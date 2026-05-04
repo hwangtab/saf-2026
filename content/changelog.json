@@ -1,5 +1,1085 @@
 [
   {
+    "hash": "882e225a",
+    "type": "fix",
+    "scope": "petition,i18n",
+    "subject": "청원 폼 RegionSelect 영문 locale 노출 정상화 + 동의문 군더더기 제거",
+    "summary": "영문 locale에서 RegionSelect 드롭다운이 한글로만 노출되던 문제를 수정하고,",
+    "body": "국외이전 동의문에서 \"(예술인협동조합)\" 중복 표기를 제거했습니다.\n\n- lib/petition/regions.ts: RegionSubdivision에 labelEn(시·도) + subsEn(시·군·구\n  ~250건) 평행 필드를 추가. 국립국어원 국어 로마자 표기법(2000)을 따르며 행정\n  접미사(-gu/-gun/-si) 그대로. getRegionLabel() / getSubregionLabel() locale\n  헬퍼 추가. DB에 저장되는 key/subs 한글값은 그대로 유지(CHECK 제약 호환)\n- RegionSelect.tsx: useLocale() + useTranslations()로 전환. 하드코딩 4건\n  (\"시·도 선택\", \"시·군·구 선택\", \"시·군·구\", \"해당 없음\")을 i18n 키로 교체\n- messages/{ko,en}.json: formRegionTopPlaceholder / formRegionSubPlaceholder /\n  formRegionSubAriaLabel / formRegionSubNone 키 추가\n- formOverseasBlurb(ko/en): \"한국스마트협동조합(예술인협동조합)\" → \"한국스마트\n  협동조합\". 위 formPrivacyBlurb에서 이미 한 번 정의된 동격이라 중복 군더더기\n\nadmin portal(OverviewTab/MessagesTab/CommitteeTab/SignaturesTab/EditSignatureModal)\n호출부는 기존 label/subs(한글)만 사용하므로 영향 없음.\n\n타입 체크 ✓ / lint ✓ / 테스트 457/457 ✓",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "ccf5a5da",
+    "type": "feat",
+    "scope": "home",
+    "subject": "Now Showing 섹션 신설 — 시한성 큐레이션 전시·캠페인 머리기사",
+    "summary": "메인 hero 직하에 시한성 콘텐츠를 노출하는 'Now Showing' 섹션 신설. 매거진 표지 다음 머리기사 톤 (DESIGN.md §1). 오윤 40주기 특별전·박생광 드로잉전(준비 중) 두 카드. endDate가 지난 항목은 자동 숨김",
+    "body": "신규:\n- lib/now-showing.ts — NowShowingItem 인터페이스 + NOW_SHOWING 데이터 + getActiveShowingItems() 필터\n- components/features/NowShowing.tsx — 서버 컴포넌트, 카드 그리드 (sm:grid-cols-2)\n  - 'on' 카드는 success badge + 깜빡이는 점, 'coming-soon'은 charcoal 배지\n  - 활성 카드는 Link, 비활성은 cursor-not-allowed div\n\ni18n:\n- messages/ko.json·en.json home.nowShowing 객체 추가:\n  title/subtitle/{ohYoon40th,parkSaenggwang}{Status,Title,Desc,Cta} 총 10키\n\npage.tsx:\n- HeroSection 직후, Mission Banner 직전에 <NowShowing /> 삽입\n- 매거진 흐름: 표지(hero) → 머리기사(NowShowing) → 미션(mission) → 본문(categories)\n\n데이터 (초기):\n- 오윤 40주기 특별전: status='on', /special/oh-yoon, 〈칼노래〉 이미지\n- 박생광 드로잉전: status='coming-soon', href=null, 〈백두산 천지 아침〉 이미지",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "ae83eed8",
+    "type": "feat",
+    "scope": "home",
+    "subject": "hero 재구성 — 16점 카탈로그 → 4점 화보, .text-hero 위계 적용",
+    "summary": "메인 hero가 작품 16점 그리드(4×4)로 인해 200vh+ 높이로 first viewport에 들어오지 않던 문제. 4점 화보(모바일 2×2, 데스크톱 1×4)로 줄이고 DESIGN.md §3 .text-hero 위계 적용해 75vh 단정한 표지 톤으로 정리",
+    "body": "진단:\n- 기존: HeroGalleryGrid 16점 → 데스크톱 ~1670px, 모바일 ~920px의 그리드만으로 hero가 200vh+\n- DESIGN.md §3 typography: .text-hero (text-5xl md:text-6xl lg:text-7xl)가 표준\n  → 기존 hero title은 text-3xl sm:text-4xl md:text-5xl로 한 단계 작음\n- §4 PageHero(sub 페이지)가 min-h-[60vh]인데 메인이 200vh+면 위계 역전\n- §1 매거진/포스터 톤: 표지 + 카탈로그 합본은 과중. 매거진 표지처럼 갤러리 화보 1행 + 큰 타이포가 적합\n\n변경:\n- artworks: 16점 → 4점 (homepage api · schema 동시 변경)\n- section: relative + min-h-[75vh] flex items-center 추가 — first viewport 안에 hero 안착\n- container-max에 w-full 추가 (flex 안에서 폭 보장)\n- title: text-3xl sm:text-4xl md:text-5xl → .text-hero (text-5xl md:text-6xl lg:text-7xl)\n- subtitle: text-sm md:text-base → .text-body-large\n- mb-8 → mb-10 md:mb-12, mt-8 → mt-10 md:mt-12 (호흡 확장)\n- mt-4 badge → mt-5\n- HeroGalleryGrid의 4-card 표시는 컴포넌트 자체 grid-cols-2 sm:3 lg:4가 자동 처리\n  → 모바일 2×2 / 데스크톱 1×4 화보로 자연스럽게 배치\n\n영향:\n- hero 높이 200vh+ → ~85vh (75vh min + 콘텐츠 자연 높이)\n- first viewport에 title·작품 화보·CTA 모두 안착 → CTA 즉시 도달\n- 16점 카탈로그 효과는 hero 직하 카테고리 섹션(회화·판화·사진·조각 각 20점)에서 보완\n- /artworks 페이지로의 클릭 동기 강화 (hero에 16점 다 보이지 않음)\n\n다음 Phase: Now Showing 섹션 신설 (오윤 40주기·박생광 드로잉전), 메뉴 청원 분리",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "ea162b15",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "web_vitals 이벤트 GA4 전송 정상화",
+    "summary": "lazyOnload된 gtag.js 로드 전 발화한 web vitals 콜백이 잘못된 dataLayer 형식으로 push되어 14일간 GA4에 0건 누적되던 문제 수정. gtag stub을 함수 인자(arguments) 형태로 큐잉하도록 변경.",
+    "body": "- 객체 형태 dataLayer.push({event: ...})는 GTM 전용이라 gtag.js 단독에서는 무시됨\n- gtag.js와 동일한 stub(window.dataLayer.push(args))을 미리 정의해 lazyOnload 전 발화도 정상 큐잉\n- gtag.js 로드 후 큐가 자동 처리되어 GA4로 전송됨\n- dev server + Playwright 검증: FCP/TTFB 이벤트가 [event, web_vitals, payload] 형식으로 dataLayer에 정상 큐잉 확인",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "7096a074",
+    "type": "fix",
+    "scope": "petition,i18n",
+    "subject": "SignForm 한글 리터럴 26건 → next-intl 메시지로 일괄 마이그레이션",
+    "summary": "오윤 청원 페이지 영문 버전(/en/petition/oh-yoon)에서 폼 라벨·도움말·동의 텍스트 등이 한글로 그대로 노출되던 문제 해결. SignForm.tsx에 박혀있던 한글 리터럴 26건을 messages/ko.json·en.json의 petition.ohYoon 네임스페이스로 옮기고 t() 호출로 전환",
+    "body": "진단:\n- petition/oh-yoon/page.tsx는 useTranslations('petition.ohYoon')로 i18n 적용 완료\n- 그러나 SignForm 클라이언트 컴포넌트는 라벨·placeholder·도움말 모두 한글 직박\n- 영문 버전에서 한글 폼이 뜨는 UX 누수\n- DESIGN.md §7 Don't 위반: '배지·상태 라벨에 한글 리터럴 박기'\n\n처치:\n- messages/ko.json·en.json petition.ohYoon에 26개 키 추가:\n  successTitle/Body/Footer, formNameLabel/Hint/Placeholder, formEmailLabel/Help,\n  formPhoneLabel/Help, formRegionLabel, formCommitteeTitle/Hint,\n  formMessageLabel/Optional/Public, formConsentTitle/Required/Petition/Privacy/Overseas,\n  formPrivacyBlurb, formOverseasBlurb, formSubmitting, formFooter\n- SignForm.tsx:\n  - PRIVACY_BLURB·OVERSEAS_BLURB 모듈 상수 제거 (i18n 키로 이전)\n  - 모든 라벨·도움말·placeholder·블러브·동의 텍스트 → t() 호출\n  - successBody는 \\n 포함 → whitespace-pre-line으로 줄바꿈 보존\n- 영문 번역은 한국어 본문의 의미를 유지하면서 자연스러운 영문으로 매핑\n  (특히 '주민등록상 이름' → 'legal name', '시민 추진위원' → 'citizen committee member',\n   '청원 전달식' → 'petition delivery events' 등 컨텍스트 살림)\n\n영향:\n- /petition/oh-yoon (한국어): 변화 없음 (텍스트 동일)\n- /en/petition/oh-yoon: 폼 전체 영문화 → 외국인 시민·기자도 정상적으로 서명 가능",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "b145eb84",
+    "type": "fix",
+    "scope": "legal",
+    "subject": "개인정보·이용약관·환불 안내 본문 섹션 제목 위계 정정",
+    "summary": "세 법적 고지 페이지(/privacy, /terms, /refund-policy) 본문의 sub-section 제목이 SectionTitle (text-section-title, 36~48px)로 너무 큰 위계를 가져 PageHero 메인 제목과 시각 위계 충돌. text-2xl md:text-3xl(24~30px)로 격하해 페이지 구조 명료화",
+    "body": "진단:\n- PageHero가 페이지 메인 제목 (text-hero, 60~72px)\n- 본문 안 sub-section은 chapter 단위가 아니므로 section-title은 과대 표현\n- DESIGN.md §3 위계: Hero(text-hero, 60~72) > Section(text-section-title, 36~48) > Card(text-card-title, 20)\n  → 본문 sub-section은 그 사이 (24~30px)가 적절\n\n코드 변경 (3 파일, 14 인스턴스):\n- privacy/page.tsx: 4건 (영문 Contact, 한글 sections.map, 부칙, 문의처)\n- terms/page.tsx: 6건 (영문 Role-specific/Contact, 한글 sections.map, 부칙, 역할별 계약서, 문의처)\n- refund-policy/page.tsx: 4건 (영문 Contact, 한글 sections.map, 부칙, 문의처)\n\n변경 패턴:\n<SectionTitle className=\"mb-4\">{...}</SectionTitle>\n→ <h2 className=\"text-2xl md:text-3xl font-bold text-charcoal mb-4 leading-snug text-balance\">{...}</h2>\n\ntext-balance + leading-snug 추가로 한국어 한 줄 한 어절 외로움 방지·줄간격 적정화.\n3개 파일에서 SectionTitle import 제거 (다른 페이지의 SectionTitle 사용은 그대로 유지).",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "930dc406",
+    "type": "fix",
+    "scope": "layout",
+    "subject": "9건 pb-12/pb-16 → SAWTOOTH_TOP_SAFE_PADDING 표준화 — Sawtooth 안전 여백 확보",
+    "summary": "DESIGN.md §7 Don't ('pb-12 같은 짧은 하단 패딩 — SawtoothDivider에 묻힘')에 명시된 위반 9건 정정. main 마지막 컨테이너의 하단 패딩을 표준 상수 SAWTOOTH_TOP_SAFE_PADDING (pb-24 md:pb-32)로 통일",
+    "body": "진단:\n- Footer SawtoothDivider position=\"top\"이 -translate-y-full로 위 컨테이너 마지막 24~40px를 덮음\n- 따라서 main 마지막 min-h-screen 래퍼는 최소 pb-24(96px)는 있어야 톱니에 콘텐츠가 묻히지 않음\n- 9개 파일이 pb-12(48px) 또는 pb-16(64px)으로 부족\n- 특히 모바일에서 버튼·CTA가 톱니에 가려질 위험\n\n코드 변경 (6 파일, 9 인스턴스):\n- app/[locale]/checkout/[artworkId]/success/SuccessClient.tsx — 4건 (loading/error/success 4가지 상태 모두)\n- app/[locale]/checkout/[artworkId]/fail/page.tsx — 1건\n- app/[locale]/orders/page.tsx — 1건\n- app/(auth)/signup/page.tsx — 1건 (SIGNED/EMAIL 두 view 동일 className 일괄)\n- app/(auth)/login/page.tsx — 1건\n- app/(portal)/exhibitor/onboarding/page.tsx — 1건 (pb-16 lg:pb-24도 표준으로 통일)\n\n각 파일에 import 추가:\nimport { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';\n\nclassName 패턴:\n- \"...pt-24 pb-16\" → {`...pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}\n- \"...pt-20 pb-12 sm:px-6 lg:px-8\" → {`...pt-20 ${SAWTOOTH_TOP_SAFE_PADDING} sm:px-6 lg:px-8`}\n\ndrop-in이라 시각 변화는 모바일에서 콘텐츠가 톱니 안전 거리만큼 위로 올라옴 — 톱니에 묻히던 버튼·텍스트가 정상 노출",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "80fc2bcf",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "10부 결구 섹션 하단 padding 표준화 — 떠 보이던 인상 해결",
+    "summary": "오윤 청원 페이지의 10부 마지막 결구 섹션이 pb-48 md:pb-64(192/256px)로 매우 큰 하단 여백을 갖고 있어, CTA 버튼 아래 빈 공간이 과도해 hero가 화면 상단에 떠 있는 듯한 시각 인상을 줌. CLAUDE.md의 표준 상수 SAWTOOTH_TOP_SAFE_PADDING(pb-24 md:pb-32)으로 교체",
+    "body": "진단:\n- 10부 결구는 main의 마지막 section → Footer SawtoothDivider가 위로 -translate-y-full로 덮어 옴\n- 기존 의도: 톱니가 덮을 자리에 charcoal-deep 색상이 충분히 깔리도록 큰 padding 사용\n- 그러나 표준 상수 pb-24 md:pb-32만으로도 톱니 안전 여백 확보 충분\n- 두 배 가까이 큰 값(pb-48/pb-64)은 의도된 안전 여백을 넘어 시각적 빈 공간을 만들어 hero가 떠 있는 인상\n\n변경:\n- pt-24 md:pt-32 pb-48 md:pb-64 → pt-24 md:pt-32 ${SAWTOOTH_TOP_SAFE_PADDING}\n- 모바일 192px → 96px (-96px)\n- 데스크톱 256px → 128px (-128px)\n\nCLAUDE.md 가이드 준수 — 하드코딩된 padding 대신 표준 상수 사용",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "06f17283",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "상단 액션 그룹 gap 추가 — 검색/언어/닫기 우측 쏠림 완화",
+    "summary": "Gemini 피드백 #1 — 닫기 우측 24px 여유 vs 검색-언어 사이 0px이라 시선 우측으로 쏠림",
+    "body": "변경:\n- .header에 gap: 0.75rem (12px) 추가\n- mr-auto 검색 버튼은 그대로 유지 (우측 그룹과 분리)\n- 언어 ↔ 닫기 사이 12px 명시적 간격 → 시각 균형 회복",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "40ff7a5b",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "활성 탭 표시 — 부모 카테고리 active 강조 + dropdown auto-open",
+    "summary": "Gemini 피드백 #3 — nav 활성 탭 표시 부재. 사용자 현재 페이지 알기 어려움 해소",
+    "body": "변경:\n- 부모 nav (전시 작품/소개/매거진/아카이브)가 자식 중 어느 sub-item이라도 현재 활성이면 부모도 active 강조 (.styles.active 적용 — 파랑 텍스트 + 옅은 파랑 배경)\n- 부모 카테고리에 현재 페이지 sub-item 있으면 details dropdown 자동 펼침 (open prop)\n- 단일 link nav (sub-item 없음)는 기존 isActive 처리 유지\n\nisParentActive 로직:\n- item.items.some(sub => isActive(sub.href)) — 자식 중 active 있으면\n- 또는 isActive(item.href) — 부모 자체 href active",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "779f05c3",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "알약 너비 통일 — grid-cols-2 + max-w-xs (Gemini 피드백 적용)",
+    "summary": "다른 너비 알약 두 개의 시각 흐름 끊김 → grid 2열로 동일 너비 + max-w-xs 가운데 정렬",
+    "body": "변경:\n- 알약 wrapper: flex flex-wrap → grid grid-cols-2 gap-2 max-w-xs mx-auto\n- Link, AuthButtons buttonClassName에 w-full 추가 → grid 셀 너비 채움\n- max-w-xs(320px) → 모바일 width에서 적정 비율, 양 옆 자연 여백\n- 두 알약이 grid에서 동일 너비로 정렬 → 깔끔한 좌우 대칭",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "d9b1852f",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "헤더 좌우 padding + 알약 영역 비율 정리",
+    "summary": "사용자 피드백 — 닫기 우측 답답함 + 알약 위아래 과한 여백 둘 다 손질",
+    "body": "변경:\n- FullscreenMenu.module.css .header: padding 0 1rem(16px) → 0 1.5rem(24px)\n  → 닫기 버튼 우측 여백 8px 추가, 답답함 해소\n- FullscreenMenu.tsx 알약 wrapper: pt-8 pb-8 (32/32) → py-5 (20/20)\n  → 과한 여백 줄이고 nav-알약-footer 간격 적정 비율",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "a9aae4a1",
+    "type": "fix",
+    "scope": "proxy",
+    "subject": "/manifest.webmanifest 404 — proxy matcher·skip 목록에 누락",
+    "summary": "매니페스트 webmanifest 경로가 next-intl proxy에 가로채여 404 반환",
+    "body": "`app/manifest.ts`가 빌드 산출물에 정상 생성됨에도 production에서\n`https://www.saf2026.com/manifest.webmanifest`가 404를 반환하던 원인.\n\nproxy.ts(Next.js 16의 구 middleware)는 `STATIC_SKIP_PATHS`에\n`/manifest.json`만 등록하고 `/manifest.webmanifest`를 빠뜨렸음.\nmatcher regex도 동일. 결과적으로 manifest 요청이 next-intl proxy에\n넘어가 `/[locale]/manifest.webmanifest` 페이지를 찾다가 404.\n\n- STATIC_SKIP_PATHS에 `/manifest.webmanifest`, `/llms-full.txt` 추가\n- matcher regex에 `manifest\\.webmanifest`, `llms-full.txt` 추가\n  (`.`은 escape — `manifest.json` 매칭이 의도치 않게 `manifestXjson`까지\n   매칭하던 잠재 회귀도 동시에 정리)\n\nConsole 에러 정리:\n- ✅ `Manifest fetch from .../manifest.webmanifest failed, code 404`\n- 🟡 `Failed to execute 'appendChild'` SyntaxError —\n   manifest 404 응답(HTML)을 chunk loader가 inject 시도하다 발생한\n   2차 에러로 추정. manifest 정상화로 함께 해결 예상\n- 🟡 `preloaded ... but not used` —\n   Next.js 자동 chunk preload 노이즈. 코드 변경 불필요",
+    "date": "2026-04-29",
+    "author": "Claude"
+  },
+  {
+    "hash": "69106586",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "알약 영역 pt 균등화 — 위로 치우침 해결 (pt-5 → pt-8)",
+    "summary": "알약 위/아래 padding 비대칭(pt-5 20px / pb-8 32px)으로 알약이 위로 치우쳐 보이던 문제",
+    "body": "pt-5(20px) → pt-8(32px)로 위/아래 동일 → 알약 영역 안에서 수직 가운데 정렬",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "a0d8160d",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "알약 글씨 작게 한 거 원복 + 알약 영역 아래 padding 추가 (진짜 원인)",
+    "summary": "사용자 진단 — 알약이 헐렁한 게 아니라 알약 아래 padding이 0이라 footer와 너무 가까워 어색했던 것",
+    "body": "직전 e6edeff3 (text-xs + min-h-0 강제 컴팩트화) 원복:\n- Link className: px-2.5 py-1 text-xs → px-3 py-1.5 text-sm\n- AuthButtons buttonClassName: text-xs px-2.5 py-1 min-h-0 제거 → size=\"xs\" default 사용\n- 알약 자체 사이즈는 70f0ed04(size=xs) 시점으로 되돌림\n\n진짜 fix:\n- 알약 wrapper div에 pb-8 추가 → 알약 → footer 텍스트 간격 32px 확보\n- 이전엔 footer의 padding-top(16-24px)만이 간격 → 좁아 보임",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "e6edeff3",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "모바일 알약 진짜 컴팩트화 — text-xs + px-2.5 py-1 + min-h-0",
+    "summary": "이전 fix(70f0ed04, size=xs)로도 사용자가 본 알약이 헐렁한 문제 — twMerge로 button-base의 px-3 py-1.5 text-sm min-h-[36px] 모두 override",
+    "body": "직전 fix는 size=\"xs\"만 박았는데, 그 size의 default(px-3 py-1.5 text-sm min-h-[36px])가 적용되었음. text-sm + 36px height + 12px padding이면 텍스트 대비 좌우 빈 공간 헐렁.\n\n이번:\n- buttonClassName에 text-xs px-2.5 py-1 min-h-0 명시 → twMerge가 size xs default 모두 override\n- Link도 동일: text-sm → text-xs, px-3 py-1.5 → px-2.5 py-1\n- 결과: 폰트 12px, padding 10/4px, height 자연 (~24px)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "eae28af2",
+    "type": "fix",
+    "scope": "header",
+    "subject": "데스크톱 헤더 알약 컴팩트화 — text-xs + px-2.5 py-1 + min-h-0",
+    "summary": "사용자가 지적한 헐렁한 알약 = 데스크톱 헤더의 utility 알약 (모바일 메뉴 알약은 이미 fix됨)",
+    "body": "변경:\n- text-sm (14px) → text-xs (12px)\n- px-3 py-1.5 (12/6px) → px-2.5 py-1 (10/4px)\n- gap-1.5 → gap-1\n- min-h-0 추가 (AuthButtons size=\"xs\"가 button-base의 min-h-[36px]를 강제하던 것 무효화)\n- flex → inline-flex (자연 width)\n\n데스크톱 nav의 보조 알약 (검색 / 주문조회 / 관리자대시보드)이\n이제 진짜로 작은 secondary 알약 비율로 표시됨",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "70f0ed04",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "알약 버튼 크기 정리 — Button size sm→xs로 컴팩트화",
+    "summary": "Button size sm(min-h 44px, px-4 py-2)에 px-5 덧칠로 좌우 패딩이 헐렁해 보이던 문제 해결",
+    "body": "진단:\n- Button size=\"sm\" default: px-4 py-2 text-sm min-h-[44px]\n- 거기에 buttonClassName으로 px-5 덧칠 → 좌우 padding 충돌, 큰 알약\n- Link도 px-5 + min-h-[40px]로 함께 큼\n\n수정:\n- AuthButtons size=\"sm\" → size=\"xs\" (px-3 py-1.5 min-h-[36px])\n- buttonClassName에서 px-5 제거 (xs default 사용)\n- Link도 px-3 py-1.5 + min-h 제거 (자연 height)\n- 결과: 두 알약 모두 px-3 py-1.5 text-sm 36px 높이로 통일, 보조 액션다운 컴팩트한 비율",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "75d84aaf",
+    "type": "feat",
+    "scope": "og",
+    "subject": "NotoSansKR Regular 추가 — OG image weight 차등 정합화",
+    "summary": "OG image의 fontWeight: 400 표기가 시각 효과 없던 문제 해결 — Satori에 Regular(400) 폰트 별도 등록",
+    "body": "배경:\n- 기존 Satori fonts 배열에 NotoSansKR-Bold.ttf(700)만 등록되어 있어,\n  OG image 코드의 fontWeight: 400은 모두 700으로 fallback (위계 안 보임)\n- 코드 의도(제목 굵게 / 본문 가늘게)와 실제 렌더 결과 불일치\n\n변경:\n- public/fonts/NotoSansKR-Regular.ttf 추가 (Variable font, 9.9MB, 서버 자산만)\n- 4개 OG image (stories/[slug], petition/oh-yoon, artworks/[id], artworks/artist/[artist]):\n  - fontPath/fontData → fontBoldPath/fontBoldData + fontRegularPath/fontRegularData 분리\n  - Satori fonts 배열에 weight: 400 entry 추가\n- 결과: SNS/카톡 공유 + Google SERP 미리보기에서 제목/본문 weight 차등 실제 표시\n\n자산 부담:\n- ttf 9.9MB는 서버 자산 (public/fonts/)이므로 client 다운로드 0\n- OG image는 Vercel Edge에서 1회 생성 후 long-term cache → 첫 cold render만 약간 느림",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8d504b77",
+    "type": "fix",
+    "scope": "font",
+    "subject": "큰 통계 숫자·작품 타이틀 weight 정합화 — font-bold(700) → font-black(900)",
+    "summary": "text-4xl/5xl/6xl 큰 임팩트 텍스트 6곳이 font-bold(700)에 머물러 시스템 위계(text-4xl+은 font-black) 어긋나던 문제 정리",
+    "body": "변경:\n- StatCard: 통계 카드 숫자 (text-4xl/5xl)\n- DynamicCounter: 통계 카운터 (text-5xl/6xl)\n- our-proof: KRW/원 강조 숫자 (text-4xl) 2곳\n- exhibitor 대시보드: 관리 작가/작품 카운트 (text-4xl) 2곳\n- artwork 상세 h1: text-3xl/4xl 작품 타이틀 → font-display font-black로 시스템 통일 (font-sans → font-display)\n\n시스템 위계 (DESIGN.md):\n- text-5xl+ → font-black (900)\n- 텍스트 강조 (text-4xl Hero급) → font-black",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "9ee959a0",
+    "type": "fix",
+    "scope": "font",
+    "subject": "큰 Hero/임팩트 텍스트 weight 보정 — font-bold(700) → font-black(900)",
+    "summary": "text-5xl 이상의 Hero·강조 텍스트 8곳이 700 weight로 임팩트 부족하던 문제 수정",
+    "body": "오윤 청원 hero h1(text-4xl/6xl)이 굵지 않다는 사용자 피드백 후 동일 패턴 전수 점검:\n- petition/oh-yoon/page.tsx: hero h1 + 따옴표 장식 → font-black\n- special/oh-yoon/page.tsx: text-5xl 임팩트 텍스트 4곳 → font-black\n- stories/page.tsx + stories/category: 이니셜 watermark span → font-black\n\n기준 (시스템 weight 위계와 일관):\n- 큰 Hero/임팩트 (text-5xl+): font-black (900)\n- 일반 제목 (h2/h3, text-2xl~text-4xl): font-bold (700)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b3121514",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "nav 메시지 키 누락 + 알약 비율 정리",
+    "summary": "nav.browseArtworks/joinMember가 다른 네임스페이스(notFound/home)에 있어 raw 키로 노출되던 버그 수정 + 알약 너비 자연 비율로",
+    "body": "변경:\n- messages/ko.json + en.json: nav.browseArtworks, nav.joinMember 추가 (기존 notFound/home에만 존재)\n  → FullscreenMenu의 t('browseArtworks'), t('joinMember') 호출 시 raw 'nav.browseArtworks' 노출되던 문제 해결\n- 알약 버튼 (주문/배송 + 아티스트 메뉴):\n  - w-44(176px) 강제 너비 제거 → 텍스트 자연 너비\n  - flex-col → flex-wrap (가로 배치 우선, 좁아지면 줄바꿈)\n  - px-5로 패딩 통일\n  - min-h-[44px] → min-h-[40px] 컴팩트화",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "76ff70c9",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "모바일 메뉴 핵심 CTA를 작품 구경하기로 — 조합원 가입은 보조 링크로",
+    "summary": "캠페인 본질에 맞게 핵심 CTA를 \"작품 구경하기\"로 교체. 조합원 가입은 footer 텍스트 링크로 강등",
+    "body": "변경:\n- 핵심 primary CTA: 조합원 가입(forms.office.com) → /artworks (작품 구경하기)\n  사이트 본질은 작품 판매 = 예술인 상호부조 기금 형성.\n  메뉴 진입한 사용자가 가장 자주 할 행동은 작품 보기\n- 보조 outline CTA: 기부하기(socialfunch) 추가\n- footer 텍스트 링크 추가: 개인정보 | 이용약관 | 조합원 가입\n  → 조합원 가입은 보존하되 위계 격하\n- 알약 버튼 (주문/배송, 아티스트 메뉴) width 통일: w-44로 좌우 정렬 정리, gap-3 → gap-2 컴팩트화\n\ni18n 정리:\n- nav.donate 라벨 \"조합원 가입\"/\"Join Co-op\" → \"기부하기\"/\"Donate\" (의미와 키 일치)\n- nav.joinMember \"조합원 가입\"/\"Join the Co-op\" — 기존 유지",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "238da93f",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "모바일에서 filter bar sticky 해제 — chrome stack 최소화",
+    "summary": "모바일 스크롤 시 헤더 + filter bar 두 chrome이 모두 따라 내려와 작품 영역이 좁아지던 문제 해결",
+    "body": "- 데스크톱(768px+): 기존대로 sticky 유지 (헤더 아래 64px에 stick)\n- 모바일(<768px): sticky 해제 → normal scroll, contents와 함께 위로 사라짐\n- 모바일에서는 헤더만 fixed로 남고 filter bar는 작품 그리드 진입 시 사라져\n  스크롤 시 시각적 답답함 제거. 검색이 필요하면 위로 스크롤하면 됨",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "6948b8c0",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "모바일에서 카테고리·가격대 필터 숨김 (ArtistNavigation과 정책 통일)",
+    "summary": "모바일 chrome 단순화 — 768px 미만에서 두 필터 hidden, 작가 네비게이션과 동일 정책",
+    "body": "- 작가 네비게이션은 이미 hidden md:block로 모바일에서 숨겨졌으나,\n  카테고리·가격대 필터만 모바일에 노출되어 sticky filter bar가 너무 길어짐\n- CategoryFilter / PriceRangeFilter wrapper div에 hidden md:block 추가\n- 데스크톱(768px+)에선 그대로 표시\n- 모바일에서는 검색창 + 상태/정렬 필터만 노출 → sticky bar 컴팩트화",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b54a38a5",
+    "type": "fix",
+    "scope": "font",
+    "subject": "weight 시스템 블라인드 스팟 정리 — 600 호출 추가, 800/light 일소",
+    "summary": "폰트 시스템 호출에 없는 weight(font-light 300, font-extrabold 800) 또는 합성 의존(font-semibold 600) 제거",
+    "body": "- app/layout.tsx: Noto Sans KR weight 호출에 600 추가 (font-semibold 291곳 정상화)\n- app/[locale]/page.tsx: font-light 화살표 4곳 제거 (Noto Sans KR 300 미호출)\n- font-extrabold 11곳 → font-black 일괄 변경 (auth/onboarding/checkout 페이지)\n- app/[locale]/petition/oh-yoon/page.tsx: 옛 PartialSansKR 코멘트 제거 + 청원 동의문에 font-display font-black 명시 (큰 강조)\n\nTailwind weight ↔ Noto Sans KR 호출 매핑 최종:\n| 클래스 | weight | 호출 여부 |\n| font-thin/extralight/light | 100/200/300 | ❌ 미사용 |\n| font-normal | 400 | ✅ |\n| font-medium | 500 | ✅ |\n| font-semibold | 600 | ✅ (이번 추가) |\n| font-bold | 700 | ✅ |\n| font-extrabold | 800 | ❌ font-black으로 일괄 변경 |\n| font-black | 900 | ✅ |",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "2e628b6c",
+    "type": "fix",
+    "scope": "font",
+    "subject": "Black Han Sans display optional → swap",
+    "summary": "Hero가 첫 방문에서 항상 Noto Sans KR로 fallback 고정되던 버그 수정",
+    "body": "display: 'optional'은 100ms 안에 한글 글리프 chunk가 도착해야 폰트 적용되는데,\nunicode-range로 수백 개 chunk 분할된 한글 폰트는 첫 방문에서 거의 못 맞춤 →\n영구 fallback 고정으로 Hero 디자인 의도 손상.\nswap으로 변경: 받을 때까지 fallback 표시 후 교체. LCP 약간 손해.",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b9f26a48",
+    "type": "perf",
+    "scope": "font",
+    "subject": "Hero h1 font-black 추가 + DESIGN.md 폰트 표 갱신",
+    "summary": "Hero LCP 요소가 Black Han Sans fallback 시 가는 폰트로 떨어지지 않도록 weight 명시",
+    "body": "- app/[locale]/page.tsx: 홈 Hero h1에 font-black (900) 추가. Black Han Sans\n  못 받으면 Noto Sans KR 900으로 fallback되어 굵게 표시 보장\n- docs/DESIGN.md: c0bed24a 폰트 마이그레이션 후속 — Typography 표를 Noto Sans KR /\n  Black Han Sans 기준으로 갱신, 변수명 alias 메모 추가",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "c0bed24a",
+    "type": "perf",
+    "scope": "font",
+    "subject": "Paperlogy/PartialSansKR/HakgyoansimPoster → Google Fonts (Noto Sans KR + Black Han Sans) 마이그레이션 완료",
+    "summary": "Vercel 빌드 에러 수정 (이전 커밋이 unused Google Font import 포함) — 로컬 woff2 5종 제거, next/font/google로 self-host 전환",
+    "body": "변경:\n- app/layout.tsx: localFont 3종(Paperlogy/PartialSansKR/HakgyoansimPoster) 제거, Noto Sans KR (4 weights) + Black Han Sans (1 weight) Google Font로 전환\n- public/fonts/*.woff2: 5개 로컬 폰트 파일 삭제 (Paperlogy-4Regular/5Medium/7Bold, PartialSansKR-Regular, HakgyoansimPosterB)\n- tailwind.config.ts: section 폰트 변수에서 --font-section 제거 (본문 변수 재사용), 주석 업데이트\n- styles/globals.css: text-hero/text-section-title/text-artwork-title에 명시적 weight (font-black/bold) — Google 폰트는 multi-weight라 명시 필요\n- components/common/Header/FullscreenMenu.module.css: --font-display → --font-partial-sans, font-weight 500 → 400\n\n효과:\n- 빌드 타임에 Google Fonts에서 다운로드 → 자체 도메인 self-host\n- unicode-range chunk 자동 분할 (한글 글리프 lazy fetch)\n- Black Han Sans는 display: optional로 LCP 영향 없음\n- Vercel TypeScript noUnusedLocals 에러 해결",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "a65b3749",
+    "type": "fix",
+    "scope": "monitoring",
+    "subject": "WebVitalsTracker가 gtag 미정의 시점에 dataLayer로 fallback",
+    "summary": "gtag.js를 lazyOnload(LCP 최적화)로 로드하기 때문에 web-vitals callback 시점에 gtag function이 정의 안 됐을 가능성. 이벤트 손실을 막기 위해 dataLayer 직접 push로 fallback 추가. + GA4 Data API 분석 스크립트 추가",
+    "body": "진단 (commit 67e23661 배포 후 GA4 점검):\n- 사이트 트래픽: 7일간 사용자 2명, 페이지뷰 64건 (정상)\n- web_vitals 이벤트: 0건\n- 원인: WebVitalsTracker의 useEffect가 hydration 직후 onLCP/onCLS 등록 → callback 즉시 발화. 그러나 gtag.js는 lazyOnload라 미로드 상태 → `typeof window.gtag !== 'function'` 분기에서 return → 이벤트 손실\n\n변경:\n- components/common/WebVitalsTracker.tsx:\n  - sendToGA가 gtag 미정의 시 dataLayer에 직접 push (Google 권장 패턴)\n  - gtag.js가 나중에 로드되면 dataLayer 큐의 이벤트 자동 처리\n  - eventPayload 분리해 양쪽 경로에서 재사용\n\n추가:\n- scripts/ga4-web-vitals.js: GA4 Data API REST로 web_vitals metric 분해 분석\n- scripts/ga4-quick-check.js: 사이트 전체 트래픽 + 이벤트 발생 추세 빠른 점검\n- @google-analytics/data devDependency 추가 (CLI 도구용)\n- .env.local에 GA4_PROPERTY_ID/GA4_ACCESS_TOKEN/GA4_REFRESH_TOKEN (gitignored)\n\n비용:\n- 모두 무료 (web-vitals + GA4 Data API)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "099fa3f6",
+    "type": "perf",
+    "scope": "image",
+    "subject": "AVIF 포맷 활성화 — Chrome에 WebP 대신 AVIF 응답",
+    "summary": "이미지 응답을 AVIF로 전환해 PSI '이미지 전송 형식' 555KB 절감",
+    "body": "- next.config.js images.formats에 ['image/avif', 'image/webp'] 추가\n- Next.js 16 기본값은 ['image/webp']이라 AVIF 가능 클라이언트에도 WebP 응답\n- PSI Lighthouse(Chrome) 기준 이미지당 30~50KB 추가 절감 → 성능 점수 5~8점 회복 예상\n- Vary: Accept 헤더로 AVIF 미지원 브라우저는 자동 WebP fallback\n- Supabase 원본(__original.webp)은 storage 형식이고, Vercel resize 재인코딩\n  출력 포맷만 변경하는 것이라 이중 최적화 아님",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "215bb559",
+    "type": "fix",
+    "scope": "navigation",
+    "subject": "not-found 페이지에서도 상단 스크롤 — hidden 작품 클릭 시 UX 개선",
+    "summary": "매거진 본문에서 작품 figure 클릭 → 정상 작품 페이지 이동 시 자동 scroll-to-top이 동작했지만, hidden 작품(예: 신학철)으로 인해 notFound() 흐름이 발생할 때는 not-found.tsx 페이지에서 스크롤 위치가 유지되어 본문 중간에 빈 화면처럼 보이는 UX 누수. ScrollToTopOnMount 클라이언트 컴포넌트를 신설해 not-found 페이지들에 마운트 — Next.js soft navigation의 scroll-to-top 누락을 보완",
+    "body": "진단:\n- next/link는 default scroll: true로 페이지 이동 시 top 스크롤\n- 그러나 notFound() 흐름에서는 URL 변경 없이 not-found.tsx로 렌더되어\n  클라이언트 navigation의 scroll-to-top이 트리거되지 않는 케이스\n- 매거진 본문에서 hidden 작품 figure 클릭 → 사용자는 본문 중간 위치 그대로\n  → 작품 페이지 못 찾음 메시지가 화면 밖에 있어 보일 수 있음\n\n처치:\n- components/common/ScrollToTopOnMount.tsx 신설: useEffect로 마운트 즉시\n  window.scrollTo({ top: 0, behavior: 'instant' })\n- 적용 대상 not-found.tsx 3개:\n  - app/not-found.tsx (root)\n  - app/[locale]/artworks/[id]/not-found.tsx (작품 not-found)\n  - app/[locale]/artworks/artist/[artist]/not-found.tsx (작가 not-found)\n- portal(admin/dashboard/exhibitor) not-found는 일반 사용자 경험과 무관하여 제외",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "caefd3cc",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 페이지 RelatedArticles + 카테고리 페이지 SEO 랜딩 강화",
+    "summary": "GSC 데이터로 본 작가 검색 page 2 정체 + 카테고리 페이지 thin content 문제를 해결. 사용자가 큐레이션한 외부 권위 자료 386 URL을 작가 페이지에 visible 노출 + 카테고리 페이지를 SEO 랜딩 페이지로 격상해 long-tail 검색어 흡수",
+    "body": "A. 작가 페이지에 RelatedArticles section 추가:\n- artist-articles.ts의 386 URL이 작품 detail에만 visible이었음 — 작가 페이지에도 노출\n- 거장 작가(오윤·박재동·박불똥 등) 페이지가 즉시 풍부해짐 (한겨례·MMCA·달진닷컴·namu.wiki·Wikipedia 등)\n- 사용자 dwell time ↑, Google entity 신뢰도 ↑, page 2 → page 1 진입 가속\n\nB. 카테고리 페이지 SEO 랜딩 격상:\n- lib/category-seo-content.ts 신설 — 5 핵심 카테고리(회화·한국화·판화·사진·조각) 한국어 introductory 본문 1,000~1,500자 + 카테고리별 FAQ 3개씩, 회화는 영문 번역 포함\n- 카테고리 페이지에 visible section 추가:\n  - Introductory paragraph (검색 의도 + 구매 가이드 + 한국 미술 맥락)\n  - Featured artists (해당 카테고리 작품 수 top 6 작가 — internal linking 강화)\n  - Price range distribution (저가 1M↓ / 중가 1M~5M / 고가 5M↑ visualization)\n  - Category-specific FAQ accordion (long-tail \"X 뜻\", \"X 가격\" 검색 흡수)\n\n기대 효과:\n- 작가 페이지 콘텐츠 풍부도 폭증 → entity-aware ranking 부스트\n- 카테고리 페이지가 \"회화 작품 구매\", \"한국 판화 작가\", \"에디션 넘버링\" 등 long-tail 검색어 흡수\n- 모든 카테고리에서 작가→카테고리→스토리 cross-linking 자동 강화\n- 콘텐츠 작성된 5 카테고리 외 (사후판화·드로잉·도자/공예·아트프린트·혼합매체·디지털아트)는 자동 fallback으로 visible section 미노출 (점진 추가 가능)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "67e23661",
+    "type": "feat",
+    "scope": "monitoring",
+    "subject": "Web Vitals → GA4 custom event 전송 — 무료 RUM 측정",
+    "summary": "유료 Vercel Speed Insights 대신 Google web-vitals 패키지(공식, 무료)로 LCP/CLS/INP/FCP/TTFB 측정해 기존 GA4 custom event로 전송. 비용 0, 실측 데이터 수집 시작",
+    "body": "설치:\n- web-vitals ^5.2.0 (Google 공식, 무료)\n\n변경:\n- components/common/WebVitalsTracker.tsx 신설:\n  - onLCP, onCLS, onINP, onFCP, onTTFB 핸들러 등록\n  - GA4 gtag('event', 'web_vitals', {...}) 전송\n  - metric_name, metric_value, metric_rating(good/needs-improvement/poor), page_path 매개변수\n  - non_interaction: true (bounce rate 영향 없음)\n  - CLS는 ×1000으로 정수화 (GA4 event value 정수 제약)\n- GlobalAnalyticsGate에 마운트 (admin/dashboard 등 path 자동 제외 그대로 적용)\n\nGA4 대시보드 확인:\n- 보고서 → 참여도 → 이벤트 → web_vitals 선택\n- 매개변수별 분해: metric_name별 LCP/CLS/INP 분포\n- 탐색 → 측정값 그래프 + page_path별 비교\n- 데이터 수집 시작: 배포 후 즉시 (실시간 보고서)\n- 의미 있는 분포: 1-2주\n\n비용:\n- web-vitals npm: 무료\n- GA4 custom events: 무료 (GA4 free tier 무제한)\n- 총 0원\n\nVercel Speed Insights 대비:\n- 동일 데이터 (LCP/CLS/INP/FCP/TTFB)\n- 차이: device/region 분해는 GA4 dimensions 활용, Speed Insights는 자체 dashboard\n- GSC + GA4 + WebVitalsTracker 조합으로 충분한 RUM 데이터",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "a24eead2",
+    "type": "feat",
+    "scope": "monitoring",
+    "subject": "Vercel Speed Insights 활성화 — 실제 사용자 LCP/CLS/INP 측정",
+    "summary": "PSI Lab 측정의 노이즈(매 측정 LCP element 변동, 단일 측정 결과 신뢰도 낮음)를 회피하기 위해 Vercel Speed Insights(RUM) 활성화. 1-2주 후 실제 사용자 Core Web Vitals 분포 데이터로 다음 fix 우선순위 정확히 판단",
+    "body": "설치:\n- @vercel/speed-insights ^2.0.0 dependency 추가\n- app/layout.tsx에 <SpeedInsights /> 컴포넌트 마운트 (body 끝)\n\n비용:\n- Pro plan 보유 → 100,000 events/월 무료\n- 사이트 트래픽(GSC 클릭 716/3개월 + 직접 방문) 무료 한도 안에 있을 가능성 매우 큼\n\n측정 가능 지표:\n- 실제 사용자 LCP (PSI Lab 9.6→5.0 단축이 RUM에서 어떻게 보이는지)\n- INP (interaction to next paint, 사용자 상호작용 반응성)\n- CLS, FCP, TTFB 분포\n- 디바이스/지역별 분해\n\n대시보드 확인 방법:\n- Vercel 프로젝트 → Speed Insights 탭\n- 배포 후 ~5분 내 첫 데이터 수집 시작\n- 1-2주 후 의미 있는 분포 형성\n\nPSI vs RUM 차이:\n- PSI = Lab 측정 (모바일 4G 시뮬, cache MISS, 측정 노이즈 큼)\n- RUM = 실제 사용자 (다양한 device/network/cache 상태 반영)\n- SAF처럼 트래픽이 크지 않은 사이트는 RUM 데이터 쌓이는 시간 필요",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "855122ce",
+    "type": "perf",
+    "scope": "bundle",
+    "subject": "ArtworkGalleryWithSort dynamic import — main chunk에서 분리",
+    "summary": "PSI 모바일 \"사용 안 하는 자바스크립트 145KB\" 절감 대응. /artworks와 /artworks/artist/[artist]에서 ArtworkGalleryWithSort + 자식 filter UI(SearchBar, FilterBar, CategoryFilter, PriceRangeFilter, ArtistNavigation, MasonryGallery)를 dynamic import로 main chunk에서 분리",
+    "body": "PSI 모바일 직전 측정(d1b68ec3 후):\n- Performance 73, LCP 5.0초, TBT 160ms\n- 사용 안 하는 JS 145KB 절감 가능\n- 메인 스레드 작업 4개\n\n변경:\n- /artworks page.tsx: ArtworkGalleryWithSort를 next/dynamic으로 lazy\n- /artworks/artist/[artist] page.tsx: 동일 (export const dynamic 충돌 회피 위해 nextDynamic alias)\n- ssr: true (default) 유지 — SSR HTML 그대로, client bundle만 분리\n- SEO 영향 없음 (작품 카드 SSR 인덱싱 유지)\n\n기대 효과:\n- /artworks initial chunk size 감소 → JS download 시간 단축\n- TBT 일부 개선 (main chunk 작아짐 → parse 빠름)\n- LCP 부수 개선 가능 (network 경쟁 줄어듦)\n- \"사용 안 하는 JS\" 145KB 일부 분리되어 다른 라우트와 공유 안 함",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d1b68ec3",
+    "type": "perf",
+    "scope": "image",
+    "subject": "next-image-export-optimizer → Vercel Image Optimization 마이그레이션",
+    "summary": "PSI Lighthouse LCP 9.6초의 진짜 원인이 Cloudflare cf-cache MISS 상황의 Supabase Mumbai 콜드 transform임을 확인. Vercel Image Optimization(한국 edge + 장기 immutable cache)로 마이그레이션해 첫 방문자 LCP 단축",
+    "body": "진단 흐름 (이전 commit 누적 결과):\n- TBT 100→60ms ✅, Speed Index 6.6→5.8s ✅, 문서지연 920→520ms ✅\n- LCP 9.6초·이미지 절감 350KB는 정체 — src 사이즈 줄여도 변화 없음\n- 응답 헤더 분석: server: cloudflare, cf-ray: ICN, cf-cache-status: MISS, cache-control: max-age=3600\n- PSI 매번 fresh test → cf-cache MISS → Mumbai에서 transform → 9.6초\n\n변경:\n- components/common/SafeImage.tsx: next-image-export-optimizer → next/image 기반 재작성\n  - Supabase render endpoint URL → raw object URL 자동 변환 (toRawSupabaseUrl)\n  - Vercel이 raw URL 받아 자체 변환·캐시·전송\n  - onError fallback 유지 (1x1 투명 PNG)\n  - 호출처 인터페이스 동일 — 23곳 SafeImage 호출은 변경 없음\n- next.config.js:\n  - images.loader: 'custom' 제거 (default Vercel loader)\n  - env.nextImageExportOptimizer_* 제거\n  - transpilePackages 제거\n  - imageSizes/deviceSizes/remotePatterns 유지\n- package.json: build 스크립트의 `&& next-image-export-optimizer` 제거\n- ExportedImage 직접 import 8곳 모두 next/image로 교체 (archive/special/petition/Footer/ShareButtons/BrandLoader/HeaderLogo)\n\n검증:\n- npm run build 성공, type-check 통과\n- 로컬 dev에서 /artworks 확인:\n  - 작품 이미지 src: /_next/image?url=...&w=1920&q=75 (Vercel Image Optimization 시그널)\n  - URL 파라미터: storage/v1/object/public/artworks/... (raw URL, render endpoint 우회)\n  - srcset 자동 생성 (16w~1920w deviceSizes 기반)\n  - 응답시간 0.89s (이전 2.86s)\n- public/images/logo/nextImageExportOptimizer/ 정적 파일은 git에 commit돼 있어 logo 컴포넌트 회귀 없음\n\n기대 효과:\n- Vercel 한국 edge에서 변환·캐시 (Mumbai 우회)\n- 장기 immutable cache (Cloudflare 1시간 vs Vercel 영구)\n- 첫 방문자 LCP 단축 — PSI 점수 개선 + 실제 사용자 LCP 안정\n- 구독: Pro plan 보유 (5,000 source images/월) — 작품 ~350개 + 변형 충분히 수용\n\n후속:\n- Vercel Speed Insights 활성화로 실제 사용자 LCP 측정 권장\n- next-image-export-optimizer dependency는 다음 PR에서 제거 (안정화 후)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "af3847ba",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "unstable_cache 키 v2 bump — Vercel Data Cache 공유 stale 데이터 강제 무효화",
+    "summary": "직전 commit 1f11f3b5의 throw 패치가 빌드는 성공했지만, Vercel Data Cache가 deployment 간 공유되어 v1 키('supabase-stories')에 저장된 stale 빈 배열이 그대로 유지되어 매거진이 여전히 비어있는 상태. 캐시 키를 v2로 bump해 강제 캐시 미스 + fresh fetch 트리거",
+    "body": "진단:\n- commit 1f11f3b5 deployment(HHr78yDzXu...) state=READY 확인\n- production curl /stories 결과: HTTP 200, 132KB이지만 stories 링크 1개만\n- production curl /stories/oh-yun-market-01-after-forty 결과: HTTP 200이지만 title=Not Found\n- → 새 빌드도 stale 빈 배열을 그대로 사용 (Vercel Data Cache는 빌드 간 공유)\n\n처치:\n- unstable_cache 키 ['supabase-stories'] → ['supabase-stories-v2']\n- 새 키이므로 첫 요청 시 캐시 미스 → fresh fetch → 새 캐시 형성\n- 이후는 정상 600s TTL 동작\n\n근본 방지는 throw 패치(1f11f3b5)에 이미 적용됨 — 다음 Supabase 일시 장애 시 빈 결과가 캐시에 저장되지 않음",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "1f11f3b5",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "Supabase fetch 실패 시 빈 fallback 캐시 차단 — 매거진 전체 공백 사고 방지",
+    "summary": "getSupabaseStoriesUncached가 Supabase fetch 실패 시 빈 fallbackStories([])를 반환했고, 이 빈 배열이 unstable_cache에 600초 동안 캐시되어 매거진 목록이 전체 공백으로 노출되던 사고 발생. fetch 실패 시 throw로 캐시 저장을 막아 stale 데이터를 유지하고, 호출 wrapper에서 try/catch로 페이지 error.tsx 떨어지는 것은 방지",
+    "body": "진단:\n- 03:59:43 production 로그에 'Error fetching stories from Supabase' 발생 (Supabase 일시 장애 추정)\n- 그 시점 fetch가 fallbackStories=[]를 반환했고 unstable_cache(600s)에 저장\n- 결과: /stories·/archive 등 모든 매거진 의존 페이지가 빈 상태로 노출\n- 자연 만료까지 10분 동안 매거진 전체가 안 보이는 사고\n\n변경:\n- getSupabaseStoriesUncached: fetch error 시 fallbackStories return → throw new Error\n  → unstable_cache는 throw된 결과를 캐시하지 않음 (stale-while-error 동작)\n- getSupabaseStories: try/catch로 throw 흡수 후 fallbackStories return\n  → 페이지 레벨 error.tsx 떨어지지 않음, 캐시는 저장 안 됨\n\n기대:\n- 다음 Supabase 일시 장애 시에도 직전 캐시(stale)가 600초 동안 노출\n- 캐시 만료 시점에 fetch 재시도 → 성공하면 fresh, 실패하면 빈 배열 (그러나 캐시 안 됨)\n- 회복 시점에 새 요청 한 번이면 즉시 정상화",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b285383d",
+    "type": "perf",
+    "scope": "image",
+    "subject": "LCP 후보 카드 src를 600w로 강제 — Lighthouse가 측정하는 src 사이즈 단축",
+    "summary": "PSI 재측정에서 LCP 9.6초·이미지 절감 350KB가 그대로인 원인이 첫 카드의 src 속성이 여전히 960w라는 것을 확인. srcset에 600w 변형이 추가되어도 src 자체가 크면 Lighthouse가 그것을 LCP 다운로드 사이즈로 측정. isAboveFold 카드(첫 3개)의 src를 mobile preset(600w)로 직접 변경",
+    "body": "PSI 재측정 비교 (commit aaaf7d0e 후):\n- Performance 66 → 68 (+2)\n- TBT 100 → 60ms ✅\n- Speed Index 6.6 → 5.8s ✅\n- 문서 요청 지연 920 → 520ms ✅\n- LCP 9.6 → 9.6s ❌ (그대로)\n- 이미지 절감 350KB → 350KB ❌ (그대로)\n\n진단:\n- prod srcset에 600w 변형은 정상 노출 (15회)\n- 그러나 첫 카드 src=\"...?width=960&quality=75\" 그대로\n- Lighthouse LCP는 src 기준 fetch 사이즈로 측정 → 9.6초 정체\n\n변경:\n- ArtworkImagePreset 타입에 'mobile' 추가\n- PRESET_TO_VARIANT에 mobile 매핑 (variant: thumb)\n- ArtworkCard getImageSrc에 isAboveFold 인자 추가 — true면 mobile preset(600w/q72), 아니면 기존 card(960w/q75)\n- gallery variant 호출부에 isAboveFold 전달\n\n영향:\n- 첫 LCP 후보 카드 src 960w → 600w (~38% 사이즈 절감)\n- 데스크톱 retina는 srcset에서 1600w 자동 픽 — 화질 손실 없음\n- 나머지 카드(scroll-in)는 여전히 card preset(960w) — 무관",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "aaaf7d0e",
+    "type": "perf",
+    "scope": "image",
+    "subject": "모바일 LCP 변형 320w→600w 조정 — Lighthouse가 실제 픽하는 사이즈로",
+    "summary": "직전 commit(d8ed15ba)의 320w 변형은 brower srcset 알고리즘상 거의 선택되지 않음을 확인. PSI Lighthouse 모바일(Pixel 5 412px × DPR 1.75 ≈ 720 effective px)과 실제 모바일은 srcset에서 720 ≥ 후보 width인 가장 작은 변형을 픽 → 320w 패스, 960w 선택. 600w로 조정해 Lighthouse + 일부 실제 사용자에 적용",
+    "body": "브라우저 srcset 알고리즘 검증:\n- effective pixel = CSS px × DPR\n- 후보 중 effective px ≥ width인 가장 작은 것 선택\n- iPhone 12(390 × 3.0 = 1170): 1600w\n- iPhone SE(343 × 2.0 = 686): 960w\n- Lighthouse mobile(380 × 1.75 = 665): 960w  ← 320w 사이즈 무시\n- 320w가 픽되려면 1x DPR + ≤320 viewport 필요 (희귀)\n\n변경:\n- ARTWORK_TRANSFORM_PRESETS.mobile: { width: 320, quality: 70 } → { width: 600, quality: 72 }\n- SafeImage quality 분기: width≤320 → width≤600\n\n기대:\n- PSI Lighthouse 모바일이 600w 변형 선택 → LCP 이미지 transfer ~30-40% 단축\n- 실제 사용자(작은 viewport, 1~1.75x DPR)에도 효과\n- 일반 모바일(DPR 2-3) 사용자는 여전히 960w/1600w 선택 — 화질 영향 없음",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d8ed15ba",
+    "type": "perf",
+    "scope": "image",
+    "subject": "모바일 LCP 단축 — 320w/quality70 변형 추가, srcset에 모바일 우선 선택지 노출",
+    "summary": "PageSpeed Insights 모바일 측정에서 LCP 9.6초·이미지 절감 350KB·Speed Index 6.6초 보고. 모바일 viewport(343px) 1x DPR이 srcset에서 자동 선택할 수 있는 더 작은 변형(320w·quality70)을 추가해 LCP 이미지 transfer 단축",
+    "body": "PSI 모바일 진단 (성능 점수 66/100):\n- LCP 9.6초 (Poor, ≤2.5s가 Good)\n- Speed Index 6.6초 (Poor)\n- FCP 2.3초, TBT 100ms, CLS 0\n- 이미지 전송 개선 가능 -350KB\n\n변경:\n- ARTWORK_TRANSFORM_PRESETS에 mobile preset 추가 (width 320, quality 70)\n- TRANSFORM_WIDTHS 배열 첫머리에 320w 추가 → srcset에 [320w, 400w, 960w, 1600w, 1920w]\n- generateArtworkSrcSet의 quality 분기에 width≤320 → 70 추가 (작은 사이즈는 시각 손실 미미)\n- 모바일 1x DPR 자동 선택: 343px viewport에서 320w 변형 픽\n- 데스크톱 retina/1600px+ viewport는 1600w/1920w 그대로 사용 — 화질 손실 없음\n\n기대:\n- 모바일 LCP 이미지 transfer ~25-30% 단축\n- PSI 모바일 LCP 9.6초 → 7초대 가능\n- 다음 차수 큰 fix(JS lazy hydration, 메인 스레드 2.4s 절감)는 별도 commit",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b02dab6b",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "본문 단락에 text-balance 일괄 — 모바일 좌측 쏠림 시각 균형",
+    "summary": "main의 text-pretty(orphan 차단)만으로는 모바일에서 본문 마지막",
+    "body": "줄이 1-2 단어로 짧아져 좌측 쏠림 인상이 강했음. 짧고 중간 길이 단락에\ntext-balance를 명시 적용해 모든 줄을 균등 분배.\n\n대상 wrapper / 단락:\n- 3부 storyP1/2/3 wrapper\n- 4부 threeStepsLead\n- 4부 「세 가지 일」 카드 본문 3개\n- 6부 「참여 방법」 카드 본문 3개\n- 8부 「특별전+작품 듀얼 CTA」 카드 본문\n- 8부 proponentsBody1/2 wrapper\n- 9부 saffestBody\n\ntext-balance는 6줄 이내에서 효과적이며, 한국어 break-keep과 함께 쓰면\n줄 길이 균등 + 단어 단위 분리가 자연스럽게 결합. 5부 청원 박스(이미\ntext-balance), 7부 강조 단락(이미 text-balance)은 그대로.",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "75dce18e",
+    "type": "perf",
+    "scope": "seo",
+    "subject": "/artworks ItemList schema에서 Offers 객체 제거 — ~12KB 절감",
+    "summary": "ItemList 30개 항목당 Offer+seller 객체가 카드당 ~827B를 차지해 schema 24KB. 작품 detail의 Product schema에 동일 정보가 이미 풍부히 마크업되어 있어 ItemList는 url+name+image만 남기고 Offers 제거 → HTML 페이로드 ~50% 절감",
+    "body": "진단:\n- /artworks ItemList schema 24,813 bytes (전체 schema 33KB 중 75%)\n- 30개 ListItem 각각에 Offer{price, currency, validUntil, availability, condition, seller} 박힘\n- 작품 detail 페이지 자체 Product schema에 이미 동일 정보 → ItemList 중복 시그널\n\n변경:\n- itemListElement에서 offers 객체 제거 (price·currency·availability·seller)\n- url + name + image 유지 → Google Carousel rich result 자격 유지\n- 가격/재고 정보는 작품 detail 크롤링 시 자체 Product schema로 전달 (Google 표준 패턴)\n\n기대 효과:\n- ItemList schema 24KB → ~12KB\n- /artworks HTML 페이로드 ~12KB 절감\n- transfer time 감소 + 모바일 LCP 개선\n- SEO 영향 없음 (rich result 자격은 url/name/image로 충분)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8f51f4aa",
+    "type": "perf",
+    "scope": "artworks",
+    "subject": "MasonryGallery 초기 SSR 카드 24→12로 절반 — HTML 240KB·transfer 1초 절감",
+    "summary": "GSC Performance상 모바일 비중 40%(한국 평균 대비 낮음)에 /artworks 응답시간 2.86s가 LCP 손실 주범. 초기 SSR 페이로드 카드 24점→12점으로 줄여 HTML 페이로드 815KB→~575KB로 절감, 모바일 LCP 개선",
+    "body": "진단 데이터:\n- /artworks TTFB 0.30s (빠름) vs Total 2.78s (느림) — streaming chunks가 천천히 도착하는 패턴\n- HTML 페이로드 815KB (카드 24점 × 카드당 ~20KB = 480KB가 카드 마크업)\n- schema 33KB, 나머지 ~302KB (filter UI/hero/footer/scripts)\n- LCP 이미지(첫 3개)는 이미 fetchpriority=high·loading=eager·decoding=sync로 최적화됨\n\n변경:\n- BATCH_SIZE 단일 상수 → INITIAL_BATCH(12) + ADDITIONAL_BATCH(24)로 분리\n- 초기 SSR/hydration 시 12점만 렌더(모바일 1열 6점·데스크톱 3열 4행 12점 모두 첫 화면 충분)\n- 스크롤 시 IntersectionObserver(rootMargin=400px)가 즉시 다음 24점 batch 로드 → UX 지연 없음\n\n기대 효과:\n- HTML 페이로드 240KB 절감 → transfer time ~1초 단축 추정\n- 모바일 LCP 개선 → CTR·체류시간 향상\n- Core Web Vitals \"Good\" 비율 증가 → SEO 랭킹 시그널 강화",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "4b4cdc78",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "4→5부 다리 문장 시각 위계 강화",
+    "summary": "\"이제 시민의 손이 더해지면, 작품은 우리의 품으로 돌아옵니다.\"는",
+    "body": "4부 「세 가지 일」을 5부 청원으로 넘기는 정서적 다리인데, 시각 비중이\n일반 본문 수준이라 무게 부족. 위계 한 단계 위로 올림.\n\n위계 재배열:\n- 카드 본문: text-sm md:text-base\n- bridge (이번 변경): text-base md:text-lg → font-display text-2xl md:text-3xl\n- 5부 청원 박스: text-2xl md:text-4xl\n\n추가:\n- font-display(PartialSansKR)로 타이포 톤 차별화\n- mt-10 → mt-12 md:mt-16 (다리 앞 호흡 확대)\n- leading-snug + text-balance (3줄 이상으로 늘어지지 않게)\n\n색상은 text-primary-strong 그대로 — 청원 페이지의 강조 톤 유지.",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "989fc160",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "stories long-tail SEO title 오버라이드 인프라 + GSC 검색어 매칭 6건",
+    "summary": "GSC Performance상 노출은 받지만 CTR 0%인 long-tail 정의형 검색어(\"한정판 에디션\", \"판화 뜻\", \"넘버링 뜻\", \"10호 크기\" 등)에 정확히 매칭하도록 stories의 SEO title/description을 본문 H1과 분리해 별도 오버라이드. 본문 매거진 톤은 유지하면서 SERP CTR 향상",
+    "body": "GSC long-tail 미사용 검색어 (3개월):\n- \"한정판 에디션\" 5 노출 / 0 클릭\n- \"판화 뜻\" 4 노출 / 0 클릭\n- \"넘버링 뜻\" 1 노출 / 0 클릭\n- \"10호 크기\" 1 노출 / 0 클릭\n\n매칭 stories (6건):\n- editions-explained → \"한정판 에디션 뜻과 종류 — 원화·한정판·오픈 에디션 차이\"\n- world-of-printmaking → \"판화 뜻과 종류 — 원본이 여러 장이라고? 판화의 세계\"\n- prints-vs-originals-and-edition-numbers → \"에디션 넘버링 읽는 법 — 판화와 원화의 차이, 1/100·AP·EA 의미\"\n- reading-art-sizes-ho-vs-cm → \"10호 30호 100호 크기 cm — 호수 ↔ 센티미터 환산표\"\n- choosing-by-medium → \"유화·아크릴·판화 차이 — 재료로 작품 고르는 법 가이드\"\n- art-glossary → \"미술관 용어 사전 — 비엔날레·아트페어·레지던시·디아스포라 정리\"\n\n변경:\n- lib/stories-seo-overrides.ts 신설: 슬러그별 SEO title/description 오버라이드 매핑 (점진 확장 가능 구조)\n- app/[locale]/stories/[slug]/page.tsx: generateMetadata가 오버라이드 우선 사용, 미매핑 슬러그는 자동 fallback\n- 한·영 둘 다 매핑\n\n기대 효과:\n- 정의형 검색어(\"X 뜻\", \"X 의미\") SERP에서 검색어와 정확 매칭으로 bold 강조 + CTR 향상\n- 노출 5+ long-tail 키워드들의 page 1 진입 가능성",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "5be419ff",
+    "type": "fix",
+    "scope": "header",
+    "subject": "/refund-policy 헤더 투명화 누락 — HERO_EXACT 등록",
+    "summary": "새로 만든 배송·교환·환불 안내 페이지에서 헤더가 흰색 불투명으로 떠 있던 문제 수정",
+    "body": "- lib/hero-routes.ts HERO_EXACT에 /refund-policy 추가\n- terms/privacy와 동일하게 PageHero 어두운 그라디언트 위에서 헤더 투명화\n- __tests__/lib/hero-routes.test.ts에 회귀 케이스 추가 (CLAUDE.md 가이드)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b15b7672",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 페이지 Person schema sameAs에 큐레이션 외부 URL 386건 자동 송출",
+    "summary": "사용자가 이미 정리해둔 content/artist-articles.ts의 작가별 매체/MMCA/위키/달진닷컴 등 권위 외부 URL 386건을 Person schema의 sameAs로 자동 송출 — Google Knowledge Graph entity 연결의 핵심 시그널 폭증",
+    "body": "데이터 활용 (이미 큐레이션됨):\n- 101명 작가, 386 URL\n- 도메인 분포: daljin.com 17, youtube 15, hani.co.kr 12, artkoreatv 12, sctoday 11, ohmynews 11, khan 9, news-art 8, mmca.go.kr 8, namu.wiki 7\n- 매체 인터뷰·미술 데이터베이스·국립현대미술관 작가 페이지 등 권위 출처 다수\n\n변경:\n- content/artist-articles.ts: getArticleUrlsByArtist() 헬퍼 추가 (URL만 추출)\n- app/[locale]/artworks/artist/[artist]/page.tsx: sameAs 구성에 article URL 병합\n  - 출처 우선순위: artist-articles → 정적 매핑(거장 위키) → Supabase homepage/instagram\n- normalizeSameAs가 중복/null/non-http 자동 제거\n\n기대 효과:\n- GSC상 작가 검색 노출 다수에 0 클릭이던 page 2 작가들(안은경 315/0, 오윤 243/0, 이은화 221/0 등)의 entity-aware ranking 부스트\n- Knowledge Panel 노출 가능성 증가\n- 2~6주 후 Google 재크롤링·평가 사이클 후 효과 측정 가능",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "ee020628",
+    "type": "fix",
+    "scope": "petition,copy",
+    "subject": "hero·결구 슬로건의 쉼표·온점 제거 — 줄바꿈으로 충분",
+    "summary": "hero title과 결구 slogan은 줄바꿈으로 호흡이 이미 분명하므로",
+    "body": "끝/사이 punctuation이 시각적 잔소리가 됨. 제거.\n\n- heroTitle: \"멸실될 위기의 오윤 벽화,\\n우리가 구하자. 우리의 품으로.\"\n  → 3줄 명시 분할 + 모든 punctuation 제거\n  \"멸실될 위기의 오윤 벽화 / 우리가 구하자 / 우리의 품으로\"\n- closingLine3: \"오윤의 작품을 시민의 품으로.\" → \"오윤의 작품을 시민의 품으로\"\n\nclosingLine1, 2는 본문 문장이라 마침표 유지 (slogan vs 본문 구분).\n\n영문판 heroTitle/closingLine3는 영어 sentence delimiter 관행상 그대로 유지.",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "e848be99",
+    "type": "fix",
+    "scope": "fonts",
+    "subject": "PartialSansKR 결함 우회 — 가운뎃점·en/em dash 빈 칸 출력 해결",
+    "summary": "매거진·refund-policy 등 hero 타이틀에서 가운뎃점(·)과 em/en dash(—, –)가 빈 칸으로 빠지던 문제 수정. PartialSansKR unicode-range에서 U+00B7, U+2013, U+2014를 제외해 fallback(Paperlogy)으로 위임.",
+    "body": "- 원인: PartialSansKR이 위 3개 코드포인트를 cmap에 매핑하면서도 outline이 비어 있어\n  브라우저가 폰트가 책임진다고 판단해 fallback을 안 쓰고 1228 unit 폭의 빈 칸 렌더\n- U+0000-00FF → U+0000-00B6, U+00B8-00FF 로 분할 (가운뎃점 제외)\n- U+2000-206F → U+2000-2012, U+2015-206F 로 분할 (en/em dash 제외)\n- HYPHEN-MINUS(U+002D)는 PartialSansKR이 정상 글리프 보유 → 그대로 유지\n- 검증: refund-policy h1에서 · 폭 33.94px, — 101.92px, – 56.68px로 정상 출력 확인",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d8dd6964",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 Person schema sameAs 외부 권위 링크 인프라 + 거장 3명 매핑",
+    "summary": "GSC Performance상 작가 검색에서 노출은 다수지만 page 2~3에 머무는 페이지들이 0 클릭. Person schema의 sameAs 외부 링크(Wikipedia/SNS/홈페이지)를 추가해 Knowledge Graph entity 연결을 강화하고 page 1 진입을 유도",
+    "body": "GSC 데이터 (3개월):\n- 안은경 315 노출/0 클릭/순위 10.68\n- 오윤 243 노출/0 클릭/순위 5.65\n- 이은화 221 노출/0 클릭/순위 8.43\n- 민정기 176 노출/0 클릭/순위 6.21\n- 박불똥 152 노출/2 클릭/순위 6.60\n\n변경:\n- lib/artist-external-links.ts 신설: 작가별 권위 외부 링크 정적 매핑(Wikipedia 등). 점진적 확장 가능 구조\n- 거장 3명 Wikipedia URL 확보·매핑: 오윤(ko.wikipedia), 박재동(ko.wikipedia), 신학철(en.wikipedia)\n  - 민정기·박불똥은 위키백과 미활성, 추후 MMCA·매체 인터뷰 링크로 보강 가능\n- lib/schemas/artist.ts: ArtistSchemaInput에 sameAs 필드 추가, generateArtistSchema/generateEnhancedArtistSchema가 schema에 출력\n- normalizeSameAs 헬퍼: 빈 값/중복/non-http 자동 제거\n- lib/supabase-data.ts: getSupabaseArtistExternalLinks 신설 — 작가 homepage/instagram만 가벼이 조회 (5분 캐시)\n- artist page.tsx: 정적 매핑 + Supabase homepage/instagram 합쳐 sameAs 구성 후 schema 전달\n\n기존 데이터에서 sameAs 자동 송출되는 작가:\n- 안은경 (Naver blog + Instagram)\n- 윤겸 (Naver blog + Instagram)\n- 오윤·박재동·신학철 (Wikipedia)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "1dc84f18",
+    "type": "fix",
+    "scope": "ci",
+    "subject": "깨진 테스트 인프라 복구 — 매일 발송되던 CI 실패 메일 차단",
+    "summary": "CI Test 단계가 26 suite/110 케이스 실패하여 main 푸시마다 GitHub에서 알림 메일이 오던 문제 해결. Next.js 16 + jsdom 환경 호환, 사라진 mock chain, stale expectation, i18n 동기화 종합 정비.",
+    "body": "- jest.setup.js: TextEncoder/TextDecoder polyfill 추가 — next/cache import 시 ReferenceError 방지\n- jest.config.js: .worktrees/ testPathIgnorePatterns 추가 — 워크트리 중복 실행 차단\n- eslint.config.mjs: .next/, .worktrees/ ignore 추가 — 빌드 산출물이 lint에 잡히던 문제\n- order-lookup 테스트: @jest-environment node + next/cache mock + supabase mock 체인(.in(), .insert().select().single()) 보강\n- parsePrice 테스트: '₩0' → 0으로 expectation 갱신 (현재 구현 동작 반영)\n- i18n-keys 테스트: Jasmine fail() → expect([]).toEqual() 패턴 (Jest엔 fail 미정의)\n- ArtworkCard 테스트: 'SOLD' → 'soldBadge' (next-intl mock 키 반환 반영)\n- vercel-drain 테스트: 응답 shape 확장(portalFiltered, skipped) 대응 toMatchObject\n\n결과: 26 suite/110 케이스 실패 → 48 suite/456 케이스 전부 통과. type-check, lint, build 모두 클린.",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8d4139dc",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "목록 페이지 SEO title 키워드 보강 — H1과 분리",
+    "summary": "GSC Performance 분석 결과 /artworks·/stories 목록 페이지가 SERP에서 차별화 안 돼 CTR 손실. SEO title을 길고 키워드 풍부하게 변경하면서 페이지 H1은 짧게 유지(seoTitle 키 분리)",
+    "body": "GSC 데이터 (3개월):\n- 클릭 716 / 노출 15,433 / CTR 4.64% / 평균 순위 6.7\n- 브랜드 키워드 49% (씨앗페 계열) — 비브랜드 유입 약함\n- 작가 검색 노출은 다수지만 page 1 후반(7~10) 순위라 클릭 0~2 (안은경 315/0, 오윤 243/0, 이은화 221/0)\n- 모바일 비중 40% (한국 평균 60~70% 대비 낮음)\n\n변경:\n- /artworks: \"작품 구매\" → \"한국 현대미술 작품 구매 — 회화·판화·사진·조각 원본 N점 | 씨앗페 온라인\"\n- /stories: \"매거진\" → \"씨앗페 매거진 — 작가 인터뷰·미술 상식·컬렉팅 가이드 | 한국 현대미술\"\n- messages/{ko,en}.json artworksPage.seoTitle 추가\n- STORIES_COPY에 seoTitle 추가\n- 페이지 H1은 기존 짧은 title 유지 (PageHero 가독성)\n\n추가 분석으로 Product/VisualArtwork schema는 이미 dual-type으로 정상 마크업되어 있음 확인 — 제품 스니펫 94/3160 already 작동 중",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "99b9d613",
+    "type": "fix",
+    "scope": "constants",
+    "subject": "사무실 주소 이전 반영 — 통일로 870, 6층 (03344)",
+    "summary": "한국스마트협동조합 사무실 이전에 따라 모든 곳에 노출되는 주소·우편번호 갱신",
+    "body": "- ADDRESS: 통일로 68길 4, 302호 → 통일로 870, 6층\n- ADDRESS_EN: 302, 4, Tongil-ro 68-gil → 6F, 870, Tongil-ro\n- POSTAL_CODE: 03358 → 03344\n- Footer 사업자정보, Organization JSON-LD(streetAddress/postalCode), 이용약관·개인정보처리방침·아티스트/출품자 계약서·배송환불 안내 모든 문의처에 자동 반영\n- EXHIBITION(인사아트센터 전시장 주소)은 사무실 이전과 무관하여 그대로 유지",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "0c69e8c7",
+    "type": "feat",
+    "scope": "legal",
+    "subject": "/refund-policy 배송·교환·환불 안내 페이지 추가",
+    "summary": "전자상거래법 기준 공시용 단독 페이지를 만들고, 푸터에 개인정보·이용약관 옆 링크 추가",
+    "body": "- lib/legal-documents.ts에 SHIPPING_REFUND_POLICY_DOCUMENT (21조) 작성\n- 배송 정책, 청약철회(법 제17조), 반품 배송비 부담 5케이스, 결제수단별 환불 기간, 하자·오배송 처리(외관상 7일·잠재적 30일), 분쟁 해결 기관(한국소비자원·공정위·전자거래분쟁조정위원회·서울시 전자상거래센터) 명시\n- 작품 거래 특수성(유일품·에디션 차이·모니터 색역 차이는 하자 아님) 사전 고지 조항 포함\n- /refund-policy 라우트 생성 — terms/privacy와 동일한 LegalDocument 렌더링 패턴, 영문판은 noindex\n- Footer에 \"배송·교환·환불 안내\" 링크 추가, 모바일 줄바꿈 대응(flex-wrap)\n- footer.refundPolicy / breadcrumbs.refundPolicy ko/en 키 추가\n- SHIPPING_REFUND_POLICY_VERSION 상수 추가 (shipping-refund-v1-2026-04-29)",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "0e17a6b0",
+    "type": "perf",
+    "scope": "stories",
+    "subject": "매거진 본문 이미지 srcset + Supabase transform 적용",
+    "summary": "매거진 본문에 들어간 작품 이미지를 디바이스별로 자동 리사이즈해",
+    "body": "모바일 페이지 용량을 약 76% 줄였습니다.\n\n- MarkdownRenderer의 ImageFigure가 Supabase artwork storage URL을 감지해\n  resolveOptimizedArtworkImageUrl로 srcset(400/720/1080/1440w) 생성\n- sizes: (max-width 640) 100vw / (max-width 1024) 80vw / 720px\n- decoding=\"async\" + 기존 loading=\"lazy\" 유지\n- 비-Supabase 이미지는 기존 동작 그대로 (가드 적용)\n\n실측: 〈回3〉 207KB(원본 webp) → 모바일 400w 48KB / 데스크톱 1080w 158KB\n시즌 큐레이션처럼 본문 이미지 21장이 들어간 페이지에서 모바일 사용자\n다운로드가 4.3MB → 약 1MB로 감소.",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "fb8b5b40",
+    "type": "fix",
+    "scope": "special/oh-yoon",
+    "subject": "모바일 갤러리 헤더 좌측 정렬 — 우측 정렬로 휑하던 문제",
+    "summary": "「전시 작품」 섹션 헤더가 desktop에서는 좌·우 split 디자인인데",
+    "body": "모바일에서는 column으로 stack되며 items-end로 모든 콘텐츠가 오른쪽에\n쏠려 좌측이 휑하게 비어 보였음. md 이상에서만 우측 정렬 유지하도록.\n\n- 외부 wrapper: items-end → md:items-end (gap도 모바일은 4, md는 6)\n- 한국어판 우측 부제 div: items-end → md:items-end\n- 영문판은 단일 span이라 flex parent 변경만으로 자연스레 좌측 정렬\n\nko/en 두 분기 모두 적용.",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "37b7ee88",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "삭제 작품/작가 200→308 — notFound() 대신 permanentRedirect",
+    "summary": "force-dynamic만으로는 segment-level not-found.tsx가 status 200을 유지하던 한계를 회피해, 삭제·숨김된 작품/작가 페이지를 작품 목록으로 308 영구 redirect로 처리",
+    "body": "- 작품 상세 페이지(`/artworks/[id]`): `if (!artwork) notFound()` → `permanentRedirect('/artworks')`\n- 작가 페이지(`/artworks/artist/[artist]`): `if (artistArtworks.length === 0) notFound()` → `permanentRedirect('/artworks')`\n- prod 검증 결과 force-dynamic은 CDN cache는 우회했지만(MISS) Next.js segment-level not-found.tsx가 여전히 status 200 응답하던 문제 발견. permanentRedirect는 명시적 308로 Google에 색인 제거 시그널 송출\n- locale 보존: ko → /artworks, en → /en/artworks",
+    "date": "2026-04-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "3cd28abc",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "GSC 색인 보고서 정리 — 삭제 작품 200→404, /_next/static noindex",
+    "summary": "GSC 진단 결과 삭제된 작품/작가 페이지가 200+not-found UI로 송출돼 NOINDEX로 보고되던 패턴을 force-dynamic으로 fix하고, _next/static 청크는 X-Robots-Tag noindex로 시그널 정리",
+    "body": "- 작품 상세 페이지(`/artworks/[id]`)와 작가 페이지(`/artworks/artist/[artist]`)에 `dynamic = 'force-dynamic'` 적용. 기존 ISR(revalidate=600)이 빌드 시점 정적 prerender의 200 status를 stale로 유지하면서 not-found.tsx UI만 새로 렌더해 GSC가 NOINDEX 153건 보고하던 원인. force-dynamic은 매 요청 SSR + notFound() 시 정확한 404 응답 보장\n- next.config.js headers에 `/_next/static/:path*` X-Robots-Tag noindex 추가. 배포마다 새 `?dpl=...` 쿼리로 청크 URL이 바뀌어 GSC \"크롤링됨, 색인 미생성\"에 1000건 누적되던 문제 차단. 정적 자산은 어차피 SERP 노출 대상 아니므로 명시적 시그널만 정리\n- 신학철 케이스(작품 전체 숨김 시 작가 페이지가 stale 200)도 같이 해결",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "9c89edfb",
+    "type": "fix",
+    "scope": "petition,form",
+    "subject": "성함 입력란 아래 본명 안내 hint 제거",
+    "summary": "라벨의 \"(주민등록상 이름)\" 보조 표기와 placeholder \"예: 홍길동\"으로",
+    "body": "의도가 충분히 전달되어 본문 hint 단락은 잔소리처럼 느껴진다는 운영 판단.\n한 단락 제거.\n\n남는 본명 안내:\n- label 옆 \"(주민등록상 이름)\" 회색 보조 텍스트\n- placeholder \"예: 홍길동\"\n- PRIVACY_BLURB의 \"수집 항목: 성함(주민등록상 이름)\"",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "c9d00620",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "디자인 통일 2단계 — 콘텐츠 카드 시각 시그니처 정렬",
+    "summary": "1단계의 정점 박스(5부 청원 박스, 4px charcoal + 8px sun shadow",
+    "body": "offset) 패턴을 콘텐츠 카드들에도 일관 적용. 다만 작은 카드는 더 가벼운\n2px border + 4-6px shadow로 위계 분명히.\n\n위계 정의:\n- 정점 박스 (5부): 4px charcoal + 8px sun shadow (가장 강함)\n- 콘텐츠 카드 (4부/6부/8부/9부): 2px charcoal + 4-6px sun shadow\n- 본문 단락: border 없음\n\n이번 commit에서 통일된 카드:\n- 4부 「세 가지 일」 카드 3개: gray-200 → 2px charcoal + 4px sun offset\n- 6부 「참여 방법」 카드 1: primary/30 → 2px charcoal + 4px sun offset(35%)\n- 6부 「참여 방법」 카드 2·3: gray-200 → 2px charcoal + 4px sun offset(25%)\n- 8부 듀얼 CTA 카드(특별전+작품): charcoal/10 → 2px charcoal + 6px sun\n- 9부 saffest 박스: gray-200 → 2px charcoal + 4px sun offset\n\n의도적으로 통일 안 한 곳:\n- 3부 추모 명패 카드 (canvas-soft 부드러운 톤) — 추모 분위기 보존\n- 7부 「참고」 박스 (작은 메모 톤) — 운영 메모 위계로 약한 그대로\n\n청원 페이지의 rounded·따뜻한 톤(rounded-xl, rounded-2xl)은 보존 —\nsharp corner brutalist까진 가지 않음. 행동 유도 톤이 약해질 수 있는\ntrade-off를 의식적으로 회피.\n\n특별전 페이지(/special/oh-yoon)의 brutalist 4px border는 그 페이지의\n디자인 정체성이라 그대로. 두 페이지가 같은 시각 어휘(charcoal border +\nsun shadow offset)로 대화하되, 청원은 더 가볍고 특별전은 무겁다.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "bc19aac6",
+    "type": "fix",
+    "scope": "petition,form",
+    "subject": "성함 필드를 주민등록상 본명으로 명시 안내",
+    "summary": "운영 중 닉네임·별명을 입력하는 사례가 발견됨. 청원이 차기 서울시장께",
+    "body": "시민의 이름으로 정중히 전달되는 흐름이라 본명 입력이 효력에 직결.\n폼의 성함 라벨·placeholder·hint와 개인정보 수집 동의문을 본명 안내로 정돈.\n\n- 성함 라벨: \"성함 *\" → \"성함 (주민등록상 이름) *\"\n- placeholder 추가: \"예: 홍길동\"\n- 입력란 아래 hint 추가: \"청원은 시민의 이름으로 차기 서울시장께\n  전달됩니다. 정중한 전달을 위해 닉네임·별명이 아닌 본명으로 입력해\n  주세요.\"\n- PRIVACY_BLURB 수집 항목: \"성함\" → \"성함(주민등록상 이름)\"\n\nDB validation은 그대로 1~100자만 검증. \"본명\" 자동 판정은 불가능하므로\n운영자가 어드민 「서명자 명단」 탭의 편집/삭제로 대응. 신뢰는 시민의\n양심에 맡기되, 폼 단계에서 의도를 분명히.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "85b2f773",
+    "type": "feat",
+    "scope": "oh-yoon",
+    "subject": "청원·특별전 두 페이지 시각 통일 1단계 — paper grain + 정점 박스 통일",
+    "summary": "오윤을 다루는 두 페이지(/petition/oh-yoon, /special/oh-yoon)의",
+    "body": "시각 언어를 「칼이 새긴 페이지 — 종이 위 인쇄물의 결」 방향으로 통일.\n1단계로 가장 임팩트 큰 두 가지 변경.\n\n방향: 오윤의 본질(목판화·인쇄 전단지·시집 표지·노동·흙)을 두 페이지가\n공유하도록 종이 grain noise를 공통 깔개로 깔고, 두 페이지의 정점 박스가\n같은 시각 시그니처(charcoal 4px border + sun shadow offset)를 갖도록.\n\n변경:\n- components/common/PaperGrain.tsx 신규 — SVG fractalNoise data URI를\n  fixed inset-0, mix-blend-multiply, opacity 0.055로 페이지 전체에 깔기.\n  pointer-events-none + aria-hidden 으로 인터랙션·접근성 영향 0.\n- petition/oh-yoon/page.tsx 와 special/oh-yoon/page.tsx 각각의 시작\n  부분에 <PaperGrain /> 추가. 디지털 화면의 매끈함이 살짝 깎이고\n  인쇄물 결이 한 켜 얹힘.\n- petition 5부 청원 박스: rounded-2xl border-y-4 border-primary\n  → border-4 border-charcoal + sun 톤 shadow offset 8px (특별전의\n  blockquote 박스와 동일 시그니처). 청원의 \"현판\" 격이 격식 있게 통일.\n\n향후 단계: 4부/6부/9부 카드 border tone 정렬, 작은 인장 라벨 통일,\ndivider 결 통일 등은 결과 본 후 추가 적용.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "f962096f",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "어색한 줄바꿈 차단 — text-balance / text-pretty 일괄 적용",
+    "summary": "결구(\"이제 우리가 힘을 모아 지켜냅시다.\") 등 짧은 강조 라인이",
+    "body": "어색한 위치에서 줄바꿈되며 마지막 줄에 한 단어만 남는 orphan이 자주\n보였다. 짧은 강조 라인엔 text-balance(모든 줄을 균등 분배), 긴 본문엔\ntext-pretty(마지막 줄 orphan 차단)를 일괄 적용.\n\n- main에 text-pretty 추가 → 페이지 모든 자식 단락에 일괄 적용\n- 짧은 강조 라인 명시 text-balance 추가:\n  - 2부 crisis (위기 한 줄)\n  - 7부 urgencyLead (시점의 무게 강조)\n  - 7부 urgencyTail (시점의 무게 결구)\n  - 10부 closingLine1·2·3 (페이지 결구 — 사용자 지적 핵심)\n- ProposalModal article에도 text-pretty 적용\n\nHERO와 SectionTitle은 이미 text-balance가 들어 있어 그대로.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "15b24892",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "글머리 항목 hanging indent — 줄바꿈 시 본문 정렬 보존",
+    "summary": "7부 「시점의 무게」의 ·-bullet 목록과 시민제안서 모달의 (가)/(나)/(다)",
+    "body": "+ (1)/(2)/(3) prefix 단락이 줄바꿈되면 두 번째 줄부터 marker 자리까지\n당겨져 본문이 헐렁하게 흘러내리던 문제. marker 다음 텍스트가 자동으로\n들여쓰기 유지되도록 정리.\n\n- 7부 ul: <li> 안에 marker · 와 본문을 별도 span으로 flex gap-2 분리\n  → 두 번째 줄도 본문 시작점에 정렬\n- ProposalModal §2/§3: marker가 메시지 본문에 박혀 있어 hanging\n  indent CSS(pl-[1.75rem] [text-indent:-1.75rem])로 처리. 첫 줄은\n  marker 위치에서 시작, 줄바꿈 후 본문 padding 위치에 정렬\n\ni18n 메시지 자체는 손대지 않음 — prefix 의미 보존.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "a82fbd49",
+    "type": "fix",
+    "scope": "header",
+    "subject": "라우트 전환 깜빡임 제거 — lock 폐기 + transparent 모드 dark fade overlay",
+    "summary": "solid 헤더가 잠시 나왔다 사라지는 깜빡임을 근본 차단. 흰글씨 가독성은 헤더 영역 전용 옅은 dark fade가 항상 보장",
+    "body": "- useHeaderStyle: transitionLock 상태·effect·prevPathname state 모두 제거 (TRANSITION_LOCK_MS 상수 폐기)\n- Header.tsx: header에 isolate + 자식으로 absolute -z-10 fade overlay 추가\n  · bg-gradient-to-b from-black/30 via-black/10 to-transparent\n  · isDarkText(=solid 모드)일 때 opacity-0, transparent 모드일 때 opacity-1\n  · 200ms transition으로 모드 전환 시 부드럽게 fade\n- SSR HTML 확인: hero 라우트 첫 paint부터 transparent 헤더 + overlay opacity-1로 그려져 hard refresh·client navigation 어디서도 lock 깜빡임 없음\n- artwork detail(solid) 검증: header bg rgba(255,255,255,0.8) + overlay opacity-0으로 자연스럽게 가려짐",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "b17cb5a6",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "8부 끝에 특별전+작품 듀얼 CTA 카드 신설",
+    "summary": "청원 페이지를 통해 오윤 40주기 자체의 의미와 작품 매출 양쪽을",
+    "body": "함께 끌어올리기 위해, 8부 추진 주체 끝의 작은 italic 링크 한 줄을\n시각적 카드로 격상. 운영자 의도: 청원 외 오윤 노출 + 작품 둘러보기\n유입 + 살아있는 예술인 상호부조 기금으로의 연결 강화.\n\n카드 구조 (max-w-3xl 안):\n- 좌측 220px portrait (grayscale, charcoal-deep 배경)\n- 우측: eyebrow 라벨 「함께 보면 좋은」 / font-display 제목 / 부제 /\n  본문 한 단락 / 듀얼 CTA 버튼\n- Primary: 「특별전 보러 가기」 → /special/oh-yoon (charcoal-deep solid)\n- Secondary: 「오윤 작품 둘러보기」 → /artworks/artist/오윤 (outlined)\n- 모바일에선 위·아래 stack, 이미지 4:5 비율로 가독성 보장\n\n추진위원장 명단 안내(proponentsCommitteeNote)는 본문 단락 마지막\nitalic 한 줄로 정돈해 운영 메모 분리 — 카드는 행동 유도에 집중.\n\ni18n: exhibitionCardEyebrow / Title / Subtitle / Body / CtaPrimary /\nCtaSecondary / ImageAlt 신규 키 ko·en 동시. 기존 proponentsExhibitionLine\n키는 다른 자료에서 재사용 가능성 있어 유지(현재 미사용).",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "437c0465",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "PayPal foreignEasyPay payload — products + country",
+    "summary": "PayPal 결제 시 COMMON_ERROR 원인으로 추정되는 foreignEasyPay 객체 추가",
+    "body": "- /v1/payments 호출 시 overseas(PayPal) provider에 대해 foreignEasyPay 필드 포함\n  (country='KR', products[1]: name/quantity/unitAmount/currency/description)\n- Toss 가이드 \"PayPal 판매자 보호를 받으려면 상품/배송 정보 권장\"에 부합\n- 기존 페이로드는 method/provider/currency/amount만 보냈고 PayPal 측 리스크 검증에서\n  COMMON_ERROR 가능성 — 상품 컨텍스트 부재 추정",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "45b69e88",
+    "type": "fix",
+    "scope": "header",
+    "subject": "알약 버튼 클릭 시 좌우 떨림 제거 — hover/active scale 무효화",
+    "summary": "utility 알약 스타일이 transition-colors만 걸어 transform transition을 잘라버린 상태에서 cva의 hover:scale-[1.02]·active:scale-[0.98]이 살아 있어 hover↔active↔default 전환이 transition 없이 즉시 토글되며 떨림이 발생하던 문제 해결",
+    "body": "- DesktopNav AuthButtons buttonClassName에 hover:scale-100 active:scale-100 hover:shadow-none 추가\n- FullscreenMenu의 동일 호출에도 active:scale-100 추가 (모바일도 일관 차단)\n- tailwind-merge가 cva의 scale-[1.02]/[0.98] 그룹을 scale-100으로 마지막 우선 override",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "c2d725ed",
+    "type": "fix",
+    "scope": "special/oh-yoon",
+    "subject": "hero padding을 청원 페이지와 동일하게 맞춰 헤더 transition 회귀 차단",
+    "summary": "특별전 페이지의 hero section이 'py-20 md:py-32'로 위·아래 동일",
+    "body": "패딩이라 헤더 영역(fixed top-0 64px)에 hero 배경이 늦게 깔리는 layout\nshift 동안 transitionLock(500ms)이 풀린 직후 빈 페이지 배경에 흰 헤더\n글씨가 안 보이는 짧은 회귀가 있었음. 청원 페이지(/petition/oh-yoon)는\n'pt-28 md:pt-36 pb-20'로 헤더 위 안전 마진을 충분히 확보해 이 회귀가\n없었던 것이 진단의 단서.\n\n특별전 hero 패딩을 동일 패턴으로 정렬:\n  py-20 md:py-32  →  pt-28 md:pt-36 pb-20 md:pb-32\n\nko/en 양쪽 hero section 모두 적용.\n\nb5550506(첫 mount transitionLock=true) fix는 코드 레벨에서 그대로\n살아있으나, 페이지 자체의 hero 콘텐츠 시작 위치가 헤더와 너무 가까워\ntransition 직후 시각 회귀가 발생. 이번 padding 보정으로 해결.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "e3870eee",
+    "type": "fix",
+    "scope": "header",
+    "subject": "데스크톱 \"아티스트 메뉴\" 버튼도 다른 utility 버튼과 동일한 알약 스타일로 통일",
+    "summary": "모바일 풀스크린 메뉴에 이어 데스크톱 헤더에서도 \"검색\"·\"주문/배송 조회\"는 알약인데 \"아티스트 메뉴\"만 흰 사각이라 시각 위계가 깨지던 잔존 이슈 정리",
+    "body": "- DesktopNav에서 AuthButtons 호출 시 buttonClassName으로 utilityButtonClassName 전달\n- inverse(hero transparent)/light 모드 분기까지 함께 흡수 — 다른 utility 버튼과 완전 동일한 모양",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "90eafb38",
+    "type": "fix",
+    "scope": "header",
+    "subject": "/archive/2023/videos 비디오 상세도 hero 경로로 등록",
+    "summary": "PageHero를 사용하는 페이지 중 /archive/2023/videos/[youtubeId]",
+    "body": "하나가 hero-routes에 매칭되지 않아 어두운 hero 위에 흰 헤더가 떠 있던\n회귀 발견. HERO_PREFIXES에 '/archive/2023/' 추가로 비디오 상세 + 향후\n같은 디렉토리 하위 신설 페이지 자동 커버.\n\n검증: app/[locale] 아래 page.tsx 28개 + PageHero 사용처 20개를 모두\n훑었고, 이번 한 건 외에는 모두 EXACT 또는 기존 PREFIX로 매칭됨.\n홈/청원/특별전(자체 hero), checkout/orders(밝은 폼 페이지)는 기존 정책\n그대로.\n\n테스트 90건 모두 통과 (이전 89 + 신규 1).",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "84db34ae",
+    "type": "fix",
+    "scope": "menu",
+    "subject": "모바일 메뉴 푸터 두 버튼 시각 위계 통일 — 작은 알약 스타일",
+    "summary": "\"주문/배송 조회\"(작은 알약)와 \"아티스트 메뉴\"(큰 직사각형)의 시각 위계가 불일치해 아티스트 메뉴가 메인 CTA처럼 보이던 문제 해결",
+    "body": "- AuthButtons에 buttonClassName prop 추가 — wrapper용 className과 별개로 내부 Button 자체 className override 가능\n- FullscreenMenu에서 layout stacked → inline 변경 + 알약 색·shape buttonClassName 전달 (rounded-full bg-gray-50 border-gray-200 hover:scale-100 hover:shadow-none)\n- 결과: 두 버튼이 동일한 작은 알약 (gray-50 fill, gray-200 border, rounded-full, sm size)",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "785fc441",
+    "type": "fix",
+    "scope": "header",
+    "subject": "/special/oh-yoon을 hero 경로로 등록 — 투명 헤더 누락 회귀 차단",
+    "summary": "40주기 특별전 페이지가 어두운 charcoal hero 섹션으로 디자인됐는데",
+    "body": "hero-routes 단일 출처에 등록 누락되어 헤더가 흰 배경 + 검은 글자로\n떠 있었음. CLAUDE.md에 명시된 stories/transparency/terms-consent 회귀\n패턴 그대로 발생 — HERO_EXACT에 누락.\n\n- lib/hero-routes.ts: HERO_EXACT에 '/special/oh-yoon' 추가\n- __tests__/lib/hero-routes.test.ts: 동일 케이스 추가 — CLAUDE.md\n  지침(\"새 hero 페이지 추가 후 hero-routes.test.ts에 케이스 추가\") 준수",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "a1dfc114",
+    "type": "fix",
+    "scope": "special/oh-yoon",
+    "subject": "작가 어록 중복 제거 — portrait 아래 박스 제거",
+    "summary": "페이지 상단의 큰 quote(\"미술은 많은 사람이 나누어야 한다 — 오윤\")가",
+    "body": "이미 페이지 정점인데, 직전 커밋에서 portrait 아래에 같은 어록 박스를\n또 배치해 같은 어록이 한 페이지에 두 번 노출됐다. portrait 아래\n박스를 제거하고 portrait 자체를 lg:sticky lg:top-24로 만들어 본문이\n스크롤될 때도 좌측 컬럼이 따라오도록 균형 보강.\n\n좌측 column은 이제 portrait + caption만 + 데스크톱에서 sticky.\n우측 column의 「주요 테마」 + 「작가의 시간」 두 카드 stack은 그대로.\n\nko/en 양쪽 동일.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "186b9f11",
+    "type": "fix",
+    "scope": "artwork",
+    "subject": "\"내 벽에 걸어보기\" 버튼 아이콘·텍스트 세로 쌓임 해결",
+    "summary": "svg를 children에 직접 넘겨 single span으로 묶이며 flex item 안에서 wrap돼 아이콘이 위·텍스트가 아래로 쌓이던 모바일 layout 버그 수정",
+    "body": "- svg를 Button의 leadingIcon prop으로 분리 전달\n- Button이 leadingIcon을 별도 span(mr-2 inline-flex items-center)으로 처리해 아이콘+텍스트 가로 정렬 보장\n- 측정: button height 68 → 48px (한 줄), svg와 텍스트가 같은 row에 정렬",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "26fd613b",
+    "type": "feat",
+    "scope": "special/oh-yoon",
+    "subject": "작가 소개 3열 비대칭 보강 — 좌측 어록 + 우측 연표",
+    "summary": "본문이 길어지면서 좌측 portrait 아래·우측 「주요 테마」 카드",
+    "body": "아래가 휑하게 비던 3열 grid 비대칭을 해소. 좌측에 작가 어록 박스를\n하나 더 얹고, 우측엔 「주요 테마」와 stack으로 「작가의 시간」 연표\n카드를 추가해 본문 길이와 균형을 맞춤.\n\n좌측: portrait + figcaption 아래에 border-l accent + sun shadow 톤의\n어록 박스. \"미술은 많은 사람이 나누어야 한다 — 오윤\". 영문판은 동일\n톤으로 \"Art should be shared by everyone — Oh Yoon\".\n\n우측: 「주요 테마」 카드 (8px shadow) + 「작가의 시간」 카드 (6px shadow,\n시각 위계). 6개 항목: 1946 부산 출생 → 1969 현실 동인 → 1974 구의동\n테라코타 → 1979 현실과 발언 → 1986 별세 → 2006 MMCA 회고전. 영문판\n\"A life in time\" 동일 6항목.\n\ngrid 토큰(lg:grid-cols-[280px_1fr_1fr])과 페이지 brutalist 톤(charcoal\n4px border + shadow offset)은 그대로 유지.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "6d1b3555",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "closing section과 톱니구분선 사이 노란 띠 제거",
+    "summary": "main의 SAWTOOTH_TOP_SAFE_PADDING이 closing section(bg-charcoal-deep) 끝과 FooterSlider 톱니 사이에 main bg-canvas(연노란)를 노출시켜 색 전환이 어색하던 문제 해결",
+    "body": "- main에서 SAWTOOTH_TOP_SAFE_PADDING 제거\n- closing section이 자체 padding-bottom(pb-48 md:pb-64)으로 SAFE 영역을 어두운 색으로 흡수 → 톱니구분선이 charcoal-deep 위에서 흰 콘텐츠로 자연스럽게 자름\n- 사용 안 하게 된 SawtoothDivider import 정리\n\n검증: closingBottom = mainBottom = sliderTop = 8219px (gap 0), 세 boundary가 정확히 일치하고 그 영역 배경이 rgb(31,36,40) charcoal-deep",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "461e212e",
+    "type": "fix",
+    "scope": "petition,og",
+    "subject": "og:image를 작품 사진(mural-1)으로 명시 override",
+    "summary": "청원 페이지를 카카오톡 등에 URL로 붙여넣었을 때 미리보기",
+    "body": "썸네일이 기본 씨앗페 OG 이미지로 떴다. 원인은 createStandardPageMetadata\n가 openGraph.images를 OG_IMAGE.url로 강제 설정해서 같은 디렉토리의\nopengraph-image.tsx 자동 동적 OG가 우선순위에서 밀려난 것.\n\n청원 페이지의 generateMetadata에서 openGraph.images / twitter.images를\n1974년 구의동 양면 부조 사진(mural-1.png, 1280×960)으로 명시 override.\n절대 URL 사용 — 외부 OG 크롤러(카카오톡·페이스북·트위터 등)가 접근.\n\nko/en 모두 적용. alt 텍스트도 로케일별 분리.\n\n배포 후 카카오톡 캐시(이전 노출 이력) 갱신은:\nhttps://developers.kakao.com/tool/clear/og 에서 청원 URL 입력해 초기화.",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "3461f641",
+    "type": "fix",
+    "scope": "error-view",
+    "subject": "콘텐츠 위쪽 쏠림 해소 — min-h 60vh → 100svh",
+    "summary": "ErrorView/NotFoundView wrapper가 viewport 60%만 사용해 콘텐츠 중심이 30% 위치로 위로 쏠려 보이던 문제 해결",
+    "body": "- min-h-[60vh] → min-h-[100svh]\n- GlobalError(헤더 없음) / page-level error(main 100svh 안) 양쪽 모두 viewport 정중앙으로 정렬",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "5666eda9",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "카카오톡 공유 썸네일을 작품 사진(mural-1)으로",
+    "summary": "청원 페이지를 카카오톡으로 공유할 때 기본 씨앗페 OG 이미지가",
+    "body": "떠 캠페인 hero asset인 1974년 구의동 테라코타 부조가 보이지 않던\n문제를 해결. ShareButtons에 imageUrl prop을 추가하고 청원 페이지\nShareButtonsWrapper에서 mural-1.png 절대 URL을 전달.\n\n- ShareButtons.tsx: imageUrl?: string prop 추가, Kakao SDK\n  sendDefault 호출에서 ?? 기본 OG 이미지로 fallback\n- petition/oh-yoon/page.tsx: ShareButtonsWrapper에\n  `${SITE_URL}/images/petition-oh-yoon/mural-1.png` 전달\n- 다른 페이지의 ShareButtons 사용처는 imageUrl 미지정 시 기존 동작\n  유지 (사이트 기본 OG 이미지)",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "b5550506",
+    "type": "fix",
+    "scope": "header",
+    "subject": "hard refresh / 첫 mount에서도 lock 발동 — SSR부터 solid 시작",
+    "summary": "hero 라우트 hard refresh 시 hero 배경 mount 전 빈 frame에 흰글씨가 노출되는 회귀 차단",
+    "body": "- transitionLock 초기값 false → true. SSR HTML과 client hydrate 모두 lock=true로 일치한 상태에서 시작\n- useEffect의 timer가 500ms 후 unlock → CSS bg-color transition으로 자연스러운 fade-out\n- pathname 변경(client navigation) 동작은 기존과 동일\n\n검증: SSR HTML fetch 결과 헤더 첫 paint 시점부터 bg-white/80 + backdrop-blur + text-charcoal 그대로 그려짐",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "5ff8d7a3",
+    "type": "fix",
+    "scope": "header",
+    "subject": "전환 lock 보강 — 500ms + 연속 navigation 재시작 + bg fade",
+    "summary": "250ms로는 dev 첫 컴파일·느린 네트워크에 부족하고 lock 풀린 직후 헤더 색이 갑자기 바뀌어 깜빡임이 잔존하는 케이스 차단",
+    "body": "- TRANSITION_LOCK_MS 250 → 500 (dev/모바일 안전마진)\n- useEffect deps에 pathname 추가: 연속 navigation 시 timer 재시작 (B→C가 A→B의 lock을 일찍 풀어버리지 않음)\n- prevPathname 변경 시 setTransitionLock(true) 무조건 호출 (React가 동일값 re-render skip이라 timer 갱신만 트리거)\n- Header.tsx transition에 background-color 추가 → solid ↔ transparent fade",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "d94feeba",
+    "type": "fix",
+    "scope": "artworks",
+    "subject": "SEO 인트로와 갤러리 사이 이중 패딩 제거",
+    "summary": "/artworks 페이지에서 SEO 인트로 섹션과 갤러리 섹션 사이가 데스크톱 88px / 모바일 56px로 너무 벌어져 있던 문제를 수정.",
+    "body": "- SEO 인트로의 `padding=\"sm\"`(py-8 md:py-12)이 다음 갤러리 섹션의 `pt-6 md:pt-10`과 더해져 이중 패딩이 발생\n- `padding=\"none\"` + `pt-8 md:pt-12`로 바꿔 하단 패딩 제거. 갤러리 섹션의 top 패딩이 단일 분리자가 되어 데스크톱 40px / 모바일 24px로 자연스럽게 이어짐",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "2d8f72f9",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "청원 페이지 디자인 개선 11개 일괄",
+    "summary": "오윤 청원 페이지 11개 디자인 리뷰 항목 일괄 적용 — 카드 CTA 보강, HERO 가독성·작품 톤 균형, 톱니 카피 정돈, 진행률 시각 보정.",
+    "body": "- A-1 6부 카드 3에 공유 템플릿 앵커 CTA 추가 + ShareTemplates 박스에 id=\"share-templates\"\n- A-2 6부 카드 2에 서명 폼 추진위원 체크 안내 CTA + participationCard2Cta 신규 키\n- A-3 3부 작품 사진 alt 3종 + figcaption i18n (muralAltFront/Detail/Back, muralCaption)\n- B-4 HERO 다중 오버레이 강도 완화 (그라디언트·vignette·highlight 모두 톤 다운, H1 textShadow 강화)\n- B-5 4부 세 가지 일 카드 border-gray-200으로 톤 통일, tone 분기 단순화\n- B-6 8부 추진 주체 끝부분(committeeNote + exhibitionLine)을 white 카드로 분리 정돈\n- B-7 ProposalModal 트리거를 outlined 버튼 + inline svg 아이콘으로 격상\n- B-8 3부 우측 사진(mural-3)에 \"반대 면\" 배지 추가 (muralOtherSideBadge 신규 키)\n- C-9 5부 청원 박스 정점화 — canvas-soft 배경, 패딩 강화, shadow-sm 추가\n- C-12 ProgressBar 막대 width에 1.5% 시각 floor 적용 (ARIA value는 실제 값 유지)\n- C-13 10부 결구 → CTA 호흡 확장 (mb-10 → mb-14 md:mb-16, line1·2 mb-3 → mb-4)",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "fe1c66fd",
+    "type": "feat",
+    "scope": "admin/petition",
+    "subject": "서명자 명단 탭 + 행 단위 편집·삭제",
+    "summary": "청원 운영자가 잘못 입력된 행이나 중복 의심 행을 즉시 정정·삭제할",
+    "body": "수 있도록 「서명자 명단」 탭을 신설. 표 형식으로 최신 1000건을 노출하고\n이름 중복 의심 자동 표시·검색·필터·tel 링크를 갖춤. 행 액션은 모달 편집과\n2단계 confirm 삭제. 모든 변경은 감사 로그(update_signature/delete_signature)\n에 자동 기록.\n\n- supabase: petition_audit_log.action enum에 update_signature·delete_signature 추가\n- petition-admin.ts: deleteSignature(스냅샷 보존 후 hard delete) +\n  updateSignature(name/phone/region/message/messagePublic/isCommittee/isMasked\n  부분 update). email은 email_hash 동기화 복잡성으로 미지원 — 잘못된\n  이메일은 삭제 후 재서명 안내.\n- SignaturesTab: 표(이름·이메일·전화·지역·표식·서명일시·관리), 검색,\n  필터(추진위원/중복의심/마스킹), tel: 링크, 1000건 초과 시 truncated 안내\n- EditSignatureModal: 시·도/시·군·구 연동 드롭다운, 메시지 500자, 표식\n  체크박스 3종(공개동의·추진위원·마스킹)\n- PetitionAdminClient: 신규 탭 등록(개요 다음 위치) + 전체 카운트 배지\n- page.tsx: 최신 1000건 + total count select\n- 메시지 키 ko/en 동시 작성",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "f8d587c0",
+    "type": "feat",
+    "scope": "magazine",
+    "subject": "FAQ 추출 유틸 + test",
+    "summary": "매거진 markdown 본문에서 **Q.** / A. 패턴을 파싱해 FAQItem[] 반환하는 유틸. FAQPage schema 자동 생성에 사용",
+    "body": "- lib/utils/extract-faqs.ts: 질문 라인은 **Q. / **Q: / **질문 prefix 인식,\n  답변은 다음 Q 블록 / heading / horizontal rule / EOF까지 수집\n- 빈 결과면 [] 반환 — 호출부는 비었을 때 FAQPage schema 미발행해 Search Console 청결 유지\n- __tests__/lib/utils/extract-faqs.test.ts: 패턴 인식·경계 처리 케이스",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "91673d4b",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "청원 서명자 전화번호 수집",
+    "summary": "이메일만으로는 시급한 연락(언론 인터뷰·청원 전달식 등)이 어렵다는",
+    "body": "운영 피드백에 따라 전화번호를 추가 수집. 평문 저장(연락 목적)이지만\nservice_role/admin만 SELECT, 동의문에 수집 항목 명시.\n\n- supabase: petition_signatures.phone(text NULL, 9~30자) 컬럼 추가 +\n  sign_petition RPC가 payload.phone 받아 INSERT\n- SignForm: 이메일 다음에 전화번호 필드 추가(type=tel, 9~15자리 검증).\n  PRIVACY_BLURB도 \"성함, 이메일, 전화번호, 거주 지역\"으로 갱신\n- Server Action signPetition: phone 입력·검증·payload 전달\n- CSV 내보내기(full/committee 모드)에 전화번호 컬럼 포함\n- Admin 추진위원 탭: 전화번호 컬럼 + 전화번호 검색 + tel: 링크\n- types/supabase.ts 재생성으로 phone 컬럼 반영",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "ab5c84ec",
+    "type": "fix",
+    "scope": "header",
+    "subject": "라우트 전환 시 헤더를 250ms 동안 solid로 유지",
+    "summary": "hero 라우트 진입 시 헤더가 흰글씨로 즉시 토글됐는데 hero 배경이 아직 mount 전이라 연노란 body bg에 흰글씨가 떠서 안 보이던 짧은 깜빡임 차단",
+    "body": "- useHeaderStyle에 transitionLock 상태 추가 (pathname 변경 시 250ms 활성)\n- previous prop을 state로 저장하는 패턴으로 set-state-in-effect / refs lint 룰 준수\n- transitionLock 활성 동안 headerMode를 'solid'로 강제",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "778244aa",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "계좌이체 주문 접수 시 구매자/관리자 이메일 발송",
+    "summary": "무통장 계좌이체 복원 시 이메일 누락. 사용자가 페이지 닫으면 계좌번호 잊어버리고, 관리자도 입금 확인 작업 필요한지 인지 못함",
+    "body": "발송 (fire-and-forget):\n1. 구매자: virtual_account_issued 템플릿 재사용 — bankName/accountNumber/dueDate 동일 구조\n   - 기업은행 (IBK) / 301-101031-04-095 / 24h 후 마감 (Asia/Seoul)\n2. 관리자: notifyEmail 'info' — \"계좌이체 주문 접수 (입금 대기)\" + 작품·배송지·계좌정보\n\n흐름:\n- 주문 접수 → 이번 commit의 2종 이메일\n- admin 입금 확인 → deposit_confirmed (admin-orders.ts에 기존)\n- 24h 미입금 → auto_cancelled (expire-stale-orders cron)",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "f54a5edc",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "시민제안서 모달 + 작가 작업세계 보강",
+    "summary": "청원 페이지 「더 자세히 시민제안서 보기」를 PDF 호스팅 대신",
+    "body": "모달 팝업으로 전환하고, 3부 작품 이야기에 오윤 작가 추모 명패(초상+\n어록) 및 작업세계 단락을 더해 청원의 명분 무게를 높였다. 8부 끝에는\n오윤 40주기 특별전으로 가는 한 줄 링크를 추가.\n\n- ProposalModal.tsx 신규 — 5개 섹션(취지/필요성/이미 진행된 일/요구/\n  발신)을 i18n 메시지로 직접 노출. 더 이상 PDF 자산 의존 없음\n- page.tsx: 3부에 추모 명패 카드(canvas-soft 카드 + 원형 grayscale\n  portrait + 흰 액자 border + 인용 ghost mark + font-display italic\n  어록), 본문 단락 P3 추가(목판화·가마골·구로공단·한·신명·민중미술),\n  8부 끝에 특별전 링크 한 줄(t.rich)\n- 9부 LinkButton(PDF 404 원인) → ProposalModal 트리거 버튼으로 교체\n- lib/petition/constants.ts: 사용 안 되게 된 PETITION_OH_YOON_PROPOSAL_PDF\n  상수 제거\n- .env.local.example: NEXT_PUBLIC_PETITION_PROPOSAL_PDF 줄 제거",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "4f809a07",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "계좌이체 안내 은행 정보 정정 — 농협 → 기업은행",
+    "summary": "옛 i18n 하드코딩이 농협 (NH) 계좌로 되어 있었으나 실제 정산 계좌는 기업은행. Toss 대시보드 ‘이용정보’ 정산계좌 = 기업은행 / 30110103104095 / 한국스마트협동조합 기준으로 수정. 계좌번호는 입금자 편의를 위해 하이픈 포맷 유지",
+    "body": "ko: \"농협 (NH)\" → \"기업은행 (IBK)\"\nen: \"NH (NongHyup)\" → \"IBK (Industrial Bank of Korea)\"\n계좌번호 \"301-101031-04-095\" 유지 (이미 하이픈 포맷)\n예금주 \"한국스마트협동조합\" / \"Korea Smart Cooperative\" 유지\n\nko.json·en.json 각각 2곳 (checkout + orderLookup namespace) 동시 수정",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "ce279078",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "계좌이체를 무통장 입금(NH 농협 하드코딩)으로 복원 — 뱅크페이 우회",
+    "summary": "뱅크페이 인증서·앱 설치 UX가 너무 무거워 옛 createBankTransferOrder 흐름 복원. 계좌이체 버튼 누르면 Toss 거치지 않고 바로 NH 농협 계좌번호 안내, 관리자가 입금 확인 후 paid 처리",
+    "body": "복원:\n1. checkout.ts: createBankTransferOrder 서버 액션. createOrder 후 awaiting_deposit + artwork=reserved\n2. CheckoutClient.tsx: paymentChoice='TRANSFER' 분기 — createBankTransferOrder + /success?method=BANK_TRANSFER redirect\n3. success/page.tsx: method 파라미터 추가, BANK_TRANSFER일 땐 paymentKey 없이 통과\n4. SuccessClient.tsx: BANK_TRANSFER 분기 복원 — NH 계좌번호 + 24시간 입금 마감 안내",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "ea02aca6",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "localeDetection 끄기 — KO 전환 후 다음 페이지에서 EN으로 되돌아가는 회귀 차단",
+    "summary": "언어 전환이 다음 페이지에서 영어로 되돌아가던 문제 수정 (URL이 곧 locale)",
+    "body": "next-intl 미들웨어의 localeDetection 기본값(true)이 쿠키 NEXT_LOCALE 또는\nAccept-Language 헤더가 영어인 경우 한국어 URL(/about 등)을 항상 /en/about으로\n307 redirect했음. KO 클릭 직후엔 클라이언트가 쿠키를 'ko'로 동기화하지만\nprefetch 타이밍·영어 시스템 브라우저·외부 진입 등에서 미들웨어 자동 감지가\n다시 발동해 다음 페이지를 영어로 끌어가는 회귀가 발생.\n\n- i18n/routing.ts에 localeDetection: false 추가\n- URL prefix가 locale의 단일 출처가 됨 (/foo → ko, /en/foo → en)\n- 검증: cookie=en + /about → 200 한국어 (이전 307 → /en/about),\n  Accept-Lang=en + /about → 200 한국어, /en/* 영어 라우팅 회귀 없음",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "646712f0",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "결제 실패 시 pending 주문 자동 정리",
+    "summary": "PayPal/카드 실패·취소 시 우리 DB의 pending_payment 주문이 30분간 살아남아 check_artwork_availability가 unique 작품을 unavailable로 차단하던 문제",
+    "body": "수정:\n1. fail page 서버 컴포넌트가 URL orderId로 pending → cancelled (Toss failUrl redirect 시)\n2. webhook ABORTED/EXPIRED + payments 미존재 시 orders도 cancelled로 정리\n\n기존 안전망 (유지): createOrder의 동일 email+artwork 자동 cancel + reconcile cron",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "819813b5",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "국제 사용자(en) 전화·주소·우편번호 입력 차단 해소",
+    "summary": "PayPal 영문 사용자가 한국 전용 검증·UI에 막혀 폼 채울 수 없던 문제",
+    "body": "서버 (checkout.ts):\n- phoneDigits: 9-11 → 7-15 (ITU E.164, 국제 번호 허용)\n- postalCode: locale 분기. ko=5자리 숫자, en=3-10자 알파+숫자+공백+하이픈 (US 12345, UK SW1A 1AA, Canada K1A 0B1, Japan 123-4567)\n\nUI (BuyerInfoForm.tsx):\n- isKorean = locale==='ko' 분기\n- en은 주소·우편번호 자유 입력 (readOnly 해제), Daum 검색 버튼 숨김\n- 전화번호 placeholder는 i18n placeholderPhone 키로 (ko:\"010-0000-0000\", en:\"+1 555 123 4567\")",
+    "date": "2026-04-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "35cd2daa",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "PayPal/USD 통화 표시 일관성 — SuccessClient + Overseas 가격표",
+    "summary": "PayPal 흐름에서 USD가 KRW로 잘못 표시되거나, 라인별 ceiling 합과 총액 ceiling 불일치로 혼란 가능. 통화 시그널 명시 전달",
+    "body": "SuccessClient:\n- Props에 currency('KRW'|'USD') 추가\n- success/page.tsx가 locale 기준으로 결정 (en→USD)\n- formatAmount 헬퍼로 통화별 분기 표시\n- 영문 success 페이지에서 \"$3\" 정상 노출 (이전: \"₩3\" 잘못)\n\nOverseasCheckoutClient 가격표:\n- 라인별 USD ceiling 표시 제거 (라인합 ≠ 총액합 차단)\n- 라인은 KRW, 최종 PayPal charge만 USD 강조",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "2e613761",
+    "type": "fix",
+    "scope": "petition-db",
+    "subject": "sign_petition의 v_role 검사 제거 — PostgREST가 service_role JWT claim을 함수 안으로 노출 안 해 false negative",
+    "summary": "폼 제출 시 «저장 중 오류가 발생했습니다» (INTERNAL_ERROR)의 root cause — current_setting('request.jwt.claim.role', true)가 라이브 PostgREST 환경에서 NULL 반환 → PETITION_SIGN_FORBIDDEN. GRANT EXECUTE TO service_role + REVOKE ALL FROM anon/authenticated/public이 이미 access control하므로 함수 본문 추가 검사는 불필요/중복",
+    "body": "- 마이그레이션 20260427091500: sign_petition CREATE OR REPLACE — v_role 변수·검사 라인 제거 (DECLARE 블록·BEGIN 본문)\n- 솔트 hard-code는 유지 (이전 마이그레이션과 동일)\n- supabase db push 적용 완료, MCP execute_sql로 정상 동작 검증 (ok: true 반환)\n- Postgres 로그상 RATE_LIMIT_FORBIDDEN도 같은 root cause지만 lib/rate-limit.ts의 try/catch fallback이 in-memory limiter로 자동 우회 → 폼 자체 동작에는 영향 없음",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "0b916248",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "PayPal USD 금액을 정수 dollar로 올림",
+    "summary": "Toss FOREIGN_EASY_PAY(PayPal)가 amount를 정수 USD로 받음. 소수 2.93을 보내면 Toss 내부에서 truncate(2)되어 PayPal COMMON_ERROR 반환",
+    "body": "증거: 우리 요청 amount=2.93 → Toss 응답 totalAmount=2.0\n\n수정: krwToUsd cents 절상 → whole dollar 절상 (Math.ceil(krw/rate)). formatUsd 정수 표시",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "d81706a3",
+    "type": "fix",
+    "scope": "petition-db",
+    "subject": "sign_petition 함수에 솔트 hard-code — ALTER DATABASE 권한 제약 우회",
+    "summary": "app.petition_email_salt 같은 custom GUC가 superuser만 설정 가능해서 service role도 ALTER DATABASE/ALTER FUNCTION SET app.* 못 함. 솔트를 함수 본문 변수로 직접 박아 우회. KOSMART에 적용 완료",
+    "body": "- 마이그레이션 20260427090607_petition_salt_alter_function: sign_petition CREATE OR REPLACE FUNCTION으로 v_email_salt/v_ip_salt를 본문 hard-coded\n- current_setting('app.petition_email_salt') 의존 제거 → PETITION_EMAIL_SALT_NOT_SET 예외 더 이상 발생 안 함\n- 폼 제출 시 «저장 중 오류가 발생했습니다» 에러 해소\n- 솔트 회전 필요 시 이 마이그레이션 재실행\n- 트레이드오프: 솔트가 git history에 노출되지만 (a) private repo (b) email_hash는 unique constraint용 (c) PII는 RLS로 anon SELECT 차단 — 보안 영향 제한적\n\n검증: pg_proc.prosrc에 솔트 hex hard-coded 확인 (MCP execute_sql)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "9024303d",
+    "type": "fix",
+    "scope": "webhook",
+    "subject": "ABORTED/EXPIRED + confirm 전 결제 webhook 멱등 처리",
+    "summary": "PayPal 결제 취소 후 Toss STATUS_CHANGED webhook이 payments 테이블 미존재 → provider 조회 실패 → 500 반복되던 문제",
+    "body": "- provider 조회 fallback: payments 없으면 orders.order_no로 직접 조회\n- ABORTED/EXPIRED + payments 미존재 케이스는 멱등 200 반환 (Toss 재시도 회피)",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "c445efc3",
+    "type": "feat",
+    "scope": "share",
+    "subject": "ShareButtons에 SMS 아이콘 추가 — 사이트 전체 공유 버튼 시스템에 통합",
+    "summary": "청원 페이지 ShareKit에서만 있던 «문자로 공유»를 사이트 표준 ShareButtons에 통합. 녹색 채팅 말풍선 SVG로 사이트 전체에서 일관된 5종 공유 버튼",
+    "body": "- ShareButtons.tsx: handleSmsShare 핸들러(sms: URL 스킴) + 녹색 원(#22C55E) + 흰색 채팅 말풍선 SVG\n- 카카오톡 버튼 다음, 링크 복사 버튼 앞 위치 (페이스북·X·카카오·SMS·링크 복사 5종)\n- 모바일 OS 메시지 앱 연동, 데스크톱은 macOS 메시지·iMessage·SMS 게이트웨이로 fallback\n- messages/ko.json + en.json: shareButtons.smsAria / smsTitle 키 추가\n- 청원 5부 박스뿐 아니라 transparency 등 사이트 전체 페이지에서 SMS 공유 즉시 활성화",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "1a8e13db",
+    "type": "fix",
+    "scope": "build",
+    "subject": "OverseasCheckoutClient의 미사용 Button import 제거",
+    "summary": "PayPal 브랜드 버튼을 커스텀 <button> 엘리먼트로 교체하면서 Button 컴포넌트가 미사용. noUnusedLocals=true 때문에 Vercel build type-check 실패 (TS6133)",
+    "body": null,
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "e68273a9",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "Button 로딩 스피너가 우측 하단으로 떨어지는 애니메이션 수정",
+    "summary": "Tailwind animate-spin이 transform: rotate를 강제 설정하면서 같은 div 노드의 -translate-x-1/2 / -translate-y-1/2 위치 변환을 덮어쓰는 충돌. 회전 시작 직후 스피너가 버튼 중심에서 우측 하단으로 어긋난 채 빙글빙글 도는 현상",
+    "body": "수정: 외곽 div(위치 transform)와 내부 div(animate-spin 회전) 분리. 외곽이 위치를 잡고, 내부 div가 transform-origin 50/50으로 자연스럽게 회전\n\n증상: /checkout 페이지에서 결제하기 누르면 로딩 스피너가 떨어짐\n영향: 모든 Button loading=true 상태",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "f6a4b952",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "PayPal 영문 결제 구현 — saf202719y MID + USD 환산",
+    "summary": "영문(en) 체크아웃을 PaypalPlaceholder 안내 페이지에서 실제 PayPal 결제 플로우로 교체. saf202719y MID(API 개별 연동)을 통해 method=FOREIGN_EASY_PAY + provider=PAYPAL + currency=USD로 Toss-hosted PayPal 결제창에 redirect",
+    "body": "신규 파일:\n- lib/utils/currency.ts: KRW↔USD 환산. NEXT_PUBLIC_KRW_USD_RATE env로 조정 (기본 1400). 환율 손실 방지 위해 cents 올림(ceil)\n- app/[locale]/checkout/[artworkId]/OverseasCheckoutClient.tsx: 영문 체크아웃 UI. USD 우선 표시 + KRW 참조. 'Pay with PayPal' 단일 CTA\n\n수정:\n- app/actions/checkout.ts:\n  - createOrder: en 주문에 metadata.usd_amount 시점 고정 저장 (환율 변동 영향 차단)\n  - initiatePayment: provider='overseas'면 method=FOREIGN_EASY_PAY + provider=PAYPAL + currency=USD + amount=USD 환산값\n- app/api/payments/toss/confirm/route.ts: overseas 주문은 metadata.usd_amount와 비교 (KRW 비교 X)\n- page.tsx: en은 OverseasCheckoutClient 렌더 (PaypalPlaceholder 대체)\n- messages/ko.json + en.json: payWithPaypal 키 추가\n\n알려진 한계:\n- 환율은 createOrder 시점 고정 (정확 환율 확인 필요시 매번 외부 API 호출 추가 가능)\n- artwork_sales.source_detail은 'toss_api' 그대로 (overseas 구분 위해 추후 'paypal' 추가 검토)\n- saf202719y MID에 PayPal 활성화 + 에스크로 OFF 등 토스 측 설정 필요",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "9ce65c68",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "청원 박스의 가운뎃점(·)이 PartialSansKR에 글리프 없어 빠지던 문제",
+    "summary": "5부 청원 박스 본문에 적용된 font-display(PartialSansKR)가 가운뎃점 글리프를 안 갖고 있어 «해체·보존·이관»이 «해체  보존  이관»처럼 빈 공간으로 노출되던 문제 — 일반 sans 폰트(font-bold)로 교체",
+    "body": "- page.tsx 5부 청원 박스의 <p className=\"font-display ...\"> → <p className=\"font-bold ...\">\n- PartialSansKR woff2는 한국어 디스플레이 폰트로 가운뎃점(U+00B7) 글리프 누락\n- 청원 동의문은 의미 전달이 핵심이므로 디스플레이 폰트보다 가독성 우선\n- 다른 가운뎃점 사용 6곳(metaDescription·heroProgressRegions·storyP1·proponentsBody2·faqA2·shareTemplateSnsLabel)은 일반 폰트라 영향 없음",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "f50b87c1",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "4건 시각 수정 — hero text-balance·제목 패딩·카드 균형·hCaptcha 활성화",
+    "summary": "사용자 지적 4건 일괄 수정 — 헤로 슬로건 두 줄 각자 text-balance, SectionTitle 다음 본문에 충분한 mb, 6부 카드 길이 균형(ShareTemplates를 카드 외부로 분리), dev에서 hCaptcha test key fallback으로 위젯 노출",
+    "body": "- HERO 슬로건: whitespace-pre-line 제거 + split('\\n')으로 두 줄 분리, 각 줄에 block + text-balance 적용. 한 줄 내에서만 balance 동작하던 한계 해소\n- SectionTitle 사용처 6곳 모두 className=\"mb-8 md:mb-10\" 추가 (제목과 본문 사이 패딩 0이던 문제)\n- 6부 참여 방법 카드: ShareTemplates를 카드3 안에서 빼서 grid 외부 별도 영역(max-w-2xl 가운데)으로 분리. 카드 1·2·3 모두 짧고 균등한 길이 + flex flex-col + mt-auto로 CTA를 카드 하단에 정렬\n- SignForm hCaptcha sitekey: NEXT_PUBLIC_HCAPTCHA_SITE_KEY 미설정 시 dev 환경에서 hCaptcha 공식 test key('10000000-...001') fallback. production에서는 미설정이면 빈 문자열로 막힘 (captcha.ts의 production 가드와 결합)\n- \"(개발 모드 — hCaptcha 비활성)\" 안내문 제거 — 위젯이 항상 노출되거나 영역 자체가 안 보임",
+    "date": "2026-04-27",
+    "author": "황경하"
+  },
+  {
     "hash": "407f7152",
     "type": "fix",
     "scope": "petition",

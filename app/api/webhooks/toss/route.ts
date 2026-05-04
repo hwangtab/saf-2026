@@ -225,7 +225,7 @@ export async function POST(req: NextRequest) {
           } else {
             void notifyEmail('payment', '가상계좌 입금 확인', {
               주문번호: order?.order_no ?? '',
-              금액: `₩${(order?.total_amount ?? 0).toLocaleString()}`,
+              금액: `₩${(order?.total_amount ?? 0).toLocaleString('ko-KR')}`,
             });
           }
 

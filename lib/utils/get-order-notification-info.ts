@@ -103,9 +103,9 @@ export function buildAdminNotificationFields(
     전화: info.buyerPhone || '미입력',
     작품: info.artworkTitle || '미상',
     작가: info.artistName || '미상',
-    상품가: `₩${info.itemAmount.toLocaleString()}`,
-    배송료: `₩${info.shippingAmount.toLocaleString()}`,
-    결제금액: `₩${info.totalAmount.toLocaleString()}`,
+    상품가: `₩${info.itemAmount.toLocaleString('ko-KR')}`,
+    배송료: `₩${info.shippingAmount.toLocaleString('ko-KR')}`,
+    결제금액: `₩${info.totalAmount.toLocaleString('ko-KR')}`,
     수령인: info.shippingName || '미입력',
     수령인연락처: info.shippingPhone || '미입력',
     배송지: info.shippingAddress || '미입력',
@@ -122,7 +122,7 @@ export function buildAdminNotificationFields(
 
   for (const [key, value] of Object.entries(extras)) {
     if (value === undefined || value === null || value === '') continue;
-    fields[key] = typeof value === 'number' ? value.toLocaleString() : value;
+    fields[key] = typeof value === 'number' ? value.toLocaleString('ko-KR') : value;
   }
 
   return fields;

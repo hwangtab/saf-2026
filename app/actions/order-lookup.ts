@@ -481,7 +481,7 @@ export async function cancelBuyerOrder(
       payment_key: payment.payment_key,
     },
     {
-      summary: `구매자 셀프 취소: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, ₩${order.total_amount.toLocaleString()}, 사유: ${trimmedReason})`,
+      summary: `구매자 셀프 취소: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, ₩${order.total_amount.toLocaleString('ko-KR')}, 사유: ${trimmedReason})`,
       reversible: false,
     }
   );

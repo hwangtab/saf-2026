@@ -538,7 +538,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
       } else {
         void notifyEmail('info', '계좌이체 주문 접수 (입금 대기)', {
           주문번호: result.orderNo,
-          금액: `₩${result.totalAmount.toLocaleString()}`,
+          금액: `₩${result.totalAmount.toLocaleString('ko-KR')}`,
           입금기한: dueDateStr,
         });
       }

@@ -286,7 +286,7 @@ export async function POST(req: NextRequest) {
       void notifyEmail('payment', '결제 승인 완료', {
         주문번호: orderId,
         결제수단: tossResponse.method ?? '알 수 없음',
-        금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
+        금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
       });
     }
     if (order.buyer_email) {
@@ -332,7 +332,7 @@ export async function POST(req: NextRequest) {
     } else {
       void notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
         주문번호: orderId,
-        금액: `₩${tossResponse.totalAmount.toLocaleString()}`,
+        금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
       });
     }
     if (order.buyer_email) {

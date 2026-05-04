@@ -352,7 +352,7 @@ export async function refundOrder(input: RefundInput) {
     },
     admin.id,
     {
-      summary: `주문 환불: ${order.order_no} (${order.buyer_name || '구매자 미상'}, ₩${order.total_amount.toLocaleString()})`,
+      summary: `주문 환불: ${order.order_no} (${order.buyer_name || '구매자 미상'}, ₩${order.total_amount.toLocaleString('ko-KR')})`,
       reversible: false,
     }
   );
@@ -695,7 +695,7 @@ export async function confirmDeposit(orderId: string) {
     },
     admin.id,
     {
-      summary: `입금 확인: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, ₩${order.total_amount.toLocaleString()})`,
+      summary: `입금 확인: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, ₩${order.total_amount.toLocaleString('ko-KR')})`,
     }
   );
 

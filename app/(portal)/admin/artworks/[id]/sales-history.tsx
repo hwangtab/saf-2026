@@ -267,7 +267,7 @@ export function SalesHistory({
                 </label>
                 {originalPrice > 0 && (
                   <span className="text-xs text-gray-400">
-                    정가: ₩{originalPrice.toLocaleString()}
+                    정가: ₩{originalPrice.toLocaleString('ko-KR')}
                   </span>
                 )}
               </div>
@@ -549,7 +549,7 @@ export function SalesHistory({
                 return (
                   <tr key={sale.id} className="hover:bg-gray-50/50">
                     <td className="px-4 py-3 text-sm text-gray-900">
-                      {new Date(sale.sold_at).toLocaleDateString()}
+                      {new Date(sale.sold_at).toLocaleDateString('ko-KR')}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {sale.buyer_name || '-'}
@@ -573,13 +573,13 @@ export function SalesHistory({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900 text-right">
-                      {sale.quantity.toLocaleString()}
+                      {sale.quantity.toLocaleString('ko-KR')}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900 text-right">
-                      ₩{sale.sale_price.toLocaleString()}
+                      ₩{sale.sale_price.toLocaleString('ko-KR')}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900 text-right">
-                      ₩{(sale.sale_price * sale.quantity).toLocaleString()}
+                      ₩{(sale.sale_price * sale.quantity).toLocaleString('ko-KR')}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
