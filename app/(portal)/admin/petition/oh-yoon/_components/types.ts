@@ -64,7 +64,9 @@ export interface AdminBootstrap {
   counts: AdminCounts;
   regionBreakdown: AdminRegionRow[];
   messages: AdminMessageRow[];
+  messagesTotal: number;
   committee: AdminCommitteeRow[];
+  committeeTotal: number;
   signatures: AdminSignatureRow[];
   signaturesTotal: number;
   audit: AdminAuditRow[];

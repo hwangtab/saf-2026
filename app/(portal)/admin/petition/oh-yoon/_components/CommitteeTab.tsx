@@ -9,9 +9,10 @@ import type { AdminCommitteeRow } from './types';
 
 interface CommitteeTabProps {
   committee: AdminCommitteeRow[];
+  committeeTotal: number;
 }
 
-export default function CommitteeTab({ committee }: CommitteeTabProps) {
+export default function CommitteeTab({ committee, committeeTotal }: CommitteeTabProps) {
   const t = useTranslations('admin.petition');
   const [search, setSearch] = useState('');
 
@@ -41,7 +42,7 @@ export default function CommitteeTab({ committee }: CommitteeTabProps) {
     <div className="space-y-5">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-charcoal-muted">
-          {t('committeeCountLine', { count: committee.length.toLocaleString('ko-KR') })}
+          {t('committeeCountLine', { count: committeeTotal.toLocaleString('ko-KR') })}
         </p>
         <input
           type="search"

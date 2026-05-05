@@ -61,14 +61,14 @@ export default function PetitionAdminClient({ bootstrap }: { bootstrap: AdminBoo
                   {bootstrap.signaturesTotal.toLocaleString('ko-KR')}
                 </span>
               )}
-              {tab_.key === 'messages' && bootstrap.messages.length > 0 && (
+              {tab_.key === 'messages' && bootstrap.messagesTotal > 0 && (
                 <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-primary-surface px-1.5 py-0.5 text-xs font-medium text-primary-strong">
-                  {bootstrap.messages.length}
+                  {bootstrap.messagesTotal.toLocaleString('ko-KR')}
                 </span>
               )}
-              {tab_.key === 'committee' && bootstrap.committee.length > 0 && (
+              {tab_.key === 'committee' && bootstrap.committeeTotal > 0 && (
                 <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-primary-surface px-1.5 py-0.5 text-xs font-medium text-primary-strong">
-                  {bootstrap.committee.length}
+                  {bootstrap.committeeTotal.toLocaleString('ko-KR')}
                 </span>
               )}
             </button>
@@ -86,8 +86,12 @@ export default function PetitionAdminClient({ bootstrap }: { bootstrap: AdminBoo
             signaturesTotal={bootstrap.signaturesTotal}
           />
         )}
-        {tab === 'messages' && <MessagesTab messages={bootstrap.messages} />}
-        {tab === 'committee' && <CommitteeTab committee={bootstrap.committee} />}
+        {tab === 'messages' && (
+          <MessagesTab messages={bootstrap.messages} messagesTotal={bootstrap.messagesTotal} />
+        )}
+        {tab === 'committee' && (
+          <CommitteeTab committee={bootstrap.committee} committeeTotal={bootstrap.committeeTotal} />
+        )}
         {tab === 'mail' && <MailTab counts={bootstrap.counts} />}
         {tab === 'audit' && <AuditLogTab audit={bootstrap.audit} />}
       </div>

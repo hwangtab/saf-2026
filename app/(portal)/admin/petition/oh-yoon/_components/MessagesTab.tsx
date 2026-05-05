@@ -13,9 +13,10 @@ type Filter = 'all' | 'open' | 'public' | 'masked';
 
 interface MessagesTabProps {
   messages: AdminMessageRow[];
+  messagesTotal: number;
 }
 
-export default function MessagesTab({ messages: initial }: MessagesTabProps) {
+export default function MessagesTab({ messages: initial, messagesTotal }: MessagesTabProps) {
   const t = useTranslations('admin.petition');
   const [messages, setMessages] = useState<AdminMessageRow[]>(initial);
   const [filter, setFilter] = useState<Filter>('open');
@@ -93,7 +94,7 @@ export default function MessagesTab({ messages: initial }: MessagesTabProps) {
       <p className="text-xs text-charcoal-muted">
         {t('messagesShownCount', {
           count: filtered.length.toLocaleString('ko-KR'),
-          total: messages.length.toLocaleString('ko-KR'),
+          total: messagesTotal.toLocaleString('ko-KR'),
         })}
       </p>
 
