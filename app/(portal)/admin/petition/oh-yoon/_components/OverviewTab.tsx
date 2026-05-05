@@ -52,7 +52,7 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
               return (
                 <li
                   key={r.region_top}
-                  className="grid grid-cols-[8rem_1fr_4rem] items-center gap-3 text-sm"
+                  className="grid grid-cols-[8rem_1fr_5.5rem] items-center gap-3 text-sm"
                 >
                   <span className="text-charcoal-deep">{label}</span>
                   <span className="relative h-5 rounded-full bg-gray-100 overflow-hidden">
@@ -61,7 +61,7 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
                       style={{ width: `${ratio}%` }}
                     />
                   </span>
-                  <span className="text-right tabular-nums text-charcoal-muted">
+                  <span className="text-right tabular-nums text-charcoal-muted font-medium">
                     {r.count.toLocaleString('ko-KR')}
                   </span>
                 </li>
