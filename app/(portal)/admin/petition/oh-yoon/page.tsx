@@ -22,7 +22,8 @@ export default async function PetitionAdminPage() {
       .from('petition_signatures')
       .select('region_top')
       .eq('petition_slug', PETITION_OH_YOON_SLUG)
-      .eq('is_masked', false),
+      .eq('is_masked', false)
+      .range(0, 49999),
   ]);
 
   // 지역별 분포 집계 (in-memory)
