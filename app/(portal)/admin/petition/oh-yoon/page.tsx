@@ -34,7 +34,7 @@ export default async function PetitionAdminPage() {
     .map(([region_top, count]) => ({ region_top, count }))
     .sort((a, b) => b.count - a.count);
 
-  // 2. 메시지 큐 (메시지가 있는 행만, 최근 200개) — 탭 배지엔 전체 카운트 사용
+  // 2. 메시지 큐 (메시지가 있는 행만) — 명시적 .range로 Supabase JS 기본 1000 한도 해제
   const { data: messages, count: messagesTotal } = await admin
     .from('petition_signatures')
     .select(
@@ -44,19 +44,18 @@ export default async function PetitionAdminPage() {
     .eq('petition_slug', PETITION_OH_YOON_SLUG)
     .not('message', 'is', null)
     .order('created_at', { ascending: false })
-    .limit(200);
+    .range(0, 49999);
 
-  // 3. 추진위원 명단 (가나다순) — Supabase 기본 max_rows(1000)에 묶여 잘리는 것을 막기 위해
-  // 명시적 .range로 가져오고 전체 카운트는 별도 헤드 카운트로 확보
+  // 3. 추진위원 명단 (가나다순) — 1만 명+ 케이스 대비 5만까지 허용
   const { data: committee, count: committeeTotal } = await admin
     .from('petition_signatures')
     .select('id, full_name, email, phone, region_top, region_sub, created_at', { count: 'exact' })
     .eq('petition_slug', PETITION_OH_YOON_SLUG)
     .eq('is_committee', true)
     .order('full_name', { ascending: true })
-    .range(0, 4999);
+    .range(0, 49999);
 
-  // 3b. 전체 서명 명단 (운영자 표 — 최근 1000개, total은 카운트로 별도 표시)
+  // 3b. 전체 서명 명단 (운영자 표) — 1만+ 서명 케이스 대비 5만까지 허용
   const { data: signatures, count: signaturesTotal } = await admin
     .from('petition_signatures')
     .select(
@@ -65,7 +64,7 @@ export default async function PetitionAdminPage() {
     )
     .eq('petition_slug', PETITION_OH_YOON_SLUG)
     .order('created_at', { ascending: false })
-    .limit(1000);
+    .range(0, 49999);
 
   // 4. 감사 로그 (최근 100개)
   const { data: auditRaw } = await admin
