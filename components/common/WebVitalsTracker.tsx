@@ -123,6 +123,23 @@ function sendToGA(metric: Metric) {
 
 export default function WebVitalsTracker() {
   useEffect(() => {
+    // 진단: 컴포넌트가 production에서 실제 mount되는지 검증용 ping.
+    // GA4에 'web_vitals_mount' 이벤트가 들어오면 mount 성공이고, web-vitals
+    // 콜백만 fire 안 하는 상황(저트래픽 + 짧은 세션). 이 이벤트도 0건이면
+    // import 또는 mount 자체가 깨진 것.
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+      if (typeof window.gtag !== 'function') {
+        window.gtag = function gtagStub() {
+          window.dataLayer!.push(arguments);
+        };
+      }
+      window.gtag('event', 'web_vitals_mount', {
+        page_path: window.location.pathname,
+        non_interaction: true,
+      });
+    }
+
     // 각 metric은 페이지당 1회 자동 측정 후 콜백.
     // INP는 사용자 인터랙션 발생 시 누적 → 페이지 떠날 때 최종값 보고.
     onLCP(sendToGA);
