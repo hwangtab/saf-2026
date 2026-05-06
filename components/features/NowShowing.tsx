@@ -49,7 +49,7 @@ async function ShowingCard({ item }: { item: NowShowingItem }) {
           src={item.imageUrl}
           alt={title}
           fill
-          sizes="(max-width: 640px) 100vw, 50vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1056px) 50vw, 512px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />

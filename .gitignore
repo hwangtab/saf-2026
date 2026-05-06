@@ -63,3 +63,6 @@ scripts/.magazine-sql/
 /*.png
 /*.jpg
 /*.jpeg
+
+# scripts/lighthouse-coverage.ts JSON 덤프 — 일회성 측정 산출물
+/tmp/
