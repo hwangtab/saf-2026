@@ -1,33 +1,38 @@
 'use client';
 
+import { useEffect } from 'react';
 import Script from 'next/script';
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export default function GoogleAnalytics() {
+  useEffect(() => {
+    if (!GA_ID) return;
+    // gtag stub — gtag.js가 후에 로드되어 큐를 처리. window.gtag가 이미 있으면 스킵.
+    type GtagFn = (...args: unknown[]) => void;
+    const w = window as Window & {
+      dataLayer?: unknown[];
+      gtag?: GtagFn;
+    };
+    if (typeof w.gtag === 'function') return;
+    w.dataLayer = w.dataLayer || [];
+    const gtag: GtagFn = function (...args) {
+      w.dataLayer!.push(args);
+    };
+    w.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', GA_ID, { page_path: window.location.pathname });
+  }, []);
+
   if (!GA_ID) return null;
 
+  // gtag.js만 next/script로 로드. 인라인 init은 useEffect로 직접 처리해
+  // next/script의 inline-script 주입 경로(production에서 SyntaxError를 일으킨 코드 경로)를 우회.
+  // afterInteractive — hydration 직후 로드, LCP 영향 미미.
   return (
-    <>
-      {/* afterInteractive — 페이지 interactive 직후 로드. lazyOnload는 LCP는 더 보호하지만
-          web-vitals(LCP/CLS/INP) 콜백이 짧은 세션에서 gtag.js 로드 전 발화 → stub 큐가
-          처리되기 전 페이지 닫혀 이벤트 영구 손실되는 문제 발생(GA4에 web_vitals 14일간
-          0건). afterInteractive는 hydration 직후라 web-vitals callback과 race 없음.
-          gtag.js는 async라 LCP에 미치는 영향 미미. */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_ID}', {
-            page_path: window.location.pathname,
-          });
-        `}
-      </Script>
-    </>
+    <Script
+      src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+      strategy="afterInteractive"
+    />
   );
 }

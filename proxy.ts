@@ -74,7 +74,34 @@ export async function proxy(request: NextRequest) {
   }
 
   // Public pages: handle i18n locale routing
-  return intlProxy(request);
+  const response = intlProxy(request);
+  applyPublicPageCacheControl(response);
+  return response;
+}
+
+/**
+ * 공개 페이지 응답에서 `no-store`를 제거해 bfcache(브라우저 뒤로가기 즉시 복원)를 허용.
+ *
+ * 배경: 공개 라우트가 next-intl `getLocale()` 등 동적 API 사용으로 SSG 자격을 잃어
+ * Vercel/Next.js 기본값으로 `cache-control: private, no-cache, no-store, max-age=0,
+ * must-revalidate`가 박힘. `no-store`는 bfcache 차단의 결정적 토큰 (Lighthouse:
+ * "Page prevented back/forward cache restoration", score 0).
+ *
+ * `no-cache`는 매 요청마다 revalidation을 강제할 뿐 bfcache는 막지 않음 (Chrome/Safari).
+ * 따라서 응답 헤더에서 `no-store`만 제거하면 보안·신선도 동작은 그대로 유지하면서
+ * 사용자가 뒤로가기 시 페이지가 즉시 복원된다.
+ *
+ * 인증 영역(`updateSession`)은 personalised 응답이라 캐시 금지가 정확한 동작이므로 손대지 않음.
+ */
+function applyPublicPageCacheControl(response: NextResponse): void {
+  const current = response.headers.get('cache-control');
+  if (!current || !current.includes('no-store')) return;
+  const next = current
+    .split(',')
+    .map((token) => token.trim())
+    .filter((token) => token && token.toLowerCase() !== 'no-store')
+    .join(', ');
+  response.headers.set('cache-control', next || 'private, no-cache, max-age=0, must-revalidate');
 }
 
 export const config = {
