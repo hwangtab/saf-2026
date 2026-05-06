@@ -127,9 +127,12 @@ export async function getArtistById(id: string) {
   await requireAdmin();
   const supabase = await requireAdminClient();
 
+  // notice_updated_by → profiles(id) FK 추가(20260430120000_artist_notice.sql)로
+  // artists ↔ profiles 관계가 두 개가 됨(user_id, notice_updated_by). 명시적 FK hint 필수
+  // — 안 그러면 PostgREST가 ambiguous로 거부해 admin 편집 진입이 깨짐.
   const { data, error } = await supabase
     .from('artists')
-    .select('*, profiles(id, name, email)')
+    .select('*, profiles!artists_user_id_fkey(id, name, email)')
     .eq('id', id)
     .single();
 
