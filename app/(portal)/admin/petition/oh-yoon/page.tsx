@@ -7,65 +7,106 @@ import type { AdminBootstrap } from './_components/types';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * PostgREST `db-max-rows=1000` 서버 한도를 우회하기 위한 페이지네이션 batch fetch.
+ * .range(0, 49999) 같은 클라이언트 헤더는 무시되고 1000개만 반환되던 문제 해결.
+ *
+ * @param buildQuery (from, to)를 받아 그 range로 query를 실행하는 함수.
+ *   첫 호출 결과의 count를 그대로 반환(전체 카운트는 한 번만 받으면 충분).
+ */
+async function fetchAllInBatches<T>(
+  // supabase 쿼리 빌더는 PromiseLike — Promise 직접 반환 아님
+  buildQuery: (
+    from: number,
+    to: number
+  ) => PromiseLike<{ data: T[] | null; error: unknown; count?: number | null }>,
+  pageSize = 1000,
+  hardLimit = 50_000
+): Promise<{ data: T[]; count: number | null }> {
+  const all: T[] = [];
+  let count: number | null = null;
+  let from = 0;
+
+  while (from < hardLimit) {
+    const to = Math.min(from + pageSize - 1, hardLimit - 1);
+    const result = await buildQuery(from, to);
+    if (result.error) throw result.error;
+    if (count == null && typeof result.count === 'number') count = result.count;
+    if (!result.data || result.data.length === 0) break;
+    all.push(...result.data);
+    if (result.data.length < pageSize) break;
+    from = to + 1;
+  }
+
+  return { data: all, count };
+}
+
 export default async function PetitionAdminPage() {
   await requireAdmin();
   const admin = createSupabaseAdminClient();
 
   // 1. 카운터·지역 분포·최근 24시간
+  // 지역 분포는 PostgREST `db-max-rows=1000` 서버 한도를 우회하기 위해 RPC로 DB에서 직접 집계.
+  // 이전에 .select('region_top').range(0, 49999)로 받아 in-memory로 집계했으나 실제로는
+  // 1000명 표본만 fetch되어 부분집계(예: 서울 1595명 → 441명으로 잘림)가 송출되던 버그.
   const [{ data: counts }, { data: regionRows }] = await Promise.all([
     admin
       .from('petition_counts')
       .select('total, committee_total, region_top_count, recent_24h, is_active, deadline_at, goal')
       .eq('petition_slug', PETITION_OH_YOON_SLUG)
       .maybeSingle(),
-    admin
-      .from('petition_signatures')
-      .select('region_top')
-      .eq('petition_slug', PETITION_OH_YOON_SLUG)
-      .eq('is_masked', false)
-      .range(0, 49999),
+    admin.rpc('get_petition_region_breakdown', { p_slug: PETITION_OH_YOON_SLUG }),
   ]);
 
-  // 지역별 분포 집계 (in-memory)
-  const regionCounts = new Map<string, number>();
-  for (const row of regionRows ?? []) {
-    regionCounts.set(row.region_top, (regionCounts.get(row.region_top) ?? 0) + 1);
-  }
-  const regionBreakdown = Array.from(regionCounts.entries())
-    .map(([region_top, count]) => ({ region_top, count }))
-    .sort((a, b) => b.count - a.count);
+  // RPC는 이미 ORDER BY count DESC 적용됨. bigint(string으로 serialize)/number 모두 Number로 변환.
+  const regionBreakdown = (
+    (regionRows as Array<{ region_top: string; count: number | string }> | null) ?? []
+  ).map((r) => ({
+    region_top: r.region_top,
+    count: Number(r.count),
+  }));
 
-  // 2. 메시지 큐 (메시지가 있는 행만) — 명시적 .range로 Supabase JS 기본 1000 한도 해제
-  const { data: messages, count: messagesTotal } = await admin
-    .from('petition_signatures')
-    .select(
-      'id, full_name, region_top, region_sub, message, message_public, is_masked, masked_at, created_at',
-      { count: 'exact' }
-    )
-    .eq('petition_slug', PETITION_OH_YOON_SLUG)
-    .not('message', 'is', null)
-    .order('created_at', { ascending: false })
-    .range(0, 49999);
+  // 2. 메시지 큐 (메시지가 있는 행만)
+  // PostgREST db-max-rows=1000 한도 우회 — fetchAllInBatches로 1000개씩 페이지네이션 fetch.
+  // 이전 .range(0, 49999) 단발 호출은 서버 한도에 걸려 1000개만 반환되어 중간에서 잘렸음.
+  const { data: messages, count: messagesTotal } = await fetchAllInBatches((from, to) =>
+    admin
+      .from('petition_signatures')
+      .select(
+        'id, full_name, region_top, region_sub, message, message_public, is_masked, masked_at, created_at',
+        { count: 'exact' }
+      )
+      .eq('petition_slug', PETITION_OH_YOON_SLUG)
+      .not('message', 'is', null)
+      .order('created_at', { ascending: false })
+      .range(from, to)
+  );
 
-  // 3. 추진위원 명단 (가나다순) — 1만 명+ 케이스 대비 5만까지 허용
-  const { data: committee, count: committeeTotal } = await admin
-    .from('petition_signatures')
-    .select('id, full_name, email, phone, region_top, region_sub, created_at', { count: 'exact' })
-    .eq('petition_slug', PETITION_OH_YOON_SLUG)
-    .eq('is_committee', true)
-    .order('full_name', { ascending: true })
-    .range(0, 49999);
+  // 3. 추진위원 명단 (가나다순)
+  const { data: committee, count: committeeTotal } = await fetchAllInBatches((from, to) =>
+    admin
+      .from('petition_signatures')
+      .select('id, full_name, email, phone, region_top, region_sub, created_at', {
+        count: 'exact',
+      })
+      .eq('petition_slug', PETITION_OH_YOON_SLUG)
+      .eq('is_committee', true)
+      .order('full_name', { ascending: true })
+      .range(from, to)
+  );
 
-  // 3b. 전체 서명 명단 (운영자 표) — 1만+ 서명 케이스 대비 5만까지 허용
-  const { data: signatures, count: signaturesTotal } = await admin
-    .from('petition_signatures')
-    .select(
-      'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at',
-      { count: 'exact' }
-    )
-    .eq('petition_slug', PETITION_OH_YOON_SLUG)
-    .order('created_at', { ascending: false })
-    .range(0, 49999);
+  // 3b. 전체 서명 명단 (운영자 표)
+  const { data: signatures, count: signaturesTotal } = await fetchAllInBatches((from, to) =>
+    admin
+      .from('petition_signatures')
+      .select(
+        'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at',
+        { count: 'exact' }
+      )
+      .eq('petition_slug', PETITION_OH_YOON_SLUG)
+      .order('created_at', { ascending: false })
+      .range(from, to)
+  );
 
   // 4. 감사 로그 (최근 100개)
   const { data: auditRaw } = await admin

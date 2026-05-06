@@ -1305,6 +1305,13 @@ export type Database = {
       execute_sql: { Args: { sql: string }; Returns: undefined };
       get_my_role: { Args: never; Returns: string };
       get_my_status: { Args: never; Returns: string };
+      get_petition_region_breakdown: {
+        Args: { p_slug: string };
+        Returns: {
+          count: number;
+          region_top: string;
+        }[];
+      };
       get_pv_browser_distribution: {
         Args: { lim?: number; since_ts: string };
         Returns: {
