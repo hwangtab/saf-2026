@@ -1,6 +1,7 @@
 'use server';
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
+import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 
 export type ArtistSalesRecord = {
   artistId: string | null;
@@ -42,25 +43,33 @@ export async function getAllArtistSales(): Promise<ArtistSalesRecord[]> {
   await requireAdmin();
   const supabase = await requireAdminClient();
 
-  // Fetch sales with artwork → artist join
-  let { data, error } = await supabase
-    .from('artwork_sales')
-    .select(
-      'sale_price, quantity, sold_at, source, artwork_id, artworks(artist_id, artists(name_ko))'
-    )
-    .is('voided_at', null)
-    .order('sold_at', { ascending: true });
-
-  if (error && isMissingVoidedAtColumnError(error)) {
-    ({ data, error } = await supabase
+  // PostgREST db-max-rows=1000 한도 우회 — artwork_sales가 1000+로 누적되면 단발 select가
+  // 잘려 작가별 매출 순위/합계가 부분 결과로 송출되는 문제 예방. batch fetch로 전부 받음.
+  const buildSalesQuery = (from: number, to: number, includeVoidedFilter: boolean) => {
+    const q = supabase
       .from('artwork_sales')
       .select(
         'sale_price, quantity, sold_at, source, artwork_id, artworks(artist_id, artists(name_ko))'
       )
-      .order('sold_at', { ascending: true }));
-  }
+      .order('sold_at', { ascending: true })
+      .range(from, to);
+    return includeVoidedFilter ? q.is('voided_at', null) : q;
+  };
 
-  if (error) throw error;
+  let data: unknown[] = [];
+  try {
+    const result = await fetchAllInBatches<unknown>((from, to) => buildSalesQuery(from, to, true));
+    data = result.data;
+  } catch (err) {
+    if (isMissingVoidedAtColumnError(err)) {
+      const result = await fetchAllInBatches<unknown>((from, to) =>
+        buildSalesQuery(from, to, false)
+      );
+      data = result.data;
+    } else {
+      throw err;
+    }
+  }
 
   // Fetch total artwork counts per artist
   const { data: artworkCounts } = await supabase.from('artworks').select('artist_id');
@@ -87,7 +96,7 @@ export async function getAllArtistSales(): Promise<ArtistSalesRecord[]> {
     }
   >();
 
-  for (const row of (data || []) as unknown as SaleRow[]) {
+  for (const row of data as SaleRow[]) {
     if (!row.artworks) continue;
 
     const artistValue = row.artworks.artists;

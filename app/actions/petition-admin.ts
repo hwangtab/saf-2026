@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { PETITION_OH_YOON_PATH, PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
+import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 
 const ADMIN_PATH = '/admin/petition/oh-yoon';
 
@@ -141,23 +142,43 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
   const t = await getTranslations('admin.petition');
   const admin = createSupabaseAdminClient();
 
-  const baseQuery = admin
-    .from('petition_signatures')
-    .select(
-      'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at'
-    )
-    .eq('petition_slug', PETITION_OH_YOON_SLUG)
-    .order('created_at', { ascending: true });
-
-  const { data, error } =
-    mode === 'committee' ? await baseQuery.eq('is_committee', true) : await baseQuery;
-
-  if (error) {
-    console.error('[petition-admin] csv error:', error);
-    return { ok: false, message: t('errorCsvFailed') };
+  // PostgREST db-max-rows=1000 한도 우회 — 단발 select는 1000행만 반환되므로 batch fetch.
+  // 청원 4000+건 CSV 다운로드가 1000건만 포함되던 버그 수정.
+  let csvError: unknown = null;
+  let rows: Array<{
+    id: string;
+    full_name: string | null;
+    email: string | null;
+    phone: string | null;
+    region_top: string | null;
+    region_sub: string | null;
+    is_committee: boolean | null;
+    message: string | null;
+    message_public: boolean | null;
+    is_masked: boolean | null;
+    created_at: string | null;
+  }> = [];
+  try {
+    const result = await fetchAllInBatches((from, to) => {
+      const q = admin
+        .from('petition_signatures')
+        .select(
+          'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at'
+        )
+        .eq('petition_slug', PETITION_OH_YOON_SLUG)
+        .order('created_at', { ascending: true })
+        .range(from, to);
+      return mode === 'committee' ? q.eq('is_committee', true) : q;
+    });
+    rows = result.data;
+  } catch (e) {
+    csvError = e;
   }
 
-  const rows = data ?? [];
+  if (csvError) {
+    console.error('[petition-admin] csv error:', csvError);
+    return { ok: false, message: t('errorCsvFailed') };
+  }
   const today = new Date().toISOString().slice(0, 10);
 
   let csv: string;
@@ -178,7 +199,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
         '마스킹',
       ],
       rows.map((r) => [
-        new Date(r.created_at).toLocaleString('ko-KR'),
+        r.created_at ? new Date(r.created_at).toLocaleString('ko-KR') : '',
         r.full_name,
         r.email,
         r.phone ?? '',
@@ -200,7 +221,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
     csv = buildCsv(
       ['서명일', '시·도', '시·군·구', '추진위원여부', '메시지(공개동의분만)'],
       rows.map((r) => [
-        new Date(r.created_at).toLocaleString('ko-KR'),
+        r.created_at ? new Date(r.created_at).toLocaleString('ko-KR') : '',
         r.region_top,
         r.region_sub ?? '',
         r.is_committee ? 'Y' : '',
@@ -222,7 +243,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
         r.phone ?? '',
         r.region_top,
         r.region_sub ?? '',
-        new Date(r.created_at).toLocaleString('ko-KR'),
+        r.created_at ? new Date(r.created_at).toLocaleString('ko-KR') : '',
       ])
     );
     filename = `petition-oh-yoon-committee-${today}.csv`;

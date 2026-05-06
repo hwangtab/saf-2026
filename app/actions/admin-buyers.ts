@@ -1,6 +1,7 @@
 'use server';
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
+import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 
 export type BuyerRecord = {
   buyerName: string;
@@ -33,22 +34,35 @@ export async function getAllBuyers(): Promise<BuyerRecord[]> {
   await requireAdmin();
   const supabase = await requireAdminClient();
 
-  let { data, error } = await supabase
-    .from('artwork_sales')
-    .select('id, artwork_id, sale_price, quantity, sold_at, source, buyer_name, buyer_phone')
-    .not('buyer_name', 'is', null)
-    .is('voided_at', null)
-    .order('sold_at', { ascending: true });
-
-  if (error && error.code === '42703' && error.message?.includes('voided_at')) {
-    ({ data, error } = await supabase
+  // PostgREST db-max-rows=1000 한도 우회 — artwork_sales가 1000+로 누적되면 단발 select가
+  // 잘려 buyer 집계가 부분 결과로 송출되는 문제 예방. batch fetch로 전부 받음.
+  const buildSalesQuery = (from: number, to: number, includeVoidedFilter: boolean) => {
+    const q = supabase
       .from('artwork_sales')
       .select('id, artwork_id, sale_price, quantity, sold_at, source, buyer_name, buyer_phone')
       .not('buyer_name', 'is', null)
-      .order('sold_at', { ascending: true }));
-  }
+      .order('sold_at', { ascending: true })
+      .range(from, to);
+    return includeVoidedFilter ? q.is('voided_at', null) : q;
+  };
 
-  if (error) throw error;
+  let data: SaleRow[] = [];
+  try {
+    const result = await fetchAllInBatches<SaleRow>((from, to) => buildSalesQuery(from, to, true));
+    data = result.data;
+  } catch (err) {
+    // voided_at 컬럼 없는 구형 스키마 fallback (42703 = undefined column)
+    const code = (err as { code?: string } | null)?.code;
+    const message = (err as { message?: string } | null)?.message;
+    if (code === '42703' && message?.includes('voided_at')) {
+      const result = await fetchAllInBatches<SaleRow>((from, to) =>
+        buildSalesQuery(from, to, false)
+      );
+      data = result.data;
+    } else {
+      throw err;
+    }
+  }
 
   const buyerMap = new Map<
     string,
@@ -65,7 +79,7 @@ export async function getAllBuyers(): Promise<BuyerRecord[]> {
     }
   >();
 
-  for (const row of (data || []) as SaleRow[]) {
+  for (const row of data) {
     const name = row.buyer_name?.trim();
     if (!name) continue;
 

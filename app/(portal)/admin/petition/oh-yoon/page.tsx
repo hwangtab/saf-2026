@@ -1,45 +1,12 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { PETITION_OH_YOON_GOAL, PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
+import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 
 import PetitionAdminClient from './_components/PetitionAdminClient';
 import type { AdminBootstrap } from './_components/types';
 
 export const dynamic = 'force-dynamic';
-
-/**
- * PostgREST `db-max-rows=1000` 서버 한도를 우회하기 위한 페이지네이션 batch fetch.
- * .range(0, 49999) 같은 클라이언트 헤더는 무시되고 1000개만 반환되던 문제 해결.
- *
- * @param buildQuery (from, to)를 받아 그 range로 query를 실행하는 함수.
- *   첫 호출 결과의 count를 그대로 반환(전체 카운트는 한 번만 받으면 충분).
- */
-async function fetchAllInBatches<T>(
-  // supabase 쿼리 빌더는 PromiseLike — Promise 직접 반환 아님
-  buildQuery: (
-    from: number,
-    to: number
-  ) => PromiseLike<{ data: T[] | null; error: unknown; count?: number | null }>,
-  pageSize = 1000,
-  hardLimit = 50_000
-): Promise<{ data: T[]; count: number | null }> {
-  const all: T[] = [];
-  let count: number | null = null;
-  let from = 0;
-
-  while (from < hardLimit) {
-    const to = Math.min(from + pageSize - 1, hardLimit - 1);
-    const result = await buildQuery(from, to);
-    if (result.error) throw result.error;
-    if (count == null && typeof result.count === 'number') count = result.count;
-    if (!result.data || result.data.length === 0) break;
-    all.push(...result.data);
-    if (result.data.length < pageSize) break;
-    from = to + 1;
-  }
-
-  return { data: all, count };
-}
 
 export default async function PetitionAdminPage() {
   await requireAdmin();
