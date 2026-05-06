@@ -110,6 +110,21 @@ const nextConfig = {
         source: '/_next/static/:path*',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       },
+      // 공개 페이지의 Cache-Control에서 `no-store` 제거해 bfcache(뒤로가기 즉시 복원) 허용.
+      // 동적 라우트(getLocale 등) 기본값 `private, no-cache, no-store, max-age=0, must-revalidate`은
+      // bfcache를 차단(Lighthouse: "Page prevented back/forward cache restoration", score 0).
+      // `no-cache`만 남기면 매 요청 revalidation은 그대로 강제하면서 bfcache는 허용된다.
+      // portal/auth/api/static 영역은 매칭 제외해서 personalised 응답 보호 유지.
+      {
+        source:
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|api|_next).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'private, no-cache, max-age=0, must-revalidate',
+          },
+        ],
+      },
       {
         source: '/(.*)',
         headers: [
