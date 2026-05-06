@@ -3,7 +3,6 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
-import BrandLoader from '@/components/common/BrandLoader';
 import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
@@ -144,10 +143,11 @@ export default async function Home() {
         </div>
       </Section>
 
-      {/* Category Artwork Sections */}
-      <Suspense fallback={<BrandLoader minHeight="60vh" />}>
-        <CategorySections />
-      </Suspense>
+      {/* Category Artwork Sections — 직접 await로 SSR. 이전 Suspense fallback(60vh)
+          → 실제 콘텐츠(약 350vh) 전환 시 290vh layout shift → CLS 1.0 → GSC 100% URL
+          CLS 회귀 회복. ISR 캐시(revalidate=3600)라 서버 응답 빠르니 streaming 이득보다
+          정적 SSR이 CWV에 유리. */}
+      <CategorySections />
 
       {/* Impact Stats + CTA */}
       <Section variant="white" prevVariant="canvas" className="pb-20">
@@ -183,9 +183,9 @@ export default async function Home() {
       <Section variant="canvas" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('faqTitle')}</SectionTitle>
-          <Suspense fallback={<BrandLoader minHeight="30vh" />}>
-            <HomeFAQSection locale={locale} />
-          </Suspense>
+          {/* FAQ도 동일 — Suspense fallback(30vh) → real content 변동으로 CLS 누적.
+              직접 await로 정적 렌더 (FAQ 데이터도 ISR 캐시되어 fast). */}
+          <HomeFAQSection locale={locale} />
         </div>
       </Section>
 
