@@ -16,6 +16,8 @@ import { AdminCard } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 import { cn } from '@/lib/utils/cn';
+import { ArtistNoticeFieldset } from './_NoticeFieldset';
+import { NOTICE_TYPES, type NoticeType } from '@/lib/artist-notice';
 
 type Artist = {
   id: string;
@@ -31,6 +33,13 @@ type Artist = {
   instagram: string | null;
   homepage: string | null;
   user_id: string | null;
+  notice_enabled?: boolean | null;
+  notice_type?: string | null;
+  notice_message?: string | null;
+  notice_message_en?: string | null;
+  notice_active_until?: string | null;
+  notice_updated_at?: string | null;
+  notice_updated_by?: string | null;
   profiles: {
     id: string;
     name: string;
@@ -424,6 +433,24 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
         <div className="rounded-lg border border-primary-soft bg-primary-surface p-4 text-sm text-primary-strong">
           프로필 이미지 및 사용자 연동은 작가 정보를 먼저 저장한 뒤 진행할 수 있습니다.
         </div>
+      )}
+
+      {/* 작가 페이지·작품 상세 공지 */}
+      {isEditing && artist.id && (
+        <ArtistNoticeFieldset
+          artistId={artist.id}
+          artistName={artist.name_ko ?? null}
+          initial={{
+            enabled: Boolean(artist.notice_enabled),
+            type: (NOTICE_TYPES as readonly string[]).includes(artist.notice_type ?? '')
+              ? (artist.notice_type as NoticeType)
+              : null,
+            message: artist.notice_message ?? null,
+            message_en: artist.notice_message_en ?? null,
+            active_until: artist.notice_active_until ?? null,
+            updated_at: artist.notice_updated_at ?? null,
+          }}
+        />
       )}
 
       {/* Confirmation Modals */}

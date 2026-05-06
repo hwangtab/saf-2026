@@ -6,6 +6,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1';
   };
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
       activity_logs: {
@@ -208,6 +233,13 @@ export type Database = {
           instagram: string | null;
           name_en: string | null;
           name_ko: string;
+          notice_active_until: string | null;
+          notice_enabled: boolean;
+          notice_message: string | null;
+          notice_message_en: string | null;
+          notice_type: string | null;
+          notice_updated_at: string | null;
+          notice_updated_by: string | null;
           owner_id: string | null;
           profile_image: string | null;
           updated_at: string | null;
@@ -226,6 +258,13 @@ export type Database = {
           instagram?: string | null;
           name_en?: string | null;
           name_ko: string;
+          notice_active_until?: string | null;
+          notice_enabled?: boolean;
+          notice_message?: string | null;
+          notice_message_en?: string | null;
+          notice_type?: string | null;
+          notice_updated_at?: string | null;
+          notice_updated_by?: string | null;
           owner_id?: string | null;
           profile_image?: string | null;
           updated_at?: string | null;
@@ -244,12 +283,26 @@ export type Database = {
           instagram?: string | null;
           name_en?: string | null;
           name_ko?: string;
+          notice_active_until?: string | null;
+          notice_enabled?: boolean;
+          notice_message?: string | null;
+          notice_message_en?: string | null;
+          notice_type?: string | null;
+          notice_updated_at?: string | null;
+          notice_updated_by?: string | null;
           owner_id?: string | null;
           profile_image?: string | null;
           updated_at?: string | null;
           user_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: 'artists_notice_updated_by_fkey';
+            columns: ['notice_updated_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'artists_user_id_fkey';
             columns: ['user_id'];
@@ -1476,6 +1529,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       artwork_status: ['available', 'sold', 'reserved', 'hidden'],

@@ -4,8 +4,10 @@ import { useMemo, useOptimistic, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
-import { deleteArtist } from '@/app/actions/admin-artists';
+import { ChevronUp, ChevronDown, ChevronsUpDown, EyeOff } from 'lucide-react';
+import { deleteArtist, toggleArtistNotice } from '@/app/actions/admin-artists';
+import { useToast } from '@/lib/hooks/useToast';
+import { cn } from '@/lib/utils/cn';
 import SafeAvatarImage from '@/components/common/SafeAvatarImage';
 import {
   AdminBadge,
@@ -27,7 +29,31 @@ type ArtistItem = {
   contact_email: string | null;
   user_id: string | null;
   artwork_count: number;
+  notice_enabled?: boolean | null;
+  notice_type?: string | null;
+  notice_message?: string | null;
+  notice_active_until?: string | null;
 };
+
+const NOTICE_DOT_COLORS: Record<string, string> = {
+  info: 'bg-primary',
+  warning: 'bg-sun-strong',
+  urgent: 'bg-danger-a11y',
+};
+
+function isNoticeExpiringSoon(activeUntil: string | null | undefined): boolean {
+  if (!activeUntil) return false;
+  const until = new Date(activeUntil);
+  if (Number.isNaN(until.getTime())) return false;
+  const hoursLeft = (until.getTime() - Date.now()) / (1000 * 60 * 60);
+  return hoursLeft > 0 && hoursLeft <= 48;
+}
+
+function isNoticeActive(artist: ArtistItem): boolean {
+  if (!artist.notice_enabled || !artist.notice_message) return false;
+  if (!artist.notice_active_until) return true;
+  return new Date(artist.notice_active_until).getTime() > Date.now();
+}
 
 type SortKey = 'artist_info' | 'account_link' | 'artwork_count';
 type SortDirection = 'asc' | 'desc';
@@ -35,6 +61,7 @@ type SortDirection = 'asc' | 'desc';
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   const locale = useLocale();
   const t = useTranslations('admin.artists');
+  const toast = useToast();
   const [, startTransition] = useTransition();
   const [optimisticArtists, removeOptimistic] = useOptimistic(
     artists,
@@ -45,9 +72,29 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>('artist_info');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [onlyWithNotice, setOnlyWithNotice] = useState(false);
+  const [noticeTogglingId, setNoticeTogglingId] = useState<string | null>(null);
   const router = useRouter();
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
+  const activeNoticeCount = useMemo(
+    () => optimisticArtists.filter(isNoticeActive).length,
+    [optimisticArtists]
+  );
+
+  const handleToggleNoticeOff = async (artist: ArtistItem) => {
+    setNoticeTogglingId(artist.id);
+    try {
+      await toggleArtistNotice(artist.id, false);
+      toast.success(`${artist.name_ko ?? '작가'}의 공지를 비활성화했습니다`);
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '공지 비활성화에 실패했습니다');
+    } finally {
+      setNoticeTogglingId(null);
+    }
+  };
 
   const handleDelete = async () => {
     if (!deleteTargetId) return;
@@ -73,6 +120,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
 
   const filtered = useMemo(() => {
     return optimisticArtists.filter((artist) => {
+      if (onlyWithNotice && !isNoticeActive(artist)) return false;
       if (!query.trim()) return true;
       return matchesAnySearch(query, [
         artist.name_ko,
@@ -81,7 +129,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         artist.contact_email,
       ]);
     });
-  }, [optimisticArtists, query]);
+  }, [optimisticArtists, query, onlyWithNotice]);
 
   const sortedArtists = useMemo(() => {
     const sorted = [...filtered];
@@ -195,6 +243,17 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
             <AdminBadge tone="info">{t('count', { count: filtered.length })}</AdminBadge>
           </div>
 
+          <label className="inline-flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={onlyWithNotice}
+              onChange={(e) => setOnlyWithNotice(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-primary-a11y focus:ring-primary-a11y"
+            />
+            <span>공지 활성만 보기</span>
+            <span className="text-xs text-gray-400">({activeNoticeCount})</span>
+          </label>
+
           <div className="relative max-w-sm w-full">
             <label htmlFor="search-artists" className="sr-only">
               {t('searchArtists')}
@@ -291,6 +350,12 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                     </span>
                   </button>
                 </th>
+                <th
+                  scope="col"
+                  className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  공지
+                </th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">{t('manage')}</span>
                 </th>
@@ -299,7 +364,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedArtists.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-0">
+                  <td colSpan={7} className="px-6 py-0">
                     <AdminEmptyState title={t('emptyTitle')} description={t('emptyDescription')} />
                   </td>
                 </tr>
@@ -361,8 +426,47 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                         {t('artworkCountValue', { count: artist.artwork_count })}
                       </span>
                     </td>
+                    <td className="hidden sm:table-cell px-6 py-4 text-sm">
+                      {isNoticeActive(artist) ? (
+                        <Link
+                          href={`/admin/artists/${artist.id}?focus=notice`}
+                          className="group inline-flex items-center gap-2 max-w-[260px]"
+                          title={artist.notice_message ?? undefined}
+                        >
+                          <span className="relative flex h-2 w-2 shrink-0">
+                            {isNoticeExpiringSoon(artist.notice_active_until) && (
+                              <span className="absolute inline-flex h-full w-full rounded-full bg-sun-strong opacity-75 animate-ping" />
+                            )}
+                            <span
+                              className={cn(
+                                'relative inline-flex h-2 w-2 rounded-full',
+                                NOTICE_DOT_COLORS[artist.notice_type ?? 'info'] ?? 'bg-primary'
+                              )}
+                            />
+                          </span>
+                          <span className="truncate text-gray-700 group-hover:text-primary-a11y">
+                            {artist.notice_message}
+                          </span>
+                        </Link>
+                      ) : (
+                        <span className="text-gray-300">-</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end items-center gap-2">
+                        {isNoticeActive(artist) && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleNoticeOff(artist)}
+                            disabled={noticeTogglingId !== null}
+                            className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-xs text-gray-500 hover:bg-gray-100 hover:text-charcoal disabled:opacity-50"
+                            aria-label={`${artist.name_ko ?? '작가'} 공지 비활성화`}
+                            title="공지 비활성화 (메시지는 보존)"
+                          >
+                            <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                            {noticeTogglingId === artist.id ? '처리 중…' : '공지 끄기'}
+                          </button>
+                        )}
                         <Link
                           href={`/admin/artists/${artist.id}`}
                           className="text-gray-500 hover:text-primary-a11y px-3 py-1.5 rounded-md hover:bg-primary-surface transition-colors"

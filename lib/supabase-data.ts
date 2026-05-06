@@ -14,6 +14,7 @@ import { exhibitionReviews } from '@/content/reviews';
 import type { Artwork, ExhibitionReview, NewsArticle, Story, TestimonialCategory } from '@/types';
 import { stories as fallbackStories } from '@/content/stories';
 import { containsHangul } from '@/lib/search-utils';
+import type { ArtistNoticeRecord } from '@/lib/artist-notice';
 
 type ArtworkRow = {
   id: string;
@@ -845,6 +846,47 @@ const getSupabaseArtistExternalLinksCached = unstable_cache(
 export const getSupabaseArtistExternalLinks = cache(
   async (nameKo: string): Promise<ArtistExternalLinkRow | null> =>
     getSupabaseArtistExternalLinksCached(nameKo)
+);
+
+/**
+ * 작가의 운영 공지 필드를 name_ko로 조회.
+ * 작가 페이지·작품 상세 페이지에서 동일한 공지를 노출하기 위한 단일 출처.
+ * 활성 판정은 호출 측에서 `lib/artist-notice.ts`의 `resolveActiveNotice`로 처리.
+ */
+const NOTICE_SELECT_COLUMNS =
+  'notice_enabled, notice_type, notice_message, notice_message_en, notice_active_until';
+
+const getSupabaseArtistNoticeByNameUncached = async (
+  nameKo: string
+): Promise<ArtistNoticeRecord | null> => {
+  if (!hasSupabaseConfig || !supabase) return null;
+
+  const { data, error } = await supabase
+    .from('artists')
+    .select(NOTICE_SELECT_COLUMNS)
+    .eq('name_ko', nameKo)
+    .maybeSingle();
+
+  if (error) {
+    console.error(`Error fetching artist notice for ${nameKo}:`, error);
+    return null;
+  }
+  return (data as ArtistNoticeRecord | null) ?? null;
+};
+
+const getSupabaseArtistNoticeByNameCached = unstable_cache(
+  async (nameKo: string) => getSupabaseArtistNoticeByNameUncached(nameKo),
+  ['supabase-artist-notice-v1'],
+  {
+    // 짧은 캐시 — 공지 토글 시 revalidatePath로 즉시 갱신, 이 캐시는 보조 안전망
+    revalidate: 60,
+    tags: ['artists', 'artist-notice'],
+  }
+);
+
+export const getSupabaseArtistNoticeByName = cache(
+  async (nameKo: string): Promise<ArtistNoticeRecord | null> =>
+    getSupabaseArtistNoticeByNameCached(nameKo)
 );
 
 export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<ArtistRow[]> => {

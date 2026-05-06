@@ -13,7 +13,10 @@ import {
   getTotalSoldCount,
   getSupabaseTestimonials,
   getSupabaseStories,
+  getSupabaseArtistNoticeByName,
 } from '@/lib/supabase-data';
+import { resolveActiveNotice } from '@/lib/artist-notice';
+import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import SafeImage from '@/components/common/SafeImage';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
@@ -119,12 +122,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
   }
 
   // artwork 확정 후 관련 작품만 병렬 fetch (이전 전체 330개 fetch → ~20개로 축소)
-  const [artistWorks, categoryWorks] = await Promise.all([
+  const [artistWorks, categoryWorks, noticeRecord] = await Promise.all([
     getSupabaseArtworksByArtist(artwork.artist),
     artwork.category
       ? getArtworksByCategoryLight(artwork.category, 20)
       : Promise.resolve([] as Artwork[]),
+    getSupabaseArtistNoticeByName(artwork.artist),
   ]);
+  const notice = resolveActiveNotice(noticeRecord, locale === 'en' ? 'en' : 'ko');
 
   const flatTestimonials = testimonialCategories
     .flatMap((c) => c.items)
@@ -290,6 +295,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
         >
           <ArtworkDetailNav artist={displayArtist} title={displayTitle} />
         </Suspense>
+
+        {notice && (
+          <div className="container-max pt-6 md:pt-8">
+            <ArtistNoticeBanner type={notice.type} message={notice.message} />
+          </div>
+        )}
 
         <article className="container-max pt-12 md:pt-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">

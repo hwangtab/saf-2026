@@ -4,7 +4,10 @@ import {
   getAvailableArtworkCategories,
   getSupabaseStories,
   getSupabaseArtistExternalLinks,
+  getSupabaseArtistNoticeByName,
 } from '@/lib/supabase-data';
+import { resolveActiveNotice } from '@/lib/artist-notice';
+import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import { getArtistExternalLinks } from '@/lib/artist-external-links';
 import { getArticleUrlsByArtist, getArticlesByArtist } from '@/content/artist-articles';
 import RelatedArticles from '@/components/features/RelatedArticles';
@@ -279,7 +282,11 @@ export default async function ArtistPage({ params }: Props) {
   // 2) lib/artist-external-links.ts (거장 정적 매핑)
   // 3) Supabase artists.homepage / artists.instagram (작가 본인 SNS)
   // GSC Performance상 작가 검색 노출은 다수인데 page 2~3에 머무는 페이지들 다수 — 이를 page 1로 끌어올리는 레버.
-  const artistMeta = await getSupabaseArtistExternalLinks(artistName);
+  const [artistMeta, noticeRecord] = await Promise.all([
+    getSupabaseArtistExternalLinks(artistName),
+    getSupabaseArtistNoticeByName(artistName),
+  ]);
+  const notice = resolveActiveNotice(noticeRecord, locale === 'en' ? 'en' : 'ko');
   const sameAs: string[] = [
     ...getArticleUrlsByArtist(artistName),
     ...getArtistExternalLinks(artistName),
@@ -385,6 +392,14 @@ export default async function ArtistPage({ params }: Props) {
           description={t('shareDescription', { artist: formattedName })}
         />
       </PageHero>
+
+      {notice && (
+        <Section variant="white" prevVariant="white" className="pt-8 pb-4 md:pt-10 md:pb-6">
+          <div className="container-max">
+            <ArtistNoticeBanner type={notice.type} message={notice.message} />
+          </div>
+        </Section>
+      )}
 
       {/* Gallery Section */}
       <Section variant="primary-surface" prevVariant="white">

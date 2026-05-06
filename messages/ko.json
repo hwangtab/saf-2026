@@ -330,7 +330,12 @@
     "priceRangeSingle": "{price}원",
     "priceRangeSpan": "{min}~{max}원",
     "originalKoreanDescription": "프로필 상세 내용은 한국어 원문으로 제공됩니다.",
-    "metaImageAlt": "{artist}의 작품 - {title}"
+    "metaImageAlt": "{artist}의 작품 - {title}",
+    "notice": {
+      "info": "공지",
+      "warning": "주의",
+      "urgent": "중요"
+    }
   },
   "relatedArticles": {
     "sectionTitle": "작가 관련 자료",

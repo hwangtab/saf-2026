@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { NOTICE_TYPES, type NoticeType } from '@/lib/artist-notice';
 import {
   hasComposedTrailingConsonantQuery,
   hasHangulJamo,
@@ -522,6 +523,216 @@ export async function unlinkArtistFromUser(artistId: string) {
     {
       beforeSnapshot: oldArtist,
       afterSnapshot: newArtist,
+      reversible: true,
+    }
+  );
+
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 작가 페이지 + 작품 상세 페이지 공지 (artist notice)
+// migration 20260430120000_artist_notice.sql 참조
+// ─────────────────────────────────────────────────────────────────────────────
+
+const NOTICE_MESSAGE_MAX = 280;
+
+type ArtistNoticeRow = {
+  id: string;
+  name_ko: string | null;
+  notice_enabled: boolean | null;
+  notice_type: string | null;
+  notice_message: string | null;
+  notice_message_en: string | null;
+  notice_active_until: string | null;
+  notice_updated_at: string | null;
+  notice_updated_by: string | null;
+};
+
+async function fetchArtistNoticeRow(
+  supabase: Awaited<ReturnType<typeof requireAdminClient>>,
+  id: string
+): Promise<ArtistNoticeRow | null> {
+  const { data, error } = await supabase
+    .from('artists')
+    .select(
+      'id, name_ko, notice_enabled, notice_type, notice_message, notice_message_en, notice_active_until, notice_updated_at, notice_updated_by'
+    )
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data as ArtistNoticeRow | null;
+}
+
+function revalidateArtistNoticeSurfaces(artistName: string | null | undefined) {
+  // 공지를 변경하면 작가 페이지·갤러리·작품 상세 페이지 모두 갱신되어야 함
+  revalidatePublicArtworkSurfaces([artistName]);
+  // getSupabaseArtistNoticeByName 캐시 무효화 + 작품 상세 페이지의 artists 캐시
+  revalidateTag('artist-notice', 'max');
+  revalidateTag('artists', 'max');
+  revalidatePath('/admin/artists');
+}
+
+function parseNoticeActiveUntil(input: string | null | undefined): string | null {
+  if (!input) return null;
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+  const date = new Date(trimmed);
+  if (Number.isNaN(date.getTime())) {
+    throw new Error('만료 시각 형식이 올바르지 않습니다.');
+  }
+  return date.toISOString();
+}
+
+export async function setArtistNotice(
+  artistId: string,
+  data: {
+    type: NoticeType;
+    message: string;
+    message_en?: string | null;
+    active_until?: string | null;
+    enabled: boolean;
+  }
+) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  if (!(NOTICE_TYPES as readonly string[]).includes(data.type)) {
+    throw new Error('공지 종류가 올바르지 않습니다.');
+  }
+
+  const message = (data.message ?? '').trim();
+  if (!message) throw new Error('공지 메시지(한국어)를 입력해주세요.');
+  if (message.length > NOTICE_MESSAGE_MAX) {
+    throw new Error(`공지 메시지는 ${NOTICE_MESSAGE_MAX}자 이내로 입력해주세요.`);
+  }
+  const message_en_raw = (data.message_en ?? '').trim();
+  if (message_en_raw.length > NOTICE_MESSAGE_MAX) {
+    throw new Error(`영문 공지 메시지는 ${NOTICE_MESSAGE_MAX}자 이내로 입력해주세요.`);
+  }
+  const message_en = message_en_raw || null;
+  const active_until = parseNoticeActiveUntil(data.active_until);
+
+  const oldRow = await fetchArtistNoticeRow(supabase, artistId);
+  if (!oldRow) throw new Error('작가를 찾을 수 없습니다.');
+
+  const { error } = await supabase
+    .from('artists')
+    .update({
+      notice_enabled: Boolean(data.enabled),
+      notice_type: data.type,
+      notice_message: message,
+      notice_message_en: message_en,
+      notice_active_until: active_until,
+      notice_updated_at: new Date().toISOString(),
+      notice_updated_by: admin.id,
+    })
+    .eq('id', artistId);
+  if (error) throw error;
+
+  const newRow = await fetchArtistNoticeRow(supabase, artistId);
+  revalidateArtistNoticeSurfaces(oldRow.name_ko);
+
+  await logAdminAction(
+    'artist_notice_set',
+    'artist',
+    artistId,
+    {
+      artist_name: oldRow.name_ko,
+      type: data.type,
+      enabled: data.enabled,
+      has_active_until: Boolean(active_until),
+    },
+    admin.id,
+    {
+      summary: `작가 공지 저장: ${oldRow.name_ko || artistId} (${data.type}, ${data.enabled ? '활성' : '비활성'})`,
+      beforeSnapshot: oldRow,
+      afterSnapshot: newRow,
+      reversible: true,
+    }
+  );
+
+  return { success: true };
+}
+
+export async function toggleArtistNotice(artistId: string, enabled: boolean) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const oldRow = await fetchArtistNoticeRow(supabase, artistId);
+  if (!oldRow) throw new Error('작가를 찾을 수 없습니다.');
+
+  if (enabled && !(oldRow.notice_message ?? '').trim()) {
+    throw new Error('공지 메시지가 비어 있어 활성화할 수 없습니다.');
+  }
+
+  const { error } = await supabase
+    .from('artists')
+    .update({
+      notice_enabled: enabled,
+      notice_updated_at: new Date().toISOString(),
+      notice_updated_by: admin.id,
+    })
+    .eq('id', artistId);
+  if (error) throw error;
+
+  const newRow = await fetchArtistNoticeRow(supabase, artistId);
+  revalidateArtistNoticeSurfaces(oldRow.name_ko);
+
+  await logAdminAction(
+    'artist_notice_toggled',
+    'artist',
+    artistId,
+    {
+      artist_name: oldRow.name_ko,
+      enabled,
+    },
+    admin.id,
+    {
+      summary: `작가 공지 ${enabled ? '활성' : '비활성'}: ${oldRow.name_ko || artistId}`,
+      beforeSnapshot: oldRow,
+      afterSnapshot: newRow,
+      reversible: true,
+    }
+  );
+
+  return { success: true };
+}
+
+export async function clearArtistNotice(artistId: string) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const oldRow = await fetchArtistNoticeRow(supabase, artistId);
+  if (!oldRow) throw new Error('작가를 찾을 수 없습니다.');
+
+  const { error } = await supabase
+    .from('artists')
+    .update({
+      notice_enabled: false,
+      notice_type: null,
+      notice_message: null,
+      notice_message_en: null,
+      notice_active_until: null,
+      notice_updated_at: new Date().toISOString(),
+      notice_updated_by: admin.id,
+    })
+    .eq('id', artistId);
+  if (error) throw error;
+
+  const newRow = await fetchArtistNoticeRow(supabase, artistId);
+  revalidateArtistNoticeSurfaces(oldRow.name_ko);
+
+  await logAdminAction(
+    'artist_notice_cleared',
+    'artist',
+    artistId,
+    { artist_name: oldRow.name_ko },
+    admin.id,
+    {
+      summary: `작가 공지 삭제: ${oldRow.name_ko || artistId}`,
+      beforeSnapshot: oldRow,
+      afterSnapshot: newRow,
       reversible: true,
     }
   );

@@ -330,7 +330,12 @@
     "priceRangeSingle": "KRW {price}",
     "priceRangeSpan": "KRW {min}–{max}",
     "originalKoreanDescription": "Profile details are currently available in Korean.",
-    "metaImageAlt": "Artwork by {artist} - {title}"
+    "metaImageAlt": "Artwork by {artist} - {title}",
+    "notice": {
+      "info": "Notice",
+      "warning": "Warning",
+      "urgent": "Important"
+    }
   },
   "relatedArticles": {
     "sectionTitle": "Related materials",
