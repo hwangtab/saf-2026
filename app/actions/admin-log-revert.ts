@@ -86,6 +86,15 @@ const ARTIST_REVERT_KEYS = [
   'contact_email',
   'instagram',
   'homepage',
+  // 작가 페이지 공지 (artist_notice_set/toggled/cleared revert 처리용)
+  // buildPatch가 snapshot에 있는 키만 픽하므로 일반 update snapshot에 notice 컬럼이 없어도 무해
+  'notice_enabled',
+  'notice_type',
+  'notice_message',
+  'notice_message_en',
+  'notice_active_until',
+  'notice_updated_at',
+  'notice_updated_by',
 ] as const;
 
 const ARTIST_RESTORE_KEYS = [
