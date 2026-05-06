@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { NOTICE_TYPES, type NoticeType } from '@/lib/artist-notice';
+import type { Tables } from '@/types/supabase';
 import {
   hasComposedTrailingConsonantQuery,
   hasHangulJamo,
@@ -537,22 +538,24 @@ export async function unlinkArtistFromUser(artistId: string) {
 
 const NOTICE_MESSAGE_MAX = 280;
 
-type ArtistNoticeRow = {
-  id: string;
-  name_ko: string | null;
-  notice_enabled: boolean | null;
-  notice_type: string | null;
-  notice_message: string | null;
-  notice_message_en: string | null;
-  notice_active_until: string | null;
-  notice_updated_at: string | null;
-  notice_updated_by: string | null;
-};
+// Supabase 자동 생성 타입(`types/supabase.ts`)에서 파생 — 컬럼 추가/타입 변경 시 컴파일 에러로 즉시 감지
+type ArtistNoticeRow = Pick<
+  Tables<'artists'>,
+  | 'id'
+  | 'name_ko'
+  | 'notice_enabled'
+  | 'notice_type'
+  | 'notice_message'
+  | 'notice_message_en'
+  | 'notice_active_until'
+  | 'notice_updated_at'
+  | 'notice_updated_by'
+>;
 
 async function fetchArtistNoticeRow(
   supabase: Awaited<ReturnType<typeof requireAdminClient>>,
   id: string
-): Promise<ArtistNoticeRow | null> {
+): Promise<ArtistNoticeRow> {
   const { data, error } = await supabase
     .from('artists')
     .select(
@@ -561,7 +564,7 @@ async function fetchArtistNoticeRow(
     .eq('id', id)
     .single();
   if (error) throw error;
-  return data as ArtistNoticeRow | null;
+  return data;
 }
 
 function revalidateArtistNoticeSurfaces(artistName: string | null | undefined) {
@@ -573,6 +576,12 @@ function revalidateArtistNoticeSurfaces(artistName: string | null | undefined) {
   revalidatePath('/admin/artists');
 }
 
+/**
+ * @param input ISO 8601 문자열만 허용 (예: '2026-05-01T01:00:00.000Z').
+ *   클라이언트의 datetime-local input(timezone 없는 'YYYY-MM-DDTHH:mm')은
+ *   `_NoticeFieldset.tsx`의 `localInputToIso()`로 사용자 로컬 시간대 기준 ISO로 변환된 뒤 전달됨.
+ *   timezone 없는 raw 문자열을 직접 넘기면 서버(보통 UTC) 기준으로 파싱되어 시간대 어긋남.
+ */
 function parseNoticeActiveUntil(input: string | null | undefined): string | null {
   if (!input) return null;
   const trimmed = input.trim();

@@ -196,9 +196,13 @@ export function ArtistNoticeFieldset({ artistId, artistName, initial }: ArtistNo
       toast.error('공지 메시지를 먼저 입력하고 저장해주세요.');
       return;
     }
+    // 미저장 메시지 변경 상태에서 ON으로 토글하면 DB의 옛 메시지가 활성화될 위험.
+    // UI도 그대로 두고(setEnabled 호출 안 함) 안내 — 사용자가 [저장] 버튼으로 확정해야 함.
+    if (nextEnabled && trimmedMessage !== (initial.message ?? '').trim()) {
+      toast.info('변경된 메시지는 [저장] 버튼을 눌러 적용해주세요.');
+      return;
+    }
     setEnabled(nextEnabled);
-    // 메시지가 새로 입력된 상태(저장 전)에서 토글하면 DB에 메시지가 없을 수 있음 — full save로 처리
-    if (nextEnabled && trimmedMessage !== (initial.message ?? '').trim()) return;
     setSaving(true);
     try {
       await toggleArtistNotice(artistId, nextEnabled);
