@@ -47,7 +47,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`inline-flex items-center gap-1 whitespace-nowrap border-b-2 px-1 pt-1 text-sm font-medium transition-colors ${
+        className={`inline-flex items-center gap-1 whitespace-nowrap border-b-2 px-1 pt-1 pb-2 text-sm font-medium transition-colors ${
           isGroupActive
             ? 'border-primary-a11y text-primary-strong'
             : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
