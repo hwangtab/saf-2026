@@ -419,13 +419,8 @@ export function generateArtworkJsonLd(
       representativeOfPage: true,
     },
     description: schemaDescription.substring(0, 500),
-    sku: `SAF2026-${artwork.id}`,
-    mpn: `SAF2026-ART-${artwork.id}`,
-    countryOfOrigin: {
-      '@type': 'Country',
-      name: isEnglish ? 'South Korea' : '대한민국',
-      '@id': 'https://www.wikidata.org/wiki/Q884',
-    },
+    // sku·mpn·countryOfOrigin은 Product 전용 필드. 2026-05 Product type 제거 이후
+    // VisualArtwork 단일 타입에서는 무시되므로 함께 제거 (코드 노이즈 청소).
     brand: {
       '@type': 'Brand',
       name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
