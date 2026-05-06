@@ -12,8 +12,9 @@
     "Samsung >= 14"
   ],
   "scripts": {
-    "dev": "next dev",
-    "build": "npm run generate-changelog && next build",
+    "dev": "node scripts/build-css.mjs && next dev",
+    "build": "npm run generate-changelog && node scripts/build-css.mjs && next build",
+    "build-css": "node scripts/build-css.mjs",
     "start": "next start",
     "lint": "eslint . && npm run check:server-button-imports",
     "check:server-button-imports": "node scripts/check-server-button-imports.js",

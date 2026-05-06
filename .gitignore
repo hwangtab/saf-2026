@@ -66,3 +66,7 @@ scripts/.magazine-sql/
 
 # scripts/lighthouse-coverage.ts JSON 덤프 — 일회성 측정 산출물
 /tmp/
+
+# scripts/build-css.mjs 산출물 — prebuild 단계에서 자동 생성 (hash 포함)
+# 단, app/_css-manifest.json은 placeholder를 commit해 type-check가 missing 안 되도록 함
+/public/css/main.*.css
