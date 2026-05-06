@@ -54,12 +54,13 @@ const nextConfig = {
   reactStrictMode: true,
   async redirects() {
     return [
-      {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'saf2026.com' }],
-        destination: 'https://www.saf2026.com/:path*',
-        permanent: true,
-      },
+      // apex(saf2026.com) → www redirect 제거. 같은 redirect를 Vercel 도메인 단계에서
+      // 중복으로 걸고 있어 PSI "리디렉션 방지" 950ms 누적의 원인이었음. Vercel UI에서
+      // saf2026.com을 "Connect to environment: Production"으로 변경해 양쪽 도메인이
+      // 동일 콘텐츠를 직접 서빙하게 한다(canonical은 이미 SITE_URL=www.saf2026.com을
+      // 가리키므로 SEO 신호 통합 보장).
+      // ⚠ 이 코드 변경 + Vercel UI 변경 두 가지가 모두 적용돼야 redirect 0이 됨.
+      // 한쪽만 하면 다른 쪽이 그대로 redirect 받음.
       {
         source: '/apple-touch-icon.png',
         destination: '/images/icons/icon-192.png',
