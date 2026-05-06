@@ -383,7 +383,11 @@ export function generateArtworkJsonLd(
 
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': isInquiry ? 'VisualArtwork' : ['VisualArtwork', 'Product'],
+    // Product 타입은 review/aggregateRating 필수 — 작품은 일회성 원본/한정 에디션이라
+    // 리뷰가 축적되지 않으며, 가짜 리뷰 주입은 Google 정책 위반. 2026-05 GSC 보고에서
+    // 'review 입력란 누락' 경고가 80건+로 증가해 dual type을 끊고 VisualArtwork 단일로 통일.
+    // offers/brand/additionalProperty 등은 CreativeWork·VisualArtwork에서도 유효.
+    '@type': 'VisualArtwork',
     '@id': `${SITE_URL}/artworks/${artwork.id}`,
     name: titleForLocale,
     inLanguage: isEnglish ? 'en' : 'ko',
