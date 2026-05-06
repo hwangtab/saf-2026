@@ -114,11 +114,16 @@ function sendToGA(metric: Metric) {
   // gtag.js 로드 후 큐를 순차 처리할 때 IArguments 형태를 기대하므로 호환성 보장.
   window.dataLayer = window.dataLayer || [];
   if (typeof window.gtag !== 'function') {
-    window.gtag = function gtagStub() {
-      window.dataLayer!.push(arguments);
+    window.gtag = (...args: unknown[]) => {
+      window.dataLayer!.push(args);
     };
   }
-  window.gtag('event', 'web_vitals', eventPayload);
+  try {
+    window.gtag('event', 'web_vitals', eventPayload);
+  } catch (err) {
+    // gtag 호출 자체 실패는 흔치 않지만 silently fail 하면 진단 불가.
+    console.error('[web-vitals] gtag send failed:', err);
+  }
 }
 
 export default function WebVitalsTracker() {
@@ -134,10 +139,13 @@ export default function WebVitalsTracker() {
           window.dataLayer!.push(arguments);
         };
       }
-      window.gtag('event', 'web_vitals_mount', {
-        page_path: window.location.pathname,
-        non_interaction: true,
-      });
+      try {
+        window.gtag('event', 'web_vitals_mount', {
+          page_path: window.location.pathname,
+        });
+      } catch (err) {
+        console.error('[web-vitals] mount ping failed:', err);
+      }
     }
 
     // 각 metric은 페이지당 1회 자동 측정 후 콜백.
