@@ -36,7 +36,9 @@ export default function StoriesCategoryFilter({ locale }: { locale: 'ko' | 'en' 
       params.set('category', key);
     }
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    // scroll: false 제거 — 사용자가 깊이 스크롤한 상태에서 카테고리 클릭하면 새 결과를
+    // 화면 밖에 묻혀버려 혼란스러운 UX. Next.js 기본값(상단으로 스크롤)으로 복원.
+    router.push(query ? `${pathname}?${query}` : pathname);
   };
 
   return (
