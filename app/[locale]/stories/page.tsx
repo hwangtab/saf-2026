@@ -259,7 +259,7 @@ export default async function StoriesPage({
                           src={featuredImg}
                           alt={featuredTitle}
                           fill
-                          className="object-cover motion-safe:animate-hero-breathing transition-transform duration-500 group-hover:scale-105"
+                          className="object-cover motion-safe:animate-hero-breathing transform-gpu will-change-transform transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-charcoal to-charcoal/80 flex items-center justify-center">

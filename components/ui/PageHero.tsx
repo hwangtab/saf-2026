@@ -46,7 +46,7 @@ export default function PageHero({
   return (
     <section
       className={cn(
-        'relative min-h-[60vh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
+        'relative min-h-[60svh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
         // Gallery White Cube: 다크 hero를 단색 charcoal-deep로 — Apple/Tesla 모델
         'bg-charcoal-deep',
         className
