@@ -50,13 +50,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'cdn.eroun.net' },
     ],
   },
-  experimental: {
-    // Critical CSS 인라인 + async 로드. Next.js 내장 (beasties/critters 기반).
-    // Lighthouse render-blocking CSS 1270ms 진단 해소 시도.
-    // Tailwind utility chunk 30KiB 중 above-the-fold 분량을 <style>로 인라인,
-    // 나머지는 <link rel="stylesheet" media="print" onload>로 비동기화.
-    optimizeCss: true,
-  },
+  experimental: {},
   reactStrictMode: true,
   async redirects() {
     return [
