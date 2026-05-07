@@ -606,11 +606,6 @@ export function generateArtworkListSchema(
   pageUrl?: string
 ) {
   const isEnglish = locale === 'en';
-  const aggregateOffer = generateGalleryAggregateOffer(artworks, locale, pageUrl);
-  // Strip @context when embedding — @context is only needed at the top level of a standalone script
-  const embeddedOffer = aggregateOffer
-    ? (({ '@context': _ctx, ...rest }) => rest)(aggregateOffer as Record<string, unknown>)
-    : null;
 
   const listUrl = pageUrl ?? buildLocaleUrl('/artworks', locale);
   return {
@@ -623,8 +618,10 @@ export function generateArtworkListSchema(
       : '씨앗페 온라인에 출품된 예술가들의 작품 목록',
     numberOfItems: Math.min(artworks.length, limit),
     itemListOrder: 'https://schema.org/ItemListUnordered',
-    // Price range for art buyers
-    ...(embeddedOffer && { offers: embeddedOffer }),
+    // ItemList는 schema.org 사양상 offers 속성을 갖지 않음 — GSC가 "offers 속성은
+    // ItemList 유형의 객체로 인정되지 않는 속성" 경고 (2026-05-07). AggregateOffer는
+    // /artworks 등 갤러리 페이지에서 generateGalleryAggregateOffer()로 별도 JsonLdScript
+    // 발행 중이므로 embedding 자체를 제거 — SEO 손실 없음.
     // /artworks 페이지 HTML 페이로드 절감 — ItemList의 각 항목에서 Offers 객체(Offer+seller) 제거.
     // 작품 detail의 Product/VisualArtwork schema에 이미 가격·재고·판매자 마크업이 풍부하므로
     // ItemList는 url+name+image만 남겨 Google Carousel rich result 자격은 유지하면서 페이로드 ~50% 절감.
