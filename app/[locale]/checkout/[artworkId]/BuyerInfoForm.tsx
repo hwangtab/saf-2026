@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 
@@ -39,7 +39,10 @@ declare global {
           zonecode: string;
           userSelectedType: 'R' | 'J';
         }) => void;
-      }) => { open(): void };
+        onclose?: (state: 'FORCE_CLOSE' | 'COMPLETE_CLOSE') => void;
+        width?: string | number;
+        height?: string | number;
+      }) => { open(): void; embed(element: HTMLElement): void };
     };
   }
 }
@@ -68,12 +71,49 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
     shippingMemo: '',
   });
   const [sameAsBuyer, setSameAsBuyer] = useState(true);
+  const [addressLayerOpen, setAddressLayerOpen] = useState(false);
+  const addressLayerRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
     ...form,
     shippingName: sameAsBuyer ? form.buyerName : form.shippingName,
     shippingPhone: sameAsBuyer ? form.buyerPhone : form.shippingPhone,
   }));
+
+  // Daum Postcode 스크립트 mount 시 미리 로드.
+  useEffect(() => {
+    if (!isKorean) return;
+    if (typeof window === 'undefined') return;
+    if (window.daum?.Postcode) return;
+    const script = document.createElement('script');
+    script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.async = true;
+    document.head.appendChild(script);
+  }, [isKorean]);
+
+  // 레이어 열릴 때 embed — popup 모드 (.open()) 대신 iframe 임베드로 popup blocker 회피.
+  useEffect(() => {
+    if (!addressLayerOpen) return;
+    if (typeof window === 'undefined') return;
+    if (!window.daum?.Postcode) return;
+    if (!addressLayerRef.current) return;
+
+    new window.daum.Postcode({
+      oncomplete: (data) => {
+        const selectedAddress =
+          data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+        setForm((prev) => ({
+          ...prev,
+          shippingAddress: selectedAddress,
+          shippingPostalCode: data.zonecode,
+        }));
+        setAddressLayerOpen(false);
+        setTimeout(() => detailRef.current?.focus(), 200);
+      },
+      width: '100%',
+      height: '100%',
+    }).embed(addressLayerRef.current);
+  }, [addressLayerOpen]);
 
   function handleChange(key: keyof FormState) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -82,36 +122,33 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
   }
 
   function handleAddressSearch() {
-    if (typeof window === 'undefined') return;
-
-    const openPostcode = () => {
-      if (!window.daum?.Postcode) return;
-      new window.daum.Postcode({
-        oncomplete: (data) => {
-          const selectedAddress =
-            data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-          setForm((prev) => ({
-            ...prev,
-            shippingAddress: selectedAddress,
-            shippingPostalCode: data.zonecode,
-          }));
-          setTimeout(() => detailRef.current?.focus(), 200);
-        },
-      }).open();
-    };
-
-    if (window.daum?.Postcode) {
-      openPostcode();
-    } else {
-      const script = document.createElement('script');
-      script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-      script.onload = openPostcode;
-      document.head.appendChild(script);
-    }
+    setAddressLayerOpen(true);
   }
 
   return (
     <div className="space-y-6">
+      {/* Daum Postcode 임베드 레이어 — popup blocker 회피 위해 .embed() iframe 모드 사용 */}
+      {addressLayerOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('shippingAddress')}
+        >
+          <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-xl">
+            <button
+              type="button"
+              onClick={() => setAddressLayerOpen(false)}
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm hover:text-charcoal"
+              aria-label="close"
+            >
+              ✕
+            </button>
+            <div ref={addressLayerRef} className="h-[500px] w-full overflow-hidden rounded-2xl" />
+          </div>
+        </div>
+      )}
+
       {/* 구매자 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-charcoal">{t('buyerInfo')}</h3>

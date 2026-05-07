@@ -9,39 +9,30 @@ import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
-import {
-  createOrder,
-  cancelPendingOrder,
-  initiatePayment,
-  createBankTransferOrder,
-} from '@/app/actions/checkout';
+import { createOrder, cancelPendingOrder, createBankTransferOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
 /**
- * 사용자가 클릭하는 결제 옵션. Toss API method/easyPay와 매핑됨.
+ * 결제 옵션 — UI 표시용. 실제 Toss 호출은 모두 통합결제창 (method='CARD').
  *
- * - CARD       → method=CARD, easyPay 없음 → Toss 카드 결제창
- * - KAKAOPAY   → method=CARD, easyPay='KAKAOPAY' → 카카오페이 직행
- * - TOSSPAY    → method=CARD, easyPay='TOSSPAY' → 토스페이 직행
- * - TRANSFER   → **Toss 거치지 않음.** createBankTransferOrder 직접 호출하여
- *                awaiting_deposit + artwork=reserved 처리. 사용자에게 하드코딩된
- *                NH 농협 계좌번호 안내 (뱅크페이 인증서·앱 설치 UX 회피).
+ * 4개 카드/간편결제 버튼은 사용자 의도 표시 + 브랜드 로고 시각 hint일 뿐, 클릭하면
+ * 모두 통합결제창(picker)으로 진입해 그 안에서 다시 선택해야 함. 직행 라우팅
+ * (`flowMode='DIRECT'` + `card.easyPay`)은 saf202i818 MID에 별도 계약이 필요해
+ * 보류 — 계약 완료되면 cardOptions 필드 추가하여 활성화.
  *
- * 'VIRTUAL_ACCOUNT' (가상계좌)는 saf202i818 MID에 미계약 (에러 2003)이라 제외.
- * 네이버페이는 심사 진행 중 — 활성화 후 NAVERPAY 추가 예정.
+ * - TRANSFER만 별도 흐름: Toss 우회 + createBankTransferOrder → awaiting_deposit
+ *   + artwork=reserved → 기업은행(IBK) 계좌번호 안내 (뱅크페이 인증서·앱 설치 UX 회피).
+ *
+ * 가상계좌는 saf202i818 MID 미계약 (에러 2003)이라 제외.
  */
-type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'TRANSFER';
+type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
 
-type BrandKind = 'kakaopay' | 'tosspay' | null;
+type BrandKind = 'kakaopay' | 'tosspay' | 'naverpay' | null;
 
 interface PaymentChoiceConfig {
   value: PaymentChoice;
-  labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodTransfer';
-  /** Toss /v1/payments method 파라미터 */
-  tossMethod: 'CARD' | 'TRANSFER';
-  /** Toss /v1/payments easyPay 파라미터 (간편결제 직접 라우팅) */
-  easyPay?: string;
+  labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
   brand: BrandKind;
 }
@@ -53,72 +44,61 @@ interface Props {
   price: number;
   displayPrice: string;
   imageUrl: string;
+  clientKey: string;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', tossMethod: 'CARD', brand: null },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', tossMethod: 'TRANSFER', brand: null },
-  {
-    value: 'KAKAOPAY',
-    labelKey: 'methodKakaopay',
-    tossMethod: 'CARD',
-    easyPay: 'KAKAOPAY',
-    brand: 'kakaopay',
-  },
-  {
-    value: 'TOSSPAY',
-    labelKey: 'methodTosspay',
-    tossMethod: 'CARD',
-    easyPay: 'TOSSPAY',
-    brand: 'tosspay',
-  },
+  { value: 'CARD', labelKey: 'methodCard', brand: null },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
+  { value: 'KAKAOPAY', labelKey: 'methodKakaopay', brand: 'kakaopay' },
+  { value: 'TOSSPAY', labelKey: 'methodTosspay', brand: 'tosspay' },
+  { value: 'NAVERPAY', labelKey: 'methodNaverpay', brand: 'naverpay' },
 ];
 
 /**
- * 브랜드 로고 컴포넌트.
- * 각 사 공식 브랜드 색상 + 텍스트 마크 (단순 wordmark 스타일).
- * Kakao Pay: 카카오 옐로 #FEE500 + 다크 텍스트
- * Toss Pay : 토스 블루 #3182F6 + 화이트 텍스트
+ * 공식 브랜드 자산 (사용자 다운로드, public/images/payment/에 배치).
+ * 모두 자체 여백이 거의 없는 trimmed 상태 (Toss는 sharp.trim()으로 후처리).
+ * 표시 높이 h-6(24px)로 통일 — 로고 정렬·시각 무게 일치.
+ * - KakaoPay : 결제수단 wordmark (121×50)
+ * - TossPay  : Toss 공식 wordmark trimmed (3000×910)
+ * - NaverPay : Npay 그린 signature (198×66)
  */
+const BRAND_ASSETS: Record<
+  Exclude<BrandKind, null>,
+  { src: string; alt: string; width: number; height: number }
+> = {
+  kakaopay: { src: '/images/payment/kakaopay.png', alt: 'KakaoPay', width: 121, height: 50 },
+  tosspay: { src: '/images/payment/tosspay.png', alt: 'Toss', width: 3000, height: 910 },
+  naverpay: { src: '/images/payment/naverpay.svg', alt: 'NaverPay', width: 198, height: 66 },
+};
+
 function BrandLogo({ brand }: { brand: BrandKind }) {
-  if (brand === 'kakaopay') {
-    return (
-      // 결제 브랜드 wordmark는 자체 brand 무드 모방을 위해 시스템 폰트 사용 — 사이트 본문(Noto Sans KR)과 의도적 분리
-      <span
-        className="font-bold text-[#3C1E1E]"
-        style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
-      >
-        kakao
-        <span className="font-black">pay</span>
-      </span>
-    );
-  }
-  if (brand === 'tosspay') {
-    return (
-      <span
-        className="font-bold text-white"
-        style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
-      >
-        toss
-        <span className="opacity-80">pay</span>
-      </span>
-    );
-  }
-  return null;
+  if (!brand) return null;
+  const asset = BRAND_ASSETS[brand];
+  return (
+    <SafeImage
+      src={asset.src}
+      alt={asset.alt}
+      width={asset.width}
+      height={asset.height}
+      className="h-6 w-auto object-contain"
+    />
+  );
 }
 
 /**
  * 한국어 체크아웃 클라이언트.
- * Toss API 개별 연동 v1 redirect 플로우 (saf202i818 MID).
+ * Toss SDK v2 `payment.requestPayment()` 결제창 (saf202i818 MID, API 개별 연동 키).
  *
  * Flow:
  *   1. createOrder — DB에 pending_payment 주문 생성 (metadata.payment_provider='domestic')
- *   2. initiatePayment(method) — Toss /v1/payments → checkout.url 반환
- *   3. window.location.href = checkoutUrl → Toss-hosted 결제창으로 redirect
+ *   2. loadTossPayments(clientKey).payment({ customerKey: ANONYMOUS })
+ *   3. payment.requestPayment({ method: 'CARD', successUrl, failUrl, ... })
+ *      → Toss-hosted 통합결제창에서 사용자가 카드/간편결제 선택
  *   4. Toss가 결제 완료 후 successUrl(우리 success page)로 redirect
  *   5. SuccessClient가 /api/payments/toss/confirm 호출 → 승인 완료
  *
- * 간편결제(카카오페이/토스페이)는 method=CARD 흐름 안에서 Toss UI가 자동 노출.
+ * 사용자가 결제창 닫으면 USER_CANCEL 코드로 reject — 주문은 cancelPendingOrder로 정리.
  */
 export default function CheckoutClient({
   artworkId,
@@ -127,6 +107,7 @@ export default function CheckoutClient({
   price,
   displayPrice,
   imageUrl,
+  clientKey,
 }: Props) {
   const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
@@ -177,7 +158,7 @@ export default function CheckoutClient({
     try {
       // 계좌이체(TRANSFER): Toss 거치지 않고 무통장 입금 흐름.
       // createBankTransferOrder가 awaiting_deposit + artwork=reserved 처리 후
-      // 우리 success page로 redirect하여 NH 농협 계좌번호 안내.
+      // 우리 success page로 redirect하여 기업은행(IBK) 계좌번호 안내.
       if (paymentChoice === 'TRANSFER') {
         const result = await createBankTransferOrder({
           artworkId,
@@ -229,32 +210,24 @@ export default function CheckoutClient({
       const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;
 
-      const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice) ?? PAYMENT_CHOICES[0];
+      const { ANONYMOUS, loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
+      const tossPayments = await loadTossPayments(clientKey);
+      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
 
-      const payResult = await initiatePayment({
-        method: choice.tossMethod,
-        easyPay: choice.easyPay,
-        orderNo,
+      // 통합결제창. 직행 라우팅(`card.flowMode='DIRECT'` + `card.easyPay`)은 saf202i818
+      // MID 미계약으로 보류. requestPayment는 redirect 모드 (successUrl 동반) → void 반환,
+      // 사용자 취소·SDK 에러는 reject되어 catch 블록에서 처리.
+      await payment.requestPayment({
+        method: 'CARD',
+        amount: { currency: 'KRW', value: serverTotal },
+        orderId: orderNo,
         orderName,
-        totalAmount: serverTotal,
-        buyerName,
-        buyerEmail,
+        customerName: buyerName,
+        customerEmail: buyerEmail,
         successUrl,
         failUrl,
-        locale: 'ko',
       });
-
-      if (!payResult.success) {
-        cancelPendingOrder(orderNo, buyerEmail).catch((err) =>
-          console.error('[checkout] cancelPendingOrder failed:', err)
-        );
-        setError(payResult.error);
-        setSubmitting(false);
-        return;
-      }
-
-      // Redirect to Toss-hosted page; submitting stays true until unload
-      window.location.href = payResult.checkoutUrl;
+      // navigate 진행 중 — 페이지 unload까지 대기
       await new Promise(() => {});
     } catch (err: unknown) {
       if (createdOrderNo) {
@@ -262,7 +235,11 @@ export default function CheckoutClient({
           (cancelErr) => console.error('[checkout] cancelPendingOrder failed:', cancelErr)
         );
       }
-      setError((err as Error)?.message ?? t('errorPayment'));
+      // SDK v2 에러는 { code, message } 형태. USER_CANCEL은 사용자가 결제창 닫은 경우라 에러 표시 생략.
+      const errorObj = err as { code?: string; message?: string };
+      if (errorObj?.code !== 'USER_CANCEL') {
+        setError(errorObj?.message ?? t('errorPayment'));
+      }
       setSubmitting(false);
     }
   }
@@ -334,60 +311,76 @@ export default function CheckoutClient({
           </table>
         </div>
 
-        {/* Payment method selector */}
-        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentMethodSelect')}</h3>
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            {PAYMENT_CHOICES.map(({ value, labelKey, brand }) => {
+        {/* Payment method selector — 5개 옵션을 동일 list row로 통일.
+            미술관 작품 라벨처럼 일관된 시각 리듬 + 좌측 selected indicator(primary 바)로
+            현재 선택을 고정 위치에서 확인 가능. */}
+        <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <h3 className="px-6 pt-6 pb-4 text-base font-semibold text-charcoal">
+            {t('paymentMethodSelect')}
+          </h3>
+
+          <div
+            role="radiogroup"
+            aria-label={t('paymentMethodSelect')}
+            className="border-t border-gray-200"
+          >
+            {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
               const selected = paymentChoice === value;
-              // 브랜드 버튼: 항상 브랜드 색상 배경. 선택 시 외곽 ring으로 강조
-              if (brand === 'kakaopay') {
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setPaymentChoice(value)}
-                    aria-label={t(labelKey)}
-                    className={clsx(
-                      'rounded-xl py-3 text-base transition-shadow flex items-center justify-center bg-[#FEE500]',
-                      selected ? 'ring-2 ring-charcoal ring-offset-2 shadow-md' : 'hover:shadow-md'
-                    )}
-                  >
-                    <BrandLogo brand={brand} />
-                  </button>
-                );
-              }
-              if (brand === 'tosspay') {
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setPaymentChoice(value)}
-                    aria-label={t(labelKey)}
-                    className={clsx(
-                      'rounded-xl py-3 text-base transition-shadow flex items-center justify-center bg-[#3182F6]',
-                      selected ? 'ring-2 ring-charcoal ring-offset-2 shadow-md' : 'hover:shadow-md'
-                    )}
-                  >
-                    <BrandLogo brand={brand} />
-                  </button>
-                );
-              }
-              // 일반 버튼 (카드/계좌이체): 기존 outline 스타일 유지
+              const description = value === 'TRANSFER' ? t('transferDescription') : null;
               return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setPaymentChoice(value)}
-                  className={clsx(
-                    'rounded-xl border-2 py-3 text-sm font-medium transition-colors',
-                    selected
-                      ? 'border-primary bg-primary-surface text-primary'
-                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                  )}
-                >
-                  {t(labelKey)}
-                </button>
+                <div key={value}>
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    aria-label={t(labelKey)}
+                    onClick={() => setPaymentChoice(value)}
+                    className={clsx(
+                      'group relative flex w-full items-center gap-4 px-6 py-4 text-left transition-colors',
+                      i > 0 && 'border-t border-gray-200',
+                      selected ? 'bg-primary-surface' : 'hover:bg-canvas-strong'
+                    )}
+                  >
+                    {/* 좌측 primary 바 — selected 시 등장 (1px 처리, 미술관 cue) */}
+                    <span
+                      aria-hidden="true"
+                      className={clsx(
+                        'absolute left-0 top-0 h-full w-1 transition-colors',
+                        selected ? 'bg-primary' : 'bg-transparent'
+                      )}
+                    />
+
+                    {/* Radio dot */}
+                    <span
+                      aria-hidden="true"
+                      className={clsx(
+                        'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+                        selected ? 'border-primary' : 'border-gray-300 group-hover:border-gray-400'
+                      )}
+                    >
+                      {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                    </span>
+
+                    {/* 본문: brand 로고 또는 텍스트 + 옵셔널 caption */}
+                    <span className="flex-1 min-w-0 flex items-center justify-between gap-3">
+                      {brand ? (
+                        <BrandLogo brand={brand} />
+                      ) : (
+                        <span
+                          className={clsx(
+                            'text-sm font-medium',
+                            selected ? 'text-primary' : 'text-charcoal'
+                          )}
+                        >
+                          {t(labelKey)}
+                        </span>
+                      )}
+                      {description && (
+                        <span className="text-caption-meta text-charcoal-soft">{description}</span>
+                      )}
+                    </span>
+                  </button>
+                </div>
               );
             })}
           </div>

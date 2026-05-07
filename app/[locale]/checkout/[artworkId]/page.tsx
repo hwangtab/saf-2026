@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
-import { getPaymentMode } from '@/lib/integrations/toss/config';
+import { getPaymentMode, getTossDomesticClientKey } from '@/lib/integrations/toss/config';
 import { parsePrice } from '@/lib/parsePrice';
 import { formatPriceForDisplay, resolveArtworkImageUrl } from '@/lib/utils';
 import CheckoutClient from './CheckoutClient';
@@ -83,6 +83,11 @@ export default async function CheckoutPage({ params }: Props) {
     );
   }
 
+  const clientKey = getTossDomesticClientKey();
+  if (!clientKey) {
+    notFound();
+  }
+
   return (
     <CheckoutClient
       artworkId={artworkId}
@@ -91,6 +96,7 @@ export default async function CheckoutPage({ params }: Props) {
       price={price}
       displayPrice={displayPrice}
       imageUrl={imageUrl}
+      clientKey={clientKey}
     />
   );
 }
