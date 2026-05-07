@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
@@ -68,6 +68,8 @@ const localizeVideoTitle = (title: string, locale: 'ko' | 'en', index = 0): stri
   return title;
 };
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return fallbackVideos.flatMap((video) =>
     routing.locales.map((locale) => ({ locale, youtubeId: video.youtubeId }))
@@ -77,10 +79,11 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ youtubeId: string }>;
+  params: Promise<{ locale: string; youtubeId: string }>;
 }): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
-  const { youtubeId } = await params;
+  const { locale: rawLocale, youtubeId } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const videos = await getArchiveVideos();
   const videoIndex = videos.findIndex((video) => video.youtube_id === youtubeId);
   const video = videos[videoIndex];
@@ -118,11 +121,12 @@ export async function generateMetadata({
 export default async function Archive2023VideoWatchPage({
   params,
 }: {
-  params: Promise<{ youtubeId: string }>;
+  params: Promise<{ locale: string; youtubeId: string }>;
 }) {
-  const locale = resolveLocale(await getLocale());
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
-  const { youtubeId } = await params;
+  const { locale: rawLocale, youtubeId } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const videos = await getArchiveVideos();
   const videoIndex = videos.findIndex((video) => video.youtube_id === youtubeId);
   const video = videos[videoIndex];

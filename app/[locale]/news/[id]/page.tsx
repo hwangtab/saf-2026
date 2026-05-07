@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getSupabaseNews, getSupabaseNewsById } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { generateNewsArticleSchema, createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -14,10 +14,11 @@ import PageHero from '@/components/ui/PageHero';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 
+export const dynamic = 'force-static';
 export const revalidate = 1800;
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }
 
 export async function generateStaticParams() {
@@ -26,8 +27,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const locale = resolveLocale(await getLocale());
+  const { locale: rawLocale, id } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const article = await getSupabaseNewsById(id);
 
   if (!article) return { title: 'Not Found' };
@@ -98,8 +100,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function NewsArticlePage({ params }: Props) {
-  const { id } = await params;
-  const locale = resolveLocale(await getLocale());
+  const { locale: rawLocale, id } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const article = await getSupabaseNewsById(id);
 
   if (!article) notFound();

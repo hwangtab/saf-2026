@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import {
   getSupabaseStories,
   getSupabaseStoryBySlug,
@@ -25,6 +25,7 @@ import type { StoryCategory, Artwork } from '@/types';
 import { ArrowRight } from 'lucide-react';
 import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 
+export const dynamic = 'force-static';
 export const revalidate = 1800;
 
 function extractFirstImage(body: string | null | undefined): string | null {
@@ -56,7 +57,7 @@ function extractArtworkIds(body: string | null | undefined): string[] {
 }
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 const CATEGORY_LABELS_KO: Record<StoryCategory, string> = {
@@ -79,8 +80,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const locale = resolveLocale(await getLocale());
+  const { locale: rawLocale, slug } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const story = await getSupabaseStoryBySlug(slug);
 
   if (!story) return { title: 'Not Found' };
@@ -143,8 +145,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StoryDetailPage({ params }: Props) {
-  const { slug } = await params;
-  const locale = resolveLocale(await getLocale());
+  const { locale: rawLocale, slug } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const story = await getSupabaseStoryBySlug(slug);
 
   if (!story) notFound();

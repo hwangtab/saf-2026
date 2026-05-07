@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -19,10 +19,11 @@ import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { STORY_CATEGORIES, type StoryCategory } from '@/types';
 
+export const dynamic = 'force-static';
 export const revalidate = 600;
 
 interface Props {
-  params: Promise<{ category: string }>;
+  params: Promise<{ locale: string; category: string }>;
 }
 
 type LocaleCode = 'ko' | 'en';
@@ -204,8 +205,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
-  const { category } = await params;
+  const { locale: rawLocale, category } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
 
   if (!isValidCategory(category)) {
     return { title: 'Not Found' };
@@ -263,8 +265,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StoryCategoryPage({ params }: Props) {
-  const locale = resolveLocale(await getLocale());
-  const { category } = await params;
+  const { locale: rawLocale, category } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
 
   if (!isValidCategory(category)) {
     notFound();

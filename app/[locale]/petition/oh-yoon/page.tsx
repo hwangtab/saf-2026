@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SafeImage from '@/components/common/SafeImage';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import PaperGrain from '@/components/common/PaperGrain';
 import Section from '@/components/ui/Section';
@@ -30,6 +30,7 @@ import PetitionFAQ from './_components/PetitionFAQ';
 import ProposalModal from './_components/ProposalModal';
 import SignForm from './_components/SignForm';
 
+export const dynamic = 'force-static';
 export const revalidate = 60; // 60초 ISR — 카운터 baseline 갱신 (PRD §10.8)
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
@@ -60,8 +61,14 @@ async function fetchPetitionCount(): Promise<PetitionCount> {
   }
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const t = await getTranslations({
     locale,
     namespace: 'petition.ohYoon',
@@ -107,9 +114,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function PetitionOhYoonPage() {
-  const t = await getTranslations('petition.ohYoon');
-  const locale = resolveLocale(await getLocale());
+export default async function PetitionOhYoonPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'petition.ohYoon' });
   const deadline = formatPetitionDeadline(locale);
   const { total, region_top_count, recent_24h, is_active } = await fetchPetitionCount();
 

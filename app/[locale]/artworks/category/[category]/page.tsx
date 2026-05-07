@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -27,10 +27,11 @@ import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { getCategorySeoContent } from '@/lib/category-seo-content';
 
+export const dynamic = 'force-static';
 export const revalidate = 600;
 
 interface Props {
-  params: Promise<{ category: string }>;
+  params: Promise<{ locale: string; category: string }>;
 }
 
 /** 지원하는 카테고리 목록 (한국어 기준) */
@@ -47,8 +48,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
-  const { category: rawCategory } = await params;
+  const { locale: rawLocale, category: rawCategory } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const category = decodeURIComponent(rawCategory);
 
   if (!SUPPORTED_CATEGORIES.includes(category)) {
@@ -146,8 +148,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const locale = resolveLocale(await getLocale());
-  const { category: rawCategory } = await params;
+  const { locale: rawLocale, category: rawCategory } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const category = decodeURIComponent(rawCategory);
 
   if (!SUPPORTED_CATEGORIES.includes(category)) {

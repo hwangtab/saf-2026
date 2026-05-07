@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import SafeImage from '@/components/common/SafeImage';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -17,6 +17,7 @@ import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
+export const dynamic = 'force-static';
 export const revalidate = 600;
 
 const OH_YOON_ARTIST_KEYS = new Set(['오윤', 'oh yoon', 'ohyoon', 'o yoon', 'o-yoon']);
@@ -59,8 +60,14 @@ const PAGE_COPY = {
   },
 } as const;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const siteName = tSeo('siteTitle');
@@ -111,8 +118,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function OhYoonPage() {
-  const locale = resolveLocale(await getLocale());
+export default async function OhYoonPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const allArtworks = await getSupabaseArtworks();
