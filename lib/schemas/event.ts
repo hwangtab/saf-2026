@@ -16,8 +16,14 @@ const resolveExhibitionState = (now: number = Date.now()): ExhibitionState => {
 };
 
 const resolveEventStatus = (state: ExhibitionState): string => {
-  if (state === 'completed') return 'https://schema.org/EventCompleted';
-  if (state === 'inProgress') return 'https://schema.org/EventInProgress';
+  // schema.org EventStatusType enum 정식 값: EventScheduled / EventCancelled /
+  // EventPostponed / EventRescheduled / EventMovedOnline. EventCompleted /
+  // EventInProgress는 사양에 존재하지 않아 검사기가 "유효하지 않음" 보고.
+  //
+  // 우리 전시 의미 매핑:
+  // - scheduled / inProgress → EventScheduled (정상 일정 진행)
+  // - completed → EventMovedOnline (오프라인 일정 종료, 온라인 갤러리는 계속 운영)
+  if (state === 'completed') return 'https://schema.org/EventMovedOnline';
   return 'https://schema.org/EventScheduled';
 };
 
