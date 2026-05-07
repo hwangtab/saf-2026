@@ -1,5 +1,715 @@
 [
   {
+    "hash": "1ac226d7",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "Toss SDK v2로 전환 — 카카오페이/토스페이 자체창 직행",
+    "summary": "결제수단 선택 시 통합결제창으로 빠지던 버그 수정 — SDK v2 flowMode='DIRECT' + card.easyPay로 해당 간편결제 자체창 직행",
+    "body": "기존 API v1 POST /v1/payments + 최상위 easyPay 파라미터는 Toss가 무시 →\n스크린샷처럼 통합 결제수단 선택창이 노출. 결과적으로 사용자가 카카오페이를\n눌러도 거기서 네이버페이로 이동 가능한 상태였음.\n\nSDK v2 명세대로 card.flowMode='DIRECT' + card.easyPay='KAKAOPAY'를 중첩 객체로\n전달하도록 변경. method='CARD' 단독은 통합결제창(의도된 동작), TRANSFER는 기존\nToss 우회 무통장 흐름 유지, PayPal/overseas 흐름은 그대로 (initiatePayment 액션\n보존).\n\n- page.tsx: getTossDomesticClientKey() 호출 + clientKey prop 전달\n- CheckoutClient.tsx: loadTossPayments + payment.requestPayment redirect 모드\n- USER_CANCEL 코드는 에러 메시지 생략 (사용자가 결제창 닫은 정상 흐름)\n- success 페이지/confirm API/createOrder/cancelPendingOrder 변경 없음",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "f0b75328",
+    "type": "perf",
+    "scope": "css",
+    "subject": "@tailwindcss/typography 제거 — 메인 LCP CSS 27KB 절감",
+    "summary": "메인 페이지가 로드하는 CSS chunk(02cpdoif8jddz.css 126KB raw)에 prose 정의가 31KB(24.8%) 차지하나 메인은 prose 미사용. typography plugin이 page-level chunk splitting을 우회해 root chunk에 박는 over-bundling 패턴 — PageSpeed에서 1,650ms 렌더링 차단 항목으로 잡힘.",
+    "body": "조치: prose 사용처(MarkdownRenderer, oh-yoon)를 globals.css의 .markdown-content 클래스와 명시적 utility로 이전 후 plugin 완전 제거.\n\n결과 (실측):\n- 메인 utility chunk: 126,285 → 99,207 B raw (-27,078 B)\n- 메인 페이지 CSS 합계: 436,861 → 409,783 B raw (gzip 추정 ~5-7KB 절감)\n- prose 흔적 0건 (chunks/*.css 전수 검색)\n- render-blocking 시간 ~250-400ms 단축 기대\n\n이전 perf/css 시도 4건(optimizeCss·critters·외부 컴파일·async load)이 Next.js 16 App Router 한계로 모두 revert됐던 영역. critical CSS 분리 대신 CSS 양 자체를 줄이는 결로 접근.\n\n변경 상세:\n- styles/globals.css: .markdown-content 클래스 신설 — h1~h4·p·ul/ol/li·blockquote·table(th/td/tr)·a·img·hr·code/pre·strong 명시적 selector 정의. prose-lg + prose-gray 기본값 + 기존 prose-* override를 모두 재현.\n- components/common/MarkdownRenderer.tsx: 16개 prose-* modifier 라인을 markdown-content 단일 클래스로 교체.\n- app/[locale]/special/oh-yoon/page.tsx: 2곳의 'prose prose-xl' → 'text-xl leading-[1.8]'.\n- tailwind.config.ts: @tailwindcss/typography plugin 제거.\n- package.json: @tailwindcss/typography 의존성 제거.\n\n검증: Vercel preview 배포(saf2026-a23ce6lcz)에서 stories 본문·oh-yoon·메인 페이지 시각 확인 완료.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "160b7c7c",
+    "type": "perf",
+    "scope": "static",
+    "subject": "/artworks/[id] + /artworks/artist/[artist] TOP N + on-demand SSG",
+    "summary": "이전 Type C 정적화는 358 작품 × 2 × 8 쿼리 = 5,700 동시 Supabase 호출로 빌드 시 Cloudflare 522 발생. TOP N + dynamicParams=true 패턴으로 빌드 부하 분산.",
+    "body": "새 헬퍼 (lib/supabase-data.ts):\n- getPopularArtworkIds(limit=30): id만 select, sold_at NULLS FIRST + created_at DESC 정렬\n- getPopularArtistNames(limit=20): 작품 수 desc 기준\n- 둘 다 unstable_cache(revalidate=3600) + react cache 이중 캐시\n\n페이지 설정:\n- /artworks/[id]: dynamic='force-static', dynamicParams=true, revalidate=3600\n  - 빌드 시 30 × 2 = 60 페이지 prerender (~480 Supabase 쿼리, 안전)\n  - 나머지 ~328 작품: 첫 요청 시 SSG → 그 후 CDN HIT\n- /artworks/artist/[artist]: 동일 패턴, 인기 작가 20 × 2 = 40 페이지\n\nStale 보호:\n- admin 액션의 revalidatePath, 결제 confirm/reconcile cron의 revalidatePath 그대로 작동\n- 1시간 background revalidate fallback\n\n빌드 결과: 두 페이지 모두 ●(SSG) 표시. 빌드 부하 안전 범위.\n\n기대 효과:\n- 인기 작품 70%+ 트래픽: 즉시 CDN HIT (TTFB ~60ms)\n- 비인기 작품: 첫 hit 시 SSG (300-500ms), 두 번째부터 HIT\n- Googlebot 크롤 예산 ↑",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "23bf39ec",
+    "type": "fix",
+    "scope": "stories,seo",
+    "subject": "/stories?category= → /stories/category/* 308 리다이렉트 + 테스트 재작성",
+    "summary": "stories 정적화 후 /stories의 server-side query 필터링이 사라지면서 외부에서 들어온 query URL이 /stories와 중복 색인될 위험. proxy.ts에서 정적 카테고리 라우트로 308 흡수해 정규 URL 단일화.",
+    "body": "stories-indexing-guards 테스트가 기존(이미 사라진) `hasQueryParams`/`toValidStoryCategory` 가드를 검증하던 stale 상태였음. 새 정적 + redirect 구조에 맞게 재작성:\n- /stories/page.tsx가 force-static + searchParams 미사용 검증\n- proxy.ts가 STORIES_LIST_PATH 매칭 + VALID_STORY_CATEGORIES + 308 redirect 보유 검증\n- VALID_STORY_CATEGORIES와 STORY_CATEGORIES 동기화 검증\n\n다음 카테고리는 정적 라우트로 흡수, 무효 카테고리는 /stories로:\n- /stories?category=artist-story → /stories/category/artist-story (308)\n- /stories?category=invalid → /stories (308)\n- /en/stories?category=foo도 동일 패턴\n\n전체 테스트 480/480 통과.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "fe105a5a",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "ItemList.offers 제거 — schema.org 사양 위반 GSC 경고 해결",
+    "summary": "/artworks 등 갤러리 목록의 ItemList 객체에 박혀 있던 offers(AggregateOffer) 임베딩 제거. ItemList는 schema.org 사양상 offers 속성을 갖지 않아 GSC가 \"offers 속성은 ItemList 유형의 객체로 인정되지 않는 속성\" 경고로 보고했던 케이스(2026-05-07 CollectionPage 검사 결과 경고 2건).",
+    "body": "- AggregateOffer는 갤러리 페이지에서 generateGalleryAggregateOffer()로 별도 JsonLdScript 발행 중이므로 임베딩 제거해도 SEO 손실 없음\n- 영향 페이지 4곳: /artworks, /artworks/category/[category], /artworks/artist/[artist], /special/oh-yoon — 모두 동일 generateArtworkListSchema()를 통하므로 단일 함수 수정으로 해결",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "07383a59",
+    "type": "fix",
+    "scope": "translations",
+    "subject": "/artworks/category shareTitle에 count 변수 누락 — 정적 빌드 시 FORMATTING_ERROR",
+    "summary": "/artworks/category shareTitle에 count 변수 누락 — 정적 빌드 시 FORMATTING_ERROR",
+    "body": null,
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "d3ef4260",
+    "type": "fix",
+    "scope": "build",
+    "subject": "사용하지 않는 getSupabaseArtworks import 제거 — Type C 롤백 후속",
+    "summary": "사용하지 않는 getSupabaseArtworks import 제거 — Type C 롤백 후속",
+    "body": null,
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "4d5a5342",
+    "type": "feat",
+    "scope": "security",
+    "subject": "portal/auth 라우트 strict CSP 분리 — unsafe-eval 제거",
+    "summary": "portal·auth(/admin·/dashboard·/exhibitor·/onboarding·/login·/signup·/terms-consent·/auth)에 외부 SDK 의존성이 0임을 실측 확인 후, 'unsafe-eval'과 외부 도메인을 제거한 strict CSP를 별도 라우트 매칭으로 분리. 공개 페이지는 Kakao Share SDK가 동적 코드 평가에 의존(kakao.min.js v2.7.2 실측 3회)하여 'unsafe-eval' 유지 불가피. 결과: 포털 영역 XSS 시 임의 코드 실행 + 외부 도메인 exfiltration 차단으로 관리자·결제 진입·회원가입 영역 공격 표면 축소.",
+    "body": "CSP 분리 결정 근거 (실측):\n- Kakao Share SDK: new Function() 3회 — 'unsafe-eval' 필수\n- Kakao Map SDK: 동일 (/archive/2026 한 곳)\n- GA4 gtag.js: 0회 — 불필요\n- Vercel Analytics: 0회 — 불필요\n- Toss Payments: 클라이언트 SDK 미로드 (CheckoutClient는 100% redirect 플로우)\n\nnext.config.js headers() 4-block 재구성:\n- strict CSP (portal nested + exact 2개 매칭)\n- public CSP (portal/api/_next 제외 negative lookahead)\n- 공통 보안 헤더 — /(.*) 매칭 (CSP 외 키들은 conflict 없음)\n- 다중 CSP 헤더는 브라우저에서 가장 엄격한 정책으로 intersect되므로 strict와 public 매칭은 mutually exclusive 강제\n\n부수 fix — (portal)/layout.tsx i18n MISSING_MESSAGE:\ngetTranslations('nav') → 'a11y'로 namespace 수정. 'skipToMain' 키는 a11y namespace에 이미 존재했고 nav에는 없어 dev/prod에서 /dashboard/artworks 등 모든 portal 라우트 SSR 시 MISSING_MESSAGE 런타임 에러 발생. 의미적으로도 메뉴 항목이 아닌 접근성 키라 a11y가 정확.\n\n검증:\n- node로 config 로드 시 8 rules 정상 (CSP 3종 + 공통 보안)\n- dev 서버 헤더 확인: /admin·/login·/dashboard/* → strict, / → public\n- /dashboard/artworks 200 OK + dev log MISSING_MESSAGE 0건\n\nPhase 2 (/checkout/*) 분리는 별도 작업 — Daum 우편번호 SDK + 실 결제 1건 회귀 테스트 필요.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "bde672a5",
+    "type": "fix",
+    "scope": "build",
+    "subject": "Type C 정적화 롤백 — Supabase Cloudflare 522로 빌드 실패",
+    "summary": "/artworks/[id] (358 × 2 locale × 8 Supabase 쿼리 = ~5700 build-time queries)와 /artworks/artist/[artist] (~200 페이지) 정적 prerender가 Vercel 빌드에서 Supabase Cloudflare 522 에러 유발 → 빌드 실패.",
+    "body": "원인: generateStaticParams로 모든 작품·작가 페이지를 빌드 시 prerender하려 했으나 Supabase가 동시 요청 부하 못 견딤.\n\n조치:\n- /artworks/[id]: dynamic = 'force-dynamic' 복구, generateStaticParams 제거\n- /artworks/artist/[artist]: 동일\n\n향후 가능한 정적화 경로:\n- generateStaticParams를 TOP N 인기 작품/작가로만 제한 + dynamicParams=true로 on-demand SSG\n- 또는 빌드 시 일부만 prerender, 나머지는 첫 요청 시 ISR 생성\n\n이번 사이클은 force-dynamic 유지가 안전한 선택.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "0930904c",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "카운터 0명 표시 회귀 — force-dynamic 복구",
+    "summary": "정적 마이그레이션에서 /petition/oh-yoon에 force-static 적용했으나 fetchPetitionCount의 createSupabaseServerClient가 cookies 컨텍스트 의존 → 정적 prerender 시 빈 응답 → catch fallback으로 total=0이 빌드 산출물에 박힘. revalidate=60도 같은 이유로 갱신값 항상 0.",
+    "body": "Production HTML 검증: \"현재 0명 / 목표 10,000명\"이 그대로 표시됨. 청원 신뢰성 직격타라 즉시 force-dynamic 복구.\n\n근본 fix는 fetchPetitionCount를 service role client로 전환하면 정적 가능하나 별도 작업으로 분리.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "88fdca2b",
+    "type": "perf",
+    "scope": "static",
+    "subject": "/artworks + /stories 정적 렌더링 — searchParams 제거",
+    "summary": "잔존 동적 라우트 2개를 정적화. /artworks는 server에서 searchParams 안 읽고 있어 setRequestLocale만 추가하면 OK. /stories는 server-side 카테고리 필터링을 제거하고 카테고리 필터 click 시 정적 라우트 /stories/category/[category]로 navigate.",
+    "body": "변경:\n- /artworks: getLocale → params, force-static + revalidate=600\n- /stories:\n  - server-side searchParams 처리 완전 제거 (`?category=` 등)\n  - 항상 전체 매거진 노출\n  - StoriesCategoryFilter는 정적 라우트로 navigate (Link href만 사용)\n  - hasQueryParams 기반 robots noindex 분기 제거 (필요 없어짐)\n  - toValidStoryCategory + STORY_CATEGORIES import 제거 (미사용)\n- StoriesCategoryFilter: useSearchParams/useRouter/handleClick 제거. pathname 매칭으로 active 카테고리 판정. Link onClick의 preventDefault hack 제거.\n\n이로써 /[locale]/* 28개 라우트 중 26개 ●(SSG), 잔여 2개만 ƒ:\n- /checkout/* (force-dynamic 의도)\n- /orders (사용자별)\n\nURL 호환성: 기존 /stories?category=foo 북마크/공유 링크는 /stories(전체 매거진)로 응답. 카테고리 필터링은 /stories/category/foo 라우트가 담당. 점진적 리다이렉트 처리는 별도 검토 가능.\n\n빌드 검증: 로컬 빌드는 작품 상세 prerender(358 × 2 × 8 Supabase 쿼리) 60초 timeout 발생하나 Vercel 환경에선 9c0d386c 이미 통과 + production 작동 확인됨.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "9c0d386c",
+    "type": "perf",
+    "scope": "static",
+    "subject": "/artworks/[id] + /artworks/artist/[artist] 정적 렌더링 전환",
+    "summary": "SEO 핵심 트래픽 페이지인 작품 상세(358개) + 작가 상세(~100명)를 force-dynamic에서 force-static + generateStaticParams로 전환. 기존 force-dynamic은 stale 200 회피 목적이었으나 admin 액션의 revalidatePath 호출이 이미 있어 on-demand revalidation으로 충분.",
+    "body": "변경:\n- /artworks/[id]:\n  - export const dynamic = 'force-dynamic' → 'force-static'\n  - revalidate = 3600 추가 (fallback safety net)\n  - generateStaticParams: locale × 358 artworks 카르테시안 → 빌드 시 716 페이지 prerender\n  - getLocale → params에서 locale 추출 + setRequestLocale\n- /artworks/artist/[artist]:\n  - 동일 패턴 (~100명 × 2 locale = 200 페이지 prerender)\n  - artist 변수명 충돌 해결\n\nstale 보호:\n- app/actions/admin-artworks.ts에서 작품 수정/삭제 시 revalidatePath('/artworks/${id}'), revalidatePath('/en/artworks/${id}') 호출 → 즉시 무효화\n- 1시간 background revalidate가 fallback (admin이 수동 무효화 미스 시)\n\n빌드 검증 완료. /[locale]/* 28개 라우트 중 24개 ●(SSG), 잔여 4개만 ƒ:\n- /artworks (searchParams 필터, UI 작업 필요)\n- /stories (searchParams)\n- /checkout/* (의도, force-dynamic)\n- /orders (의도, 사용자별)\n\n이번 변경의 영향:\n- Korean 사용자가 작품 상세 페이지 접속 시 TTFB ~200ms → ~60ms\n- Googlebot 작품 페이지 크롤 예산 ↑ (358 페이지 모두 빠른 응답)\n- bfcache 자동 활성화 (no-store 헤더 제거)",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "a6a6496f",
+    "type": "perf",
+    "scope": "static",
+    "subject": "Type A+B 잔존 동적 페이지 7개 정적 렌더링 전환",
+    "summary": "이전 commit에서 단순 페이지 13개 정적화에 이어 generateStaticParams 이미 있던 페이지 + 단일 locale-only 페이지 7개를 setRequestLocale + force-static으로 전환.",
+    "body": "전환된 페이지:\n- /petition/oh-yoon (revalidate=60, 청원 카운터)\n- /special/oh-yoon (revalidate=600, 캠페인 페이지)\n- /stories/[slug] (revalidate=1800, ~30개 매거진 글 prerender)\n- /news/[id] (revalidate=1800)\n- /stories/category/[category] (revalidate=600, 3개 카테고리)\n- /artworks/category/[category] (revalidate=600, 4개 카테고리)\n- /archive/2023/videos/[youtubeId] (소수 영상)\n\nscripts/migrate-static-locale.mjs는 단순 시그니처만 처리 가능해서, Props 패턴 페이지(extra param 있는 동적 라우트)는 Python 스크립트 + 수동 Edit 조합으로 처리.\n\n빌드 결과: /[locale]/* 28개 라우트 중 21개 ●(SSG) 전환. 잔여 ƒ는 의도된 force-dynamic(artworks/[id], artworks/artist), searchParams 사용(stories, artworks), 사용자 데이터(checkout, orders)뿐.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "2d1df593",
+    "type": "perf",
+    "scope": "static",
+    "subject": "공개 페이지 13개 정적 렌더링 일괄 적용",
+    "summary": "홈 적용에 이어 about/our-reality/our-proof/transparency/privacy/refund-policy/archive (3개)/news/terms (3개) 13개 공개 페이지를 setRequestLocale + force-static + revalidate 패턴으로 전환. 빌드에서 모두 ●(SSG) 확인됨.",
+    "body": "scripts/migrate-static-locale.mjs로 일괄 자동 변환:\n- import: getLocale 제거, setRequestLocale 추가\n- export const dynamic = 'force-static' 추가\n- generateMetadata / default export 시그니처에 params: Promise<{ locale: string }> 추가\n- await getLocale() → params에서 locale 추출 + setRequestLocale(locale)\n\n각 페이지 효과 (한국 사용자 기준):\n- TTFB: ~200ms → ~50-70ms (CDN HIT)\n- Cache-Control: no-store 자동 제거 (bfcache 헤더 차단 해소)\n- 크롤 예산 ↑ (Googlebot 응답 빠름)\n\n여전히 동적인 페이지(force-dynamic 명시 또는 searchParams 사용):\n- artworks/*, checkout/*, orders, news/[id], petition/oh-yoon, special/oh-yoon, stories/*\n\n후속 가능성:\n- news/[id], stories/[slug] 등은 generateStaticParams 추가하면 SSG 가능\n- artworks/[id]는 force-dynamic을 빼고 generateStaticParams로 가능 (작품 358개 prerender)\n- 별도 작업으로 분리",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "4f14a69a",
+    "type": "perf",
+    "scope": "static",
+    "subject": "홈 페이지 정적 렌더링 (SSG) 전환 — TTFB 200→50ms 기대",
+    "summary": "setRequestLocale + force-static 패턴으로 /[locale] 홈을 동적(ƒ)에서 정적(●)으로 전환. 다른 공개 라우트는 후속 commit으로 점진 적용.",
+    "body": "변경:\n- app/layout.tsx: getLocale() 제거. <html lang>을 'ko' 하드코딩 (SEO는 hreflang이 주신호이므로 경미한 영향). JsonLdScripts도 ko 기준으로 통일. 모듈 레벨로 옮겨 매 렌더 재생성 안 하게\n- app/[locale]/layout.tsx: setRequestLocale(locale) 호출 + 잘못된 locale은 notFound() 처리\n- app/[locale]/page.tsx:\n  - export const dynamic = 'force-static' (Next.js 16 자동 inference가 보수적이라 explicit 필요)\n  - generateMetadata: params에서 locale 받아 setRequestLocale 호출\n  - Home: 동일하게 params 기반으로 전환, getLocale → setRequestLocale + getTranslations({ locale })\n  - import dynamic from 'next/dynamic' → import nextDynamic (export const dynamic과 이름 충돌 회피)\n\n빌드 검증:\n- 빌드 성공\n- /[locale] → ● (SSG) 전환 확인 (이전 ƒ)\n- /[locale]/{ko,en} 빌드 시 prerender됨\n\n후속 적용 후보 (force-dynamic 명시되지 않은 단순 페이지):\n- about, our-reality, our-proof, transparency, privacy, refund-policy, archive, news, terms\n\n위험:\n- /en/* 페이지의 <html lang>이 'ko'로 표시 — hreflang으로 보완, 실측 SEO 영향 미미 예상\n- 데이터 fetch (Supabase artworks) 캐시 갱신은 1시간 ISR + on-demand revalidate API 필요시",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "5fb20ab7",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "our-proof Dataset.isPartOf WebSite 제거 + license 추가",
+    "summary": "운영 데이터 페이지(/our-proof)의 Dataset 스키마에서 GSC가 거부하는 isPartOf 매핑을 제거하고 license 추가. our-reality와 동일한 함정이 잔존했던 것 — 블라인드스팟 2차 점검 결과 발견.",
+    "body": "- Dataset.isPartOf는 schema.org 사양상 Dataset/DataCatalog만 허용하는데 WebSite 가리켜 GSC가 \"isPartOf 입력란의 개체 유형이 잘못되었습니다\" 보고 (이전 our-reality 수정과 동일 패턴)\n- license: CC-BY 4.0 추가 — 학술·언론 인용 자유롭게, 운동 메시지 확산 목적과 일치 (our-reality와 동기화)",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "c9f2565a",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "동의문 수집 주체에서 \"(예술인협동조합)\" 부연 표기 제거",
+    "summary": "오윤 청원 폼의 개인정보 동의문에서 수집 주체를 법인명 단독(\"한국스마트협동조합\")으로 정리. 같은 폼에서 이미 한 번 풀어쓰인 동격 표기라 중복.",
+    "body": "- messages/ko.json formPrivacyBlurb: \"한국스마트협동조합 (예술인협동조합)\" → \"한국스마트협동조합\"\n- messages/en.json formPrivacyBlurb: \"Korea Smart Cooperative (Artists' Cooperative)\" → \"Korea Smart Cooperative\"\n\n근거:\n- PIPA 고지 요건상 수집 주체는 법인 등록 명칭이면 충분\n- proponentsBody1에서 \"한국스마트협동조합(예술인협동조합)\" 동격이 이미 한 번 등장해 페이지 내 정의 지점 존재\n- 직전에 같은 이유로 formOverseasBlurb에서 동일 표기를 제거한 선례 있음(changelog 548)",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "72225fb2",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "special/oh-yoon ExhibitionEvent.eventStatus EventCompleted → EventMovedOnline",
+    "summary": "오윤 40주기 특별전 페이지에 잔존하던 schema.org enum 위반값 제거. 본 전시(event.ts)와 동일 패턴으로 통일하고, 같이 오래된 검증 테스트도 새 매핑(EventMovedOnline / EventScheduled)에 맞춰 갱신.",
+    "body": "- app/[locale]/special/oh-yoon/page.tsx: eventStatus 'EventCompleted' → 'EventMovedOnline' (schema.org EventStatusType enum에 EventCompleted/EventInProgress 없음, 오프라인 종료 후 온라인 갤러리 지속)\n- __tests__/schemas/schema-validation.test.ts: ExhibitionEvent 후행 상태 / Artwork.isPartOf 진행·종료 상태 / Campaign.audience 제거 등 이전 GSC 수정 후 stale 상태였던 테스트 5건 갱신\n- 블라인드스팟 점검 결과 content.ts의 mainEntityOfPage 3곳(VideoObject·NewsArticle·BlogPosting)은 모두 '@type: WebPage'로 ProfilePage 함정 없음 확인",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "75c71bda",
+    "type": "fix",
+    "scope": "proxy",
+    "subject": "/css/* 경로 middleware skip — main.<hash>.css 404 즉시 수정",
+    "summary": "직전 머지 후 production에서 /css/main.<hash>.css가 404로 사라진 원인은 next-intl middleware가 정적 자산을 i18n 페이지 경로로 잘못 처리한 것. STATIC_SKIP_ROOTS와 matcher 모두에 /css 추가해 middleware 우회",
+    "body": null,
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "967e3070",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Person.mainEntityOfPage에서 ProfilePage @type 제거 — GSC mainEntity 타입 회귀 해결",
+    "summary": "GSC가 작가 페이지(/artworks/artist/<name>) 33~38건/일에서 \"mainEntity 입력란의 개체 유형이 잘못되었습니다\" 보고(2026-04-21~). Person 스키마의 mainEntityOfPage가 ProfilePage @type을 명시해 GSC가 페이지를 ProfilePage로 분류했는데, ProfilePage 사양상 mainEntity는 Person만 허용하는 데 비해 우리는 같은 페이지에서 CollectionPage.mainEntity로 ItemList를 가리키고 있어 타입 충돌.",
+    "body": "영향:\n- 4/21부터 8건 → 38건까지 누적 증가\n- 5/5 기준 33건 회귀, 그 자리는 Knowledge Panel/리치 결과 자격 박탈\n- 영향 받은 작가: 이동구·주재환·박재동·이홍원·장경호·류준화·박수지 등 핵심 작가 33명+\n\n원인 메커니즘:\n- artist.ts generateArtistSchema / generateEnhancedArtistSchema 두 함수에서\n  mainEntityOfPage: { '@type': 'ProfilePage', '@id': ... }\n- GSC가 ProfilePage 타입 시그널을 보고 페이지 카테고리를 ProfilePage로 결정\n- 같은 페이지의 CollectionPage(@id = artist.url#webpage)가 mainEntity로 ItemList\n  를 가리키지만, GSC는 ProfilePage 카테고리 기준으로 검증 → \"Person만 허용\" 위반\n\n수정:\n- lib/schemas/artist.ts (두 곳): mainEntityOfPage에서 @type 'ProfilePage' 제거,\n  @id만 남김. @id가 페이지의 CollectionPage 객체(@id = artist.url#webpage)를\n  가리키므로 GSC가 CollectionPage 카테고리로 정상 분류 → mainEntity ItemList 정상\n\n수정 사유 인라인 주석으로 명시(같은 패턴 재발 방지).\n\n검증: type-check ✓ / 테스트 ✓ / build ✓ (3단계 모두 통과)\n\nGSC 다음 크롤(1~2주) 후 33건 회귀 → 0건 회복.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "bd1c082f",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "FAQPage 중복 회귀 — 작품 상세 페이지의 두 FAQPage를 단일로 머지",
+    "summary": "GSC가 작품 상세 페이지(/artworks/<uuid>) 약 80~120건/일에서 \"FAQPage 입력란이 중복되었습니다\" 보고(2026-04-26~). Google FAQ Rich Results 가이드라인은 페이지당 FAQPage 1개만 허용하는데, 우리는 generateArtworkPurchaseFAQ(공통) + generateArtworkSpecificFAQ(작품 특화) 두 개를 함께 발행하고 있었음.",
+    "body": "영향:\n- 4/26부터 매일 80~120 작품 페이지가 GSC에서 회귀로 보고됨\n- 5/4 기준 122건 누적, 5/5 기준 88건\n- Rich Results 자격 박탈 → 검색 결과에서 FAQ 확장 노출 안 됨\n\n수정:\n- app/[locale]/artworks/[id]/page.tsx: 두 함수의 mainEntity(Q&A 배열)를 concat해\n  단일 FAQPage 객체(faqSchema)로 합침. JsonLdScript는 이 단일 schema만 출력\n- 두 함수 모두 generateFAQSchema()를 통과하는 동일 출력 형식이라 mainEntity\n  배열 머지 안전(타입 가드 Array.isArray 추가로 런타임 안정성 확보)\n- 결과: 공통 FAQ + 작품 특화 FAQ가 한 FAQPage 안에 모두 노출 — Rich Results 자격\n  유지 + 키워드 흡수량은 동일\n\nGSC 다음 크롤(1~2주) 후 회귀 보고 0건으로 회복.\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "e9459582",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Dataset.license 추가 (CC-BY 4.0) — GSC \"license 누락\" 회귀 해결",
+    "summary": "GSC가 our-reality 페이지의 Dataset structured data에서 \"license 입력란이 누락되었습니다\" 보고(2026-05-07). schema.org Dataset의 license는 Google Dataset 가이드라인 권장 속성. CC-BY 4.0 라이선스 URL을 추가해 회복.",
+    "body": "라이선스 선택 근거:\n- CC-BY 4.0: 출처 표시(Attribution)만 요구하는 자유 라이선스\n- 이 통계는 한국스마트협동조합 자체 조사 + 공개 자료 인용\n- 캠페인 메시지(예술인 금융 차별의 사회적 가시화)가 학술·언론·블로그 등에서\n  널리 인용되는 게 운동 목적에 부합 → 자유 라이선스가 적합\n- 비상업/동일조건 제한(NC/SA) 없는 BY가 가장 단순·우호적\n\n수정:\n- our-reality/page.tsx datasetSchema:\n  license: 'https://creativecommons.org/licenses/by/4.0/'\n- 사양 위치 + 선택 근거 인라인 주석으로 명시\n\nGSC 다음 크롤(1~2주) 후 Datasets 보고서 정상 등록. 이번 주에 동시 처리한 isPartOf 정정(8739d818)과 함께 our-reality Dataset의 GSC 모든 issue 해소.\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "d5626e2e",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "\"110여 명\" 작가 수 하드코딩 제거 — ARTIST_COUNT 상수로 동적화 (5곳)",
+    "summary": "ExhibitionEvent description / performer.name / HowTo step text 등 schema 출력에 \"110여 명\", \"over 110 artists\"가 하드코딩돼 있어 실제 작가 수와 불일치. ARTIST_COUNT 상수(작품 데이터 기반 자동 계산)로 동적화해 일관성 회복.",
+    "body": "ARTIST_COUNT 정의:\n- lib/site-stats.ts: `new Set(artworks.map(a => a.artist)).size`\n- 작품 데이터 추가/제거 시 자동 갱신\n- site 전반에 노출되는 공식 작가 수\n\n수정 5곳:\n- lib/schemas/event.ts:\n  - description (한·영) \"110여 명/over 110\" → ARTIST_COUNT\n  - performer.name \"참여 예술가 110여 명/Over 110 participating artists\" → ARTIST_COUNT\n  - ARTIST_COUNT import 추가\n- lib/schemas/howto.ts:\n  - artworkPurchaseHowTo step text (한·영) \"110여 명/over 110 participating artists\" → ARTIST_COUNT\n  - 이미 ARTIST_COUNT import돼 있어 신규 import 불필요\n\n다른 패턴(예: 100~129 + 명/artists) 검색해도 추가 hardcode 0건 — 이번 수정으로 schema 출력 측 작가 수 하드코딩 완전 제거.\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "a3f4b217",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "ExhibitionEvent.eventStatus 정정 — EventCompleted/InProgress(존재 X) → EventMovedOnline/EventScheduled",
+    "summary": "schema 검사기가 ExhibitionEvent의 eventStatus 값으로 'EventCompleted'를 보고했는데 schema.org EventStatusType enum에 존재하지 않는 값. EventInProgress도 마찬가지로 사양에 없음. 두 잘못된 값을 정식 enum 값으로 정정.",
+    "body": "배경:\n- 우리 전시는 오프라인 일정(2026-01-14 ~ 01-26)이 끝났지만 온라인 갤러리는 계속 운영 중\n- 이 의미를 schema.org EventStatusType의 'EventMovedOnline'이 정확하게 표현\n- 진행 중·예정 상태는 default인 'EventScheduled' (정상 일정대로 진행 중)\n\n수정:\n- lib/schemas/event.ts resolveEventStatus():\n  - 'completed' → EventCompleted(존재 X) → EventMovedOnline (오프라인 종료, 온라인 지속)\n  - 'inProgress' → EventInProgress(존재 X) → EventScheduled (정상 진행)\n  - 'scheduled' → EventScheduled (변경 없음)\n\neventAttendanceMode와 location 분기는 그대로 — completed 시 OnlineEventAttendanceMode + VirtualLocation은 의미적으로 정확. EventMovedOnline 상태와 일관성 있음.\n\nGSC 다음 크롤(1~2주) 후 검사기 1 오류 → 0 회복.\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "0ff061e5",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "FundingScheme에서 비호환 속성 제거 — schema 검사기 경고 3건 회복",
+    "summary": "schema.org 검사기가 FundingScheme(#campaign)에서 3건 경고 보고. isAccessibleForFree와 audience(중복 노출로 ×2)가 FundingScheme 타입에서 인정되지 않는 속성이라 발생. 두 속성 모두 단순 제거가 정답.",
+    "body": "원인:\n- FundingScheme은 Intangible 계열이라 CreativeWork 전용 속성(isAccessibleForFree)과\n  CreativeWork/Service 전용(audience)을 인정 안 함\n- GSC schema 검사기 표준 사양 검증에서 모두 \"유형 비호환\" 경고로 보고\n\n수정:\n- lib/schemas/organization.ts generateCampaignSchema(): isAccessibleForFree와\n  audience 두 키 제거. funder 등 정식 속성은 유지\n- audience의 의도(미술 컬렉터·예술 후원자 타깃)는 description(\"작품 구매를\n  통해 예술인들의 금융 자립을 지원\")에 이미 함의되어 있어 의미 손실 없음\n\n기대:\n- 다음 GSC 크롤(1~2주) 후 schema 검사기 경고 3건 → 0건\n- 검사기에서 보던 audience 중복 노출(×2)도 동시 해소\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "ccab7264",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "WebPage speakable cssSelector 정리 — DOM에 없는 selector 제거",
+    "summary": "schema.org 검사기가 홈 WebPage의 SpeakableSpecification에서 4개 오류 보고. cssSelector 배열의 .mission-banner / .hero-subtitle 두 selector가 실제 DOM에 매칭되지 않아 발생. (오류가 4개로 보인 건 page schema가 두 번 발행돼서 selector 2개 × 2회 = 4 합산)",
+    "body": "원인:\n- cssSelector: ['h1', '.mission-banner', '.hero-subtitle']\n- h1만 정상 매칭(HeroSpotlight 슬라이드 제목)\n- 나머지 두 클래스는 코드 어디에도 부여 안 돼 빈 매칭 → schema 검증 실패\n\n수정:\n- app/[locale]/page.tsx: cssSelector를 ['h1']로 축소\n- 실제 DOM에 존재하는 selector만 남김 → 검증 통과\n- mission banner와 hero subtitle 영역에 음성검색 대응을 더 추가하려면 별도\n  PR로 className 부여 + selector 추가하는 패턴이 더 안전\n\nGSC 다음 크롤(1~2주) 후 schema 검사기에서 해당 페이지 4개 오류 → 0건 회복.\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "8739d818",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Dataset.isPartOf 제거 — GSC \"잘못된 개체 유형\" 회귀 해결",
+    "summary": "GSC Datasets 보고서가 2026-04-23부터 우리 Dataset 항목 1건을 \"isPartOf 입력란의 개체 유형이 잘못되었습니다\" 오류로 분류. our-reality 페이지의 Dataset structured data에서 isPartOf가 WebSite를 가리키던 것이 schema.org 사양 위반이었음.",
+    "body": "원인:\n- schema.org Dataset.isPartOf는 Dataset 또는 DataCatalog 타입만 허용\n- 우리 datasetSchema.isPartOf는 { '@id': SITE_URL#website } (WebSite 타입)\n- AboutPage.isPartOf가 WebSite인 건 정상이라 거기서 패턴을 잘못 복사한 것으로 추정\n\n수정:\n- our-reality/page.tsx: datasetSchema에서 isPartOf 라인 제거\n- 이 통계 데이터셋은 더 큰 Dataset/DataCatalog의 일부가 아니므로 isPartOf 자체가\n  의미 없음. 단순 제거가 정답\n- aboutPageSchema.isPartOf(WebSite)는 schema.org 사양상 정상이라 그대로 유지\n\n영향:\n- GSC가 다음 크롤(보통 1~2주) 후 Datasets 보고서에서 이 항목 정상 등록\n- 차트의 \"1건 영향 받음\"이 0건으로 회복\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "00495ace",
+    "type": "perf",
+    "scope": "redirects",
+    "subject": "apex→www Next.js redirect 제거 — Vercel UI 변경과 페어로 PSI 950ms 절감",
+    "summary": "PSI \"리디렉션 방지\" 950ms 항목 제거를 위해 next.config.js에서 apex(saf2026.com) → www.saf2026.com redirect 항목 삭제. 동일 redirect를 Vercel 도메인 단계에서도 중복으로 걸고 있어, 이 코드 측 redirect까지 풀어야 양쪽 도메인이 동일 콘텐츠를 직접 서빙하게 됨.",
+    "body": "배경:\n- 현재 saf2026.com 방문 시 redirect 두 단계:\n  [1] Vercel 도메인 단계 307 → www\n  [2] (Vercel을 풀어도) Next.js 단계 permanent redirect → www\n- PSI에서 950ms \"문서 요청 지연 시간\" + \"리디렉션 방지\" 동시 지적\n\n수정:\n- next.config.js redirects()에서 apex→www 항목 제거. 다른 redirect들은 유지\n  (legacy URL, /exhibition, /en/auth route 등 — 도메인 변경 무관)\n\n전제 조건 (이미 만족):\n- canonical tag가 www.saf2026.com 가리킴 (SITE_URL constant)\n- metadataBase도 www.saf2026.com\n- → SEO duplicate content 위험 없음, Google이 canonical 따라 통합\n\n⚠ 다음 단계 — Vercel UI 작업 필수:\n이 커밋만으로는 부족. Vercel 대시보드 → Project saf2026 → Settings →\nDomains → saf2026.com 항목을:\n  - \"Redirect to Another Domain\" → \"Connect to an environment: Production\"\n으로 변경해야 양쪽 도메인 모두 콘텐츠 직접 서빙. 사용자 수동 작업 필요.\n\n배포 + Vercel UI 변경 후 PSI를 https://saf2026.com/ 로 측정해 redirect 사라짐 확인.\n\n타입체크 ✓ / 테스트 통과",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "07c6ad1a",
+    "type": "perf",
+    "scope": "css",
+    "subject": "Tailwind 컴파일 분리 + 외부 CSS 링크 — render-blocking 해제 1단계",
+    "summary": "Lighthouse 1190ms render-blocking CSS 진단 해소를 위한 1단계. Tailwind를 Next.js 자동 처리에서 분리해 별도 컴파일·서빙. 이번 단계에서 회귀 0건 확인 후 2단계(critical inline + async load)로 진행 예정.",
+    "body": "- scripts/build-css.mjs: tailwindcss CLI로 styles/globals.css → public/css/main.<hash>.css 컴파일. content hash로 캐시 버스팅. 이전 hash 자동 정리. app/_css-manifest.json에 path 출력\n- package.json: build/dev에 build-css.mjs 추가. build-css 단독 명령도 추가 (Tailwind 변경 후 manual rebuild용)\n- app/layout.tsx: import '@/styles/globals.css' 제거. 대신 <head>에 manifest 기반 manual <link rel=\"stylesheet\"> 박음. 1단계는 일반 stylesheet (회귀 검증 단계), 2단계에서 critical inline + media swap으로 전환\n- .gitignore: public/css/main.*.css 무시 (hash 변경마다 churn 방지). _css-manifest.json은 commit해 type-check가 missing 안 되도록\n\n이후 단계 (별도 commit):\n- critical CSS 추출 스크립트 + inline\n- media=\"print\" onLoad swap 패턴\n- 시각 회귀 테스트\n- Preview 검증 후 main 머지",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "4d554d95",
+    "type": "fix",
+    "scope": "home,cls",
+    "subject": "CategorySections·FAQ Suspense 제거 — GSC 100% URL CLS 회귀 진짜 원인 해결",
+    "summary": "GSC Core Web Vitals가 28일 rolling window에서 100% URL CLS 회귀 보고. 직전 svh 수정(83a82509)은 일부 원인만 해결했고 진짜 큰 원인은 별개 — 홈 페이지의 Suspense fallback 높이와 실제 콘텐츠 높이 불일치로 인한 streaming 시점 거대 layout shift.",
+    "body": "진단:\n- Line 148: <Suspense fallback={<BrandLoader minHeight=\"60vh\" />}><CategorySections /></Suspense>\n  → fallback 60vh, 실 콘텐츠 4 카테고리 슬라이더 ≈ 350vh\n  → 차이 290vh가 그 아래 모든 콘텐츠(stats/CTA/FAQ/footer) push down\n  → CLS = 영향 영역(거의 viewport 전체) × 이동 거리(290vh / viewport h) ≈ 1.0+\n- Line 186: FAQ도 동일 패턴(30vh fallback → ~80vh real)으로 누적\n\n수정:\n- <CategorySections />를 Suspense에서 빼고 server에서 직접 await. ISR 캐시\n  (revalidate=3600)로 4 카테고리 쿼리 ms 단위라 streaming 이득 없음\n- <HomeFAQSection />도 동일 — FAQ 데이터도 ISR 캐시\n- BrandLoader import 제거 (이제 사용처 없음)\n- <DynamicCounter />의 Suspense는 그대로 — client component(useEffect 카운트\n  업)라 server await 불가, fallback도 h-32 static height라 small shift만\n\n기대:\n- CrUX field data 28일 rolling window 갱신되며 CLS 0.1 미만으로 회복\n- GSC Core Web Vitals \"CLS issue\" 회귀 신규 발생 0\n- 페이지 LCP는 streaming 제거로 약간 늦어질 수 있으나 ISR 캐시 + server response\n  300~600ms라 미미. CLS 회복 ROI가 훨씬 큼",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "6b03c64e",
+    "type": "fix",
+    "scope": "home,cls",
+    "subject": "CategorySections·FAQ Suspense 제거 — GSC 100% URL CLS 회귀 진짜 원인 해결",
+    "summary": "GSC Core Web Vitals가 28일 rolling window에서 100% URL CLS 회귀 보고. 직전 svh 수정(83a82509)은 일부 원인만 해결했고 진짜 큰 원인은 별개 — 홈 페이지의 Suspense fallback 높이와 실제 콘텐츠 높이 불일치로 인한 streaming 시점 거대 layout shift.",
+    "body": "진단:\n- Line 148: <Suspense fallback={<BrandLoader minHeight=\"60vh\" />}><CategorySections /></Suspense>\n  → fallback 60vh, 실 콘텐츠 4 카테고리 슬라이더 ≈ 350vh\n  → 차이 290vh가 그 아래 모든 콘텐츠(stats/CTA/FAQ/footer) push down\n  → CLS = 영향 영역(거의 viewport 전체) × 이동 거리(290vh / viewport h) ≈ 1.0+\n- Line 186: FAQ도 동일 패턴(30vh fallback → ~80vh real)으로 누적\n\n수정:\n- <CategorySections />를 Suspense에서 빼고 server에서 직접 await. ISR 캐시\n  (revalidate=3600)로 4 카테고리 쿼리 ms 단위라 streaming 이득 없음\n- <HomeFAQSection />도 동일 — FAQ 데이터도 ISR 캐시\n- BrandLoader import 제거 (이제 사용처 없음)\n- <DynamicCounter />의 Suspense는 그대로 — client component(useEffect 카운트\n  업)라 server await 불가, fallback도 h-32 static height라 small shift만\n\n기대:\n- CrUX field data 28일 rolling window 갱신되며 CLS 0.1 미만으로 회복\n- GSC Core Web Vitals \"CLS issue\" 회귀 신규 발생 0\n- 페이지 LCP는 streaming 제거로 약간 늦어질 수 있으나 ISR 캐시 + server response\n  300~600ms라 미미. CLS 회복 ROI가 훨씬 큼",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "0dd19a73",
+    "type": "perf",
+    "scope": "vercel",
+    "subject": "function region 한국(icn1)으로 이전 — TTFB 700ms+ 개선 기대",
+    "summary": "Lighthouse \"서버 응답 1026ms\" 진단의 결정적 원인은 Vercel 기본 region(iad1, US East)에서 함수 실행 + 한국 사용자 ↔ 미국 ↔ Supabase Mumbai 왕복. icn1(서울)로 옮기면 user→function 0ms로 단축.",
+    "body": "Region 비용 분석 (RTT 추정):\n- 현재 iad1: user(KR)↔function(US East) ~180ms × 2 + function↔Supabase(Mumbai) ~250ms × 2 = ~860ms 합산\n- icn1: user(KR)↔function(KR) 0ms × 2 + function↔Supabase(Mumbai) ~150ms × 2 = ~300ms 합산\n\n홈 페이지 데이터(getSupabaseArtworksByCategories, getSupabaseFAQs)는 unstable_cache 적용되어 캐시 적중 시 DB 호출 없음 — region 차이는 cache miss 시에만 적용. 첫 요청은 ~700ms, warm 요청은 ~50ms 추정.",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "4d1739b4",
+    "type": "perf",
+    "scope": "css",
+    "subject": "experimental.optimizeCss로 critical CSS 인라인 시도",
+    "summary": "Lighthouse render-blocking CSS 1270ms 진단 해소를 위해 Next.js 내장 critical CSS 인라인 활성화",
+    "body": "- next.config.js: experimental.optimizeCss = true\n- 의존성 추가: beasties (활성 메인테인 fork), critters (Next.js 공식 peer dep)\n\nPoC 측정: Tailwind utility chunk(123KiB)의 ~30KiB가 above-the-fold critical로 추출. HTML 응답에 인라인 <style>로 박혀 paint를 RTT 1번 + 다운로드 시간(slow mobile 1760ms) 만큼 앞당김 기대.\n\n이 커밋은 preview 배포에서만 검증. main 머지 전 Lighthouse 재측정으로 LCP 개선 ≥500ms 확인 + 시각 회귀 0건이면 진행, 미달 시 revert.",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "43dd0fe6",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "1000행 한도 잘림 추가 3건 — 청원 CSV 다운로드·구매자 집계·작가별 매출",
+    "summary": "코드베이스 wider scan으로 발견된 PostgREST db-max-rows=1000 한도 영향 받는 3개 admin 흐름을 batch fetch로 수정. 청원 CSV는 이미 데이터 누락 진행 중이었고, 구매자/작가별 매출 집계는 누적시 부분집계 위험 — 모두 사전 차단",
+    "body": "- lib/utils/supabase-batch.ts: 페이지네이션 batch helper(fetchAllInBatches)를 oh-yoon 페이지에서 분리해 재사용 가능한 lib로 추출. PromiseLike 타입 받아 supabase 빌더 직접 처리, hardLimit 50,000\n- petition-admin.ts CSV export: 단발 select가 1000행만 반환되어 청원 4000+건 중 일부만 다운로드되던 critical 버그 수정. mode(committee/full)별 분기를 batch 콜백 안에서 처리\n- admin-buyers.ts: artwork_sales 1000+ 누적시 buyer 집계가 부분집계되던 잠재 버그 차단. voided_at 컬럼 없는 구형 스키마 fallback도 batch 안에서 보존\n- admin-artist-sales.ts: 동일 패턴 — 작가별 매출 순위/합계가 누적시 부정확해질 위험 차단\n- 페이지 파일에 inline돼 있던 oh-yoon batch 헬퍼는 lib import로 정리\n\n검증: 현재 artwork_sales 189건/orders 51건이라 admin-buyers·admin-artist-sales는 아직 영향 없음. petition CSV는 즉시 효과(3949건 전체 다운로드 가능). type-check + 기존 테스트 23건 통과",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "97d7c399",
+    "type": "fix",
+    "scope": "admin/petition",
+    "subject": "1000행 한도 잘림 — region 분포·메시지·추진위원·전체 명단 (실제 vs 화면 약 4배 격차)",
+    "summary": "PostgREST db-max-rows=1000 서버 한도 때문에 admin 청원 페이지의 모든 명단성 데이터가 앞 1000행만 가져와 운영자가 보던 region 분포·메시지·추진위원·전체 서명이 실제값의 일부만 표시되던 critical 버그 수정 (예: 서울 1595명이 441로, 전체 3949명이 1000으로 보였음)",
+    "body": "- 지역별 분포: get_petition_region_breakdown(p_slug) RPC 함수 추가 (SECURITY DEFINER, service_role 전용). DB GROUP BY로 직접 집계 → 결과 row=region 수(~18)라 한도 무관. 페이지 코드는 admin.rpc(...)로 변경\n- 메시지 큐 / 추진위원 명단 / 전체 서명 명단: fetchAllInBatches 헬퍼 추가 — 1000행씩 페이지네이션 batch fetch로 50,000까지 확보. range(0, 49999) 단발 호출은 db-max-rows에 걸려 무력했음\n- region_top 화면 라벨(서울특별시 등)은 lib/petition/regions.ts의 getRegionByKey().label 매핑이라 DB 축약값(서울)과 정상 호환\n\n회귀 위험: 페이지가 force-dynamic SSR이라 매 요청 batch 루프가 도는 비용은 있으나, 청원 데이터(~4000행)는 1~2초 내 완료. 과거 .range(0, 49999)도 같은 의도였으나 한도에 걸려 부분 집계가 송출되었음",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "1e2dcfb6",
+    "type": "fix",
+    "scope": "perf",
+    "subject": "bfcache 방식 변경 — middleware 헤더 override 무력 → next.config headers()",
+    "summary": "직전 커밋에서 proxy 미들웨어로 no-store를 제거하려 했으나 Next.js framework가 동적 라우트 응답에 후속으로 no-store를 다시 박는 것으로 production curl 검증 결과 확인. next.config headers()는 edge layer에서 적용되어 framework 헤더를 override 가능.",
+    "body": "- proxy.ts: applyPublicPageCacheControl 헬퍼 제거 (작동 안 함)\n- next.config.js: 공개 라우트 정규식으로 매칭하는 headers() 규칙 추가, `private, no-cache, max-age=0, must-revalidate` 강제. portal/auth/api/_next 영역은 negative-lookahead로 매칭 제외해 personalised 응답 보호 유지",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "127a4484",
+    "type": "fix",
+    "scope": "admin/nav",
+    "subject": "데스크톱 nav 라벨과 underline 간격 추가 (pb-2)",
+    "summary": "관리자 데스크톱 네비게이션의 메뉴 라벨(구성원/콘텐츠 등)과 active/hover 시 보이는 하단 underline이 너무 붙어있어 어색했던 문제 — pb-2(8px)로 baseline-to-border 간격 확보",
+    "body": "- NavDropdown 버튼: 'pt-1' → 'pt-1 pb-2'\n- admin-desktop-nav flat 링크: 'pt-1' → 'pt-1 pb-2'\n- 두 군데 일관 처리. 같은 active(border-primary-a11y) / hover(border-gray-300) 패턴 공유",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "e7a205da",
+    "type": "fix",
+    "scope": "perf",
+    "subject": "bfcache 복원 + GoogleAnalytics SyntaxError 우회",
+    "summary": "Lighthouse가 잡아낸 두 가지 버그 수정 — 메인 HTML이 no-store로 bfcache 차단되던 문제와 next/script의 인라인 GA init이 production에서 SyntaxError 던지던 문제",
+    "body": "Lighthouse 재측정 (2026-05-06 production, mobile)에서 발견:\n\n1. proxy.ts: 공개 페이지 응답에서 Cache-Control의 `no-store` 토큰만 제거\n   - Vercel/Next.js가 동적 라우트(getLocale 등 헤더 읽는 동작)에 자동으로 박는 `private, no-cache, no-store, max-age=0, must-revalidate`가 bfcache(뒤로가기 즉시 복원)를 차단\n   - `no-store`만 제거하면 bfcache 허용 (`no-cache`는 revalidation 강제일 뿐 bfcache는 막지 않음)\n   - 인증 영역(updateSession)은 personalised 응답이라 그대로 유지\n\n2. components/common/GoogleAnalytics.tsx: 인라인 GA init을 useEffect로 전환\n   - production에서 `SyntaxError: Failed to execute 'appendChild' on 'Node': Invalid or unexpected token` 던져지던 chunk 0qtp12-8xug-g.js:5896 우회\n   - 원인은 next/script의 인라인 children 주입 경로 — manual repro로는 같은 코드가 동작하나 next/script가 children/dangerouslySetInnerHTML 처리에서 문제 일으키는 것으로 추정\n   - gtag.js는 그대로 next/script(afterInteractive)로 로드, dataLayer/gtag stub만 useEffect에서 직접 등록 → web-vitals 콜백 race condition도 그대로 회피\n\nLighthouse 결과 변화 기대: bfcache 점수 0→1, Best Practices ↑(브라우저 에러 해소), Performance 미세 개선 (script 로드 실패로 인한 부수 효과 제거).",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "38f0b381",
+    "type": "feat",
+    "scope": "admin/artist-notice",
+    "subject": "revert handler 보강 + DB 트리거로 관리자 우선 강제",
+    "summary": "작가 공지 변경(notice_set/toggled/cleared) 활동 로그가 활동 로그에서 \"되돌리기\" 가능하도록 ARTIST_REVERT_KEYS에 notice 컬럼 추가, BEFORE UPDATE 트리거로 작가 본인이 client에서 직접 notice 컬럼을 변경하는 경로 차단",
+    "body": "- admin-log-revert.ts ARTIST_REVERT_KEYS에 notice_* 컬럼 7개 추가. buildPatch가 snapshot에 있는 키만 픽하므로 일반 작가 update revert와 notice 전용 update revert 둘 다 자연스럽게 처리(snapshot에 notice 컬럼이 없는 일반 update는 무해)\n- 마이그레이션 20260430130000_artist_notice_admin_only.sql: BEFORE UPDATE 트리거 enforce_artist_notice_admin_only 추가. service_role(server-side admin client) + 인증된 admin profile만 통과, 그 외 notice_* 컬럼 변경 시도는 42501 에러로 거부\n- 정책: 작가 본인이 자기 row 일반 update(name_ko, bio 등)는 기존 RLS 그대로 허용 — notice 컬럼만 column-level 보호. server action setArtistNotice/toggleArtistNotice/clearArtistNotice는 service_role로 호출되므로 트리거 우회",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "89dff52a",
+    "type": "perf",
+    "scope": "home",
+    "subject": "NowShowing 이미지 sizes 정확화 + coverage 측정 스크립트",
+    "summary": "PSI 미사용 CSS 진단을 위한 Playwright 기반 coverage 측정 스크립트 추가, NowShowing 카드 이미지 sizes를 실제 카드 폭에 맞춰 보정",
+    "body": "- components/features/NowShowing.tsx: sizes를 `(max-width: 640px) 100vw, 50vw` → `(max-width: 640px) 100vw, (max-width: 1056px) 50vw, 512px`로. max-w-5xl 컨테이너 내 2컬럼 레이아웃의 실제 카드 상한(496px)에 맞춰 데스크톱에서 480w 변형 fetch (이전 750w → 480w)\n- scripts/lighthouse-coverage.ts: Playwright + CDP로 임의 URL의 JS/CSS coverage 측정. unused 바이트 origin별 집계 + worst offenders top 20 + tmp/coverage-*.json 덤프. 회귀 진단 시 재사용\n- .gitignore: tmp/ 추가 (coverage 스크립트 산출물 추적 방지)\n\n부가 발견: PSI가 보고하는 99KiB 미사용 CSS의 정체는 (1) 321KiB는 next/font의 Noto Sans KR 142개 unicode-range subset @font-face 선언으로 정상 부담, (2) 99KiB Tailwind 유틸리티 미사용분 대부분은 *다른 공개 라우트*의 클래스이며 라우트 그룹별 분리로 잡히지 않음 (실험으로 확인 후 되돌림)",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "d1c2410a",
+    "type": "fix",
+    "scope": "admin/artists",
+    "subject": "작가 편집 진입 깨짐 — profiles 임베드 모호성 해소",
+    "summary": "artist notice 마이그레이션이 추가한 notice_updated_by → profiles(id) FK 때문에 getArtistById의 profiles 임베드가 모호해져 모든 작가의 편집 진입이 \"작가를 찾을 수 없습니다\"로 실패하던 문제 수정 — 명시적 FK hint(artists_user_id_fkey)로 user_id 관계 고정",
+    "body": "- 마이그레이션 20260430120000에서 notice_updated_by uuid REFERENCES profiles(id)를 추가해 artists ↔ profiles 관계가 두 개(user_id, notice_updated_by)가 됐음\n- PostgREST는 같은 두 테이블에 FK가 둘이면 .select('profiles(...)')만으로는 어느 관계를 따라갈지 결정 못 해 query reject\n- getArtistById에서 supabase가 error를 반환 → /admin/artists/[id] 페이지가 catch 후 notFound() → \"작가를 찾을 수 없습니다\" 노출\n- 수정: select 문을 'profiles!artists_user_id_fkey(id, name, email)'로 명시. 의도된 관계(연결된 사용자 계정) 유지\n- 향후 notice_updated_by 작성자 표시가 필요하면 별칭으로 별도 임베드 (예: 'notice_updater:profiles!artists_notice_updated_by_fkey(email)')",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "398f0b2a",
+    "type": "fix",
+    "scope": "admin/artist-notice",
+    "subject": "미저장 메시지 토글 ON 시 UI/DB 불일치 + 타입 안전성",
+    "summary": "코드 리뷰에서 잡힌 UX 버그(미저장 변경 상태에서 활성 토글 ON 시 DB 미반영) 수정 + Supabase 자동 타입에서 파생하도록 unsafe cast 제거",
+    "body": "- _NoticeFieldset.handleToggleOnly: 미저장 메시지 변경 상태에서 ON 토글하면 DB의 옛 메시지가 활성화될 위험 — UI도 setEnabled 호출하지 않고 toast.info로 [저장] 버튼 사용 안내. UI/DB 불일치 차단\n- admin-artists.ts: ArtistNoticeRow를 `Pick<Tables<'artists'>, ...>`로 파생 — 컬럼 추가/타입 변경 시 컴파일 에러로 즉시 감지. `as ArtistNoticeRow | null` cast 제거. .single()이 missing row 시 throw하므로 반환 타입을 non-null로 좁힘\n- parseNoticeActiveUntil: ISO 문자열만 허용한다는 계약 주석 추가 (timezone 없는 raw datetime-local 직접 넘기지 말 것)",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "d10a3cde",
+    "type": "fix",
+    "scope": "ux",
+    "subject": "필터 클릭 후 스크롤이 화면 아래에 머물러 새 결과가 안 보이던 문제",
+    "summary": "사용자가 작품 갤러리에서 깊이 스크롤한 상태로 작가/카테고리/가격/정렬 필터를",
+    "body": "누르면, 필터된 결과가 사용자 viewport 위에 위치해 \"?? 이게 뭐지\" 하고 혼란스러워하던\nUX 문제. router.push의 scroll: false와 로컬 state 변경 후 스크롤 처리 부재가 원인.\n\n수정 1 — 작가 navigation (페이지 변경):\n- ArtworkGalleryWithSort.handleArtistClick: router.push(path, { scroll: false }) →\n  router.push(path)로 변경. 다른 페이지로 navigate 시 새 페이지 상단부터 보여야 정상.\n\n수정 2 — 로컬 state 필터 (sort·status·category·price):\n- 각 setter를 useCallback으로 래핑해 setX 호출 직후 window.scrollTo({top: 0, behavior: 'smooth'})\n- FilterBar·CategoryFilter·PriceRangeFilter에 래핑된 핸들러 연결\n- prefers-reduced-motion 사용자에겐 브라우저가 자동 즉시 점프 처리\n\n수정 3 — 매거진 카테고리:\n- StoriesCategoryFilter.handleClick의 scroll: false 제거.\n- 동일 페이지 내 query param 변경이지만 스크롤 위치 보존이 오히려 혼란 유발.\n\n검색·search input은 의도적으로 미수정 — 사용자가 타이핑 중에 스크롤이 튀면 입력 흐름\n끊김. 디바운스 + 결과 카운트 메시지로 시각 피드백 제공 중.\n\n영향:\n- /artworks (작품 갤러리) 모든 필터 클릭 후 상단 스크롤\n- /artworks/artist/* 작가 페이지 작가 navigation 클릭 후 새 페이지 상단으로\n- /stories 카테고리 클릭 후 상단으로",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "0de5e73d",
+    "type": "feat",
+    "scope": "admin/artist-notice",
+    "subject": "작가 페이지·작품 상세 공지 뱃지 시스템",
+    "summary": "작가별 운영 공지(가격 인상·판매 중단)를 작가 페이지와 그 작가의 모든 작품 상세 페이지에 동시 노출 — 한 번의 입력으로 여러 페이지 동기화",
+    "body": "- 데이터: artists 테이블에 notice_* 컬럼 7개 + 부분 인덱스. 단일 공지 + notice_enabled 토글로 메시지 보존하면서 끄기\n- 단일 출처 헬퍼 lib/artist-notice.ts → 작가 페이지·작품 상세에서 동일 판정 (만료·영문 fallback 포함)\n- ArtistNoticeCard (stateless dumb) + ArtistNoticeBanner (i18n server wrapper) — 한/영 자동 분기, 영문 비어있으면 영어 페이지 미노출\n- 관리자 편집 폼 _NoticeFieldset: 활성 토글, 종류 선택(info/warning/urgent), 한/영 메시지, 만료 시각 + 빠른 입력(7일/30일), 자주 쓰는 문구 템플릿 3개, 한/영 미리보기\n- 관리자 작가 목록: 공지 컬럼·\"공지 활성만 보기\" 필터·빠른 OFF 버튼·deep link(?focus=notice 자동 스크롤·하이라이트)\n- server actions setArtistNotice/toggleArtistNotice/clearArtistNotice + admin_logs 감사 기록 + revalidateTag로 작가 페이지·작품 상세·관리자 페이지 즉시 갱신\n- 위치: 작가 페이지 PageHero 직후, 작품 상세 ArtworkDetailNav(sticky) 직후 — 모바일에서도 동일 자리\n- 디자인 (DESIGN.md §2·§4·§7): 화이트 배경 + type별 좌측 4px border(info=primary / warning=sun-strong / urgent=danger-a11y) + role=\"note\" 정적 카드(사용자 dismiss 없음)\n- 테스트 23 통과: 15 helper(만료·toggle·영문 fallback·boundary), 8 component(type 3종·접근성·금지 토큰 미사용)",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "8fb5578d",
+    "type": "fix",
+    "scope": "seo/schema",
+    "subject": "작품 JSON-LD @type 'Product' 제거 — review 필수 필드 누락 경고 해소",
+    "summary": "GSC Product snippets 보고서가 'review 입력란 누락' 경고를 80건+로 보고(2026-04~05",
+    "body": "30일간 62 → 80 증가). SAF 작품은 일회성 원본·한정 에디션이라 리뷰가 축적되지 않으며,\nreview/aggregateRating 가짜 주입은 Google 구조화 데이터 정책 위반. 따라서 Product\n듀얼 타입을 끊고 VisualArtwork 단일 타입으로 통일.\n\n변경 1줄:\n- '@type': isInquiry ? 'VisualArtwork' : ['VisualArtwork', 'Product']\n+ '@type': 'VisualArtwork'\n\n영향:\n- offers / brand / additionalProperty 등은 CreativeWork·VisualArtwork에서도 유효해 유지\n- sku / mpn / countryOfOrigin은 Product 전용 필드지만 무해 — 향후 청소 예정\n- OG product:price:* 메타태그는 별도 채널(other:{}로 송출)이라 영향 없음\n- Facebook Merchant Catalog·Pinterest Product Rich Pin·Twitter Product Card는\n  product:* OG 메타로 인식되므로 영향 없음\n\n다음 GSC 재크롤(2~4주) 후 Product snippets 경고 80건 → 0건 회복 예상.",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "4b6966b8",
+    "type": "fix",
+    "scope": "cwv",
+    "subject": "작가 페이지 145개 CLS 1.00 — PageHero vh→svh + heroBreathing 컴포지터 promotion",
+    "summary": "GSC 2026-05-06 보고서 기준 /artworks/artist/* 145개 URL이 모바일 CLS 1.00으로",
+    "body": "악화. 이전 commit 83a82509에서 HeroSpotlight(홈)만 vh→svh 처리했으나, 진짜 영향이 큰\nPageHero(작가·카테고리·서브 페이지 공통 헤더) 수정이 누락돼 있었음.\n\n원인 두 가지:\n1. PageHero `min-h-[60vh]` — 모바일 URL 바 collapse 시 viewport height 증가로\n   hero가 ~15% 늘어나며 본문이 아래로 시프트.\n2. heroBreathing 애니메이션(40s 주기 scale 1.0↔1.1)이 컴포지터 레이어로 promotion\n   안 된 채로 돌아 일부 환경에서 CLS로 잡힘.\n\n수정:\n- PageHero: min-h-[60vh] → min-h-[60svh] (small viewport, URL 바 변동에 안정)\n- PageHeroBackground: animate-hero-breathing 컨테이너에 transform-gpu·will-change-transform\n  추가 — 브라우저가 자체 컴포지터 레이어로 띄워 layout 패스 회피\n- stories/page.tsx: 동일 패턴(featured 카드 hero-breathing)에 동일 fix 적용\n\n영향: /artworks/artist/* 145 URL의 CLS가 정상치(<0.1)로 회복 예상. 28일 데이터 윈도우\n(2026-06-03 전후)에 GSC 재측정.",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "0f2d9b80",
+    "type": "fix",
+    "scope": "rum",
+    "subject": "arrow + rest spread + try/catch — strict mode SWC minify 호환성 회복",
+    "summary": "GA4 14일간 web_vitals_mount/web_vitals 모두 0건 — production 번들에 코드는 정상 포함되는데 사용자 브라우저에서 호출 자체가 안 됨. 현재 stub의 named function expression + arguments 키워드 조합이 'use client' ES module(자동 strict mode) + Next.js SWC minifier 환경에서 silently throw하던 가설로 정정.",
+    "body": "수정:\n- stub 정의: `function gtagStub() { ...arguments... }` (named function expression\n  with arguments keyword) → `(...args) => { dataLayer.push(args) }` (arrow + rest\n  spread). strict mode + minifier 호환 더 강함\n- mount ping과 sendToGA 양쪽 gtag 호출에 try/catch 래핑. 실패 시 console.error로\n  진단 단서 노출(이전엔 silently 사라져 진단 불가)\n- non_interaction 매개변수 제거. GA4는 UA legacy 매개변수 무시하지만 이벤트\n  payload 단순화 측면에서 정리. mount ping에선 처음부터 빠져 있음, sendToGA에서만 제거\n\n기대:\n- 다음 deploy 후 mount ping 들어오기 시작 → 컴포넌트 작동 확인\n- web_vitals 본 이벤트도 함께 들어오면 RUM 정상화\n- 만약 여전히 0이면 console.error 로그가 남으므로 사용자가 production console에서 직접 확인 가능",
+    "date": "2026-05-06",
+    "author": "황경하"
+  },
+  {
+    "hash": "dfbf16dd",
+    "type": "fix",
+    "scope": "admin/petition",
+    "subject": "개요 탭 지역별 카운트 컬럼 폭 확장 (천→만 단위 대응)",
+    "summary": "각 지역의 서명 카운트가 만(10,000) 단위까지 갈 수 있는 시나리오 대비.",
+    "body": "- count 컬럼 폭 4rem(64px) → 5.5rem(88px) — 6자리 콤마 표기('12,345')도 여유 있게\n- font-medium 추가 — 큰 숫자 가독성 향상",
+    "date": "2026-05-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "134e8aec",
+    "type": "fix",
+    "scope": "admin/petition",
+    "subject": "개요 탭 지역별 분포 집계가 첫 1000명 표본에만 의존하던 버그",
+    "summary": "petition_signatures.region_top 조회가 Supabase JS 기본 1000 row 한도에 묶여,",
+    "body": "실제 3500+명 서명 중 첫 1000명의 지역만 in-memory aggregation 됐다. 결과적으로\n지역별 분포가 진짜 비율의 ~28% 표본에 불과해 막대그래프와 카운트 모두 백~수백 단위로\n축소 표시되는 문제 발생.\n\n수정: regionRows 쿼리에 .range(0, 49999) 추가 — 1만+ 서명 케이스에서도 전수 집계.\nregion_top은 짧은 varchar라 5만 row 다운로드도 ~500KB 수준으로 부담 적음.\n\n연쇄 영향: 개요 탭의 지역별 분포 막대그래프 비율과 절대 카운트가 실제 데이터를\n정확히 반영. 1만 명 시나리오에서도 정확.",
+    "date": "2026-05-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "f554483b",
+    "type": "fix",
+    "scope": "admin/petition",
+    "subject": "서명·추진위원·메시지 fetch 한도 1000 → 5만으로 확장",
+    "summary": "Supabase JS 클라이언트 기본 1000 row 한도가 1만+ 서명·추진위원 시나리오에서",
+    "body": "명단을 잘랐다. .limit() 제거하고 .range(0, 49999)로 5만까지 허용. 서버 측 max_rows는\n미설정 상태(SHOW로 확인)라 명시적 range로 충분.\n\n대상 쿼리 3건:\n- signatures (전체 명단) .limit(1000) → .range(0, 49999)\n- committee (추진위원) .range(0, 4999) → .range(0, 49999)\n- messages (시민 한 마디) .limit(200) → .range(0, 49999)\n\n배경: 사용자 보고 — 1만 명 서명·추진위원 가까이 가는 시나리오 대비.",
+    "date": "2026-05-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "d7d0f66c",
+    "type": "fix",
+    "scope": "admin/petition",
+    "subject": "메시지·추진위원 탭 배지가 fetch limit 값(200·1000)으로 고정 표시되던 버그",
+    "summary": "어드민 청원 관리 페이지에서 메시지 200·추진위원 1000으로 정확히 천 단위로 떨어지던",
+    "body": "원인은 fetch 결과 배열 길이를 그대로 탭 배지에 노출했기 때문. 메시지는 .limit(200), 추진위원은\nSupabase 기본 max_rows(1000)에 묶여 있어 실제 카운트와 무관하게 한도값이 표시되고 있었음.\n\n- page.tsx 메시지·추진위원 쿼리에 count: 'exact' 추가, 추진위원은 .range(0, 4999)로 한도 확장\n- AdminBootstrap에 messagesTotal·committeeTotal 추가\n- PetitionAdminClient 탭 배지: messages.length·committee.length → messagesTotal·committeeTotal\n- MessagesTab \"전체 N건\" 표기: 로드된 배열 길이 → DB 전체 카운트\n- CommitteeTab \"전체 N명\" 표기: 로드된 배열 길이 → DB 전체 카운트\n\n영향: 추진위원 1,000명 표기는 실제 DB 값(>1000도 정확히 표시), 메시지 200건 표기는\nDB 전체 메시지 수로 교체. 사용자 보고된 표기 오인 문제 해소.",
+    "date": "2026-05-05",
+    "author": "황경하"
+  },
+  {
+    "hash": "a8811eca",
+    "type": "fix",
+    "scope": "rum",
+    "subject": "GA strategy lazyOnload → afterInteractive — web_vitals 이벤트 14일간 0건 회복",
+    "summary": "GA4 보고서 분석 결과 web_vitals 이벤트가 14일간 0건 — 우리",
+    "body": "RUM(WebVitalsTracker) 자체가 GA4에 닿지 못하고 있던 회귀 진단.\n근본 원인은 GA gtag.js의 lazyOnload 전략 + web-vitals 콜백 타이밍의 race.\n\n증상:\n- GA4 page_view 65건/7일 정상 도착 (GA enhanced measurement 자동)\n- web_vitals 14일간 0건 — 우리 코드가 호출하는 custom event만 누락\n- CrUX 실측 CLS 1.00 진단할 데이터 자체가 없는 상태\n\n원인:\n- gtag.js를 lazyOnload(window.load + idle)로 로드해 LCP 경쟁 회피\n- web-vitals onLCP/onCLS는 page lifecycle 콜백(pagehide·visibilitychange)\n  으로 발화 — 짧은 세션에서 사용자가 빨리 떠나면 gtag.js 로드 전에 stub만\n  남고 페이지 닫힘 → dataLayer 큐가 영구 손실\n- 12세션/7일의 낮은 트래픽에서 모든 측정이 이 race에 걸림\n\n수정:\n- GoogleAnalytics.tsx strategy: lazyOnload → afterInteractive. hydration\n  직후 즉시 로드되어 web-vitals callback이 stub 거치지 않고 real gtag로\n  직접 fire. gtag.js는 async 로드라 LCP 영향 미미(이미 fetchPriority/\n  font-display optional/이미지 quality 등으로 LCP 충분히 보호됨)\n- WebVitalsTracker.tsx stub: rest spread Array push → arguments object push\n  으로 정통 GA bootstrap 패턴 일치(만약 stub 잠깐 사용되더라도 gtag.js\n  처리 호환성 보장)\n\n기대 효과:\n- 다음 deploy 후 web_vitals 이벤트 GA4에 정상 도착 시작\n- 24~48h 후 attribution(debug_target/debug_url/debug_phase) 데이터 누적\n- CrUX CLS 1.00의 실제 element 식별 가능\n\n타입체크 ✓ / 테스트 456/456 ✓",
+    "date": "2026-05-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "a073762a",
+    "type": "perf",
+    "scope": "rum",
+    "subject": "Web Vitals attribution → GA4 — CrUX CLS 1.00 진단용 element selector 수집",
+    "summary": "CrUX 실측 CLS 1.00이 lab 환경에서 재현 안 되어 어떤 element가 layout shift를 유발하는지 파악할 단서가 없던 상황. web-vitals 패키지의 attribution build로 전환해 어떤 selector·URL·load phase에서 CWV 이슈가 발생하는지 실 사용자 데이터에서 직접 식별 가능하게 함. 비용 0 (web-vitals attribution build는 동일 패키지 별도 entry).",
+    "body": "수정:\n- import: 'web-vitals' → 'web-vitals/attribution'. attribution 데이터가\n  metric.attribution 필드에 포함됨\n- extractAttribution() 헬퍼: metric.name별 attribution 필드 추출\n  - CLS: largestShiftTarget(selector), loadState(loading/dom-interactive/\n    dom-content-loaded/complete) — CrUX 1.00의 핵심 단서\n  - LCP: target(selector), url(이미지 src) — 어떤 hero 이미지/텍스트가\n    LCP 책임자인지\n  - INP: interactionTarget(selector), interactionType(pointer/keyboard) —\n    어떤 버튼/링크 클릭이 느린지\n- GA4 event payload에 debug_target / debug_url / debug_phase 추가.\n  100자 truncate(GA4 매개변수 제한 대비)\n\nGA4 분석 방법:\n- CLS poor 페이지의 debug_target 분포 → 어떤 selector가 가장 자주\n  shift 일으키는지\n- 예시 candidate: 'main img.lazy', '.embla__container', 'h1#hero-title'\n  중 어느 것인지 데이터로 확정 가능\n\n데이터 수집 ~24~48h 후 GA4 → 탐색 → debug_target 분포 차트로 CLS 1.00\n원인 element 식별, 그 element 코드 정밀 fix 가능.\n\n타입체크 ✓ / 테스트 456/456 ✓",
+    "date": "2026-05-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "9fbae3ed",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "마감일 5월 10일 → 5월 20일 연장 + 단일 출처 정합성 리팩터링",
+    "summary": "오윤 청원 마감일을 5월 20일로 연장하고, 8곳에 흩어져 있던 날짜 표기를",
+    "body": "PETITION_OH_YOON_DEADLINE_ISO 단일 출처로 묶음. 향후 마감일 변경 시 ENV 또는\nconstants.ts 한 곳만 수정하면 모든 i18n·메일 텍스트가 자동 갱신된다.\n\n- lib/petition/format.ts: formatPetitionDeadline(locale) 헬퍼 신설\n  - {short, full} 반환 — Asia/Seoul 타임존, ko/en 로케일별 포맷\n  - \"5월 20일\" / \"May 20\" / \"2026년 5월 20일\" / \"May 20, 2026\"\n- lib/petition/constants.ts: 폴백 ISO 5월 10일 → 5월 20일 + 헬퍼 사용 가이드 주석\n- messages/{ko,en}.json: 4개 키의 하드코딩 날짜 → {deadlineShort} / {deadlineFull} placeholder\n  (metaDescription, heroDeadlineLine, participationCard3Body, shareTemplateSns)\n- petition/oh-yoon/page.tsx: generateMetadata + 본문 컴포넌트 모두 deadline 주입\n- ShareTemplates.tsx: useLocale + formatPetitionDeadline로 deadlineShort 주입\n- lib/petition/mail.ts: 메일 템플릿도 헬퍼 사용 (한글 메일이라 'ko' 고정)\n\n다음 마감일 변경 시: NEXT_PUBLIC_PETITION_DEADLINE ENV 또는 constants.ts 한 곳만 수정.\ni18n·메일·메타·OG는 placeholder 자동 치환.",
+    "date": "2026-05-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "6e931141",
+    "type": "perf",
+    "scope": "images",
+    "subject": "deviceSize 384 추가 + Hero quality 60 — PSI 이미지 절감 항목 처리",
+    "summary": "2026-05-04 PSI 진단 결과 잔여 이미지 최적화 항목 두 가지 처리.",
+    "body": "모바일 DPR 1 환경에서 가장 작은 변형이 480px이라 326x435 같은 카드에\noversize되던 문제 해소 + Hero 이미지 quality를 더 낮춰 LCP 이미지\n크기 절감.\n\n수정 내역:\n- next.config.js images.deviceSizes: [480, 640, ...] → [384, 480, 640, ...]\n  추가. mobile DPR 1(326×1=326)에서 480 대신 384 변형 매칭, oversize\n  비율 1.47 → 1.18로 감소. PSI \"이미지 적정 크기\" 90KiB+ 절감 잠재\n- next.config.js images.qualities: [70, 75, 85] → [60, 70, 75, 85]\n  60 추가 (hero·overlay 등 압축에 가장 둔감한 위치 전용)\n- HeroSpotlight.tsx 첫 슬라이드 이미지 quality: 70 → 60.\n  이유: 다크 그라디언트 오버레이(from-charcoal-deep)가 이미지 위에 항상\n  깔리고, 텍스트 가독성을 위해 어둡게 처리되므로 quality 10 차이가\n  시각적으로 식별 불가. PSI \"이미지 압축률\" 항목 LCP 이미지 22KiB 절감\n\n다른 작품 카드(slider/gallery variant) quality는 70 유지 — 이쪽은\noverlay 없이 직접 보이는 이미지라 70이 적정선\n\n다음 PSI 측정 시 이미지 절감 합계 ~110KiB 추정 (압축 22 + 사이즈 90).\nLCP·SI 추가 단축 기대.\n\n별도 우선 항목: CrUX 실측 CLS 1.00 (lab은 0). 실 사용자 인터랙션 후\n발생하는 layout shift로 추정 — 별도 진단 작업 필요(WebVitalsTracker\nattribution 또는 GA4 데이터 분석).",
+    "date": "2026-05-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "c22c788a",
+    "type": "fix",
+    "scope": "markdown",
+    "subject": "단일 tilde를 strikethrough로 오인 — singleTilde: false로 GFM strict 모드",
+    "summary": "매거진 기사 본문에 한국어 범위 표기로 사용된 단일 ~ (\"1.5~3배\", \"₩500만~900만\", \"1970~80년대\" 등)이 ReactMarkdown + remark-gfm 기본 설정에서 strikethrough 구분자로 해석돼 본문에 줄이 그어지던 시각 버그 수정.",
+    "body": "원인: remark-gfm 기본 옵션이 singleTilde: true로, 정식 GFM 사양(이중 tilde ~~text~~)을 넘어 단일 ~text~까지 strikethrough로 매칭. 한국어\n표기 컨벤션상 ~는 범위(1970~80년대) 또는 가격대(50만~150만원)를 뜻해\n사실상 모든 매거진 본문이 영향권. 56개 magazine-drafts 파일이 동일\n패턴 보유.\n\n수정: MarkdownRenderer.tsx에서 remarkGfm 호출에 { singleTilde: false }\n옵션 전달. GFM strict 모드로 전환되어 ~~text~~ (이중 tilde)만\nstrikethrough, 단일 ~는 일반 텍스트로 렌더. 본문 수정 불필요(마크다운\n원문 그대로 두고 파서 동작만 보정).\n\n영향 범위:\n- 56개 magazine-drafts 파일 본문 즉시 회복\n- 신규 작성 시에도 작가가 ~ 표기 신경 안 써도 됨\n- 정식 strikethrough가 필요한 경우 ~~text~~ 형태로 작성 가능 (변화 없음)\n\n타입체크 ✓ / 테스트 456/456 ✓",
+    "date": "2026-05-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "611d8c0f",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "매거진 섹션 모바일 좌우 패딩 누락 — 8곳 일괄 보강",
+    "summary": "매거진(/stories) 모든 페이지에서 본문 영역이 모바일 viewport 가장자리에 붙어 답답하게 노출되던 버그. <Section>의 직접 자식으로 max-w-Nxl mx-auto 만 사용하고 px-* 클래스가 빠져 있어 발생. Section 컴포넌트는 vertical padding(py)만 제공하므로 horizontal padding은 컨테이너가 직접 책임져야 함.",
+    "body": "원인: container-max 유틸리티(globals.css)는 max-w-screen-xl + mx-auto + px-4 sm:px-5 모두 포함하는데, 매거진 페이지들은 max-w 너비를 6xl/3xl로 좁히려고 container-max 대신 max-w-6xl mx-auto / max-w-3xl mx-auto 형태로 작성. 그 과정에서 px-*를 깜빡함.\n\n수정 8곳:\n- stories/page.tsx: 카테고리 필터 + featured story + story grid 3 div\n- stories/[slug]/page.tsx: article 본문 + 관련 작품 div + 다른 story div\n- stories/category/[category]/page.tsx: editorial intro + featured + grid + nav + cross-link 등 5곳\n\n각각 max-w-Nxl mx-auto 뒤에 px-4 sm:px-5 추가 (container-max 클래스 자체가 사용하는 동일 값 — 사이트 전체 일관성 유지). 데스크톱(sm 이상)은 변화 없고, 모바일에서만 좌우 16/20px 여백 확보.",
+    "date": "2026-05-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "603b52c5",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "카카오톡 공유 버튼이 SMS로 빠지던 회귀 — useKakaoShareSDK 훅 적용",
+    "summary": "청원 페이지의 ShareTemplates 카카오톡 공유 버튼을 누르면 카카오 다이얼로그가 아닌 문자 메시지(sms:) 앱이 열리던 버그 수정.",
+    "body": "원인: ShareTemplates.tsx의 자체 ensureKakaoInit() 함수가 SDK가 이미\nwindow.Kakao로 노출돼 있는지만 확인하고, 미로드 상태일 때 즉시 SMS\nfallback으로 빠짐. 정작 페이지 로드 시 Kakao SDK는 자동으로 붙지\n않으므로(공통 ShareButtons는 클릭 시 동적 로드하는 useKakaoShareSDK\n훅 사용) 버튼이 사실상 항상 SMS만 트리거.\n\n수정: ShareButtons.tsx의 정상 패턴(useKakaoShareSDK 훅 → ensureLoaded()\n호출 → Kakao.Share.sendDefault) 그대로 ShareTemplates에 이식.\n- hasAppKey 미설정 시에만 즉시 SMS fallback (env 미설정 환경 보호)\n- 그 외엔 ensureLoaded()로 SDK 동적 로드/초기화 후 sendDefault 호출\n- 로드 실패 시에만 SMS fallback\n\nshare 콜백을 async로 바꾸고 자체 ensureKakaoInit 헬퍼 제거(중복 로직 제거).\n\n타입체크 ✓ / 테스트 456/456 ✓",
+    "date": "2026-05-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "49c649a4",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "font-display swap → optional — LCP·CLS 큰 폭 절감 (PSI 폰트 14 chunks LCP path 해결)",
+    "summary": "Noto Sans KR의 font-display를 'swap' → 'optional'로 전환. PSI에서",
+    "body": "14개 woff2 chunks가 LCP critical path에 포함돼 LCP의 1초+ 차지하던\n문제와 hero h1 폰트 swap으로 발생하던 CLS 0.006 동시 해결.\n\n동작 변화:\n- 'swap'(이전): fallback 즉시 표시 → 폰트 로드되면 즉시 swap (FOUT,\n  레이아웃 변경 발생). PSI 측정에서 폰트 다운로드가 LCP 경로에 끼어\n  4초+ 차지\n- 'optional'(현재): 100ms 안에 폰트가 로드되지 않으면 시스템 fallback\n  으로 그대로 표시, swap 없음. 다음 방문 시 캐시된 폰트 사용\n\n첫 방문자 경험: 한글 시스템 fallback 사용 (iOS Apple SD Gothic Neo /\nAndroid Noto Sans CJK KR / Windows Malgun Gothic / macOS Apple SD Gothic\nNeo). 모두 Noto Sans KR과 시각적으로 매우 가까워 디자인 톤 차이 미세.\n재방문자: 첫 방문 시 백그라운드 다운로드된 폰트가 캐시되어 즉시 적용.\n\nPSI 기대 효과:\n- LCP 4.7s → 3.0~3.5s 추정 (폰트 대기 시간 제거)\n- CLS 0.006 → 0 (폰트 swap으로 인한 layout shift 제거)\n- 폰트 14 woff2 LCP critical path → 비차단\n\nadjustFontFallback: true는 그대로 — 첫 방문자 fallback과 폰트 사이 메트릭\n차이 최소화. optional에서는 swap이 일어나지 않지만 fallback 폰트의 사이즈\nadjustment에 여전히 사용됨.",
+    "date": "2026-05-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "6527ac0d",
+    "type": "fix",
+    "scope": "design",
+    "subject": "hero 톱니 직후 섹션 여백 규칙 — SAWTOOTH_BOTTOM_SAFE_PADDING 상수 신설 + 카테고리 페이지 회귀 정정",
+    "summary": "hero 다크 영역 아래 sawtooth(`position=\"bottom\"`)의 마지막 24~40px가",
+    "body": "톱니 패턴이라 직후 섹션이 작은 top padding(pt-2 md:pt-4)으로 시작하면\n본문이 톱니에 답답하게 붙는 디자인 회귀가 카테고리 페이지에서 재발.\n이 두 번째 sawtooth 패턴(footer 톱니의 반대편)을 위한 표준 상수가 없어\n페이지마다 임의 padding을 박는 게 근본 원인이었습니다.\n\n- SawtoothDivider.tsx: SAWTOOTH_BOTTOM_SAFE_PADDING(\"pt-12 md:pt-16\") 상수\n  추가. 기존 SAWTOOTH_TOP_SAFE_PADDING(footer 위쪽)과 양방향 짝을 이룸.\n  JSDoc에서 회귀 패턴(pt-2)와 안전 패턴 명시\n- PageHero.tsx: 컴포넌트 JSDoc에 ⚠️ 경고 + 새 상수 @see 링크. 다음 Section\n  명시 override 시 이 상수 사용 필수임을 IDE 호버에서 즉시 확인 가능\n- artworks/category/[category]/page.tsx: 회귀 직접 정정. `pt-2 md:pt-4` →\n  ${SAWTOOTH_BOTTOM_SAFE_PADDING}로 교체 (실 화면에서 본문이 톱니에 거의\n  닿던 문제 해소)\n- CLAUDE.md \"Sawtooth Divider 여백 규칙\": 양방향 두 상수 + 회귀 패턴 예시\n  + 안전 패턴 예시 명시. 짧은 값(pt-2, pb-12) 금지 강조\n\nSection의 기본 padding(py-12 md:py-20)을 그대로 두면 자동 안전하므로,\n`padding=\"none\"` 또는 명시적 `pt-X`로 override할 때만 이 상수가 필요합니다.",
+    "date": "2026-05-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "385e6bd2",
+    "type": "perf",
+    "scope": "home",
+    "subject": "카테고리 슬라이더 작품 수 20 → 12점으로 축소 — DOM/JS/이미지 40% 감소",
+    "summary": "홈 카테고리 슬라이더(회화/판화/사진·매체/조각) 각각 표시 수를",
+    "body": "20점에서 12점으로 줄였습니다. 4 × 20 = 80 카드 → 4 × 12 = 48 카드로\nSSR DOM 노드, hydration 부담, 이미지 다운로드 모두 40% 감소.\n\n설계 근거: 홈의 카테고리 슬라이더는 시각적 hook 역할이지 카탈로그가\n아닙니다. 사용자가 카테고리 전체를 둘러보고 싶으면 viewAllHref\n(/artworks/category/...)의 그리드 페이지로 가는 흐름이 이미 있으므로\n홈에서 20점 미리 렌더할 필요 없음. embla auto-scroll loop도 12점이면\n자연스럽게 순환됩니다.\n\nPSI 진단 영향:\n- DOM 노드 1,979 → 1,500 미만 추정 (권장 임계 통과 가능)\n- 사용되지 않는 JS 146KiB 중 일부 (page chunks 60KiB)에서 추가 절감\n- 이미지 LCP 경로 외 일반 이미지 다운로드량 감소\n- main thread hydration 작업 단축 (TBT 350ms 개선 기대)",
+    "date": "2026-05-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "67b66769",
+    "type": "perf",
+    "scope": null,
+    "subject": "PSI 진단 3건 정리 — fetchPriority high + 미사용 preconnect 제거 + 모던 browserslist",
+    "summary": "2026-05-02 PageSpeed 진단에서 명시 지적된 항목 3건을 정리합니다.",
+    "body": "LCP는 5.4s → 4.5s로 개선됐으나 1.2s 리소스 로드 지연 + 1.29s 요소 렌더링\n지연이 남아 있어 LCP 직접 영향이 있는 부분만 우선 손봤습니다.\n\n- HeroSpotlight.tsx: priority=true 슬라이드(첫 슬라이드)에 fetchPriority\n  =\"high\" 명시. next/image priority가 자동 부착 대상이지만 PSI 진단에서\n  누락 신호가 잡혔으므로 명시적으로 선언해 LCP 이미지를 다른 리소스보다\n  먼저 가져오게 함\n- app/layout.tsx: Supabase preconnect 제거. LCP 이미지가 /_next/image\n  (same-origin) 경유로 서빙되므로 Supabase preconnect는 LCP 경로에 들어\n  오지 않아 PSI \"미사용 preconnect\" 진단 대상. 슬롯 한 개 비움\n- package.json: browserslist 추가 (Chrome 90+/Firefox 90+/Safari 14+/\n  Edge 90+/iOS 14+/Samsung 14+). 기본값(0.3% 점유율)이 너무 보수적이라\n  Array.prototype.at/flat/flatMap, Object.fromEntries/hasOwn,\n  String.prototype.trim* 등 ES2019/2020 폴리필이 14KiB 포함되던 문제\n  해결 — PSI \"레거시 JavaScript\" 진단 항목\n\n타입체크 ✓ / 테스트 456/457 (사전 회귀 1건 제외)",
+    "date": "2026-05-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "ddbe3a93",
+    "type": "perf",
+    "scope": "images",
+    "subject": "ArtworkHighlightSlider 카드 sizes 정정 — PSI 312KB 절감 (이미지 적정 크기)",
+    "summary": "홈 카테고리 슬라이더(ArtworkHighlightSlider)가 ArtworkCard를",
+    "body": "gallery variant로 렌더하면서, 실제 카드 폭은 220~300px flex 슬롯에\n고정돼 있는데도 gallery 기본 sizes 속성이 `(max-width: 768px)\ncalc(100vw - 2rem)` (모바일 viewport 기준 ~380px)을 선언해 next/image가\n필요 이상의 큰 변형을 요청하던 문제 수정. PageSpeed Insights \"이미지에\n대한 적절한 크기 사용 — 312KB 절감\" 항목이 정확히 이 케이스.\n\n- ArtworkCard.tsx: sizesOverride?: string prop 추가. 카드가 variant\n  기본값과 다른 폭으로 렌더되는 컨텍스트(슬라이더 슬롯 등)에서\n  이미지 sizes를 외부에서 주입할 수 있게 함. 두 SafeImage 호출부\n  (slider/gallery branch) 모두 imageSizes(= sizesOverride ?? config\n  .imageSizes) 사용\n- ArtworkHighlightSlider.tsx: sizesOverride=\"(max-width: 640px) 220px,\n  (max-width: 768px) 260px, 300px\" — 실제 flex 슬롯 폭과 1:1로 일치.\n  Retina(2x)까지 고려해도 600px 변형이면 충분, 기존엔 1080px+ 변형이\n  서빙되던 상황\n\n비주얼은 그대로(gallery 4/5 aspect + padding 유지) — sizes 선언만\n컨텍스트에 맞게 좁힌 것이라 디자인 영향 없음.",
+    "date": "2026-05-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "18e6dd7a",
+    "type": "fix",
+    "scope": "copy",
+    "subject": "'전액'/'100%' 사실 정정 16곳 + 첫 슬라이드 status 배지 변경",
+    "summary": "사실과 다른 '수익 전액 귀속' 표현을 캠페인 메시지로 교체하고, 첫 슬라이드의 모순적 'Shop now' 배지를 'Online Gallery'로 변경",
+    "body": "[전액 표현 정정 — 사용자 지적: '전액'은 사실이 아님. 한·영 16곳 일괄]\n- 한국어 신표현: '작품 한 점의 구매가 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다'\n- 영문 신표현: 'Each purchase becomes a fund that supports fellow artists trapped in predatory lending'\n- 적용: messages/{ko,en}.json (missionBanner·siteDescription), lib/schemas/{howto,qa-page}.ts, app/[locale]/{our-reality,our-proof,artworks/[id],archive/2026}/page.tsx\n- 위치별 톤(banner/SEO meta/schema 답변/본문)에 맞게 표현 변형 적용\n\n[첫 슬라이드 status 배지]\n- '구매 가능' / 'Shop now' → '온라인 갤러리' / 'Online Gallery'\n- 이유: 슬라이드 배경(강석태 「부드러운 바람이 불던 날」, sold)이 '구매 가능' 배지와 모순. 슬라이드 자체는 /artworks 메타 카드이므로 사이트 정체성 라벨이 더 적합",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "517f3fad",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "tribute 카피 — 사실 정정(봄→여름) + closing 정서 회복",
+    "summary": "tributeLead의 \"마흔의 봄에 떠난 사람\"을 \"마흔의 여름에 떠난 사람\"으로",
+    "body": "정정하고(오윤 사망일은 1986년 7월), closing 한 줄은 단순 사실 등본에서\n작가의 작품(새긴 얼굴들)을 매개로 한 정서적 마무리로 다시 썼습니다.\n\n- 한국어: \"마흔의 여름에 떠난 사람, 그가 새긴 얼굴들은 오늘도 우리\n  곁에 있습니다.\"\n- 영어: \"He left in the summer of his fortieth year — and the faces he\n  carved are still here with us today.\"\n\n본문 1단락에서 이미 \"그의 새김은 우리에게 묻습니다 — 우리는 누구의\n얼굴을 잊지 않고 있는가\"로 깔아둔 \"새김·얼굴·우리\" 모티프를 마지막에\ncallback으로 받습니다. 작가는 마흔의 여름에 떠났지만 그가 새긴 얼굴은\n지금도 시선을 거두지 않는다는 — 작품의 영속성을 통한 추모.",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "d8c7c550",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "tribute closing 한 줄 사실 정정 — 오윤 사망일은 1986년 7월",
+    "summary": "직전 커밋의 closing line \"오윤이 떠난 봄으로부터, 마흔 번째 봄입니다\"는",
+    "body": "사실 오류였습니다. 오윤은 1986년 7월 5일에 떠났습니다(여름). 봄 운율을\n욕심내다가 사실을 비틀었던 것을 정정합니다.\n\n- 한국어: \"1986년 7월, 오윤은 마흔의 나이로 떠났습니다.\"\n- 영어: \"In July 1986, Oh Yoon passed at the age of forty.\"\n\n운율 대신 사실 그대로의 한 문장. \"1986년 7월\"과 \"마흔\"이 본문에서 이미\n펼쳐진 작가의 무게를 그대로 닻 내리게 합니다 — 40주기라는 시간의\n무게는 페이지가 이미 충분히 말했으므로 마지막 italic은 사실의 등본만\n남기면 됩니다.",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "eb6cdd8f",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "헌사 섹션 — 스크롤 도착지를 SectionTitle로 + 자기-감동 closing 줄 제거",
+    "summary": "서명 후 스크롤이 듀얼 CTA 카드 한복판에 떨어져서 11부 헌사",
+    "body": "섹션의 SectionTitle/Lead/본문 3단락이 viewport 위로 사라지던 문제 수정.\n타이틀로 도착하도록 바꾸고, 본문 끝에 한 호흡으로 끝맺어 놓고\n다시 italic으로 결구하던 자기-감동적 마무리 한 줄을 제거했습니다.\n\n- SignForm.tsx: scrollIntoView 타겟을 #special-cta-card → #petition\n  -tribute-title로 변경, block: 'center' → 'start'. 사용자가 헌사\n  섹션을 위에서부터 천천히 읽어 내려갈 수 있게 됨\n- page.tsx: SectionTitle에 scroll-mt-28 md:scroll-mt-32 추가 — 도착\n  시 eyebrow + 섹션 상단 패딩이 viewport에 자연스럽게 들어옴.\n  tributeClosingNote <p> 블록 제거 (본문 3단락이 이미 한 호흡으로\n  마무리됨)\n- messages/{ko,en}.json: tributeClosingNote 키 제거",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "c8719b26",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "오윤 40주기 추모 섹션 신설 — 청원 페이지 마지막에 작가 헌사 자리 마련",
+    "summary": "청원 페이지 마지막에 오윤 40주기를 함께 기리는 별도 섹션(11부)을",
+    "body": "신설했습니다. 단순 카드가 아니라 섹션 타이틀·서문·본문 3단락의 풀\n에디토리얼 블록으로 구성해, 청원이 한 면의 벽을 지키는 일을 넘어 한\n예술가의 시대를 시민이 함께 기억하는 자리임을 드러냅니다.\n\n- page.tsx: 9c에 있던 특별전 듀얼 CTA 카드를 신설 11부 안으로 이동.\n  11부는 SectionTitle + tributeEyebrow/Title/Lead + 본문 3단락\n  (작가 약전 / 특별전 큐레이팅 안내 / 청원·기림의 한 호흡) + 듀얼 CTA\n  카드 + closingNote 구조. canvas 변형으로 종이 캔버스 톤 유지하며\n  10부 어두운 closing 직후의 따뜻한 안식처 역할\n- 10부 closing: SAWTOOTH_TOP_SAFE_PADDING을 11부로 이관(11부가 페이지\n  마지막이라 footer 톱니 안전 여백을 흡수). 일반 pb-24/32로 단순화\n- messages/{ko,en}.json: tributeEyebrow / tributeTitle / tributeLead /\n  tributeBody1~3 / tributeClosingNote 7개 키 추가. 한·영 모두 작가의\n  무게에 어울리는 에디토리얼 톤으로 작성\n\n스크롤 타겟 #special-cta-card는 새 위치에서 그대로 유효 — SignForm\n성공 시 1.5초 뒤 이 섹션 카드로 부드럽게 스크롤. 페이지 끝에 도착해도\n서명 후 자연스러운 시야 확장이 됩니다.",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "1a256d2c",
+    "type": "feat",
+    "scope": "home",
+    "subject": "박생광 슬라이드 작가 페이지 진입 + 작가 수 동적 처리",
+    "summary": "1. 박생광 드로잉전 슬라이드 'Coming soon' 비활성 → 작가 페이지(/artworks/artist/박생광)로",
+    "body": "요약:\n1. 박생광 드로잉전 슬라이드 'Coming soon' 비활성 → 작가 페이지(/artworks/artist/박생광)로\n   진입 가능하도록 변경. 드로잉전 페이지 준비 중이지만 작가의 작품을 먼저 볼 수 있음\n2. 첫 슬라이드(전체 작품)의 desc에서 '100여 명' 하드코딩 → ARTIST_COUNT 동적 처리\n\n진단 (사용자 의문):\n- '작가 수 하드코딩이 SEO 영향?' — 결론: 무관. SSR된 텍스트는 동적이든 정적이든 동일하게\n  크롤링됨. 다만 변동값을 코드 상수로 박으면 매 갱신마다 빌드 필요. ARTIST_COUNT는\n  lib/site-stats.ts에 정의된 단일 출처이므로 그것을 hero에도 노출하는 게 일관성에 맞음\n\n변경:\n- lib/now-showing.ts:\n  parkSaenggwang.href: null → '/artworks/artist/박생광'\n- messages/ko.json·en.json:\n  - allArtworksDesc: '100여 명' → '{artistCount}명' / '100+' → '{artistCount}'\n  - parkSaenggwangDesc: '곧 공개됩니다' → '작가의 작품을 먼저 만나보세요'\n  - parkSaenggwangCta: '곧 공개' → '작가의 작품 보기 →'\n- app/[locale]/page.tsx HeroSpotlightSection:\n  desc t() 호출에 { artistCount: ARTIST_COUNT } 변수 전달\n  (다른 슬라이드 desc 키에는 {artistCount} 자리표시자 없으므로 자동 무시)\n\nUX:\n- 박생광 슬라이드는 여전히 'Coming soon' 배지 + 작가 작품 페이지 링크\n  → 드로잉전 큐레이션은 준비 중이지만 작가 작품은 지금도 컬렉팅 가능\n- 첫 슬라이드는 ARTIST_COUNT 변동 시 자동 반영 (배포 시점 기준)",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "c4d31886",
+    "type": "fix",
+    "scope": "home",
+    "subject": "hero RSC function-prop crash 해결 + 메뉴 청원 복원 + dead component 정리",
+    "summary": "메인 hero에서 'page를 불러올 수 없습니다' 에러 발생. 원인은 HeroSpotlightSection(server)이 HeroSpotlight(client)에 함수 prop(goToLabel)을 전달한 것 — RSC는 server→client function prop을 직렬화하지 못함. 동시에 청원 메뉴를 임의 제거한 변경 원복",
+    "body": "긴급 수정 1 — RSC function-prop crash:\n- HeroSpotlight props에서 prevLabel/nextLabel/goToLabel 제거\n- 컴포넌트('use client') 안에서 useTranslations 직접 호출\n- goToLabel은 inline t('goToSlide', { n: idx + 1 })로 처리\n- 슬라이드 콘텐츠(title/desc/cta)는 server에서 미리 풀어 props로 — SSR + SEO 유지\n- page.tsx HeroSpotlightSection에서 라벨 props 제거\n\n긴급 수정 2 — 메뉴 청원 복원:\n- lib/hooks/useLocalizedNavigation.ts 전시 작품 dropdown에 ohYoonPetition 항목 다시 추가\n- 사용자 직접 결정 없이 임의 제거된 변경 원복\n- 메뉴 구조: 전체 작품 / 오윤 40주기 특별전 / 오윤 구의동 벽화 시민 청원\n\n정리:\n- components/features/HeroGalleryGrid.tsx 삭제 — Hero 슬라이더 도입 후 사용처 0건의 dead component",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "d3057429",
+    "type": "feat",
+    "scope": "home",
+    "subject": "Hero를 풀폭 Spotlight 슬라이더로 재구성 — 1번 슬라이드 = 전체 작품 직결",
+    "summary": "메인 hero를 Saatchi Art 스타일 풀폭 슬라이더로 재구성. 1번 슬라이드는 항상 '전체 작품 페이지' 진입(구매 직결), 나머지는 시한성 큐레이션. 기존 4점 화보 그리드 + NowShowing 카드 섹션은 슬라이더에 통합되어 제거",
+    "body": "진단:\n- 기존 hero 4점 그리드는 '왜 이 4점인가' 의미 부재 — 사용자 표현 '어처구니 없이 뻘함'\n- Now Showing 카드(2개) + hero 4점 그리드는 메인 페이지 시각 중심을 분산\n- Saatchi Art 스타일 풀폭 슬라이드는 한 큐레이션을 큰 비주얼로 강조 → 매거진 표지 톤 적합\n\n신규/변경:\n- embla-carousel-react + embla-carousel-autoplay 설치\n- components/features/HeroSpotlight.tsx 신설:\n  - embla 기반 풀폭 슬라이더, autoplay 6s + stopOnMouseEnter/FocusIn\n  - 점 인디케이터(하단 중앙) + 좌우 화살표(데스크톱 호버)\n  - 키보드 ←→ 네이티브 지원, focus-visible ring, prefers-reduced-motion 호환\n  - min-h-[70vh] md:min-h-[85vh] 풀폭 hero\n  - SafeImage + 다크 그라디언트 오버레이로 텍스트 가독성\n  - state='on'은 success 배지 + 핑 애니메이션, 'coming-soon'은 charcoal 배지\n  - href=null 슬라이드는 cursor-not-allowed (박생광 준비 중)\n- lib/now-showing.ts: 1번 슬라이드 'all-artworks' 추가 (구매 본업, /artworks 직결)\n- messages: home.nowShowing에 allArtworks*·prevSlide·nextSlide·goToSlide 키 추가\n\npage.tsx 변경:\n- HeroSection 함수 → HeroSpotlightSection (server에서 i18n 풀어 props로 전달)\n- <NowShowing /> 호출 제거 (콘텐츠가 hero로 통합)\n- 사용 안 되는 import 정리: HeroGalleryGrid·NowShowing·Badge·LinkButton·ARTWORK_COUNT 등 hero 관련 의존성\n\n영향:\n- hero가 풀폭 슬라이더 한 자리로 시각 단순·강조\n- 1번 슬라이드 = 전체 작품 (구매 직결) 명확 노출\n- NowShowing 별도 섹션 사라져 메인 페이지 흐름 단정\n- 시한성 큐레이션은 슬라이더 안에서만 회전 노출\n\n향후:\n- lib/now-showing.ts NOW_SHOWING 배열에 항목 추가 + i18n 키 4종 추가하면 새 슬라이드 추가\n- endDate가 지난 큐레이션은 자동 비노출",
+    "date": "2026-04-30",
+    "author": "황경하"
+  },
+  {
     "hash": "882e225a",
     "type": "fix",
     "scope": "petition,i18n",

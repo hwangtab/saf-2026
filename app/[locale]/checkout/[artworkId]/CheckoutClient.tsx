@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { ANONYMOUS, loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import clsx from 'clsx';
 
 import SafeImage from '@/components/common/SafeImage';
@@ -225,6 +224,7 @@ export default function CheckoutClient({
 
       const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice) ?? PAYMENT_CHOICES[0];
 
+      const { ANONYMOUS, loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
       const tossPayments = await loadTossPayments(clientKey);
       const payment = tossPayments.payment({ customerKey: ANONYMOUS });
 
