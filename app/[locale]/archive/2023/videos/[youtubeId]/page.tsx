@@ -19,7 +19,9 @@ import { resolveLocale } from '@/lib/server-locale';
 type ArchiveVideo = {
   id: string;
   title: string;
+  title_en?: string;
   description: string;
+  description_en?: string;
   youtube_id: string;
   transcript?: string;
   duration?: string;
@@ -50,7 +52,7 @@ const getArchiveVideos = async (): Promise<ArchiveVideo[]> => {
 
   // Supabase에 duration/publishedAt 컬럼이 없을 수 있으므로 fallback 데이터에서 병합
   const fallbackMap = new Map(fallbackVideos.map((v) => [v.youtubeId, v]));
-  return (data as ArchiveVideo[]).map((row) => {
+  return (data as unknown as ArchiveVideo[]).map((row) => {
     const fallback = fallbackMap.get(row.youtube_id);
     return {
       ...row,
@@ -60,8 +62,14 @@ const getArchiveVideos = async (): Promise<ArchiveVideo[]> => {
   });
 };
 
-const localizeVideoTitle = (title: string, locale: 'ko' | 'en', index = 0): string => {
+const localizeVideoTitle = (
+  title: string,
+  locale: 'ko' | 'en',
+  index = 0,
+  titleEn?: string
+): string => {
   if (locale === 'ko') return title;
+  if (titleEn?.trim()) return titleEn;
   if (containsHangul(title)) {
     return `SAF 2023 Campaign Video #${index + 1}`;
   }
@@ -97,13 +105,15 @@ export async function generateMetadata({
     };
   }
 
-  const localizedTitle = localizeVideoTitle(video.title, locale, videoIndex);
+  const localizedTitle = localizeVideoTitle(video.title, locale, videoIndex, video.title_en);
   const pageTitle =
     locale === 'en'
       ? `${localizedTitle} | SAF 2023 Video Archive`
       : `${localizedTitle} | 씨앗페 2023 영상 아카이브`;
   const pageDescription =
-    locale === 'en' ? 'Dedicated watch page for SAF 2023 campaign video.' : video.description;
+    locale === 'en'
+      ? video.description_en?.trim() || 'Dedicated watch page for SAF 2023 campaign video.'
+      : video.description;
   const pagePath = `/archive/2023/videos/${youtubeId}`;
   const pageUrl = buildLocaleUrl(pagePath, locale);
 
@@ -138,7 +148,7 @@ export default async function Archive2023VideoWatchPage({
   const pagePath = `/archive/2023/videos/${youtubeId}`;
   const pageUrl = buildLocaleUrl(pagePath, locale);
   const archive2023Path = '/archive/2023';
-  const localizedTitle = localizeVideoTitle(video.title, locale, videoIndex);
+  const localizedTitle = localizeVideoTitle(video.title, locale, videoIndex, video.title_en);
   const isEnglish = locale === 'en';
 
   const breadcrumbItems = [
@@ -149,9 +159,12 @@ export default async function Archive2023VideoWatchPage({
   ];
 
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const localizedDescription = isEnglish
+    ? video.description_en?.trim() || 'Campaign video from SAF 2023.'
+    : video.description;
   const videoSchema = generateVideoSchema({
     title: localizedTitle,
-    description: isEnglish ? 'Campaign video from SAF 2023.' : video.description,
+    description: localizedDescription,
     transcript: isEnglish ? undefined : video.transcript,
     duration: video.duration,
     youtubeId: video.youtube_id,
@@ -177,9 +190,7 @@ export default async function Archive2023VideoWatchPage({
           </div>
 
           <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
-            <p className="text-charcoal-muted leading-relaxed">
-              {isEnglish ? 'Campaign video from SAF 2023.' : video.description}
-            </p>
+            <p className="text-charcoal-muted leading-relaxed">{localizedDescription}</p>
             {video.transcript && !isEnglish && (
               <div className="mt-4 border-l-4 border-primary/30 bg-white p-4">
                 <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">

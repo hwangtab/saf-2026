@@ -80,20 +80,23 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
       .select('*')
       .order('created_at', { ascending: true });
     if (!error && data) {
-      videos = data.map((v) => ({
-        id: v.id,
-        title: v.title,
-        description: v.description || '',
-        youtubeId: v.youtube_id,
-        youtube_id: v.youtube_id,
-        thumbnail: v.thumbnail ?? undefined,
-        transcript: v.transcript ?? undefined,
+      videos = (data as unknown as Array<Record<string, unknown>>).map((v) => ({
+        id: v.id as string,
+        title: v.title as string,
+        title_en: (v.title_en as string | null) ?? undefined,
+        description: (v.description as string | null) || '',
+        description_en: (v.description_en as string | null) ?? undefined,
+        youtubeId: v.youtube_id as string,
+        youtube_id: v.youtube_id as string,
+        thumbnail: (v.thumbnail as string | null) ?? undefined,
+        transcript: (v.transcript as string | null) ?? undefined,
       }));
     }
   }
 
-  const localizeVideoTitle = (title: string, index: number): string => {
+  const localizeVideoTitle = (title: string, index: number, titleEn?: string): string => {
     if (!isEnglish) return title;
+    if (titleEn?.trim()) return titleEn;
     if (containsHangul(title)) {
       return `SAF 2023 Campaign Video #${index + 1}`;
     }
@@ -367,7 +370,13 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video, index) => {
-              const localizedVideoTitle = localizeVideoTitle(video.title, index);
+              const localizedVideoTitle = localizeVideoTitle(video.title, index, video.title_en);
+              const localizedVideoDescription =
+                isEnglish && video.description_en?.trim()
+                  ? video.description_en
+                  : isEnglish
+                    ? 'Campaign video from SAF 2023.'
+                    : video.description;
               const watchPath = `/archive/2023/videos/${video.youtube_id}`;
 
               return (
@@ -376,7 +385,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
                   <div className="p-6">
                     <h3 className="font-sans font-bold text-xl mb-2">{localizedVideoTitle}</h3>
                     <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">
-                      {isEnglish ? 'Campaign video from SAF 2023.' : video.description}
+                      {localizedVideoDescription}
                     </p>
 
                     <Link

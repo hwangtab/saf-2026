@@ -37,14 +37,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = `/news/${article.id}`;
   const pageUrl = buildLocaleUrl(path, locale);
   const isEn = locale === 'en';
-  const description = article.description
-    ? article.description.substring(0, 160)
+  const localizedTitle = isEn ? article.title_en?.trim() || article.title : article.title;
+  const localizedRawDesc = isEn
+    ? article.description_en?.trim() || article.description
+    : article.description;
+  const description = localizedRawDesc
+    ? localizedRawDesc.substring(0, 160)
     : isEn
       ? `Coverage by ${article.source}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
       : `${article.source}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
 
   return {
-    title: article.title,
+    title: localizedTitle,
     description,
     keywords: isEn
       ? [
@@ -65,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
     alternates: createLocaleAlternates(path, locale, true),
     openGraph: {
-      title: article.title,
+      title: localizedTitle,
       description,
       url: pageUrl,
       type: 'article',
@@ -76,7 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: [article.source],
       section: locale === 'en' ? 'News' : '언론 보도',
       images: article.thumbnail
-        ? [{ url: article.thumbnail, width: 1200, height: 630, alt: article.title }]
+        ? [{ url: article.thumbnail, width: 1200, height: 630, alt: localizedTitle }]
         : [
             {
               url: OG_IMAGE.url,
@@ -88,14 +92,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: article.title,
+      title: localizedTitle,
       description,
       images: article.thumbnail
-        ? [{ url: article.thumbnail, alt: article.title }]
+        ? [{ url: article.thumbnail, alt: localizedTitle }]
         : [{ url: OG_IMAGE.url, alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
-    // 뉴스 콘텐츠는 한국어 전용 — 영어 페이지는 thin content이므로 색인 제외
-    ...(isEn ? { robots: { index: false, follow: true } } : {}),
+    // 뉴스 콘텐츠는 _en 채워진 후 영어 페이지도 색인 가능. 미채움 fallback 시에도 OK.
   };
 }
 
@@ -108,14 +111,18 @@ export default async function NewsArticlePage({ params }: Props) {
   if (!article) notFound();
 
   const isEn = locale === 'en';
-  const description = article.description
-    ? article.description.substring(0, 160)
+  const localizedTitle = isEn ? article.title_en?.trim() || article.title : article.title;
+  const localizedDescriptionRaw = isEn
+    ? article.description_en?.trim() || article.description
+    : article.description;
+  const description = localizedDescriptionRaw
+    ? localizedDescriptionRaw.substring(0, 160)
     : isEn
       ? `Coverage by ${article.source}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
       : `${article.source}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
 
   const articleSchema = generateNewsArticleSchema({
-    title: article.title,
+    title: localizedTitle,
     description,
     datePublished: article.date,
     image: article.thumbnail || OG_IMAGE.url,
@@ -128,7 +135,7 @@ export default async function NewsArticlePage({ params }: Props) {
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('news'), url: buildLocaleUrl('/news', locale) },
-    { name: article.title, url: buildLocaleUrl(`/news/${article.id}`, locale) },
+    { name: localizedTitle, url: buildLocaleUrl(`/news/${article.id}`, locale) },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
@@ -136,7 +143,7 @@ export default async function NewsArticlePage({ params }: Props) {
     <>
       <JsonLdScript data={[articleSchema, breadcrumbSchema]} />
       <PageHero
-        title={article.title}
+        title={localizedTitle}
         description={`${article.source} · ${article.date}`}
         breadcrumbItems={breadcrumbItems}
       />
@@ -146,14 +153,14 @@ export default async function NewsArticlePage({ params }: Props) {
             <div className="relative w-full aspect-video mb-8 rounded overflow-hidden">
               <SafeImage
                 src={article.thumbnail}
-                alt={article.title}
+                alt={localizedTitle}
                 fill
                 className="object-cover"
               />
             </div>
           )}
-          {article.description && (
-            <p className="text-lg leading-relaxed mb-8">{article.description}</p>
+          {localizedDescriptionRaw && (
+            <p className="text-lg leading-relaxed mb-8">{localizedDescriptionRaw}</p>
           )}
           {article.link && (
             <LinkButton

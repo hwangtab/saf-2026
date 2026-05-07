@@ -178,7 +178,9 @@ export interface ArtworkCardData {
 export interface Video {
   id: string;
   title: string;
+  title_en?: string;
   description: string;
+  description_en?: string;
   youtubeId: string;
   thumbnail?: string;
   transcript?: string; // AI-friendly summary or transcript
@@ -188,12 +190,16 @@ export interface Video {
 
 export interface TestimonialItem {
   quote: string;
+  quote_en?: string;
   author: string;
+  author_en?: string;
   context?: string;
+  context_en?: string;
 }
 
 export interface TestimonialCategory {
   category: string;
+  category_en?: string;
   items: TestimonialItem[];
 }
 
@@ -222,19 +228,24 @@ export interface Story {
 export interface NewsArticle {
   id: string;
   title: string;
+  title_en?: string;
   source: string;
   date: string;
   link: string;
   thumbnail?: string;
   description?: string;
+  description_en?: string;
 }
 
 export interface ExhibitionReview {
   id?: string;
   author: string;
+  author_en?: string;
   role?: string;
+  role_en?: string;
   rating: number;
   comment: string;
+  comment_en?: string;
   date: string;
 }
 

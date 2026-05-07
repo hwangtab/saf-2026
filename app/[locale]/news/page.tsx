@@ -155,15 +155,26 @@ const localizeSourceName = (source: string, locale: LocaleCode): string => {
   return locale === 'en' ? mapped.en : mapped.ko;
 };
 
-const localizeArticleDescription = (description: string, locale: LocaleCode): string => {
+const localizeArticleDescription = (
+  description: string,
+  locale: LocaleCode,
+  descriptionEn?: string
+): string => {
   if (locale === 'ko') return description;
+  if (descriptionEn?.trim()) return descriptionEn;
   if (!description) return '';
   if (!containsHangul(description)) return description;
   return NEWS_COPY.en.originalKoreanArticleDescription;
 };
 
-const localizeArticleTitle = (title: string, source: string, locale: LocaleCode): string => {
+const localizeArticleTitle = (
+  title: string,
+  source: string,
+  locale: LocaleCode,
+  titleEn?: string
+): string => {
   if (locale === 'ko') return title;
+  if (titleEn?.trim()) return titleEn;
   if (!title || containsHangul(title)) {
     return `${localizeSourceName(source, locale)} · ${NEWS_COPY.en.originalKoreanArticleTitle}`;
   }
@@ -401,8 +412,12 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
         '@type': 'ListItem',
         position: index + 1,
         item: generateNewsArticleSchema({
-          title: localizeArticleTitle(article.title, article.source, locale),
-          description: localizeArticleDescription(article.description || '', locale),
+          title: localizeArticleTitle(article.title, article.source, locale, article.title_en),
+          description: localizeArticleDescription(
+            article.description || '',
+            locale,
+            article.description_en
+          ),
           datePublished: article.date,
           image: article.thumbnail || OG_IMAGE.url,
           url: buildLocaleUrl(`/news/${article.id}`, locale),
@@ -469,10 +484,16 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {newsArticles.map((article, index) => {
-              const localizedTitle = localizeArticleTitle(article.title, article.source, locale);
+              const localizedTitle = localizeArticleTitle(
+                article.title,
+                article.source,
+                locale,
+                article.title_en
+              );
               const localizedDescription = localizeArticleDescription(
                 article.description || '',
-                locale
+                locale,
+                article.description_en
               );
 
               return (

@@ -137,11 +137,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
   ]);
   const notice = resolveActiveNotice(noticeRecord, locale === 'en' ? 'en' : 'ko');
 
+  const isEnglish = locale === 'en';
   const flatTestimonials = testimonialCategories
     .flatMap((c) => c.items)
     .map((item) => ({
-      quote: item.quote.replace(/<\/?strong>/g, ''),
-      author: item.author,
+      quote: (isEnglish && item.quote_en?.trim() ? item.quote_en : item.quote).replace(
+        /<\/?strong>/g,
+        ''
+      ),
+      author: isEnglish && item.author_en?.trim() ? item.author_en : item.author,
     }));
 
   const otherWorks = artistWorks.filter((a) => a.id !== artwork.id).slice(0, 3);

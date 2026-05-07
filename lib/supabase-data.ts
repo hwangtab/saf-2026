@@ -48,28 +48,37 @@ type ArtistRow = {
 
 type TestimonialRow = {
   category: string;
+  category_en: string | null;
   quote: string;
+  quote_en: string | null;
   author: string;
+  author_en: string | null;
   context: string | null;
+  context_en: string | null;
 };
 
 type ReviewRow = {
   id: string;
   author: string;
+  author_en: string | null;
   role: string | null;
+  role_en: string | null;
   rating: number | string;
   comment: string;
+  comment_en: string | null;
   date: string;
 };
 
 type NewsRow = {
   id: string;
   title: string;
+  title_en: string | null;
   source: string | null;
   date: string;
   link: string | null;
   thumbnail: string | null;
   description: string | null;
+  description_en: string | null;
 };
 
 type FAQRow = {
@@ -600,14 +609,21 @@ const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]>
 
   // Group by category
   const grouped = (data || []).reduce<Record<string, TestimonialCategory>>((acc, item) => {
-    const row = item as TestimonialRow;
+    const row = item as unknown as TestimonialRow;
     if (!acc[row.category]) {
-      acc[row.category] = { category: row.category, items: [] };
+      acc[row.category] = {
+        category: row.category,
+        category_en: row.category_en ? sanitizeTextForRscPayload(row.category_en) : undefined,
+        items: [],
+      };
     }
     acc[row.category].items.push({
       quote: sanitizeTextForRscPayload(row.quote),
+      quote_en: row.quote_en ? sanitizeTextForRscPayload(row.quote_en) : undefined,
       author: sanitizeTextForRscPayload(row.author),
+      author_en: row.author_en ? sanitizeTextForRscPayload(row.author_en) : undefined,
       context: sanitizeTextForRscPayload(row.context || ''),
+      context_en: row.context_en ? sanitizeTextForRscPayload(row.context_en) : undefined,
     });
     return acc;
   }, {});
@@ -718,15 +734,18 @@ const getSupabaseReviewsUncached = async (): Promise<ExhibitionReview[]> => {
   }
 
   const reviews = (data || []).map((item) => {
-    const row = item as ReviewRow;
+    const row = item as unknown as ReviewRow;
     const parsedRating =
       typeof row.rating === 'number' ? row.rating : parseFloat(String(row.rating));
     return {
       id: row.id,
       author: sanitizeTextForRscPayload(row.author),
+      author_en: row.author_en ? sanitizeTextForRscPayload(row.author_en) : undefined,
       role: sanitizeTextForRscPayload(row.role || ''),
+      role_en: row.role_en ? sanitizeTextForRscPayload(row.role_en) : undefined,
       rating: Number.isFinite(parsedRating) ? parsedRating : 0,
       comment: sanitizeTextForRscPayload(row.comment),
+      comment_en: row.comment_en ? sanitizeTextForRscPayload(row.comment_en) : undefined,
       date: row.date,
     };
   });
@@ -767,15 +786,19 @@ const getSupabaseNewsUncached = async (): Promise<NewsArticle[]> => {
   }
 
   return (data || []).map((item) => {
-    const row = item as NewsRow;
+    const row = item as unknown as NewsRow;
     return {
       id: row.id,
       title: sanitizeTextForRscPayload(row.title),
+      title_en: row.title_en ? sanitizeTextForRscPayload(row.title_en) : undefined,
       source: sanitizeTextForRscPayload(row.source || ''),
       date: row.date,
       link: row.link || '',
       thumbnail: row.thumbnail || '',
       description: sanitizeTextForRscPayload(row.description || ''),
+      description_en: row.description_en
+        ? sanitizeTextForRscPayload(row.description_en)
+        : undefined,
     };
   });
 };

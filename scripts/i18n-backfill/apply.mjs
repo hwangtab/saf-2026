@@ -16,9 +16,14 @@ if (!url || !key) {
 
 const [, , table, fieldEn, ...inputs] = process.argv;
 if (!table || !fieldEn || inputs.length === 0) {
-  console.error('Usage: apply.mjs <table> <field_en> <input.json> [<input.json>...]');
+  console.error(
+    'Usage:\n' +
+      '  apply.mjs <table> <field_en> <input.json> [...]   # single-field {id, translation_en}\n' +
+      '  apply.mjs <table> auto <input.json> [...]          # multi-field {id, ...fields}'
+  );
   process.exit(1);
 }
+const isMulti = fieldEn === 'auto';
 
 const fs = await import('node:fs');
 let items = [];
@@ -27,14 +32,18 @@ for (const f of inputs) {
   items.push(...data);
 }
 
-console.log(`Applying ${items.length} updates → ${table}.${fieldEn}`);
+console.log(`Applying ${items.length} updates → ${table}${isMulti ? ' (auto multi-field)' : '.' + fieldEn}`);
 
 let ok = 0,
   fail = 0;
 const errors = [];
 
 for (const item of items) {
-  const body = JSON.stringify({ [fieldEn]: item.translation_en });
+  const { id, ...rest } = item;
+  const payload = isMulti ? rest : { [fieldEn]: item.translation_en };
+  const body = JSON.stringify(payload);
+  // override item.id reference further down
+  item.id = id;
   try {
     const resp = await fetch(`${url}/rest/v1/${table}?id=eq.${item.id}`, {
       method: 'PATCH',
