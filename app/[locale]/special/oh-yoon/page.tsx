@@ -156,7 +156,9 @@ export default async function OhYoonPage() {
         ? "A special online exhibition honoring the 40th anniversary of Oh Yoon's passing, presenting his selected works from the SAF Online collection."
         : '민중미술의 거장 오윤 화백의 40주기를 기념하는 온라인 특별전. 씨앗페 온라인에 소장된 오윤 작품들을 선보입니다.',
     url: pageUrl,
-    eventStatus: 'https://schema.org/EventCompleted',
+    // EventCompleted/EventInProgress는 schema.org EventStatusType enum에 없는 값.
+    // 본 전시(event.ts)와 동일하게 EventMovedOnline 적용 — 오프라인 종료 후 온라인 지속.
+    eventStatus: 'https://schema.org/EventMovedOnline',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
     location: {
       '@type': 'VirtualLocation',

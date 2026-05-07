@@ -199,10 +199,11 @@ describe('generateExhibitionSchema', () => {
     expect(schema.endDate).toBeTruthy();
   });
 
-  it('should compute eventStatus as EventCompleted since exhibition dates have passed', () => {
-    // Exhibition: 2026-01-14 to 2026-01-26, current date is 2026-03-19
+  it('should compute eventStatus as EventMovedOnline since exhibition dates have passed', () => {
+    // Exhibition: 2026-01-14 to 2026-01-26 (offline ended), online gallery continues.
+    // schema.org EventStatusType enum에 EventCompleted/EventInProgress 없음 → MovedOnline 매핑.
     const schema = generateExhibitionSchema();
-    expect(schema.eventStatus).toBe('https://schema.org/EventCompleted');
+    expect(schema.eventStatus).toBe('https://schema.org/EventMovedOnline');
   });
 
   it('should include valid location schema for current event phase', () => {
@@ -258,7 +259,7 @@ describe('generateExhibitionSchema', () => {
     const schema = generateExhibitionSchema();
     nowSpy.mockRestore();
 
-    expect(schema.eventStatus).toBe('https://schema.org/EventCompleted');
+    expect(schema.eventStatus).toBe('https://schema.org/EventMovedOnline');
     expect(schema.eventAttendanceMode).toBe('https://schema.org/OnlineEventAttendanceMode');
     expect(schema.location['@type']).toBe('VirtualLocation');
   });
@@ -344,7 +345,8 @@ describe('generateArtworkJsonLd', () => {
     const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
     nowSpy.mockRestore();
 
-    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventCompleted');
+    // 오프라인 종료 → EventMovedOnline (EventCompleted는 schema.org enum에 없음)
+    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventMovedOnline');
     expect(productSchema.isPartOf.eventAttendanceMode).toBe(
       'https://schema.org/OnlineEventAttendanceMode'
     );
@@ -356,7 +358,8 @@ describe('generateArtworkJsonLd', () => {
     const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
     nowSpy.mockRestore();
 
-    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventInProgress');
+    // 진행 중 → EventScheduled (EventInProgress는 schema.org enum에 없음)
+    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventScheduled');
     expect(productSchema.isPartOf.eventAttendanceMode).toBe(
       'https://schema.org/MixedEventAttendanceMode'
     );
@@ -404,10 +407,10 @@ describe('generateCampaignSchema', () => {
     expect(schema.funder.name).toBeTruthy();
   });
 
-  it('should include audience', () => {
+  it('should omit audience (incompatible with FundingScheme)', () => {
+    // FundingScheme은 Intangible 하위로 audience 속성을 갖지 않음 — GSC가 invalid 보고
     const schema = generateCampaignSchema();
-    expect(schema.audience['@type']).toBe('Audience');
-    expect(schema.audience.audienceType).toBeTruthy();
+    expect(schema).not.toHaveProperty('audience');
   });
 
   it('should use Korean text for ko locale', () => {
