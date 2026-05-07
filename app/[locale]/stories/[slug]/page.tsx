@@ -13,12 +13,12 @@ import { generateBlogPostingSchema } from '@/lib/schemas/content';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { OG_IMAGE } from '@/lib/constants';
 import { resolveLocale } from '@/lib/server-locale';
-import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
+import RelatedArtworkCard from '@/components/features/RelatedArtworkCard';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import type { StoryCategory, Artwork } from '@/types';
@@ -201,10 +201,12 @@ export default async function StoryDetailPage({ params }: Props) {
   if (referencedArtworkIds.length > 0) {
     const allArtworks = await getSupabaseArtworks();
     const byId = new Map(allArtworks.map((a) => [a.id, a]));
+    // tier 1: 본문에 작가가 직접 인용한 작품은 추천 가치 높음 — 6개까지 노출
+    // (이전 3개 제한은 작가의도 누락. tier 2/3 fallback은 3개 유지 — thin link 회피).
     relatedArtworks = referencedArtworkIds
       .map((id) => byId.get(id))
       .filter((a): a is Artwork => Boolean(a))
-      .slice(0, 3);
+      .slice(0, 6);
   }
 
   if (relatedArtworks.length === 0 && primaryArtistTag) {
@@ -310,47 +312,15 @@ export default async function StoryDetailPage({ params }: Props) {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-              {relatedArtworks.map((artwork, i) => {
-                const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
-                const imgUrl = resolveArtworkImageUrl(artwork.images[0] ?? '');
-                return (
-                  <Link
-                    key={artwork.id}
-                    href={`/artworks/${artwork.id}`}
-                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover motion-safe:opacity-0 motion-safe:animate-fade-in-up"
-                    style={{
-                      animationDelay: `${i * 0.1}s`,
-                      animationFillMode: 'forwards',
-                    }}
-                  >
-                    <div className="relative aspect-square overflow-hidden bg-canvas-soft">
-                      {imgUrl ? (
-                        <SafeImage
-                          src={imgUrl}
-                          alt={artTitle}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-charcoal-muted/20 text-4xl font-display font-bold">
-                            M
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-sm font-bold text-charcoal line-clamp-2 group-hover:text-primary transition-colors duration-300">
-                        {artTitle}
-                      </h3>
-                      <p className="text-xs text-charcoal-muted mt-1">{artwork.artist}</p>
-                      <p className="text-xs font-semibold text-primary mt-2">
-                        {artwork.sold ? (isEn ? 'Sold' : '판매 완료') : artwork.price}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
+              {relatedArtworks.map((artwork, i) => (
+                <RelatedArtworkCard
+                  key={artwork.id}
+                  artwork={artwork}
+                  isEn={isEn}
+                  storySlug={story.slug}
+                  position={i}
+                />
+              ))}
             </div>
           </div>
         </Section>

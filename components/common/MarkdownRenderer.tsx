@@ -3,9 +3,15 @@ import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
 import type { Components } from 'react-markdown';
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { resolveOptimizedArtworkImageUrl } from '@/lib/utils';
+
+const ARTWORK_LINK_PATTERN =
+  /^\/(?:en\/)?artworks\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+function isInternalArtworkLink(href: string): boolean {
+  return ARTWORK_LINK_PATTERN.test(href);
+}
 
 function isSafeHref(href: string | undefined): href is string {
   if (!href) return false;
@@ -88,6 +94,24 @@ function createMarkdownComponents(locale: string = 'ko'): Components {
       }
       // 내부 링크 (작품 페이지 등) — i18n 라우팅
       if (href && !href.startsWith('http')) {
+        // /artworks/{uuid} plain-text 링크는 "구매 가능한 작품" 신호를 강화 — primary
+        // 색상 + bold + 작은 외부-이동 아이콘으로 prose 흐름을 깨지 않으면서 product
+        // link임을 명확히 표시. (image-link 패턴 [![](thumb)](/artworks/...)는 위
+        // ImageFigure 분기에서 별도 처리됨.)
+        if (isInternalArtworkLink(href)) {
+          return (
+            <Link
+              href={href}
+              className="text-primary font-semibold no-underline hover:underline underline-offset-2 inline-flex items-baseline gap-0.5"
+            >
+              {children}
+              <ArrowUpRight
+                className="h-3 w-3 self-center opacity-70 shrink-0"
+                aria-hidden="true"
+              />
+            </Link>
+          );
+        }
         return <Link href={href}>{children}</Link>;
       }
       // 외부 링크
