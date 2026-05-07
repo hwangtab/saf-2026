@@ -146,7 +146,13 @@ export default async function OurProof() {
         unitText: '%',
       },
     ],
-    isPartOf: { '@id': `${SITE_URL}#website` },
+    // schema.org Dataset.isPartOf는 Dataset/DataCatalog만 허용 — WebSite를 가리키면
+    // GSC가 "isPartOf 입력란의 개체 유형이 잘못되었습니다" 보고. 이 운영 데이터는 더 큰
+    // 데이터 컬렉션의 일부가 아니므로 isPartOf 자체를 제거. (our-reality와 동일 패턴)
+
+    // license — Google Dataset 가이드라인 권장. our-reality와 동일하게 CC-BY 4.0:
+    // 운동 목적상 학술·언론 인용이 자유롭게 가능해야 함.
+    license: 'https://creativecommons.org/licenses/by/4.0/',
   };
   const loanSchema = {
     '@context': 'https://schema.org',
