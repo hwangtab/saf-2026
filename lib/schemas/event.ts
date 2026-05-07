@@ -1,4 +1,5 @@
 import { SITE_URL, OG_IMAGE, EXHIBITION, CONTACT } from '@/lib/constants';
+import { ARTIST_COUNT } from '@/lib/site-stats';
 import { ExhibitionReview } from '@/types';
 
 export const EXHIBITION_START_DATE = '2026-01-14T10:00:00+09:00';
@@ -88,8 +89,8 @@ export function generateExhibitionSchema(
       ? 'SAF Online (Seed Art Festival Online)'
       : '씨앗페 온라인 (Seed Art Festival Online)',
     description: isEnglish
-      ? 'A special art exhibition in Seoul raising mutual-aid funds for Korean artists. Features paintings, sculptures, photography, and prints by over 110 artists. Online gallery open year-round.'
-      : '서울 인사동 전시회. 한국 예술인들의 상호부조 기금 마련을 위한 특별전. 110여 명의 작가가 참여한 회화, 조각, 사진, 판화 등 다양한 예술 작품을 온라인에서 만나보세요.',
+      ? `A special art exhibition in Seoul raising mutual-aid funds for Korean artists. Features paintings, sculptures, photography, and prints by ${ARTIST_COUNT} artists. Online gallery open year-round.`
+      : `서울 인사동 전시회. 한국 예술인들의 상호부조 기금 마련을 위한 특별전. ${ARTIST_COUNT}명의 작가가 참여한 회화, 조각, 사진, 판화 등 다양한 예술 작품을 온라인에서 만나보세요.`,
     keywords: isEnglish
       ? 'Korean art exhibition, Seoul exhibition, contemporary art, exhibition catalog, art gallery Seoul'
       : '전시회, 서울 전시회, 전시회 서울, 현대미술 전시회, 전시 도록, 인사동 전시회, 전시회 일정',
@@ -116,7 +117,7 @@ export function generateExhibitionSchema(
     },
     performer: {
       '@type': 'Organization',
-      name: isEnglish ? 'Over 110 participating artists' : '참여 예술가 110여 명',
+      name: isEnglish ? `${ARTIST_COUNT} participating artists` : `참여 예술가 ${ARTIST_COUNT}명`,
     },
     isAccessibleForFree: true,
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
