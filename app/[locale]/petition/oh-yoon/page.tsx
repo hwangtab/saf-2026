@@ -30,8 +30,11 @@ import PetitionFAQ from './_components/PetitionFAQ';
 import ProposalModal from './_components/ProposalModal';
 import SignForm from './_components/SignForm';
 
-export const dynamic = 'force-static';
-export const revalidate = 60; // 60초 ISR — 카운터 baseline 갱신 (PRD §10.8)
+// 청원 카운터(fetchPetitionCount)가 createSupabaseServerClient의 cookies 컨텍스트에 의존해
+// 정적 prerender 시점엔 빈 응답 → catch fallback으로 total=0이 빌드 산출물에 박힘.
+// revalidate=60도 같은 문제로 갱신값이 항상 0. 정적화 부적합 → 매 요청 SSR 유지.
+export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
 
