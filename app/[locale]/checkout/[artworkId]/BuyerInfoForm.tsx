@@ -47,8 +47,10 @@ declare global {
   }
 }
 
+// iOS Safari auto-zoom 회피를 위해 input은 text-base(16px) — text-sm(14px)이면
+// focus 시 viewport가 자동 줌됨. 라벨은 14px 유지(zoom 트리거 아님).
 const inputClass =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary';
+  'w-full rounded-lg border border-gray-300 px-3 py-2 text-base placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary';
 const labelClass = 'block text-sm font-medium text-charcoal mb-1';
 
 const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {

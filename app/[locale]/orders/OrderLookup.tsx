@@ -213,8 +213,9 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
     }
   }
 
+  // text-base(16px) — text-sm(14px)이면 iOS Safari가 input focus 시 auto-zoom.
   const inputClass =
-    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary';
+    'w-full rounded-lg border border-gray-300 px-3 py-2 text-base text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary';
 
   return (
     <div className="space-y-2.5 rounded-xl border border-gray-200 bg-gray-50 p-4">
@@ -336,7 +337,7 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder={t('cancelReasonPlaceholder')}
-          className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary resize-none"
+          className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-base text-charcoal placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary resize-none"
         />
 
         {error && <p className="mb-3 text-xs text-danger-a11y">{error}</p>}

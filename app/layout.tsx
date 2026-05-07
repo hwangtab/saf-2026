@@ -36,6 +36,11 @@ const notoSansKR = Noto_Sans_KR({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  // iOS Safari auto-zoom 차단 — input focus 시 font-size<16px일 때 viewport가 줌되는
+  // 이슈. 자체 modal 입력은 text-base(16px) 이상으로 처리하지만 Daum Postcode iframe
+  // 같은 외부 컨텐츠는 통제 못 하므로 viewport에서 한 번 더 차단. iOS 10+는
+  // maximumScale=1이어도 사용자 pinch-zoom은 허용 → a11y 영향 없음.
+  maximumScale: 1,
   themeColor: BRAND_COLORS.primary.DEFAULT,
   viewportFit: 'cover',
 };
