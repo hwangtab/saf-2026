@@ -160,7 +160,10 @@ export default async function OurReality() {
         unitText: '%',
       },
     ],
-    isPartOf: { '@id': `${SITE_URL}#website` },
+    // schema.org Dataset.isPartOf는 Dataset 또는 DataCatalog만 허용. WebSite를 가리키면
+    // GSC가 "isPartOf 입력란의 개체 유형이 잘못되었습니다"로 보고함(2026-04-23~). 이 통계는
+    // 더 큰 데이터 컬렉션의 일부가 아니므로 isPartOf 자체를 제거하는 게 정답. AboutPage의
+    // isPartOf(WebSite)는 schema.org 사양상 정상이므로 위 aboutPageSchema는 그대로 유지.
   };
 
   if (locale === 'en') {
