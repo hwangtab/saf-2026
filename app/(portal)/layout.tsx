@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const messages = await getMessages();
-  const t = await getTranslations('nav');
+  const t = await getTranslations('a11y');
 
   return (
     <NextIntlClientProvider messages={messages}>
