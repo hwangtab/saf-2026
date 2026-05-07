@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
-import { getLocale } from 'next-intl/server';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
@@ -104,15 +103,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
-  const resolvedLocale = locale === 'en' ? 'en' : 'ko';
-  const organizationSchema = generateOrganizationSchema(resolvedLocale);
-  const websiteSchema = generateWebsiteSchema(resolvedLocale);
-  const localBusinessSchema = generateLocalBusinessSchema(resolvedLocale);
+// 루트 layout은 모든 라우트(공개·포털·인증)가 공유하므로 dynamic API(getLocale 등)를 호출하면
+// 전체 라우트가 dynamic(ƒ)으로 강제됨. 정적 렌더링 활성화를 위해 locale-aware 처리는 [locale]
+// 하위 layout으로 위임하고, 여기선 한국어 기본값으로 고정.
+//
+// SEO 영향: /en/* 페이지의 <html lang>이 'ko'로 표시되지만 metadata.alternates에 hreflang이
+// 정확히 박혀 Google이 페이지 언어를 인식. <html lang>은 보조 신호이며 실제 SEO 결정은
+// hreflang + content language 우선.
+const ROOT_LOCALE = 'ko' as const;
+const organizationSchema = generateOrganizationSchema(ROOT_LOCALE);
+const websiteSchema = generateWebsiteSchema(ROOT_LOCALE);
+const localBusinessSchema = generateLocalBusinessSchema(ROOT_LOCALE);
 
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={locale} className={notoSansKR.variable} suppressHydrationWarning>
+    <html lang={ROOT_LOCALE} className={notoSansKR.variable} suppressHydrationWarning>
       <head>
         {/* LCP 이미지가 next/image(/_next/image) 경유로 같은 origin에서 서빙되므로
             Supabase preconnect는 LCP 경로에 들어오지 않음 — PSI "미사용 preconnect" 진단으로

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
-import dynamic from 'next/dynamic';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import nextDynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { Link } from '@/i18n/navigation';
@@ -31,17 +31,28 @@ import type { Artwork } from '@/types';
 
 // 홈 ISR — 1시간. 작품/FAQ 데이터는 자주 바뀌지 않으므로 cache hit률을 높여
 // 백그라운드 regeneration 빈도를 줄임. PSI "서버 응답 속도" 항목 완화 (1047ms TTFB).
+// force-static + setRequestLocale: 명시적으로 빌드 시점 prerender + 1시간마다 background
+// regeneration. Next.js 16 자동 inference는 보수적이라 explicit 필요.
+export const dynamic = 'force-static';
 export const revalidate = 3600;
 
-const DynamicCounter = dynamic(() => import('@/components/features/DynamicCounter'));
-const FAQList = dynamic(() => import('@/components/features/FAQList'));
-const ArtworkHighlightSlider = dynamic(
+const DynamicCounter = nextDynamic(() => import('@/components/features/DynamicCounter'));
+const FAQList = nextDynamic(() => import('@/components/features/FAQList'));
+const ArtworkHighlightSlider = nextDynamic(
   () => import('@/components/features/ArtworkHighlightSlider')
 );
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const t = await getTranslations('home');
+type LocaleParams = { locale: string };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<LocaleParams>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale === 'en' ? 'en' : 'ko';
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'home' });
   const pageUrl = buildLocaleUrl('/', locale);
 
   const counts = {
@@ -83,10 +94,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Home() {
-  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const t = await getTranslations('home');
-  const tStat = await getTranslations('statistics');
+export default async function Home({ params }: { params: Promise<LocaleParams> }) {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale === 'en' ? 'en' : 'ko';
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'home' });
+  const tStat = await getTranslations({ locale, namespace: 'statistics' });
 
   const counterItems = [
     { label: tStat('exclusionRate'), value: 84.9, unit: tStat('unitPercent') },

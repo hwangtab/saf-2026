@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { OG_IMAGE } from '@/lib/constants';
 import { ARTIST_COUNT, LOAN_COUNT } from '@/lib/site-stats';
@@ -75,6 +76,14 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // 정적 렌더링 활성화 — generateStaticParams로 빌드 시 'ko'/'en' 페이지가 prerender되며,
+  // setRequestLocale로 next-intl이 헤더 대신 인자로 받은 locale을 사용해 dynamic API
+  // 의존을 끊는다. 결과: 동적(ƒ) → 정적(●) 라우트 전환, TTFB 크롤 예산 + LCP 개선.
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+    notFound();
+  }
+  setRequestLocale(locale);
+
   const messages = await getMessages();
   const publicMessages = Object.fromEntries(
     Object.entries(messages).filter(([namespace]) => !EXCLUDED_PUBLIC_NAMESPACES.has(namespace))
