@@ -14,6 +14,7 @@ import {
 import { rateLimit } from '@/lib/rate-limit';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { getClientIp } from '@/lib/security/get-client-ip';
 import { logBuyerAction } from './activity-log-writer';
 
 export type PublicOrderListItem = {
@@ -66,7 +67,7 @@ export async function lookupOrders(
 ): Promise<OrderLookupListResult> {
   // Rate limiting — IP 기준 분당 5회
   const headersList = await headers();
-  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(headersList);
   const rl = await rateLimit(`lookupOrders:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
@@ -152,7 +153,7 @@ export async function lookupOrderDetail(
 ): Promise<OrderDetailResult> {
   // Rate limiting — IP 기준 분당 5회
   const headersList = await headers();
-  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(headersList);
   const rl = await rateLimit(`lookupOrderDetail:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
@@ -297,7 +298,7 @@ export async function updateBuyerShipping(
 ): Promise<{ success: true } | { success: false; error: string }> {
   // Rate limiting — IP 기준 분당 3회
   const headersList = await headers();
-  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(headersList);
   const rl = await rateLimit(`updateBuyerShipping:${ip}`, { limit: 3, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
@@ -361,7 +362,7 @@ export async function cancelBuyerOrder(
 ): Promise<{ success: true } | { success: false; error: string }> {
   // Rate limiting — IP 기준 분당 3회
   const headersList = await headers();
-  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(headersList);
   const rl = await rateLimit(`cancelBuyerOrder:${ip}`, { limit: 3, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };

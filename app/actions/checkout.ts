@@ -3,6 +3,7 @@
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
+import { getClientIp } from '@/lib/security/get-client-ip';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { parsePrice } from '@/lib/parsePrice';
 import {
@@ -83,7 +84,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   // Rate limiting — IP 기준 분당 10회
   const headersList = await headers();
-  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(headersList);
   const rl = await rateLimit(`createOrder:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: apiError('rate_limited', buyerLocale) };
@@ -312,7 +313,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
 
   // Rate limiting
   const headersList = await headers();
-  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(headersList);
   const rl = await rateLimit(`initiatePayment:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: apiError('rate_limited', buyerLocale) };
@@ -577,7 +578,7 @@ export async function cancelPendingOrder(orderNo: string, buyerEmail: string): P
   if (!orderNo || !buyerEmail) return;
   // BUG 29: rate limit — IP 기준 분당 10회
   const headersList = await headers();
-  const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(headersList);
   const rl = await rateLimit(`cancelPendingOrder:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rl.success) return;
   const adminClient = createSupabaseAdminClient();

@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { getClientIp } from '@/lib/security/get-client-ip';
 
 export type RequestMetadata = {
   ip: string | null;
@@ -7,20 +8,11 @@ export type RequestMetadata = {
 
 export async function getRequestMetadata(): Promise<RequestMetadata> {
   const headerList = await headers();
-  const forwardedFor = headerList.get('x-forwarded-for');
-  const realIp = headerList.get('x-real-ip');
   const userAgent = headerList.get('user-agent');
-
-  const ip =
-    forwardedFor
-      ?.split(',')
-      .map((value) => value.trim())
-      .find((value) => value.length > 0) ||
-    realIp?.trim() ||
-    null;
+  const ip = getClientIp(headerList);
 
   return {
-    ip,
+    ip: ip === 'unknown' ? null : ip,
     userAgent: userAgent?.trim() || null,
   };
 }
