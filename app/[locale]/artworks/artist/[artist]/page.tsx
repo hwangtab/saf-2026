@@ -4,6 +4,7 @@ import {
   getSupabaseStories,
   getSupabaseArtistExternalLinks,
   getSupabaseArtistNoticeByName,
+  getPopularArtistNames,
 } from '@/lib/supabase-data';
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
@@ -43,9 +44,12 @@ import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-// /artworks/[id]와 같은 이유로 정적화 롤백 — Type C 빌드 시 Supabase 부하로 Cloudflare 522 발생.
-// 향후 generateStaticParams를 TOP N 작가만으로 제한 + dynamicParams=true 패턴 검토.
-export const dynamic = 'force-dynamic';
+// /artworks/[id]와 같은 패턴 — TOP N 인기 작가만 빌드 시 prerender, 나머지는 dynamicParams=true로
+// on-demand SSG. 작품 수가 많은 활발한 작가가 검색 트래픽 대부분을 흡수.
+// admin 수정/삭제 시 revalidatePath('/artworks/artist/...') 호출하면 즉시 무효화.
+export const dynamic = 'force-static';
+export const dynamicParams = true;
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{
@@ -188,7 +192,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// generateStaticParams 제거 — force-dynamic이라 prerender 안 함.
+// 빌드 시 인기 작가 TOP 20 × 2 locale = 40 페이지 prerender. 작가당 ~3-4 Supabase 쿼리라
+// 빌드 부하 안전. 나머지 작가는 첫 요청 시 SSG (그 후 캐시).
+export async function generateStaticParams() {
+  const names = await getPopularArtistNames(20);
+  return names.flatMap((artist) => ['ko', 'en'].map((locale) => ({ locale, artist })));
+}
 
 export default async function ArtistPage({ params }: Props) {
   const { locale: rawLocale, artist } = await params;

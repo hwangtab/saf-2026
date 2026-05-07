@@ -13,6 +13,7 @@ import {
   getSupabaseTestimonials,
   getSupabaseStories,
   getSupabaseArtistNoticeByName,
+  getPopularArtworkIds,
 } from '@/lib/supabase-data';
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
@@ -47,10 +48,14 @@ interface Props {
   }>;
 }
 
-// 358 × 2 locale × 8 Supabase 쿼리 = ~5700 build-time queries로 Supabase Cloudflare 522 발생.
-// Type C 정적화 롤백 — force-dynamic 복구. ISR + admin revalidatePath 조합도 부적합.
-// 향후 가능한 길: generateStaticParams를 TOP N 인기 작품만으로 제한하고 나머지는 dynamicParams=true로 on-demand SSG.
-export const dynamic = 'force-dynamic';
+// TOP N 인기 작품만 빌드 시 prerender하고 나머지는 dynamicParams=true로 첫 요청 시 SSG.
+// 빌드 부하 분산 (Supabase Cloudflare 522 회피) + 70%+ 트래픽이 인기 작품에 집중되므로 ROI 큼.
+// 첫 hit 작품도 SSG 후 캐시되어 두 번째부터 CDN HIT.
+// stale 보호: admin 수정/삭제 시 revalidatePath('/artworks/${id}'), 결제 confirm 시도 동일 호출.
+// 1시간 background revalidate가 fallback safety net.
+export const dynamic = 'force-static';
+export const dynamicParams = true;
+export const revalidate = 3600;
 
 /** 스토리 body 마크다운에서 첫 번째 이미지 URL 추출 — 썸네일 fallback용 */
 function extractFirstImage(body: string | null | undefined): string | null {
@@ -80,8 +85,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return generateArtworkMetadata(artwork, locale);
 }
 
-// generateStaticParams 제거 — force-dynamic이라 빌드 시 prerender 안 함.
-// 빌드 시 Supabase에 358 × 2 × 8 쿼리 부하 회피.
+// 빌드 시 인기 작품 TOP 30 × 2 locale = 60 페이지 prerender. 작품당 8 Supabase 쿼리라
+// 약 480 쿼리로 빌드 부하 안전. 나머지 ~328 작품은 첫 요청 시 SSG (그 후 캐시).
+export async function generateStaticParams() {
+  const ids = await getPopularArtworkIds(30);
+  return ids.flatMap((id) => ['ko', 'en'].map((locale) => ({ locale, id })));
+}
 
 export default async function ArtworkDetailPage({ params }: Props) {
   const { locale: rawLocale, id } = await params;

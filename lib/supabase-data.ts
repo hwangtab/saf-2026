@@ -510,6 +510,79 @@ const getTotalSoldCountCached = unstable_cache(
 
 export const getTotalSoldCount = cache(async (): Promise<number> => getTotalSoldCountCached());
 
+// 빌드 시 generateStaticParams가 prerender할 인기 작품 ID 목록.
+// 358 작품 전체를 prerender하면 Supabase Cloudflare 522 발생 → TOP N만 미리 빌드하고
+// 나머지는 dynamicParams=true로 첫 요청 시 on-demand SSG.
+//
+// 정렬: 판매중 우선 (active 인벤토리 → 신규 트래픽 흡수) → created_at desc.
+// id만 select해 빌드 부하 최소화.
+const getPopularArtworkIdsUncached = async (limit: number): Promise<string[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks.slice(0, limit).map((a) => a.id);
+  }
+  const { data, error } = await supabase
+    .from('artworks')
+    .select('id, sold_at, created_at')
+    .eq('is_hidden', false)
+    .order('sold_at', { ascending: true, nullsFirst: true })
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching popular artwork IDs:', error);
+    return fallbackArtworks.slice(0, limit).map((a) => a.id);
+  }
+  return (data || []).map((row) => row.id as string);
+};
+
+const getPopularArtworkIdsCached = unstable_cache(
+  async (limit: number) => getPopularArtworkIdsUncached(limit),
+  ['supabase-popular-artwork-ids'],
+  { revalidate: 3600, tags: ['artworks'] }
+);
+
+export const getPopularArtworkIds = cache(
+  async (limit = 30): Promise<string[]> => getPopularArtworkIdsCached(limit)
+);
+
+// 빌드 시 prerender할 인기 작가 이름 목록 — 작품 수 desc 기준.
+const getPopularArtistNamesUncached = async (limit: number): Promise<string[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return Array.from(new Set(fallbackArtworks.map((a) => a.artist))).slice(0, limit);
+  }
+  const { data, error } = await supabase
+    .from('artworks')
+    .select('artist_id, artists(name)')
+    .eq('is_hidden', false);
+
+  if (error) {
+    console.error('Error fetching popular artist names:', error);
+    return Array.from(new Set(fallbackArtworks.map((a) => a.artist))).slice(0, limit);
+  }
+
+  const counts = new Map<string, number>();
+  for (const row of data || []) {
+    const artistRow = row as unknown as { artists: { name: string } | null };
+    const name = artistRow.artists?.name?.trim();
+    if (!name) continue;
+    counts.set(name, (counts.get(name) || 0) + 1);
+  }
+  return Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([name]) => name);
+};
+
+const getPopularArtistNamesCached = unstable_cache(
+  async (limit: number) => getPopularArtistNamesUncached(limit),
+  ['supabase-popular-artist-names'],
+  { revalidate: 3600, tags: ['artworks'] }
+);
+
+export const getPopularArtistNames = cache(
+  async (limit = 20): Promise<string[]> => getPopularArtistNamesCached(limit)
+);
+
 const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]> => {
   if (!hasSupabaseConfig || !supabase) {
     return testimonials;
