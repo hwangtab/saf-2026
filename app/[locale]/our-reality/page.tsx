@@ -81,6 +81,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
+  const isEnglish = locale === 'en';
   const pageUrl = buildLocaleUrl('/our-reality', locale);
   const testimonialsData = await getSupabaseTestimonials();
   const tBreadcrumbs = await getTranslations('breadcrumbs');
@@ -181,170 +182,34 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
     license: 'https://creativecommons.org/licenses/by/4.0/',
   };
 
-  if (locale === 'en') {
-    return (
-      <>
-        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews]} />
-        <PageHero
-          title="Our Reality"
-          description="Data from the 2025 report shows structural financial exclusion faced by artists in Korea."
-          breadcrumbItems={breadcrumbItems}
-        >
-          <ShareButtonsWrapper
-            url={pageUrl}
-            title="Our Reality - SAF Online"
-            description="Understand the structure of artist financial exclusion through data."
-          />
-        </PageHero>
-
-        <div className="w-full bg-white">
-          <div className="container-max pt-4 text-right">
-            <p className="text-xs text-charcoal-soft">Last updated: {LAST_UPDATED}</p>
-          </div>
-        </div>
-        <Section variant="white" prevVariant="canvas">
-          <div className="container-max max-w-3xl text-balance">
-            <SectionTitle className="mb-8">
-              For artists, finance is a life-support system
-            </SectionTitle>
-            <div className="space-y-6 text-lg text-charcoal">
-              <p>
-                Many artists earn irregular, project-based income. During unavoidable income gaps,
-                access to fair finance determines whether creative work can continue.
-              </p>
-              <p>
-                Yet mainstream systems often assess only regular payroll patterns, which excludes
-                artists by design.
-              </p>
-              <p>
-                The result is a recurring cycle of{' '}
-                <strong>exclusion → predatory lending → collapse</strong>.
-              </p>
-            </div>
-          </div>
-        </Section>
-
-        <Section variant="primary-surface" prevVariant="white">
-          <div className="container-max">
-            <div className="mb-10">
-              <span className="text-sm font-bold text-primary-strong uppercase">Stage 1</span>
-              <SectionTitle className="mb-4">Closed doors: banking rejection</SectionTitle>
-              <p
-                id="stage1-description"
-                className="text-xl text-charcoal-muted max-w-2xl leading-relaxed"
-              >
-                Primary banking exclusion rate:{' '}
-                <strong className="text-primary-strong">84.9%</strong>
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
-              <div className="h-[420px] md:h-96">
-                <RejectionReasonsChart />
-              </div>
-              <div className="h-[420px] md:h-96">
-                <FirstBankAccessChart />
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        <Section variant="primary-surface" prevVariant="primary-surface">
-          <div className="container-max">
-            <div className="mb-10">
-              <span className="text-sm font-bold text-primary-strong uppercase">Stage 2</span>
-              <SectionTitle className="mb-4">Predatory exposure under pressure</SectionTitle>
-              <p
-                id="stage2-description"
-                className="text-xl text-charcoal-muted max-w-2xl leading-relaxed"
-              >
-                Predatory product exposure: <strong className="text-primary-strong">48.6%</strong>
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
-              <div className="h-[420px] md:h-96">
-                <HighInterestProductChart />
-              </div>
-              <div className="h-[420px] md:h-96">
-                <InterestRateDistributionChart />
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        <Section variant="canvas" prevVariant="primary-surface">
-          <div className="container-max">
-            <div className="mb-10">
-              <span className="text-sm font-bold text-danger uppercase">Stage 3</span>
-              <SectionTitle className="mb-4">Creative breakdown</SectionTitle>
-              <p
-                id="stage3-description"
-                className="text-xl text-charcoal-muted max-w-2xl leading-relaxed"
-              >
-                Creative interruption among debt-collection-experienced artists:{' '}
-                <strong className="text-danger">88.3%</strong>
-              </p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-12 items-start mb-16">
-              <div className="h-[420px] md:h-96">
-                <DebtCollectionChart />
-              </div>
-              <div className="h-[420px] md:h-96">
-                <CreativeImpactChart />
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        <Section variant="white" prevVariant="canvas">
-          <div className="container-max max-w-4xl">
-            <SectionTitle className="mb-6">
-              This is a structural issue, not a personal failure
-            </SectionTitle>
-            <p className="text-lg text-charcoal-muted leading-relaxed mb-6">
-              Artist financial hardship is rooted in systemic mismatch. We need financing models
-              that recognize project-based livelihoods and protect creative continuity.
-            </p>
-            <p className="text-base text-charcoal-muted leading-relaxed mb-8">
-              Korea Smart Cooperative is responding with a{' '}
-              <Link href="/our-proof" className="text-primary-strong hover:underline font-medium">
-                proven mutual-aid lending program
-              </Link>
-              . Purchasing{' '}
-              <Link href="/artworks" className="text-primary-strong hover:underline font-medium">
-                artworks from participating artists
-              </Link>{' '}
-              supports fellow artists trapped in predatory lending.
-            </p>
-            <CTAButtonGroup
-              donateText="Join as a member"
-              purchaseText="Buy artworks"
-              donateHref={EXTERNAL_LINKS.JOIN_MEMBER}
-              purchaseHref="/artworks"
-            />
-          </div>
-        </Section>
-      </>
-    );
-  }
-
   return (
     <>
       <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews]} />
       <PageHero
-        title="우리의 현실"
-        description="2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실"
+        title={isEnglish ? 'Our Reality' : '우리의 현실'}
+        description={
+          isEnglish
+            ? 'Data from the 2025 report exposes the structural financial exclusion faced by artists in Korea.'
+            : '2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실'
+        }
         breadcrumbItems={breadcrumbItems}
       >
         <ShareButtonsWrapper
-          url={PAGE_URL}
-          title="우리의 현실 - 씨앗페 온라인"
-          description="예술인이 겪는 금융 재난의 구조와 데이터를 확인하세요."
+          url={pageUrl}
+          title={isEnglish ? 'Our Reality — SAF Online' : '우리의 현실 - 씨앗페 온라인'}
+          description={
+            isEnglish
+              ? 'Understand the structure of artist financial exclusion through data.'
+              : '예술인이 겪는 금융 재난의 구조와 데이터를 확인하세요.'
+          }
         />
       </PageHero>
 
       <div className="w-full bg-white">
         <div className="container-max pt-4 text-right">
-          <p className="text-xs text-charcoal-soft">마지막 업데이트: {LAST_UPDATED}</p>
+          <p className="text-xs text-charcoal-soft">
+            {isEnglish ? 'Last updated' : '마지막 업데이트'}: {LAST_UPDATED}
+          </p>
         </div>
       </div>
       {testimonialsData.map((group, groupIndex) => {
@@ -352,28 +217,37 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
         const currentVariant = variants[groupIndex % variants.length];
         const prevVariant =
           groupIndex > 0 ? variants[(groupIndex - 1) % variants.length] : undefined;
+        const groupCategory =
+          isEnglish && group.category_en?.trim() ? group.category_en : group.category;
 
         return (
           <Section key={group.category} variant={currentVariant} prevVariant={prevVariant}>
             <div className="container-max">
-              <SectionTitle className="mb-12">{group.category}</SectionTitle>
+              <SectionTitle className="mb-12">{groupCategory}</SectionTitle>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {group.items.map((item, itemIndex) => (
-                  <div
-                    key={`${item.author}-${itemIndex}`}
-                    className="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-primary flex flex-col justify-between"
-                  >
-                    <p className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed before:content-['“'] after:content-['”']">
-                      <HighlightedText text={item.quote} />
-                    </p>
-                    <div>
-                      <p className="font-semibold text-primary">{item.author}</p>
-                      {item.context && (
-                        <p className="text-sm text-charcoal-muted">{item.context}</p>
-                      )}
+                {group.items.map((item, itemIndex) => {
+                  const itemQuote = isEnglish && item.quote_en?.trim() ? item.quote_en : item.quote;
+                  const itemAuthor =
+                    isEnglish && item.author_en?.trim() ? item.author_en : item.author;
+                  const itemContext =
+                    isEnglish && item.context_en?.trim() ? item.context_en : item.context;
+                  return (
+                    <div
+                      key={`${item.author}-${itemIndex}`}
+                      className="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-primary flex flex-col justify-between"
+                    >
+                      <p className="text-xl md:text-2xl text-charcoal mb-4 italic leading-relaxed before:content-['“'] after:content-['”']">
+                        <HighlightedText text={itemQuote} />
+                      </p>
+                      <div>
+                        <p className="font-semibold text-primary">{itemAuthor}</p>
+                        {itemContext && (
+                          <p className="text-sm text-charcoal-muted">{itemContext}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </Section>
@@ -384,27 +258,60 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
       <Section variant="white" prevVariant="canvas">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-balance">
-            <SectionTitle className="mb-8">예술인에게 금융은 산소호흡기</SectionTitle>
+            <SectionTitle className="mb-8">
+              {isEnglish
+                ? 'For artists, finance is a life-support system'
+                : '예술인에게 금융은 산소호흡기'}
+            </SectionTitle>
             <div className="space-y-6 text-lg text-charcoal">
-              <p>
-                예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과
-                공연 사이, 전시와 전시 사이 발생하는
-                <strong> &ldquo;소득 공백기&rdquo;</strong>는 그들이 피할 수 없는 구조적 현실입니다.
-              </p>
-              <p>
-                이 공백기 동안 월세, 식비, 창작 재료비를 버텨낼 방법이 필요합니다. 안정적인 금융은
-                단순한 &lsquo;빚&rsquo;이 아닌,
-                <strong>
-                  {' '}
-                  창작의 시간을 살려내는 <span className="text-charcoal-deep">생명의 산소</span>
-                </strong>
-                입니다.
-              </p>
-              <p>
-                그러나 한국의 금융 시스템은 예술인을 정상적인 금융 고객으로 인정하지 않았습니다. 그
-                결과 예술인들은
-                <strong> 배제 → 약탈 → 파괴</strong>라는 악순환에 갇혀있습니다.
-              </p>
+              {isEnglish ? (
+                <>
+                  <p>
+                    Artists earn project-based, irregular income — not steady payroll. Between one
+                    performance and the next, between one exhibition and the next, comes an
+                    unavoidable <strong>&ldquo;income gap&rdquo;</strong> built into the structure
+                    of creative work.
+                  </p>
+                  <p>
+                    During those gaps, rent, food, and materials still have to be paid. Stable
+                    finance is not just &lsquo;debt&rsquo; — it is
+                    <strong>
+                      {' '}
+                      the <span className="text-charcoal-deep">oxygen</span> that keeps creative
+                      time alive
+                    </strong>
+                    .
+                  </p>
+                  <p>
+                    Yet Korea&rsquo;s financial system has never recognized artists as legitimate
+                    customers. The result is a closed loop of
+                    <strong> exclusion → predatory lending → collapse</strong>.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다.
+                    공연과 공연 사이, 전시와 전시 사이 발생하는
+                    <strong> &ldquo;소득 공백기&rdquo;</strong>는 그들이 피할 수 없는 구조적
+                    현실입니다.
+                  </p>
+                  <p>
+                    이 공백기 동안 월세, 식비, 창작 재료비를 버텨낼 방법이 필요합니다. 안정적인
+                    금융은 단순한 &lsquo;빚&rsquo;이 아닌,
+                    <strong>
+                      {' '}
+                      창작의 시간을 살려내는 <span className="text-charcoal-deep">생명의 산소</span>
+                    </strong>
+                    입니다.
+                  </p>
+                  <p>
+                    그러나 한국의 금융 시스템은 예술인을 정상적인 금융 고객으로 인정하지 않았습니다.
+                    그 결과 예술인들은
+                    <strong> 배제 → 약탈 → 파괴</strong>라는 악순환에 갇혀있습니다.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -416,26 +323,58 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
           <div className="mb-12">
             <Ban aria-hidden="true" className="mb-4 h-12 w-12 text-primary-strong" />
             <span className="text-sm font-bold text-primary-strong uppercase">STAGE 1</span>
-            <SectionTitle className="mb-4">닫힌 문: 은행이 거절하다</SectionTitle>
+            <SectionTitle className="mb-4">
+              {isEnglish ? 'Closed doors: banks turn artists away' : '닫힌 문: 은행이 거절하다'}
+            </SectionTitle>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              제1금융권 배제율 <strong className="text-primary-strong">84.9%</strong>
+              {isEnglish ? (
+                <>
+                  Primary banking exclusion rate{' '}
+                  <strong className="text-primary-strong">84.9%</strong>
+                </>
+              ) : (
+                <>
+                  제1금융권 배제율 <strong className="text-primary-strong">84.9%</strong>
+                </>
+              )}
             </p>
           </div>
 
           {/* Description Text */}
           <div id="stage1-description" className="max-w-3xl mb-12">
-            <h3 className="text-card-title mb-3">은행의 문은 왜 닫혔나?</h3>
+            <h3 className="text-card-title mb-3">
+              {isEnglish ? 'Why are the bank doors shut?' : '은행의 문은 왜 닫혔나?'}
+            </h3>
             <ul className="space-y-3 text-charcoal">
               <li className="flex gap-3">
                 <span className="font-bold text-primary-strong">•</span>
                 <span>
-                  <strong>53.1%</strong>는 대출 신청 후 직접적으로 <strong>거절</strong>
+                  {isEnglish ? (
+                    <>
+                      <strong>53.1%</strong> were <strong>directly rejected</strong> after applying
+                      for a loan
+                    </>
+                  ) : (
+                    <>
+                      <strong>53.1%</strong>는 대출 신청 후 직접적으로 <strong>거절</strong>
+                    </>
+                  )}
                 </span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-primary-strong">•</span>
                 <span>
-                  <strong>31.8%</strong>는 어차피 안 될 것이라 예상하며 <strong>신청 포기</strong>
+                  {isEnglish ? (
+                    <>
+                      <strong>31.8%</strong> <strong>never applied</strong>, expecting to be
+                      rejected
+                    </>
+                  ) : (
+                    <>
+                      <strong>31.8%</strong>는 어차피 안 될 것이라 예상하며{' '}
+                      <strong>신청 포기</strong>
+                    </>
+                  )}
                 </span>
               </li>
             </ul>
@@ -459,23 +398,53 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
           <div className="mb-12">
             <AlertTriangle aria-hidden="true" className="mb-4 h-12 w-12 text-primary-strong" />
             <span className="text-sm font-bold text-primary-strong uppercase">STAGE 2</span>
-            <SectionTitle className="mb-4">낭떠러지: 고리대금로 내몰리다</SectionTitle>
+            <SectionTitle className="mb-4">
+              {isEnglish
+                ? 'The cliff: pushed into predatory lending'
+                : '낭떠러지: 고리대금로 내몰리다'}
+            </SectionTitle>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              고리대금 상품 노출률 <strong className="text-primary-strong">48.6%</strong> (연 15%
-              이상)
+              {isEnglish ? (
+                <>
+                  Predatory product exposure <strong className="text-primary-strong">48.6%</strong>{' '}
+                  (15%+ APR)
+                </>
+              ) : (
+                <>
+                  고리대금 상품 노출률 <strong className="text-primary-strong">48.6%</strong> (연
+                  15% 이상)
+                </>
+              )}
             </p>
           </div>
 
           {/* Description Text */}
           <div id="stage2-description" className="max-w-3xl mb-12">
-            <h3 className="text-card-title mb-3">선택이 아닌 생존</h3>
-            <p className="text-charcoal mb-4 text-balance leading-relaxed">
-              은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
-              <strong> 83.2%의 예술인이 고리대금 금융 상품을 이용</strong>한 경험이 있습니다.
-            </p>
-            <p className="text-charcoal leading-relaxed">
-              이는 선택이 아닌, 생존을 위한 유일한 탈출구였습니다.
-            </p>
+            <h3 className="text-card-title mb-3">
+              {isEnglish ? 'Not a choice — survival' : '선택이 아닌 생존'}
+            </h3>
+            {isEnglish ? (
+              <>
+                <p className="text-charcoal mb-4 text-balance leading-relaxed">
+                  The moment the bank door closes, artists are funneled straight into savings banks,
+                  card loans, and consumer finance lenders.
+                  <strong> 83.2% of artists have used a high-interest financial product</strong>.
+                </p>
+                <p className="text-charcoal leading-relaxed">
+                  This is not a preference — it is the only exit available for survival.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-charcoal mb-4 text-balance leading-relaxed">
+                  은행 문이 닫힌 순간, 예술인들은 곧바로 저축은행, 카드론, 대부업체로 내몰립니다.
+                  <strong> 83.2%의 예술인이 고리대금 금융 상품을 이용</strong>한 경험이 있습니다.
+                </p>
+                <p className="text-charcoal leading-relaxed">
+                  이는 선택이 아닌, 생존을 위한 유일한 탈출구였습니다.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Chart Grid */}
@@ -498,18 +467,42 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
               💔
             </div>
             <span className="text-sm font-bold text-danger uppercase">STAGE 3</span>
-            <SectionTitle className="mb-4">파괴: 창작이 멈춘다</SectionTitle>
+            <SectionTitle className="mb-4">
+              {isEnglish ? 'Collapse: creative work stops' : '파괴: 창작이 멈춘다'}
+            </SectionTitle>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
-              채권추심 경험자의 창작 중단율 <strong className="text-danger">88.3%</strong>
+              {isEnglish ? (
+                <>
+                  Creative-stoppage rate among debt-collection survivors{' '}
+                  <strong className="text-danger">88.3%</strong>
+                </>
+              ) : (
+                <>
+                  채권추심 경험자의 창작 중단율 <strong className="text-danger">88.3%</strong>
+                </>
+              )}
             </p>
           </div>
 
           {/* Description Text */}
           <div id="stage3-description" className="max-w-3xl mb-12">
-            <h3 className="text-card-title mb-3">생존의 위기</h3>
+            <h3 className="text-card-title mb-3">
+              {isEnglish ? 'A crisis of survival' : '생존의 위기'}
+            </h3>
             <p className="text-charcoal mb-4 text-balance leading-relaxed">
-              채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다. 이들은 멈추지 않는
-              전화, 모욕적인 언사, 집으로 찾아오는 추심원 앞에서 생존의 벼랑 끝으로 내몰립니다.
+              {isEnglish ? (
+                <>
+                  <strong>4 out of 10 (43%)</strong> Korean artists have lived through debt
+                  collection — relentless phone calls, verbal abuse, agents at the front door. Many
+                  are pushed to the edge of survival itself.
+                </>
+              ) : (
+                <>
+                  채권추심을 경험한 예술인은 <strong>10명 중 4명(43%)</strong>입니다. 이들은 멈추지
+                  않는 전화, 모욕적인 언사, 집으로 찾아오는 추심원 앞에서 생존의 벼랑 끝으로
+                  내몰립니다.
+                </>
+              )}
             </p>
           </div>
 
@@ -528,33 +521,84 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
       {/* 진단: 사회적 재난 */}
       <Section variant="white" prevVariant="red">
         <div className="container-max max-w-3xl">
-          <SectionTitle className="mb-8">이것은 개인의 문제가 아닙니다</SectionTitle>
+          <SectionTitle className="mb-8">
+            {isEnglish ? 'This is not a personal failure' : '이것은 개인의 문제가 아닙니다'}
+          </SectionTitle>
           <div className="space-y-6 text-lg text-charcoal">
-            <p>
-              예술인 금융 위기는 개인의 나태나 불성실의 결과가 아닙니다. 이는{' '}
-              <strong>프로젝트 기반 고용이라는 산업 구조적 현실</strong>을 전혀 인정하지 않는 금융
-              시스템의 구조적 실패입니다.
-            </p>
-            <p>
-              고용보험, 실업급여 등 대부분의 사회 안전망도 전통적 &lsquo;상시 고용&rsquo;을 기준으로
-              설계되어, 예술인들은 <strong>사회적으로도 금융적으로도 체계적으로 배제</strong>되어
-              있습니다.
-            </p>
-            <p>
-              따라서 이것은 단순한 개인의 빈곤 문제가 아닌,
-              <strong> 한국 문화예술 생태계의 지속가능성을 위협하는 사회적 재난</strong>입니다.
-            </p>
-            <p>
-              씨앗페는 이 구조적 문제에 대한 대안으로{' '}
-              <Link href="/our-proof" className="text-primary-strong hover:underline font-medium">
-                예술인 상호부조 대출
-              </Link>
-              을 실행하고 있으며, 데이터로 그 성과를 증명하고 있습니다.{' '}
-              <Link href="/artworks" className="text-primary-strong hover:underline font-medium">
-                출품 작가들의 작품을 구매
-              </Link>
-              하면 판매 수익이 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다.
-            </p>
+            {isEnglish ? (
+              <>
+                <p>
+                  Artist financial hardship is not the result of laziness or carelessness. It is a{' '}
+                  <strong>structural failure of a financial system</strong> that refuses to
+                  recognize project-based labor as legitimate work.
+                </p>
+                <p>
+                  Employment insurance, unemployment benefits, and most social safety nets in Korea
+                  are designed around &lsquo;permanent employment.&rsquo; Artists are{' '}
+                  <strong>systematically excluded</strong> from both finance and social protection.
+                </p>
+                <p>
+                  This is not an individual poverty problem. It is{' '}
+                  <strong>
+                    a social disaster threatening the sustainability of Korea&rsquo;s cultural
+                    ecosystem
+                  </strong>
+                  .
+                </p>
+                <p>
+                  As a structural alternative, SAF runs an{' '}
+                  <Link
+                    href="/our-proof"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    artist mutual-aid lending program
+                  </Link>{' '}
+                  and proves its results through data. When you{' '}
+                  <Link
+                    href="/artworks"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    purchase a participating artist&rsquo;s work
+                  </Link>
+                  , the proceeds become a fund that helps fellow artists trapped by predatory
+                  lending.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  예술인 금융 위기는 개인의 나태나 불성실의 결과가 아닙니다. 이는{' '}
+                  <strong>프로젝트 기반 고용이라는 산업 구조적 현실</strong>을 전혀 인정하지 않는
+                  금융 시스템의 구조적 실패입니다.
+                </p>
+                <p>
+                  고용보험, 실업급여 등 대부분의 사회 안전망도 전통적 &lsquo;상시 고용&rsquo;을
+                  기준으로 설계되어, 예술인들은{' '}
+                  <strong>사회적으로도 금융적으로도 체계적으로 배제</strong>되어 있습니다.
+                </p>
+                <p>
+                  따라서 이것은 단순한 개인의 빈곤 문제가 아닌,
+                  <strong> 한국 문화예술 생태계의 지속가능성을 위협하는 사회적 재난</strong>입니다.
+                </p>
+                <p>
+                  씨앗페는 이 구조적 문제에 대한 대안으로{' '}
+                  <Link
+                    href="/our-proof"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    예술인 상호부조 대출
+                  </Link>
+                  을 실행하고 있으며, 데이터로 그 성과를 증명하고 있습니다.{' '}
+                  <Link
+                    href="/artworks"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    출품 작가들의 작품을 구매
+                  </Link>
+                  하면 판매 수익이 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </Section>
@@ -562,40 +606,73 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
       {/* 제언: 산소호흡기가 필요하다 */}
       <Section variant="canvas" prevVariant="white">
         <div className="container-max">
-          <SectionTitle className="mb-8">산소호흡기가 필요하다</SectionTitle>
+          <SectionTitle className="mb-8">
+            {isEnglish ? 'What artists need is oxygen' : '산소호흡기가 필요하다'}
+          </SectionTitle>
           <div className="space-y-6 text-lg text-charcoal mb-12 max-w-3xl mx-auto text-balance">
-            <p>
-              예술인에게 필요한 것은 일시적인 지원금이나 복지가 아닙니다.
-              <strong> 예측 불가능한 소득 공백기를 버텨낼 안정적인 금융</strong>입니다.
-            </p>
-            <p>
-              복지는 물고기를 주는 것이라면, 금융은 물고기를 잡으러 나갈 다음 기회까지 버틸 수 있게
-              해주는 <strong>산소호흡기</strong>입니다.
-            </p>
+            {isEnglish ? (
+              <>
+                <p>
+                  Artists do not need a one-time grant or welfare program.
+                  <strong>
+                    {' '}
+                    They need stable finance that can absorb the unpredictable gaps
+                  </strong>{' '}
+                  between projects.
+                </p>
+                <p>
+                  If welfare is giving someone a fish, finance is the <strong>oxygen</strong> that
+                  keeps them alive long enough to fish again.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  예술인에게 필요한 것은 일시적인 지원금이나 복지가 아닙니다.
+                  <strong> 예측 불가능한 소득 공백기를 버텨낼 안정적인 금융</strong>입니다.
+                </p>
+                <p>
+                  복지는 물고기를 주는 것이라면, 금융은 물고기를 잡으러 나갈 다음 기회까지 버틸 수
+                  있게 해주는 <strong>산소호흡기</strong>입니다.
+                </p>
+              </>
+            )}
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-primary">
               <Timer aria-hidden="true" className="mb-3 h-10 w-10 text-primary-strong" />
-              <h3 className="font-bold text-lg mb-2">창작 시간을 살려내고</h3>
+              <h3 className="font-bold text-lg mb-2">
+                {isEnglish ? 'Save creative time' : '창작 시간을 살려내고'}
+              </h3>
               <p className="text-sm text-charcoal-muted">
-                안정적인 금융으로 소득 공백기를 버티며 창작에 집중할 수 있습니다
+                {isEnglish
+                  ? 'Stable finance carries artists through income gaps so they can stay focused on the work.'
+                  : '안정적인 금융으로 소득 공백기를 버티며 창작에 집중할 수 있습니다'}
               </p>
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-primary">
               <Drama aria-hidden="true" className="mb-3 h-10 w-10 text-primary-strong" />
-              <h3 className="font-bold text-lg mb-2">예술적 존엄성을 지키며</h3>
+              <h3 className="font-bold text-lg mb-2">
+                {isEnglish ? 'Protect artistic dignity' : '예술적 존엄성을 지키며'}
+              </h3>
               <p className="text-sm text-charcoal-muted">
-                부당한 조건을 거부하고 자신의 예술적 가치를 지킬 수 있습니다
+                {isEnglish
+                  ? 'Artists can refuse unfair terms and protect the integrity of their own work.'
+                  : '부당한 조건을 거부하고 자신의 예술적 가치를 지킬 수 있습니다'}
               </p>
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-primary">
               <Leaf aria-hidden="true" className="mb-3 h-10 w-10 text-primary-strong" />
-              <h3 className="font-bold text-lg mb-2">생태계를 지속가능하게</h3>
+              <h3 className="font-bold text-lg mb-2">
+                {isEnglish ? 'Sustain the ecosystem' : '생태계를 지속가능하게'}
+              </h3>
               <p className="text-sm text-charcoal-muted">
-                문화예술 생태계의 다양성과 지속가능성을 확보할 수 있습니다
+                {isEnglish
+                  ? 'A diverse, sustainable cultural ecosystem becomes possible — and stays that way.'
+                  : '문화예술 생태계의 다양성과 지속가능성을 확보할 수 있습니다'}
               </p>
             </div>
           </div>
@@ -605,12 +682,26 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
       {/* Call to Action */}
       <Section variant="primary-surface" prevVariant="canvas" className="pb-24 md:pb-32">
         <div className="container-max text-center">
-          <SectionTitle className="mb-6">이제 행동할 시간입니다</SectionTitle>
+          <SectionTitle className="mb-6">
+            {isEnglish ? 'Now is the time to act' : '이제 행동할 시간입니다'}
+          </SectionTitle>
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
-            한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
-            <br />
-            조합원 가입과 작품 구매가 예술이 계속 숨 쉬게 하는{' '}
-            <span className="text-charcoal-deep font-semibold">산소호흡기</span>가 됩니다.
+            {isEnglish ? (
+              <>
+                Help save the creative time of Korean artists.
+                <br />
+                Membership and artwork purchases become the{' '}
+                <span className="text-charcoal-deep font-semibold">oxygen</span> that keeps art
+                breathing.
+              </>
+            ) : (
+              <>
+                한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
+                <br />
+                조합원 가입과 작품 구매가 예술이 계속 숨 쉬게 하는{' '}
+                <span className="text-charcoal-deep font-semibold">산소호흡기</span>가 됩니다.
+              </>
+            )}
           </p>
           <CTAButtonGroup variant="large" className="justify-center" />
 
@@ -620,37 +711,64 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
             className="mt-16 pt-16 border-t border-primary/20 max-w-2xl mx-auto text-left"
           >
             <h3 className="text-sm font-bold text-primary-strong uppercase tracking-widest mb-6">
-              자료 출처 및 근거 (Citations)
+              {isEnglish ? 'Sources & Citations' : '자료 출처 및 근거 (Citations)'}
             </h3>
             <ul className="space-y-3 text-xs md:text-sm text-charcoal-muted list-disc pl-5">
-              <li>
-                <strong>금융 배제 및 고리대금 통계</strong>: 한국스마트협동조합 &apos;2025 예술인
-                금융 재난 보고서&apos; (179명 심층 설문 결과)
-              </li>
-              <li>
-                <strong>상환율 데이터</strong>: 2022년 12월~2025년 9월 예술인 상호부조 대출 운용
-                기록 (누적 {LOAN_COUNT}건 집계)
-              </li>
-              <li>
-                <strong>관련 보도</strong>: 한겨레(2025.11.05), 뉴스아트(2025.11.05),
-                아시아경제(2025.11.05) 등 주요 일간지 및 전문지
-              </li>
-              <li>
-                <strong>제도적 배경</strong>: 문화체육관광부 예술인 복지 정책 및 제1금융권 예술인
-                신용 규제 현황
-              </li>
+              {isEnglish ? (
+                <>
+                  <li>
+                    <strong>Financial exclusion and predatory lending statistics</strong>: Korea
+                    Smart Cooperative, &lsquo;2025 Artist Financial Disaster Report&rsquo; (in-depth
+                    survey of 179 artists).
+                  </li>
+                  <li>
+                    <strong>Repayment data</strong>: Operating records of the artist mutual-aid loan
+                    program, December 2022 – September 2025 (cumulative {LOAN_COUNT} loans).
+                  </li>
+                  <li>
+                    <strong>Press coverage</strong>: Hankyoreh (2025-11-05), News Art (2025-11-05),
+                    Asia Economy (2025-11-05), and other major daily and specialist outlets.
+                  </li>
+                  <li>
+                    <strong>Institutional context</strong>: Korea Ministry of Culture, Sports and
+                    Tourism artist welfare policy and primary banking credit rules for artists.
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <strong>금융 배제 및 고리대금 통계</strong>: 한국스마트협동조합 &apos;2025
+                    예술인 금융 재난 보고서&apos; (179명 심층 설문 결과)
+                  </li>
+                  <li>
+                    <strong>상환율 데이터</strong>: 2022년 12월~2025년 9월 예술인 상호부조 대출 운용
+                    기록 (누적 {LOAN_COUNT}건 집계)
+                  </li>
+                  <li>
+                    <strong>관련 보도</strong>: 한겨레(2025.11.05), 뉴스아트(2025.11.05),
+                    아시아경제(2025.11.05) 등 주요 일간지 및 전문지
+                  </li>
+                  <li>
+                    <strong>제도적 배경</strong>: 문화체육관광부 예술인 복지 정책 및 제1금융권
+                    예술인 신용 규제 현황
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
           <p className="text-sm text-charcoal-muted mt-12">
-            2025 예술인 금융 재난 보고서 기반 |{' '}
+            {isEnglish
+              ? 'Based on the 2025 Artist Financial Disaster Report'
+              : '2025 예술인 금융 재난 보고서 기반'}{' '}
+            |{' '}
             <a
               href={EXTERNAL_LINKS.KOSMART_HOME}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline"
             >
-              한국스마트협동조합
+              {isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합'}
             </a>
           </p>
         </div>

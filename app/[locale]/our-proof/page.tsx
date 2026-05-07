@@ -316,6 +316,64 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 variant="bordered"
               />
             </div>
+
+            <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12 max-w-3xl mx-auto mb-16">
+              <SectionTitle className="mb-8">Why does mutual-aid finance work?</SectionTitle>
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <span className="text-2xl font-bold text-primary">1</span>
+                  </div>
+                  <div>
+                    <h3 className="text-card-title mb-2">Reserve fund and special contributions</h3>
+                    <p className="text-charcoal-muted text-balance">
+                      The cooperative&rsquo;s KRW 77 million reserve, combined with borrowers&rsquo;
+                      special contributions, maintains a KRW 35,608,224 stabilization balance — risk
+                      is shared collectively.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <span className="text-2xl font-bold text-primary">2</span>
+                  </div>
+                  <div>
+                    <h3 className="text-card-title mb-2">Fixed 5% annual rate</h3>
+                    <p className="text-charcoal-muted text-balance">
+                      Both project-based and emergency-living products are designed at a fixed 5%
+                      APR, cutting interest burden by an average of 14 percentage points or more
+                      compared to predatory lending.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <span className="text-2xl font-bold text-primary">3</span>
+                  </div>
+                  <div>
+                    <h3 className="text-card-title mb-2">Purpose-tailored products</h3>
+                    <p className="text-charcoal-muted text-balance">
+                      Four products — emergency, next-day, special, and project loans — deliver
+                      capital exactly when artists need it, from living expenses to creative
+                      production.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <span className="text-2xl font-bold text-primary">4</span>
+                  </div>
+                  <div>
+                    <h3 className="text-card-title mb-2">Transparent risk management</h3>
+                    <p className="text-charcoal-muted text-balance">
+                      Of the 20 subrogation cases (6.56%), KRW 11,396,305 has been recovered.
+                      Real-time monitoring and recovery planning sustain the trust mutual aid
+                      depends on.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </Section>
 
@@ -386,6 +444,13 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                     <td className="px-6 py-4 font-semibold">Loan flexibility</td>
                     <td className="px-6 py-4 text-center">Limited</td>
                     <td className="px-6 py-4 text-center">Relatively flexible</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="px-6 py-4 font-semibold">Advisory support</td>
+                    <td className="px-6 py-4 text-center">Minimal</td>
+                    <td className="px-6 py-4 text-center text-primary font-semibold">
+                      Tailored consultation
+                    </td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold">Core philosophy</td>

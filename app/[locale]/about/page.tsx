@@ -134,10 +134,17 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         {/* Key stats */}
         <Section variant="primary-surface" prevVariant="white">
           <div className="container-max">
-            <SectionTitle className="mb-12">SAF by the numbers</SectionTitle>
+            <SectionTitle className="mb-4">SAF by the numbers</SectionTitle>
+            <p className="text-center text-charcoal-muted mb-12 text-balance">
+              Cumulative results from the first loan in December 2022 through September 2025
+            </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              <StatCard value="127" label="Solidarity artists" variant="highlight" />
-              <StatCard value="354" label="Loans funded" variant="highlight" />
+              <StatCard
+                value={String(ARTIST_COUNT)}
+                label="Solidarity artists"
+                variant="highlight"
+              />
+              <StatCard value={`${LOAN_COUNT}`} label="Loans funded" variant="highlight" />
               <StatCard value="~₩700M" label="Total deployed" variant="highlight" />
               <StatCard value="95%" label="Repayment rate" variant="highlight" />
             </div>
@@ -185,6 +192,25 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 </div>
               ))}
             </div>
+
+            {/* Fund leverage callout */}
+            <div className="mt-16 max-w-3xl mx-auto bg-primary-surface rounded-2xl p-8 border-2 border-primary text-center">
+              <h3 className="text-card-title mb-2">Mutual-aid fund leverage</h3>
+              <p className="text-sm text-charcoal-muted mb-4">
+                Up to 7× the deposited reserve is converted into low-interest artist loans
+              </p>
+              <div className="flex items-center justify-center gap-4 flex-wrap">
+                <div>
+                  <p className="text-sm text-charcoal-muted">Reserve</p>
+                  <p className="text-2xl font-bold text-primary">~₩77M</p>
+                </div>
+                <ArrowRight className="h-6 w-6 text-charcoal-muted" aria-hidden="true" />
+                <div>
+                  <p className="text-sm text-charcoal-muted">Available to lend</p>
+                  <p className="text-2xl font-bold text-primary">~₩540M</p>
+                </div>
+              </div>
+            </div>
           </div>
         </Section>
 
@@ -225,8 +251,53 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </div>
         </Section>
 
-        {/* Exhibition archive */}
+        {/* Traditional finance vs mutual aid */}
         <Section variant="white" prevVariant="canvas">
+          <div className="container-max">
+            <SectionTitle className="mb-12">Traditional finance vs mutual-aid lending</SectionTitle>
+            <div className="max-w-4xl mx-auto overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-charcoal">
+                    <th className="py-4 pr-4 text-sm font-bold text-charcoal-deep">Criterion</th>
+                    <th className="py-4 px-4 text-sm font-bold text-danger-a11y">
+                      Traditional finance
+                    </th>
+                    <th className="py-4 pl-4 text-sm font-bold text-primary-strong">
+                      Mutual-aid loan
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {[
+                    [
+                      'Underwriting',
+                      'Steady income & credit score',
+                      'Practice record & peer trust',
+                    ],
+                    ['Interest rate', '15–20%+ APR (predatory)', 'Fixed 5% APR'],
+                    ['Repayment terms', 'Rigid monthly schedule', 'Flexible, income-cycle aware'],
+                    [
+                      'Advisory support',
+                      'None (automated review)',
+                      '1:1 counseling + peer network',
+                    ],
+                    ['Philosophy', 'Profit maximization', 'Mutual aid + solidarity'],
+                  ].map(([label, old, mutual], i) => (
+                    <tr key={label} className={i < 4 ? 'border-b border-gray-200' : ''}>
+                      <td className="py-4 pr-4 font-medium text-charcoal-deep">{label}</td>
+                      <td className="py-4 px-4 text-danger-a11y/80">{old}</td>
+                      <td className="py-4 pl-4 text-primary-strong font-medium">{mutual}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Section>
+
+        {/* Exhibition archive */}
+        <Section variant="white">
           <div className="container-max">
             <SectionTitle className="mb-12">Exhibition history</SectionTitle>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -341,6 +412,53 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               variant="large"
               className="justify-center"
             />
+
+            {/* Sources */}
+            <div className="mt-16 pt-8 border-t border-charcoal/10 text-left max-w-2xl mx-auto">
+              <h3 className="text-sm font-bold text-charcoal-muted mb-3">Sources & references</h3>
+              <ul className="text-xs text-charcoal-muted space-y-1">
+                <li>
+                  • Banking exclusion & high-interest exposure: 2025 Korean Artist Financial
+                  Disaster Report (Korea Smart Cooperative)
+                </li>
+                <li>
+                  • Loan disbursements & repayment rate: Mutual-Aid Loan Operating Report, Dec
+                  2022–Sep 2025
+                </li>
+                <li>
+                  •{' '}
+                  <Link
+                    href="/our-reality"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      Data details
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                  </Link>{' '}
+                  /{' '}
+                  <Link
+                    href="/our-proof"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      Outcome details
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                  </Link>{' '}
+                  /{' '}
+                  <Link
+                    href="/transparency"
+                    className="text-primary-strong hover:underline font-medium"
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      Annual reports
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </Section>
       </>
