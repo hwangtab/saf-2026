@@ -10,8 +10,15 @@ import {
   generateWebsiteSchema,
   generateLocalBusinessSchema,
 } from '@/lib/seo-utils';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { BRAND_COLORS } from '@/lib/colors';
 import cssManifest from './_css-manifest.json';
+
+// styles/critical.css — scripts/extract-critical-css.mjs로 prebuild 추출.
+// production HTML의 above-the-fold DOM에 매칭되는 utility 클래스만 골라냄.
+// inline <style>로 박혀 paint 즉시 가능. 나머지 (~70%)는 async loading.
+const criticalCss = readFileSync(join(process.cwd(), 'styles/critical.css'), 'utf8');
 // styles/globals.css는 Next.js의 자동 <link rel="stylesheet" precedence="next"> 주입을
 // 끊고 수동 제어하기 위해 여기서 import하지 않음. scripts/build-css.mjs가 prebuild
 // 단계에서 컴파일해 public/css/main.<hash>.css로 출력하고, 아래 <head>에서 직접 link.
@@ -126,10 +133,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />
-        {/* Tailwind CSS는 prebuild 단계에서 별도 컴파일되어 /css/main.<hash>.css로 서빙.
-            매니페스트에서 hash를 읽어 link href 생성. 1단계에서는 일반 stylesheet으로 적용
-            (회귀 없음 검증), 2단계에서 critical inline + async loading으로 전환. */}
-        <link rel="stylesheet" href={cssManifest.tailwindCss} />
+        {/* Tailwind CSS critical inline — above-the-fold 분량 (~30KiB raw / ~6KiB brotli).
+            paint 즉시 가능 (link 다운로드 RTT 절약). 나머지는 아래 async link로 받음.
+            criticalCss는 styles/critical.css 파일 내용 (build 시 추출, 신뢰 가능 source). */}
+        <style>{criticalCss}</style>
+        {/* 전체 Tailwind CSS는 async loading. media="print"으로 박으면 render-blocking
+            아니게 다운로드되고, onLoad에서 media="all"로 swap해 적용. JS 비활성화 환경은
+            아래 <noscript> fallback이 일반 link 박아 정상 적용. */}
+        <link rel="preload" as="style" href={cssManifest.tailwindCss} fetchPriority="high" />
+        <link
+          rel="stylesheet"
+          href={cssManifest.tailwindCss}
+          media="print"
+          // @ts-expect-error onLoad on link는 표준 DOM 속성. React 타입은 함수만 받지만
+          // 실제 SSR 시 string으로 직렬화되어 브라우저가 inline event handler로 실행.
+          onLoad="this.media='all'"
+        />
+        <noscript>
+          <link rel="stylesheet" href={cssManifest.tailwindCss} />
+        </noscript>
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         {children}
