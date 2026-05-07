@@ -11,12 +11,7 @@ import {
   generateLocalBusinessSchema,
 } from '@/lib/seo-utils';
 import { BRAND_COLORS } from '@/lib/colors';
-import cssManifest from './_css-manifest.json';
-// styles/globals.css는 Next.js의 자동 <link rel="stylesheet" precedence="next"> 주입을
-// 끊고 수동 제어하기 위해 여기서 import하지 않음. scripts/build-css.mjs가 prebuild
-// 단계에서 컴파일해 public/css/main.<hash>.css로 출력하고, 아래 <head>에서 직접 link.
-// 목적: Lighthouse "render-blocking CSS" 1190ms 진단 해소. async loading + critical
-// inline 패턴 적용 가능해짐.
+import '@/styles/globals.css';
 
 // next/font/google: 빌드 타임에 Google Fonts에서 폰트 다운로드 → 자체 도메인으로 self-host 변환.
 // unicode-range chunk 자동 분할로 한글 글리프가 사용 시점에 lazy fetch됨.
@@ -126,10 +121,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />
-        {/* Tailwind CSS는 prebuild 단계에서 별도 컴파일되어 /css/main.<hash>.css로 서빙.
-            매니페스트에서 hash를 읽어 link href 생성. 1단계에서는 일반 stylesheet으로 적용
-            (회귀 없음 검증), 2단계에서 critical inline + async loading으로 전환. */}
-        <link rel="stylesheet" href={cssManifest.tailwindCss} />
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         {children}
