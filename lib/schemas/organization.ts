@@ -208,10 +208,10 @@ export function generateCampaignSchema(locale: 'ko' | 'en' = 'ko') {
       name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
-    isAccessibleForFree: false,
-    audience: {
-      '@type': 'Audience',
-      audienceType: isEnglish ? 'Art collectors and supporters' : '미술 컬렉터, 예술 후원자',
-    },
+    // schema.org FundingScheme은 Intangible 계열이라 isAccessibleForFree
+    // (CreativeWork 전용)와 audience(CreativeWork/Service 전용) 속성을 인정하지
+    // 않음. GSC schema 검사기가 두 속성 모두 경고로 보고. 단순 제거가 정답.
+    // FundingScheme의 의도(audience: 미술 컬렉터·예술 후원자)는 description의
+    // "작품 구매를 통해 예술인들의 금융 자립을 지원" 자체에 이미 함의됨.
   };
 }
