@@ -48,13 +48,10 @@ interface Props {
   }>;
 }
 
-// force-static + revalidate=3600 + admin 액션의 revalidatePath 조합:
-// - 빌드 시 358 작품 prerender → CDN HIT, TTFB 50ms+
-// - admin이 수정/삭제 시 app/actions/admin-artworks.ts에서 revalidatePath('/artworks/${id}') 호출 → 즉시 무효화
-// - 1시간 background revalidate로 fallback safety net
-// 이전 force-dynamic은 stale 200 회피 목적이었으나 on-demand revalidation 인프라가 갖춰져 있어 불필요해짐.
-export const dynamic = 'force-static';
-export const revalidate = 3600;
+// 358 × 2 locale × 8 Supabase 쿼리 = ~5700 build-time queries로 Supabase Cloudflare 522 발생.
+// Type C 정적화 롤백 — force-dynamic 복구. ISR + admin revalidatePath 조합도 부적합.
+// 향후 가능한 길: generateStaticParams를 TOP N 인기 작품만으로 제한하고 나머지는 dynamicParams=true로 on-demand SSG.
+export const dynamic = 'force-dynamic';
 
 /** 스토리 body 마크다운에서 첫 번째 이미지 URL 추출 — 썸네일 fallback용 */
 function extractFirstImage(body: string | null | undefined): string | null {
@@ -84,12 +81,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return generateArtworkMetadata(artwork, locale);
 }
 
-// Generate static params for all artworks at build time
-// locale x artwork ID 카르테시안 — 두 locale 모두 prerender됨
-export async function generateStaticParams() {
-  const artworks = await getSupabaseArtworks();
-  return artworks.flatMap((artwork) => ['ko', 'en'].map((locale) => ({ locale, id: artwork.id })));
-}
+// generateStaticParams 제거 — force-dynamic이라 빌드 시 prerender 안 함.
+// 빌드 시 Supabase에 358 × 2 × 8 쿼리 부하 회피.
 
 export default async function ArtworkDetailPage({ params }: Props) {
   const { locale: rawLocale, id } = await params;

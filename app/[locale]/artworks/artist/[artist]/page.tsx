@@ -44,12 +44,9 @@ import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-// force-static + revalidate=3600: 빌드 시 ~100명 작가 페이지 prerender → CDN HIT.
-// admin 액션이 작품 수정/삭제 시 revalidatePath('/artworks/artist/...') 호출하면 즉시 무효화.
-// 1시간 fallback revalidate가 stale 보호. 이전 force-dynamic은 신학철 케이스(작가 작품 전체 삭제 후
-// stale 200) 대응이었으나 on-demand revalidation으로 충분.
-export const dynamic = 'force-static';
-export const revalidate = 3600;
+// /artworks/[id]와 같은 이유로 정적화 롤백 — Type C 빌드 시 Supabase 부하로 Cloudflare 522 발생.
+// 향후 generateStaticParams를 TOP N 작가만으로 제한 + dynamicParams=true 패턴 검토.
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{
@@ -192,12 +189,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Generate static params for all artists × locales
-export async function generateStaticParams() {
-  const artworks = await getSupabaseArtworks();
-  const artists = Array.from(new Set(artworks.map((a) => a.artist)));
-  return artists.flatMap((artist) => ['ko', 'en'].map((locale) => ({ locale, artist })));
-}
+// generateStaticParams 제거 — force-dynamic이라 prerender 안 함.
 
 export default async function ArtistPage({ params }: Props) {
   const { locale: rawLocale, artist } = await params;

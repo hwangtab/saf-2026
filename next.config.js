@@ -126,15 +126,76 @@ const nextConfig = {
           },
         ],
       },
+      // ─── CSP 분리: portal vs public ───────────────────────────────────────
+      // portal/auth(/admin·/dashboard·/exhibitor·/onboarding·/login·/signup·
+      // /terms-consent·/auth)는 GlobalAnalyticsGate에서 GA4·Vercel Analytics·
+      // WebVitals이 모두 OFF이고, Kakao Share/Map SDK·Toss SDK 어느 것도 로드되지
+      // 않음 — 외부 SDK 의존성이 0이므로 strict CSP 적용 가능.
+      // 공개 페이지는 Kakao Share SDK가 동적 코드 평가(Function 생성자 3회 — 실측)에
+      // 의존하고 거의 모든 페이지에 박혀 있어 'unsafe-eval' 유지 불가피.
+      // ⚠ 다중 CSP 헤더는 브라우저에서 가장 엄격한 정책으로 intersect되므로
+      // strict와 public CSP는 mutually exclusive 라우트 매칭이 필수.
+      // 보안 가치: portal에서 XSS 발생해도 동적 코드 실행 차단 + 외부 도메인 호출
+      // 차단으로 관리자·결제 진입·회원가입 영역 공격 표면 축소.
       {
-        source: '/(.*)',
+        source: '/:portal(admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth)/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              // 'unsafe-eval' is required by Kakao Map SDK which uses eval() internally.
-              // Removing it breaks map rendering. Track: https://devtalk.kakao.com
+              // 'unsafe-eval' 제거 — portal에서는 Kakao SDK 미로드 (실측 확인).
+              // 'unsafe-inline'은 Next.js __NEXT_DATA__ 인라인 스크립트 때문에 유지
+              // (nonce 기반으로 전환하려면 별도 작업).
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https:",
+              "font-src 'self' data:",
+              // Supabase 외 모든 외부 도메인 제거 — portal에서 호출하는 외부 서비스 0.
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "worker-src 'self' blob:",
+              "frame-src 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
+        ],
+      },
+      // portal exact paths (`/login`, `/signup`, `/terms-consent`, `/onboarding` 등)
+      // 위 `:path*` 패턴이 nested만 매칭하는 경우 대비 — Next.js path-to-regexp 동작상
+      // 둘 다 매칭되어도 같은 값이라 browser intersect 결과 동일.
+      {
+        source: '/:portal(admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "worker-src 'self' blob:",
+              "frame-src 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
+        ],
+      },
+      // 공개 페이지용 CSP — portal/api/_next 제외. Kakao Share/Map + 분석 SDK 허용.
+      {
+        source:
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth|api|_next).*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              // 'unsafe-eval' 필수 — Kakao Share SDK 동적 코드 평가 의존 (kakao.min.js v2.7.2 실측).
+              // 거의 모든 공개 페이지에 ShareButtons가 박혀 있어 제거 시 광범위 회귀.
+              // Kakao Map(/archive/2026)도 동일 요구.
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://developers.kakao.com https://dapi.kakao.com https://t1.daumcdn.net https://map.daumcdn.net https://t1.kakaocdn.net https://*.vercel-insights.com https://*.tosspayments.com https://*.toss.im https://toss.im https://www.googletagmanager.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
@@ -146,6 +207,12 @@ const nextConfig = {
               "form-action 'self'",
             ].join('; '),
           },
+        ],
+      },
+      // 공통 보안 헤더 — 모든 라우트에 동일 적용 (CSP 외 키들은 conflict 없음)
+      {
+        source: '/(.*)',
+        headers: [
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
