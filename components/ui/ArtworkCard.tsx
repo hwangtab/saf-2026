@@ -8,6 +8,7 @@ import type { ArtworkCardData } from '@/types';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { containsHangul } from '@/lib/search-utils';
+import { getMaterialLabel } from '@/lib/artwork-material';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 type ArtworkCardTheme = 'light' | 'dark';
@@ -207,12 +208,13 @@ function ArtworkCard({
     if (locale !== 'en') return value;
     if (value === '문의') return 'Inquiry';
     if (value === '확인 중') return 'Pending';
+    if (/^\s*에디션\s*/.test(value)) return value.replace(/^\s*에디션\s*/, 'Edition ');
     if (containsHangul(value)) return originalKoreanDataLabel;
     return value;
   };
 
   const localizedPrice = localizeDataValue(artwork.price);
-  const localizedMaterial = localizeDataValue(artwork.material);
+  const localizedMaterial = getMaterialLabel(artwork.material, locale);
   const localizedSize = localizeDataValue(artwork.size);
 
   const showMaterial = isDisplayable(artwork.material);

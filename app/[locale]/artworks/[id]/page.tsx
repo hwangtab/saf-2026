@@ -16,6 +16,7 @@ import {
   getPopularArtworkIds,
 } from '@/lib/supabase-data';
 import { resolveActiveNotice } from '@/lib/artist-notice';
+import { getMaterialLabel } from '@/lib/artwork-material';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import SafeImage from '@/components/common/SafeImage';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
@@ -169,6 +170,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
     if (locale !== 'en') return value;
     if (value === '문의') return 'Inquiry';
     if (value === '확인 중') return 'Pending';
+    // edition 표기: "에디션 1/5" → "Edition 1/5"
+    if (/^\s*에디션\s*/.test(value)) return value.replace(/^\s*에디션\s*/, 'Edition ');
     if (containsHangul(value)) return t('originalKoreanDetail');
     return value;
   };
@@ -204,7 +207,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
     t('originalKoreanHistory')
   );
   const localizedPrice = localizeDataValue(artwork.price);
-  const localizedMaterial = localizeDataValue(artwork.material);
+  const localizedMaterial = getMaterialLabel(artwork.material, locale);
   const localizedSize = localizeDataValue(artwork.size);
   const localizedEdition = localizeDataValue(artwork.edition);
   const displayTitle = locale === 'en' && artwork.title_en ? artwork.title_en : artwork.title;
