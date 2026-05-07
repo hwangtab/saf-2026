@@ -225,7 +225,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
     }
   );
 
-  const faqSchema = generateArtworkPurchaseFAQ(locale);
+  const purchaseFaqSchema = generateArtworkPurchaseFAQ(locale);
   // 작품-특화 FAQ — 제목·작가·매체·크기·가격을 답변에 포함시켜 작품마다 unique한 Q&A.
   // "{작가명} 작품 가격", "{작품명} 어떤 작품" 같은 롱테일 검색·LLM 인용 흡수.
   const artworkSpecificFaqSchema = generateArtworkSpecificFAQ(
@@ -246,6 +246,21 @@ export default async function ArtworkDetailPage({ params }: Props) {
     },
     locale
   );
+
+  // GSC가 "FAQPage 입력란이 중복되었습니다" 보고(2026-04-26~). Google FAQ Rich Results
+  // 가이드라인: 페이지당 FAQPage 1개만 허용. 두 함수의 mainEntity(Q&A 배열)를 합쳐
+  // 단일 FAQPage로 발행. 두 함수 모두 generateFAQSchema()를 거치는 동일 형식이라
+  // mainEntity concat 안전.
+  const faqSchema =
+    artworkSpecificFaqSchema && Array.isArray(artworkSpecificFaqSchema.mainEntity)
+      ? {
+          ...purchaseFaqSchema,
+          mainEntity: [
+            ...(Array.isArray(purchaseFaqSchema.mainEntity) ? purchaseFaqSchema.mainEntity : []),
+            ...artworkSpecificFaqSchema.mainEntity,
+          ],
+        }
+      : purchaseFaqSchema;
 
   // LCP preload — 모바일은 slider 프리셋(400w) / 데스크톱은 detail(1600w)
   // imageSrcSet + imageSizes로 <picture> + media query 분기에 맞춰 브라우저가 올바른 URL 선택
@@ -270,7 +285,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
       )}
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
       <JsonLdScript data={faqSchema} />
-      {artworkSpecificFaqSchema !== null && <JsonLdScript data={artworkSpecificFaqSchema} />}
       <Section
         variant="white"
         prevVariant="canvas"
