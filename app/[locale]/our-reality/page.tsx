@@ -164,6 +164,12 @@ export default async function OurReality() {
     // GSC가 "isPartOf 입력란의 개체 유형이 잘못되었습니다"로 보고함(2026-04-23~). 이 통계는
     // 더 큰 데이터 컬렉션의 일부가 아니므로 isPartOf 자체를 제거하는 게 정답. AboutPage의
     // isPartOf(WebSite)는 schema.org 사양상 정상이므로 위 aboutPageSchema는 그대로 유지.
+
+    // license — Google Dataset 가이드라인 권장 속성. GSC가 "license 입력란이 누락" 보고
+    // (2026-05-07). CC-BY 4.0 선언: 출처 표시만 요구하는 자유 라이선스로, 우리 캠페인
+    // 메시지(예술인 금융 차별의 사회적 가시화)가 학술·언론·블로그 등에서 널리 인용되는 게
+    // 운동 목적에 부합. 통계 자체는 한국스마트협동조합 자체 조사 + 공개 인용.
+    license: 'https://creativecommons.org/licenses/by/4.0/',
   };
 
   if (locale === 'en') {
