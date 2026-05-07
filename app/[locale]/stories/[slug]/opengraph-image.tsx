@@ -7,7 +7,7 @@ import { BRAND_COLORS } from '@/lib/colors';
 import type { StoryCategory } from '@/types';
 
 export const runtime = 'nodejs';
-export const alt = 'SAF 매거진 기사';
+export const alt = 'SAF Magazine Article';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const revalidate = 1800;

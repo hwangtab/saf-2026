@@ -26,6 +26,7 @@ interface Props {
  */
 export default function RelatedArtworkCard({ artwork, isEn, storySlug, position }: Props) {
   const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
+  const artArtist = isEn && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const imgUrl = resolveArtworkImageUrl(artwork.images[0] ?? '');
 
   function handleClick() {
@@ -81,7 +82,7 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position 
         <h3 className="text-sm font-bold text-charcoal line-clamp-2 group-hover:text-primary transition-colors duration-300">
           {artTitle}
         </h3>
-        <p className="text-xs text-charcoal-muted mt-1">{artwork.artist}</p>
+        <p className="text-xs text-charcoal-muted mt-1">{artArtist}</p>
         <p className="text-xs font-semibold text-primary mt-2">
           {artwork.sold ? (isEn ? 'Sold' : '판매 완료') : artwork.price}
         </p>

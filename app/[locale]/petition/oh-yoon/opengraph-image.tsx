@@ -7,7 +7,8 @@ import { routing } from '@/i18n/routing';
 import { SITE_URL } from '@/lib/constants';
 
 export const runtime = 'nodejs';
-export const alt = '오윤 구의동 벽화 시민 청원 — 차기 서울시장께';
+export const alt =
+  "Citizens' Petition to Save Oh Yoon's Guuidong Mural / 오윤 구의동 벽화 시민 청원";
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const revalidate = 3600;

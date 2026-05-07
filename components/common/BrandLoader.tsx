@@ -18,7 +18,7 @@ export default async function BrandLoader({ minHeight = '80vh' }: BrandLoaderPro
       <div className="animate-fade-in opacity-0">
         <SafeImage
           src="/images/logo/320pxX90px_white.webp"
-          alt="씨앗페 온라인 – SAF Online"
+          alt={t('brandLogo')}
           width={320}
           height={90}
           className="w-72 md:w-96 max-w-[85vw] h-auto"

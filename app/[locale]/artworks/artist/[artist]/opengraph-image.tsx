@@ -7,7 +7,7 @@ import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { BRAND_COLORS } from '@/lib/colors';
 
 export const runtime = 'nodejs';
-export const alt = 'SAF 작가 페이지';
+export const alt = 'SAF Artist Page';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const revalidate = 3600;
