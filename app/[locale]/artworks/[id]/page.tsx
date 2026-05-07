@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import {
-  getSupabaseArtworks,
   getSupabaseArtworkById,
   getSupabaseArtworksByArtist,
   getArtworksByCategoryLight,

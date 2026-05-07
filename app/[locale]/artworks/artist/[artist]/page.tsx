@@ -1,5 +1,4 @@
 import {
-  getSupabaseArtworks,
   getSupabaseArtworksByArtist,
   getAvailableArtworkCategories,
   getSupabaseStories,
