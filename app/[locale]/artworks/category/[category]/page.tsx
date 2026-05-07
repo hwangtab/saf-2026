@@ -286,7 +286,7 @@ export default async function CategoryPage({ params }: Props) {
         >
           <ShareButtonsWrapper
             url={`${SITE_URL}${categoryPath}`}
-            title={t('shareTitle', { category: displayCategory })}
+            title={t('shareTitle', { category: displayCategory, count: categoryArtworks.length })}
             description={t('shareDescription', { category: displayCategory })}
           />
         </PageHero>
