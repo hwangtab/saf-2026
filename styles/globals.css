@@ -26,6 +26,119 @@
   .container-max {
     @apply max-w-screen-xl mx-auto px-4 sm:px-5;
   }
+
+  /* 마크다운 본문 스타일 — stories/news 등 ReactMarkdown 출력에 적용.
+     이전엔 @tailwindcss/typography(prose-*)을 사용했으나 메인 페이지 CSS chunk에
+     31KB(가장 큰 utility 그룹)가 미사용 상태로 함께 번들되는 문제가 있어 제거하고
+     필요한 스타일만 명시적으로 정의. typography plugin의 prose-lg + prose-gray 기본값과
+     기존 prose-* modifier override를 그대로 재현. */
+  .markdown-content {
+    @apply text-lg text-charcoal max-w-none;
+    line-height: 1.78;
+  }
+  .markdown-content > :first-child {
+    margin-top: 0;
+  }
+  .markdown-content > :last-child {
+    margin-bottom: 0;
+  }
+  .markdown-content p {
+    @apply leading-relaxed mb-6;
+  }
+  .markdown-content h1 {
+    @apply font-section text-charcoal mt-0 mb-8;
+    font-size: 2.6667em;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .markdown-content h2 {
+    @apply font-section font-bold text-charcoal mt-12 mb-5 pb-3 border-b border-gray-100;
+    font-size: 1.6667em;
+    line-height: 1.333;
+  }
+  .markdown-content h3 {
+    @apply font-section font-bold text-charcoal mt-8 mb-4;
+    font-size: 1.3333em;
+    line-height: 1.5;
+  }
+  .markdown-content h4 {
+    @apply text-charcoal mt-6 mb-3;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+  .markdown-content strong {
+    @apply text-charcoal;
+    font-weight: 600;
+  }
+  .markdown-content a {
+    @apply text-primary no-underline;
+  }
+  .markdown-content a:hover {
+    @apply underline;
+  }
+  .markdown-content ul {
+    @apply list-disc my-6 space-y-2;
+    padding-inline-start: 1.55em;
+  }
+  .markdown-content ol {
+    @apply list-decimal my-6 space-y-2;
+    padding-inline-start: 1.55em;
+  }
+  .markdown-content li {
+    @apply mb-2 leading-relaxed;
+  }
+  .markdown-content ul ul,
+  .markdown-content ul ol,
+  .markdown-content ol ul,
+  .markdown-content ol ol {
+    @apply my-2;
+  }
+  .markdown-content blockquote {
+    @apply border-l-4 border-primary bg-primary-surface rounded-r-lg py-2 px-6 my-6;
+    font-style: normal;
+  }
+  /* prose 기본값의 자동 따옴표 제거 — 본문에 이미 따옴표 있을 때 중복 방지 */
+  .markdown-content blockquote p:first-of-type::before,
+  .markdown-content blockquote p:last-of-type::after {
+    content: none;
+  }
+  .markdown-content table {
+    @apply border-collapse w-full my-8 text-base;
+  }
+  .markdown-content th {
+    @apply border border-gray-200 bg-gray-50 px-4 py-3 text-left font-semibold text-charcoal text-sm;
+  }
+  .markdown-content td {
+    @apply border border-gray-200 px-4 py-3 align-top;
+  }
+  .markdown-content tr:nth-child(even) {
+    background-color: rgb(247 248 250 / 0.5);
+  }
+  .markdown-content img {
+    @apply rounded-xl shadow-md my-8;
+  }
+  .markdown-content hr {
+    @apply my-10 border-gray-200;
+  }
+  .markdown-content code {
+    @apply font-semibold text-sm;
+  }
+  .markdown-content code::before {
+    content: '`';
+  }
+  .markdown-content code::after {
+    content: '`';
+  }
+  .markdown-content pre {
+    @apply bg-gray-100 rounded-md p-4 overflow-x-auto my-6 text-sm;
+  }
+  .markdown-content pre code {
+    @apply font-normal;
+  }
+  .markdown-content pre code::before,
+  .markdown-content pre code::after {
+    content: none;
+  }
 }
 
 html {

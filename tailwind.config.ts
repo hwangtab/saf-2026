@@ -96,6 +96,10 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('@tailwindcss/typography')],
+  // @tailwindcss/typography 제거 — 메인 페이지 CSS chunk(02cpdoif8jddz.css 126KB)에서
+  // prose 정의가 31KB raw(전체의 24.8%)를 차지했으나 메인은 prose 미사용. typography
+  // 사용처(MarkdownRenderer + oh-yoon)는 globals.css의 .markdown-content + 명시적
+  // utility로 이전. 결과: 메인 LCP render-blocking CSS 크기 감소.
+  plugins: [],
 };
 export default config;

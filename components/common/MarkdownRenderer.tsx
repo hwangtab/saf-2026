@@ -109,34 +109,10 @@ interface Props {
 export default function MarkdownRenderer({ content, className, locale = 'ko' }: Props) {
   return (
     <div
-      className={clsx(
-        'prose prose-lg prose-gray max-w-none',
-        // 문단 줄간격 및 여백
-        'prose-p:leading-relaxed prose-p:mb-6',
-        // 제목 간격 + 구분선
-        'prose-headings:text-charcoal',
-        'prose-h2:font-section prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-5 prose-h2:pb-3 prose-h2:border-b prose-h2:border-gray-100',
-        'prose-h3:font-section prose-h3:font-bold prose-h3:mt-8 prose-h3:mb-4',
-        // 테이블 — 선 + 패딩
-        'prose-table:border-collapse prose-table:w-full',
-        'prose-th:border prose-th:border-gray-200 prose-th:bg-gray-50 prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:font-semibold prose-th:text-charcoal prose-th:text-sm',
-        'prose-td:border prose-td:border-gray-200 prose-td:px-4 prose-td:py-3 prose-td:align-top',
-        'prose-tr:even:bg-gray-50/50',
-        // 링크
-        'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
-        // 이미지
-        'prose-img:rounded-xl prose-img:shadow-md',
-        // 인용구 — prose 기본 자동 따옴표 제거 (본문에 이미 따옴표가 있을 때 중복 방지)
-        'prose-blockquote:border-primary prose-blockquote:bg-primary-surface prose-blockquote:rounded-r-lg prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:not-italic',
-        '[&_blockquote_p:first-of-type]:before:content-none [&_blockquote_p:last-of-type]:after:content-none',
-        // 목록 간격
-        'prose-li:mb-2',
-        // 구분선
-        'prose-hr:my-10 prose-hr:border-gray-200',
-        // 강조
-        'prose-strong:text-charcoal',
-        className
-      )}
+      // 모든 기존 prose-* modifier 정의는 globals.css의 .markdown-content 클래스로 이전.
+      // @tailwindcss/typography 의존 제거 — 메인 페이지 CSS chunk에서 미사용 prose 정의
+      // 31KB raw가 함께 번들되던 문제 해결.
+      className={clsx('markdown-content', className)}
     >
       <ReactMarkdown
         // singleTilde: false — GFM strict 모드. 단일 `~text~`를 strikethrough로 해석하지 않고
