@@ -24,7 +24,7 @@ const PORTAL_AUTH_ROOTS = [
 ] as const;
 
 // i18n·인증 미들웨어를 건너뛸 정적·API 루트.
-const STATIC_SKIP_ROOTS = ['/api', '/_next', '/images', '/fonts', '/reports'] as const;
+const STATIC_SKIP_ROOTS = ['/api', '/_next', '/images', '/fonts', '/reports', '/css'] as const;
 
 const STATIC_SKIP_PATHS = new Set([
   '/favicon.ico',
@@ -79,6 +79,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|images/|fonts/|reports/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|llms.txt|llms-full.txt).*)',
+    '/((?!api|_next/static|_next/image|images/|fonts/|css/|reports/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|llms.txt|llms-full.txt).*)',
   ],
 };
