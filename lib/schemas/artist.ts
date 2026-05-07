@@ -160,8 +160,12 @@ export function generateArtistSchema(artist: ArtistSchemaInput) {
     jobTitle: artist.jobTitle || 'Artist',
     // 외부 권위 링크 (Wikipedia, MMCA, 작가 홈페이지/SNS 등) — Knowledge Graph entity 연결
     ...(sameAs.length > 0 && { sameAs }),
+    // mainEntityOfPage에서 @type 'ProfilePage' 제거. GSC가 페이지를 ProfilePage로 분류
+    // 하면 ProfilePage.mainEntity가 Person만 허용한다는 사양 때문에 같은 페이지의
+    // CollectionPage.mainEntity(ItemList)와 충돌해 "mainEntity 입력란의 개체 유형이
+    // 잘못되었습니다" 오류 발생(2026-04-21~). @id만 남겨 페이지의 CollectionPage(@id
+    // = artist.url#webpage)를 가리키게 하면 GSC가 CollectionPage 카테고리로 정상 분류.
     mainEntityOfPage: {
-      '@type': 'ProfilePage',
       '@id': `${artist.url}#webpage`,
     },
   };
@@ -197,8 +201,10 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
     },
     // 외부 권위 링크 (Wikipedia, MMCA, 작가 홈페이지/SNS 등) — Knowledge Graph entity 연결
     ...(sameAs.length > 0 && { sameAs }),
+    // ProfilePage @type 제거 사유는 위 generateArtistSchema 주석 참조 — GSC가
+    // ProfilePage로 분류하면 ProfilePage.mainEntity는 Person만 허용해 같은 페이지의
+    // CollectionPage.mainEntity(ItemList)와 충돌.
     mainEntityOfPage: {
-      '@type': 'ProfilePage',
       '@id': `${artist.url}#webpage`,
     },
     // Expertise areas
