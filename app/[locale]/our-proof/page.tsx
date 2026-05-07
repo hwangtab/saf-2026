@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -18,6 +18,7 @@ import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
 
+export const dynamic = 'force-static';
 export const revalidate = false;
 
 const LAST_UPDATED = '2026-03-01';
@@ -33,8 +34,14 @@ const PAGE_COPY = {
   },
 } as const;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
   const base = createStandardPageMetadata(
     copy.title,
@@ -58,8 +65,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function OurProof() {
-  const locale = resolveLocale(await getLocale());
+export default async function OurProof({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const pageUrl = buildLocaleUrl('/our-proof', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [

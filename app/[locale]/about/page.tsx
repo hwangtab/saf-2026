@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -30,6 +30,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
+export const dynamic = 'force-static';
 export const revalidate = false;
 
 const PAGE_URL = `${SITE_URL}/about`;
@@ -44,8 +45,14 @@ const PAGE_COPY = {
   },
 } as const;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
   const base = createStandardPageMetadata(copy.title, copy.description, PAGE_URL, '/about', locale);
   return {
@@ -57,8 +64,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function AboutPage() {
-  const locale = resolveLocale(await getLocale());
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const pageCopy = PAGE_COPY[locale];
   const pageUrl = buildLocaleUrl('/about', locale);
 

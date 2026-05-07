@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import LinkButton from '@/components/ui/LinkButton';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -24,6 +24,7 @@ import ExhibitionMapWrapper from '@/components/features/ExhibitionMapWrapper';
 
 import { Ban, ClipboardList, Handshake, Palette } from 'lucide-react';
 
+export const dynamic = 'force-static';
 export const revalidate = 3600;
 
 const PAGE_URL = `${SITE_URL}/archive/2026`;
@@ -38,8 +39,14 @@ const PAGE_COPY = {
   },
 } as const;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
@@ -52,8 +59,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Archive2026Page() {
-  const locale = resolveLocale(await getLocale());
+export default async function Archive2026Page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const pageUrl = buildLocaleUrl('/archive/2026', locale);
   const archiveUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');

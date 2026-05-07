@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
@@ -12,6 +12,7 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 
+export const dynamic = 'force-static';
 export const revalidate = false;
 
 const PAGE_URL = `${SITE_URL}/archive`;
@@ -28,8 +29,14 @@ const PAGE_COPY = {
   },
 } as const;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations('seo');
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
@@ -42,8 +49,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ArchiveHubPage() {
-  const locale = resolveLocale(await getLocale());
+export default async function ArchiveHubPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const pageUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const breadcrumbItems = [

@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import type { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -17,6 +17,7 @@ import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
 import { Newspaper } from 'lucide-react';
 
+export const dynamic = 'force-static';
 export const revalidate = 300;
 
 type LocaleCode = 'ko' | 'en';
@@ -84,8 +85,14 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
   },
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const newsArticles = await getSupabaseNews();
   const count = newsArticles.length;
   const title =
@@ -339,8 +346,10 @@ function formatDate(isoString: string, locale: LocaleCode) {
   });
 }
 
-export default async function NewsPage() {
-  const locale = resolveLocale(await getLocale());
+export default async function NewsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const canonicalUrl = buildLocaleUrl('/news', locale);
   const copy = NEWS_COPY[locale];
   const highlightQuotes = highlightQuotesByLocale[locale];
