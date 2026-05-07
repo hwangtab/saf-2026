@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { Link } from '@/i18n/navigation';
 import type { StoryCategory } from '@/types';
@@ -18,45 +18,24 @@ function getCategoryHref(key: string): string {
 }
 
 export default function StoriesCategoryFilter({ locale }: { locale: 'ko' | 'en' }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
 
-  // /stories 페이지 내에서 query param 필터링도 유지
-  const isStoriesListPage =
-    pathname === '/stories' || pathname === '/en/stories' || pathname.endsWith('/stories');
-  const current = searchParams.get('category') || 'all';
-
-  const handleClick = (key: string) => {
-    if (!isStoriesListPage) return; // 카테고리 전용 페이지에서는 client-side 필터 불필요
-    const params = new URLSearchParams(searchParams.toString());
-    if (key === 'all') {
-      params.delete('category');
-    } else {
-      params.set('category', key);
-    }
-    const query = params.toString();
-    // scroll: false 제거 — 사용자가 깊이 스크롤한 상태에서 카테고리 클릭하면 새 결과를
-    // 화면 밖에 묻혀버려 혼란스러운 UX. Next.js 기본값(상단으로 스크롤)으로 복원.
-    router.push(query ? `${pathname}?${query}` : pathname);
-  };
+  // 활성 판정: pathname이 /stories/category/{key}로 끝나면 그 카테고리, 아니면 'all'.
+  // 이전엔 /stories?category=foo query param도 지원했으나 server static 전환 위해
+  // /stories/category/foo 정적 라우트로만 작동 — 양쪽 모두 SSG라 CDN HIT.
+  const categoryMatch = pathname.match(/\/stories\/category\/([^/?#]+)/);
+  const current = categoryMatch?.[1] ?? 'all';
 
   return (
     <div className="flex flex-wrap justify-center gap-3">
       {CATEGORIES.map(({ key, label, labelEn }) => {
-        const isActive = isStoriesListPage ? current === key : false;
+        const isActive = current === key;
         const displayLabel = locale === 'en' ? labelEn : label;
 
         return (
           <Link
             key={key}
             href={getCategoryHref(key)}
-            onClick={(e) => {
-              if (isStoriesListPage) {
-                e.preventDefault();
-                handleClick(key);
-              }
-            }}
             className={clsx(
               'rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300',
               isActive

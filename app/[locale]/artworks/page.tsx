@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -27,13 +27,22 @@ import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 
+export const dynamic = 'force-static';
 export const revalidate = 600;
 
 const PAGE_URL = `${SITE_URL}/artworks`;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const t = await getTranslations('artworksPage');
+type LocaleParams = { locale: string };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<LocaleParams>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale === 'en' ? 'en' : 'ko';
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'artworksPage' });
 
   // 실시간 작품 수와 가격 범위를 메타 description에 반영
   const artworks = await getSupabaseArtworks();
@@ -77,10 +86,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ArtworksPage() {
-  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const t = await getTranslations('artworksPage');
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+export default async function ArtworksPage({ params }: { params: Promise<LocaleParams> }) {
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale === 'en' ? 'en' : 'ko';
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'artworksPage' });
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const artworks = await getSupabaseArtworks();
   const listArtworks: ArtworkListItem[] = artworks.map(
     ({

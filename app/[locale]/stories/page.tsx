@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -12,8 +12,9 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
 import StoriesCategoryFilter from '@/components/stories/StoriesCategoryFilter';
-import { STORY_CATEGORIES, type StoryCategory } from '@/types';
+import type { StoryCategory } from '@/types';
 
+export const dynamic = 'force-static';
 export const revalidate = 300;
 
 /** body 마크다운에서 첫 번째 이미지 URL 추출 */
@@ -82,23 +83,15 @@ const CATEGORY_LABELS: Record<LocaleCode, Record<StoryCategory, string>> = {
   },
 };
 
-const toValidStoryCategory = (value?: string): StoryCategory | null => {
-  if (!value) return null;
-  if (STORY_CATEGORIES.includes(value as StoryCategory)) {
-    return value as StoryCategory;
-  }
-  return null;
-};
-
 export async function generateMetadata({
-  searchParams,
+  params,
 }: {
-  searchParams: Promise<Record<string, string | undefined>>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const copy = STORIES_COPY[locale];
-  const params = await searchParams;
-  const hasQueryParams = Object.values(params).some((value) => Boolean(value));
   const path = '/stories';
   const pageUrl = buildLocaleUrl(path, locale);
 
@@ -140,27 +133,19 @@ export async function generateMetadata({
       description: dynamicDescription,
       images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
-    ...(hasQueryParams && {
-      robots: {
-        index: false,
-        follow: true,
-      },
-    }),
   };
 }
 
-export default async function StoriesPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | undefined>>;
-}) {
-  const locale = resolveLocale(await getLocale());
+export default async function StoriesPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const copy = STORIES_COPY[locale];
-  const params = await searchParams;
-  const category = toValidStoryCategory(params.category);
 
+  // /stories는 항상 전체 매거진 노출. 카테고리별 필터는 정적 라우트
+  // /stories/category/[category]가 별도 담당 — 양쪽 모두 SSG, CDN HIT.
   const allStories = await getSupabaseStories();
-  const stories = category ? allStories.filter((s) => s.category === category) : allStories;
+  const stories = allStories;
 
   const breadcrumbItems = [
     { name: locale === 'en' ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
