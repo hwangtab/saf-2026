@@ -176,9 +176,9 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
 
 const CATEGORY_LABELS: Record<LocaleCode, Record<StoryCategory, string>> = {
   ko: {
-    'artist-story': '작가를 만나다',
-    'buying-guide': '컬렉팅 시작하기',
-    'art-knowledge': '미술 산책',
+    'artist-story': '작가 이야기',
+    'buying-guide': '구매 가이드',
+    'art-knowledge': '미술 지식',
   },
   en: {
     'artist-story': 'Artist Stories',
@@ -268,6 +268,7 @@ export default async function StoryCategoryPage({ params }: Props) {
   const { locale: rawLocale, category } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
+  const isEnglish = locale === 'en';
 
   if (!isValidCategory(category)) {
     notFound();
@@ -282,8 +283,8 @@ export default async function StoryCategoryPage({ params }: Props) {
 
   // Breadcrumbs
   const breadcrumbItems = [
-    { name: locale === 'en' ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
-    { name: locale === 'en' ? 'Magazine' : '매거진', url: buildLocaleUrl('/stories', locale) },
+    { name: isEnglish ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
+    { name: isEnglish ? 'Magazine' : '매거진', url: buildLocaleUrl('/stories', locale) },
     { name: meta.heroTitle, url: pageUrl },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
@@ -301,11 +302,11 @@ export default async function StoryCategoryPage({ params }: Props) {
       '@type': 'Thing',
       name: meta.heroTitle,
     },
-    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
     ...(stories.length > 0
       ? {
@@ -317,7 +318,7 @@ export default async function StoryCategoryPage({ params }: Props) {
               '@type': 'ListItem',
               position: i + 1,
               url: buildLocaleUrl(`/stories/${story.slug}`, locale),
-              name: locale === 'en' && story.title_en ? story.title_en : story.title,
+              name: isEnglish && story.title_en ? story.title_en : story.title,
             })),
           },
         }
@@ -371,21 +372,25 @@ export default async function StoryCategoryPage({ params }: Props) {
         <Section variant="canvas" prevVariant="white">
           <div className="flex flex-col items-center justify-center py-20">
             <p className="text-lg font-medium text-charcoal mb-1">
-              {locale === 'en' ? 'No stories available yet.' : '아직 등록된 글이 없습니다.'}
+              {isEnglish ? 'No stories available yet.' : '아직 등록된 글이 없습니다.'}
             </p>
             <p className="text-sm text-charcoal-muted">
-              {locale === 'en' ? 'New stories are coming soon.' : '곧 새로운 글이 찾아옵니다.'}
+              {isEnglish ? 'New stories are coming soon.' : '곧 새로운 글이 찾아옵니다.'}
             </p>
           </div>
         </Section>
       ) : (
         <Section variant="white">
           <div className="max-w-6xl mx-auto px-4 sm:px-5">
+            <div className="mb-8">
+              <h2 className="text-section-title text-charcoal-deep">
+                {isEnglish ? 'Stories in this category' : '이 카테고리의 매거진'}
+              </h2>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {stories.map((story, i) => {
-                const title = locale === 'en' && story.title_en ? story.title_en : story.title;
-                const excerpt =
-                  locale === 'en' && story.excerpt_en ? story.excerpt_en : story.excerpt;
+                const title = isEnglish && story.title_en ? story.title_en : story.title;
+                const excerpt = isEnglish && story.excerpt_en ? story.excerpt_en : story.excerpt;
                 const cardImg = story.thumbnail || extractFirstImage(story.body);
 
                 return (

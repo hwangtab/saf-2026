@@ -122,6 +122,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
+  const isEnglish = locale === 'en';
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
   const tBreadcrumbs = await getTranslations('breadcrumbs');
   const allArtworks = await getSupabaseArtworks();
@@ -131,7 +132,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
   const OH_YOON_ARTWORKS: ArtworkListItem[] = ohYoonFullArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
-  const artworkCountLabel = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR').format(
+  const artworkCountLabel = new Intl.NumberFormat(isEnglish ? 'en-US' : 'ko-KR').format(
     OH_YOON_ARTWORKS.length
   );
   const breadcrumbSchema = createBreadcrumbSchema([
@@ -143,11 +144,10 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
     '@type': 'Person',
     name: '오윤',
     alternateName: 'Oh Yoon',
-    jobTitle: locale === 'en' ? 'Artist' : '화가',
-    description:
-      locale === 'en'
-        ? "Oh Yoon (1946–1986) was a pivotal figure in Korean people's art (minjung misul), known for bold woodblock prints depicting the lives of workers and farmers."
-        : '오윤(1946–1986)은 민중미술의 대표 작가로, 노동자·농민의 삶을 담은 역동적인 판화로 한국 현대미술에 큰 족적을 남겼습니다.',
+    jobTitle: isEnglish ? 'Artist' : '화가',
+    description: isEnglish
+      ? "Oh Yoon (1946–1986) was a pivotal figure in Korean people's art (minjung misul), known for bold woodblock prints depicting the lives of workers and farmers."
+      : '오윤(1946–1986)은 민중미술의 대표 작가로, 노동자·농민의 삶을 담은 역동적인 판화로 한국 현대미술에 큰 족적을 남겼습니다.',
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -159,11 +159,10 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
   const exhibitionEventSchema = {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: locale === 'en' ? 'Oh Yoon 40th Anniversary Special Exhibition' : '오윤 40주기 특별전',
-    description:
-      locale === 'en'
-        ? "A special online exhibition honoring the 40th anniversary of Oh Yoon's passing, presenting his selected works from the SAF Online collection."
-        : '민중미술의 거장 오윤 화백의 40주기를 기념하는 온라인 특별전. 씨앗페 온라인에 소장된 오윤 작품들을 선보입니다.',
+    name: isEnglish ? 'Oh Yoon 40th Anniversary Special Exhibition' : '오윤 40주기 특별전',
+    description: isEnglish
+      ? "A special online exhibition honoring the 40th anniversary of Oh Yoon's passing, presenting his selected works from the SAF Online collection."
+      : '민중미술의 거장 오윤 화백의 40주기를 기념하는 온라인 특별전. 씨앗페 온라인에 소장된 오윤 작품들을 선보입니다.',
     url: pageUrl,
     // EventCompleted/EventInProgress는 schema.org EventStatusType enum에 없는 값.
     // 본 전시(event.ts)와 동일하게 EventMovedOnline 적용 — 오프라인 종료 후 온라인 지속.
@@ -178,7 +177,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
     organizer: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
       url: SITE_URL,
     },
     about: ohYoonPerson,
@@ -192,217 +191,6 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
     pageUrl
   );
   const aggregateOfferSchema = generateGalleryAggregateOffer(ohYoonFullArtworks, locale, pageUrl);
-
-  if (locale === 'en') {
-    return (
-      <>
-        <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
-        {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-        <PaperGrain />
-        <div className="w-full bg-canvas-soft min-h-screen font-sans">
-          <section className="relative w-full pt-28 md:pt-36 pb-20 md:pb-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
-            <div className="max-w-4xl mx-auto text-center relative z-10">
-              <div className="inline-block relative mb-8 animate-stamp [animation-fill-mode:both]">
-                <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
-                  Oh Yoon 40th Anniversary
-                </span>
-                <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
-                The Blade of the People,
-                <br />
-                Returning After 40 Years
-              </h1>
-
-              <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6 animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:400ms]">
-                A short yet powerful life. A spirit of the times carved in printmaking.
-                <br />
-                Oh Yoon speaks to us again through his work.
-              </p>
-            </div>
-          </section>
-
-          <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
-            <div className="mb-20 flex justify-center">
-              <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-                <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
-                  Art should be shared by everyone.
-                </p>
-                <footer className="mt-8 text-xl text-charcoal font-bold tracking-widest">
-                  Oh Yoon
-                </footer>
-              </blockquote>
-            </div>
-
-            <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-24 items-start">
-              {/* Portrait */}
-              <div className="flex flex-col items-center lg:items-start lg:sticky lg:top-24">
-                <figure className="relative w-full max-w-[260px] lg:max-w-none">
-                  <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
-                    <SafeImage
-                      src="/images/ohyoon.webp"
-                      alt="Oh Yoon (1946-1986)"
-                      width={400}
-                      height={533}
-                      className="w-full object-cover grayscale"
-                      priority
-                    />
-                  </div>
-                  <figcaption className="mt-3 text-xs text-charcoal-soft font-medium tracking-widest uppercase text-center">
-                    Oh Yoon, 1946–1986
-                  </figcaption>
-                </figure>
-              </div>
-
-              <div className="space-y-8">
-                <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
-                  Carving the pain of the era
-                  <br />
-                  <span className="text-primary-strong">into hope</span>
-                </h2>
-                <div className="text-xl leading-[1.8] text-charcoal space-y-6 font-medium">
-                  <p>
-                    Oh Yoon (1946–1986) chose woodcut printmaking as a social language. At a time
-                    when elite abstraction dominated, he turned toward ordinary people and
-                    collective realities. Pressed not by machine but by a spoon rubbed against
-                    paper, his prints traveled freely — to poetry covers, workers&apos; leaflets,
-                    and children&apos;s storybooks. &ldquo;Art should be shared by everyone,&rdquo;
-                    he insisted, and he meant it.
-                  </p>
-                  <p>
-                    His visual language captured labor, grief, resilience, and shared dignity. In
-                    July 1986, shortly after his very first solo exhibition, he passed away at the
-                    age of forty. Forty years on, the roughly one hundred prints he left behind
-                    still touch the most aching parts of our time, still speaking of a life lived
-                    together.
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-8">
-                <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
-                  <h3 className="text-2xl text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-bold font-display text-balance">
-                    <span className="w-4 h-4 bg-primary rotate-45" />
-                    Major themes
-                  </h3>
-                  <ul className="space-y-6 text-lg text-charcoal">
-                    <li>
-                      <strong>Reality:</strong> recording concrete sites of everyday life.
-                    </li>
-                    <li>
-                      <strong>Han:</strong> transforming collective grief into artistic vitality.
-                    </li>
-                    <li>
-                      <strong>Shared art:</strong> practicing art beyond galleries, in public
-                      spaces.
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Timeline card — balances the 3-column grid */}
-                <div className="bg-white p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
-                  <h3 className="text-xl md:text-2xl text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-display font-bold">
-                    <span className="w-3 h-3 bg-charcoal rotate-45" />A life in time
-                  </h3>
-                  <ol className="space-y-4">
-                    <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                        1946
-                      </span>
-                      <span className="text-charcoal text-base leading-snug">
-                        Born in Busan, eldest son of novelist Oh Young-su.
-                      </span>
-                    </li>
-                    <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                        1969
-                      </span>
-                      <span className="text-charcoal text-base leading-snug">
-                        Co-founds &ldquo;Hyeonsil Dong-in,&rdquo; launching Korean realist art.
-                      </span>
-                    </li>
-                    <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                        1974
-                      </span>
-                      <span className="text-charcoal text-base leading-snug">
-                        At 28, carves terracotta murals at Sangup Bank&apos;s Dongdaemun and
-                        Guui-dong branches.
-                      </span>
-                    </li>
-                    <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                        1979
-                      </span>
-                      <span className="text-charcoal text-base leading-snug">
-                        Founding member of &ldquo;Hyeonsil-gwa Baleon,&rdquo; the heart of the
-                        minjung art movement.
-                      </span>
-                    </li>
-                    <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                        1986
-                      </span>
-                      <span className="text-charcoal text-base leading-snug">
-                        Passes away shortly after his very first solo show. Aged forty.
-                      </span>
-                    </li>
-                    <li className="flex gap-5 items-baseline">
-                      <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                        2006
-                      </span>
-                      <span className="text-charcoal text-base leading-snug">
-                        MMCA retrospective &ldquo;Oh Yoon: Daytime Goblin&apos;s Festival.&rdquo;
-                      </span>
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative py-20 bg-charcoal text-white">
-            <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-6 border-b border-white/20 pb-8">
-              <div>
-                <h2 className="text-4xl md:text-5xl mb-4 text-white font-black font-display text-balance">
-                  Exhibition Works
-                </h2>
-                <p className="text-base sm:text-lg text-white/70 font-medium">
-                  <span className="text-primary font-bold text-xl">{artworkCountLabel}</span> prints
-                  are currently on display.
-                </p>
-              </div>
-              <span className="text-sm text-white/60">Click a work to view details</span>
-            </div>
-
-            <div className="max-w-[1440px] mx-auto px-4">
-              {OH_YOON_ARTWORKS.length > 0 ? (
-                <OhYoonMasonryGallery artworks={OH_YOON_ARTWORKS} />
-              ) : (
-                <section className="py-24 text-center">
-                  <div className="inline-block rounded-xl border border-white/10 bg-white/5 p-12 backdrop-blur-sm">
-                    <h3 className="text-2xl font-bold text-white text-balance mb-4">
-                      Artwork data is being prepared
-                    </h3>
-                    <p className="text-white/60 text-balance mb-8">
-                      We are currently organizing the Oh Yoon special exhibition data.
-                    </p>
-                    <Link
-                      href="/artworks"
-                      className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-charcoal transition-colors font-medium"
-                    >
-                      Browse all artworks
-                    </Link>
-                  </div>
-                </section>
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -420,27 +208,47 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <div className="inline-block relative mb-8 animate-stamp [animation-fill-mode:both]">
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
-                오윤 40주기 특별전
+                {isEnglish ? 'Oh Yoon 40th Anniversary' : '오윤 40주기 특별전'}
               </span>
               <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
-              40년 만에 돌아온
-              <br />
-              <span className="relative inline-block px-2">
-                <span className="relative z-10 text-primary">민중의 칼날</span>
-                <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
-              </span>
-              , 다시
-              <br />
-              신명을 깨우다
+              {isEnglish ? (
+                <>
+                  The Blade of the People,
+                  <br />
+                  Returning After 40 Years
+                </>
+              ) : (
+                <>
+                  40년 만에 돌아온
+                  <br />
+                  <span className="relative inline-block px-2">
+                    <span className="relative z-10 text-primary">민중의 칼날</span>
+                    <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
+                  </span>
+                  , 다시
+                  <br />
+                  신명을 깨우다
+                </>
+              )}
             </h1>
 
             <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6 animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:400ms]">
-              짧지만 강렬했던 삶, 판화로 새긴 시대의 정신.
-              <br />
-              오윤의 예술혼이 오늘 우리에게 다시 말을 겁니다.
+              {isEnglish ? (
+                <>
+                  A short yet powerful life. The spirit of an era, carved in print.
+                  <br />
+                  Oh Yoon&apos;s work speaks to us once again, today.
+                </>
+              ) : (
+                <>
+                  짧지만 강렬했던 삶, 판화로 새긴 시대의 정신.
+                  <br />
+                  오윤의 예술혼이 오늘 우리에게 다시 말을 겁니다.
+                </>
+              )}
             </p>
           </div>
 
@@ -459,12 +267,20 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                 &ldquo;
               </div>
               <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
-                미술은 많은 사람이
-                <br className="md:hidden" /> 나누어야 한다
+                {isEnglish ? (
+                  <>Art should be shared by many.</>
+                ) : (
+                  <>
+                    미술은 많은 사람이
+                    <br className="md:hidden" /> 나누어야 한다
+                  </>
+                )}
               </p>
               <footer className="mt-8 flex items-center justify-center gap-2">
                 <span className="h-px w-8 bg-charcoal/40"></span>
-                <span className="text-xl text-charcoal font-bold tracking-widest">오윤</span>
+                <span className="text-xl text-charcoal font-bold tracking-widest">
+                  {isEnglish ? 'Oh Yoon' : '오윤'}
+                </span>
                 <span className="h-px w-8 bg-charcoal/40"></span>
               </footer>
             </blockquote>
@@ -478,7 +294,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                 <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(49,57,60,0.15)] overflow-hidden">
                   <SafeImage
                     src="/images/ohyoon.webp"
-                    alt="오윤 작가 (1946-1986)"
+                    alt={isEnglish ? 'Oh Yoon (1946–1986)' : '오윤 작가 (1946–1986)'}
                     width={400}
                     height={533}
                     className="w-full object-cover grayscale"
@@ -486,43 +302,88 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                   />
                 </div>
                 <figcaption className="mt-3 text-xs text-charcoal-soft font-medium tracking-widest uppercase text-center">
-                  오윤, 1946–1986
+                  {isEnglish ? 'Oh Yoon, 1946–1986' : '오윤, 1946–1986'}
                 </figcaption>
               </figure>
             </div>
 
             <div className="space-y-8">
               <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
-                시대의 아픔을
-                <br />
-                <span className="text-primary-strong">희망으로 새기다</span>
+                {isEnglish ? (
+                  <>
+                    Carving the pain of an era
+                    <br />
+                    <span className="text-primary-strong">into hope</span>
+                  </>
+                ) : (
+                  <>
+                    시대의 아픔을
+                    <br />
+                    <span className="text-primary-strong">희망으로 새기다</span>
+                  </>
+                )}
               </h2>
               <div className="text-xl leading-[1.8] text-charcoal space-y-6 font-medium">
-                <p>
-                  오윤(1946-1986). 소설가 오영수의 아들로 태어났으나, 그는 문학적 언어 대신{' '}
-                  <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
-                    칼끝
-                  </strong>
-                  으로 시대를 기록했습니다. 화려한 추상미술이 강단을 지배하던 시절, 그는
-                  &quot;미술은 썩어가는 현실을 도려내는 칼이어야 한다&quot;고 믿으며 가장 낮은
-                  곳으로 향했습니다.
-                </p>
-                <p>
-                  그가 선택한 <strong className="font-bold text-charcoal">목판화</strong>는 단순한
-                  예술 형식이 아니었습니다. 그것은 한 번 칼을 대면 되돌릴 수 없는 결기였으며, 수만
-                  장을 찍어내어 공장 담벼락과 대학가, 시장통의 사람들과 나눌 수 있는 가장 민주적인
-                  그릇이었습니다. 프레스기조차 없이 숟가락으로 종이를 문질러 전사한 그 손길은,
-                  &apos;미술은 많은 사람이 나누어야 한다&apos;는 그의 신념을 가장 정직하게
-                  보여줍니다.
-                </p>
-                <p>
-                  부산 가마골의 억센 웃음, 구로공단 노동자의 땀방울, 그리고 짓눌린 한(恨)을
-                  신명(神明)나는 춤사위로 풀어내는 민중의 생명력. 오윤의 칼자국은 투박하지만
-                  정직하게 이 모든 것을 나무에 새겼습니다. 1986년 7월, 그는 자신의 이름을 단 첫
-                  개인전을 연 지 얼마 되지 않아 세상을 떠나셨습니다. 향년 마흔. 짧은 생애 동안 그가
-                  남긴 100여 점의 선 굵은 판화들은, 40년이 지난 지금도 우리 시대의 가장 아픈 곳을
-                  어루만지며 &apos;함께 사는 삶&apos;을 이야기하고 있습니다.
-                </p>
+                {isEnglish ? (
+                  <>
+                    <p>
+                      Oh Yoon (1946–1986) was born the eldest son of the novelist Oh Young-su, but
+                      he chose to record his time not in literary language, but with the{' '}
+                      <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
+                        edge of a blade
+                      </strong>
+                      . While elite abstraction held the academy, he turned toward the lowest
+                      ground, believing that &ldquo;art must be a blade that cuts away the rot of
+                      reality.&rdquo;
+                    </p>
+                    <p>
+                      The <strong className="font-bold text-charcoal">woodcut print</strong> he
+                      chose was more than a form. Each cut was a resolve that could not be undone,
+                      and each impression was a vessel democratic enough to be shared by the
+                      thousands — pasted on factory walls, on campuses, in the markets. Pressed not
+                      by machine but by a spoon rubbed against paper, his hand bears witness, with
+                      the most honest grain, to his belief that &ldquo;art should be shared by
+                      many.&rdquo;
+                    </p>
+                    <p>
+                      The hardy laughter of Busan&apos;s Gamagol, the sweat of Guro Industrial
+                      Complex workers, and the life force of ordinary people who turned suppressed
+                      grief (han) into the dance of shinmyeong — Oh Yoon&apos;s knife traced all of
+                      this into wood, rough yet honest. In July 1986, not long after his very first
+                      solo show, he passed away. He was forty. The roughly one hundred bold prints
+                      he left behind still touch the most aching parts of our time, forty years
+                      later, and still speak to us of a life lived together.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      오윤(1946-1986). 소설가 오영수의 아들로 태어났으나, 그는 문학적 언어 대신{' '}
+                      <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
+                        칼끝
+                      </strong>
+                      으로 시대를 기록했습니다. 화려한 추상미술이 강단을 지배하던 시절, 그는
+                      &quot;미술은 썩어가는 현실을 도려내는 칼이어야 한다&quot;고 믿으며 가장 낮은
+                      곳으로 향했습니다.
+                    </p>
+                    <p>
+                      그가 선택한 <strong className="font-bold text-charcoal">목판화</strong>는
+                      단순한 예술 형식이 아니었습니다. 그것은 한 번 칼을 대면 되돌릴 수 없는
+                      결기였으며, 수만 장을 찍어내어 공장 담벼락과 대학가, 시장통의 사람들과 나눌 수
+                      있는 가장 민주적인 그릇이었습니다. 프레스기조차 없이 숟가락으로 종이를 문질러
+                      전사한 그 손길은, &apos;미술은 많은 사람이 나누어야 한다&apos;는 그의 신념을
+                      가장 정직하게 보여줍니다.
+                    </p>
+                    <p>
+                      부산 가마골의 억센 웃음, 구로공단 노동자의 땀방울, 그리고 짓눌린 한(恨)을
+                      신명(神明)나는 춤사위로 풀어내는 민중의 생명력. 오윤의 칼자국은 투박하지만
+                      정직하게 이 모든 것을 나무에 새겼습니다. 1986년 7월, 그는 자신의 이름을 단 첫
+                      개인전을 연 지 얼마 되지 않아 세상을 떠나셨습니다. 향년 마흔. 짧은 생애 동안
+                      그가 남긴 100여 점의 선 굵은 판화들은, 40년이 지난 지금도 우리 시대의 가장
+                      아픈 곳을 어루만지며 &apos;함께 사는 삶&apos;을 이야기하고 있습니다.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -530,7 +391,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               <div className="bg-white p-8 md:p-12 border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(247,152,36,0.3)]">
                 <h3 className="text-2xl text-charcoal mb-8 flex items-center gap-3 border-b-2 border-charcoal pb-4 font-bold font-display text-balance">
                   <span className="w-4 h-4 bg-primary rotate-45" />
-                  주요 테마
+                  {isEnglish ? 'Major themes' : '주요 테마'}
                 </h3>
 
                 <ul className="space-y-8">
@@ -540,11 +401,12 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        현실 (Reality)
+                        {isEnglish ? 'Reality' : '현실 (Reality)'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
-                        구체적인 삶의 현장과 그 속에서 살아가는 사람들의 모습을 가감 없이
-                        기록했습니다.
+                        {isEnglish
+                          ? 'He recorded, without embellishment, concrete sites of life and the people who live within them.'
+                          : '구체적인 삶의 현장과 그 속에서 살아가는 사람들의 모습을 가감 없이 기록했습니다.'}
                       </p>
                     </div>
                   </li>
@@ -554,11 +416,12 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        한 (Han)
+                        {isEnglish ? 'Han' : '한 (Han)'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
-                        민중의 가슴 속에 맺힌 한을 예술적 승화로 풀어내어, 슬픔을 넘어선 생명력을
-                        표현했습니다.
+                        {isEnglish
+                          ? 'He transformed the han knotted in the hearts of ordinary people into artistic vitality, expressing a life force that surpasses sorrow.'
+                          : '민중의 가슴 속에 맺힌 한을 예술적 승화로 풀어내어, 슬픔을 넘어선 생명력을 표현했습니다.'}
                       </p>
                     </div>
                   </li>
@@ -568,11 +431,12 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        함께하는 미술
+                        {isEnglish ? 'Art shared together' : '함께하는 미술'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
-                        미술관을 넘어, 거리와 현장에서 사람들과 직접 소통하며 예술의 사회적 가치를
-                        실천했습니다.
+                        {isEnglish
+                          ? 'Beyond the museum, on streets and at sites, he met people directly and practiced art for its social worth.'
+                          : '미술관을 넘어, 거리와 현장에서 사람들과 직접 소통하며 예술의 사회적 가치를 실천했습니다.'}
                       </p>
                     </div>
                   </li>
@@ -583,7 +447,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               <div className="bg-white p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
                 <h3 className="text-xl md:text-2xl text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-bold font-display text-balance">
                   <span className="w-3 h-3 bg-charcoal rotate-45" />
-                  작가의 시간
+                  {isEnglish ? "The artist's timeline" : '작가의 시간'}
                 </h3>
                 <ol className="space-y-4">
                   <li className="flex gap-5 items-baseline">
@@ -591,7 +455,9 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                       1946
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      부산 출생. 소설가 오영수의 장남.
+                      {isEnglish
+                        ? 'Born in Busan, eldest son of the novelist Oh Young-su.'
+                        : '부산 출생. 소설가 오영수의 장남.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -599,7 +465,9 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                       1969
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      「현실 동인」 결성, 한국 리얼리즘 미술 운동 제창.
+                      {isEnglish
+                        ? 'Co-founds the Hyeonsil Dong-in collective, calling for a Korean realist art movement.'
+                        : '「현실 동인」 결성, 한국 리얼리즘 미술 운동 제창.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -607,7 +475,9 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                       1974
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      28세에 상업은행 동대문·구의동지점 테라코타 부조 제작.
+                      {isEnglish
+                        ? "At age 28, creates terracotta reliefs at Sangup Bank's Dongdaemun and Guui-dong branches."
+                        : '28세에 상업은행 동대문·구의동지점 테라코타 부조 제작.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -615,7 +485,9 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                       1979
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      「현실과 발언」 동인 창립 회원으로 참여.
+                      {isEnglish
+                        ? 'Founding member of Hyeonsil-gwa Baleon (Reality and Utterance), the heart of the minjung art movement.'
+                        : '「현실과 발언」 동인 창립 회원으로 참여.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -623,7 +495,9 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                       1986
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      첫 개인전 직후 별세. 향년 마흔.
+                      {isEnglish
+                        ? 'Passes away shortly after his very first solo exhibition. Aged forty.'
+                        : '첫 개인전 직후 별세. 향년 마흔.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -631,7 +505,9 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                       2006
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      국립현대미술관 회고전 「오윤: 낮도깨비 신명마당」.
+                      {isEnglish
+                        ? "MMCA retrospective: Oh Yoon — A Daytime Goblin's Festival."
+                        : '국립현대미술관 회고전 「오윤: 낮도깨비 신명마당」.'}
                     </span>
                   </li>
                 </ol>
@@ -646,21 +522,34 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
           <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
             <div className="relative">
               <h2 className="text-4xl md:text-5xl mb-4 text-white font-black font-display text-balance">
-                전시 작품
+                {isEnglish ? 'Exhibition Works' : '전시 작품'}
               </h2>
               <div className="absolute -left-4 -top-6 text-[80px] text-white/5 -z-10 font-display font-black select-none">
                 ARCHIVE
               </div>
               <p className="text-base sm:text-lg text-white/70 font-medium">
-                총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
-                점의 판화가 전시되어 있습니다.
+                {isEnglish ? (
+                  <>
+                    <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>{' '}
+                    prints are currently on view.
+                  </>
+                ) : (
+                  <>
+                    총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
+                    점의 판화가 전시되어 있습니다.
+                  </>
+                )}
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
               <span className="text-xs text-white/40 uppercase tracking-widest">
                 Oh Yoon 40th Anniversary
               </span>
-              <span className="text-sm text-white/60">작품을 클릭하여 상세 정보를 확인하세요</span>
+              <span className="text-sm text-white/60">
+                {isEnglish
+                  ? 'Click a work to view its details'
+                  : '작품을 클릭하여 상세 정보를 확인하세요'}
+              </span>
             </div>
           </div>
 
@@ -672,18 +561,29 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               <section className="py-24 text-center">
                 <div className="inline-block rounded-xl border border-white/10 bg-white/5 p-12 backdrop-blur-sm">
                   <h3 className="text-2xl font-bold text-white text-balance mb-4">
-                    작품 데이터 준비 중입니다
+                    {isEnglish ? 'Artwork data is being prepared' : '작품 데이터 준비 중입니다'}
                   </h3>
                   <p className="text-white/60 text-balance mb-8">
-                    현재 오윤 특별전 작품 정보를 정리하고 있습니다.
-                    <br />
-                    전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                    {isEnglish ? (
+                      <>
+                        We are currently organizing the works for the Oh Yoon special exhibition.
+                        <br />
+                        In the meantime, you are warmly invited to browse the rest of the
+                        collection.
+                      </>
+                    ) : (
+                      <>
+                        현재 오윤 특별전 작품 정보를 정리하고 있습니다.
+                        <br />
+                        전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                      </>
+                    )}
                   </p>
                   <Link
                     href="/artworks"
                     className="inline-flex items-center justify-center px-6 py-3 border border-white/30 rounded text-white hover:bg-white hover:text-charcoal transition-colors font-medium"
                   >
-                    전체 작품 보러 가기
+                    {isEnglish ? 'Browse all artworks' : '전체 작품 보러 가기'}
                   </Link>
                 </div>
               </section>

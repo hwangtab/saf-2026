@@ -156,6 +156,18 @@ export default async function StoryDetailPage({ params }: Props) {
   const title = isEn && story.title_en ? story.title_en : story.title;
   const excerpt = isEn && story.excerpt_en ? story.excerpt_en : story.excerpt;
   const body = isEn && story.body_en ? story.body_en : story.body;
+  // English user but no body_en: show Korean source with a small label so readers
+  // know the translation is forthcoming rather than missing/broken.
+  const showKoreanFallbackNotice = isEn && !story.body_en;
+  // Magazine-tone date formatting. ISO date string -> "May 7, 2026" / "2026-05-07".
+  const formattedDate = (() => {
+    if (!story.published_at) return '';
+    const d = new Date(story.published_at);
+    if (Number.isNaN(d.getTime())) return story.published_at;
+    return isEn
+      ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      : story.published_at;
+  })();
   const primaryArtistTag =
     story.category === 'artist-story'
       ? story.tags?.find((tag) => tag.trim().length > 0)?.trim()
@@ -242,7 +254,7 @@ export default async function StoryDetailPage({ params }: Props) {
       <JsonLdScript data={[blogPostingSchema, breadcrumbSchema]} />
       <PageHero
         title={title}
-        description={`${categoryLabel} · ${story.published_at}${story.author ? ` · ${story.author}` : ''}`}
+        description={`${categoryLabel} · ${isEn ? 'Published' : '발행'} ${formattedDate}${story.author ? ` · ${story.author}` : ''}`}
         breadcrumbItems={breadcrumbItems}
       />
 
@@ -252,6 +264,12 @@ export default async function StoryDetailPage({ params }: Props) {
           {excerpt && (
             <p className="text-xl md:text-2xl text-charcoal-muted leading-relaxed mb-10 border-l-4 border-primary pl-6 motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.1s]">
               {excerpt}
+            </p>
+          )}
+
+          {showKoreanFallbackNotice && (
+            <p className="mb-8 inline-block rounded-full border border-gray-200 bg-canvas-soft px-4 py-1.5 text-xs font-medium tracking-wide uppercase text-charcoal-muted">
+              Korean original — English translation pending
             </p>
           )}
 
@@ -276,7 +294,9 @@ export default async function StoryDetailPage({ params }: Props) {
               {story.author && (
                 <div>
                   <p className="text-sm font-semibold text-charcoal">{story.author}</p>
-                  <p className="text-xs text-charcoal-muted">{story.published_at}</p>
+                  <p className="text-xs text-charcoal-muted">
+                    {isEn ? `Published ${formattedDate}` : `발행 ${formattedDate}`}
+                  </p>
                 </div>
               )}
             </div>
@@ -373,7 +393,18 @@ export default async function StoryDetailPage({ params }: Props) {
                         {relTitle}
                       </h3>
                       <span className="text-xs text-charcoal-muted/60 mt-2 block">
-                        {related.published_at}
+                        {(() => {
+                          if (!related.published_at) return '';
+                          if (!isEn) return related.published_at;
+                          const d = new Date(related.published_at);
+                          return Number.isNaN(d.getTime())
+                            ? related.published_at
+                            : d.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              });
+                        })()}
                       </span>
                     </div>
                   </Link>

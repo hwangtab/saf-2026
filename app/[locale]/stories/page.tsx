@@ -91,6 +91,7 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
+  const isEnglish = locale === 'en';
   const copy = STORIES_COPY[locale];
   const path = '/stories';
   const pageUrl = buildLocaleUrl(path, locale);
@@ -98,11 +99,11 @@ export async function generateMetadata({
   const allStories = await getSupabaseStories();
   const recentTitles = allStories
     .slice(0, 3)
-    .map((s) => (locale === 'en' && s.title_en ? s.title_en : s.title))
+    .map((s) => (isEnglish && s.title_en ? s.title_en : s.title))
     .filter((t): t is string => Boolean(t && t.trim()));
   const dynamicDescription =
     recentTitles.length > 0
-      ? locale === 'en'
+      ? isEnglish
         ? `${copy.pageDescription} Recent: ${recentTitles.join(' · ')}.`
         : `${copy.pageDescription} 최근 글: ${recentTitles.join(' · ')}.`
       : copy.pageDescription;
@@ -116,14 +117,14 @@ export async function generateMetadata({
       description: dynamicDescription,
       url: pageUrl,
       type: 'website',
-      siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
-      locale: locale === 'en' ? 'en_US' : 'ko_KR',
+      siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
+      locale: isEnglish ? 'en_US' : 'ko_KR',
       images: [
         {
           url: OG_IMAGE.url,
           width: OG_IMAGE.width,
           height: OG_IMAGE.height,
-          alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt,
+          alt: isEnglish ? OG_IMAGE.altEn : OG_IMAGE.alt,
         },
       ],
     },
@@ -131,7 +132,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: copy.seoTitle,
       description: dynamicDescription,
-      images: [{ url: OG_IMAGE.url, alt: locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt }],
+      images: [{ url: OG_IMAGE.url, alt: isEnglish ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
   };
 }
@@ -140,6 +141,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
+  const isEnglish = locale === 'en';
   const copy = STORIES_COPY[locale];
 
   // /stories는 항상 전체 매거진 노출. 카테고리별 필터는 정적 라우트
@@ -148,7 +150,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
   const stories = allStories;
 
   const breadcrumbItems = [
-    { name: locale === 'en' ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
+    { name: isEnglish ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
     { name: copy.pageTitle, url: buildLocaleUrl('/stories', locale) },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
@@ -159,11 +161,11 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
     name: copy.collectionName,
     description: copy.collectionDescription,
     url: buildLocaleUrl('/stories', locale),
-    inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
-      name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
     ...(stories.length > 0
       ? {
@@ -174,7 +176,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
               '@type': 'ListItem',
               position: i + 1,
               url: buildLocaleUrl(`/stories/${story.slug}`, locale),
-              name: locale === 'en' && story.title_en ? story.title_en : story.title,
+              name: isEnglish && story.title_en ? story.title_en : story.title,
             })),
           },
         }
@@ -238,7 +240,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                     {(() => {
                       const featuredImg = featured.thumbnail || extractFirstImage(featured.body);
                       const featuredTitle =
-                        locale === 'en' && featured.title_en ? featured.title_en : featured.title;
+                        isEnglish && featured.title_en ? featured.title_en : featured.title;
                       return featuredImg ? (
                         <SafeImage
                           src={featuredImg}
@@ -260,11 +262,11 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                         {CATEGORY_LABELS[locale][featured.category]}
                       </span>
                       <h2 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-white drop-shadow-lg mb-3 max-w-3xl">
-                        {locale === 'en' && featured.title_en ? featured.title_en : featured.title}
+                        {isEnglish && featured.title_en ? featured.title_en : featured.title}
                       </h2>
-                      {(locale === 'en' ? featured.excerpt_en : featured.excerpt) && (
+                      {(isEnglish ? featured.excerpt_en : featured.excerpt) && (
                         <p className="text-sm md:text-base text-white/80 line-clamp-2 mb-4 max-w-2xl leading-relaxed">
-                          {locale === 'en' && featured.excerpt_en
+                          {isEnglish && featured.excerpt_en
                             ? featured.excerpt_en
                             : featured.excerpt}
                         </p>
@@ -291,9 +293,9 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
               <div className="max-w-6xl mx-auto px-4 sm:px-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {rest.map((story, i) => {
-                    const title = locale === 'en' && story.title_en ? story.title_en : story.title;
+                    const title = isEnglish && story.title_en ? story.title_en : story.title;
                     const excerpt =
-                      locale === 'en' && story.excerpt_en ? story.excerpt_en : story.excerpt;
+                      isEnglish && story.excerpt_en ? story.excerpt_en : story.excerpt;
                     const categoryLabel = CATEGORY_LABELS[locale][story.category];
 
                     return (
