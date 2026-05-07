@@ -9,6 +9,12 @@ import { resolveLegacyArtworkId } from '@/lib/artwork-legacy-map';
 // proxy(=구 middleware)에서 렌더 전에 처리.
 const LEGACY_ARTWORK_PATH = /^\/(en\/)?artworks\/(\d+)\/?$/;
 
+// /stories?category=foo → /stories/category/foo 308 redirect.
+// stories 정적화 후 server-side query 필터 제거. 외부 백링크나 직접 입력으로 들어온 query URL이
+// 색인되면 /stories(전체 매거진)와 중복 색인 위험. 정적 카테고리 라우트로 흡수해 단일 정규 URL 보장.
+const STORIES_LIST_PATH = /^\/(en\/)?stories\/?$/;
+const VALID_STORY_CATEGORIES = new Set(['artist-story', 'buying-guide', 'art-knowledge']);
+
 const intlProxy = createMiddleware(routing);
 
 // 인증·포털 영역. `belongsToSurface`가 슬래시 경계를 강제해 `/admin-foo` 같은 형제 경로 차단.
@@ -37,7 +43,22 @@ const STATIC_SKIP_PATHS = new Set([
 ]);
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
+
+  // /stories?category=foo → /stories/category/foo 308. 정적화 후 query URL은 중복 색인 위험이라
+  // 정규 정적 라우트로 흡수. invalid category는 query 제거만 하고 /stories로 흘려보냄.
+  if (STORIES_LIST_PATH.test(pathname) && searchParams.has('category')) {
+    const enPrefix =
+      pathname.startsWith('/en/') || pathname === '/en' || pathname === '/en/' ? 'en/' : '';
+    const category = searchParams.get('category') || '';
+    if (VALID_STORY_CATEGORIES.has(category)) {
+      return NextResponse.redirect(
+        new URL(`/${enPrefix}stories/category/${category}`, request.url),
+        308
+      );
+    }
+    return NextResponse.redirect(new URL(`/${enPrefix}stories`, request.url), 308);
+  }
 
   // Legacy artwork ID (e.g. /artworks/151) → UUID 308 리다이렉트
   // page.tsx의 permanentRedirect이 error boundary에 가로막히므로 proxy에서 처리
