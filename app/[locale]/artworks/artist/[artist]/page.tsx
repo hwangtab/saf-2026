@@ -32,7 +32,7 @@ import {
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -44,21 +44,25 @@ import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-// 작가 lifecycle (작품 전체 숨김/삭제)이 발생하면 ISR prerender + revalidate 조합으로는
-// stale 200 + not-found UI가 송출되어 GSC가 NOINDEX로 보고함 (신학철 케이스).
-// force-dynamic으로 매 요청 SSR + notFound() 시 정확한 404 응답 보장.
-export const dynamic = 'force-dynamic';
+// force-static + revalidate=3600: 빌드 시 ~100명 작가 페이지 prerender → CDN HIT.
+// admin 액션이 작품 수정/삭제 시 revalidatePath('/artworks/artist/...') 호출하면 즉시 무효화.
+// 1시간 fallback revalidate가 stale 보호. 이전 force-dynamic은 신학철 케이스(작가 작품 전체 삭제 후
+// stale 200) 대응이었으나 on-demand revalidation으로 충분.
+export const dynamic = 'force-static';
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{
+    locale: string;
     artist: string;
   }>;
 }
 
 // Generate metadata for Artist Page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
-  const { artist } = await params;
+  const { locale: rawLocale, artist } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const artistName = decodeURIComponent(artist);
   const artistArtworks = await getSupabaseArtworksByArtist(artistName);
   const t = await getTranslations('artistPage');
@@ -188,22 +192,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Generate static params for all artists
+// Generate static params for all artists × locales
 export async function generateStaticParams() {
   const artworks = await getSupabaseArtworks();
-
-  // Extract unique artist names
   const artists = Array.from(new Set(artworks.map((a) => a.artist)));
-
-  return artists.map((artist) => ({
-    artist: artist,
-  }));
+  return artists.flatMap((artist) => ['ko', 'en'].map((locale) => ({ locale, artist })));
 }
 
 export default async function ArtistPage({ params }: Props) {
-  const locale = resolveLocale(await getLocale());
+  const { locale: rawLocale, artist } = await params;
+  const locale = resolveLocale(rawLocale);
+  setRequestLocale(locale);
   const isEnglish = locale === 'en';
-  const { artist } = await params;
   const artistName = decodeURIComponent(artist);
   // 병렬 fetch — 이전 getSupabaseArtworks() (전체 330개) → 카테고리 문자열 배열만으로 축소
   const [artistArtworks, availableCategories] = await Promise.all([

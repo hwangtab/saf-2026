@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import {
   getSupabaseArtworks,
@@ -43,15 +43,18 @@ import { ArrowRight } from 'lucide-react';
 
 interface Props {
   params: Promise<{
+    locale: string;
     id: string;
   }>;
 }
 
-// 작품 lifecycle (추가/판매/삭제)이 잦아 ISR prerender + revalidate 조합으로는
-// 삭제된 작품에 대해 stale 200 응답이 서빙되어 GSC가 NOINDEX로 보고하는 문제가 있었음.
-// force-dynamic으로 매 요청 SSR + notFound() 시 정확한 404 응답을 보장 — Google에 명확한
-// 색인 제거 시그널 송출. Supabase fetch 비용은 페이지당 6병렬로 분산되어 영향 미미.
-export const dynamic = 'force-dynamic';
+// force-static + revalidate=3600 + admin 액션의 revalidatePath 조합:
+// - 빌드 시 358 작품 prerender → CDN HIT, TTFB 50ms+
+// - admin이 수정/삭제 시 app/actions/admin-artworks.ts에서 revalidatePath('/artworks/${id}') 호출 → 즉시 무효화
+// - 1시간 background revalidate로 fallback safety net
+// 이전 force-dynamic은 stale 200 회피 목적이었으나 on-demand revalidation 인프라가 갖춰져 있어 불필요해짐.
+export const dynamic = 'force-static';
+export const revalidate = 3600;
 
 /** 스토리 body 마크다운에서 첫 번째 이미지 URL 추출 — 썸네일 fallback용 */
 function extractFirstImage(body: string | null | undefined): string | null {
@@ -62,8 +65,9 @@ function extractFirstImage(body: string | null | undefined): string | null {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const { id } = await params;
+  const { locale: rawLocale, id } = await params;
+  const locale = rawLocale === 'en' ? 'en' : 'ko';
+  setRequestLocale(locale);
 
   // Legacy redirect는 proxy.ts에서 page render 이전에 처리됨 (error.tsx 가로채기 회피).
   // 여기 도달한 숫자 ID는 proxy에서 매핑 못 찾은 케이스 → notFound 경로.
@@ -81,16 +85,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // Generate static params for all artworks at build time
+// locale x artwork ID 카르테시안 — 두 locale 모두 prerender됨
 export async function generateStaticParams() {
   const artworks = await getSupabaseArtworks();
-  return artworks.map((artwork) => ({
-    id: artwork.id,
-  }));
+  return artworks.flatMap((artwork) => ['ko', 'en'].map((locale) => ({ locale, id: artwork.id })));
 }
 
 export default async function ArtworkDetailPage({ params }: Props) {
-  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const { id } = await params;
+  const { locale: rawLocale, id } = await params;
+  const locale = rawLocale === 'en' ? 'en' : 'ko';
+  setRequestLocale(locale);
 
   // Legacy redirect는 proxy.ts에서 처리됨.
 
