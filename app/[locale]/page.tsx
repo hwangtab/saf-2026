@@ -212,10 +212,13 @@ export default async function Home() {
             name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
             url: SITE_URL,
           },
-          // 홈페이지에서 음성검색 대응 — 브랜드/미션 소개 영역
+          // 홈페이지에서 음성검색 대응 — Hero h1만 매칭. 이전 .mission-banner /
+          // .hero-subtitle selector는 실제 DOM에 존재하지 않아 schema 검사기가 4개
+          // 오류로 보고하던 회귀(빈 매칭 = 검증 실패). 현재 h1은 HeroSpotlight 슬라이드
+          // 제목으로 정상 매칭됨.
           speakable: {
             '@type': 'SpeakableSpecification',
-            cssSelector: ['h1', '.mission-banner', '.hero-subtitle'],
+            cssSelector: ['h1'],
           },
         }}
       />
