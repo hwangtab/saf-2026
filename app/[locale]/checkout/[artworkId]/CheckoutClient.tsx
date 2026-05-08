@@ -9,7 +9,12 @@ import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
-import { createOrder, cancelPendingOrder, createBankTransferOrder } from '@/app/actions/checkout';
+import {
+  createOrder,
+  cancelPendingOrder,
+  createBankTransferOrder,
+  initiatePayment,
+} from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
@@ -45,7 +50,6 @@ interface Props {
   price: number;
   displayPrice: string;
   imageUrl: string;
-  clientKey: string;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
@@ -58,17 +62,20 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
 
 /**
  * 한국어 체크아웃 클라이언트.
- * Toss SDK v2 `payment.requestPayment()` 결제창 (saf202i818 MID, API 개별 연동 키).
+ * Toss API 개별 연동 v1 redirect 플로우 (saf202i818 MID).
  *
  * Flow:
  *   1. createOrder — DB에 pending_payment 주문 생성 (metadata.payment_provider='domestic')
- *   2. loadTossPayments(clientKey).payment({ customerKey: orderNo })
- *   3. payment.requestPayment({ method: 'CARD', successUrl, failUrl, ... })
- *      → Toss-hosted 통합결제창에서 사용자가 카드/간편결제 선택
- *   4. Toss가 결제 완료 후 successUrl(우리 success page)로 redirect
- *   5. SuccessClient가 /api/payments/toss/confirm 호출 → 승인 완료
+ *   2. initiatePayment(method='CARD') — Toss /v1/payments → checkout.url 반환
+ *   3. window.location.href = checkoutUrl → Toss-hosted 통합결제창으로 redirect
+ *   4. Toss-hosted picker에 saf202i818 MID에 활성화된 카드 + 카카오페이/토스페이/
+ *      네이버페이 모두 노출. 사용자가 선택 후 결제 진행.
+ *   5. 결제 완료 후 successUrl로 redirect → SuccessClient → /api/payments/toss/confirm
  *
- * 사용자가 결제창 닫으면 USER_CANCEL 코드로 reject — 주문은 cancelPendingOrder로 정리.
+ * SDK v2 client-side `payment.requestPayment()`는 일부 BrandPay 기반 간편결제를
+ * customerKey 기반으로 필터링하는 회귀가 있어 redirect로 우회. 직행 라우팅
+ * (`flowMode='DIRECT'` + `card.easyPay`)은 saf202i818 MID 직행 계약 후 SDK v2로
+ * 재전환하여 활성화 가능.
  */
 export default function CheckoutClient({
   artworkId,
@@ -77,7 +84,6 @@ export default function CheckoutClient({
   price,
   displayPrice,
   imageUrl,
-  clientKey,
 }: Props) {
   const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
@@ -180,27 +186,32 @@ export default function CheckoutClient({
       const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;
 
-      const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
-      const tossPayments = await loadTossPayments(clientKey);
-      // customerKey는 비회원 결제라도 고유 식별자가 필요. ANONYMOUS는 BrandPay 기반
-      // 간편결제(TossPay/NaverPay 등)를 통합 picker에서 숨길 수 있어 orderNo 사용.
-      // orderNo는 매 결제마다 unique, 50자 이내, 영문/숫자 형식 적합.
-      const payment = tossPayments.payment({ customerKey: orderNo });
-
-      // 통합결제창. 직행 라우팅(`card.flowMode='DIRECT'` + `card.easyPay`)은 saf202i818
-      // MID 미계약으로 보류. requestPayment는 redirect 모드 (successUrl 동반) → void 반환,
-      // 사용자 취소·SDK 에러는 reject되어 catch 블록에서 처리.
-      await payment.requestPayment({
+      // API v1 redirect — Toss-hosted 통합결제창이 saf202i818 MID에 활성화된
+      // 카드 + 카카오페이/토스페이/네이버페이 모두 노출. SDK v2 client-side picker는
+      // 일부 BrandPay 기반 간편결제를 customerKey 없이 숨기는 회귀가 있어 redirect로
+      // 우회. 직행 라우팅은 Toss와 직행 계약 후 SDK v2로 재전환 가능.
+      const payResult = await initiatePayment({
         method: 'CARD',
-        amount: { currency: 'KRW', value: serverTotal },
-        orderId: orderNo,
+        orderNo,
         orderName,
-        customerName: buyerName,
-        customerEmail: buyerEmail,
+        totalAmount: serverTotal,
+        buyerName,
+        buyerEmail,
         successUrl,
         failUrl,
+        locale: 'ko',
       });
-      // navigate 진행 중 — 페이지 unload까지 대기
+
+      if (!payResult.success) {
+        cancelPendingOrder(orderNo, buyerEmail).catch((err) =>
+          console.error('[checkout] cancelPendingOrder failed:', err)
+        );
+        setError(payResult.error);
+        setSubmitting(false);
+        return;
+      }
+
+      window.location.href = payResult.checkoutUrl;
       await new Promise(() => {});
     } catch (err: unknown) {
       if (createdOrderNo) {
@@ -208,11 +219,7 @@ export default function CheckoutClient({
           (cancelErr) => console.error('[checkout] cancelPendingOrder failed:', cancelErr)
         );
       }
-      // SDK v2 에러는 { code, message } 형태. USER_CANCEL은 사용자가 결제창 닫은 경우라 에러 표시 생략.
-      const errorObj = err as { code?: string; message?: string };
-      if (errorObj?.code !== 'USER_CANCEL') {
-        setError(errorObj?.message ?? t('errorPayment'));
-      }
+      setError((err as Error)?.message ?? t('errorPayment'));
       setSubmitting(false);
     }
   }

@@ -97,7 +97,6 @@ export default async function CheckoutPage({ params }: Props) {
       price={price}
       displayPrice={displayPrice}
       imageUrl={imageUrl}
-      clientKey={clientKey}
     />
   );
 }
