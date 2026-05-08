@@ -10,31 +10,45 @@ import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { krwToUsd, formatUsd } from '@/lib/utils/currency';
-import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
+import {
+  createOrder,
+  cancelPendingOrder,
+  initiatePayment,
+  createBankTransferOrder,
+} from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 
 /**
- * 영문(en) 체크아웃 옵션 — 한국어 페이지와 거의 동일하지만 PayPal이 추가되고
- * TRANSFER(국내 무통장 입금)는 제외됨.
+ * 영문(en) 체크아웃 옵션. 결제수단별 buyer 자격이 다르므로 caption으로 명시:
  *
- * - PAYPAL    : Toss FOREIGN_EASY_PAY + provider=PAYPAL + USD 환산. 해외 PayPal
- *               계정만 결제 가능 (한국 PayPal 계정은 PayPal 정책상 차단).
+ * - PAYPAL    : Toss FOREIGN_EASY_PAY + USD. 해외 PayPal 계정만 (한국 PayPal은
+ *               PayPal 정책상 한국→한국 차단). caption "International accounts only".
  * - CARD      : Toss SDK v2 통합결제창 — 한국 카드 + 외국 카드 (다국어 결제창).
  *               KRW 결제. 한국 PayPal 사용자가 영문 페이지에서 우회 가능한 경로.
- * - KAKAOPAY/TOSSPAY/NAVERPAY : Toss 통합결제창 picker. 한국 거주 buyer가 영문
- *               UI 선호하는 경우.
+ * - KAKAOPAY/TOSSPAY/NAVERPAY : Toss 통합결제창 picker. 한국 거주 buyer 또는
+ *               한국 간편결제 보유 해외 거주자.
+ * - TRANSFER  : 기업은행(IBK) 무통장 입금. 해외에서 SWIFT로 한국 계좌 송금하는 건
+ *               $10~50 수수료라 작품 가격대에 비합리적. 실질적으로 한국 계좌
+ *               보유자(국내 거주자 + 해외 거주 한국인 diaspora) 한정.
+ *               caption "Korean bank accounts only".
  *
  * 직행(`flowMode='DIRECT'`)은 saf202i818 MID 활성화 후 cardOptions 추가.
  */
-type EnPaymentChoice = 'PAYPAL' | 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY';
+type EnPaymentChoice = 'PAYPAL' | 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
 
 type EnBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay' | 'paypal'> | null;
 
 interface PaymentChoiceConfig {
   value: EnPaymentChoice;
-  labelKey: 'methodPaypal' | 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay';
+  labelKey:
+    | 'methodPaypal'
+    | 'methodCard'
+    | 'methodKakaopay'
+    | 'methodTosspay'
+    | 'methodNaverpay'
+    | 'methodTransfer';
   brand: EnBrand;
 }
 
@@ -44,6 +58,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'KAKAOPAY', labelKey: 'methodKakaopay', brand: 'kakaopay' },
   { value: 'TOSSPAY', labelKey: 'methodTosspay', brand: 'tosspay' },
   { value: 'NAVERPAY', labelKey: 'methodNaverpay', brand: 'naverpay' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
 ];
 
 interface Props {
@@ -132,6 +147,32 @@ export default function OverseasCheckoutClient({
     let createdOrderNo: string | null = null;
 
     try {
+      // 무통장 입금(TRANSFER): Toss 거치지 않고 IBK 계좌번호 안내. createOrder
+      // 흐름과 별도. createBankTransferOrder가 awaiting_deposit + reserved 처리.
+      if (paymentChoice === 'TRANSFER') {
+        const result = await createBankTransferOrder({
+          artworkId,
+          buyerName,
+          buyerEmail,
+          buyerPhone,
+          shippingName,
+          shippingPhone,
+          shippingAddress,
+          shippingAddressDetail,
+          shippingPostalCode,
+          shippingMemo,
+          locale: 'en',
+        });
+        if (!result.success) {
+          setError(result.error);
+          setSubmitting(false);
+          return;
+        }
+        window.location.href = `${window.location.origin}/en/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+        await new Promise(() => {});
+        return;
+      }
+
       const result = await createOrder({
         artworkId,
         buyerName,
@@ -303,7 +344,12 @@ export default function OverseasCheckoutClient({
           >
             {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
               const selected = paymentChoice === value;
-              const description = value === 'PAYPAL' ? t('paypalCaption') : null;
+              const description =
+                value === 'PAYPAL'
+                  ? t('paypalCaption')
+                  : value === 'TRANSFER'
+                    ? t('transferDescription')
+                    : null;
               return (
                 <div key={value}>
                   <button
