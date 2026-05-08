@@ -28,23 +28,22 @@ export default function CountdownTimer({ deadlineIso }: CountdownTimerProps) {
   const targetMs = new Date(deadlineIso).getTime();
   const now = useSyncExternalStore(subscribeHourly, getSnapshot, getServerSnapshot);
 
-  if (now === 0) {
-    return (
-      <span className="inline-block min-w-[7ch] text-center" aria-label={t('countdownPrefix')}>
-        D-…
-      </span>
-    );
-  }
+  // SSR/첫 렌더(now===0) placeholder와 hydrate 후 마크업이 다르면 hydration 시 layout
+  // shift 발생(petition 페이지 데스크톱 CLS 0.05의 직접 원인). prefix + strong 구조를
+  // 동일하게 유지하고 strong에 min-w-[5ch] tabular-nums로 너비 reserve해 D-N/NN/NNN
+  // 자릿수 변화에도 layout 안정.
+  const days = now === 0 ? null : Math.max(0, Math.ceil((targetMs - now) / (24 * HOUR_MS)));
 
-  const days = Math.max(0, Math.ceil((targetMs - now) / (24 * HOUR_MS)));
-
-  if (days <= 0) {
+  if (days !== null && days <= 0) {
     return <span className="font-semibold">{t('countdownClosed')}</span>;
   }
 
   return (
     <span aria-live="polite">
-      {t('countdownPrefix')} <strong className="font-semibold">D-{days}</strong>
+      {t('countdownPrefix')}{' '}
+      <strong className="font-semibold inline-block min-w-[5ch] text-center tabular-nums">
+        {days === null ? 'D-…' : `D-${days}`}
+      </strong>
     </span>
   );
 }
