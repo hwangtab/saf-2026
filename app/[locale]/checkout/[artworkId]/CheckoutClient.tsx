@@ -14,16 +14,17 @@ import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 
 /**
- * 결제 옵션 — UI 표시용. 실제 Toss 호출은 모두 통합결제창 (method='CARD').
+ * 결제 옵션 → SDK v2 `payment.requestPayment()` 파라미터 매핑.
  *
- * 4개 카드/간편결제 버튼은 사용자 의도 표시 + 브랜드 로고 시각 hint일 뿐, 클릭하면
- * 모두 통합결제창(picker)으로 진입해 그 안에서 다시 선택해야 함. 직행 라우팅
- * (`flowMode='DIRECT'` + `card.easyPay`)은 saf202i818 MID에 별도 계약이 필요해
- * 보류 — 계약 완료되면 cardOptions 필드 추가하여 활성화.
+ * - CARD     : 카드/간편결제 통합결제창 (card 미지정 = DEFAULT 모드)
+ * - KAKAOPAY : flowMode='DIRECT' + easyPay='카카오페이' → 카카오페이 자체창 직행
+ * - TOSSPAY  : flowMode='DIRECT' + easyPay='토스페이'   → 토스페이 자체창 직행
+ * - NAVERPAY : flowMode='DIRECT' + easyPay='네이버페이' → 네이버페이 자체창 직행
+ * - TRANSFER : Toss 거치지 않음. createBankTransferOrder 직접 호출하여
+ *              awaiting_deposit + artwork=reserved 처리 후 기업은행(IBK) 계좌번호
+ *              안내 (뱅크페이 인증서·앱 설치 UX 회피).
  *
- * - TRANSFER만 별도 흐름: Toss 우회 + createBankTransferOrder → awaiting_deposit
- *   + artwork=reserved → 기업은행(IBK) 계좌번호 안내 (뱅크페이 인증서·앱 설치 UX 회피).
- *
+ * easyPay 코드는 한국어 (Toss 가이드 명세) — 'KAKAOPAY' 영문이 아닌 '카카오페이'.
  * 가상계좌는 saf202i818 MID 미계약 (에러 2003)이라 제외.
  */
 type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
@@ -35,6 +36,8 @@ interface PaymentChoiceConfig {
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
   brand: BrandKind;
+  /** SDK card 옵션 — 직행 라우팅 시에만 지정. 미지정 시 통합결제창. */
+  cardOptions?: { flowMode: 'DIRECT'; easyPay: '카카오페이' | '토스페이' | '네이버페이' };
 }
 
 interface Props {
@@ -50,9 +53,24 @@ interface Props {
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'CARD', labelKey: 'methodCard', brand: null },
   { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
-  { value: 'KAKAOPAY', labelKey: 'methodKakaopay', brand: 'kakaopay' },
-  { value: 'TOSSPAY', labelKey: 'methodTosspay', brand: 'tosspay' },
-  { value: 'NAVERPAY', labelKey: 'methodNaverpay', brand: 'naverpay' },
+  {
+    value: 'KAKAOPAY',
+    labelKey: 'methodKakaopay',
+    brand: 'kakaopay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
+  },
+  {
+    value: 'TOSSPAY',
+    labelKey: 'methodTosspay',
+    brand: 'tosspay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
+  },
+  {
+    value: 'NAVERPAY',
+    labelKey: 'methodNaverpay',
+    brand: 'naverpay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
+  },
 ];
 
 /**
@@ -92,8 +110,9 @@ function BrandLogo({ brand }: { brand: BrandKind }) {
  *
  * Flow:
  *   1. createOrder — DB에 pending_payment 주문 생성 (metadata.payment_provider='domestic')
- *   2. loadTossPayments(clientKey).payment({ customerKey: ANONYMOUS })
- *   3. payment.requestPayment({ method: 'CARD', successUrl, failUrl, ... })
+ *   2. loadTossPayments(clientKey).payment({ customerKey: orderNo })
+ *   3. payment.requestPayment({ method: 'CARD', card?, successUrl, failUrl, ... })
+ *      → cardOptions 있으면 자체창 직행, 없으면 통합결제창
  *      → Toss-hosted 통합결제창에서 사용자가 카드/간편결제 선택
  *   4. Toss가 결제 완료 후 successUrl(우리 success page)로 redirect
  *   5. SuccessClient가 /api/payments/toss/confirm 호출 → 승인 완료
@@ -210,13 +229,18 @@ export default function CheckoutClient({
       const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;
 
-      const { ANONYMOUS, loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
-      const tossPayments = await loadTossPayments(clientKey);
-      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
+      const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice) ?? PAYMENT_CHOICES[0];
 
-      // 통합결제창. 직행 라우팅(`card.flowMode='DIRECT'` + `card.easyPay`)은 saf202i818
-      // MID 미계약으로 보류. requestPayment는 redirect 모드 (successUrl 동반) → void 반환,
-      // 사용자 취소·SDK 에러는 reject되어 catch 블록에서 처리.
+      const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
+      const tossPayments = await loadTossPayments(clientKey);
+      // customerKey는 비회원 결제라도 고유 식별자 필요. orderNo는 매 결제마다 unique
+      // (영문/숫자 조합, 50자 이내) → 그대로 customerKey로 사용 가능. 자체창 직행
+      // 모드는 ANONYMOUS 키로는 동작 안 함 (Toss 가이드 명세).
+      const payment = tossPayments.payment({ customerKey: orderNo });
+
+      // requestPayment는 redirect 모드 (successUrl 동반) → void 반환, 사용자 취소·
+      // SDK 에러는 reject되어 catch 블록에서 처리.
+      // card 객체는 cardOptions가 있을 때만 (직행 라우팅), 없으면 통합결제창 DEFAULT.
       await payment.requestPayment({
         method: 'CARD',
         amount: { currency: 'KRW', value: serverTotal },
@@ -224,8 +248,20 @@ export default function CheckoutClient({
         orderName,
         customerName: buyerName,
         customerEmail: buyerEmail,
+        // Toss SDK는 '-' 없는 숫자만 받음 (8~15자)
+        customerMobilePhone: buyerPhone.replace(/[^0-9]/g, ''),
         successUrl,
         failUrl,
+        ...(choice.cardOptions
+          ? {
+              card: {
+                useEscrow: false,
+                useCardPoint: false,
+                useAppCardOnly: false,
+                ...choice.cardOptions,
+              },
+            }
+          : {}),
       });
       // navigate 진행 중 — 페이지 unload까지 대기
       await new Promise(() => {});
