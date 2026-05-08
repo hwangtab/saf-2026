@@ -61,6 +61,10 @@ export function DailyViewsChart({ data }: Props) {
                 border: `1px solid ${BRAND_COLORS.gray[200]}`,
                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
               }}
+              formatter={(value: number, name: string) => [
+                `${value.toLocaleString('ko-KR')}회`,
+                name,
+              ]}
             />
             <Legend verticalAlign="top" align="right" height={36} iconType="circle" />
             <Line

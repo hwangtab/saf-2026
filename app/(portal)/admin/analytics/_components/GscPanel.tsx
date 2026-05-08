@@ -1,6 +1,6 @@
 import { AdminCard, AdminCardHeader, AdminEmptyState } from '@/app/admin/_components/admin-ui';
 import type { AnalyticsData } from '@/app/actions/admin-analytics';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 /**
  * Google Search Console organic SEO 패널 — Phase D.
@@ -20,13 +20,15 @@ interface Props {
 
 export default async function GscPanel({ data }: Props) {
   const t = await getTranslations('admin.analytics');
-  const numberFormatter = new Intl.NumberFormat();
-  const dateFormatter = new Intl.DateTimeFormat('ko-KR', {
+  const locale = await getLocale();
+  const intlLocale = locale === 'en' ? 'en-US' : 'ko-KR';
+  const numberFormatter = new Intl.NumberFormat(intlLocale);
+  const dateFormatter = new Intl.DateTimeFormat(intlLocale, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
   });
-  const datetimeFormatter = new Intl.DateTimeFormat('ko-KR', {
+  const datetimeFormatter = new Intl.DateTimeFormat(intlLocale, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -38,6 +40,8 @@ export default async function GscPanel({ data }: Props) {
   const formatDatetime = (s: string | null) => (s ? datetimeFormatter.format(new Date(s)) : '—');
 
   const hasData = data.syncStatus.totalRows > 0;
+  // 운영 분석 화면은 최신 일자가 위쪽에 — RPC는 ASC 반환이라 클라이언트에서 reverse
+  const dailyTrendDesc = [...data.dailyTrend].reverse();
 
   return (
     <section className="space-y-6">
@@ -102,7 +106,7 @@ export default async function GscPanel({ data }: Props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {data.dailyTrend.map((row) => (
+                    {dailyTrendDesc.map((row) => (
                       <tr key={row.date} className="transition-colors hover:bg-gray-50">
                         <td className="px-6 py-3 font-medium tabular-nums text-gray-900">
                           {formatDate(row.date)}
