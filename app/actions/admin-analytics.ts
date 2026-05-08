@@ -24,6 +24,40 @@ export type AnalyticsData = {
   osDistribution: Array<{ os: string; count: number }>;
   hourlyDistribution: Array<{ hour: number; views: number; visitors: number }>;
   /**
+   * 빠른 win 4종 — 기존 page_views 데이터로 산출 가능한 경영자 인사이트.
+   * - sessionDepth: avg/median pages per session (engagement)
+   * - topExitPages: 어디서 사이트 떠나는지 (CRO 직격)
+   * - visitorRecurrence: 신규 vs 재방문자
+   * - utmDistribution: 캠페인·매체별 traffic (마케팅 ROI)
+   */
+  insights: {
+    sessionDepth: {
+      totalSessions: number;
+      totalPageviews: number;
+      avgPagesPerSession: number;
+      medianPagesPerSession: number;
+    };
+    topExitPages: Array<{
+      path: string;
+      exitCount: number;
+      totalViews: number;
+      exitRate: number;
+    }>;
+    visitorRecurrence: {
+      newVisitors: number;
+      returningVisitors: number;
+      newVisitorPageviews: number;
+      returningVisitorPageviews: number;
+    };
+    utmDistribution: Array<{
+      utmSource: string;
+      utmMedium: string;
+      utmCampaign: string;
+      views: number;
+      visitors: number;
+    }>;
+  };
+  /**
    * 매거진↔작품 cross-link funnel — 본문에 작품 인용 → 카드 클릭으로 이어지는 흐름.
    * 데이터 source는 page_views 테이블의 event_type='event' + event_name='*_click' 행.
    * 2026-05-08부터 webhook이 event_data jsonb 컬럼에 properties 보존해 활성화됨.
@@ -106,6 +140,31 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   // `position`은 PG reserved keyword라 RPC 컬럼명을 `card_position`으로 정의
   // (마이그레이션 20260508110000 참조). 호출부는 그대로 position number로 매핑.
   type PositionRow = { card_position: number; clicks: number };
+  type SessionDepthRow = {
+    total_sessions: number;
+    total_pageviews: number;
+    avg_pages_per_session: number;
+    median_pages_per_session: number;
+  };
+  type ExitPageRow = {
+    path: string;
+    exit_count: number;
+    total_views: number;
+    exit_rate: number;
+  };
+  type VisitorRecurrenceRow = {
+    new_visitors: number;
+    returning_visitors: number;
+    new_visitor_pageviews: number;
+    returning_visitor_pageviews: number;
+  };
+  type UtmRow = {
+    utm_source: string;
+    utm_medium: string;
+    utm_campaign: string;
+    views: number;
+    visitors: number;
+  };
 
   const [
     summaryRes,
@@ -124,6 +183,10 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     sourceDistRes,
     positionDistRes,
     topArtworkSourcesRes,
+    sessionDepthRes,
+    exitPagesRes,
+    visitorRecurrenceRes,
+    utmDistRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -149,6 +212,10 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       since_ts: sinceTs,
       lim: 10,
     }),
+    untypedRpc<SessionDepthRow[]>('get_pv_session_depth', { since_ts: sinceTs }),
+    untypedRpc<ExitPageRow[]>('get_pv_top_exit_pages', { since_ts: sinceTs, lim: 10 }),
+    untypedRpc<VisitorRecurrenceRow[]>('get_pv_visitor_recurrence', { since_ts: sinceTs }),
+    untypedRpc<UtmRow[]>('get_pv_utm_distribution', { since_ts: sinceTs, lim: 20 }),
   ]);
 
   // Summary
@@ -366,6 +433,44 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
+  // Phase A 인사이트 — 마이그레이션 적용 전엔 RPC 없어 0/[] fallback.
+  const sessionDepthRow = Array.isArray(sessionDepthRes.data) ? sessionDepthRes.data[0] : null;
+  const visitorRecurrenceRow = Array.isArray(visitorRecurrenceRes.data)
+    ? visitorRecurrenceRes.data[0]
+    : null;
+
+  const insights: AnalyticsData['insights'] = {
+    sessionDepth: {
+      totalSessions: Number(sessionDepthRow?.total_sessions ?? 0),
+      totalPageviews: Number(sessionDepthRow?.total_pageviews ?? 0),
+      avgPagesPerSession: Number(sessionDepthRow?.avg_pages_per_session ?? 0),
+      medianPagesPerSession: Number(sessionDepthRow?.median_pages_per_session ?? 0),
+    },
+    topExitPages: Array.isArray(exitPagesRes.data)
+      ? exitPagesRes.data.map((row) => ({
+          path: row.path,
+          exitCount: Number(row.exit_count),
+          totalViews: Number(row.total_views),
+          exitRate: Number(row.exit_rate),
+        }))
+      : [],
+    visitorRecurrence: {
+      newVisitors: Number(visitorRecurrenceRow?.new_visitors ?? 0),
+      returningVisitors: Number(visitorRecurrenceRow?.returning_visitors ?? 0),
+      newVisitorPageviews: Number(visitorRecurrenceRow?.new_visitor_pageviews ?? 0),
+      returningVisitorPageviews: Number(visitorRecurrenceRow?.returning_visitor_pageviews ?? 0),
+    },
+    utmDistribution: Array.isArray(utmDistRes.data)
+      ? utmDistRes.data.map((row) => ({
+          utmSource: row.utm_source,
+          utmMedium: row.utm_medium,
+          utmCampaign: row.utm_campaign,
+          views: Number(row.views),
+          visitors: Number(row.visitors),
+        }))
+      : [],
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
@@ -378,6 +483,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     browserDistribution,
     osDistribution,
     hourlyDistribution,
+    insights,
     crossLinks,
   };
 }

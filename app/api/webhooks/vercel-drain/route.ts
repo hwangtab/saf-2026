@@ -38,6 +38,8 @@ type VercelDrainEvent = {
   data?: string | Record<string, unknown>;
   /** 동적 라우트 패턴 (예: '/stories/[slug]'). path 슬러그별 fragment와 별도. */
   route?: string;
+  /** URL query string raw (예: 'utm_source=naver&utm_medium=cpc'). UTM 분석에 사용. */
+  queryParams?: string;
   timestamp: number;
   path: string;
   referrer?: string;
@@ -114,6 +116,7 @@ function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
     isOptionalString(value.eventName) &&
     isOptionalString(value.eventData) &&
     isOptionalString(value.route) &&
+    isOptionalString(value.queryParams) &&
     isOptionalString(value.referrer) &&
     isOptionalString(value.country) &&
     isOptionalString(value.region) &&
@@ -272,6 +275,7 @@ export async function POST(request: NextRequest) {
     event_type: e.eventType,
     path: e.path,
     route: e.route ?? null,
+    query_params: e.queryParams ?? null,
     referrer: e.referrer ?? null,
     country: e.country ?? null,
     region: e.region ?? null,

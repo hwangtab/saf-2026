@@ -18,6 +18,7 @@ import {
   AnalyticsCsvExport,
 } from './_components/AnalyticsCharts';
 import CrossLinkPanel from './_components/CrossLinkPanel';
+import InsightsPanel from './_components/InsightsPanel';
 import { getTranslations, getLocale } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -154,6 +155,9 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
 
       {/* 브라우저 / OS 분포 */}
       <BrowserOsChart browserData={data.browserDistribution} osData={data.osDistribution} />
+
+      {/* 사용자 행동 인사이트 (Phase A) */}
+      <InsightsPanel data={data.insights} />
 
       {/* 매거진 ↔ 작품 cross-link funnel */}
       <CrossLinkPanel data={data.crossLinks} />
