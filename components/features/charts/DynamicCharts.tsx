@@ -5,9 +5,13 @@ import { ComponentType } from 'react';
 import { useTranslations } from 'next-intl';
 import { ChartErrorBoundary } from './ChartErrorBoundary';
 
+// CLS 회피: ChartContainer 실제 높이(p-6 padding 48 + title h3 mb-4 ~48 +
+// ResponsiveContainer height 300 + description ~36 ≈ 432px)와 placeholder 사이
+// 차이가 크면 chart chunk 로드 후 layout shift 발생. min-h-[400px]로 일치.
+// (ChartSkeleton in ChartContainer.tsx도 동일 값.)
 const LoadingPlaceholder = ({ label }: { label: string }) => (
   <div
-    className="h-96 bg-gray-100 rounded animate-pulse"
+    className="min-h-[400px] bg-gray-100 rounded animate-pulse"
     role="status"
     aria-busy="true"
     aria-label={label}
