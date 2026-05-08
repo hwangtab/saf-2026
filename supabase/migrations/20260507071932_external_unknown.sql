@@ -1,0 +1,27 @@
+-- =============================================
+-- Placeholder: 외부 세션이 CLI 우회하여 적용한 미상 마이그레이션
+-- =============================================
+--
+-- 발견 시점: 2026-05-08
+-- 발견 경위: `supabase migration list` 실행 시 REMOTE 컬럼에는 있으나 LOCAL에 없는
+-- 마이그레이션. 다른 작업 세션이 Supabase Dashboard SQL Editor 또는 직접 psql로 schema
+-- 변경을 적용한 후 supabase_migrations.schema_migrations 테이블에 timestamp만 등록한
+-- 케이스로 추정.
+--
+-- 실제 schema 변경 내용: 미상.
+-- 운영 DB의 실제 schema state를 알려면:
+--   1) Supabase Dashboard > Database > Tables/Functions에서 직접 확인, 또는
+--   2) supabase db pull --schema public 후 diff 검토
+--
+-- 본 placeholder의 목적:
+-- - `supabase migration repair --status applied 20260507071932` 명령이 로컬에 같은
+--   timestamp의 SQL 파일을 요구함 → 이 파일이 그 요구를 충족시켜 후속 db push 가능
+-- - 미래 환경 재구성 시 누군가가 이 timestamp의 변경 내용을 추적할 수 있도록
+--   placeholder임을 명시
+--
+-- ⚠ 주의: 본 파일은 의도적으로 비어있음. 운영 DB schema는 이미 다른 세션이 변경했고,
+-- 이 파일을 새 환경에 적용해도 그 변경이 재현되지 않음. 새 환경 구성 시 운영 DB의
+-- 실제 schema dump가 필요함.
+
+-- (no-op)
+SELECT 1 WHERE FALSE;
