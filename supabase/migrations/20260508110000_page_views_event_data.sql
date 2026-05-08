@@ -154,16 +154,18 @@ AS $$
   LIMIT lim
 $$;
 
--- 6) position(카드 순서)별 클릭 분포
+-- 6) position(카드 순서)별 클릭 분포 — `position`은 PostgreSQL reserved keyword라
+-- RETURNS TABLE 컬럼명으로 사용 못 함(syntax error). `card_position`으로 두고 호출부는
+-- 그대로 position 키로 매핑.
 CREATE OR REPLACE FUNCTION get_story_to_artwork_position_distribution(since_ts timestamptz)
 RETURNS TABLE(
-  position int,
+  card_position int,
   clicks bigint
 )
 LANGUAGE sql STABLE SECURITY DEFINER
 AS $$
   SELECT
-    (event_data->>'position')::int AS position,
+    (event_data->>'position')::int AS card_position,
     COUNT(*) AS clicks
   FROM page_views
   WHERE event_timestamp >= since_ts

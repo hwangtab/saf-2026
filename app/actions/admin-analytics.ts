@@ -90,7 +90,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     visitors: number;
   };
   type SourceRow = { source: string; clicks: number; visitors: number };
-  type PositionRow = { position: number; clicks: number };
+  // `position`은 PG reserved keyword라 RPC 컬럼명을 `card_position`으로 정의
+  // (마이그레이션 20260508110000 참조). 호출부는 그대로 position number로 매핑.
+  type PositionRow = { card_position: number; clicks: number };
 
   const [
     summaryRes,
@@ -275,7 +277,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
     positionDistribution: Array.isArray(positionDistRes.data)
       ? positionDistRes.data.map((row) => ({
-          position: Number(row.position),
+          position: Number(row.card_position),
           clicks: Number(row.clicks),
         }))
       : [],
