@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import nextDynamic from 'next/dynamic';
-import { Suspense } from 'react';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
@@ -166,9 +165,11 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       <Section variant="white" prevVariant="canvas" className="pb-20">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('statsTitle')}</SectionTitle>
-          <Suspense fallback={<div className="h-32 animate-pulse bg-gray-100 rounded" />}>
-            <DynamicCounter items={counterItems} locale={locale} />
-          </Suspense>
+          {/* DynamicCounter는 dynamic import 아닌 직접 import이고 SSR 결과가
+              fallback(h-32 = 128px)과 다름(모바일 1열 3카드 ~480px). 회귀로 CLS 1.0
+              유발. CategorySections·HomeFAQSection과 동일 패턴으로 Suspense 제거 —
+              SSR 후 hydrate 시 카드 높이가 안정적. */}
+          <DynamicCounter items={counterItems} locale={locale} />
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
             <LinkButton
               href={EXTERNAL_LINKS.JOIN_MEMBER}
