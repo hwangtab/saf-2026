@@ -22,14 +22,20 @@ type VercelDrainEvent = {
   eventType: 'pageview' | 'event';
   eventName?: string;
   /**
-   * Vercel Analytics Drain v2: track(eventName, properties) 호출의 properties가
-   * JSON-stringified 형태로 들어오는 필드.
-   * 예: '{"artwork_id":"abc","source":"inline","story_slug":"...","position":0}'
-   * 이전 버전 webhook 코드는 이 필드를 type 정의에 포함시키지 않아 drop했고,
-   * 본 패치 + page_views.event_data jsonb 컬럼으로 보존.
-   * 참조: https://vercel.com/docs/drains/reference/analytics
+   * Vercel Analytics Drain의 custom event properties는 schema 버전·SDK 버전 조합에 따라
+   * 두 필드명 중 하나로 들어옴 — 양쪽 모두 type에 정의해 parseEventData()가 fallback.
+   *
+   * - eventData (string, JSON-stringified): 공식 v2 docs 형식
+   *   예: '{"artwork_id":"abc","source":"inline","position":0}'
+   *   참조: https://vercel.com/docs/drains/reference/analytics
+   *
+   * - data (string|object): @vercel/analytics SDK 내부에서 사용하는 필드명. 1.6.x 기준
+   *   `window.va("event", { name, data: props })` 형태로 전송. 일부 Drain 페이로드에서
+   *   이 이름이 그대로 보존되는 경우가 관찰됨 (cross-link 13건 모두 eventData NULL이라
+   *   진단 후 추가).
    */
   eventData?: string;
+  data?: string | Record<string, unknown>;
   /** 동적 라우트 패턴 (예: '/stories/[slug]'). path 슬러그별 fragment와 별도. */
   route?: string;
   timestamp: number;
@@ -102,6 +108,8 @@ function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
     return false;
   }
 
+  // `data` 필드는 string 또는 object 둘 다 허용 — 검증을 typeof로 명시적으로 처리하지
+  // 않고 parseEventData()에서 안전하게 좁힘. 잘못된 형식이면 null 반환.
   return (
     isOptionalString(value.eventName) &&
     isOptionalString(value.eventData) &&
@@ -119,19 +127,33 @@ function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
 }
 
 /**
- * Vercel Drain의 eventData(JSON-stringified)를 안전하게 jsonb로 파싱.
+ * Vercel Drain payload에서 custom event properties를 추출 — 두 필드명 fallback 시도.
+ *
+ * 발견 경위(2026-05-08): cross-link click 13건 모두 event_data가 NULL로 들어와 진단.
+ * @vercel/analytics SDK 내부 코드 추적 결과 SDK는 properties를 `data` 필드로 wrap해
+ * Vercel Web Analytics에 전송. 공식 Drain docs는 `eventData` (string)을 명시하지만,
+ * 실제 페이로드에는 SDK 측 필드명 `data`가 그대로 보존되어 forward되는 경우가 있음.
+ * 양쪽을 순차 시도해 어느 schema든 호환.
+ *
  * 잘못된 JSON, primitive 값(string·number·boolean), null은 모두 null 반환 — 잘못 들어온
  * 데이터로 row insert 자체가 실패하지 않도록 격리.
  */
-function parseEventData(eventData: string | undefined): Record<string, unknown> | null {
-  if (!eventData) return null;
-  try {
-    const parsed = JSON.parse(eventData);
-    if (!isRecord(parsed)) return null;
-    return parsed;
-  } catch {
-    return null;
+function parseEventData(event: VercelDrainEvent): Record<string, unknown> | null {
+  const raw = event as unknown as Record<string, unknown>;
+  for (const key of ['eventData', 'data'] as const) {
+    const value = raw[key];
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        if (isRecord(parsed)) return parsed;
+      } catch {
+        // not valid JSON for this field, try next candidate
+      }
+    } else if (isRecord(value)) {
+      return value;
+    }
   }
+  return null;
 }
 
 function hasAcceptedAnalyticsSchema(value: unknown): boolean {
@@ -260,7 +282,7 @@ export async function POST(request: NextRequest) {
     session_id: e.sessionId != null ? String(e.sessionId) : null,
     device_id: e.deviceId != null ? String(e.deviceId) : null,
     event_name: e.eventName ?? null,
-    event_data: parseEventData(e.eventData),
+    event_data: parseEventData(e),
     event_timestamp: new Date(e.timestamp).toISOString(),
   }));
 
