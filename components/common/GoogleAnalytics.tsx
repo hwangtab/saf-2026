@@ -3,7 +3,10 @@
 import { useEffect } from 'react';
 import Script from 'next/script';
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+// Vercel 환경변수에 trailing newline이 들어가는 경우가 있어 GA4 measurement ID
+// 매칭이 깨짐(`G-XXX\n`). gtag('config', 'G-XXX\n', ...)가 silent fail이라
+// dataLayer에는 들어가지만 GA4 서버로 전송 안 됨 — RUM 14일+ 0건 회귀의 근본 원인.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID?.trim();
 
 export default function GoogleAnalytics() {
   useEffect(() => {
