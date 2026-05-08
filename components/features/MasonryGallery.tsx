@@ -1,69 +1,63 @@
 'use client';
 
-import { memo, useState, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ArtworkListItem } from '@/types';
 import ArtworkCard from '@/components/ui/ArtworkCard';
+import { Pagination } from '@/components/ui/Pagination';
 
-// 초기 SSR HTML 페이로드 절감용 — 카드당 ~20KB 마크업 × 12 = 240KB 절약.
-// 모바일 첫 화면(1열·6점)·데스크톱(3열·4행=12점) 모두 충분히 채움.
-// IntersectionObserver(rootMargin=400px)가 스크롤 임박 즉시 다음 12점 로드해 UX 지연 최소화.
-const INITIAL_BATCH = 12;
-// 추가 로드 단위 — 사용자가 스크롤 시 한 번에 더 많이 가져와 IO 호출 빈도 감소.
-const ADDITIONAL_BATCH = 24;
+// 페이지당 작품 수. 모바일(1열)·태블릿(2열)·데스크톱(3열) 모두 자연스러운 행 수가 되도록 24로 설정.
+// 365점/24 ≈ 16페이지. 사용자가 한 페이지를 끝까지 스크롤할 만큼만 보여주고 다음 페이지로.
+const PAGE_SIZE = 24;
 
 interface MasonryGalleryProps {
   artworks: ArtworkListItem[];
 }
 
 function MasonryGallery({ artworks }: MasonryGalleryProps) {
-  const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const isLoadingRef = useRef(false);
+  // 이전 infinite scroll(IntersectionObserver) 패턴은 batch 추가 시점마다 Gallery Section
+  // 높이가 viewport만큼 늘어나며 그 아래 Section들(Category Guide·Campaign Banner·FAQ)이
+  // 일제히 밀려 CLS 1.0 발생 (PSI CrUX 모바일 측정 회귀의 직접 원인). 페이지네이션으로 변경 —
+  // 페이지 이동은 사용자 입력 직후 layout 변화라 hadRecentInput=true로 CLS 카운트 안 됨.
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const pageParam = Number(searchParams.get('page') || '1');
+  const totalPages = Math.max(1, Math.ceil(artworks.length / PAGE_SIZE));
+  const currentPage = Math.min(Math.max(1, pageParam), totalPages);
 
-  // Fix #1: Use stable primitives to detect real filter/sort changes,
-  // not the artworks array reference (which can change on URL sync)
-  const artworksKey = artworks.length > 0 ? artworks[0].id : '';
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const visibleArtworks = artworks.slice(start, start + PAGE_SIZE);
+
+  // 페이지 변경(URL ?page=N) 시 부드럽게 상단으로 스크롤. 사용자가 깊이 스크롤된 상태에서
+  // pagination을 누르면 새 카드가 viewport 밖이라 혼란스러운 UX 방지.
+  // 첫 마운트 또는 sortKey 변경 시엔 스크롤하지 않도록 ref로 가드.
+  const isFirstRender = useRef(true);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: reset visible count when filter/sort changes
-    setVisibleCount(INITIAL_BATCH);
-  }, [artworksKey, artworks.length]);
-
-  // Fix #5: Guard against cascade loading — use a ref to prevent
-  // re-firing before the new batch has rendered and pushed the sentinel down
-  useEffect(() => {
-    isLoadingRef.current = false;
-  }, [visibleCount]);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel || visibleCount >= artworks.length) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isLoadingRef.current) {
-          isLoadingRef.current = true;
-          setVisibleCount((prev) => Math.min(prev + ADDITIONAL_BATCH, artworks.length));
-        }
-      },
-      { rootMargin: '400px' }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [artworks.length, visibleCount]);
-
-  const visibleArtworks = artworks.slice(0, visibleCount);
-  const hasMore = visibleCount < artworks.length;
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentPage]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
-      {visibleArtworks.map((artwork, index) => (
-        <div key={artwork.id} id={`artwork-${artwork.id}`} className="w-full">
-          <ArtworkCard artwork={artwork} variant="gallery" priorityIndex={index} />
-        </div>
-      ))}
-      {hasMore && <div ref={sentinelRef} className="col-span-full h-px" aria-hidden="true" />}
-    </div>
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+        {visibleArtworks.map((artwork, index) => (
+          <div key={artwork.id} id={`artwork-${artwork.id}`} className="w-full">
+            <ArtworkCard artwork={artwork} variant="gallery" priorityIndex={index} />
+          </div>
+        ))}
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={artworks.length}
+        baseUrl={pathname}
+      />
+    </>
   );
 }
 
