@@ -118,7 +118,7 @@ export default async function CrossLinkPanel({ data }: Props) {
               data={data.topConvertingStories}
               emptyTitle={t('noCrossLinkData')}
               emptyDescription={t('noCrossLinkDataDesc')}
-              slugLabel={t('storySlugColumn')}
+              titleLabel={t('storyTitleColumn')}
               clicksLabel={t('clicksColumn')}
               visitorsLabel={t('visitors')}
             />
@@ -179,14 +179,14 @@ function StoriesTable({
   data,
   emptyTitle,
   emptyDescription,
-  slugLabel,
+  titleLabel,
   clicksLabel,
   visitorsLabel,
 }: {
-  data: Array<{ storySlug: string; clicks: number; visitors: number }>;
+  data: Array<{ storySlug: string; storyTitle: string | null; clicks: number; visitors: number }>;
   emptyTitle: string;
   emptyDescription: string;
-  slugLabel: string;
+  titleLabel: string;
   clicksLabel: string;
   visitorsLabel: string;
 }) {
@@ -199,7 +199,7 @@ function StoriesTable({
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-gray-100">
-            <th className="px-6 py-3 font-medium text-gray-500">{slugLabel}</th>
+            <th className="px-6 py-3 font-medium text-gray-500">{titleLabel}</th>
             <th className="px-6 py-3 text-right font-medium text-gray-500">{clicksLabel}</th>
             <th className="px-6 py-3 text-right font-medium text-gray-500">{visitorsLabel}</th>
           </tr>
@@ -207,7 +207,25 @@ function StoriesTable({
         <tbody className="divide-y divide-gray-50">
           {data.map((row) => (
             <tr key={row.storySlug} className="transition-colors hover:bg-gray-50">
-              <td className="px-6 py-3 text-gray-700 truncate max-w-[400px]">{row.storySlug}</td>
+              <td className="px-6 py-3 max-w-[500px]">
+                {/*
+                  새 탭으로 열기: 운영자가 분석 화면 컨텍스트를 잃지 않고 매거진 확인 후 돌아옴.
+                  storyTitle이 null인 경우(예: 매거진 삭제 후) slug 단독 표시 — 클릭은 그대로 가능.
+                */}
+                <a
+                  href={`/stories/${row.storySlug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-primary-a11y hover:underline"
+                >
+                  <div className="font-medium text-gray-900 line-clamp-2">
+                    {row.storyTitle ?? row.storySlug}
+                  </div>
+                  {row.storyTitle && (
+                    <div className="text-xs text-gray-500 mt-0.5 truncate">{row.storySlug}</div>
+                  )}
+                </a>
+              </td>
               <td className="px-6 py-3 text-right tabular-nums text-gray-900">
                 {numberFormatter.format(row.clicks)}
               </td>
@@ -231,7 +249,13 @@ function ArtworksTable({
   clicksLabel,
   visitorsLabel,
 }: {
-  data: Array<{ artworkId: string; artist: string; clicks: number; visitors: number }>;
+  data: Array<{
+    artworkId: string;
+    artworkTitle: string | null;
+    artist: string;
+    clicks: number;
+    visitors: number;
+  }>;
   emptyTitle: string;
   emptyDescription: string;
   artworkLabel: string;
@@ -257,8 +281,25 @@ function ArtworksTable({
         <tbody className="divide-y divide-gray-50">
           {data.map((row) => (
             <tr key={row.artworkId} className="transition-colors hover:bg-gray-50">
-              <td className="px-6 py-3 font-mono text-xs text-gray-700 truncate max-w-[200px]">
-                {row.artworkId}
+              <td className="px-6 py-3 max-w-[400px]">
+                {/* 작품 detail 새 탭으로. 작품 title이 비어있으면 id로 fallback. */}
+                <a
+                  href={`/artworks/${row.artworkId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block hover:underline"
+                >
+                  <div className="font-medium text-gray-900 line-clamp-2">
+                    {row.artworkTitle || (
+                      <span className="font-mono text-xs text-gray-500">{row.artworkId}</span>
+                    )}
+                  </div>
+                  {row.artworkTitle && (
+                    <div className="font-mono text-[10px] text-gray-400 mt-0.5 truncate">
+                      {row.artworkId}
+                    </div>
+                  )}
+                </a>
               </td>
               <td className="px-6 py-3 text-gray-700">{row.artist || '—'}</td>
               <td className="px-6 py-3 text-right tabular-nums text-gray-900">

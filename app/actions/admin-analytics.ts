@@ -35,9 +35,21 @@ export type AnalyticsData = {
       artworkToStoryClicks: number;
       artworkToStoryVisitors: number;
     };
-    topConvertingStories: Array<{ storySlug: string; clicks: number; visitors: number }>;
+    /**
+     * UI에서 사용자가 직접 페이지로 이동할 수 있게 storyTitle도 함께 노출 — slug만으로는
+     * 운영자가 어떤 매거진인지 알 수 없음. RPC 결과 + stories 테이블 batch fetch 결합.
+     * 매거진 삭제·이름 변경 시 fallback: storyTitle null일 수 있음 → UI는 slug 표시.
+     */
+    topConvertingStories: Array<{
+      storySlug: string;
+      storyTitle: string | null;
+      clicks: number;
+      visitors: number;
+    }>;
+    /** 작품 title + artist도 함께 — id는 보조 표시. */
     topClickedArtworks: Array<{
       artworkId: string;
+      artworkTitle: string | null;
       artist: string;
       clicks: number;
       visitors: number;
@@ -46,6 +58,7 @@ export type AnalyticsData = {
     positionDistribution: Array<{ position: number; clicks: number }>;
     topArtworkSources: Array<{
       artworkId: string;
+      artworkTitle: string | null;
       artist: string;
       clicks: number;
       visitors: number;
@@ -246,6 +259,57 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   const crossLinkSummaryRow = Array.isArray(crossLinkSummaryRes.data)
     ? crossLinkSummaryRes.data[0]
     : null;
+
+  // RPC 결과의 slug/id를 운영자가 알아볼 수 있게 title/artist로 hydrate.
+  // RPC를 join 형태로 다시 짜는 대신 server action에서 batch fetch — 작은 N(<=10)이라
+  // 부담 작고 RPC schema 단순 유지.
+  const storySlugs = Array.isArray(topConvertingStoriesRes.data)
+    ? Array.from(new Set(topConvertingStoriesRes.data.map((r) => r.story_slug)))
+    : [];
+  const artworkIds = Array.from(
+    new Set([
+      ...(Array.isArray(topClickedArtworksRes.data)
+        ? topClickedArtworksRes.data.map((r) => r.artwork_id)
+        : []),
+      ...(Array.isArray(topArtworkSourcesRes.data)
+        ? topArtworkSourcesRes.data.map((r) => r.artwork_id)
+        : []),
+    ])
+  );
+
+  const [storyMetaRes, artworkMetaRes] = await Promise.all([
+    storySlugs.length > 0
+      ? supabase.from('stories').select('slug, title').in('slug', storySlugs)
+      : Promise.resolve({ data: [] as Array<{ slug: string; title: string }> }),
+    artworkIds.length > 0
+      ? supabase.from('artworks').select('id, title, artists(name_ko)').in('id', artworkIds)
+      : Promise.resolve({
+          data: [] as Array<{ id: string; title: string; artists: { name_ko: string } | null }>,
+        }),
+  ]);
+
+  const storyTitleByslug = new Map<string, string>();
+  if (Array.isArray(storyMetaRes.data)) {
+    for (const s of storyMetaRes.data) {
+      if (s?.slug && s?.title) storyTitleByslug.set(s.slug, s.title);
+    }
+  }
+  const artworkMetaById = new Map<string, { title: string; artist: string }>();
+  if (Array.isArray(artworkMetaRes.data)) {
+    for (const a of artworkMetaRes.data as Array<{
+      id: string;
+      title: string;
+      artists: { name_ko: string } | null;
+    }>) {
+      if (a?.id) {
+        artworkMetaById.set(a.id, {
+          title: a.title ?? '',
+          artist: a.artists?.name_ko ?? '',
+        });
+      }
+    }
+  }
+
   const crossLinks: AnalyticsData['crossLinks'] = {
     summary: {
       storyToArtworkClicks: Number(crossLinkSummaryRow?.story_to_artwork_clicks ?? 0),
@@ -256,17 +320,24 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     topConvertingStories: Array.isArray(topConvertingStoriesRes.data)
       ? topConvertingStoriesRes.data.map((row) => ({
           storySlug: row.story_slug,
+          storyTitle: storyTitleByslug.get(row.story_slug) ?? null,
           clicks: Number(row.clicks),
           visitors: Number(row.visitors),
         }))
       : [],
     topClickedArtworks: Array.isArray(topClickedArtworksRes.data)
-      ? topClickedArtworksRes.data.map((row) => ({
-          artworkId: row.artwork_id,
-          artist: row.artist,
-          clicks: Number(row.clicks),
-          visitors: Number(row.visitors),
-        }))
+      ? topClickedArtworksRes.data.map((row) => {
+          const meta = artworkMetaById.get(row.artwork_id);
+          return {
+            artworkId: row.artwork_id,
+            artworkTitle: meta?.title ?? null,
+            // RPC가 event_data에서 가져온 artist는 이벤트 발생 시점 snapshot — 작가 이름
+            // 변경됐으면 stale. artworks 테이블의 현재 작가가 더 정확.
+            artist: meta?.artist || row.artist,
+            clicks: Number(row.clicks),
+            visitors: Number(row.visitors),
+          };
+        })
       : [],
     sourceDistribution: Array.isArray(sourceDistRes.data)
       ? sourceDistRes.data.map((row) => ({
@@ -282,12 +353,16 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
         }))
       : [],
     topArtworkSources: Array.isArray(topArtworkSourcesRes.data)
-      ? topArtworkSourcesRes.data.map((row) => ({
-          artworkId: row.artwork_id,
-          artist: row.artist,
-          clicks: Number(row.clicks),
-          visitors: Number(row.visitors),
-        }))
+      ? topArtworkSourcesRes.data.map((row) => {
+          const meta = artworkMetaById.get(row.artwork_id);
+          return {
+            artworkId: row.artwork_id,
+            artworkTitle: meta?.title ?? null,
+            artist: meta?.artist || row.artist,
+            clicks: Number(row.clicks),
+            visitors: Number(row.visitors),
+          };
+        })
       : [],
   };
 

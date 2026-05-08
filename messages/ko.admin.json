@@ -443,6 +443,7 @@
       "sourceRecentFallback": "최신 작품 fallback",
       "sourceUnknown": "(미분류)",
       "storySlugColumn": "매거진 슬러그",
+      "storyTitleColumn": "매거진",
       "artworkColumn": "작품 ID",
       "artistColumn": "작가",
       "positionColumn": "위치",

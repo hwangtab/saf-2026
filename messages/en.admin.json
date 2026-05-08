@@ -443,6 +443,7 @@
       "sourceRecentFallback": "Recent fallback",
       "sourceUnknown": "(unknown)",
       "storySlugColumn": "Story slug",
+      "storyTitleColumn": "Story",
       "artworkColumn": "Artwork ID",
       "artistColumn": "Artist",
       "positionColumn": "Position",
