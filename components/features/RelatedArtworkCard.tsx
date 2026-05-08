@@ -6,11 +6,22 @@ import SafeImage from '@/components/common/SafeImage';
 import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
 import type { Artwork } from '@/types';
 
+type ArtworkSource = 'inline' | 'artist-fallback' | 'recent-fallback';
+
 interface Props {
   artwork: Artwork;
   isEn: boolean;
   storySlug: string;
   position: number;
+  /**
+   * 어떤 매칭 단계에서 추천된 작품인지.
+   * - inline: 본문에 작가가 직접 인용 (가장 의도적)
+   * - artist-fallback: 본문 인용 없을 때 artist-story → 작가 다른 작품
+   * - recent-fallback: 작가 매칭도 실패 → 사이트 최신 판매중
+   *
+   * tier별 CTR 차이로 매칭 알고리즘 효과 측정.
+   */
+  source: ArtworkSource;
 }
 
 /**
@@ -24,7 +35,7 @@ interface Props {
  * conversion funnel 측정에 사용 — README가 짚은 "매거진 글 노출 0~3" 회귀 진단 후
  * 어떤 개선이 효과 있는지 측정 기반 의사결정을 위한 인프라.
  */
-export default function RelatedArtworkCard({ artwork, isEn, storySlug, position }: Props) {
+export default function RelatedArtworkCard({ artwork, isEn, storySlug, position, source }: Props) {
   const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
   const artArtist = isEn && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const imgUrl = resolveArtworkImageUrl(artwork.images[0] ?? '');
@@ -36,6 +47,7 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position 
         artwork_id: artwork.id,
         artist: artwork.artist,
         position,
+        source,
       });
     } catch (error) {
       // 분석 실패가 navigation을 막아선 안 됨 — 조용히 로깅만.

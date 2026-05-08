@@ -207,7 +207,14 @@ export default async function StoryDetailPage({ params }: Props) {
 
   // Related artworks
   // 우선순위: 본문에 직접 인용된 작품 → 작가 태그(artist-story) → 최신 판매중 작품 fallback
+  // source는 tracking에서 tier별 CTR 비교에 사용 — 어느 매칭이 실제 conversion을 만드는지 측정.
   let relatedArtworks: Artwork[] = [];
+  let artworksSource: 'inline' | 'artist-fallback' | 'recent-fallback' = 'inline';
+
+  // sold 작품은 클릭 시 "SOLD" 화면으로 dead-end가 되므로 가장 끝으로 밀어내려 정렬.
+  // 인용 자체는 유지 (sold-out 명작 referencing 같은 educational use-case 보존).
+  const sortAvailableFirst = (a: Artwork, b: Artwork) =>
+    Number(a.sold ?? false) - Number(b.sold ?? false);
 
   const referencedArtworkIds = extractArtworkIds(story.body);
   if (referencedArtworkIds.length > 0) {
@@ -218,16 +225,22 @@ export default async function StoryDetailPage({ params }: Props) {
     relatedArtworks = referencedArtworkIds
       .map((id) => byId.get(id))
       .filter((a): a is Artwork => Boolean(a))
+      .sort(sortAvailableFirst)
       .slice(0, 6);
+    artworksSource = 'inline';
   }
 
   if (relatedArtworks.length === 0 && primaryArtistTag) {
-    relatedArtworks = (await getSupabaseArtworksByArtist(primaryArtistTag)).slice(0, 3);
+    relatedArtworks = (await getSupabaseArtworksByArtist(primaryArtistTag))
+      .sort(sortAvailableFirst)
+      .slice(0, 3);
+    artworksSource = 'artist-fallback';
   }
 
   if (relatedArtworks.length === 0) {
     const allArtworks = await getSupabaseArtworks();
     relatedArtworks = allArtworks.filter((a) => !a.sold).slice(0, 3);
+    artworksSource = 'recent-fallback';
   }
 
   const footerLinks = [
@@ -339,6 +352,7 @@ export default async function StoryDetailPage({ params }: Props) {
                   isEn={isEn}
                   storySlug={story.slug}
                   position={i}
+                  source={artworksSource}
                 />
               ))}
             </div>

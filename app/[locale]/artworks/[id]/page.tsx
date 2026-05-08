@@ -18,7 +18,6 @@ import {
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import { getMaterialLabel } from '@/lib/artwork-material';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
-import SafeImage from '@/components/common/SafeImage';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
@@ -27,6 +26,7 @@ import ArtworkDetailNav from '@/components/features/ArtworkDetailNav';
 import { parsePrice } from '@/lib/parsePrice';
 import { SITE_URL } from '@/lib/constants';
 import RelatedArticles from '@/components/features/RelatedArticles';
+import RelatedMagazineCard from '@/components/features/RelatedMagazineCard';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
 import { generateArtworkPurchaseFAQ, generateArtworkSpecificFAQ } from '@/lib/schemas/howto';
@@ -57,13 +57,6 @@ interface Props {
 export const dynamic = 'force-static';
 export const dynamicParams = true;
 export const revalidate = 3600;
-
-/** 스토리 body 마크다운에서 첫 번째 이미지 URL 추출 — 썸네일 fallback용 */
-function extractFirstImage(body: string | null | undefined): string | null {
-  if (!body) return null;
-  const match = body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
-  return match?.[1] ?? null;
-}
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -535,47 +528,16 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     {locale === 'en' ? 'Magazine' : '관련 매거진'}
                   </h2>
                   <div className="space-y-4">
-                    {relatedMagazineStories.map((story) => {
-                      const storyTitle =
-                        locale === 'en' && story.title_en ? story.title_en : story.title;
-                      const storyExcerpt =
-                        locale === 'en' && story.excerpt_en ? story.excerpt_en : story.excerpt;
-                      const thumbUrl = story.thumbnail || extractFirstImage(story.body);
-                      return (
-                        <Link
-                          key={story.id}
-                          href={`/stories/${story.slug}`}
-                          className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-lg"
-                        >
-                          {thumbUrl && (
-                            <div className="relative aspect-[16/10] overflow-hidden">
-                              <SafeImage
-                                src={thumbUrl}
-                                alt={storyTitle}
-                                fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                            </div>
-                          )}
-                          <div className="p-4">
-                            <span className="text-[10px] font-semibold tracking-wider uppercase text-primary">
-                              {locale === 'en' ? 'Magazine' : '매거진'}
-                            </span>
-                            <h3 className="text-sm font-bold mt-1.5 line-clamp-2 group-hover:text-primary transition-colors duration-300">
-                              {storyTitle}
-                            </h3>
-                            {storyExcerpt && (
-                              <p className="text-xs text-charcoal-muted mt-1.5 line-clamp-2 leading-relaxed">
-                                {storyExcerpt}
-                              </p>
-                            )}
-                            <span className="text-[10px] text-charcoal-muted/60 mt-2 block">
-                              {story.published_at}
-                            </span>
-                          </div>
-                        </Link>
-                      );
-                    })}
+                    {relatedMagazineStories.map((story, i) => (
+                      <RelatedMagazineCard
+                        key={story.id}
+                        story={story}
+                        isEn={locale === 'en'}
+                        artworkId={artwork.id}
+                        artworkArtist={artwork.artist}
+                        position={i}
+                      />
+                    ))}
                   </div>
                 </div>
               )}
