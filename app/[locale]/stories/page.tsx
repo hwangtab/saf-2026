@@ -197,7 +197,9 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
       {/* Category Filter */}
       <Section variant="white">
         <div className="max-w-6xl mx-auto px-4 sm:px-5">
-          <Suspense fallback={null}>
+          {/* fallback={null}이면 hydration 시 chip 4개(~42px) 점프 → CLS 누적.
+              chip과 동일 높이로 고정 placeholder. */}
+          <Suspense fallback={<div className="h-[42px]" aria-hidden="true" />}>
             <StoriesCategoryFilter locale={locale} />
           </Suspense>
         </div>

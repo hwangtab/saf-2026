@@ -118,7 +118,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
         breadcrumbItems={breadcrumbItems}
       />
 
-      <Section variant="white" className="min-h-[60vh] pb-24 md:pb-32">
+      <Section variant="white" className="min-h-[60svh] pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">
             {isEnglish ? 'Past event records' : '지난 행사 기록'}
