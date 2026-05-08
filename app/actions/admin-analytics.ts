@@ -93,6 +93,34 @@ export type AnalyticsData = {
     }>;
   };
   /**
+   * 작가별·매거진별 commerce 기여도 — Phase C.
+   * - artistDashboard: 작가별 페이지뷰·결제·매출·view→paid conversion
+   * - storyAttributedRevenue: 매거진에서 클릭된 작품의 결제 매출 (last-touch attribution)
+   *
+   * Attribution 한계: orders 테이블에 device_id 컬럼이 없어 명시적 사용자 매칭 불가.
+   * 단순 last-touch: 매거진에서 클릭된 artwork의 paid 매출을 그 매거진에 기여로 인정.
+   */
+  attribution: {
+    artistDashboard: Array<{
+      artistId: string;
+      artistName: string;
+      artworkCount: number;
+      totalViews: number;
+      uniqueVisitors: number;
+      ordersPaid: number;
+      totalRevenue: number;
+      viewToPaidRate: number;
+    }>;
+    storyAttributedRevenue: Array<{
+      storySlug: string;
+      storyTitle: string | null;
+      totalClicks: number;
+      uniqueClickers: number;
+      attributedOrdersPaid: number;
+      attributedRevenue: number;
+    }>;
+  };
+  /**
    * 매거진↔작품 cross-link funnel — 본문에 작품 인용 → 카드 클릭으로 이어지는 흐름.
    * 데이터 source는 page_views 테이블의 event_type='event' + event_name='*_click' 행.
    * 2026-05-08부터 webhook이 event_data jsonb 컬럼에 properties 보존해 활성화됨.
@@ -225,6 +253,23 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     orders_paid: number;
     revenue: number;
   };
+  type ArtistDashboardRow = {
+    artist_id: string;
+    artist_name: string;
+    artwork_count: number;
+    total_views: number;
+    unique_visitors: number;
+    orders_paid: number;
+    total_revenue: number;
+    view_to_paid_rate: number;
+  };
+  type StoryAttributionRow = {
+    story_slug: string;
+    total_clicks: number;
+    unique_clickers: number;
+    attributed_orders_paid: number;
+    attributed_revenue: number;
+  };
 
   const [
     summaryRes,
@@ -250,6 +295,8 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     commerceFunnelSummaryRes,
     artworkFunnelRes,
     revenueTrendRes,
+    artistDashboardRes,
+    storyAttributionRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -282,6 +329,14 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     untypedRpc<CommerceFunnelSummaryRow[]>('get_commerce_funnel_summary', { since_ts: sinceTs }),
     untypedRpc<ArtworkFunnelRow[]>('get_top_artwork_funnel', { since_ts: sinceTs, lim: 20 }),
     untypedRpc<RevenueTrendRow[]>('get_revenue_daily_trend', { since_ts: sinceTs }),
+    untypedRpc<ArtistDashboardRow[]>('get_artist_commerce_dashboard', {
+      since_ts: sinceTs,
+      lim: 30,
+    }),
+    untypedRpc<StoryAttributionRow[]>('get_story_attributed_revenue', {
+      since_ts: sinceTs,
+      lim: 20,
+    }),
   ]);
 
   // Summary
@@ -396,9 +451,17 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   // RPC 결과의 slug/id를 운영자가 알아볼 수 있게 title/artist로 hydrate.
   // RPC를 join 형태로 다시 짜는 대신 server action에서 batch fetch — 작은 N(<=10)이라
   // 부담 작고 RPC schema 단순 유지.
-  const storySlugs = Array.isArray(topConvertingStoriesRes.data)
-    ? Array.from(new Set(topConvertingStoriesRes.data.map((r) => r.story_slug)))
-    : [];
+  const storySlugs = Array.from(
+    new Set([
+      ...(Array.isArray(topConvertingStoriesRes.data)
+        ? topConvertingStoriesRes.data.map((r) => r.story_slug)
+        : []),
+      // Phase C: story attribution에 등장하는 slug도 함께 hydrate
+      ...(Array.isArray(storyAttributionRes.data)
+        ? storyAttributionRes.data.map((r) => r.story_slug).filter((s): s is string => Boolean(s))
+        : []),
+    ])
+  );
   const artworkIds = Array.from(
     new Set([
       ...(Array.isArray(topClickedArtworksRes.data)
@@ -582,6 +645,32 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
+  // Phase C: 작가/매거진 attribution
+  const attribution: AnalyticsData['attribution'] = {
+    artistDashboard: Array.isArray(artistDashboardRes.data)
+      ? artistDashboardRes.data.map((row) => ({
+          artistId: row.artist_id,
+          artistName: row.artist_name,
+          artworkCount: Number(row.artwork_count),
+          totalViews: Number(row.total_views),
+          uniqueVisitors: Number(row.unique_visitors),
+          ordersPaid: Number(row.orders_paid),
+          totalRevenue: Number(row.total_revenue),
+          viewToPaidRate: Number(row.view_to_paid_rate ?? 0),
+        }))
+      : [],
+    storyAttributedRevenue: Array.isArray(storyAttributionRes.data)
+      ? storyAttributionRes.data.map((row) => ({
+          storySlug: row.story_slug,
+          storyTitle: storyTitleByslug.get(row.story_slug) ?? null,
+          totalClicks: Number(row.total_clicks),
+          uniqueClickers: Number(row.unique_clickers),
+          attributedOrdersPaid: Number(row.attributed_orders_paid),
+          attributedRevenue: Number(row.attributed_revenue),
+        }))
+      : [],
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
@@ -596,6 +685,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     hourlyDistribution,
     insights,
     commerce,
+    attribution,
     crossLinks,
   };
 }

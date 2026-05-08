@@ -17,6 +17,7 @@ import {
   HourlyHeatmap,
   AnalyticsCsvExport,
 } from './_components/AnalyticsCharts';
+import AttributionPanel from './_components/AttributionPanel';
 import CommercePanel from './_components/CommercePanel';
 import CrossLinkPanel from './_components/CrossLinkPanel';
 import InsightsPanel from './_components/InsightsPanel';
@@ -159,6 +160,9 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
 
       {/* Commerce Funnel (Phase B) — 매출 직결, 가장 위에 노출 */}
       <CommercePanel data={data.commerce} />
+
+      {/* 작가·매거진 매출 기여도 (Phase C) — Commerce 직후 */}
+      <AttributionPanel data={data.attribution} />
 
       {/* 사용자 행동 인사이트 (Phase A) */}
       <InsightsPanel data={data.insights} />
