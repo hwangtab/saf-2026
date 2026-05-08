@@ -58,6 +58,41 @@ export type AnalyticsData = {
     }>;
   };
   /**
+   * Commerce funnel — 작품 페이지뷰부터 결제까지. 매출 의사결정 핵심 지표.
+   * - summary: 단계별 unique 수 + 총 매출
+   * - topArtworkFunnel: 작품별 funnel (조회→체크아웃→결제 conversion rate). 페이지뷰 많은데 안 팔리는 작품 식별
+   * - revenueDailyTrend: 일별 매출 추이 (결제 완료 기준)
+   */
+  commerce: {
+    summary: {
+      artworkViews: number;
+      uniqueArtworkVisitors: number;
+      checkoutViews: number;
+      uniqueCheckoutVisitors: number;
+      ordersCreated: number;
+      ordersPaid: number;
+      totalRevenue: number;
+    };
+    topArtworkFunnel: Array<{
+      artworkId: string;
+      artworkTitle: string | null;
+      artist: string;
+      views: number;
+      uniqueVisitors: number;
+      checkoutViews: number;
+      ordersCreated: number;
+      ordersPaid: number;
+      revenue: number;
+      viewToCheckoutRate: number;
+      checkoutToPaidRate: number;
+    }>;
+    revenueDailyTrend: Array<{
+      date: string;
+      ordersPaid: number;
+      revenue: number;
+    }>;
+  };
+  /**
    * 매거진↔작품 cross-link funnel — 본문에 작품 인용 → 카드 클릭으로 이어지는 흐름.
    * 데이터 source는 page_views 테이블의 event_type='event' + event_name='*_click' 행.
    * 2026-05-08부터 webhook이 event_data jsonb 컬럼에 properties 보존해 활성화됨.
@@ -165,6 +200,31 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     views: number;
     visitors: number;
   };
+  type CommerceFunnelSummaryRow = {
+    artwork_views: number;
+    unique_artwork_visitors: number;
+    checkout_views: number;
+    unique_checkout_visitors: number;
+    orders_created: number;
+    orders_paid: number;
+    total_revenue: number;
+  };
+  type ArtworkFunnelRow = {
+    artwork_id: string;
+    views: number;
+    unique_visitors: number;
+    checkout_views: number;
+    orders_created: number;
+    orders_paid: number;
+    revenue: number;
+    view_to_checkout_rate: number;
+    checkout_to_paid_rate: number;
+  };
+  type RevenueTrendRow = {
+    day: string;
+    orders_paid: number;
+    revenue: number;
+  };
 
   const [
     summaryRes,
@@ -187,6 +247,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     exitPagesRes,
     visitorRecurrenceRes,
     utmDistRes,
+    commerceFunnelSummaryRes,
+    artworkFunnelRes,
+    revenueTrendRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -216,6 +279,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     untypedRpc<ExitPageRow[]>('get_pv_top_exit_pages', { since_ts: sinceTs, lim: 10 }),
     untypedRpc<VisitorRecurrenceRow[]>('get_pv_visitor_recurrence', { since_ts: sinceTs }),
     untypedRpc<UtmRow[]>('get_pv_utm_distribution', { since_ts: sinceTs, lim: 20 }),
+    untypedRpc<CommerceFunnelSummaryRow[]>('get_commerce_funnel_summary', { since_ts: sinceTs }),
+    untypedRpc<ArtworkFunnelRow[]>('get_top_artwork_funnel', { since_ts: sinceTs, lim: 20 }),
+    untypedRpc<RevenueTrendRow[]>('get_revenue_daily_trend', { since_ts: sinceTs }),
   ]);
 
   // Summary
@@ -340,6 +406,10 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
         : []),
       ...(Array.isArray(topArtworkSourcesRes.data)
         ? topArtworkSourcesRes.data.map((r) => r.artwork_id)
+        : []),
+      // Phase B: artwork funnel에 등장하는 작품 id도 함께 hydrate
+      ...(Array.isArray(artworkFunnelRes.data)
+        ? artworkFunnelRes.data.map((r) => r.artwork_id).filter((id): id is string => Boolean(id))
         : []),
     ])
   );
@@ -471,6 +541,47 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
+  // Phase B: Commerce funnel
+  const commerceFunnelSummaryRow = Array.isArray(commerceFunnelSummaryRes.data)
+    ? commerceFunnelSummaryRes.data[0]
+    : null;
+  const commerce: AnalyticsData['commerce'] = {
+    summary: {
+      artworkViews: Number(commerceFunnelSummaryRow?.artwork_views ?? 0),
+      uniqueArtworkVisitors: Number(commerceFunnelSummaryRow?.unique_artwork_visitors ?? 0),
+      checkoutViews: Number(commerceFunnelSummaryRow?.checkout_views ?? 0),
+      uniqueCheckoutVisitors: Number(commerceFunnelSummaryRow?.unique_checkout_visitors ?? 0),
+      ordersCreated: Number(commerceFunnelSummaryRow?.orders_created ?? 0),
+      ordersPaid: Number(commerceFunnelSummaryRow?.orders_paid ?? 0),
+      totalRevenue: Number(commerceFunnelSummaryRow?.total_revenue ?? 0),
+    },
+    topArtworkFunnel: Array.isArray(artworkFunnelRes.data)
+      ? artworkFunnelRes.data.map((row) => {
+          const meta = artworkMetaById.get(row.artwork_id);
+          return {
+            artworkId: row.artwork_id,
+            artworkTitle: meta?.title ?? null,
+            artist: meta?.artist ?? '',
+            views: Number(row.views),
+            uniqueVisitors: Number(row.unique_visitors),
+            checkoutViews: Number(row.checkout_views),
+            ordersCreated: Number(row.orders_created),
+            ordersPaid: Number(row.orders_paid),
+            revenue: Number(row.revenue),
+            viewToCheckoutRate: Number(row.view_to_checkout_rate ?? 0),
+            checkoutToPaidRate: Number(row.checkout_to_paid_rate ?? 0),
+          };
+        })
+      : [],
+    revenueDailyTrend: Array.isArray(revenueTrendRes.data)
+      ? revenueTrendRes.data.map((row) => ({
+          date: row.day,
+          ordersPaid: Number(row.orders_paid),
+          revenue: Number(row.revenue),
+        }))
+      : [],
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
@@ -484,6 +595,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     osDistribution,
     hourlyDistribution,
     insights,
+    commerce,
     crossLinks,
   };
 }
