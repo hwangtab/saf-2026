@@ -405,6 +405,41 @@ export async function deleteVideo(id: string) {
 
 // ─── Stories (매거진) ───
 
+/**
+ * Story 변경 시 그 story의 tags(작가 이름)에 매칭되는 모든 artwork detail 페이지를 revalidate.
+ *
+ * 배경: artwork detail 페이지의 "관련 매거진" 섹션은 allStories.filter(s => s.tags?.includes(artwork.artist))
+ * 로 매칭. story 추가/수정/삭제 시 그 작가의 작품 detail은 ISR 캐시(revalidate=3600)에 stale로 남아
+ * 매거진 변경이 1시간 동안 반영 안 됨. 더 심각한 건 dynamicParams=true로 first-request SSG라 작품마다
+ * 다른 시점에 prerender → 같은 작가의 두 작품에서 한쪽만 매거진이 보이는 inconsistency 발생.
+ *
+ * 본 helper는 story.tags를 작가 이름으로 보고, 매칭되는 artists 레코드 → 그 작가의 모든 artwork id를
+ * 모아 일괄 revalidate. 일반적으로 작가당 작품 5~15개라 호출 부담 작음.
+ */
+async function revalidateArtworksForStoryTags(
+  supabase: Awaited<ReturnType<typeof requireAdminClient>>,
+  tags: string[] | null | undefined
+): Promise<void> {
+  if (!tags?.length) return;
+  const trimmed = tags.map((t) => t?.trim()).filter((t): t is string => Boolean(t));
+  if (!trimmed.length) return;
+
+  const { data: artists } = await supabase.from('artists').select('id').in('name_ko', trimmed);
+  if (!artists?.length) return;
+
+  const artistIds = artists.map((a) => a.id);
+  const { data: artworks } = await supabase
+    .from('artworks')
+    .select('id')
+    .in('artist_id', artistIds);
+  if (!artworks?.length) return;
+
+  for (const artwork of artworks) {
+    revalidatePath(`/artworks/${artwork.id}`);
+    revalidatePath(`/en/artworks/${artwork.id}`);
+  }
+}
+
 export async function createStory(formData: FormData) {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
@@ -452,6 +487,7 @@ export async function createStory(formData: FormData) {
   revalidatePath('/stories');
   revalidatePath('/sitemap.xml');
   revalidateTag('stories', 'max');
+  await revalidateArtworksForStoryTags(supabase, story?.tags);
 }
 
 export async function updateStory(id: string, formData: FormData) {
@@ -507,6 +543,10 @@ export async function updateStory(id: string, formData: FormData) {
   revalidatePath('/stories');
   revalidatePath('/sitemap.xml');
   revalidateTag('stories', 'max');
+  // tags가 변경됐을 수도 있어 이전 + 신규 tags 모두 revalidate
+  // (예: 작가 A → 작가 B로 tag 변경 시 양쪽 작가 작품 모두 갱신 필요)
+  const allTags = [...(oldStory?.tags ?? []), ...(newStory?.tags ?? [])];
+  await revalidateArtworksForStoryTags(supabase, allTags);
 }
 
 export async function deleteStory(id: string) {
@@ -527,4 +567,5 @@ export async function deleteStory(id: string) {
   revalidatePath('/stories');
   revalidatePath('/sitemap.xml');
   revalidateTag('stories', 'max');
+  await revalidateArtworksForStoryTags(supabase, story?.tags);
 }
