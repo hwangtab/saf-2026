@@ -149,6 +149,7 @@ export default function OverseasCheckoutClient({
     try {
       // 무통장 입금(TRANSFER): Toss 거치지 않고 IBK 계좌번호 안내. createOrder
       // 흐름과 별도. createBankTransferOrder가 awaiting_deposit + reserved 처리.
+      // KRW 결제이므로 success page에 currency=KRW 명시.
       if (paymentChoice === 'TRANSFER') {
         const result = await createBankTransferOrder({
           artworkId,
@@ -168,10 +169,17 @@ export default function OverseasCheckoutClient({
           setSubmitting(false);
           return;
         }
-        window.location.href = `${window.location.origin}/en/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+        window.location.href = `${window.location.origin}/en/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW`;
         await new Promise(() => {});
         return;
       }
+
+      // createOrder의 locale은 metadata.payment_provider 결정용
+      // (en → 'overseas'/saf202719y/USD, ko → 'domestic'/saf202i818/KRW).
+      // PayPal만 'overseas'(USD), 그 외(Card/easyPay)는 'domestic'(KRW)으로 저장해야
+      // confirm 단계에서 paymentKey와 provider 일치.
+      const orderLocale = paymentChoice === 'PAYPAL' ? 'en' : 'ko';
+      const successCurrency = paymentChoice === 'PAYPAL' ? 'USD' : 'KRW';
 
       const result = await createOrder({
         artworkId,
@@ -184,7 +192,7 @@ export default function OverseasCheckoutClient({
         shippingAddressDetail,
         shippingPostalCode,
         shippingMemo,
-        locale: 'en',
+        locale: orderLocale,
       });
 
       if (!result.success) {
@@ -196,7 +204,7 @@ export default function OverseasCheckoutClient({
       const { orderNo, orderName, totalAmount: serverTotal } = result;
       createdOrderNo = orderNo;
 
-      const successUrl = `${window.location.origin}/en/checkout/${artworkId}/success`;
+      const successUrl = `${window.location.origin}/en/checkout/${artworkId}/success?currency=${successCurrency}`;
       const failUrl = `${window.location.origin}/en/checkout/${artworkId}/fail`;
 
       // PayPal 흐름: Toss saf202719y MID + USD + redirect
