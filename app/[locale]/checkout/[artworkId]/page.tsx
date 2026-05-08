@@ -37,7 +37,7 @@ export default async function CheckoutPage({ params }: Props) {
 
   const { data: artwork, error } = await adminClient
     .from('artworks')
-    .select('id, title, price, status, images, artists(name_ko)')
+    .select('id, title, title_en, price, status, images, artists(name_ko, name_en)')
     .eq('id', artworkId)
     .eq('is_hidden', false)
     .single();
@@ -65,10 +65,20 @@ export default async function CheckoutPage({ params }: Props) {
   const imageUrl = firstImage ? resolveArtworkImageUrl(firstImage) : '';
 
   const displayPrice = formatPriceForDisplay(artwork.price);
-  const artistRow = artwork.artists as { name_ko: string } | { name_ko: string }[] | null;
+  const artistRow = artwork.artists as
+    | { name_ko: string; name_en: string | null }
+    | { name_ko: string; name_en: string | null }[]
+    | null;
+  const isEnglish = locale === 'en';
+  // 영문 페이지에서 영문 표기 우선, 없으면 한국어 fallback
+  const pickArtistName = (row: { name_ko: string; name_en: string | null } | undefined) =>
+    isEnglish
+      ? row?.name_en?.trim() || row?.name_ko || 'Unknown Artist'
+      : (row?.name_ko ?? 'Unknown Artist');
   const artistName = Array.isArray(artistRow)
-    ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
-    : (artistRow?.name_ko ?? 'Unknown Artist');
+    ? pickArtistName(artistRow[0])
+    : pickArtistName(artistRow ?? undefined);
+  const artworkTitle = isEnglish ? artwork.title_en?.trim() || artwork.title : artwork.title;
 
   const clientKey = getTossDomesticClientKey();
   if (!clientKey) {
@@ -79,7 +89,7 @@ export default async function CheckoutPage({ params }: Props) {
     return (
       <OverseasCheckoutClient
         artworkId={artworkId}
-        artworkTitle={artwork.title}
+        artworkTitle={artworkTitle}
         artist={artistName}
         price={price}
         displayPrice={displayPrice}
@@ -92,7 +102,7 @@ export default async function CheckoutPage({ params }: Props) {
   return (
     <CheckoutClient
       artworkId={artworkId}
-      artworkTitle={artwork.title}
+      artworkTitle={artworkTitle}
       artist={artistName}
       price={price}
       displayPrice={displayPrice}
