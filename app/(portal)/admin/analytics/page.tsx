@@ -17,6 +17,7 @@ import {
   HourlyHeatmap,
   AnalyticsCsvExport,
 } from './_components/AnalyticsCharts';
+import CrossLinkPanel from './_components/CrossLinkPanel';
 import { getTranslations, getLocale } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -153,6 +154,9 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
 
       {/* 브라우저 / OS 분포 */}
       <BrowserOsChart browserData={data.browserDistribution} osData={data.osDistribution} />
+
+      {/* 매거진 ↔ 작품 cross-link funnel */}
+      <CrossLinkPanel data={data.crossLinks} />
 
       {/* 국가 분포 + 유입 경로 */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

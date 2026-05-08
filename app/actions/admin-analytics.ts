@@ -23,6 +23,34 @@ export type AnalyticsData = {
   browserDistribution: Array<{ browser: string; count: number }>;
   osDistribution: Array<{ os: string; count: number }>;
   hourlyDistribution: Array<{ hour: number; views: number; visitors: number }>;
+  /**
+   * 매거진↔작품 cross-link funnel — 본문에 작품 인용 → 카드 클릭으로 이어지는 흐름.
+   * 데이터 source는 page_views 테이블의 event_type='event' + event_name='*_click' 행.
+   * 2026-05-08부터 webhook이 event_data jsonb 컬럼에 properties 보존해 활성화됨.
+   */
+  crossLinks: {
+    summary: {
+      storyToArtworkClicks: number;
+      storyToArtworkVisitors: number;
+      artworkToStoryClicks: number;
+      artworkToStoryVisitors: number;
+    };
+    topConvertingStories: Array<{ storySlug: string; clicks: number; visitors: number }>;
+    topClickedArtworks: Array<{
+      artworkId: string;
+      artist: string;
+      clicks: number;
+      visitors: number;
+    }>;
+    sourceDistribution: Array<{ source: string; clicks: number; visitors: number }>;
+    positionDistribution: Array<{ position: number; clicks: number }>;
+    topArtworkSources: Array<{
+      artworkId: string;
+      artist: string;
+      clicks: number;
+      visitors: number;
+    }>;
+  };
 };
 
 const PERIOD_DAYS: Record<AnalyticsPeriod, number> = {
@@ -39,6 +67,31 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   const days = PERIOD_DAYS[period];
   const sinceTs = new Date(Date.now() - days * 86_400_000).toISOString();
 
+  // 새 cross-link RPC들은 generated supabase types에 아직 없어 typed client에서
+  // 호출 시 union literal 에러 발생. types 자동 생성이 다음 supabase gen-types
+  // 사이클에서 갱신될 때까지 untyped wrapper로 우회 — runtime은 동일.
+  type RpcResult<T> = { data: T | null; error: unknown };
+  const untypedRpc = supabase.rpc.bind(supabase) as unknown as <T>(
+    name: string,
+    args?: Record<string, unknown>
+  ) => Promise<RpcResult<T>>;
+
+  type CrossLinkSummaryRow = {
+    story_to_artwork_clicks: number;
+    story_to_artwork_visitors: number;
+    artwork_to_story_clicks: number;
+    artwork_to_story_visitors: number;
+  };
+  type StoryRow = { story_slug: string; clicks: number; visitors: number };
+  type ArtworkRow = {
+    artwork_id: string;
+    artist: string;
+    clicks: number;
+    visitors: number;
+  };
+  type SourceRow = { source: string; clicks: number; visitors: number };
+  type PositionRow = { position: number; clicks: number };
+
   const [
     summaryRes,
     trendRes,
@@ -50,6 +103,12 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     osRes,
     hourlyRes,
     realtimeRes,
+    crossLinkSummaryRes,
+    topConvertingStoriesRes,
+    topClickedArtworksRes,
+    sourceDistRes,
+    positionDistRes,
+    topArtworkSourcesRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -61,6 +120,20 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     supabase.rpc('get_pv_os_distribution', { since_ts: sinceTs, lim: 10 }),
     supabase.rpc('get_pv_hourly_distribution', { since_ts: sinceTs }),
     supabase.rpc('get_pv_realtime_visitors', { minutes: 5 }),
+    untypedRpc<CrossLinkSummaryRow[]>('get_cross_link_summary', { since_ts: sinceTs }),
+    untypedRpc<StoryRow[]>('get_top_converting_stories', { since_ts: sinceTs, lim: 10 }),
+    untypedRpc<ArtworkRow[]>('get_top_clicked_artworks_from_stories', {
+      since_ts: sinceTs,
+      lim: 10,
+    }),
+    untypedRpc<SourceRow[]>('get_story_to_artwork_source_distribution', { since_ts: sinceTs }),
+    untypedRpc<PositionRow[]>('get_story_to_artwork_position_distribution', {
+      since_ts: sinceTs,
+    }),
+    untypedRpc<ArtworkRow[]>('get_top_artwork_to_story_artworks', {
+      since_ts: sinceTs,
+      lim: 10,
+    }),
   ]);
 
   // Summary
@@ -166,6 +239,56 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     activePageviews: Number(realtimeRow?.active_pageviews ?? 0),
   };
 
+  // Cross-link funnel — untypedRpc로 호출했으므로 .data가 이미 generic-typed.
+  // 운영 DB에 마이그레이션 적용 전엔 RPC 자체가 없어 .data가 null — 모두 안전한 0/[] fallback.
+  const crossLinkSummaryRow = Array.isArray(crossLinkSummaryRes.data)
+    ? crossLinkSummaryRes.data[0]
+    : null;
+  const crossLinks: AnalyticsData['crossLinks'] = {
+    summary: {
+      storyToArtworkClicks: Number(crossLinkSummaryRow?.story_to_artwork_clicks ?? 0),
+      storyToArtworkVisitors: Number(crossLinkSummaryRow?.story_to_artwork_visitors ?? 0),
+      artworkToStoryClicks: Number(crossLinkSummaryRow?.artwork_to_story_clicks ?? 0),
+      artworkToStoryVisitors: Number(crossLinkSummaryRow?.artwork_to_story_visitors ?? 0),
+    },
+    topConvertingStories: Array.isArray(topConvertingStoriesRes.data)
+      ? topConvertingStoriesRes.data.map((row) => ({
+          storySlug: row.story_slug,
+          clicks: Number(row.clicks),
+          visitors: Number(row.visitors),
+        }))
+      : [],
+    topClickedArtworks: Array.isArray(topClickedArtworksRes.data)
+      ? topClickedArtworksRes.data.map((row) => ({
+          artworkId: row.artwork_id,
+          artist: row.artist,
+          clicks: Number(row.clicks),
+          visitors: Number(row.visitors),
+        }))
+      : [],
+    sourceDistribution: Array.isArray(sourceDistRes.data)
+      ? sourceDistRes.data.map((row) => ({
+          source: row.source,
+          clicks: Number(row.clicks),
+          visitors: Number(row.visitors),
+        }))
+      : [],
+    positionDistribution: Array.isArray(positionDistRes.data)
+      ? positionDistRes.data.map((row) => ({
+          position: Number(row.position),
+          clicks: Number(row.clicks),
+        }))
+      : [],
+    topArtworkSources: Array.isArray(topArtworkSourcesRes.data)
+      ? topArtworkSourcesRes.data.map((row) => ({
+          artworkId: row.artwork_id,
+          artist: row.artist,
+          clicks: Number(row.clicks),
+          visitors: Number(row.visitors),
+        }))
+      : [],
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
@@ -178,5 +301,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     browserDistribution,
     osDistribution,
     hourlyDistribution,
+    crossLinks,
   };
 }

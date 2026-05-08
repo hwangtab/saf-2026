@@ -21,6 +21,17 @@ type VercelDrainEvent = {
   schema: string;
   eventType: 'pageview' | 'event';
   eventName?: string;
+  /**
+   * Vercel Analytics Drain v2: track(eventName, properties) 호출의 properties가
+   * JSON-stringified 형태로 들어오는 필드.
+   * 예: '{"artwork_id":"abc","source":"inline","story_slug":"...","position":0}'
+   * 이전 버전 webhook 코드는 이 필드를 type 정의에 포함시키지 않아 drop했고,
+   * 본 패치 + page_views.event_data jsonb 컬럼으로 보존.
+   * 참조: https://vercel.com/docs/drains/reference/analytics
+   */
+  eventData?: string;
+  /** 동적 라우트 패턴 (예: '/stories/[slug]'). path 슬러그별 fragment와 별도. */
+  route?: string;
   timestamp: number;
   path: string;
   referrer?: string;
@@ -93,6 +104,8 @@ function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
 
   return (
     isOptionalString(value.eventName) &&
+    isOptionalString(value.eventData) &&
+    isOptionalString(value.route) &&
     isOptionalString(value.referrer) &&
     isOptionalString(value.country) &&
     isOptionalString(value.region) &&
@@ -103,6 +116,22 @@ function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
     isOptionalStringOrNumber(value.sessionId) &&
     isOptionalStringOrNumber(value.deviceId)
   );
+}
+
+/**
+ * Vercel Drain의 eventData(JSON-stringified)를 안전하게 jsonb로 파싱.
+ * 잘못된 JSON, primitive 값(string·number·boolean), null은 모두 null 반환 — 잘못 들어온
+ * 데이터로 row insert 자체가 실패하지 않도록 격리.
+ */
+function parseEventData(eventData: string | undefined): Record<string, unknown> | null {
+  if (!eventData) return null;
+  try {
+    const parsed = JSON.parse(eventData);
+    if (!isRecord(parsed)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 function hasAcceptedAnalyticsSchema(value: unknown): boolean {
@@ -220,6 +249,7 @@ export async function POST(request: NextRequest) {
   const rows = publicEvents.map((e) => ({
     event_type: e.eventType,
     path: e.path,
+    route: e.route ?? null,
     referrer: e.referrer ?? null,
     country: e.country ?? null,
     region: e.region ?? null,
@@ -230,6 +260,7 @@ export async function POST(request: NextRequest) {
     session_id: e.sessionId != null ? String(e.sessionId) : null,
     device_id: e.deviceId != null ? String(e.deviceId) : null,
     event_name: e.eventName ?? null,
+    event_data: parseEventData(e.eventData),
     event_timestamp: new Date(e.timestamp).toISOString(),
   }));
 
