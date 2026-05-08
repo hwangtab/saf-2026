@@ -2,15 +2,64 @@
 
 import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import clsx from 'clsx';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
+import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { krwToUsd, formatUsd } from '@/lib/utils/currency';
-import { createOrder, cancelPendingOrder, initiatePayment } from '@/app/actions/checkout';
+import {
+  createOrder,
+  cancelPendingOrder,
+  initiatePayment,
+  createBankTransferOrder,
+} from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
+import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
+
+/**
+ * 영문(en) 체크아웃 옵션. 결제수단별 buyer 자격이 다르므로 caption으로 명시:
+ *
+ * - PAYPAL    : Toss FOREIGN_EASY_PAY + USD. 해외 PayPal 계정만 (한국 PayPal은
+ *               PayPal 정책상 한국→한국 차단). caption "International accounts only".
+ * - CARD      : Toss SDK v2 통합결제창 — 한국 카드 + 외국 카드 (다국어 결제창).
+ *               KRW 결제. 한국 PayPal 사용자가 영문 페이지에서 우회 가능한 경로.
+ * - KAKAOPAY/TOSSPAY/NAVERPAY : Toss 통합결제창 picker. 한국 거주 buyer 또는
+ *               한국 간편결제 보유 해외 거주자.
+ * - TRANSFER  : 기업은행(IBK) 무통장 입금. 해외에서 SWIFT로 한국 계좌 송금하는 건
+ *               $10~50 수수료라 작품 가격대에 비합리적. 실질적으로 한국 계좌
+ *               보유자(국내 거주자 + 해외 거주 한국인 diaspora) 한정.
+ *               caption "Korean bank accounts only".
+ *
+ * 직행(`flowMode='DIRECT'`)은 saf202i818 MID 활성화 후 cardOptions 추가.
+ */
+type EnPaymentChoice = 'PAYPAL' | 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
+
+type EnBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay' | 'paypal'> | null;
+
+interface PaymentChoiceConfig {
+  value: EnPaymentChoice;
+  labelKey:
+    | 'methodPaypal'
+    | 'methodCard'
+    | 'methodKakaopay'
+    | 'methodTosspay'
+    | 'methodNaverpay'
+    | 'methodTransfer';
+  brand: EnBrand;
+}
+
+const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
+  { value: 'PAYPAL', labelKey: 'methodPaypal', brand: 'paypal' },
+  { value: 'CARD', labelKey: 'methodCard', brand: null },
+  { value: 'KAKAOPAY', labelKey: 'methodKakaopay', brand: 'kakaopay' },
+  { value: 'TOSSPAY', labelKey: 'methodTosspay', brand: 'tosspay' },
+  { value: 'NAVERPAY', labelKey: 'methodNaverpay', brand: 'naverpay' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
+];
 
 interface Props {
   artworkId: string;
@@ -19,22 +68,27 @@ interface Props {
   price: number;
   displayPrice: string;
   imageUrl: string;
+  clientKey: string;
 }
 
 /**
- * 영문(en) 체크아웃 클라이언트 — PayPal via Toss saf202719y MID.
+ * 영문(en) 체크아웃 클라이언트.
  *
- * Flow:
- *   1. createOrder(locale='en') — pending_payment 주문 생성, metadata에 usd_amount(시점 환산) 저장
- *   2. initiatePayment(locale='en') — Toss /v1/payments
- *      - method=FOREIGN_EASY_PAY, provider=PAYPAL, currency=USD
- *      - amount = krwToUsd(KRW total)
- *   3. window.location.href = checkoutUrl → Toss-hosted PayPal 결제 페이지
- *   4. PayPal에서 결제 완료 후 successUrl로 redirect
- *   5. SuccessClient → /api/payments/toss/confirm — provider='overseas'로 USD 검증
+ * Flow (PayPal):
+ *   1. createOrder(locale='en') — pending_payment, metadata.usd_amount(시점 환산)
+ *   2. initiatePayment(method='FOREIGN_EASY_PAY', locale='en') — Toss saf202719y MID
+ *   3. window.location.href = checkoutUrl → Toss-hosted PayPal 페이지
+ *   4. PayPal 결제 완료 → successUrl
+ *   5. SuccessClient → /api/payments/toss/confirm (provider='overseas', USD 검증)
  *
- * 환율 정책: NEXT_PUBLIC_KRW_USD_RATE 환경변수 (기본 1400). 환산 USD 값은
- * createOrder 시점에 metadata.usd_amount로 시점 고정되어 confirm 단계에서 변동 영향 X.
+ * Flow (Card / 간편결제):
+ *   1. createOrder(locale='en') — pending_payment, KRW 그대로
+ *   2. loadTossPayments(domestic clientKey).payment(...).requestPayment(...)
+ *      — Toss SDK v2 통합결제창 (saf202i818 MID, KRW)
+ *   3. successUrl로 redirect → SuccessClient → /api/payments/toss/confirm
+ *      (provider='domestic', KRW 검증)
+ *
+ * 환율: NEXT_PUBLIC_KRW_USD_RATE (기본 1400). createOrder 시점 고정.
  */
 export default function OverseasCheckoutClient({
   artworkId,
@@ -43,14 +97,14 @@ export default function OverseasCheckoutClient({
   price,
   displayPrice,
   imageUrl,
+  clientKey,
 }: Props) {
   const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
   const totalKrw = price + shippingFee;
-  // PayPal에 전달하는 USD는 totalKrw 단일 ceiling만 사용 — 라인별 ceiling 합과
-  // 다를 수 있으므로 라인은 KRW로만 표시하여 합계 불일치 회피
   const usdTotal = krwToUsd(totalKrw);
 
+  const [paymentChoice, setPaymentChoice] = useState<EnPaymentChoice>('PAYPAL');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
@@ -93,6 +147,32 @@ export default function OverseasCheckoutClient({
     let createdOrderNo: string | null = null;
 
     try {
+      // 무통장 입금(TRANSFER): Toss 거치지 않고 IBK 계좌번호 안내. createOrder
+      // 흐름과 별도. createBankTransferOrder가 awaiting_deposit + reserved 처리.
+      if (paymentChoice === 'TRANSFER') {
+        const result = await createBankTransferOrder({
+          artworkId,
+          buyerName,
+          buyerEmail,
+          buyerPhone,
+          shippingName,
+          shippingPhone,
+          shippingAddress,
+          shippingAddressDetail,
+          shippingPostalCode,
+          shippingMemo,
+          locale: 'en',
+        });
+        if (!result.success) {
+          setError(result.error);
+          setSubmitting(false);
+          return;
+        }
+        window.location.href = `${window.location.origin}/en/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+        await new Promise(() => {});
+        return;
+      }
+
       const result = await createOrder({
         artworkId,
         buyerName,
@@ -119,30 +199,50 @@ export default function OverseasCheckoutClient({
       const successUrl = `${window.location.origin}/en/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/en/checkout/${artworkId}/fail`;
 
-      // method/easyPay는 무시됨 — initiatePayment 안에서 locale='en'이면
-      // method=FOREIGN_EASY_PAY + provider=PAYPAL + currency=USD로 강제됨.
-      const payResult = await initiatePayment({
-        method: 'FOREIGN_EASY_PAY',
-        orderNo,
-        orderName,
-        totalAmount: serverTotal,
-        buyerName,
-        buyerEmail,
-        successUrl,
-        failUrl,
-        locale: 'en',
-      });
+      // PayPal 흐름: Toss saf202719y MID + USD + redirect
+      if (paymentChoice === 'PAYPAL') {
+        const payResult = await initiatePayment({
+          method: 'FOREIGN_EASY_PAY',
+          orderNo,
+          orderName,
+          totalAmount: serverTotal,
+          buyerName,
+          buyerEmail,
+          successUrl,
+          failUrl,
+          locale: 'en',
+        });
 
-      if (!payResult.success) {
-        cancelPendingOrder(orderNo, buyerEmail).catch((err) =>
-          console.error('[checkout] cancelPendingOrder failed:', err)
-        );
-        setError(payResult.error);
-        setSubmitting(false);
+        if (!payResult.success) {
+          cancelPendingOrder(orderNo, buyerEmail).catch((err) =>
+            console.error('[checkout] cancelPendingOrder failed:', err)
+          );
+          setError(payResult.error);
+          setSubmitting(false);
+          return;
+        }
+
+        window.location.href = payResult.checkoutUrl;
+        await new Promise(() => {});
         return;
       }
 
-      window.location.href = payResult.checkoutUrl;
+      // Card / 간편결제 흐름: Toss saf202i818 MID + KRW + SDK v2 통합결제창
+      const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
+      const tossPayments = await loadTossPayments(clientKey);
+      const payment = tossPayments.payment({ customerKey: orderNo });
+
+      await payment.requestPayment({
+        method: 'CARD',
+        amount: { currency: 'KRW', value: serverTotal },
+        orderId: orderNo,
+        orderName,
+        customerName: buyerName,
+        customerEmail: buyerEmail,
+        customerMobilePhone: buyerPhone.replace(/[^0-9]/g, ''),
+        successUrl,
+        failUrl,
+      });
       await new Promise(() => {});
     } catch (err: unknown) {
       if (createdOrderNo) {
@@ -150,7 +250,10 @@ export default function OverseasCheckoutClient({
           (cancelErr) => console.error('[checkout] cancelPendingOrder failed:', cancelErr)
         );
       }
-      setError((err as Error)?.message ?? t('errorPayment'));
+      const errorObj = err as { code?: string; message?: string };
+      if (errorObj?.code !== 'USER_CANCEL') {
+        setError(errorObj?.message ?? t('errorPayment'));
+      }
       setSubmitting(false);
     }
   }
@@ -195,7 +298,7 @@ export default function OverseasCheckoutClient({
           <BuyerInfoForm ref={buyerInfoRef} />
         </div>
 
-        {/* Price breakdown — KRW for line items + final USD total */}
+        {/* Price breakdown — KRW lines + USD final (PayPal 결제 시 USD로 청구) */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-base font-semibold text-charcoal">{t('orderSummaryTitle')}</h3>
           <table className="w-full text-sm">
@@ -213,23 +316,99 @@ export default function OverseasCheckoutClient({
                 </td>
               </tr>
               <tr>
-                <td className="py-2 text-gray-600">{t('totalAmount')} (KRW)</td>
-                <td className="py-2 text-right font-medium text-charcoal">
+                <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
+                <td className="py-2 text-right text-lg font-bold text-primary-a11y">
                   {formatPriceForDisplay(totalKrw)}
                 </td>
               </tr>
-              <tr className="border-t-2 border-charcoal">
-                <td className="py-3 font-bold text-charcoal">PayPal charge (USD)</td>
-                <td className="py-3 text-right text-xl font-bold text-primary-a11y">
-                  {formatUsd(usdTotal)}
+              <tr>
+                <td className="py-2 text-caption-meta text-charcoal-soft">PayPal (USD)</td>
+                <td className="py-2 text-right text-caption-meta text-charcoal-soft">
+                  ≈ {formatUsd(usdTotal)}
                 </td>
               </tr>
             </tbody>
           </table>
-          <p className="mt-3 text-xs text-gray-500">
-            International payment processed via PayPal in USD. Amount is rounded up to the nearest
-            dollar; exchange rate is fixed at order time.
-          </p>
+        </div>
+
+        {/* Payment method selector — 한국어 페이지와 동일한 list rows 패턴 */}
+        <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <h3 className="px-6 pt-6 pb-4 text-base font-semibold text-charcoal">
+            {t('paymentMethodSelect')}
+          </h3>
+
+          <div
+            role="radiogroup"
+            aria-label={t('paymentMethodSelect')}
+            className="border-t border-gray-200"
+          >
+            {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
+              const selected = paymentChoice === value;
+              const description =
+                value === 'PAYPAL'
+                  ? t('paypalCaption')
+                  : value === 'TRANSFER'
+                    ? t('transferDescription')
+                    : null;
+              return (
+                <div key={value}>
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    aria-label={t(labelKey)}
+                    onClick={() => setPaymentChoice(value)}
+                    className={clsx(
+                      'group relative flex w-full items-center gap-4 px-6 py-4 text-left transition-colors',
+                      i > 0 && 'border-t border-gray-200',
+                      selected ? 'bg-primary-surface' : 'hover:bg-canvas-strong'
+                    )}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={clsx(
+                        'absolute left-0 top-0 h-full w-1 transition-colors',
+                        selected ? 'bg-primary' : 'bg-transparent'
+                      )}
+                    />
+
+                    <span
+                      aria-hidden="true"
+                      className={clsx(
+                        'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+                        selected ? 'border-primary' : 'border-gray-300 group-hover:border-gray-400'
+                      )}
+                    >
+                      {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                    </span>
+
+                    <span className="flex-1 min-w-0 flex items-center justify-between gap-3">
+                      {brand ? (
+                        <PaymentBrandLogo brand={brand} />
+                      ) : (
+                        <span
+                          className={clsx(
+                            'text-sm font-medium',
+                            selected ? 'text-primary' : 'text-charcoal'
+                          )}
+                        >
+                          {t(labelKey)}
+                        </span>
+                      )}
+                      {description && (
+                        <span className="text-caption-meta text-charcoal-soft">{description}</span>
+                      )}
+                    </span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* PayPal 선택 시 USD 환산 안내 */}
+          {paymentChoice === 'PAYPAL' && (
+            <p className="px-6 pb-5 text-caption-meta text-charcoal-soft">{t('paypalUsdNotice')}</p>
+          )}
         </div>
 
         {/* Error */}
@@ -239,25 +418,10 @@ export default function OverseasCheckoutClient({
           </div>
         )}
 
-        {/* CTA — PayPal brand button (gold #FFC439, official PayPal wordmark) */}
-        <button
-          type="button"
-          onClick={handlePayment}
-          disabled={submitting}
-          aria-label={t('payWithPaypal')}
-          className="w-full rounded-xl py-4 text-lg transition-shadow flex items-center justify-center gap-2 bg-[#FFC439] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.03em' }}
-        >
-          {submitting ? (
-            <span className="inline-block h-5 w-5 border-2 border-[#003087] border-t-transparent rounded-full animate-spin" />
-          ) : (
-            // PayPal 공식 wordmark: "Pay" 다크블루 #003087 + "Pal" 라이트블루 #009CDE
-            <span className="font-black italic">
-              <span className="text-[#003087]">Pay</span>
-              <span className="text-[#009CDE]">Pal</span>
-            </span>
-          )}
-        </button>
+        {/* CTA */}
+        <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
+          {submitting ? t('processingShort') : t('payNow')}
+        </Button>
       </div>
     </div>
   );

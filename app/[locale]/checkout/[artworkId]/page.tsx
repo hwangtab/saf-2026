@@ -70,6 +70,11 @@ export default async function CheckoutPage({ params }: Props) {
     ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
     : (artistRow?.name_ko ?? 'Unknown Artist');
 
+  const clientKey = getTossDomesticClientKey();
+  if (!clientKey) {
+    notFound();
+  }
+
   if (locale !== 'ko') {
     return (
       <OverseasCheckoutClient
@@ -79,13 +84,9 @@ export default async function CheckoutPage({ params }: Props) {
         price={price}
         displayPrice={displayPrice}
         imageUrl={imageUrl}
+        clientKey={clientKey}
       />
     );
-  }
-
-  const clientKey = getTossDomesticClientKey();
-  if (!clientKey) {
-    notFound();
   }
 
   return (

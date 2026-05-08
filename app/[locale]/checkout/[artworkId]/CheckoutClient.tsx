@@ -12,6 +12,7 @@ import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { createOrder, cancelPendingOrder, createBankTransferOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
+import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 
 /**
  * 결제 옵션 — UI 표시용. 실제 Toss 호출은 모두 통합결제창 (method='CARD').
@@ -28,13 +29,13 @@ import type { BuyerInfo } from './BuyerInfoForm';
  */
 type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
 
-type BrandKind = 'kakaopay' | 'tosspay' | 'naverpay' | null;
+type KoBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay'> | null;
 
 interface PaymentChoiceConfig {
   value: PaymentChoice;
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
-  brand: BrandKind;
+  brand: KoBrand;
 }
 
 interface Props {
@@ -54,37 +55,6 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'TOSSPAY', labelKey: 'methodTosspay', brand: 'tosspay' },
   { value: 'NAVERPAY', labelKey: 'methodNaverpay', brand: 'naverpay' },
 ];
-
-/**
- * 공식 브랜드 자산 (사용자 다운로드, public/images/payment/에 배치).
- * 모두 자체 여백이 거의 없는 trimmed 상태 (Toss는 sharp.trim()으로 후처리).
- * 표시 높이 h-6(24px)로 통일 — 로고 정렬·시각 무게 일치.
- * - KakaoPay : 결제수단 wordmark (121×50)
- * - TossPay  : Toss 공식 wordmark trimmed (3000×910)
- * - NaverPay : Npay 그린 signature (198×66)
- */
-const BRAND_ASSETS: Record<
-  Exclude<BrandKind, null>,
-  { src: string; alt: string; width: number; height: number }
-> = {
-  kakaopay: { src: '/images/payment/kakaopay.png', alt: 'KakaoPay', width: 121, height: 50 },
-  tosspay: { src: '/images/payment/tosspay.png', alt: 'Toss', width: 3000, height: 910 },
-  naverpay: { src: '/images/payment/naverpay.svg', alt: 'NaverPay', width: 198, height: 66 },
-};
-
-function BrandLogo({ brand }: { brand: BrandKind }) {
-  if (!brand) return null;
-  const asset = BRAND_ASSETS[brand];
-  return (
-    <SafeImage
-      src={asset.src}
-      alt={asset.alt}
-      width={asset.width}
-      height={asset.height}
-      className="h-6 w-auto object-contain"
-    />
-  );
-}
 
 /**
  * 한국어 체크아웃 클라이언트.
@@ -367,7 +337,7 @@ export default function CheckoutClient({
                     {/* 본문: brand 로고 또는 텍스트 + 옵셔널 caption */}
                     <span className="flex-1 min-w-0 flex items-center justify-between gap-3">
                       {brand ? (
-                        <BrandLogo brand={brand} />
+                        <PaymentBrandLogo brand={brand} />
                       ) : (
                         <span
                           className={clsx(
