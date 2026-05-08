@@ -65,6 +65,7 @@
     "embla-carousel-auto-scroll": "^8.6.0",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
+    "googleapis": "^171.4.0",
     "lucide-react": "^0.577.0",
     "next": "^16.2.4",
     "next-image-export-optimizer": "^1.20.1",

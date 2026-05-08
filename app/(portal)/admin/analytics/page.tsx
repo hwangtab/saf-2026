@@ -20,6 +20,7 @@ import {
 import AttributionPanel from './_components/AttributionPanel';
 import CommercePanel from './_components/CommercePanel';
 import CrossLinkPanel from './_components/CrossLinkPanel';
+import GscPanel from './_components/GscPanel';
 import InsightsPanel from './_components/InsightsPanel';
 import { getTranslations, getLocale } from 'next-intl/server';
 
@@ -169,6 +170,9 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
 
       {/* 매거진 ↔ 작품 cross-link funnel */}
       <CrossLinkPanel data={data.crossLinks} />
+
+      {/* Google Search Console organic SEO (Phase D) */}
+      <GscPanel data={data.gsc} />
 
       {/* 국가 분포 + 유입 경로 */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

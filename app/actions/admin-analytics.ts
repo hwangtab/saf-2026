@@ -121,6 +121,51 @@ export type AnalyticsData = {
     }>;
   };
   /**
+   * Google Search Console organic SEO 성과 — Phase D.
+   * Cron으로 매일 fetch해 gsc_metrics 테이블에 캐시. 최대 30일 보관.
+   * - syncStatus: 마지막 sync 시점 (운영자가 데이터 신선도 확인)
+   * - dailyTrend: 일별 impressions/clicks/CTR 추이
+   * - topQueries: 검색 노출 TOP 키워드
+   * - topPages: organic 트래픽 받는 TOP 페이지
+   * - lowCtrQueries: 노출 50회+ but CTR 낮은 keyword (메타태그 개선 신호)
+   */
+  gsc: {
+    syncStatus: {
+      latestDate: string | null;
+      oldestDate: string | null;
+      totalRows: number;
+      lastFetched: string | null;
+    };
+    dailyTrend: Array<{
+      date: string;
+      impressions: number;
+      clicks: number;
+      ctr: number;
+      avgPosition: number;
+    }>;
+    topQueries: Array<{
+      query: string;
+      impressions: number;
+      clicks: number;
+      ctr: number;
+      avgPosition: number;
+    }>;
+    topPages: Array<{
+      page: string;
+      impressions: number;
+      clicks: number;
+      ctr: number;
+      avgPosition: number;
+    }>;
+    lowCtrQueries: Array<{
+      query: string;
+      impressions: number;
+      clicks: number;
+      ctr: number;
+      avgPosition: number;
+    }>;
+  };
+  /**
    * 매거진↔작품 cross-link funnel — 본문에 작품 인용 → 카드 클릭으로 이어지는 흐름.
    * 데이터 source는 page_views 테이블의 event_type='event' + event_name='*_click' 행.
    * 2026-05-08부터 webhook이 event_data jsonb 컬럼에 properties 보존해 활성화됨.
@@ -270,6 +315,33 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     attributed_orders_paid: number;
     attributed_revenue: number;
   };
+  type GscQueryRow = {
+    query: string;
+    impressions: number;
+    clicks: number;
+    ctr: number;
+    avg_position: number;
+  };
+  type GscPageRow = {
+    page: string;
+    impressions: number;
+    clicks: number;
+    ctr: number;
+    avg_position: number;
+  };
+  type GscDailyRow = {
+    day: string;
+    impressions: number;
+    clicks: number;
+    ctr: number;
+    avg_position: number;
+  };
+  type GscSyncStatusRow = {
+    latest_date: string | null;
+    oldest_date: string | null;
+    total_rows: number;
+    last_fetched: string | null;
+  };
 
   const [
     summaryRes,
@@ -297,6 +369,11 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     revenueTrendRes,
     artistDashboardRes,
     storyAttributionRes,
+    gscTopQueriesRes,
+    gscTopPagesRes,
+    gscLowCtrRes,
+    gscDailyTrendRes,
+    gscSyncStatusRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -337,6 +414,24 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       since_ts: sinceTs,
       lim: 20,
     }),
+    // GSC RPC들은 date 타입이 since_date param. ISO timestamp의 앞 10자(YYYY-MM-DD) 사용.
+    untypedRpc<GscQueryRow[]>('get_gsc_top_queries', {
+      since_date: sinceTs.slice(0, 10),
+      lim: 30,
+    }),
+    untypedRpc<GscPageRow[]>('get_gsc_top_pages', {
+      since_date: sinceTs.slice(0, 10),
+      lim: 30,
+    }),
+    untypedRpc<GscQueryRow[]>('get_gsc_low_ctr_queries', {
+      since_date: sinceTs.slice(0, 10),
+      min_impressions: 50,
+      lim: 20,
+    }),
+    untypedRpc<GscDailyRow[]>('get_gsc_daily_trend', {
+      since_date: sinceTs.slice(0, 10),
+    }),
+    untypedRpc<GscSyncStatusRow[]>('get_gsc_sync_status', {}),
   ]);
 
   // Summary
@@ -671,6 +766,53 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
+  // Phase D: Google Search Console (GSC) organic SEO
+  const gscSyncStatusRow = Array.isArray(gscSyncStatusRes.data) ? gscSyncStatusRes.data[0] : null;
+  const gsc: AnalyticsData['gsc'] = {
+    syncStatus: {
+      latestDate: gscSyncStatusRow?.latest_date ?? null,
+      oldestDate: gscSyncStatusRow?.oldest_date ?? null,
+      totalRows: Number(gscSyncStatusRow?.total_rows ?? 0),
+      lastFetched: gscSyncStatusRow?.last_fetched ?? null,
+    },
+    dailyTrend: Array.isArray(gscDailyTrendRes.data)
+      ? gscDailyTrendRes.data.map((row) => ({
+          date: row.day,
+          impressions: Number(row.impressions),
+          clicks: Number(row.clicks),
+          ctr: Number(row.ctr ?? 0),
+          avgPosition: Number(row.avg_position ?? 0),
+        }))
+      : [],
+    topQueries: Array.isArray(gscTopQueriesRes.data)
+      ? gscTopQueriesRes.data.map((row) => ({
+          query: row.query,
+          impressions: Number(row.impressions),
+          clicks: Number(row.clicks),
+          ctr: Number(row.ctr ?? 0),
+          avgPosition: Number(row.avg_position ?? 0),
+        }))
+      : [],
+    topPages: Array.isArray(gscTopPagesRes.data)
+      ? gscTopPagesRes.data.map((row) => ({
+          page: row.page,
+          impressions: Number(row.impressions),
+          clicks: Number(row.clicks),
+          ctr: Number(row.ctr ?? 0),
+          avgPosition: Number(row.avg_position ?? 0),
+        }))
+      : [],
+    lowCtrQueries: Array.isArray(gscLowCtrRes.data)
+      ? gscLowCtrRes.data.map((row) => ({
+          query: row.query,
+          impressions: Number(row.impressions),
+          clicks: Number(row.clicks),
+          ctr: Number(row.ctr ?? 0),
+          avgPosition: Number(row.avg_position ?? 0),
+        }))
+      : [],
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
@@ -687,5 +829,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     commerce,
     attribution,
     crossLinks,
+    gsc,
   };
 }
