@@ -38,7 +38,7 @@ export async function generateMetadata({
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
+  const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   const base = createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH, locale);
   if (locale === 'en') {
@@ -56,7 +56,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const pageUrl = buildLocaleUrl(PAGE_PATH, locale);
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('terms'), url: pageUrl },

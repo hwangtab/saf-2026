@@ -38,7 +38,7 @@ export async function generateMetadata({
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
+  const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   return {
     ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive', locale),
@@ -55,7 +55,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
   setRequestLocale(locale);
   const isEnglish = locale === 'en';
   const pageUrl = buildLocaleUrl('/archive', locale);
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('archive'), url: pageUrl },

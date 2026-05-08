@@ -13,7 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ArtworkNotFound() {
-  const t = await getTranslations('notFound');
+  const locale = await getLocale().catch(() => 'ko');
+  const t = await getTranslations({ locale, namespace: 'notFound' });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-canvas-soft pt-20">

@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   setRequestLocale(locale);
   const artistName = decodeURIComponent(artist);
   const artistArtworks = await getSupabaseArtworksByArtist(artistName);
-  const t = await getTranslations('artistPage');
+  const t = await getTranslations({ locale, namespace: 'artistPage' });
 
   if (artistArtworks.length === 0) {
     return {
@@ -213,7 +213,7 @@ export default async function ArtistPage({ params }: Props) {
   const listArtworks: ArtworkListItem[] = artistArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
-  const t = await getTranslations('artistPage');
+  const t = await getTranslations({ locale, namespace: 'artistPage' });
 
   if (artistArtworks.length === 0) {
     // 작품 전체 숨김된 작가는 not-found.tsx 렌더(noindex 메타) — 신학철 케이스.
@@ -321,7 +321,7 @@ export default async function ArtistPage({ params }: Props) {
   const relatedArticles = getArticlesByArtist(artistName);
 
   // Breadcrumb Schema: Home > Artworks > Artist Name
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
@@ -396,7 +396,7 @@ export default async function ArtistPage({ params }: Props) {
       {notice && (
         <Section variant="white" prevVariant="white" className="pt-8 pb-4 md:pt-10 md:pb-6">
           <div className="container-max">
-            <ArtistNoticeBanner type={notice.type} message={notice.message} />
+            <ArtistNoticeBanner type={notice.type} message={notice.message} locale={locale} />
           </div>
         </Section>
       )}
@@ -451,7 +451,7 @@ export default async function ArtistPage({ params }: Props) {
       {relatedArticles.length > 0 && (
         <Section variant="white" prevVariant="white" className="pb-8">
           <div className="container-max">
-            <RelatedArticles articles={relatedArticles} />
+            <RelatedArticles articles={relatedArticles} locale={locale} />
           </div>
         </Section>
       )}

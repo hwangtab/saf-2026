@@ -317,7 +317,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
         {notice && (
           <div className="container-max pt-6 md:pt-8">
-            <ArtistNoticeBanner type={notice.type} message={notice.message} />
+            <ArtistNoticeBanner type={notice.type} message={notice.message} locale={locale} />
           </div>
         )}
 
@@ -519,7 +519,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               )}
 
               {/* Related Articles */}
-              <RelatedArticles articles={relatedArticles} />
+              <RelatedArticles articles={relatedArticles} locale={locale} />
 
               {/* Related Magazine Stories (Supabase) — 카드형 */}
               {relatedMagazineStories.length > 0 && (
@@ -599,7 +599,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
           )}
 
           {/* Recently Sold Section */}
-          <RecentlySoldSection artworks={recentlySold} totalCount={totalSoldCount} />
+          <RecentlySoldSection
+            artworks={recentlySold}
+            totalCount={totalSoldCount}
+            locale={locale}
+          />
         </article>
       </Section>
     </>

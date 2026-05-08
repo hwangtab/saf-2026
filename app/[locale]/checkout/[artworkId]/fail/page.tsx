@@ -47,9 +47,9 @@ async function cancelPendingByOrderId(orderId: string): Promise<void> {
 }
 
 export default async function FailPage({ params, searchParams }: Props) {
-  const { artworkId } = await params;
+  const { artworkId, locale } = await params;
   const { code, message, orderId } = await searchParams;
-  const t = await getTranslations('checkout');
+  const t = await getTranslations({ locale, namespace: 'checkout' });
 
   // 페이지 진입 즉시 pending_payment 주문 자동 정리 — unique edition 차단 해소
   if (orderId) {

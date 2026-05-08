@@ -11,11 +11,11 @@ import { getActiveShowingItems, type NowShowingItem } from '@/lib/now-showing';
  * 데이터: lib/now-showing.ts의 NOW_SHOWING 배열에서 endDate가 지나지 않은 항목만 노출.
  * 항목 0건이면 섹션 자체 렌더 X.
  */
-export default async function NowShowing() {
+export default async function NowShowing({ locale }: { locale: string }) {
   const items = getActiveShowingItems();
   if (items.length === 0) return null;
 
-  const t = await getTranslations('home.nowShowing');
+  const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
 
   return (
     <Section variant="canvas-soft" className="py-16 md:py-20">
@@ -26,7 +26,7 @@ export default async function NowShowing() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
           {items.map((item) => (
-            <ShowingCard key={item.slug} item={item} />
+            <ShowingCard key={item.slug} item={item} locale={locale} />
           ))}
         </div>
       </div>
@@ -34,8 +34,8 @@ export default async function NowShowing() {
   );
 }
 
-async function ShowingCard({ item }: { item: NowShowingItem }) {
-  const t = await getTranslations('home.nowShowing');
+async function ShowingCard({ item, locale }: { item: NowShowingItem; locale: string }) {
+  const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
 
   const status = t(`${item.i18nKey}Status` as 'ohYoon40thStatus');
   const title = t(`${item.i18nKey}Title` as 'ohYoon40thTitle');

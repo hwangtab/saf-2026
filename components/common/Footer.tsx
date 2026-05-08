@@ -1,15 +1,17 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 
-export default async function Footer() {
-  const t = await getTranslations('footer');
-  const tNav = await getTranslations('nav');
-  const tA11y = await getTranslations('a11y');
-  const locale = await getLocale();
+// force-static에서 layout의 setRequestLocale이 sub-component(Footer)에 전파되지 않아
+// default locale로 fallback하는 회귀가 있어 locale을 prop으로 명시 전달.
+export default async function Footer({ locale }: { locale: string }) {
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'footer' });
+  const tNav = await getTranslations({ locale, namespace: 'nav' });
+  const tA11y = await getTranslations({ locale, namespace: 'a11y' });
   const isEn = locale === 'en';
 
   return (

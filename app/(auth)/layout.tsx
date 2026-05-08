@@ -30,7 +30,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
           <Suspense fallback={<PageLoader />}>{children}</Suspense>
         </main>
         <Suspense>
-          <Footer />
+          <Footer locale={locale} />
         </Suspense>
       </ToastProvider>
     </NextIntlClientProvider>

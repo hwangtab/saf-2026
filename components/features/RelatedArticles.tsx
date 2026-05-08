@@ -1,14 +1,18 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { containsHangul } from '@/lib/search-utils';
 import type { Article } from '@/content/artist-articles';
 
 interface RelatedArticlesProps {
   articles: Article[];
+  locale: string;
 }
 
-export default async function RelatedArticles({ articles }: RelatedArticlesProps) {
-  const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const t = await getTranslations('relatedArticles');
+export default async function RelatedArticles({
+  articles,
+  locale: rawLocale,
+}: RelatedArticlesProps) {
+  const locale = rawLocale === 'en' ? 'en' : 'ko';
+  const t = await getTranslations({ locale, namespace: 'relatedArticles' });
 
   const localizeSource = (source: string): string => {
     if (locale !== 'en') return source;

@@ -7,10 +7,11 @@ import { CONTACT } from '@/lib/constants';
 interface Props {
   artworkId: string;
   artworkTitle: string;
+  locale: string;
 }
 
-export default async function PaypalPlaceholder({ artworkId, artworkTitle }: Props) {
-  const t = await getTranslations('checkout.paypalPreparing');
+export default async function PaypalPlaceholder({ artworkId, artworkTitle, locale }: Props) {
+  const t = await getTranslations({ locale, namespace: 'checkout.paypalPreparing' });
 
   return (
     <div

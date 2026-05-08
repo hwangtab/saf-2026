@@ -70,7 +70,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const pageUrl = buildLocaleUrl('/our-proof', locale);
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('ourProof'), url: pageUrl },

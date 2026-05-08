@@ -131,7 +131,7 @@ export default async function NewsArticlePage({ params }: Props) {
     locale,
   });
 
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('news'), url: buildLocaleUrl('/news', locale) },

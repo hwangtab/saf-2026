@@ -191,7 +191,7 @@ export default async function StoryDetailPage({ params }: Props) {
     locale,
   });
 
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('stories'), url: buildLocaleUrl('/stories', locale) },

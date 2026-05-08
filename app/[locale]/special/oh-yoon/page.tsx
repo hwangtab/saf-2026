@@ -69,7 +69,7 @@ export async function generateMetadata({
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
+  const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const siteName = tSeo('siteTitle');
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
 
@@ -124,7 +124,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
   setRequestLocale(locale);
   const isEnglish = locale === 'en';
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const allArtworks = await getSupabaseArtworks();
   const ohYoonFullArtworks = allArtworks.filter((artwork: Artwork) =>
     isOhYoonArtist(artwork.artist)

@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const availableCount = categoryArtworks.filter((a) => !a.sold).length;
 
   const categoryPath = `/artworks/category/${encodeURIComponent(category)}`;
-  const t = await getTranslations('categoryPage');
+  const t = await getTranslations({ locale, namespace: 'categoryPage' });
 
   const isEnglish = locale === 'en';
   const displayCategory = isEnglish ? getCategoryEnName(category) : category;
@@ -170,8 +170,8 @@ export default async function CategoryPage({ params }: Props) {
 
   const isEnglish = locale === 'en';
   const displayCategory = isEnglish ? getCategoryEnName(category) : category;
-  const t = await getTranslations('categoryPage');
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const t = await getTranslations({ locale, namespace: 'categoryPage' });
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
   const categoryPath = `/artworks/category/${encodeURIComponent(category)}`;
   const pageUrl = buildLocaleUrl(categoryPath, locale);

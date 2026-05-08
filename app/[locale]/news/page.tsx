@@ -364,7 +364,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
   const canonicalUrl = buildLocaleUrl('/news', locale);
   const copy = NEWS_COPY[locale];
   const highlightQuotes = highlightQuotesByLocale[locale];
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const newsArticles = await getSupabaseNews();
 
   const breadcrumbItems = [

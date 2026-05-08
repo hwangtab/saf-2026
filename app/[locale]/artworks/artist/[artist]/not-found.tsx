@@ -13,7 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ArtistNotFound() {
-  const t = await getTranslations('notFound');
+  const locale = await getLocale().catch(() => 'ko');
+  const t = await getTranslations({ locale, namespace: 'notFound' });
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-canvas-soft pt-20">

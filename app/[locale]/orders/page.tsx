@@ -3,8 +3,13 @@ import type { Metadata } from 'next';
 import OrderLookup from './OrderLookup';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('orderLookup');
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'orderLookup' });
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),

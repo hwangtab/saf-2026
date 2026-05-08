@@ -80,7 +80,7 @@ export default async function TransparencyPage({
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const pageUrl = buildLocaleUrl('/transparency', locale);
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('transparency'), url: pageUrl },

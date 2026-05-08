@@ -48,7 +48,7 @@ export async function generateMetadata({
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
-  const tSeo = await getTranslations('seo');
+  const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   return {
     ...createStandardPageMetadata(title, copy.description, PAGE_URL, '/archive/2026', locale),
@@ -65,7 +65,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
   setRequestLocale(locale);
   const pageUrl = buildLocaleUrl('/archive/2026', locale);
   const archiveUrl = buildLocaleUrl('/archive', locale);
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const exhibitionReviews = await getSupabaseReviews();
   const canonicalUrl = pageUrl;
   const shareTitle =

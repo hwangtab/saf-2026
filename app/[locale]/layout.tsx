@@ -104,7 +104,7 @@ export default async function LocaleLayout({
           </Suspense>
         </main>
         <Suspense>
-          <Footer />
+          <Footer locale={locale} />
         </Suspense>
       </ToastProvider>
     </NextIntlClientProvider>

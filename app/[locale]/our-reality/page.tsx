@@ -84,7 +84,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
   const isEnglish = locale === 'en';
   const pageUrl = buildLocaleUrl('/our-reality', locale);
   const testimonialsData = await getSupabaseTestimonials();
-  const tBreadcrumbs = await getTranslations('breadcrumbs');
+  const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('ourReality'), url: pageUrl },

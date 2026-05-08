@@ -5,15 +5,17 @@ import type { ArtworkCardData } from '@/types';
 interface RecentlySoldSectionProps {
   artworks: ArtworkCardData[];
   totalCount: number;
+  locale: string;
 }
 
 export default async function RecentlySoldSection({
   artworks,
   totalCount,
+  locale,
 }: RecentlySoldSectionProps) {
   if (artworks.length === 0) return null;
 
-  const t = await getTranslations('artworkDetail');
+  const t = await getTranslations({ locale, namespace: 'artworkDetail' });
 
   return (
     <div className="mt-24 pt-24 border-t border-gray-100">

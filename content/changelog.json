@@ -1,11 +1,331 @@
 [
   {
-    "hash": "1ac226d7",
+    "hash": "af693bae",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "force-static에서 영문 페이지에 한국어 leak 해결 — locale 명시 전달",
+    "summary": "setRequestLocale의 request scope가 force-static 빌드의 일부 server sub-component에 전파되지 않아 default locale(ko)로 fallback되어 영문 페이지에 한국어가 노출되던 문제 — getMessages·getTranslations에 locale 명시 전달로 해결",
+    "body": "[증상]\n영문 페이지(/en/...) HTML SSR 결과에 EN + KO 메시지 동시 노출:\n- /en 홈 hero CTA: \"전체 작품 보기\" 4회, \"전시 보러 가기\" 3회 KO leak\n- /en 작품 상세: \"가격\" 15회, \"작가 소개\", \"작품 가격\", \"온라인 구매\" KO leak\n- 헤더 등 client component만 정상 EN. SSR 메시지는 부분 KO.\n\n[원인]\nNext.js 16 + next-intl + force-static + generateStaticParams 조합에서\nsetRequestLocale(locale)이 main page render에는 적용되지만, async server\nsub-component(HeroSpotlightSection, CategorySections 등)나 layout의\ngetMessages() 호출 시 request scope에서 locale을 못 찾고 default 'ko'로\nfallback. NextIntlClientProvider도 KO 메시지로 init되어 client component\n들도 KO 사용.\n\n[수정]\n1. app/[locale]/layout.tsx — `getMessages()` → `getMessages({ locale })`\n   NextIntlClientProvider에 정확한 locale의 messages 전달.\n2. app/[locale]/page.tsx\n   - HeroSpotlightSection, CategorySections에 `locale` prop 전달\n   - 각 sub-component에서 setRequestLocale(locale) 추가 호출\n   - getTranslations({ locale, namespace })로 locale 명시\n3. app/[locale]/artworks/[id]/page.tsx\n   - getTranslations(`'artworkDetail'`) → getTranslations({ locale, namespace: 'artworkDetail' })\n   - generateMetadata 포함 모든 호출에 locale 명시\n\n[검증]\npreview 배포(saf2026-py8ijzt2j) 검증:\n- /en 홈: KO 키워드 0회, EN 정상 (\"Browse all artworks\" 3회, \"View the exhibition\" 6회)\n- /en 작품 상세: KO 키워드 0회, EN 정상 (\"Price\" 22회, \"About the Artist\" 3회, \"Buy Online\" 2회)\n\n[추가 i18n 키]\n이전 작업에서 추가된 artworkDetail 네임스페이스 키들 (relatedMagazine,\nrelatedArtworks, relatedStories, magazineLabel, statusAvailable/Reserved/\nSold) — agent 진단으로 잘못 식별됐던 14건은 영문 사용자에게 leak 아니지만\n(ternary 분기) 키는 정리됨. 향후 코드 정리 시 ternary→t() 통일 가능.\n\n[남은 작업]\n다른 페이지(stories, news, archive, artworks 리스트, artist 프로필 등)도\n동일 패턴 적용 필요할 수 있음. production 배포 후 확인하면서 별도 PR로\n처리.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "cbd1312c",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "Google Search Console organic SEO 분석 (Phase D)",
+    "summary": "관리자 분석 페이지에 GSC organic SEO 데이터 패널 추가. 매일 새벽 5시",
+    "body": "(KST) cron으로 GSC API에서 7일치 fetch해 gsc_metrics에 캐시. 어떤 키워드로\n검색에 잡히는지·CTR 낮은 keyword(메타태그 개선 신호)·organic 트래픽 받는\n페이지 가시화. Phase A→D 시리즈 마지막 단계.\n\n- supabase/migrations/20260508160000_gsc_metrics.sql:\n  - gsc_metrics 테이블 (date × query × page unique, 30일 보관)\n  - 5개 RPC: get_gsc_top_queries / get_gsc_top_pages / get_gsc_low_ctr_queries\n    / get_gsc_daily_trend / get_gsc_sync_status (모두 SECURITY DEFINER, service_role only)\n- lib/gsc-client.ts: OAuth refresh token 기반 webmasters client (googleapis SDK)\n- app/api/internal/gsc-sync/route.ts: cron handler — 7일치 upsert + 30일 cleanup\n- vercel.json: gsc-sync cron 등록 (0 20 * * *)\n- app/actions/admin-analytics.ts: AnalyticsData에 gsc 필드 추가 + RPC 5개 호출\n- app/(portal)/admin/analytics/_components/GscPanel.tsx: 신규 패널 (sync 상태,\n  일별 추이, TOP queries, TOP pages, low-CTR queries)\n- messages/{ko,en}.admin.json: GSC 섹션 i18n 키 추가\n- package.json: googleapis ^171.4.0 의존성\n\n환경변수: GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET, GSC_OAUTH_REFRESH_TOKEN,\nGSC_SITE_URL — Vercel production/preview/development 모두 등록 완료.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "11ff0a64",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "FooterSliderWrapper에 460px placeholder + path 가드 — slider mount 시 footer 영역 점프 제거",
+    "summary": "FooterSlider는 dynamic({ssr:false}) + client에서 artworks fetch → RelatedArtworksSlider 렌더하며 약 460px height 추가. 이 시점에 Footer SawtoothDivider svg 위치가 변동되어 stories 등 slider 표시 페이지에서 CLS 0.05 발생. wrapper에 미리 min-h-[460px] placeholder 잡고, slider 안 보이는 페이지(메인·/artworks·portal)는 path 가드로 null 반환해 빈 공간도 안 보이게 함.",
+    "body": "- usePathname + shouldShowFooterSlider로 client side path 체크\n- shouldShowFooterSlider=false면 null (placeholder 없음, 깔끔)\n- shouldShowFooterSlider=true면 min-h-[460px] placeholder 안에 FooterSlider 렌더 → fetch 후 동일 영역에 RelatedArtworksSlider 들어와도 layout 변동 0\n\n검증 (Playwright dev mode 데스크톱):\n- 변경 전: stories CLS 0.05\n- 변경 후: stories CLS 0 ✅",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "3df639b4",
     "type": "fix",
     "scope": "checkout",
-    "subject": "Toss SDK v2로 전환 — 카카오페이/토스페이 자체창 직행",
-    "summary": "결제수단 선택 시 통합결제창으로 빠지던 버그 수정 — SDK v2 flowMode='DIRECT' + card.easyPay로 해당 간편결제 자체창 직행",
-    "body": "기존 API v1 POST /v1/payments + 최상위 easyPay 파라미터는 Toss가 무시 →\n스크린샷처럼 통합 결제수단 선택창이 노출. 결과적으로 사용자가 카카오페이를\n눌러도 거기서 네이버페이로 이동 가능한 상태였음.\n\nSDK v2 명세대로 card.flowMode='DIRECT' + card.easyPay='KAKAOPAY'를 중첩 객체로\n전달하도록 변경. method='CARD' 단독은 통합결제창(의도된 동작), TRANSFER는 기존\nToss 우회 무통장 흐름 유지, PayPal/overseas 흐름은 그대로 (initiatePayment 액션\n보존).\n\n- page.tsx: getTossDomesticClientKey() 호출 + clientKey prop 전달\n- CheckoutClient.tsx: loadTossPayments + payment.requestPayment redirect 모드\n- USER_CANCEL 코드는 에러 메시지 생략 (사용자가 결제창 닫은 정상 흐름)\n- success 페이지/confirm API/createOrder/cancelPendingOrder 변경 없음",
+    "subject": "영문 페이지에서 작품명·작가명 영문 컬럼 fallback",
+    "summary": "/en/checkout/[artworkId]에서 artwork.title / artist.name_ko 그대로 노출되어 한국어 leak 발생 — DB의 title_en / name_en을 우선 사용, 비어있으면 한국어 fallback",
+    "body": "[원인]\npage.tsx의 select가 'id, title, price, status, images, artists(name_ko)'로\ntitle_en·name_en을 가져오지 않음. 결과적으로 영문 페이지에서도 한국어\n작품명·작가명이 그대로 노출됨.\n\n[수정]\n- select에 title_en, artists(name_en) 추가\n- locale='en'일 때 title_en?.trim() || title, name_en?.trim() || name_ko로 fallback\n- locale='ko'일 때는 기존대로 한국어 사용\n- artistName 추출 로직 헬퍼 함수로 정리\n\n[유지된 한국어 (의도적)]\n- 사업자 대표명·사업자번호·통신판매신고번호 등 한국 행정 정보는 영문 페이지에도\n  한국어 그대로 (footer 표기, 법적 식별자라 번역 안 함)\n- 기업은행 계좌번호·예금주 (한국 계좌 정보, \"Korea Smart Cooperative\" 영문\n  표기는 i18n으로 처리되어 영문 페이지에서 정상 노출)\n\n작품 데이터의 title_en/name_en 컬럼이 비어 있는 작품은 한국어로 fallback —\n별도 데이터 채우기 작업으로 보강 가능.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "44997b40",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "CountdownTimer SSR placeholder ↔ hydrate 마크업 불일치 — petition 0.05 회귀 해결",
+    "summary": "SSR 시 useSyncExternalStore의 getServerSnapshot이 0 반환 → placeholder 'D-…'(7ch)만 표시. hydrate 후 'prefix(마감까지) D-NN' 구조로 변경되며 prefix 추가 + strong 너비 변동으로 CLS 0.0503 발생. SSR/hydrate 양쪽이 동일 마크업 구조를 갖도록 통일.",
+    "body": "- 동일 구조: <span aria-live=\"polite\">prefix <strong inline-block min-w-[5ch] text-center tabular-nums>D-{값}</strong></span>\n- 값 차이만: SSR='D-…' / hydrate='D-NN'\n- min-w-[5ch] tabular-nums로 D-N/NN/NNN 자릿수 변동에도 너비 reserve\n\n검증 (Playwright dev mode 데스크톱):\n- 변경 전: CLS 0.0503\n- 변경 후: CLS 0.0001 ✅",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "8efd18c2",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "작가·매거진 매출 기여도 attribution (Phase C)",
+    "summary": "경영자가 promotion·콘텐츠 우선순위를 결정할 수 있도록 작가별 commerce dashboard와 매거진별 매출 attribution 추가. 어떤 작가가 매출을 만드는지(작품 수·페이지뷰·결제·매출·view→paid 비율), 어떤 매거진 글이 결제로 이어지는지(클릭→그 작품 매출 last-touch attribution).",
+    "body": "데이터 흐름:\n- 작가별: page_views의 artwork path 정규식 → artworks.artist_id join → orders 매출 합산\n- 매거진별: story_to_artwork_click 이벤트의 event_data.artwork_id → orders.artwork_id join\n\n신규 RPC (모두 SECURITY DEFINER, service_role):\n- get_artist_commerce_dashboard: 작가별 페이지뷰·결제·매출·view→paid conversion. TOP 30\n- get_story_attributed_revenue: 매거진→작품 클릭의 paid 매출 (last-touch). TOP 20\n\nAttribution 한계 명시: orders 테이블에 device_id 컬럼 부재 → 명시적 사용자 매칭 불가. 단순 last-touch — 매거진에서 클릭된 artwork의 paid 매출을 그 매거진에 기여로 인정. 같은 작품이 여러 매거진에서 클릭됐다면 양쪽에 중복 계산. 운영자 비교 용도. 정확한 attribution은 device_id 컬럼 + 시간 기반 매칭 별도 작업.\n\nUI (admin/analytics 새 AttributionPanel — Commerce 바로 아래):\n- 작가별 dashboard 표 (작가/작품수/조회/방문자/결제/매출/조회→결제율). 1%+ 녹색·50뷰+0% 빨간색\n- 매거진별 attribution 표 (매거진 클릭→작품 매출). 매거진 행 클릭 시 새 탭으로 stories/{slug}\n\n배치 순서: CommercePanel > AttributionPanel > InsightsPanel > CrossLinkPanel.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "635a0815",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "Commerce Funnel 분석 — 작품뷰→체크아웃→결제 (Phase B)",
+    "summary": "경영자 대시보드에 매출 직결 funnel 추가. 4단계 conversion rate(작품 페이지뷰 → 체크아웃 → 주문 → 결제 완료)와 작품별 매출 TOP 20을 노출. 각 작품의 조회→체크아웃 비율과 체크아웃→결제 비율로 매출 누수 지점(가격·이미지·CTA) 즉시 식별.",
+    "body": "데이터 흐름:\n- page_views의 path 정규식 매칭으로 artwork_id, checkout artwork_id 추출\n- orders 테이블 join으로 주문/결제 통계 (paid_at IS NOT NULL OR is_paid_status(status))\n- artworks 테이블 join으로 title/artist hydrate (cross-link과 동일 패턴)\n\n신규 RPC (모두 SECURITY DEFINER, service_role only):\n- get_commerce_funnel_summary: 전체 단계별 unique count + 총 매출\n- get_top_artwork_funnel: 작품별 funnel TOP N (10회 미만 페이지뷰 제외, 매출 순 정렬)\n- get_revenue_daily_trend: paid_at 기준 일별 매출\n- helper is_paid_status(text): paid·preparing·shipped·delivered·completed를 결제됨으로 분류\n\nUI (admin/analytics 새 CommercePanel — InsightsPanel 위에 배치):\n- 5단계 funnel 요약 카드 (조회→체크아웃→주문→결제→매출). 결제·매출은 success-a11y 강조\n- 일별 매출 추이 표 (KRW currency 포맷)\n- 작품별 funnel TOP 20: 조회/체크아웃/결제/매출/체크아웃→결제율. 50%+는 녹색·10%- 빨간색 강조\n\n배치 순서: CommercePanel(매출) > InsightsPanel(행동) > CrossLinkPanel(매거진↔작품). 매출이 경영자에게 가장 중요해 최상단.\n\n운영 적용: supabase db push 후 즉시 반영 (orders 테이블 + page_views 기존 데이터 활용).",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "6a0a8bbd",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "scrollbar-gutter:stable — Modal scroll-lock 시 데스크톱 17px 페이지 너비 변동 제거",
+    "summary": "Modal·FullscreenMenu·GlobalSearchDialog 3개가 body.style.overflow='hidden'으로 scroll-lock할 때 데스크톱 scrollbar(~17px)가 사라지며 페이지 너비 증가 → 모든 element가 오른쪽으로 밀려 CLS 발생. PSI 데스크톱 CLS 0.31의 가능 원인. html{scrollbar-gutter:stable}로 lock 여부와 무관하게 scrollbar 영역 항상 reserve.",
+    "body": "- 영향: 데스크톱 CLS 잠재 회귀 제거. 모바일은 overlay scrollbar라 영향 없음\n- 부작용: 데스크톱에서 항상 17px scrollbar gutter 표시 (스크롤 안 되는 짧은 페이지에도)\n- 브라우저 지원: Chrome 94+ / Firefox 97+ / Safari 16+ — 미지원 브라우저는 기존 동작\n- 사용자 input(modal trigger 클릭) 후 layoutShift는 hadRecentInput=true로 카운트 안 되지만 시점 차이로 CrUX는 일부 카운트 가능 — 이번 fix로 그 risk도 제거",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "0aed32c9",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "영문 페이지 결제수단별 metadata/통화 일관성",
+    "summary": "영문 결제 페이지의 Card/EasyPay 흐름이 metadata=overseas로 저장돼 confirm 시 saf202719y로 잘못 분기되던 문제 + KRW 결제인데 success가 USD 표시하던 통화 mismatch 동시 해결",
+    "body": "[원인 1: confirm provider mismatch]\n영문 페이지에서 Card/EasyPay 클릭 시:\n- createOrder(locale='en') → metadata.payment_provider='overseas' (saf202719y)\n- 그러나 SDK v2는 saf202i818(domestic) MID에서 결제 → paymentKey도 saf202i818\n- confirm 시 metadata 보고 saf202719y secret 사용 → 401 fail\nPayPal만 실제로 saf202719y로 결제하므로, PayPal만 locale='en'이어야 함.\n\n[원인 2: success page 통화 mismatch]\nsuccess/page.tsx가 locale='en'일 때 무조건 currency='USD'로 가정. KRW로 결제한\nCard/EasyPay 흐름에서도 USD로 표시 → 사용자 혼란.\n\n[수정]\n1. OverseasCheckoutClient.handlePayment의 createOrder locale 분기:\n   - PayPal → locale='en' (overseas/USD/saf202719y)\n   - Card/EasyPay → locale='ko' (domestic/KRW/saf202i818)\n   - Transfer → locale='en' 그대로 (createBankTransferOrder는 manual_bank_transfer\n     provider 저장이라 분기 무관)\n\n2. successUrl에 currency 쿼리 추가:\n   - PayPal: ?currency=USD\n   - Card/EasyPay: ?currency=KRW\n   - Transfer: ?currency=KRW (BANK_TRANSFER 쿼리와 함께)\n\n3. success/page.tsx의 currency 결정 로직:\n   - 무통장(BANK_TRANSFER)은 항상 KRW\n   - 그 외엔 currency 쿼리 우선 (USD/KRW), 쿼리 없을 때만 locale 기반 fallback\n\n[결과]\n영문 페이지에서 어떤 결제수단을 선택해도:\n- 결제 → confirm → success 표시까지 통화·MID 일관성 유지\n- 한국어 페이지(SDK v2)와 동일 흐름. 둘 다 정상 동작 확인된 패턴.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "4ce48ec8",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "사용자 행동 인사이트 4종 — 세션 깊이·이탈 페이지·재방문률·UTM (Phase A)",
+    "summary": "경영자 대시보드에 의사결정 인사이트 추가. (1) 세션 깊이 — 평균/중앙값 페이지/세션. (2) 주요 이탈 페이지 — 이탈률 70% 이상 빨간색 강조, CRO 개선 신호. (3) 신규 vs 재방문자 — 재방문 유도 효과 측정. (4) UTM 캠페인 분포 — 광고/뉴스레터 ROI 측정.",
+    "body": "데이터:\n- 1~3은 기존 page_views 테이블만으로 산출 (RPC 3개 신설)\n- UTM은 Vercel Drain의 queryParams 필드 보존이 필요해 webhook patch + page_views.query_params text 컬럼 추가. 그 이전 트래픽은 미포함.\n\n신규 RPC (모두 SECURITY DEFINER, service_role):\n- get_pv_session_depth: total_sessions, avg/median pages_per_session\n- get_pv_top_exit_pages: 세션마다 마지막 페이지 + exit_rate (5회 미만 노출 노이즈 제외)\n- get_pv_visitor_recurrence: device_id의 first_seen 기준 신규/재방문 분류\n- get_pv_utm_distribution: query_params에서 utm_source/medium/campaign 파싱\n- helper extract_query_param: query string parsing\n\nWebhook 변경:\n- VercelDrainEvent type에 queryParams?: string 추가\n- isValidVercelDrainEvent 검증 통과\n- rows.query_params 보존\n\nUI (admin/analytics 페이지 새 InsightsPanel 섹션):\n- 세션 깊이 4-stat 카드\n- 신규/재방문자 + 신규 비율 highlight\n- 이탈 페이지 표 (path 새 탭 클릭 가능, 이탈률 70%+ 빨간색)\n- UTM 캠페인 표 (Source/Medium/Campaign)\n\ni18n: ko/en.admin.json에 insightsTitle, sessionDepthTitle, exitPagesTitle 등 18 키 추가.\n\n운영 적용: supabase db push 후 다음 vercel-drain webhook부터 query_params 보존 시작 + InsightsPanel 데이터 채워짐.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "782f74a9",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "cross-link 패널 UX — slug/id 대신 매거진·작품 이름 + 클릭 navigate",
+    "summary": "운영자가 분석 페이지에서 어떤 매거진·작품이 conversion을 만드는지 즉시 파악할 수 있도록 slug/UUID 대신 사람이 읽을 수 있는 제목·작가 표시 + 행 전체를 새 탭 링크로 변환. RPC schema는 그대로 두고 admin-analytics action에서 stories/artworks 테이블을 batch fetch해 hydrate.",
+    "body": "변경:\n- AnalyticsData['crossLinks']에 storyTitle, artworkTitle 필드 추가 (null 허용 — 매거진 삭제·이름 변경 fallback)\n- admin-analytics action: 고유 slug/id 모아 stories(slug, title) + artworks(id, title, artists.name_ko) batch fetch → Map으로 hydrate. event_data의 artist는 이벤트 시점 snapshot이라 stale 가능 → artworks 테이블 현재 작가가 있으면 우선\n- StoriesTable: 매거진 제목 큰 글씨 + slug 보조 회색. <a target=\"_blank\">로 새 탭에서 stories/{slug} 열기 — 운영자 분석 컨텍스트 보존\n- ArtworksTable: 작품 제목·작가 큰 글씨 + UUID 작은 회색 보조. artworks/{id} 새 탭\n- 메타 fetch 실패·매거진 삭제 시: 제목 null → UI에서 slug/UUID로 fallback (링크는 그대로)\n- i18n: storyTitleColumn 키 추가 (ko: \"매거진\", en: \"Story\")\n\n성능: top N=10 limit이라 batch fetch 부담 작음 (slug ≤10개, id ≤20개 max)",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "298bdb17",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "story 변경 시 작가 작품 detail revalidate — ISR 캐시 inconsistency 해결",
+    "summary": "같은 작가의 작품 detail 페이지 두 개에서 한쪽만 \"관련 매거진\" 섹션이 보이는 회귀 발견. 원인은 stories 추가/수정 시 그 작가의 작품 detail이 revalidate되지 않아 ISR 캐시(revalidate=3600)에 stale로 남는 것 + dynamicParams=true로 first-request SSG라 작품마다 다른 시점에 prerender되어 매거진 추가 전 prerender된 작품은 영원히 stale.",
+    "body": "진단 사례: 강석태 작가\n- /artworks/90539c27 — 매거진 보임 (kang-seoktae-little-prince)\n- /artworks/07e3bec6 — 매거진 안 보임\n- 두 작품의 artist_id 정확히 동일 (ad5f81de...), name_ko 'codepoint 단위 일치\n- 둘 다 x-vercel-cache: STALE이지만 prerender 시점 달라 컨텐츠 차이\n\n조치: createStory/updateStory/deleteStory에서 story.tags(작가 이름들)에 매칭되는 모든 artwork detail revalidate. updateStory는 tag 변경 케이스 대응으로 이전+신규 tags 합집합 revalidate.\n\nhelper revalidateArtworksForStoryTags():\n- tags 배열 받아 trimmed 작가 이름 list 만듦\n- artists 테이블에서 name_ko in tags 매칭 → artist_id 추출\n- artworks 테이블에서 artist_id in [ids] 작품 모두 가져와 /artworks/{id} + /en/artworks/{id} revalidatePath 호출\n\n영향:\n- 매거진 추가 시 그 작가의 모든 작품 detail이 다음 요청부터 새 매거진 노출\n- 일반적으로 작가당 작품 5~15개라 revalidate 호출 부담 작음\n- 즉시 수습: 강석태 매거진(kang-seoktae-little-prince) 한 번 수정·저장하면 모든 강석태 작품 detail이 갱신됨",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "b96926cb",
+    "type": "fix",
+    "scope": "webhook",
+    "subject": "Vercel Drain payload의 custom event properties 누락 — `data` 필드 fallback",
+    "summary": "cross-link 추적 이벤트 13건 모두 page_views.event_data가 NULL로 들어옴 진단 결과, @vercel/analytics SDK(v1.6.x)가 track() 호출 시 properties를 내부적으로 `data` 필드로 wrap해 전송하는데, Drain payload에 그 필드명이 그대로 보존되는 경우가 있음(공식 docs는 v2 schema에 `eventData`라고 명시하지만 실제 동작은 다름). webhook handler가 `eventData`만 파싱하던 것을 `eventData → data` 순차 fallback으로 강화.",
+    "body": "진단 경로:\n- 운영 DB의 page_views 13건 모두 event_data NULL 확인 (PostgREST API로 조회)\n- @vercel/analytics SDK 내부 코드 추적: window.va(\"event\", { name, data: props }) 형태로 wrap\n- 공식 Drain docs(vercel.analytics.v2)는 eventData 명시 — 두 형식 모두 대응 필요\n\n변경:\n- VercelDrainEvent type에 data?: string | Record<string, unknown> 추가\n- parseEventData()를 event 객체 통째로 받게 변경, 두 필드명 순차 시도\n- string·object 둘 다 안전하게 narrow\n\n영향:\n- 다음 클릭부터 event_data jsonb에 properties 정상 보존\n- 과거 NULL 13건은 회복 불가 (Vercel raw payload 보존 안 함)\n- admin/analytics CrossLinkPanel의 'source 분포' '클릭받은 작품' 등이 데이터 모이면 채워짐",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "bcd6f827",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "MasonryGallery infinite scroll → pagination — /artworks CLS 1.0 회귀 해결",
+    "summary": "PSI CrUX 모바일 CLS 1.0의 추가 원인. /artworks(작품 365점) infinite scroll이 24점씩 추가될 때마다 Gallery Section 높이가 viewport만큼 늘어나 그 아래 Section들(Category Guide·Campaign Banner·FAQ)이 일제히 밀려 매 batch 1.0의 layout shift 발생. 페이지네이션으로 변경 — 사용자 입력(클릭) 직후 layout 변화라 hadRecentInput=true로 CLS 카운트 안 됨.",
+    "body": "- IntersectionObserver(rootMargin=400px) 기반 batch 로드 제거\n- usePathname + useSearchParams로 ?page=N 동기화\n- PAGE_SIZE=24 (모바일 1열 24행 / 태블릿 2열 12행 / 데스크톱 3열 8행)\n- Pagination 컴포넌트(이미 구현됨) 재사용 — 7개 표시·이전·다음·총 N개\n- 페이지 변경 시 부드럽게 상단으로 scroll. 첫 마운트는 가드(useRef)로 스킵.\n\n검증 (Playwright, dev mode 모바일 viewport):\n- 변경 전: CLS 1.0 (4건 누적, 페이지 높이 70200)\n- 변경 후: CLS 0.036 (Good, 페이지 높이 19393 — 1/4 축소)\n- Pagination ?page=2 링크 정상 노출\n\n영향 페이지: /artworks 외에 같은 MasonryGallery 사용처(category·artist 페이지)도 동일하게 회복.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "6de155f6",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "SDK v2 → API v1 redirect 회귀 — 통합 picker에 간편결제 복구",
+    "summary": "한국어 결제 페이지에서 카카오페이/토스페이/네이버페이가 picker에서 사라지던 SDK v2 회귀 — API v1 redirect 흐름으로 되돌려 Toss-hosted picker가 saf202i818 MID 활성화된 모든 결제수단 노출하게 복구",
+    "body": "[원인]\nSDK v2 client-side `payment.requestPayment({method:'CARD'})`는 통합 picker를\n열지만 picker가 BrandPay 등록 customerKey를 요구하는 일부 간편결제(TossPay/\nNaverPay 등)를 비회원 결제(orderNo, ANONYMOUS 등 새 키)에서 숨김. 결과적으로\n카드만 노출되고 간편결제 누락. 사용자 보고 회귀.\n\n[수정]\n- CheckoutClient.tsx — SDK v2 호출 제거, API v1 initiatePayment + window.location.href\n  redirect로 되돌림. Toss-hosted 통합결제창은 saf202i818 활성화된 카드 + 카카오/\n  토스/네이버페이 모두 노출 (확인된 동작).\n- clientKey prop 제거 (더 이상 SDK 안 사용).\n- page.tsx — CheckoutClient에 clientKey 전달 제거. clientKey 검증 자체는 유지\n  (Toss config 활성 확인용, OverseasCheckoutClient에는 여전히 필요).\n- Header doc + flow 주석 업데이트.\n\n[유지된 UI 개선]\n- 5개 옵션 list rows + 큐레이터 라벨 + Daum embed 그대로\n- 브랜드 로고(KakaoPay/TossPay/NaverPay) 그대로\n- 좌측 primary bar selected indicator 그대로\n\n[직행 라우팅]\nsaf202i818 MID와 직행(`flowMode='DIRECT'`) 계약 후 SDK v2로 재전환하여 활성화\n가능. cardOptions 필드 그대로 두어 미래 활성 시 한 줄 추가만 필요. 단, 그\n시점에는 SDK v2의 picker 회귀(이번 사고)도 다시 검토해야 함.\n\n[영문 페이지]\nOverseasCheckoutClient는 별도 fix 필요 (Card/easyPay 흐름이 SDK v2 그대로).\nPayPal·Bank Transfer 흐름은 영향 없음. 후속 PR로 처리.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "1d488b21",
+    "type": "fix",
+    "scope": "migration",
+    "subject": "cross-link RPC `position` reserved keyword 컬럼명을 card_position으로 변경",
+    "summary": "직전 commit(f5d889b0)의 마이그레이션이 `supabase db push` 시 syntax error로 실패. PostgreSQL에서 `position`이 reserved keyword라 `RETURNS TABLE(position int, ...)` 형태로 사용 불가. 컬럼명을 `card_position`으로 변경하고 호출부(admin-analytics.ts)는 그대로 position 키로 매핑.",
+    "body": "영향: 운영 DB에 마이그레이션이 아직 적용 전인 상태에서 fix 적용 — `supabase db push` 가능. 이미 적용된 환경(있다면 dev/staging)에서는 마이그레이션 idempotent하게 재적용 가능 (CREATE OR REPLACE FUNCTION 사용).",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "f242e5f0",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "영문 페이지 multi-payment + 계좌이체 + KRW/USD 동시 표시",
+    "summary": "영문 결제에 6개 옵션(PayPal/Card/KakaoPay/TossPay/NaverPay/Bank Transfer) 추가 — 한국 PayPal 사용자가 영문 페이지에서 막히던 문제 해결 + 자격 caption으로 사용 가능 옵션 명확화",
+    "body": "[배경]\nPayPal Korea 정책상 한국 PayPal 계정은 한국 가맹점에 결제 불가. 영문 페이지가\nPayPal 단일 옵션이라 한국 buyer가 영문 UI에서 마지막 단계 차단 사고 발생.\n주소 입력 시스템(Daum vs 자유 입력) 차이로 한국어/영문 페이지 통합은 불가,\n영문 페이지에 한국어 페이지의 결제수단을 그대로 추가.\n\n[옵션 매트릭스]\n| 옵션          | 자격                                | 통화 | Caption                    |\n|---------------|-------------------------------------|------|----------------------------|\n| PayPal        | 해외 PayPal 계정 (한국 PayPal 차단) | USD  | International accounts only |\n| Card          | 전 세계 카드 (한국+외국)            | KRW  | —                          |\n| KakaoPay      | 한국 카카오페이                     | KRW  | —                          |\n| TossPay       | 한국 토스페이                       | KRW  | —                          |\n| NaverPay      | 한국 네이버페이                     | KRW  | —                          |\n| Bank Transfer | 한국 계좌(국내+해외 diaspora)       | KRW  | Korean bank accounts only  |\n\n[가격 표시]\nKRW + USD 동시 노출. 표 마지막 row \"PayPal (USD) ≈ $X\" caption. PayPal 선택 시\n추가 안내 (\"Charged in USD via PayPal at the rate fixed at order time.\").\n\n[구조]\n- PaymentBrandLogo.tsx 신규 — BrandLogo + BRAND_ASSETS + BrandKind 분리,\n  CheckoutClient·OverseasCheckoutClient 양쪽 import. PayPal wordmark는 Pay\n  다크블루 + Pal 라이트블루 italic 텍스트로 (이미지 자산 미사용)\n- OverseasCheckoutClient.tsx 대폭 재작성 — 한국어 페이지의 큐레이터 list rows\n  패턴 그대로 + PayPal/Transfer caption + handlePayment 다중 분기\n- page.tsx — clientKey를 영문 분기에도 전달 (SDK v2 통합결제창 호출 위해)\n- CheckoutClient.tsx — BrandLogo 제거(분리 파일로), import 정리\n\n[i18n]\n- methodPaypal (PayPal)\n- paypalCaption (영문: \"International accounts only\")\n- paypalUsdNotice (USD 청구 안내)\n- transferDescription 영문: \"IBK Bank · ships after deposit\" → \"Korean bank accounts only\"\n  (자격 안내 톤 통일. 한국어는 \"기업은행 · 입금 확인 후 발송\" 그대로 유지)",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "0119fc14",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "GA_ID trailing newline trim — web_vitals RUM 30일 0건 회귀 근본 원인",
+    "summary": "Playwright로 production gtag dataLayer inspect 결과 gtag('config', 'G-XXX\\\\n', ...) 호출에서 measurement ID에 trailing newline 포함. GA4 서버에서 ID 매칭 실패해 web_vitals/web_vitals_mount 이벤트가 dataLayer에는 정상 push되지만 백엔드로 전송 안 되던 현상. 30일 GA4 데이터에 web_vitals 0건이었던 직접 원인.",
+    "body": "- NEXT_PUBLIC_GA_ID?.trim() 적용\n- Vercel 환경변수 등록 시 trailing newline이 들어간 케이스 — 환경변수 수정 대신 코드에서 방어적으로 trim\n- 영향: 배포 후 신규 사용자부터 web_vitals 이벤트 정상 수집 → GA4에서 RUM CLS/LCP/INP 모니터링 가능 (CrUX 28일 rolling보다 빠른 신호로 fix 효과 검증)\n\n검증: Playwright production page → gtag config arg에서 \\\\n 확인. 코드 trim 후 type-check 통과.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "4ee98e25",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "customerKey ANONYMOUS → orderNo — 간편결제 picker 노출 복구",
+    "summary": "SDK v2 통합결제창에서 카카오/토스/네이버페이가 안 보이던 문제 — customerKey ANONYMOUS가 BrandPay 기반 간편결제를 picker에서 숨겨 발생. orderNo로 변경",
+    "body": "[원인]\nSDK v2 `payment.requestPayment()` 호출 시 `customerKey: ANONYMOUS`(@@ANONYMOUS)\n는 비회원 결제 marker. 그런데 ANONYMOUS는 BrandPay 등록이 필요한 일부\n간편결제(TossPay, NaverPay)를 picker에서 차단함. 결과적으로 카드만 보이고\n간편결제는 사라짐.\n\n[수정]\n- customerKey: ANONYMOUS → orderNo\n- ANONYMOUS import 제거 (loadTossPayments만 import)\n- 주석 업데이트\n\norderNo는 영문/숫자, 50자 이내, 매 결제마다 unique한 형식. customerKey 명세\n(\"영문 대소문자, 숫자, 특수문자 -, _, =, ., @ 중 최소 1개 포함, 2~50자\") 부합.\n\n[배경]\n이 동일한 customerKey 패턴은 토스 매니저가 보내준 간편결제 자체창 직행 가이드\nHTML에서도 사용 (UUID 형식 hardcoded customerKey). OverseasCheckoutClient는\n직행 시도 때 이미 orderNo 패턴 적용. CheckoutClient만 ANONYMOUS로 남아 있어\n간편결제 안 보이는 회귀 발생.\n\n검증: 머지 후 production에서 결제하기 클릭 → Toss picker에 카드 + 카카오페이\n+ 토스페이 + 네이버페이 모두 노출되어야 정상.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "f5d889b0",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "매거진↔작품 cross-link funnel 분석 패널",
+    "summary": "직전 commit(42097034)에서 추가한 story_to_artwork_click·artwork_to_story_click 트래킹 이벤트가 Vercel Drain webhook을 통해 자체 page_views 테이블에 들어오지만, webhook handler가 properties(artwork_id, source 등)를 drop하고 있어 활용 불가. 본 패치로 (1) page_views.event_data jsonb 컬럼 추가 + webhook handler 확장 (2) cross-link 분석용 RPC 6개 (3) admin/analytics 페이지에 CrossLinkPanel 섹션 추가.",
+    "body": "데이터 흐름:\n사이트 track('story_to_artwork_click', {properties}) → Vercel Analytics → Vercel Log Drain →\n/api/webhooks/vercel-drain → page_views (event_data jsonb 보존) → admin RPC → CrossLinkPanel UI\n\n신규 RPC (모두 SECURITY DEFINER, service_role only):\n- get_cross_link_summary: 양 방향 클릭/방문자 총합\n- get_top_converting_stories: 전환이 잘 일어나는 매거진 TOP N (slug 기준)\n- get_top_clicked_artworks_from_stories: 매거진에서 클릭 받은 작품 TOP N (event_data->artwork_id)\n- get_story_to_artwork_source_distribution: source(inline/artist-fallback/recent-fallback) 분포\n- get_top_artwork_to_story_artworks: 반대 방향 — 작품에서 매거진으로 이끄는 작품 TOP N\n- get_story_to_artwork_position_distribution: 카드 position(0~5)별 클릭 분포\n\nUI (admin/analytics 페이지 새 섹션):\n- 4 summary cards (양 방향 click/visitor)\n- source 분포 + position 분포 테이블\n- 전환 잘 일어나는 매거진 / 클릭 받은 작품 / 매거진 클릭을 만드는 작품 — 각 TOP 10\n- no-data state: 신규 추적 인프라 안내 (운영 초기엔 자연스러운 상태)\n\n타입 우회: 새 RPC 이름들이 generated supabase types에 아직 없어 typed client에서 union literal 에러 발생. untypedRpc wrapper로 우회 — 다음 supabase gen-types 사이클에서 자연 정리됨.\n\n마이그레이션 적용 필요: supabase migration up 또는 db push로 운영 DB에 적용 후 비로소 데이터 수집 시작. 적용 전에 admin 페이지를 열어도 fallback(0/[])으로 안전.\n\n격리 worktree(cross-link-analytics)에서 type-check 통과 후 commit.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "c12d1edb",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "chart loading placeholder 높이를 ChartContainer 실제 높이와 일치",
+    "summary": "dynamic chart import의 LoadingPlaceholder가 h-96(384px)인데 실제 ChartContainer 렌더 높이(p-6 padding 48 + title h3 mb-4 ~48 + ResponsiveContainer 300 + description ~36 ≈ 432px)와 차이. our-reality·our-proof 페이지의 chart 5종이 client mount 시점마다 ~50px layout shift 누적 → CLS 회귀 가능.",
+    "body": "- min-h-[400px]로 변경 (ChartSkeleton과 동일 값으로 통일)\n- chart chunk 로드 후에도 안정적 layout",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "7d2ce8d4",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "잠재 layout shift 회귀 2건 정리 — archive vh→svh + stories Suspense placeholder",
+    "summary": "PSI CLS 1.0 진단 후속 점검에서 발견한 추가 잠재 layout shift 영역 2건 fix. 메인 페이지 외 다른 라우트에서 누적되던 minor CLS.",
+    "body": "- app/[locale]/archive/page.tsx: min-h-[60vh] → min-h-[60svh]\n  - raw vh는 모바일 chrome bar 표시·숨김에 따라 viewport 기준 변동 → 해당 컨테이너 크기 변동으로 layout shift. svh(small viewport, chrome bar 표시 상태 기준 고정)로 안정화. HeroSpotlight도 같은 패턴으로 이전에 fix됨.\n\n- app/[locale]/stories/page.tsx: Suspense fallback={null} → fallback={<div className=\"h-[42px]\" aria-hidden=\"true\" />}\n  - StoriesCategoryFilter는 'use client' + usePathname 사용하는 chip 4개(~42px). null fallback이면 hydration 시 chip이 들어오며 그만큼 점프. 동일 높이 placeholder로 고정.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "da4b0b55",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "DynamicCounter Suspense 제거 — fallback 128px → 실제 ~480px 점프 회귀",
+    "summary": "PSI 모바일 CLS 1.0 회귀의 단일 원인 — 메인 페이지 통계 섹션 Suspense fallback(h-32 = 128px)이 모바일에서 실제 1열 3카드(~480px)로 hydration되며 ~350px layout shift 발생. 이전에 CategorySections·HomeFAQSection에서 같은 패턴으로 잡았던 회귀와 동일.",
+    "body": "- DynamicCounter는 dynamic() import가 아닌 직접 import이고 SSR 결과에서도 카드 그리드 그대로 렌더되므로 Suspense 자체가 불필요. Suspense + fallback 제거 → SSR HTML이 곧 최종 layout이라 hydration 시점 변동 없음\n- 사용 안 하는 Suspense import 제거\n\n영향:\n- 모바일 CLS: 1.0 (Poor) → 0.1 미만 예상 (다른 큰 layout shift 요소 부재)\n- 데스크톱 CLS: 0.31 (Poor) → 0.1 미만 예상\n- LCP/INP/FCP/TTFB는 양호 — 별도 변동 없음\n\n검증: type-check ✅ / build ✅. CrUX 데이터는 28일 rolling이라 PSI 점수 회복은 점진적.",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "42097034",
+    "type": "feat",
+    "scope": "stories,artworks",
+    "subject": "cross-link blind spot 3건 보강",
+    "summary": "직전 commit(973eb538) 리뷰에서 발견한 비대칭·불완전 추적·dead-end UX 3건 fix. (1) 작품→매거진 방향 funnel tracking 누락 → RelatedMagazineCard client 컴포넌트 신설로 대칭 측정(artwork_to_story_click). (2) tracking position 데이터가 inline 인용 vs fallback 매칭 구분 못 함 → source 속성('inline'|'artist-fallback'|'recent-fallback') 추가로 tier별 CTR 비교 가능. (3) Featured Artworks에 sold 작품이 섞여 dead-end UX → available 작품 우선 정렬(sort by sold), 인용 자체는 유지(educational reference 보존).",
+    "body": "변경:\n- components/features/RelatedMagazineCard.tsx (신규): RelatedArtworkCard와 짝을 이루는 반대 방향 카드. track('artwork_to_story_click', { artwork_id, artwork_artist, story_slug, story_category, position }) 호출.\n- components/features/RelatedArtworkCard.tsx: source prop 추가 + track properties 확장.\n- app/[locale]/stories/[slug]/page.tsx: sortAvailableFirst 헬퍼 + tier별 source 라벨링 + tier 1·2에 정렬 적용. tier 3는 이미 !sold 필터라 정렬 불필요.\n- app/[locale]/artworks/[id]/page.tsx: 사이드바 inline 카드 마크업을 RelatedMagazineCard로 추출. 미사용 import(SafeImage, extractFirstImage helper) 제거.\n\n검증: type-check 통과. Vercel preview(saf2026-pvzna6tob) 배포 완료. prod에서 양 방향 1회 클릭 후 Vercel Analytics 대시보드에서 story_to_artwork_click + artwork_to_story_click 이벤트 도달 확인은 별도(blind spot #5).",
+    "date": "2026-05-08",
+    "author": "황경하"
+  },
+  {
+    "hash": "5e50b4ac",
+    "type": "fix",
+    "scope": "mobile",
+    "subject": "iOS Safari input auto-zoom 차단 — text-base + viewport max-scale",
+    "summary": "모바일 모달/폼에서 input focus 시 viewport가 자동 줌되던 iOS Safari 버그 — 자체 모달 input의 폰트를 16px로 올리고 viewport에 maximumScale=1 추가해 외부 iframe(Daum) 케이스까지 방어",
+    "body": "[원인]\niOS Safari는 input focus 시점에 input의 font-size가 16px 미만이면 viewport를\n자동으로 확대해 텍스트를 읽기 쉽게 만든다. 이게 modal 안에서 발생하면 모달이\n잘리거나 살짝 줌되어 보이는 시각적 버그가 됨. Daum Postcode iframe(.embed)\n같은 외부 컨텐츠는 우리가 input font-size를 못 바꾸므로 viewport 단위 차단도\n필요.\n\n[수정 — 자체 모달 input 폰트]\n- BuyerInfoForm: inputClass의 text-sm → text-base\n- OrderLookup EditShippingForm: inputClass의 text-sm → text-base\n- OrderLookup CancelModal textarea: text-sm → text-base\n- FeedbackModal: select/input/textarea 3건 text-sm → text-base\n(라벨·버튼·캡션 등 focus 안 받는 텍스트는 text-sm 유지 — zoom 트리거 아님)\n\n[수정 — viewport]\n- app/layout.tsx Viewport에 maximumScale: 1 추가\n- iOS 10+는 maximumScale=1이어도 사용자 핀치-zoom 허용 → a11y 영향 없음\n- Daum Postcode iframe 같은 외부 컨텐츠도 자동 zoom 차단됨\n\n검증: Modal·Drawer·Dialog 전체 인벤토리 중 input 포함 컴포넌트 4건 식별,\n모두 처리. 외부 iframe(KakaoMap·Lightbox·ShareButtons window.open)은 input\n포함 안 함.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "6cc98ed1",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "SDK v2 picker + 5개 결제수단 + 큐레이터 list rows + Daum embed",
+    "summary": "결제 페이지 통합 picker 흐름 개선 — Toss SDK v2 전환, 네이버페이 추가, 공식 브랜드 자산 적용, 일관된 list 레이아웃, Daum 주소 검색 popup blocker 해소",
+    "body": "[결제 흐름]\n- API v1 redirect → SDK v2 `payment.requestPayment()` 통합결제창\n- saf202i818 MID는 직행(`flowMode: 'DIRECT'` + `easyPay`) 미계약 → DEFAULT picker\n  유지. Toss와 직행 계약 후 `cardOptions` 필드 추가만으로 활성 가능\n\n[UI 개편]\n- 5개 옵션을 동일한 list row로 통일 (chip + row 혼합 제거)\n- 좌측 1px primary bar로 selected 위치 고정 시각 cue\n- Radio dot pattern (5×5 outline → 2.5×2.5 fill)\n- 브랜드 로고 모두 공식 자산 사용 (sharp.trim()으로 Toss 여백 제거 후\n  h-6 w-auto로 일괄, dot/logo 좌측 정렬 일치)\n- 계좌이체 row에 \"기업은행 · 입금 확인 후 발송\" caption 우측 노출\n- chrome 무채색 원칙 — 모든 배경 white scale, accent는 primary tint만\n\n[Daum Postcode]\n- `.open()` popup 모드 → `.embed(element)` iframe 모드\n- 모달 레이어 직접 렌더 → cold cache 환경에서도 popup blocker 무관\n\n[i18n]\n- methodNaverpay (네이버페이/Naver Pay)\n- easyPayGroup (간편결제/Easy Pay)\n- transferDescription (기업은행 · 입금 확인 후 발송 / IBK Bank · ships after deposit)\n- 기존 잘못된 \"NH 농협\" 표기 정정 → 기업은행(IBK)\n\n[자산]\n- public/images/payment/{kakaopay.png,tosspay.png,naverpay.svg}\n- 각 사 공식 브랜드 가이드 자산",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "123a22ef",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "잔여 한국어 노출 정리 — RelatedArtworkCard.artist_en + 4개 OG image alt + BrandLoader alt",
+    "summary": "공개 페이지 블라인드스팟 점검에서 발견된 영문 페이지 잔여 한국어 노출 6건 정리.",
+    "body": "- components/features/RelatedArtworkCard.tsx: artwork.artist_en 우선 사용 패턴 추가 (영문 매거진→작품 카드에서 한국어 작가명 노출되던 회귀)\n\n- 4개 OG image alt 영문화:\n  - app/[locale]/stories/[slug]/opengraph-image.tsx: 'SAF 매거진 기사' → 'SAF Magazine Article'\n  - app/[locale]/artworks/[id]/opengraph-image.tsx: 'SAF 작품 상세' → 'SAF Artwork Detail'\n  - app/[locale]/artworks/artist/[artist]/opengraph-image.tsx: 'SAF 작가 페이지' → 'SAF Artist Page'\n  - app/[locale]/petition/oh-yoon/opengraph-image.tsx: alt에 영문/한국어 병기 (정적 export라 locale 분기 불가)\n\n- components/common/BrandLoader.tsx: alt='씨앗페 온라인 – SAF Online' hardcoded → messages a11y.brandLogo (ko='씨앗페 온라인' / en='SAF Online')\n\n- messages/{ko,en}.json: a11y.brandLogo 키 추가",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "50b7eb35",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "stories 3페이지 + archive index + special/oh-yoon 본문 영문 분기 정비",
+    "summary": "3차 i18n 백필 — 매거진 stories 영역(목록/카테고리/상세), 아카이브 인덱스, 오윤 특별전 페이지의 hardcoded 한국어를 영문/한국어 분기로 일관 정비. archive/2023 패턴(isEnglish 인라인 삼항) 통일 적용.",
+    "body": "- app/[locale]/stories/page.tsx: STORIES_COPY/CATEGORY_LABELS 기존 분기 유지 + locale === 'en' 비교를 isEnglish로 통일\n- app/[locale]/stories/[slug]/page.tsx:\n  - \"Korean original — English translation pending\" pill 라벨 (body_en 미채움 시)\n  - 발행일 prefix \"Published\"/\"발행\"\n  - en-US long-form 날짜 포맷 (영문 사용자)\n  - 작가 블록·관련 매거진 날짜 영문화\n- app/[locale]/stories/category/[category]/page.tsx:\n  - isEnglish 통일 (7곳 ternary 리팩터)\n  - \"Stories in this category\" 섹션 헤더 추가\n  - CATEGORY_LABELS 한국어 라벨 보강\n- app/[locale]/archive/page.tsx: locale === 'en' early return 통합 → 단일 JSX + isEnglish 인라인 삼항\n- app/[locale]/special/oh-yoon/page.tsx:\n  - 분리된 두 JSX 트리 → 단일 트리 + isEnglish 분기\n  - 표준 표기 Oh Yoon / woodcut print / minjung art / han / shinmyeong / Hyeonsil Dong-in / Hyeonsil-gwa Baleon / MMCA\n  - 톤: 차분한 기록·추모\n\n검사 결과: charts 6종 + homepage + transparency는 이미 완전 영문화 — 변경 없음.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "973eb538",
+    "type": "feat",
+    "scope": "stories",
+    "subject": "매거진→작품 cross-link 강화 + funnel tracking",
+    "summary": "이미 발행된 매거진 114편에서 본문 작품 인용이 conversion으로 이어지도록 4가지 보강. (1) 매거진 끝 \"관련 작품\" 카드 클릭 시 Vercel Analytics에 story_to_artwork_click 이벤트 발화 — 어떤 매거진이 conversion을 만드는지 측정 가능. (2) 본문에 직접 인용된 작품 노출 한계를 3 → 6으로 확장(작가 의도 보존, fallback tier는 3 유지). (3) 본문 안 plain text /artworks/{uuid} 링크에 primary color + bold + ↗ 아이콘으로 \"구매 가능한 작품 링크\"임을 시각화. (4) 카드에 \"판매중\" badge(success dot + 흰 pill) 추가 — sold/reserved일 때는 본문 텍스트와 중복 회피.",
+    "body": "배경: 2026-04-29 GSC SEO 사이클 README 진단으로 \"매거진 글 노출 0~3\"에 그치는 문제 확인. 진짜 빈 곳은 cross-link 인프라가 아닌 funnel 측정·conversion signal 디테일.\n\n변경:\n- components/features/RelatedArtworkCard.tsx (신규): server page에서 onClick 못 박는 제약을 풀기 위한 client component. track('story_to_artwork_click', { story_slug, artwork_id, artist, position }) 호출. 판매중 badge 포함.\n- app/[locale]/stories/[slug]/page.tsx: tier 1 slice(0, 3) → slice(0, 6). 인라인 카드 마크업을 RelatedArtworkCard로 추출. 미사용 import(resolveArtworkImageUrl) 제거.\n- components/common/MarkdownRenderer.tsx: ARTWORK_LINK_PATTERN 정규식으로 /artworks/{uuid} plain-text 링크 식별 → primary 컬러 + ArrowUpRight 아이콘. image-link 패턴(`[![](thumb)](/artworks/...)`)은 기존 ImageFigure 분기 그대로.\n\n검증: type-check 통과. Vercel preview(saf2026-jsa4xougj)에서 first-art-buyer-price-guide(4건 inline) / art-types-comparison-guide(9건 → 6건 카드) 시각 확인 완료.",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "fa58ea38",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "about / our-reality / our-proof 영문 본문 분기 보완 — 코드 hardcoded 한국어 영문화",
+    "summary": "영문 로케일에서도 한국어 본문이 노출되던 핵심 캠페인 페이지 3곳을 영문/한국어 분기로 정비. 영어 사용자가 캠페인 신뢰 지표·통계·운영 데이터를 이해할 수 있게 됨.",
+    "body": "- app/[locale]/about/page.tsx: 영문 본문 누락 4개 섹션 추가\n  - \"SAF by the numbers\" 부제\n  - \"Mutual-aid fund leverage\" callout (Reserve ~₩77M → Available ~₩540M)\n  - \"Traditional finance vs mutual-aid lending\" 5행 비교 표\n  - \"Sources & references\" 출처 블록\n\n- app/[locale]/our-reality/page.tsx: locale early return 제거 → isEnglish 삼항 분기 통일\n  - PageHero·ShareButtons·\"마지막 업데이트\"·testimonials(_en 우선)·Stage 1/2/3·CTA·Citations 전부 영문 분기 추가\n  - 통계 수치(84.9%/48.6%/88.3%/53.1%/31.8%/83.2%/43%) 보존\n  - 차트는 내부 useLocale()로 자체 i18n\n\n- app/[locale]/our-proof/page.tsx: 영문 분기에 누락된 2개 섹션 보완\n  - \"Why does mutual-aid finance work?\" 4-step (KRW 77M reserve, fixed 5%, etc.)\n  - 비교 표 5행 구조 매칭 (Advisory support 행 추가)\n  - 운영 수치(35,608,224 stabilization / 11,396,305 recovery / 6.56% subrogation) 보존\n\n- 캠페인 프레이밍 준수: 출품 작가 = 자발적 연대자, 통계 = 한국 예술인 전체 구조적 문제",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "cab6b86f",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "news/testimonials/videos/reviews 4테이블 _en 컬럼 추가 + 61건 채움 + 코드 fallback _en 우선화",
+    "summary": "1차 i18n 백필 후 추가 점검에서 _en 페어가 아예 없던 4테이블(news 32, testimonials 15, videos 9, reviews 5) 발견. DDL 마이그레이션으로 11개 컬럼 추가, 61행 영문 번역 채움, 모든 표시 코드가 _en 우선·source fallback 패턴 사용하도록 갱신.",
+    "body": "- DDL 마이그레이션 (add_en_columns_news_testimonials_videos_reviews):\n  - news: title_en, description_en\n  - testimonials: quote_en, context_en, author_en, category_en\n  - videos: title_en, description_en\n  - reviews: comment_en, author_en, role_en\n\n- 데이터 채움 (REST API + service-role-key, scripts/i18n-backfill/apply.mjs):\n  - news 32건, testimonials 15건, videos 9건, reviews 5건 = 61건\n\n- 코드:\n  - types/index.ts: Video / TestimonialItem / TestimonialCategory / NewsArticle / ExhibitionReview에 _en 필드 추가\n  - lib/supabase-data.ts: row 타입 + mapper에 _en 필드 추가\n  - news/[id]·news 목록·archive/2023(목록·detail)에서 _en 우선 사용 (있으면 영문, 없으면 placeholder fallback)\n  - artworks/[id] flatTestimonials에서 quote_en/author_en 우선\n  - apply.mjs에 'auto' 모드 추가 — {id, ...fields} 형태 JSON을 한 번에 다중 필드 PATCH\n\n- 정적 페이지 영어 노출에서 한국어 잔존 비율을 한 번 더 줄임 (2차 백필 종합)",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "6c3f4d10",
+    "type": "fix",
+    "scope": "security",
+    "subject": "X-Forwarded-For 위조 차단 — rate limit bypass 방어",
+    "summary": "공격자가 클라이언트에서 임의의 X-Forwarded-For 헤더를 박을 수 있어 모든 IP-기반 rate limit이 매 요청 다른 가짜 IP로 우회 가능. 청원 카운터 inflation, order-lookup brute force, checkout flooding 위험.",
+    "body": "원인:\n- Vercel Edge는 클라이언트가 보낸 X-Forwarded-For 끝에 자체 검출 IP를 append → `<client-supplied>, <vercel-detected>`\n- 기존 코드: `headerList.get('x-forwarded-for')?.split(',')[0]` → 클라이언트가 위조한 첫 번째 값을 사용\n\n조치 (lib/security/get-client-ip.ts 신설):\n1. x-vercel-forwarded-for (Vercel 전용 헤더, 위조 불가능) 우선\n2. x-real-ip (Vercel이 박는 단일 client IP) fallback\n3. x-forwarded-for의 마지막 segment (Vercel append 검증값) 마지막 fallback\n\n영향받은 endpoint (모두 헬퍼로 교체):\n- app/actions/checkout.ts: createOrder × 3 (분당 10회 rate limit)\n- app/actions/order-lookup.ts: lookupOrders/lookupOrderDetail/updateBuyerShipping/cancelBuyerOrder × 4 (분당 5회)\n- app/actions/request-metadata.ts: getRequestMetadata (petition 등에서 사용)\n\n검증: 빌드 통과, 480 jest 테스트 통과.\n\n@see https://vercel.com/docs/edge-network/headers#x-vercel-forwarded-for",
+    "date": "2026-05-07",
+    "author": "황경하"
+  },
+  {
+    "hash": "5fab5b15",
+    "type": "feat",
+    "scope": "i18n",
+    "subject": "EN locale 누락 데이터 235건 자동 번역 일괄 채움 + material/edition 매핑",
+    "summary": "정적 페이지 전환 후 영어 페이지에서 한국어 콘텐츠가 그대로 노출되던 문제를 데이터 + 코드 양쪽으로 해결. DB의 _en 필드 235건 자동 번역으로 채우고, _en 컬럼이 없는 material(매체)·edition은 코드 측 매핑 함수로 처리.",
+    "body": "- DB _en 필드 일괄 채움 (서브에이전트 병렬 번역 + REST API 적용):\n  - artworks.title 7 + description 126\n  - artists.name 5 + bio 1 + history 5\n  - faq.question 6 + answer 6\n  - stories.excerpt 31 + body 48\n  - 총 235건 / 누락 0건 검증 완료\n\n- 코드 측 i18n 매핑:\n  - lib/artwork-material.ts 신규 — 한국어 매체 표기 → 영어 매핑 사전 (~80개 패턴; 캔버스에 유채 → Oil on canvas, 한지에 먹 → Ink on hanji, 장지에 채색 → Color on jangji 등)\n  - 작품 상세 + ArtworkCard에서 getMaterialLabel(value, locale) 사용\n  - localizeDataValue에 \"에디션 N/M\" → \"Edition N/M\" 변환 추가\n\n- scripts/i18n-backfill/apply.mjs 신규 — service role key + REST API로 _en 일괄 PATCH 적용 (재사용 가능: node apply.mjs <table> <field_en> <input.json>)",
     "date": "2026-05-07",
     "author": "황경하"
   },
