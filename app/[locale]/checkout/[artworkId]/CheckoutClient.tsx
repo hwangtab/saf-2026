@@ -92,7 +92,7 @@ function BrandLogo({ brand }: { brand: BrandKind }) {
  *
  * Flow:
  *   1. createOrder — DB에 pending_payment 주문 생성 (metadata.payment_provider='domestic')
- *   2. loadTossPayments(clientKey).payment({ customerKey: ANONYMOUS })
+ *   2. loadTossPayments(clientKey).payment({ customerKey: orderNo })
  *   3. payment.requestPayment({ method: 'CARD', successUrl, failUrl, ... })
  *      → Toss-hosted 통합결제창에서 사용자가 카드/간편결제 선택
  *   4. Toss가 결제 완료 후 successUrl(우리 success page)로 redirect
@@ -210,9 +210,12 @@ export default function CheckoutClient({
       const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;
 
-      const { ANONYMOUS, loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
+      const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
       const tossPayments = await loadTossPayments(clientKey);
-      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
+      // customerKey는 비회원 결제라도 고유 식별자가 필요. ANONYMOUS는 BrandPay 기반
+      // 간편결제(TossPay/NaverPay 등)를 통합 picker에서 숨길 수 있어 orderNo 사용.
+      // orderNo는 매 결제마다 unique, 50자 이내, 영문/숫자 형식 적합.
+      const payment = tossPayments.payment({ customerKey: orderNo });
 
       // 통합결제창. 직행 라우팅(`card.flowMode='DIRECT'` + `card.easyPay`)은 saf202i818
       // MID 미계약으로 보류. requestPayment는 redirect 모드 (successUrl 동반) → void 반환,
