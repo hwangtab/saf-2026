@@ -148,6 +148,12 @@ html {
   overflow-x: clip;
   overscroll-behavior-x: none;
   -webkit-overflow-scrolling: touch;
+  /* Modal/FullscreenMenu/GlobalSearchDialog가 body.style.overflow='hidden'로
+     scroll-lock할 때 데스크톱 scrollbar(~17px)가 사라지며 페이지 width 증가 →
+     모든 element 오른쪽 밀림 → CLS 발생. scrollbar-gutter:stable로 scrollbar
+     영역을 항상 reserve해 lock 여부와 무관하게 layout 안정. 모바일은 overlay
+     scrollbar라 영향 없음. */
+  scrollbar-gutter: stable;
 }
 
 body {
