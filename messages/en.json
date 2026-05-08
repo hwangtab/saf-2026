@@ -312,7 +312,14 @@
     "inquiryDescription": "If you're interested in this artwork, please contact us below.",
     "artworkPrice": "Price",
     "sameCategoryWorks": "More {category} Artworks",
-    "viewAllCategory": "View all {category}"
+    "viewAllCategory": "View all {category}",
+    "relatedMagazine": "Related Stories",
+    "relatedArtworks": "Featured Works",
+    "relatedStories": "Related Stories",
+    "magazineLabel": "Magazine",
+    "statusAvailable": "Available",
+    "statusReserved": "Reserved",
+    "statusSold": "Sold"
   },
   "artistPage": {
     "notFound": "Artist not found",

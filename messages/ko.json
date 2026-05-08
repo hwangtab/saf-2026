@@ -312,7 +312,14 @@
     "inquiryDescription": "이 작품에 관심이 있으시면 아래 연락처로 문의해 주세요.",
     "artworkPrice": "작품 가격",
     "sameCategoryWorks": "{category} 카테고리의 다른 작품",
-    "viewAllCategory": "{category} 전체보기"
+    "viewAllCategory": "{category} 전체보기",
+    "relatedMagazine": "관련 매거진",
+    "relatedArtworks": "관련 작품",
+    "relatedStories": "관련 글",
+    "magazineLabel": "매거진",
+    "statusAvailable": "판매중",
+    "statusReserved": "예약중",
+    "statusSold": "판매완료"
   },
   "artistPage": {
     "notFound": "작가를 찾을 수 없습니다",

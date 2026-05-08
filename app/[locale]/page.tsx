@@ -109,7 +109,7 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
   return (
     <>
       {/* Hero Spotlight — 풀폭 슬라이더 (1번: 전체 작품, 그 외: 시한성 큐레이션) */}
-      <HeroSpotlightSection />
+      <HeroSpotlightSection locale={locale} />
 
       {/* Mission Banner */}
       <Section variant="canvas" padding="sm">
@@ -159,7 +159,7 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           → 실제 콘텐츠(약 350vh) 전환 시 290vh layout shift → CLS 1.0 → GSC 100% URL
           CLS 회귀 회복. ISR 캐시(revalidate=3600)라 서버 응답 빠르니 streaming 이득보다
           정적 SSR이 CWV에 유리. */}
-      <CategorySections />
+      <CategorySections locale={locale} />
 
       {/* Impact Stats + CTA */}
       <Section variant="white" prevVariant="canvas" className="pb-20">
@@ -265,8 +265,11 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
 
 // ─── Async server sub-components ──────────────────────────────────────────────
 
-async function HeroSpotlightSection() {
-  const t = await getTranslations('home.nowShowing');
+async function HeroSpotlightSection({ locale }: { locale: string }) {
+  // force-static + sub-component에서 i18n 호출 시 setRequestLocale 명시 호출 필요
+  // (next-intl 가이드). 누락하면 default locale (ko)로 fallback되어 영문 페이지에 한국어 leak.
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
   const items = getActiveShowingItems();
 
   // i18n 키를 풀어 SpotlightSlide 형태로 변환 (server에서 미리 풀어 client 슬라이더에 전달)
@@ -289,8 +292,9 @@ async function HeroSpotlightSection() {
   );
 }
 
-async function CategorySections() {
-  const t = await getTranslations('home');
+async function CategorySections({ locale }: { locale: string }) {
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'home' });
 
   // 카테고리당 12점으로 제한 — 홈 카테고리 슬라이더는 시각적 hook이지 카탈로그가 아니므로
   // 12점이면 충분 (auto-scroll loop도 자연스러움). 4 카테고리 × 20 = 80 → 4 × 12 = 48 카드로

@@ -84,7 +84,9 @@ export default async function LocaleLayout({
   }
   setRequestLocale(locale);
 
-  const messages = await getMessages();
+  // force-static 빌드에서 setRequestLocale의 request scope가 일부 sub-component에
+  // 전파되지 않아 default locale fallback이 발생한 사고가 있어 명시 locale 전달.
+  const messages = await getMessages({ locale });
   const publicMessages = Object.fromEntries(
     Object.entries(messages).filter(([namespace]) => !EXCLUDED_PUBLIC_NAMESPACES.has(namespace))
   );

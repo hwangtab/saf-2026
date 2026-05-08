@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // 여기 도달한 숫자 ID는 proxy에서 매핑 못 찾은 케이스 → notFound 경로.
 
   const artwork = await getSupabaseArtworkById(id);
-  const t = await getTranslations('artworkDetail');
+  const t = await getTranslations({ locale, namespace: 'artworkDetail' });
 
   if (!artwork) {
     return {
@@ -108,8 +108,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
     getTotalSoldCount(),
     getSupabaseTestimonials(),
     getSupabaseStories(),
-    getTranslations('artworkDetail'),
-    getTranslations('breadcrumbs'),
+    getTranslations({ locale, namespace: 'artworkDetail' }),
+    getTranslations({ locale, namespace: 'breadcrumbs' }),
   ]);
 
   if (!artwork) {
