@@ -58,7 +58,6 @@ export default function ArtworkHighlightSlider({
       : `${title} 전체 보기`
     : defaultCopy.viewAll;
 
-  const [mounted, setMounted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -78,10 +77,6 @@ export default function ArtworkHighlightSlider({
   );
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
     if (!emblaApi) return;
 
     const plugins = emblaApi.plugins();
@@ -95,10 +90,16 @@ export default function ArtworkHighlightSlider({
     autoScroll.play();
   }, [emblaApi, isPaused]);
 
-  if (!mounted || artworks.length === 0) {
+  // mounted 가드 제거: embla는 SSR HTML이 정적 flex layout으로 정상 렌더되고 mount 후
+  // transform만 추가되므로 layout 변동 없음. 이전 패턴은 placeholder(py-12 + h-[300px])와
+  // 실제 렌더(py-16 md:py-24 + title + slider)의 height 차이로 hydration 시 ~150-200px
+  // CLS 회귀를 만들었음. artworks.length===0 가드는 유지(빈 데이터 안전).
+  if (artworks.length === 0) {
     return (
-      <section className={cn('py-12', theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft')}>
-        <div className="container-max h-[300px] animate-pulse rounded-xl bg-white/10" />
+      <section
+        className={cn('py-16 md:py-24', theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft')}
+      >
+        <div className="container-max h-[280px] rounded-xl bg-white/5" />
       </section>
     );
   }
