@@ -15,27 +15,36 @@ import type { BuyerInfo } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 
 /**
- * 결제 옵션 — UI 표시용. 실제 Toss 호출은 모두 통합결제창 (method='CARD').
+ * 결제 옵션 — 각 버튼의 cardOptions에 따라 Toss 결제창이 분기.
  *
- * 4개 카드/간편결제 버튼은 사용자 의도 표시 + 브랜드 로고 시각 hint일 뿐, 클릭하면
- * 모두 통합결제창(picker)으로 진입해 그 안에서 다시 선택해야 함. 직행 라우팅
- * (`flowMode='DIRECT'` + `card.easyPay`)은 saf202i818 MID에 별도 계약이 필요해
- * 보류 — 계약 완료되면 cardOptions 필드 추가하여 활성화.
+ * - CARD: cardOptions undefined → 통합결제창(picker, flowMode='DEFAULT'). 카드사 선택 UI를
+ *   별도로 만들지 않으므로 SDK가 picker를 띄워 사용자가 카드사를 고르도록 위임.
+ * - KAKAOPAY/TOSSPAY/NAVERPAY: `card: { flowMode: 'DIRECT', easyPay: '한국어 enum' }`로
+ *   해당 간편결제 자체창 직행. easyPay 영문 enum('KAKAOPAY' 등)은 Toss 검증 단계에서 거부됨.
+ * - TRANSFER: Toss 우회 + createBankTransferOrder → awaiting_deposit + artwork=reserved
+ *   → 기업은행(IBK) 계좌번호 안내 (뱅크페이 인증서·앱 설치 UX 회피).
  *
- * - TRANSFER만 별도 흐름: Toss 우회 + createBankTransferOrder → awaiting_deposit
- *   + artwork=reserved → 기업은행(IBK) 계좌번호 안내 (뱅크페이 인증서·앱 설치 UX 회피).
- *
- * 가상계좌는 saf202i818 MID 미계약 (에러 2003)이라 제외.
+ * saf202i818 MID 자체창 직행은 토스페이먼츠 결제연동팀 한지형부장 회신(2026-05-09)으로
+ * 활성화 — 테스트-라이브 sync 이슈 해결됨. 가상계좌는 별도 미계약(에러 2003) 제외.
  */
 type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
 
 type KoBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay'> | null;
+
+type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
+
+interface CardOptions {
+  flowMode: 'DIRECT';
+  easyPay: EasyPayKo;
+}
 
 interface PaymentChoiceConfig {
   value: PaymentChoice;
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
   brand: KoBrand;
+  /** Toss SDK v2 자체창 직행 옵션. undefined면 통합결제창 (DEFAULT). */
+  cardOptions?: CardOptions;
 }
 
 interface Props {
@@ -51,9 +60,24 @@ interface Props {
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'CARD', labelKey: 'methodCard', brand: null },
   { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
-  { value: 'KAKAOPAY', labelKey: 'methodKakaopay', brand: 'kakaopay' },
-  { value: 'TOSSPAY', labelKey: 'methodTosspay', brand: 'tosspay' },
-  { value: 'NAVERPAY', labelKey: 'methodNaverpay', brand: 'naverpay' },
+  {
+    value: 'KAKAOPAY',
+    labelKey: 'methodKakaopay',
+    brand: 'kakaopay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
+  },
+  {
+    value: 'TOSSPAY',
+    labelKey: 'methodTosspay',
+    brand: 'tosspay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
+  },
+  {
+    value: 'NAVERPAY',
+    labelKey: 'methodNaverpay',
+    brand: 'naverpay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
+  },
 ];
 
 /**
@@ -187,9 +211,10 @@ export default function CheckoutClient({
       // orderNo는 매 결제마다 unique, 50자 이내, 영문/숫자 형식 적합.
       const payment = tossPayments.payment({ customerKey: orderNo });
 
-      // 통합결제창. 직행 라우팅(`card.flowMode='DIRECT'` + `card.easyPay`)은 saf202i818
-      // MID 미계약으로 보류. requestPayment는 redirect 모드 (successUrl 동반) → void 반환,
-      // 사용자 취소·SDK 에러는 reject되어 catch 블록에서 처리.
+      // 자체창 직행: PAYMENT_CHOICES의 cardOptions가 있으면 해당 간편결제 자체창으로 직행.
+      // CARD는 cardOptions undefined → 통합결제창 (DEFAULT). requestPayment는 redirect 모드
+      // (successUrl 동반) → void 반환, 사용자 취소·SDK 에러는 reject되어 catch에서 처리.
+      const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
       await payment.requestPayment({
         method: 'CARD',
         amount: { currency: 'KRW', value: serverTotal },
@@ -199,6 +224,7 @@ export default function CheckoutClient({
         customerEmail: buyerEmail,
         successUrl,
         failUrl,
+        ...(choice?.cardOptions && { card: choice.cardOptions }),
       });
       // navigate 진행 중 — 페이지 unload까지 대기
       await new Promise(() => {});

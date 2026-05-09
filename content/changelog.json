@@ -1,5 +1,15 @@
 [
   {
+    "hash": "0b1eaed4",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "Footer + 24개 페이지 force-static locale 누락 — 영문 KO leak 추가 해결",
+    "summary": "이전 af693bae fix는 home·artwork detail에만 적용. /en/our-reality·our-proof·about·archive·news·stories·artworks/category·special/oh-yoon 등 거의 모든 force-static 페이지에 동일 회귀 잔존. 가시 KO 단어 76+ → 2로 감소.",
+    "body": "- Footer: locale prop 추가 + setRequestLocale + getTranslations({locale,namespace})\n  → layout이 sub-component에 setRequestLocale 전파 못 하는 force-static 함정 회피\n- [locale]/{layout,(auth)/layout}: Footer에 locale prop 전달\n- 24개 페이지의 getTranslations('ns') → getTranslations({locale,namespace:'ns'}):\n  privacy, refund-policy, terms(/artist,/exhibitor), archive(/, /2023, /2026),\n  our-reality, our-proof, transparency, special/oh-yoon, news(/, /[id]),\n  stories/[slug], artworks(/category, /artist, /[id], not-found), orders,\n  checkout/{fail,PaypalPlaceholder}\n- 공유 server components (RelatedArticles, RecentlySoldSection, ArtistNoticeBanner,\n  NowShowing): locale prop 추가 + 호출자 업데이트\n- 잔존 KO 2건은 의도된 고유명사 (대표자명 '서인형', 사업자번호 '제2021-서울은평-0715호')\n\n검증: 로컬 prod build → /en/* curl 후 visible body 한글 추출.\n이전 76+ → 현재 baseline 2 (untranslatable proper nouns).",
+    "date": "2026-05-09",
+    "author": "황경하"
+  },
+  {
     "hash": "af693bae",
     "type": "fix",
     "scope": "i18n",

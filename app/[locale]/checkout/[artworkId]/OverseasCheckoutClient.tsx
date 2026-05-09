@@ -34,11 +34,19 @@ import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
  *               보유자(국내 거주자 + 해외 거주 한국인 diaspora) 한정.
  *               caption "Korean bank accounts only".
  *
- * 직행(`flowMode='DIRECT'`)은 saf202i818 MID 활성화 후 cardOptions 추가.
+ * 직행(`flowMode='DIRECT'`): saf202i818 MID 활성화(2026-05-09)로 KAKAOPAY/TOSSPAY/NAVERPAY는
+ * 자체창 직행. CARD는 카드사 선택 UI 없으므로 통합결제창(DEFAULT) 유지.
  */
 type EnPaymentChoice = 'PAYPAL' | 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
 
 type EnBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay' | 'paypal'> | null;
+
+type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
+
+interface CardOptions {
+  flowMode: 'DIRECT';
+  easyPay: EasyPayKo;
+}
 
 interface PaymentChoiceConfig {
   value: EnPaymentChoice;
@@ -50,14 +58,31 @@ interface PaymentChoiceConfig {
     | 'methodNaverpay'
     | 'methodTransfer';
   brand: EnBrand;
+  /** Toss SDK v2 자체창 직행 옵션. CARD/PAYPAL/TRANSFER는 별도 흐름이라 undefined. */
+  cardOptions?: CardOptions;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'PAYPAL', labelKey: 'methodPaypal', brand: 'paypal' },
   { value: 'CARD', labelKey: 'methodCard', brand: null },
-  { value: 'KAKAOPAY', labelKey: 'methodKakaopay', brand: 'kakaopay' },
-  { value: 'TOSSPAY', labelKey: 'methodTosspay', brand: 'tosspay' },
-  { value: 'NAVERPAY', labelKey: 'methodNaverpay', brand: 'naverpay' },
+  {
+    value: 'KAKAOPAY',
+    labelKey: 'methodKakaopay',
+    brand: 'kakaopay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
+  },
+  {
+    value: 'TOSSPAY',
+    labelKey: 'methodTosspay',
+    brand: 'tosspay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
+  },
+  {
+    value: 'NAVERPAY',
+    labelKey: 'methodNaverpay',
+    brand: 'naverpay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
+  },
   { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
 ];
 
@@ -235,11 +260,13 @@ export default function OverseasCheckoutClient({
         return;
       }
 
-      // Card / 간편결제 흐름: Toss saf202i818 MID + KRW + SDK v2 통합결제창
+      // Card / 간편결제 흐름: Toss saf202i818 MID + KRW + SDK v2.
+      // KAKAOPAY/TOSSPAY/NAVERPAY는 cardOptions로 자체창 직행, CARD는 통합결제창(DEFAULT).
       const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
       const tossPayments = await loadTossPayments(clientKey);
       const payment = tossPayments.payment({ customerKey: orderNo });
 
+      const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
       await payment.requestPayment({
         method: 'CARD',
         amount: { currency: 'KRW', value: serverTotal },
@@ -250,6 +277,7 @@ export default function OverseasCheckoutClient({
         customerMobilePhone: buyerPhone.replace(/[^0-9]/g, ''),
         successUrl,
         failUrl,
+        ...(choice?.cardOptions && { card: choice.cardOptions }),
       });
       await new Promise(() => {});
     } catch (err: unknown) {
