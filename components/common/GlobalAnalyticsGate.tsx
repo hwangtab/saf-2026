@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Analytics } from '@vercel/analytics/react';
 import GoogleAnalytics from '@/components/common/GoogleAnalytics';
 import WebVitalsTracker from '@/components/common/WebVitalsTracker';
+import { stripLocale } from '@/lib/path-rules';
 
 const ANALYTICS_DISABLED_PREFIXES = [
   '/admin',
@@ -16,8 +17,9 @@ const ANALYTICS_DISABLED_PREFIXES = [
 ];
 
 function isAnalyticsDisabledPath(pathname: string): boolean {
+  const normalized = stripLocale(pathname);
   return ANALYTICS_DISABLED_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`)
   );
 }
 

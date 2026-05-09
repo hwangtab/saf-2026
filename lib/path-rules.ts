@@ -10,7 +10,7 @@ const FOOTER_SLIDER_EXCLUDE_PREFIXES = PORTAL_SURFACE_PREFIXES;
  * 이 mismatch가 React error #418 (hydration HTML mismatch)의 원인 — locale prefix를
  * 일괄 strip해서 비교에 일관성을 줍니다.
  */
-function stripLocale(pathname: string): string {
+export function stripLocale(pathname: string): string {
   const m = pathname.match(/^\/(ko|en)(?=\/|$)/);
   if (!m) return pathname;
   const rest = pathname.slice(m[0].length);

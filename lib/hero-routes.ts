@@ -9,7 +9,13 @@
  * 이 모듈은 두 문제를 구조적으로 차단합니다:
  *   - Hero 경로 선언이 이 파일 한 곳에만 존재 → 추가/삭제를 여기만 건드리면 됨
  *   - {@link Slashed} 타입으로 접두어에 `/` 종결을 **컴파일 타임에 강제**
+ *
+ * locale 처리: server `usePathname()`은 next-intl internal rewrite로 `/ko/foo`를 보고,
+ * client는 browser URL `/foo`를 본다. 양쪽 결과가 달라지면 Header 투명/불투명 className이
+ * SSR ↔ hydrate에서 mismatch → React error #418. `stripLocale`로 일괄 정규화한다.
  */
+
+import { stripLocale } from '@/lib/path-rules';
 
 /** 슬래시로 끝나는 문자열만 허용하는 브랜드 타입. */
 type Slashed = `${string}/`;
@@ -57,18 +63,20 @@ const HERO_PREFIXES = [
  * artist/category 서브섹션은 제외.
  */
 export function isArtworkDetail(pathname: string): boolean {
-  if (!pathname.startsWith('/artworks/')) return false;
-  if (pathname === '/artworks') return false;
-  if (pathname.startsWith('/artworks/artist/')) return false;
-  if (pathname.startsWith('/artworks/category/')) return false;
+  const normalized = stripLocale(pathname);
+  if (!normalized.startsWith('/artworks/')) return false;
+  if (normalized === '/artworks') return false;
+  if (normalized.startsWith('/artworks/artist/')) return false;
+  if (normalized.startsWith('/artworks/category/')) return false;
   return true;
 }
 
 /** 주어진 pathname이 hero 레이아웃(상단 투명 헤더) 대상인지 판정. */
 export function isHeroRoute(pathname: string): boolean {
-  if (isArtworkDetail(pathname)) return false;
-  if (HERO_EXACT.has(pathname)) return true;
-  return HERO_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const normalized = stripLocale(pathname);
+  if (isArtworkDetail(normalized)) return false;
+  if (HERO_EXACT.has(normalized)) return true;
+  return HERO_PREFIXES.some((prefix) => normalized.startsWith(prefix));
 }
 
 /** 외부에서 참조해야 할 때를 위한 읽기 전용 export (테스트·문서용). */

@@ -107,3 +107,29 @@ describe('isArtworkDetail', () => {
     expect(isArtworkDetail(path)).toBe(expected);
   });
 });
+
+describe('locale prefix 정규화 (server `/ko` ↔ client `/` mismatch 방지)', () => {
+  // server `usePathname()`은 next-intl internal rewrite로 `/ko/foo`를 본다.
+  // client는 browser URL `/foo`만 본다. 양쪽이 동일 결과여야 Header className이
+  // SSR ↔ hydrate에서 일치 → React error #418 회피.
+  it.each([
+    ['/ko', '/'],
+    ['/en', '/'],
+    ['/ko/about', '/about'],
+    ['/en/about', '/about'],
+    ['/ko/stories/slug', '/stories/slug'],
+    ['/ko/artworks', '/artworks'],
+    ['/en/artworks/category/oil', '/artworks/category/oil'],
+  ] as const)('isHeroRoute(%s) === isHeroRoute(%s)', (prefixed, plain) => {
+    expect(isHeroRoute(prefixed)).toBe(isHeroRoute(plain));
+  });
+
+  it.each([
+    ['/ko/artworks/123', '/artworks/123'],
+    ['/en/artworks/some-slug', '/artworks/some-slug'],
+    ['/ko/artworks', '/artworks'],
+    ['/en/artworks/artist/kim', '/artworks/artist/kim'],
+  ] as const)('isArtworkDetail(%s) === isArtworkDetail(%s)', (prefixed, plain) => {
+    expect(isArtworkDetail(prefixed)).toBe(isArtworkDetail(plain));
+  });
+});
