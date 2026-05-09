@@ -1,20 +1,23 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Phone, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
-import { formatCurrentDate } from '@/lib/utils/format-date';
 import { CONTACT } from '@/lib/constants';
 
 interface GalleryStatusBarProps {
   className?: string;
+  /**
+   * 현재 날짜 — server에서 formatCurrentDate(locale)로 평가해 prop 전달.
+   * client에서 직접 `new Date()`를 호출하면 SSR 시점 날짜와 hydration 시점 날짜가
+   * 자정·timezone 차이로 어긋나 React error #418 (text content mismatch) 발생.
+   */
+  currentDate: string;
 }
 
-export default function GalleryStatusBar({ className }: GalleryStatusBarProps) {
+export default function GalleryStatusBar({ className, currentDate }: GalleryStatusBarProps) {
   const t = useTranslations('galleryStatus');
-  const locale = useLocale();
-  const formattedDate = useMemo(() => formatCurrentDate(locale), [locale]);
+  const formattedDate = currentDate;
 
   return (
     <div

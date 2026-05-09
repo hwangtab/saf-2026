@@ -8,6 +8,7 @@ import PageHero from '@/components/ui/PageHero';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import GalleryStatusBar from '@/components/features/GalleryStatusBar';
+import { formatCurrentDate } from '@/lib/utils/format-date';
 import { ArrowRight } from 'lucide-react';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -255,7 +256,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
           className="pt-6 md:pt-10 pb-12 md:pb-20"
         >
           <div className="container-max">
-            <GalleryStatusBar className="mb-6" />
+            <GalleryStatusBar className="mb-6" currentDate={formatCurrentDate(locale)} />
             <ArtworkGalleryWithSort artworks={listArtworks} />
           </div>
         </Section>
