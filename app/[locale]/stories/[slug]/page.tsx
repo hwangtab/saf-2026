@@ -24,6 +24,7 @@ import { routing } from '@/i18n/routing';
 import type { StoryCategory, Artwork } from '@/types';
 import { ArrowRight } from 'lucide-react';
 import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
+import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 
 export const dynamic = 'force-static';
 export const revalidate = 1800;
@@ -139,8 +140,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ],
     },
-    // 영어 번역 본문(body_en)이 없는 스토리는 한국어가 그대로 노출 — thin content 색인 제외
+    // 영어 번역 본문(body_en)이 없는 스토리는 한국어가 그대로 노출 — thin content 색인 제외.
+    // body_en이 있고 EN_INDEXABLE_STORY_SLUGS 화이트리스트에 들어간 글은 indexable로 풀어
+    // 해외 컬렉터 long-tail entry로 활용 (layout robots: false 덮어쓰기).
     ...(isEn && !story.body_en ? { robots: { index: false, follow: true } } : {}),
+    ...(() => {
+      const enRobots = resolveEnRobots(
+        locale,
+        Boolean(story.body_en) && EN_INDEXABLE_STORY_SLUGS.has(story.slug)
+      );
+      return enRobots ? { robots: enRobots } : {};
+    })(),
   };
 }
 

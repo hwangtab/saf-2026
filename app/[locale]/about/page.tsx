@@ -10,6 +10,7 @@ import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { resolveEnRobots, EN_INDEXABLE_PAGES } from '@/lib/en-indexable';
 import { SITE_URL, EXTERNAL_LINKS } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
@@ -55,12 +56,15 @@ export async function generateMetadata({
   setRequestLocale(locale);
   const copy = PAGE_COPY[locale];
   const base = createStandardPageMetadata(copy.title, copy.description, PAGE_URL, '/about', locale);
+  // /about은 영문 본문이 hand-written으로 충분히 풍부 — en도 indexable로 풀어 해외 컬렉터 entry 확보.
+  const robots = resolveEnRobots(locale, EN_INDEXABLE_PAGES.has('/about'));
   return {
     ...base,
     openGraph: {
       ...base.openGraph,
       type: 'website',
     },
+    ...(robots && { robots }),
   };
 }
 

@@ -1,5 +1,15 @@
 [
   {
+    "hash": "735c3b76",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "gtag consent default granted 명시 — Consent Mode v2 collect 차단 해제",
+    "summary": "GA4 측정 5/1부터 무수신 — gtag.js의 Consent Mode v2 default denied로 추정. 한국 사이트라 default granted로 명시해 collect 송신 복구",
+    "body": "원인 진단:\n- production Realtime 활성 사용자 0명, 일자별 데이터 4/30이 마지막 (절벽 cut)\n- 클라이언트 측은 100% 정상: gtag.js 200 OK, dataLayer push 정상, gtag fn 등록\n- 그러나 collect endpoint 요청 0건, _ga 쿠키 0건, gaGlobal undefined\n- GA4 admin 진단(scripts/ga4-property-diag.js): Property·Stream·Measurement ID·Enhanced Measurement·Data Filters·Event Create Rules 모두 정상 — 차단 가능 항목 전무\n- 남은 가설: 2024년 이후 gtag.js가 consent 신호 없으면 wait_for_update timeout 후 collect 차단\n\n수정:\n- gtag('consent', 'default', { analytics_storage: 'granted', ... }) 7종 명시\n- gtag('js', ...)와 gtag('config', ...) 호출 직전에 위치 (consent default는 첫 명령이어야 효력)\n\n검증:\n- 배포 후 24시간 GA4 Realtime 활성 사용자 + 일자별 totalUsers 회복 확인 필요\n- EU GDPR 사용자 진입 시 region별 분기 도입 필요 (현재는 한국 단일 시장이라 단순화)",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "3b77e20b",
     "type": "fix",
     "scope": "hydration",
