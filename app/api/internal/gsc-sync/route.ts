@@ -34,6 +34,8 @@ export async function GET(request: NextRequest) {
   });
 
   // 1) GSC에서 7일치 fetch (lag 2일 + 7일치 = D-2 ~ D-8)
+  // DEBUG: production env 적용 확인용 로깅 — sync 정상화 후 제거 예정
+  console.log('[gsc-sync] DEBUG GSC_SITE_URL:', JSON.stringify(process.env.GSC_SITE_URL));
   let dailyResults;
   try {
     dailyResults = await fetchGscDataRange({ daysBack: 7, startOffset: 2 });
@@ -42,6 +44,15 @@ export async function GET(request: NextRequest) {
     console.error('[gsc-sync] fetch failed:', err);
     return NextResponse.json({ error: 'GSC fetch failed', message }, { status: 502 });
   }
+  // DEBUG: 첫 day의 결과 로깅
+  console.log(
+    '[gsc-sync] DEBUG day0:',
+    JSON.stringify({
+      date: dailyResults[0]?.date,
+      rowCount: dailyResults[0]?.rows.length ?? 0,
+      rawCount: dailyResults[0]?.rawCount ?? 0,
+    })
+  );
 
   // 2) Supabase에 upsert
   let totalInserted = 0;
