@@ -1,5 +1,15 @@
 [
   {
+    "hash": "1e68824f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "매거진 본문 끝에 같은 카테고리 다른 글 inline markdown link 자동 추가",
+    "summary": "매거진 글 본문 끝에 \"${카테고리} 다음 글\" 섹션을 자동으로 markdown link 형식으로 append. UI \"관련 글\" 카드 섹션은 그대로 유지하되, 본문 inline 텍스트 link를 추가해 Google·AI 모델이 본문 콘텐츠로 인식하는 cluster signal 강화.",
+    "body": "- lib/inline-cross-links.ts: 같은 카테고리 다른 글 N편(기본 3편)을 markdown unordered list + excerpt로 변환\n- 카테고리별 라벨 (구매 가이드 / 미술 산책 / 작가 이야기), 한·영 분기\n- 글 타이틀 그대로 anchor text — Google이 anchor → target 키워드 시그널로 활용\n- stories/[slug]/page.tsx: body에 append 후 MarkdownRenderer로 render\n\nUI 카드 link는 navigation chrome으로, 본문 inline link는 작가 의도된 cross-reference로 — 두 시그널 모두 활용.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "041d78b1",
     "type": "feat",
     "scope": "seo",

@@ -64,6 +64,51 @@ export function generateInlineCrossLinks(opts: CrossLinkOptions): string {
     })
     .join('\n');
 
-  // 본문 끝 직전(마무리 단락 전) append되도록 빈 줄 + 섹션 + 빈 줄로 감쌈.
   return `\n\n${heading}\n\n${intro}\n\n${items}\n`;
+}
+
+/**
+ * 본문 markdown에 cross-link 섹션을 의미적으로 적절한 위치에 삽입.
+ *
+ * 매거진 글 컨벤션상 본문은 다음 패턴으로 끝남:
+ *   ...마지막 단락...
+ *   [씨앗페에서 ... 보기 →](/...)   ← 마지막 outbound CTA
+ *
+ * cross-link 섹션을 단순 append하면 마지막 CTA 뒤에 와서 흐름이 어색.
+ * 마지막 link 라인 또는 horizontal rule(`---`) 직전에 삽입하면 자연스럽게
+ * "본문 → 다른 글 추천 → 마무리 CTA" 흐름이 형성됨.
+ *
+ * 삽입 위치 규칙:
+ * - 본문 끝에서 가장 가까운 horizontal rule(`---`) 또는 단독 link 라인을 anchor로
+ * - anchor 직전에 cross-link 섹션 삽입
+ * - anchor 못 찾으면 단순 append (fallback)
+ */
+export function insertCrossLinksBeforeFinalCta(body: string, crossLinksMarkdown: string): string {
+  if (!crossLinksMarkdown) return body;
+
+  const lines = body.split('\n');
+  // 본문 끝에서 거꾸로 훑으며 마지막 horizontal rule 또는 단독 link 라인 위치 찾기.
+  let anchorIdx = -1;
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = lines[i].trim();
+    if (line === '---') {
+      anchorIdx = i;
+      break;
+    }
+    // 단독 markdown link 라인 패턴: `[...](...)` 만 있는 줄
+    if (/^\[[^\]]+\]\([^)]+\)$/.test(line)) {
+      anchorIdx = i;
+      break;
+    }
+  }
+
+  if (anchorIdx === -1) {
+    // anchor 없으면 본문 끝에 append
+    return body + crossLinksMarkdown;
+  }
+
+  // anchor 직전에 cross-link 섹션 삽입. 섹션 자체가 \n\n으로 시작·끝나니 추가 줄바꿈 불필요.
+  const before = lines.slice(0, anchorIdx).join('\n');
+  const after = lines.slice(anchorIdx).join('\n');
+  return `${before}${crossLinksMarkdown}\n${after}`;
 }

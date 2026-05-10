@@ -27,7 +27,7 @@ import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 import { extractFaqFromBody, generateFaqPageSchema } from '@/lib/markdown-faq';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
-import { generateInlineCrossLinks } from '@/lib/inline-cross-links';
+import { generateInlineCrossLinks, insertCrossLinksBeforeFinalCta } from '@/lib/inline-cross-links';
 
 export const dynamic = 'force-static';
 export const revalidate = 1800;
@@ -279,7 +279,9 @@ export default async function StoryDetailPage({ params }: Props) {
     categoryLabelKo: CATEGORY_LABELS_KO[story.category],
     categoryLabelEn: CATEGORY_LABELS_EN[story.category],
   });
-  const bodyWithCrossLinks = body + inlineCrossLinksMarkdown;
+  // 단순 append가 아니라 본문 마지막 CTA link/horizontal rule 직전에 삽입 →
+  // "본문 → 다른 글 추천 → 마무리 CTA" 흐름을 자연스럽게 유지.
+  const bodyWithCrossLinks = insertCrossLinksBeforeFinalCta(body, inlineCrossLinksMarkdown);
 
   // BlogPosting schema 생성 — relatedArtworks·relatedStories hydrate된 이후이라
   // mentions 필드를 정확한 작품 title·관련 매거진 title로 채울 수 있음.
