@@ -1,8 +1,6 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-const EMERGENCY_BYPASS_MAX_WINDOW_MS = 24 * 60 * 60 * 1000;
-
 function isTimingSafeEqual(left: string, right: string) {
   const leftBuffer = Buffer.from(left);
   const rightBuffer = Buffer.from(right);
@@ -11,40 +9,16 @@ function isTimingSafeEqual(left: string, right: string) {
   );
 }
 
-function canBypassMissingVercelCronHeader() {
-  const bypassUntilRaw = process.env.INTERNAL_CRON_EMERGENCY_BYPASS_UNTIL;
-  if (!bypassUntilRaw) return false;
-
-  const bypassReason = process.env.INTERNAL_CRON_EMERGENCY_BYPASS_REASON?.trim();
-  if (!bypassReason) {
-    console.error('[internal-cron-auth] CRON_GUARD_BYPASS_REJECTED_MISSING_REASON');
-    return false;
-  }
-
-  const bypassUntil = Date.parse(bypassUntilRaw);
-  if (Number.isNaN(bypassUntil)) {
-    console.error('[internal-cron-auth] CRON_GUARD_BYPASS_REJECTED_INVALID_UNTIL');
-    return false;
-  }
-
-  const now = Date.now();
-  if (bypassUntil <= now) {
-    return false;
-  }
-
-  if (bypassUntil - now > EMERGENCY_BYPASS_MAX_WINDOW_MS) {
-    console.error('[internal-cron-auth] CRON_GUARD_BYPASS_REJECTED_WINDOW_EXCEEDED');
-    return false;
-  }
-
-  console.error(
-    `[internal-cron-auth] CRON_GUARD_BYPASS_ACTIVE until=${new Date(
-      bypassUntil
-    ).toISOString()} reason=${bypassReason}`
-  );
-  return true;
-}
-
+/**
+ * Internal cron 요청 인증.
+ *
+ * Vercel cron은 호출 시 `Authorization: Bearer ${CRON_SECRET}` header를 부착하지만,
+ * `x-vercel-cron` 같은 magic header는 부착하지 않음(2026-05-11 확인 — 7일+ 동안 모든
+ * cron이 그 header 검증으로 403). 이전 구현은 가정이 잘못되어 모든 cron 호출을 거부.
+ *
+ * 보안 모델: CRON_SECRET이 충분히 random하고 production env에 sealed라 Bearer
+ * 검증만으로 외부 우회 불가. timing-safe compare로 timing attack 방어.
+ */
 export function validateInternalCronRequest(request: NextRequest) {
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret) {
@@ -55,13 +29,6 @@ export function validateInternalCronRequest(request: NextRequest) {
   const expectedAuthHeader = `Bearer ${cronSecret}`;
   if (!isTimingSafeEqual(authHeader, expectedAuthHeader)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  if (process.env.NODE_ENV === 'production') {
-    const vercelCronHeader = request.headers.get('x-vercel-cron');
-    if (!vercelCronHeader && !canBypassMissingVercelCronHeader()) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
   }
 
   return null;

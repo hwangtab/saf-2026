@@ -13,21 +13,15 @@ function createRequest(headers: Record<string, string> = {}) {
 describe('validateInternalCronRequest', () => {
   const originalCronSecret = process.env.CRON_SECRET;
   const originalNodeEnv = process.env.NODE_ENV;
-  const originalBypassUntil = process.env.INTERNAL_CRON_EMERGENCY_BYPASS_UNTIL;
-  const originalBypassReason = process.env.INTERNAL_CRON_EMERGENCY_BYPASS_REASON;
 
   beforeEach(() => {
     process.env.CRON_SECRET = 'test-cron-secret';
     process.env.NODE_ENV = 'development';
-    delete process.env.INTERNAL_CRON_EMERGENCY_BYPASS_UNTIL;
-    delete process.env.INTERNAL_CRON_EMERGENCY_BYPASS_REASON;
   });
 
   afterAll(() => {
     process.env.CRON_SECRET = originalCronSecret;
     process.env.NODE_ENV = originalNodeEnv;
-    process.env.INTERNAL_CRON_EMERGENCY_BYPASS_UNTIL = originalBypassUntil;
-    process.env.INTERNAL_CRON_EMERGENCY_BYPASS_REASON = originalBypassReason;
   });
 
   it('returns 500 when CRON_SECRET is missing', async () => {
@@ -49,93 +43,29 @@ describe('validateInternalCronRequest', () => {
     await expect(response?.json()).resolves.toEqual({ error: 'Unauthorized' });
   });
 
-  it('accepts valid secret in development without x-vercel-cron header', () => {
+  it('returns 401 when authorization header is missing', async () => {
+    const response = validateInternalCronRequest(createRequest());
+
+    expect(response).not.toBeNull();
+    expect(response?.status).toBe(401);
+  });
+
+  it('accepts valid secret in development', () => {
     const response = validateInternalCronRequest(
       createRequest({ authorization: 'Bearer test-cron-secret' })
     );
     expect(response).toBeNull();
   });
 
-  it('requires x-vercel-cron header in production', async () => {
+  it('accepts valid secret in production (Vercel cron 호출 — `x-vercel-cron` header 부착하지 않음)', () => {
+    // 회귀 보호: 2026-05-11 이전 구현은 production에서 `x-vercel-cron` header를
+    // 추가 검증해 모든 cron이 403 거부됐음. Vercel cron은 Bearer 외 magic header를
+    // 부착하지 않으므로 그 검증은 잘못된 가정.
     process.env.NODE_ENV = 'production';
-    const response = validateInternalCronRequest(
-      createRequest({ authorization: 'Bearer test-cron-secret' })
-    );
-
-    expect(response).not.toBeNull();
-    expect(response?.status).toBe(403);
-    await expect(response?.json()).resolves.toEqual({ error: 'Forbidden' });
-  });
-
-  it('accepts valid secret and x-vercel-cron header in production', () => {
-    process.env.NODE_ENV = 'production';
-    const response = validateInternalCronRequest(
-      createRequest({
-        authorization: 'Bearer test-cron-secret',
-        'x-vercel-cron': '1',
-      })
-    );
-
-    expect(response).toBeNull();
-  });
-
-  it('allows 24h emergency bypass in production when reason is provided', () => {
-    process.env.NODE_ENV = 'production';
-    process.env.INTERNAL_CRON_EMERGENCY_BYPASS_UNTIL = new Date(
-      Date.now() + 30 * 60 * 1000
-    ).toISOString();
-    process.env.INTERNAL_CRON_EMERGENCY_BYPASS_REASON = 'incident-123 false-positive';
-
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
     const response = validateInternalCronRequest(
       createRequest({ authorization: 'Bearer test-cron-secret' })
     );
 
     expect(response).toBeNull();
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('CRON_GUARD_BYPASS_ACTIVE')
-    );
-  });
-
-  it('rejects bypass when reason is missing', async () => {
-    process.env.NODE_ENV = 'production';
-    process.env.INTERNAL_CRON_EMERGENCY_BYPASS_UNTIL = new Date(
-      Date.now() + 30 * 60 * 1000
-    ).toISOString();
-
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    const response = validateInternalCronRequest(
-      createRequest({ authorization: 'Bearer test-cron-secret' })
-    );
-
-    expect(response).not.toBeNull();
-    expect(response?.status).toBe(403);
-    await expect(response?.json()).resolves.toEqual({ error: 'Forbidden' });
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      '[internal-cron-auth] CRON_GUARD_BYPASS_REJECTED_MISSING_REASON'
-    );
-  });
-
-  it('rejects bypass when window exceeds 24 hours', async () => {
-    process.env.NODE_ENV = 'production';
-    process.env.INTERNAL_CRON_EMERGENCY_BYPASS_UNTIL = new Date(
-      Date.now() + 25 * 60 * 60 * 1000
-    ).toISOString();
-    process.env.INTERNAL_CRON_EMERGENCY_BYPASS_REASON = 'incident-123';
-
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    const response = validateInternalCronRequest(
-      createRequest({ authorization: 'Bearer test-cron-secret' })
-    );
-
-    expect(response).not.toBeNull();
-    expect(response?.status).toBe(403);
-    await expect(response?.json()).resolves.toEqual({ error: 'Forbidden' });
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      '[internal-cron-auth] CRON_GUARD_BYPASS_REJECTED_WINDOW_EXCEEDED'
-    );
   });
 });
