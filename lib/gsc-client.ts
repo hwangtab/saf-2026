@@ -117,12 +117,8 @@ export async function fetchGscDataRange(options: {
       const res = await fetchGscDataForDate(dateStr);
       results.push(res);
     } catch (err) {
-      // 한 날짜 실패해도 나머지 진행. 자세한 진단 정보 stringify 추가 (truncation 방어용 short message)
-      const e = err as { message?: string; code?: number; response?: { data?: unknown } };
-      const detail =
-        `code=${e.code ?? '?'} msg=${(e.message ?? '').slice(0, 200)} ` +
-        `resp=${JSON.stringify(e.response?.data ?? {}).slice(0, 300)}`;
-      console.error(`[gsc-client] fetch failed for ${dateStr}: ${detail}`);
+      // 한 날짜 실패해도 나머지 진행. quota·permission 에러 등은 caller가 로그 확인.
+      console.error(`[gsc-client] fetch failed for ${dateStr}:`, err);
     }
   }
   return results;
