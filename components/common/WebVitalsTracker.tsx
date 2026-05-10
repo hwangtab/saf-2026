@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { track } from '@vercel/analytics';
 import {
   onCLS,
   onFCP,
@@ -123,6 +124,22 @@ function sendToGA(metric: Metric) {
   } catch (err) {
     // gtag 호출 자체 실패는 흔치 않지만 silently fail 하면 진단 불가.
     console.error('[web-vitals] gtag send failed:', err);
+  }
+
+  // 자체 page_views 테이블 적재 — Vercel Analytics Drain webhook으로 Supabase에
+  // event_type='event', event_name='web_vitals'으로 들어가 어드민 패널이 GA4 의존 없이
+  // p75·분포 등 풍부한 분석을 자체 RPC로 직접 산출. Vercel track API는 nested object를
+  // 못 받아 attribution은 평탄화된 키만 보냄.
+  try {
+    track('web_vitals', {
+      metric_name: metric.name,
+      metric_value: metric.value,
+      metric_rating: metric.rating,
+      page_path: window.location.pathname,
+      debug_target: attribution.debug_target ?? null,
+    });
+  } catch (err) {
+    console.error('[web-vitals] vercel track send failed:', err);
   }
 }
 

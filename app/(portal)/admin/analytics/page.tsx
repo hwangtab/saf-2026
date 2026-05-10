@@ -23,6 +23,7 @@ import CrossLinkPanel from './_components/CrossLinkPanel';
 import GscPanel from './_components/GscPanel';
 import InsightsPanel from './_components/InsightsPanel';
 import StoryAttributionPanel from './_components/StoryAttributionPanel';
+import WebVitalsPanel from './_components/WebVitalsPanel';
 import { getTranslations, getLocale } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -334,6 +335,19 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
           description={t('sectionSeoDesc')}
         />
         <GscPanel data={data.gsc} />
+      </section>
+
+      {/* ============================================================ */}
+      {/* VI. 실측 성능 (RUM) — Web Vitals self-tracking 기반          */}
+      {/* ============================================================ */}
+      <section className="space-y-8">
+        <MajorSectionHeader
+          id="section-rum"
+          index="06"
+          title={t('sectionRumTitle')}
+          description={t('sectionRumDesc')}
+        />
+        <WebVitalsPanel data={data.webVitals} />
       </section>
     </div>
   );

@@ -206,6 +206,46 @@ export type AnalyticsData = {
       visitors: number;
     }>;
   };
+  /**
+   * Real User Monitoring — WebVitalsTracker가 자체 page_views 테이블에 적재한
+   * web_vitals 이벤트를 기반으로 LCP/CLS/INP/FCP/TTFB의 p75·median·avg·rating 분포를
+   * 자체 RPC로 산출. GA4 Custom Dimension 등록 없이도 동작. 데이터 source:
+   * page_views.event_name='web_vitals' + event_data jsonb (metric_name·metric_value·
+   * metric_rating·page_path 키).
+   *
+   * Web Vitals 임계값(Google 공식):
+   * - LCP good ≤2500ms / poor >4000ms
+   * - CLS good ≤0.1 / poor >0.25
+   * - INP good ≤200ms / poor >500ms
+   * - FCP good ≤1800ms / poor >3000ms
+   * - TTFB good ≤800ms / poor >1800ms
+   */
+  webVitals: {
+    summary: Array<{
+      metricName: 'LCP' | 'CLS' | 'INP' | 'FCP' | 'TTFB' | (string & {});
+      totalEvents: number;
+      goodCount: number;
+      needsImprovementCount: number;
+      poorCount: number;
+      p75Value: number;
+      medianValue: number;
+      avgValue: number;
+    }>;
+    dailyP75: Array<{
+      date: string;
+      metricName: string;
+      sampleSize: number;
+      p75Value: number;
+      goodRate: number;
+    }>;
+    /** 가장 흔히 LCP가 나쁜 페이지 — 성능 회귀 진단의 핵심 진입점. */
+    lcpWorstPages: Array<{
+      pagePath: string;
+      sampleSize: number;
+      p75Value: number;
+      poorCount: number;
+    }>;
+  };
 };
 
 const PERIOD_DAYS: Record<AnalyticsPeriod, number> = {
@@ -342,6 +382,29 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     total_rows: number;
     last_fetched: string | null;
   };
+  type WebVitalsSummaryRow = {
+    metric_name: string;
+    total_events: number;
+    good_count: number;
+    needs_improvement_count: number;
+    poor_count: number;
+    p75_value: number;
+    median_value: number;
+    avg_value: number;
+  };
+  type WebVitalsDailyRow = {
+    day: string;
+    metric_name: string;
+    sample_size: number;
+    p75_value: number;
+    good_rate: number;
+  };
+  type WebVitalsWorstPageRow = {
+    page_path: string;
+    sample_size: number;
+    p75_value: number;
+    poor_count: number;
+  };
 
   const [
     summaryRes,
@@ -374,6 +437,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     gscLowCtrRes,
     gscDailyTrendRes,
     gscSyncStatusRes,
+    webVitalsSummaryRes,
+    webVitalsDailyRes,
+    webVitalsLcpWorstRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -432,6 +498,13 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       since_date: sinceTs.slice(0, 10),
     }),
     untypedRpc<GscSyncStatusRow[]>('get_gsc_sync_status', {}),
+    untypedRpc<WebVitalsSummaryRow[]>('get_web_vitals_summary', { since_ts: sinceTs }),
+    untypedRpc<WebVitalsDailyRow[]>('get_web_vitals_daily_p75', { since_ts: sinceTs }),
+    untypedRpc<WebVitalsWorstPageRow[]>('get_web_vitals_worst_pages', {
+      since_ts: sinceTs,
+      target_metric: 'LCP',
+      lim: 10,
+    }),
   ]);
 
   // Summary
@@ -813,6 +886,39 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
+  // Real User Monitoring (Web Vitals 자체 적재 기반)
+  const webVitals: AnalyticsData['webVitals'] = {
+    summary: Array.isArray(webVitalsSummaryRes.data)
+      ? webVitalsSummaryRes.data.map((row) => ({
+          metricName: row.metric_name,
+          totalEvents: Number(row.total_events),
+          goodCount: Number(row.good_count),
+          needsImprovementCount: Number(row.needs_improvement_count),
+          poorCount: Number(row.poor_count),
+          p75Value: Number(row.p75_value ?? 0),
+          medianValue: Number(row.median_value ?? 0),
+          avgValue: Number(row.avg_value ?? 0),
+        }))
+      : [],
+    dailyP75: Array.isArray(webVitalsDailyRes.data)
+      ? webVitalsDailyRes.data.map((row) => ({
+          date: row.day,
+          metricName: row.metric_name,
+          sampleSize: Number(row.sample_size),
+          p75Value: Number(row.p75_value ?? 0),
+          goodRate: Number(row.good_rate ?? 0),
+        }))
+      : [],
+    lcpWorstPages: Array.isArray(webVitalsLcpWorstRes.data)
+      ? webVitalsLcpWorstRes.data.map((row) => ({
+          pagePath: row.page_path,
+          sampleSize: Number(row.sample_size),
+          p75Value: Number(row.p75_value ?? 0),
+          poorCount: Number(row.poor_count),
+        }))
+      : [],
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
@@ -830,5 +936,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     attribution,
     crossLinks,
     gsc,
+    webVitals,
   };
 }
