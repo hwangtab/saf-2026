@@ -3,6 +3,7 @@
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import clsx from 'clsx';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface LanguageSwitcherProps {
   className?: string;
@@ -15,6 +16,13 @@ export default function LanguageSwitcher({ className, compact }: LanguageSwitche
   const pathname = usePathname();
 
   function switchLocale(newLocale: 'ko' | 'en') {
+    // 같은 locale 클릭은 무시 (사용자가 활성 상태 toggle 의도 없음).
+    if (newLocale === locale) return;
+    trackEvent('locale_switch', {
+      from_locale: locale,
+      to_locale: newLocale,
+      page_path: pathname,
+    });
     router.replace(pathname, { locale: newLocale });
   }
 

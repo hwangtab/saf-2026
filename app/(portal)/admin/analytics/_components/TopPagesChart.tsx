@@ -34,7 +34,13 @@ export function TopPagesChart({ data }: Props) {
   if (chartData.length === 0) {
     return (
       <AdminCard className="flex h-full flex-col p-6">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">인기 페이지</h3>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">인기 페이지 (실시간)</h3>
+          <p className="mt-1 text-xs text-gray-500">
+            자체 page_views 적재 기반. 5분 내 반영. 같은 섹션의 GA4 페이지 보고서는 24h lag지만
+            page_title·engagement 등 풍부한 metric.
+          </p>
+        </div>
         <div className="flex flex-1 min-h-[300px] items-center justify-center">
           <p className="text-sm text-gray-500">데이터가 없습니다.</p>
         </div>
@@ -44,7 +50,12 @@ export function TopPagesChart({ data }: Props) {
 
   return (
     <AdminCard className="flex h-full flex-col p-6">
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">인기 페이지</h3>
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">인기 페이지 (실시간)</h3>
+        <p className="mt-1 text-xs text-gray-500">
+          자체 page_views 적재 기반 — path별 PV TOP 10. 5분 내 반영.
+        </p>
+      </div>
       <div className="flex-1 min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

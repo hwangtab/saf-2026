@@ -302,6 +302,32 @@ export type AnalyticsData = {
       }>;
       topPages: Array<{ pagePath: string; clicks: number; uniqueClickers: number }>;
     };
+    /**
+     * Purchase clicks — ArtworkPurchaseCTA의 외부 쇼핑몰(Cafe24) 이동 클릭.
+     * 자체 결제 funnel(orders 테이블)과 별개로 legacy artwork의 외부 conversion 측정.
+     */
+    purchase: {
+      totalClicks: number;
+      uniqueClickers: number;
+      distinctArtworks: number;
+      topArtworks: Array<{
+        artworkId: string;
+        artworkTitle: string;
+        artist: string;
+        clicks: number;
+        uniqueClickers: number;
+      }>;
+    };
+    /**
+     * Locale switch — 한↔영 전환. 어느 페이지가 영문 사용자에게 호소력 있는지 측정.
+     */
+    localeSwitch: {
+      totalSwitches: number;
+      uniqueSwitchers: number;
+      koToEnSwitches: number;
+      enToKoSwitches: number;
+      topPages: Array<{ pagePath: string; koToEn: number; enToKo: number; total: number }>;
+    };
   };
 };
 
@@ -490,6 +516,30 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     clicks: number;
     unique_clickers: number;
   };
+  type PurchaseSummaryRow = {
+    total_clicks: number;
+    unique_clickers: number;
+    distinct_artworks: number;
+  };
+  type PurchaseArtworkRow = {
+    artwork_id: string;
+    artwork_title: string;
+    artist: string;
+    clicks: number;
+    unique_clickers: number;
+  };
+  type LocaleSwitchSummaryRow = {
+    total_switches: number;
+    unique_switchers: number;
+    ko_to_en_switches: number;
+    en_to_ko_switches: number;
+  };
+  type LocaleSwitchPageRow = {
+    page_path: string;
+    ko_to_en: number;
+    en_to_ko: number;
+    total: number;
+  };
 
   const [
     summaryRes,
@@ -531,6 +581,10 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     shareSummaryRes,
     shareChannelRes,
     sharePagesRes,
+    purchaseSummaryRes,
+    purchaseArtworksRes,
+    localeSwitchSummaryRes,
+    localeSwitchPagesRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -608,6 +662,13 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       since_ts: sinceTs,
     }),
     untypedRpc<SharePageRow[]>('get_top_shared_pages', { since_ts: sinceTs, lim: 10 }),
+    untypedRpc<PurchaseSummaryRow[]>('get_purchase_click_summary', { since_ts: sinceTs }),
+    untypedRpc<PurchaseArtworkRow[]>('get_top_purchase_clicked_artworks', {
+      since_ts: sinceTs,
+      lim: 10,
+    }),
+    untypedRpc<LocaleSwitchSummaryRow[]>('get_locale_switch_summary', { since_ts: sinceTs }),
+    untypedRpc<LocaleSwitchPageRow[]>('get_locale_switch_pages', { since_ts: sinceTs, lim: 10 }),
   ]);
 
   // GA4 page report — RPC와 별도 try/catch. env 미설정·일시 장애 시 빈 배열로 graceful
@@ -1040,6 +1101,10 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     ['get_web_vitals_summary', webVitalsSummaryRes],
     ['get_web_vitals_daily_p75', webVitalsDailyRes],
     ['get_web_vitals_worst_pages', webVitalsLcpWorstRes],
+    ['get_purchase_click_summary', purchaseSummaryRes],
+    ['get_top_purchase_clicked_artworks', purchaseArtworksRes],
+    ['get_locale_switch_summary', localeSwitchSummaryRes],
+    ['get_locale_switch_pages', localeSwitchPagesRes],
   ] as const;
   for (const [name, res] of ctaRpcResults) {
     if (res.error) {
@@ -1105,6 +1170,42 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
           }))
         : [],
     },
+    purchase: (() => {
+      const sumRow = Array.isArray(purchaseSummaryRes.data) ? purchaseSummaryRes.data[0] : null;
+      return {
+        totalClicks: Number(sumRow?.total_clicks ?? 0),
+        uniqueClickers: Number(sumRow?.unique_clickers ?? 0),
+        distinctArtworks: Number(sumRow?.distinct_artworks ?? 0),
+        topArtworks: Array.isArray(purchaseArtworksRes.data)
+          ? purchaseArtworksRes.data.map((row) => ({
+              artworkId: row.artwork_id,
+              artworkTitle: row.artwork_title ?? '',
+              artist: row.artist ?? '',
+              clicks: Number(row.clicks),
+              uniqueClickers: Number(row.unique_clickers),
+            }))
+          : [],
+      };
+    })(),
+    localeSwitch: (() => {
+      const sumRow = Array.isArray(localeSwitchSummaryRes.data)
+        ? localeSwitchSummaryRes.data[0]
+        : null;
+      return {
+        totalSwitches: Number(sumRow?.total_switches ?? 0),
+        uniqueSwitchers: Number(sumRow?.unique_switchers ?? 0),
+        koToEnSwitches: Number(sumRow?.ko_to_en_switches ?? 0),
+        enToKoSwitches: Number(sumRow?.en_to_ko_switches ?? 0),
+        topPages: Array.isArray(localeSwitchPagesRes.data)
+          ? localeSwitchPagesRes.data.map((row) => ({
+              pagePath: row.page_path,
+              koToEn: Number(row.ko_to_en),
+              enToKo: Number(row.en_to_ko),
+              total: Number(row.total),
+            }))
+          : [],
+      };
+    })(),
   };
 
   // Real User Monitoring (Web Vitals 자체 적재 기반)

@@ -42,6 +42,8 @@ export default async function CtaClicksPanel({ data }: Props) {
 
   const hasMemberJoin = data.memberJoin.totalClicks > 0;
   const hasShare = data.share.totalClicks > 0;
+  const hasPurchase = data.purchase.totalClicks > 0;
+  const hasLocaleSwitch = data.localeSwitch.totalSwitches > 0;
 
   return (
     <section className="space-y-8">
@@ -244,6 +246,163 @@ export default async function CtaClicksPanel({ data }: Props) {
                           </td>
                           <td className="px-4 py-2 text-right tabular-nums text-gray-600">
                             {numberFormatter.format(row.uniqueClickers)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AdminCard>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* ========================== 외부 구매 (Cafe24) ========================== */}
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">{t('ctaPurchaseTitle')}</h2>
+          <p className="mt-1 text-sm text-gray-500">{t('ctaPurchaseDesc')}</p>
+        </div>
+
+        {!hasPurchase ? (
+          <AdminCard className="flex flex-col">
+            <AdminEmptyState
+              title={t('ctaPurchaseNoData')}
+              description={t('ctaPurchaseNoDataDesc')}
+            />
+          </AdminCard>
+        ) : (
+          <>
+            <AdminCard className="p-6">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <Stat
+                  label={t('ctaTotalClicks')}
+                  value={numberFormatter.format(data.purchase.totalClicks)}
+                  highlight
+                />
+                <Stat
+                  label={t('ctaUniqueClickers')}
+                  value={numberFormatter.format(data.purchase.uniqueClickers)}
+                />
+                <Stat
+                  label={t('ctaPurchaseDistinctArtworks')}
+                  value={numberFormatter.format(data.purchase.distinctArtworks)}
+                />
+              </div>
+            </AdminCard>
+
+            {data.purchase.topArtworks.length > 0 && (
+              <AdminCard className="flex flex-col">
+                <AdminCardHeader className="rounded-t-2xl">
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {t('ctaPurchaseTopTitle')}
+                  </h3>
+                </AdminCardHeader>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead className="bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
+                      <tr>
+                        <th className="px-4 py-2 text-left">{t('ctaPurchaseArtworkColumn')}</th>
+                        <th className="px-4 py-2 text-right">{t('ctaClicksColumn')}</th>
+                        <th className="px-4 py-2 text-right">{t('ctaUniqueColumn')}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 bg-white">
+                      {data.purchase.topArtworks.map((row) => (
+                        <tr key={row.artworkId}>
+                          <td className="px-4 py-2 text-gray-700">
+                            <p className="font-medium text-gray-900 line-clamp-1">
+                              {row.artworkTitle || row.artworkId}
+                            </p>
+                            <p className="text-xs text-gray-500 line-clamp-1">{row.artist}</p>
+                          </td>
+                          <td className="px-4 py-2 text-right tabular-nums font-semibold text-gray-900">
+                            {numberFormatter.format(row.clicks)}
+                          </td>
+                          <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                            {numberFormatter.format(row.uniqueClickers)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AdminCard>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* ========================== 언어 전환 ========================== */}
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">{t('ctaLocaleSwitchTitle')}</h2>
+          <p className="mt-1 text-sm text-gray-500">{t('ctaLocaleSwitchDesc')}</p>
+        </div>
+
+        {!hasLocaleSwitch ? (
+          <AdminCard className="flex flex-col">
+            <AdminEmptyState
+              title={t('ctaLocaleSwitchNoData')}
+              description={t('ctaLocaleSwitchNoDataDesc')}
+            />
+          </AdminCard>
+        ) : (
+          <>
+            <AdminCard className="p-6">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <Stat
+                  label={t('ctaTotalSwitches')}
+                  value={numberFormatter.format(data.localeSwitch.totalSwitches)}
+                  highlight
+                />
+                <Stat
+                  label={t('ctaUniqueSwitchers')}
+                  value={numberFormatter.format(data.localeSwitch.uniqueSwitchers)}
+                />
+                <Stat
+                  label={t('ctaKoToEn')}
+                  value={numberFormatter.format(data.localeSwitch.koToEnSwitches)}
+                />
+                <Stat
+                  label={t('ctaEnToKo')}
+                  value={numberFormatter.format(data.localeSwitch.enToKoSwitches)}
+                />
+              </div>
+            </AdminCard>
+
+            {data.localeSwitch.topPages.length > 0 && (
+              <AdminCard className="flex flex-col">
+                <AdminCardHeader className="rounded-t-2xl">
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {t('ctaLocaleSwitchPagesTitle')}
+                  </h3>
+                </AdminCardHeader>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead className="bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
+                      <tr>
+                        <th className="px-4 py-2 text-left">{t('wvPagePathColumn')}</th>
+                        <th className="px-4 py-2 text-right">{t('ctaKoToEn')}</th>
+                        <th className="px-4 py-2 text-right">{t('ctaEnToKo')}</th>
+                        <th className="px-4 py-2 text-right">{t('ctaTotalSwitches')}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 bg-white">
+                      {data.localeSwitch.topPages.map((row) => (
+                        <tr key={row.pagePath}>
+                          <td className="px-4 py-2 font-mono text-xs text-gray-700">
+                            {row.pagePath}
+                          </td>
+                          <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                            {numberFormatter.format(row.koToEn)}
+                          </td>
+                          <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                            {numberFormatter.format(row.enToKo)}
+                          </td>
+                          <td className="px-4 py-2 text-right tabular-nums font-semibold text-gray-900">
+                            {numberFormatter.format(row.total)}
                           </td>
                         </tr>
                       ))}
