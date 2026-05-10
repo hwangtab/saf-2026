@@ -703,7 +703,11 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
               </>
             )}
           </p>
-          <CTAButtonGroup variant="large" className="justify-center" />
+          <CTAButtonGroup
+            variant="large"
+            className="justify-center"
+            trackingPosition="our-reality"
+          />
 
           {/* AI/GEO Optimization: Explicit Citations Section */}
           <div

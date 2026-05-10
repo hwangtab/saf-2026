@@ -24,6 +24,7 @@ export default function GalleryCampaignBanner({ className }: GalleryCampaignBann
       <CTAButtonGroup
         purchaseHref={EXTERNAL_LINKS.ONLINE_GALLERY}
         className="mt-8 justify-center"
+        trackingPosition="gallery-campaign-banner"
       />
       <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-charcoal-muted">
         <Link

@@ -415,6 +415,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               purchaseHref="/artworks"
               variant="large"
               className="justify-center"
+              trackingPosition="about-en"
             />
 
             {/* Sources */}
@@ -776,6 +777,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             purchaseHref="/artworks"
             variant="large"
             className="justify-center"
+            trackingPosition="about-ko"
           />
 
           {/* 출처 */}

@@ -4,6 +4,7 @@ import nextDynamic from 'next/dynamic';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
+import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
@@ -171,15 +172,14 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
               SSR 후 hydrate 시 카드 높이가 안정적. */}
           <DynamicCounter items={counterItems} locale={locale} />
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
-            <LinkButton
-              href={EXTERNAL_LINKS.JOIN_MEMBER}
-              external
+            <TrackedDonateButton
+              position="home-our-reality"
               variant="primary"
               size="lg"
               className="w-full sm:w-auto justify-center min-w-[180px]"
             >
               {t('joinMemberLink')}
-            </LinkButton>
+            </TrackedDonateButton>
             <LinkButton
               href={EXTERNAL_LINKS.LOAN_INFO}
               external

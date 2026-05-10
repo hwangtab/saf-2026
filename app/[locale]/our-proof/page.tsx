@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import LinkButton from '@/components/ui/LinkButton';
+import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -490,9 +491,9 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                   Become a member of Korea Smart Cooperative and help sustain artist mutual-aid
                   finance.
                 </p>
-                <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
+                <TrackedDonateButton position="our-proof-en" variant="primary" size="md">
                   Join now
-                </LinkButton>
+                </TrackedDonateButton>
               </div>
               <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
                 <h3 className="text-card-title mb-3">Support artists through purchases</h3>
@@ -804,9 +805,9 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 한국스마트협동조합의 조합원이 되어 예술인 상호부조 대출 기금 조성과 운영에 함께하실
                 수 있습니다.
               </p>
-              <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
+              <TrackedDonateButton position="our-proof-ko" variant="primary" size="md">
                 조합원 가입하기
-              </LinkButton>
+              </TrackedDonateButton>
             </div>
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
               <h3 className="text-card-title mb-3">작품을 구매해 예술인을 응원하세요</h3>

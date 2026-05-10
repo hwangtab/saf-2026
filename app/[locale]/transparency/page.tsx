@@ -2,12 +2,13 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import LinkButton from '@/components/ui/LinkButton';
+import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import StatCard from '@/components/ui/StatCard';
-import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
+import { CONTACT, SITE_URL } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -322,9 +323,9 @@ export default async function TransparencyPage({
                 <p className="text-charcoal-muted mb-4 flex-grow">
                   Membership contributions strengthen the fund&apos;s lending capacity.
                 </p>
-                <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
+                <TrackedDonateButton position="transparency-en" variant="primary" size="md">
                   Join now
-                </LinkButton>
+                </TrackedDonateButton>
               </div>
             </div>
           </div>
@@ -501,9 +502,9 @@ export default async function TransparencyPage({
               <p className="text-charcoal-muted mb-4 flex-grow">
                 조합원 가입으로 기금 조성에 직접 참여하고 대출 가능 금액을 늘릴 수 있습니다.
               </p>
-              <LinkButton href={EXTERNAL_LINKS.JOIN_MEMBER} external variant="primary" size="md">
+              <TrackedDonateButton position="transparency-ko" variant="primary" size="md">
                 조합원 가입하기
-              </LinkButton>
+              </TrackedDonateButton>
             </div>
           </div>
         </div>

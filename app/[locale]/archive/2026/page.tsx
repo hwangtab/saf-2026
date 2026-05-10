@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import LinkButton from '@/components/ui/LinkButton';
+import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
@@ -190,9 +191,8 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
 
                 <div className="mt-auto space-y-3">
                   <h3 className="text-card-title mb-4">Participate</h3>
-                  <LinkButton
-                    href={EXTERNAL_LINKS.JOIN_MEMBER}
-                    external
+                  <TrackedDonateButton
+                    position="archive-2026-en"
                     variant="primary"
                     className="w-full"
                     size="md"
@@ -200,7 +200,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
                     iconLayout="fixed-left"
                   >
                     Join as a member
-                  </LinkButton>
+                  </TrackedDonateButton>
                   <LinkButton
                     href="/artworks"
                     variant="secondary"
@@ -288,9 +288,8 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
               <div className="mt-auto space-y-3">
                 <h3 className="text-card-title mb-4">참여하기</h3>
                 <div className="space-y-3">
-                  <LinkButton
-                    href={EXTERNAL_LINKS.JOIN_MEMBER}
-                    external
+                  <TrackedDonateButton
+                    position="archive-2026-ko"
                     variant="primary"
                     className="w-full"
                     size="md"
@@ -298,7 +297,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
                     iconLayout="fixed-left"
                   >
                     조합원 가입하기
-                  </LinkButton>
+                  </TrackedDonateButton>
                   <LinkButton
                     href="/artworks"
                     variant="secondary"

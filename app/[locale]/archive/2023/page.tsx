@@ -434,6 +434,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
             className="justify-center"
             donateText={isEnglish ? 'Join the Co-op' : undefined}
             purchaseText={isEnglish ? 'Browse Artworks' : undefined}
+            trackingPosition="archive-2023"
           />
         </div>
       </Section>
