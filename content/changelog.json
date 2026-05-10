@@ -1,5 +1,15 @@
 [
   {
+    "hash": "49e65242",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "BlogPosting schema에 mentions·isPartOf·articleSection·keywords 추가",
+    "summary": "매거진 BlogPosting JSON-LD에 (1) 본문 인용 작품 + 같은 카테고리 관련 글을 mentions entity로, (2) 카테고리 페이지를 isPartOf Blog로, (3) articleSection 라벨, (4) tags 기반 keywords를 발행. AI Overview·Knowledge Graph entity 그래프에 직접 시그널.",
+    "body": "- BlogPostingMention 타입: { type: 'BlogPosting'|'Product'|'Person', name, url }\n- generateBlogPostingSchema: 신규 옵션 articleSection, categoryUrl, keywords, mentions\n- stories/[slug]/page.tsx: relatedArtworks(본문 인용 우선) + relatedStories(같은 카테고리)를 mentions로 변환\n  - blogPostingSchema 생성 위치를 relatedArtworks·relatedStories hydrate 이후로 이동\n  - articleSection은 매거진 카테고리 라벨 (한·영), categoryUrl은 /stories/category/{slug}, keywords는 story.tags\n\ncluster SEO 시그널 강화 — 매거진 토픽 클러스터(buying-guide·art-knowledge·artist-story) 안에서 글들이 서로 mentions·isPartOf로 묶여 Google이 entity 그래프 형성.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "c46f43b7",
     "type": "fix",
     "scope": "analytics",

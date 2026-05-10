@@ -1,11 +1,13 @@
 import {
   getSupabaseArtworksByArtist,
   getAvailableArtworkCategories,
+  getSupabaseArtworks,
   getSupabaseStories,
   getSupabaseArtistExternalLinks,
   getSupabaseArtistNoticeByName,
   getPopularArtistNames,
 } from '@/lib/supabase-data';
+import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import { getArtistExternalLinks } from '@/lib/artist-external-links';
@@ -309,10 +311,29 @@ export default async function ArtistPage({ params }: Props) {
     })),
   });
 
-  // Related magazine stories (where tags include the artist name)
-  const allStories = await getSupabaseStories();
+  // Related magazine stories — 두 경로 모두 매칭:
+  //   (1) tags에 작가명이 포함된 글 (작가-인터뷰 시리즈, 거장 단독 글 등)
+  //   (2) 본문에 이 작가의 작품(/artworks/{uuid})이 인용된 글 (큐레이션·가이드 시리즈)
+  // 두 번째 경로 덕분에 매거진 작성 시 tags에 작가명을 넣지 않아도 본문 인용만으로
+  // 작가 페이지에 자동으로 backlink가 생성됨 — 양방향 entity 그래프.
+  const [allStories, allArtworks] = await Promise.all([
+    getSupabaseStories(),
+    getSupabaseArtworks(),
+  ]);
+  const thisArtistArtworkIds = new Set(
+    allArtworks.filter((a) => a.artist === artistName).map((a) => a.id)
+  );
   const relatedStories = allStories
-    .filter((s) => s.tags?.some((tag) => tag === artistName || tag === displayArtistName))
+    .filter((s) => {
+      const taggedMatch = s.tags?.some((tag) => tag === artistName || tag === displayArtistName);
+      if (taggedMatch) return true;
+      // 본문에 이 작가의 작품 id가 하나라도 인용되면 매칭. body·body_en 양쪽 모두 검사.
+      const referencedIds = [
+        ...extractArtworkIdsFromBody(s.body),
+        ...extractArtworkIdsFromBody(s.body_en),
+      ];
+      return referencedIds.some((id) => thisArtistArtworkIds.has(id));
+    })
     .slice(0, 3);
 
   // 작가 외부 권위 자료 (한겨레·MMCA·달진닷컴·Wikipedia·namu.wiki 등 큐레이션 386 URL).

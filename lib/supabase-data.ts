@@ -878,20 +878,13 @@ const getSupabaseStoriesUncached = async (): Promise<Story[]> => {
   return (data || []).map((item) => mapStoryRow(item as StoryRow));
 };
 
-const getSupabaseStoriesCached = unstable_cache(
-  async () => getSupabaseStoriesUncached(),
-  // 'supabase-stories' v1 키에 빈 배열이 캐시되는 사고 후, 캐시 미스 강제를 위해 v2로 bump.
-  // Vercel Data Cache는 deployment 간 공유되어 stale 데이터가 유지될 수 있음.
-  ['supabase-stories-v2'],
-  { revalidate: 600, tags: ['stories'] }
-);
-
+// unstable_cache 제거 — 매거진 본문(특히 영문 14,000자급)이 누적되며 2MB 한도 초과로
+// 빌드 실패. 페이지 레벨 revalidate(/stories: 300s, /stories/[slug]: 1800s)가 SSG 시점을
+// 결정하므로 Vercel Data Cache 추가 레이어 없어도 실제 호출 빈도는 동일.
+// React cache()로 request-scope 중복 제거만 유지.
 export const getSupabaseStories = cache(async (): Promise<Story[]> => {
-  // 캐시 미스 + Supabase 일시 장애 시 throw가 페이지 레벨로 올라가
-  // /stories·/archive 등 전 페이지가 error.tsx로 떨어지는 것을 방지.
-  // 호출자에게는 빈 배열 fallback을 노출하되, 빈 결과는 캐시되지 않음.
   try {
-    return await getSupabaseStoriesCached();
+    return await getSupabaseStoriesUncached();
   } catch (err) {
     console.error('getSupabaseStories fallback to empty array:', err);
     return fallbackStories;

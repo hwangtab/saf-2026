@@ -26,6 +26,7 @@ import { ArrowRight } from 'lucide-react';
 import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 import { extractFaqFromBody, generateFaqPageSchema } from '@/lib/markdown-faq';
+import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 
 export const dynamic = 'force-static';
 export const revalidate = 1800;
@@ -36,27 +37,7 @@ function extractFirstImage(body: string | null | undefined): string | null {
   return match?.[1] ?? null;
 }
 
-/**
- * body 마크다운에서 `/artworks/{uuid}` 링크로 직접 참조된 작품 id를 중복 없이 등장 순서대로 추출.
- * artist-story 외 카테고리에서도 '이 글에서 소개한 작품'을 관련 작품 카드로 노출하기 위함.
- */
-function extractArtworkIds(body: string | null | undefined): string[] {
-  if (!body) return [];
-  // 뒤따르는 문자로 끝(`)`, `"`, 공백, 문자열 끝)일 때만 매칭 — Supabase Storage URL
-  // (`/artworks/{artist-id}/...` 구조)의 artist-id가 잡히지 않도록 경계 제약.
-  const pattern =
-    /\/(?:en\/)?artworks\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?=[)"\s]|$)/gi;
-  const seen = new Set<string>();
-  const ordered: string[] = [];
-  for (const match of body.matchAll(pattern)) {
-    const id = match[1].toLowerCase();
-    if (!seen.has(id)) {
-      seen.add(id);
-      ordered.push(id);
-    }
-  }
-  return ordered;
-}
+// extractArtworkIdsFromBody는 lib/markdown-artwork-refs로 이동 — artists 페이지에서도 재사용.
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -228,7 +209,7 @@ export default async function StoryDetailPage({ params }: Props) {
   const sortAvailableFirst = (a: Artwork, b: Artwork) =>
     Number(a.sold ?? false) - Number(b.sold ?? false);
 
-  const referencedArtworkIds = extractArtworkIds(story.body);
+  const referencedArtworkIds = extractArtworkIdsFromBody(story.body);
   if (referencedArtworkIds.length > 0) {
     const allArtworks = await getSupabaseArtworks();
     const byId = new Map(allArtworks.map((a) => [a.id, a]));
