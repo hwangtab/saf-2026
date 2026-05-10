@@ -7,7 +7,11 @@
  *
  * 환경변수 (Vercel·local 모두 등록):
  * - GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET, GSC_OAUTH_REFRESH_TOKEN
- * - GSC_SITE_URL: 'https://www.saf2026.com' (URL prefix) 또는 'sc-domain:saf2026.com' (Domain)
+ * - GSC_SITE_URL: GSC에 등록된 정확한 site identifier
+ *   · Domain property(권장): 'sc-domain:saf2026.com' — www·non-www·http·https 모두 포함
+ *   · URL prefix property: 'https://www.saf2026.com/' — 등록한 URL과 trailing slash 정확히 일치 필요
+ *   사용자 OAuth 권한이 GSC에 등록된 정확한 식별자에 매핑되어야 작동 (잘못된 값은 403 forbidden).
+ *   현재 운영: 'sc-domain:saf2026.com' (Domain property — hwangtab@gmail.com siteOwner 권한)
  *
  * 사용: 매일 한 번 cron에서 fetchGscDataForDate(date)을 호출해 Supabase에 캐시.
  * GSC API는 약 2일 lag — 어제·오늘 데이터는 보통 미반영.
