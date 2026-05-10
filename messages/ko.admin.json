@@ -589,6 +589,7 @@
       "ctaShareTitle": "공유 클릭",
       "ctaShareDesc": "ShareButtons 컴포넌트의 5채널(facebook·twitter·kakao·sms·copy_link) 클릭 분포 + 가장 많이 공유되는 페이지.",
       "ctaShareNoData": "공유 클릭 데이터 없음",
+      "ctaShareNoDataDesc": "ShareButtons가 노출된 페이지에서 공유 버튼이 아직 클릭되지 않았습니다. 트래킹 시작 직후거나 사용자 트래픽이 더 쌓일 때까지 기다려야 합니다.",
       "ctaShareChannelTitle": "채널 분포",
       "ctaShareChannelColumn": "채널",
       "ctaShareTopPagesTitle": "가장 많이 공유된 페이지",

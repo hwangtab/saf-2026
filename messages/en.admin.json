@@ -589,6 +589,7 @@
       "ctaShareTitle": "Share clicks",
       "ctaShareDesc": "ShareButtons clicks across 5 channels (facebook·twitter·kakao·sms·copy_link) + most-shared pages.",
       "ctaShareNoData": "No share click data",
+      "ctaShareNoDataDesc": "Share buttons exist on pages but have not been clicked yet. Tracking just started or no user traffic yet.",
       "ctaShareChannelTitle": "Channel distribution",
       "ctaShareChannelColumn": "Channel",
       "ctaShareTopPagesTitle": "Most shared pages",

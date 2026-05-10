@@ -73,9 +73,11 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
   };
 
   const handleCopyLink = async () => {
+    // 다른 4개 채널과 동일하게 클릭 시점에 트래킹 — clipboard API 실패(보안 정책,
+    // HTTP 환경 등)로 인한 누락 방지. 사용자 의도("공유 시도")가 측정 대상.
+    trackShare('copy_link');
     try {
       await navigator.clipboard.writeText(url);
-      trackShare('copy_link');
       setCopyStatus('copied');
       setTimeout(() => setCopyStatus('idle'), 2000);
     } catch (err) {

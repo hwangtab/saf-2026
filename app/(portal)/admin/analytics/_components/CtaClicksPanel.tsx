@@ -168,7 +168,7 @@ export default async function CtaClicksPanel({ data }: Props) {
 
         {!hasShare ? (
           <AdminCard className="flex flex-col">
-            <AdminEmptyState title={t('ctaShareNoData')} description={t('ctaDonateNoDataDesc')} />
+            <AdminEmptyState title={t('ctaShareNoData')} description={t('ctaShareNoDataDesc')} />
           </AdminCard>
         ) : (
           <>

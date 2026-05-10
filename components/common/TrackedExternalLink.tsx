@@ -30,9 +30,12 @@ export default function TrackedExternalLink({
   ariaLabel,
 }: TrackedExternalLinkProps) {
   const handleClick = () => {
+    // page_path는 default — 호출자가 eventParams에 명시하면 그쪽이 우선.
+    // 'use client'라 typeof window 가드는 사실상 dead branch이지만 helper 함수
+    // 패턴 일관성 위해 유지.
     trackEvent(eventName, {
-      ...eventParams,
       page_path: typeof window !== 'undefined' ? window.location.pathname : null,
+      ...eventParams,
     });
   };
 

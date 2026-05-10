@@ -109,21 +109,18 @@ function sendToGA(metric: Metric) {
     non_interaction: true, // 사용자 상호작용 카운트에서 제외 (bounce rate 영향 없음)
   };
 
-  // gtag.js가 lazyOnload(LCP 최적화)이라 vitals callback이 gtag 정의 전에 발화함.
-  // 정통 Google bootstrap 패턴(`function gtag(){dataLayer.push(arguments)}`)을 그대로
-  // 사용해 dataLayer에 IArguments 형태로 큐잉 — rest spread Array push 대신.
-  // gtag.js 로드 후 큐를 순차 처리할 때 IArguments 형태를 기대하므로 호환성 보장.
-  window.dataLayer = window.dataLayer || [];
-  if (typeof window.gtag !== 'function') {
-    window.gtag = (...args: unknown[]) => {
-      window.dataLayer!.push(args);
-    };
-  }
-  try {
-    window.gtag('event', 'web_vitals', eventPayload);
-  } catch (err) {
-    // gtag 호출 자체 실패는 흔치 않지만 silently fail 하면 진단 불가.
-    console.error('[web-vitals] gtag send failed:', err);
+  // gtag stub 등록은 GoogleAnalytics.tsx의 단일 출처에 위임.
+  // 여기서 spread stub `(...args) => push(args)`를 등록하면 GoogleAnalytics 표준 stub
+  // (`function(){push(arguments)}`)과 충돌해 dataLayer 항목 형태가 Array 가 되며,
+  // gtag.js Tag-2.0이 Arguments-shape를 strict 검증해 collect 송신을 silent abort한다
+  // (5/1~10 0건 회귀의 근본 원인). gtag 미등록 상태면 이 hit은 그냥 손실 — Vercel
+  // Analytics 측 자체 적재가 살아 있어 admin 패널은 영향 없음.
+  if (typeof window.gtag === 'function') {
+    try {
+      window.gtag('event', 'web_vitals', eventPayload);
+    } catch (err) {
+      console.error('[web-vitals] gtag send failed:', err);
+    }
   }
 
   // 자체 page_views 테이블 적재 — Vercel Analytics Drain webhook으로 Supabase에
@@ -146,16 +143,12 @@ function sendToGA(metric: Metric) {
 export default function WebVitalsTracker() {
   useEffect(() => {
     // 진단: 컴포넌트가 production에서 실제 mount되는지 검증용 ping.
-    // GA4에 'web_vitals_mount' 이벤트가 들어오면 mount 성공이고, web-vitals
+    // GA4에 web_vitals_mount 이벤트가 들어오면 mount 성공이고, web-vitals
     // 콜백만 fire 안 하는 상황(저트래픽 + 짧은 세션). 이 이벤트도 0건이면
     // import 또는 mount 자체가 깨진 것.
-    if (typeof window !== 'undefined') {
-      window.dataLayer = window.dataLayer || [];
-      if (typeof window.gtag !== 'function') {
-        window.gtag = function gtagStub() {
-          window.dataLayer!.push(arguments);
-        };
-      }
+    // stub 등록은 GoogleAnalytics 단일 출처에 위임 — mount ping이 GoogleAnalytics보다
+    // 먼저 발화하면 GA4 송신만 손실(자체 page_views 적재는 살아있음).
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       try {
         window.gtag('event', 'web_vitals_mount', {
           page_path: window.location.pathname,

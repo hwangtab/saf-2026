@@ -275,7 +275,7 @@ export default function FullscreenMenu({
                 trackEvent('donate_click', {
                   position: 'fullscreen-menu',
                   target: 'join_member',
-                  page_path: window.location.pathname,
+                  page_path: typeof window !== 'undefined' ? window.location.pathname : null,
                 });
                 onClose();
               }}
