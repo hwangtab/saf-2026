@@ -1,5 +1,15 @@
 [
   {
+    "hash": "8c96f9a8",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Artist Person schema에 subjectOf(관련 매거진) 추가 — entity 그래프 양방향화",
+    "summary": "작가 페이지의 Person schema에 그 작가를 다룬 매거진 글을 subjectOf BlogPosting 항목으로 발행. 매거진 → 작가(BlogPosting.mentions) 단방향이던 entity 관계가 작가 → 매거진(Person.subjectOf)으로 양방향화. Google Knowledge Graph·AI Overview entity 매칭에 직접 시그널.",
+    "body": "- ArtistRelatedStory 인터페이스: { url, name, datePublished? }\n- EnhancedArtistSchemaInput에 relatedStories 필드 추가\n- generateEnhancedArtistSchema: subjectOf 항목 발행 (BlogPosting type)\n- artists/[artist]/page.tsx: personSchema 생성 위치를 relatedStories hydrate 이후로 이동, relatedStories를 schema input의 relatedStories로 변환\n\n이전 commit(9a01e705)의 작가 페이지 backlink 매칭(tags + 본문 인용)으로 hydrate된 데이터를 schema에도 반영. entity 그래프 양방향 완성.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "c4e763cb",
     "type": "feat",
     "scope": "seo",

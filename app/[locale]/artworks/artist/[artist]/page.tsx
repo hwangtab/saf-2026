@@ -39,7 +39,7 @@ import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { containsHangul } from '@/lib/search-utils';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Globe, Instagram } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 
 import SafeImage from '@/components/common/SafeImage';
@@ -422,6 +422,45 @@ export default async function ArtistPage({ params }: Props) {
           title={t('shareTitle', { artist: formattedName })}
           description={t('shareDescription', { artist: formattedName })}
         />
+        {/* 작가 외부 권위 링크 — homepage·instagram이 schema sameAs에는 들어가지만
+            UI에서도 가시화하면 (1) 사용자 trust ↑ (2) 외부 링크 트래픽 (3) Google entity 확신 강화.
+            Wikipedia·MMCA 같은 권위 article은 별도 RelatedArticles 컴포넌트가 페이지 하단에 노출. */}
+        {(artistMeta?.homepage || artistMeta?.instagram) && (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {artistMeta.homepage && (
+              <a
+                href={artistMeta.homepage}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-white/20 transition-colors"
+                aria-label={
+                  isEnglish
+                    ? `Visit ${formattedName}'s official homepage (opens in new tab)`
+                    : `${formattedName} 작가 공식 홈페이지 (새 탭)`
+                }
+              >
+                <Globe aria-hidden="true" className="h-3.5 w-3.5" />
+                {isEnglish ? 'Homepage' : '작가 홈페이지'}
+              </a>
+            )}
+            {artistMeta.instagram && (
+              <a
+                href={artistMeta.instagram}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm hover:bg-white/20 transition-colors"
+                aria-label={
+                  isEnglish
+                    ? `Visit ${formattedName} on Instagram (opens in new tab)`
+                    : `${formattedName} 작가 Instagram (새 탭)`
+                }
+              >
+                <Instagram aria-hidden="true" className="h-3.5 w-3.5" />
+                Instagram
+              </a>
+            )}
+          </div>
+        )}
       </PageHero>
 
       {notice && (
