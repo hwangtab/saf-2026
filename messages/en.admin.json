@@ -597,6 +597,7 @@
       "pageReportViewsPerUserColumn": "Views/user",
       "pageReportEngagementColumn": "Avg engagement",
       "pageReportEventsColumn": "Events",
+      "pageReportSortBy": "Sort by:",
       "ctaShareChannelTitle": "Channel distribution",
       "ctaShareChannelColumn": "Channel",
       "ctaShareTopPagesTitle": "Most shared pages",

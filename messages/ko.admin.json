@@ -597,6 +597,7 @@
       "pageReportViewsPerUserColumn": "사용자당 조회수",
       "pageReportEngagementColumn": "평균 참여 시간",
       "pageReportEventsColumn": "이벤트 수",
+      "pageReportSortBy": "정렬:",
       "ctaShareChannelTitle": "채널 분포",
       "ctaShareChannelColumn": "채널",
       "ctaShareTopPagesTitle": "가장 많이 공유된 페이지",

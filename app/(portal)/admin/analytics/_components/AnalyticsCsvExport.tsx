@@ -84,6 +84,27 @@ export function AnalyticsCsvExport({ data }: Props) {
     for (const row of data.topReferrers) {
       lines.push(`${csvSafeCell(row.referrer)},${csvSafeCell(row.count)}`);
     }
+    lines.push('');
+
+    // GA4 페이지 보고서 (engagement 등 자체 적재에 없는 metric 포함)
+    lines.push('=== GA4 페이지 보고서 ===');
+    lines.push(
+      '순위,페이지 제목,경로,조회수,활성 사용자,사용자당 조회수,평균 참여 시간(초),이벤트 수'
+    );
+    data.pageReport.forEach((row, idx) => {
+      lines.push(
+        [
+          idx + 1,
+          csvSafeCell(row.pageTitle),
+          csvSafeCell(row.pagePath),
+          row.screenPageViews,
+          row.activeUsers,
+          row.viewsPerUser,
+          Math.round(row.avgEngagementSeconds),
+          row.eventCount,
+        ].join(',')
+      );
+    });
 
     const bom = '\uFEFF';
     const csv = bom + lines.join('\n');
