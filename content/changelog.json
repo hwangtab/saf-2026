@@ -1,5 +1,25 @@
 [
   {
+    "hash": "c46f43b7",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "gtag stub을 표준 arguments 패턴으로 회귀",
+    "summary": "stub의 spread `(...args) => push(args)`가 진짜 Array를 push하는데, gtag.js Tag-2.0 일부 분기가 Arguments-shape를 strict 검사한다는 보고. 표준 stub으로 회귀해서 collect 0건 회귀의 잔여 가설 제거",
+    "body": "수정:\n- GoogleAnalytics.tsx의 gtag 스텁: `(...args) => dataLayer.push(args)` → `function(this:void){ dataLayer.push(arguments) }` (GA4 official stub과 동일)\n- TS strict와 충돌 회피 위해 `as unknown as GtagFn` cast로 호출 시그니처만 보존\n\n배경 (전건과 같은 시리즈):\n- 5/1부터 GA4 totalUsers 0건 절벽 cut. server는 raw curl로 hit 받음(204), client gtag.js·dataLayer 정상이지만 collect 송신 0건\n- 직전 commit 735c3b76(consent default granted 명시)으로 검증했으나 collect 여전 0건 → Consent Mode v2 가설 폐기\n- 다음 후보 가설 검증: stub 패턴 비표준 (Array vs Arguments)\n- 검증 후 24시간 무효 시 다음 단계: Stream defaultUri patch + production env 정리(NEXT_PUBLIC_GA_ID literal `\\n` 제거)",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "0bad3793",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "sitemap에 영문 indexable URL + bilingual hreflang 추가",
+    "summary": "이전 commit(782fcc48)에서 about + 매거진 3편을 영문 indexable로 풀었으나 sitemap에는 영문 URL이 없어 Google이 발견 못 함. EN_INDEXABLE_PAGES + EN_INDEXABLE_STORY_SLUGS 화이트리스트 활용해 sitemap에 영문 URL 별도 entry + ko/en 양방향 hreflang alternates 발행.",
+    "body": "- bilingualAlternates() 헬퍼: 'ko-KR'/'en-US'/'x-default' 매핑\n- staticEnPages: /en/about 별도 entry\n- storyEnPages: /en/stories/{oh-yoon-estate-print-guide,korean-documentary-landscape-photography,newlywed-home-first-artwork-guide} 별도 entry\n- 화이트리스트 외 영문 URL은 그대로 sitemap 제외 (noindex 정책 유지)\n\n다음 sitemap 갱신(revalidate 3600s) 후 GSC 인덱싱 요청 가능.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "e2eb24ea",
     "type": "feat",
     "scope": "seo",

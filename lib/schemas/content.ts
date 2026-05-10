@@ -173,6 +173,15 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
   };
 }
 
+export interface BlogPostingMention {
+  /** schema.org @type — 'BlogPosting'(관련 매거진), 'Product'(작품) 등 */
+  type: 'BlogPosting' | 'Product' | 'Person';
+  /** 표시 이름 */
+  name: string;
+  /** 절대 URL */
+  url: string;
+}
+
 export interface BlogPostingSchemaInput {
   title: string;
   description: string;
@@ -182,11 +191,27 @@ export interface BlogPostingSchemaInput {
   url: string;
   authorName?: string;
   locale?: 'ko' | 'en';
+  /** 카테고리 라벨 (articleSection) — 예: '컬렉팅 시작하기', 'Buying Guide' */
+  articleSection?: string;
+  /** 카테고리 페이지 절대 URL (isPartOf로 매핑) */
+  categoryUrl?: string;
+  /** tags 또는 SEO 키워드 — 콤마로 join되어 keywords로 노출 */
+  keywords?: readonly string[];
+  /** 본문에서 인용된 관련 매거진·작품·작가 entity (mentions 필드) */
+  mentions?: readonly BlogPostingMention[];
 }
 
 export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
   const inLanguage = post.locale === 'en' ? 'en-US' : 'ko-KR';
   const orgName = post.locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME;
+
+  const mentions = post.mentions
+    ?.filter((m) => m.name && m.url)
+    .map((m) => ({
+      '@type': m.type,
+      name: m.name,
+      url: m.url,
+    }));
 
   return {
     '@context': 'https://schema.org',
@@ -214,6 +239,18 @@ export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
       },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': post.url },
+    ...(post.articleSection ? { articleSection: post.articleSection } : {}),
+    ...(post.categoryUrl
+      ? {
+          isPartOf: {
+            '@type': 'Blog',
+            name: post.articleSection ?? (post.locale === 'en' ? 'SAF Magazine' : '씨앗페 매거진'),
+            url: post.categoryUrl,
+          },
+        }
+      : {}),
+    ...(post.keywords && post.keywords.length > 0 ? { keywords: post.keywords.join(', ') } : {}),
+    ...(mentions && mentions.length > 0 ? { mentions } : {}),
   };
 }
 

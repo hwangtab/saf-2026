@@ -189,18 +189,11 @@ export default async function StoryDetailPage({ params }: Props) {
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
 
-  // BlogPosting schema도 동일한 thumbnail/body 첫 이미지 fallback 적용 — 일관성
+  // BlogPosting schema도 동일한 thumbnail/body 첫 이미지 fallback 적용 — 일관성.
+  // BlogPosting schema는 relatedArtworks·relatedStories가 hydrate된 이후 생성하므로
+  // 함수 끝부분으로 이동 (아래 참고).
   const schemaImage = story.thumbnail || extractFirstImage(body) || OG_IMAGE.url;
-  const blogPostingSchema = generateBlogPostingSchema({
-    title,
-    description: excerpt,
-    datePublished: story.published_at,
-    dateModified: story.updated_at,
-    image: schemaImage,
-    url: pageUrl,
-    authorName: story.author,
-    locale,
-  });
+  const categoryUrl = buildLocaleUrl(`/stories/category/${story.category}`, locale);
 
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const breadcrumbItems = [
@@ -280,6 +273,36 @@ export default async function StoryDetailPage({ params }: Props) {
       label: isEn ? 'Related Magazine' : '관련 매거진',
     },
   ];
+
+  // BlogPosting schema 생성 — relatedArtworks·relatedStories hydrate된 이후이라
+  // mentions 필드를 정확한 작품 title·관련 매거진 title로 채울 수 있음.
+  // mentions는 schema.org에서 "이 글이 참조하는 entity" 시그널 — AI Overview·Knowledge Graph
+  // entity 매칭과 관련 entity 그래프 형성에 직접 영향.
+  const blogPostingSchema = generateBlogPostingSchema({
+    title,
+    description: excerpt,
+    datePublished: story.published_at,
+    dateModified: story.updated_at,
+    image: schemaImage,
+    url: pageUrl,
+    authorName: story.author,
+    locale,
+    articleSection: categoryLabel,
+    categoryUrl,
+    keywords: story.tags ?? undefined,
+    mentions: [
+      ...relatedArtworks.map((art) => ({
+        type: 'Product' as const,
+        name: isEn && art.title_en ? art.title_en : art.title,
+        url: buildLocaleUrl(`/artworks/${art.id}`, locale),
+      })),
+      ...relatedStories.map((rel) => ({
+        type: 'BlogPosting' as const,
+        name: isEn && rel.title_en ? rel.title_en : rel.title,
+        url: buildLocaleUrl(`/stories/${rel.slug}`, locale),
+      })),
+    ],
+  });
 
   return (
     <>
