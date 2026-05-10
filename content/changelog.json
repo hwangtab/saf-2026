@@ -1,5 +1,15 @@
 [
   {
+    "hash": "782fcc48",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "영문 indexable 화이트리스트 — /about + 매거진 3편 색인 허용",
+    "summary": "영문 페이지 전체 noindex 정책을 유지하되, 영문 본문이 hand-written으로 충분한 페이지·매거진 글은 화이트리스트로 indexable 풀어 해외 컬렉터 long-tail entry 확보.",
+    "body": "- lib/en-indexable.ts: 단일 출처 화이트리스트 + resolveEnRobots() 헬퍼\n- /en/about: 자체 영문 콘텐츠 풍부 (PageHero·History·Stats·How it works 등 hand-written) → indexable\n- /en/stories/{oh-yoon-estate-print-guide,korean-documentary-landscape-photography,newlywed-home-first-artwork-guide}: body_en 5,000~14,000자 영문 본문 → indexable\n- 그 외 영문 페이지·매거진 글: layout robots(index:false) 그대로 유지\n\nNext.js metadata 머지 규칙: 페이지 generateMetadata에서 robots 명시 시 layout robots 객체 통째로 교체. 따라서 indexable 페이지에서 googleBot 디렉티브(max-snippet 등) 함께 명시.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "735c3b76",
     "type": "fix",
     "scope": "analytics",

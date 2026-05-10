@@ -25,6 +25,7 @@ import type { StoryCategory, Artwork } from '@/types';
 import { ArrowRight } from 'lucide-react';
 import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
+import { extractFaqFromBody, generateFaqPageSchema } from '@/lib/markdown-faq';
 
 export const dynamic = 'force-static';
 export const revalidate = 1800;
@@ -209,6 +210,14 @@ export default async function StoryDetailPage({ params }: Props) {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  // 본문에 "## 자주 묻는 질문" / "## Frequently asked questions" 섹션이 있으면
+  // FAQPage schema 자동 생성 — Google AI Overview·featured snippet 진입 우선순위 ↑.
+  // 추출 실패 시 null → JsonLdScript에 추가하지 않음.
+  const faqSchema = generateFaqPageSchema(extractFaqFromBody(body), {
+    url: pageUrl,
+    locale,
+  });
+
   // Related stories (same category, exclude current)
   const allStories = await getSupabaseStories();
   const relatedStories = allStories
@@ -274,7 +283,9 @@ export default async function StoryDetailPage({ params }: Props) {
 
   return (
     <>
-      <JsonLdScript data={[blogPostingSchema, breadcrumbSchema]} />
+      <JsonLdScript
+        data={[blogPostingSchema, breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])]}
+      />
       <PageHero
         title={title}
         description={`${categoryLabel} · ${isEn ? 'Published' : '발행'} ${formattedDate}${story.author ? ` · ${story.author}` : ''}`}
