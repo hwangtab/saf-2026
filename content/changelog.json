@@ -1,5 +1,15 @@
 [
   {
+    "hash": "9a01e705",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 페이지 매거진 backlink 자동 매칭 + Supabase stories cache 한도 수정",
+    "summary": "작가 페이지의 relatedStories를 (1) tags 작가명 매칭 + (2) 본문 인용 작품 → 작가 매칭 두 경로로 확장. tags에 작가명을 안 넣은 매거진 글도 본문 인용만으로 작가 페이지에 자동 backlink 형성. 양방향 entity 그래프 완성.",
+    "body": "- lib/markdown-artwork-refs.ts: extractArtworkIdsFromBody 헬퍼 추출 (기존 stories 페이지의 in-file 함수를 lib로 이동·재사용)\n- artists/[artist]/page.tsx: tags 매칭 + body·body_en 인용 매칭 OR 합침. allArtworks로 artist → artwork id Set 만들고 매거진 본문의 인용 id가 그 Set에 포함되면 매칭\n- stories/[slug]/page.tsx: 중복된 in-file 함수 제거, 새 헬퍼 import\n- lib/supabase-data.ts: getSupabaseStories의 unstable_cache 제거 — 매거진 7편 게시(영문 14k자급 다수) 후 cache 2MB 한도 초과로 빌드 실패. React cache()로 request-scope 중복 제거만 유지, 페이지 레벨 revalidate가 SSG 시점 결정하므로 실제 호출 빈도 변화 없음\n\n향후 매거진 작성자가 tags에 작가명을 빠뜨려도 본문에 작가 작품 인용만 있으면 작가 페이지에 자동 노출.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "49e65242",
     "type": "feat",
     "scope": "seo",

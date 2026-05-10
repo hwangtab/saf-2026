@@ -15,6 +15,7 @@ import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { getSupabaseStories } from '@/lib/supabase-data';
+import { generateFaqPageSchema } from '@/lib/markdown-faq';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { STORY_CATEGORIES, type StoryCategory } from '@/types';
@@ -38,6 +39,9 @@ interface CategoryEditorial {
   // 각 단락 200~400자 정도, 자연스러운 키워드 분포.
   editorialIntro: string;
   editorialParagraphs: string[];
+  // 카테고리 hub 페이지 FAQ — 매거진 글의 FAQ와 별도로 카테고리 자체에 대한 보편 질문.
+  // FAQPage schema로 발행 → Google AI Overview·featured snippet 진입 강화.
+  faqs: Array<{ question: string; answer: string }>;
 }
 
 const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>> = {
@@ -62,6 +66,33 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         '씨앗페 출품 작가들은 작품 판매 수익 일부를 동료 예술인을 위한 상호부조 기금에 내놓기로 한 “연대 작가”들입니다. 한국 예술인의 84.9%가 제1금융권 대출에서 배제되는 현실에서, 한 사람의 작가가 다른 작가를 떠받치는 작은 공동체를 만드는 시도에 동참한 사람들입니다. 그래서 이곳의 작가 이야기는 개인사이면서 동시에 한국 미술의 구조를 비추는 거울이기도 합니다.',
         '관심 가는 작가의 인터뷰를 읽으셨다면, 그 작가의 출품작 페이지에서 작품을 직접 만나보세요. 작품 옆에는 작가 약력과 다른 출품작 링크가 함께 놓여 있고, 마음에 드는 작품은 화랑 직매로 구매할 수 있습니다. 무료 배송과 7일 이내 반품으로 첫 작품 구매의 부담도 줄였습니다.',
       ],
+      faqs: [
+        {
+          question: '씨앗페 출품 작가는 어떤 분들인가요?',
+          answer:
+            '씨앗페 2026에는 한국 현대미술 작가 110여 명이 모였습니다. 회화·판화·사진·조각·디지털아트 등 다양한 매체로 활동하는 신진부터 거장까지 — 동료 예술인의 금융 차별 문제 해결을 위해 작품을 자발적으로 출품한 “연대 작가”들입니다.',
+        },
+        {
+          question: '작가 인터뷰는 누가 진행하나요?',
+          answer:
+            '씨앗페 매거진 편집부가 작가와 직접 만나 인터뷰합니다. 미술관 도록·학술 글의 형식적 거리를 줄이고, 작가 본인의 언어로 작품 세계와 작업 일상을 풀어냅니다.',
+        },
+        {
+          question: '특정 작가의 작품을 사고 싶으면 어떻게 하나요?',
+          answer:
+            '인터뷰에서 다룬 작가의 이름을 클릭하면 작가 페이지로 이동합니다. 그 작가의 모든 출품작·약력·다른 매거진 글이 한 페이지에 모여 있고, 마음에 드는 작품은 바로 구매할 수 있습니다. 화랑 수수료가 없는 작가 직매 구조입니다.',
+        },
+        {
+          question: '작품을 사면 작가에게 직접 수익이 가나요?',
+          answer:
+            '작품 판매 수익의 대부분은 작가에게 직접 갑니다. 일부는 예술인 상호부조 기금에 적립되어 금융 차별을 겪는 동료 예술인의 저금리 대출 재원이 됩니다. 95% 상환율로 운영되어 한 작품 구매가 한 작가만이 아니라 한국 미술 생태계 전반의 안전망이 됩니다.',
+        },
+        {
+          question: '작가 인터뷰는 얼마나 자주 새로 올라오나요?',
+          answer:
+            '월 1~2편 페이스로 새 인터뷰가 추가됩니다. 신규 인터뷰는 매거진 메인과 카테고리 페이지 상단에서 확인할 수 있고, 매거진 RSS 또는 뉴스레터로 받아보실 수도 있습니다.',
+        },
+      ],
     },
     'buying-guide': {
       title: '컬렉팅 시작하기 — 미술 작품 구매 가이드',
@@ -83,6 +114,33 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         '미술 작품 가격은 마법이 아닙니다. 작가의 이력과 시장에서의 거래 기록, 작품의 크기·매체·에디션 수가 가격의 골격을 만듭니다. 같은 작가라도 회화 원본과 한정 에디션 판화의 가격대가 다르고, 같은 매체라도 시리즈 안에서의 위치에 따라 다릅니다. 처음에는 “내가 매일 봐도 좋을 것 같은가”라는 단순한 기준으로 시작하시고, 익숙해지면 가격의 구조를 들여다보세요.',
         `씨앗페 온라인은 화랑 수수료가 끼지 않는 작가 직매 구조이고, 작품 판매 수익은 ${LOAN_COUNT}건의 저금리 대출(95% 상환율)로 운영된 예술인 상호부조 기금이 됩니다. 한 점을 사는 일이 한 명의 작가를 응원하는 것이 아니라, 한국 예술 생태계의 작은 안전망을 보태는 일이 됩니다. 그래서 “왜 이 갤러리에서 사야 하는가”에 대한 답이 가격표 너머에 있습니다.`,
         '구매 절차는 단순합니다: 마음에 드는 작품을 클릭 → 작가·재료·크기·가격을 확인 → 토스페이먼츠로 결제 → 4,000원 정액 배송비로 전국 배송. 7일 이내 반품도 가능합니다. 처음에는 가격대가 부담 없는 판화나 소형 회화로 시작하시는 분이 많습니다. 가격대별 필터로 예산에 맞는 작품을 추리고, 인테리어와 어울리는지 작품 옆 사진을 함께 확인해 보세요.',
+      ],
+      faqs: [
+        {
+          question: '미술 작품을 처음 사는데 얼마부터 시작해야 하나요?',
+          answer:
+            '15만원~50만원대에서 신진 작가의 소형 사진·판화·디지털아트로 시작하실 수 있습니다. 50만원~150만원대는 거장의 사후 판화·중견 작가 회화 진입점, 150만원 이상은 거실 메인 한 점 또는 평생 가는 한 점에 적합합니다.',
+        },
+        {
+          question: '원본과 판화·디지털 프린트는 어떻게 다른가요?',
+          answer:
+            '원본은 작가가 직접 만든 1점뿐인 작품(회화·조각·일부 사진)입니다. 판화는 원판으로 한정 부수 인쇄(예: 30/50)된 작품으로 작가가 직접 찍은 “생전 판화”와 사후 유족·재단이 인쇄한 “사후 판화”로 나뉩니다. 디지털 프린트는 작가가 색을 감수한 한정 출력본입니다. 모두 진짜 작품이며 작가 서명·에디션 번호·증명서가 동봉됩니다.',
+        },
+        {
+          question: '작품 구매 후 액자·배송·보관은 어떻게 하나요?',
+          answer:
+            '액자는 작품마다 포함/미포함 표기됩니다. 미포함이면 동네 액자집(소형 5~15만원) 또는 온라인 맞춤 액자에서 의뢰. 배송은 4,000원 정액 전국 배송, 7일 이내 단순 변심 반품 가능. 보관은 직사광선·습기 피하고 적정 온도·습도 유지하면 30~50년 보존됩니다.',
+        },
+        {
+          question: '미술품을 사면 가격이 오르나요? 투자가 되나요?',
+          answer:
+            '거장 사후 판화는 10년에 1.5~2배 수준의 가격 상승을 보이는 경우가 많지만, 신진 작가 작품의 5년 후 가격 회복률은 20~30%입니다. 첫 컬렉션은 “투자가 아니라 함께 사는 풍경”의 관점이 안전하고, 자산 가치 상승은 보유의 결과로 자연스럽게 따라옵니다.',
+        },
+        {
+          question: '신혼집·사무실·선물 등 용도별 추천 작품이 있나요?',
+          answer:
+            '매거진 컬렉팅 가이드에 신혼집 첫 한 점, 10만원대 첫 컬렉션, 사무실·카페 B2B 큐레이션, 결혼·집들이 선물용 미술품 등 용도별 가이드와 큐레이션이 정리되어 있습니다. 각 가이드에서 5점씩 추천 작품과 함께 공간별 선택 원칙을 안내합니다.',
+        },
       ],
     },
     'art-knowledge': {
@@ -106,6 +164,32 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         '한국 현대미술의 흐름도 이 코너에서 가볍게 다룹니다. 1980년대 민중미술의 목판화, 1990년대 단색화의 부상, 2000년대 이후의 사진과 미디어 — 큰 사조의 윤곽을 알면 동시대 작가의 작업이 어디서 출발해 어디로 향하는지 보이기 시작합니다. 작가 한 사람의 인터뷰가 나무라면, 미술 산책의 글은 그 나무가 자란 숲의 풍경입니다.',
         `읽다가 마음에 닿는 작가나 매체가 생기면, 작품 갤러리에서 직접 그 결의 작품을 찾아보세요. 회화·판화·사진·조각 카테고리별로 ${ARTIST_COUNT}명 작가의 작품을 비교해 볼 수 있고, 가격대 필터로 부담 없이 시작할 수도 있습니다. 미술은 결국 좋아하는 작품을 한 점 들이는 데서 진짜로 시작됩니다.`,
       ],
+      faqs: [
+        {
+          question: '현대미술이 어렵게 느껴지는데 어떻게 보면 좋나요?',
+          answer:
+            '정답을 맞히려 하지 말고 질문을 던져보세요. “이 색은 왜”, “이 크기는 왜” 같은 작은 질문이 감상의 기본기입니다. 한 작품 앞에서 1분 머물러 보고 그 질문에 답이 떠오르면 그게 자기만의 감상입니다.',
+        },
+        {
+          question: '한국 현대미술사의 큰 흐름은 어떻게 되나요?',
+          answer:
+            '1970년대 단색화(서구 미니멀과 대화한 추상), 1980년대 민중미술(오윤·박재동·민정기 등 목판·사실주의), 1990년대 미디어아트(백남준 계보), 2000년대 이후 사진·설치·디지털 다양화. 거장 한 명의 작품을 통해 그 시대의 결을 짐작할 수 있습니다.',
+        },
+        {
+          question: '판화는 어떻게 만들어지나요? 진짜 작품인가요?',
+          answer:
+            '작가가 직접 새긴 원판(목판·동판·실크스크린 등)으로 한정 부수 인쇄한 진짜 작품입니다. 작가가 직접 찍은 “생전 판화”와 작가 사후 유족·재단이 원판으로 인쇄한 “사후 판화”로 나뉘며, 둘 다 작가 서명 또는 에디션 번호·증명서를 갖춘 공식 작품입니다.',
+        },
+        {
+          question: '전시회는 어디서 정보를 얻고 어떻게 가나요?',
+          answer:
+            '국립현대미술관(MMCA) 4관, 안국·삼청동 갤러리 거리, 한남·이태원 글로벌 갤러리, 성수·을지로 대안 공간, 광주비엔날레·아트부산·KIAF 같은 페어 — 매거진의 미술관·갤러리 가이드 시리즈에서 동선과 관람법을 정리했습니다.',
+        },
+        {
+          question: '한국 작가의 작품을 보고 사려면 어디서 시작하나요?',
+          answer: `씨앗페 온라인은 한국 동시대 작가 ${ARTIST_COUNT}명의 작품을 회화·판화·사진·조각·디지털아트 카테고리로 모았습니다. 가격대 필터로 부담 없이 시작할 수 있고, 작품 페이지에서 작가 약력·재료·크기·매거진 인터뷰까지 한눈에 확인 가능합니다.`,
+        },
+      ],
     },
   },
   en: {
@@ -128,6 +212,33 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         'Every featured artist is a “solidarity artist”: they donated work knowing the proceeds would fund low-interest loans for peers excluded from primary banking (84.9% of Korean artists). Their stories are personal, but they also reveal the structural reality of Korean art-making.',
         'Found an artist you connect with? Their full SAF collection is one click away — original works, gallery-direct pricing, free shipping, and 7-day returns.',
       ],
+      faqs: [
+        {
+          question: 'Who are the SAF artists?',
+          answer:
+            'SAF 2026 brings together 110+ Korean contemporary artists across painting, print, photography, sculpture, and digital art — from emerging artists to recognized masters. All voluntarily contributed works to address financial discrimination against fellow artists.',
+        },
+        {
+          question: 'Who conducts the artist interviews?',
+          answer:
+            'The SAF magazine editorial team meets each artist directly. We aim to reduce the formal distance of museum catalogs and academic writing, letting the artists describe their practice and daily studio life in their own words.',
+        },
+        {
+          question: 'How can I buy work by a specific artist I read about?',
+          answer:
+            'Click the artist name in the interview to reach the artist page. All available works, biography, and other magazine features are gathered there — and any work can be purchased directly. SAF is artist-direct: no gallery markup.',
+        },
+        {
+          question: 'Does the artist actually receive the proceeds?',
+          answer:
+            'The majority of sales proceeds go directly to the artist. A portion contributes to the artist mutual-aid fund, providing low-interest loans (5% APR, 95% repayment rate) to artists facing financial discrimination. One purchase supports both an artist and the broader Korean art ecosystem.',
+        },
+        {
+          question: 'How often are new artist interviews published?',
+          answer:
+            'New interviews are added at a pace of 1–2 per month. Recent additions appear at the top of the magazine and category pages. RSS and newsletter subscriptions are available.',
+        },
+      ],
     },
     'buying-guide': {
       title: 'Start Collecting — Art Buying Guide',
@@ -149,6 +260,33 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         `SAF Online is artist-direct: there is no gallery markup. All proceeds become an artist mutual-aid fund — already ${LOAN_COUNT} loans deployed at 95% repayment. Buying one work supports one artist; buying through SAF strengthens a small safety net for Korean art as a whole.`,
         'The process is simple: pick a work, review the artist and details, check out via Toss Payments, and receive nationwide shipping at a flat ₩4,000. Returns are accepted within 7 days. Many first-time collectors begin with smaller prints or paintings — use the price filter to find a starting point.',
       ],
+      faqs: [
+        {
+          question: 'How much should I budget for my first artwork?',
+          answer:
+            '₩150,000–500,000 covers small photographs, prints, or digital art by emerging artists. ₩500,000–1,500,000 is the sweet spot for estate prints by major Korean artists or works by mid-career artists. Above ₩1,500,000 is appropriate for a living-room main piece you keep for life.',
+        },
+        {
+          question: 'What is the difference between originals, prints, and digital prints?',
+          answer:
+            'Originals are unique works (paintings, sculptures, some photographs). Prints are limited editions (e.g., 30/50) made from a master plate — either lifetime prints (pulled by the artist) or estate prints (printed posthumously by family/foundation). Digital prints are color-supervised limited outputs. All are real artworks with the artist’s signature, edition number, and certificate.',
+        },
+        {
+          question: 'How does framing, shipping, and care work?',
+          answer:
+            'Framing inclusion is noted per work. If not included, neighborhood frame shops in Korea charge ₩50,000–150,000 for small works. Shipping is a flat ₩4,000 nationwide; 7-day returns accepted. With basic care (no direct sunlight, stable humidity), works last 30–50 years.',
+        },
+        {
+          question: 'Do artworks appreciate in value? Are they an investment?',
+          answer:
+            'Estate prints by Korean masters tend to appreciate 1.5–2x over a decade. Emerging-artist works recover their purchase price only ~20–30% of the time within five years. The safer mindset for a first collection is "a landscape you live with" — appreciation tends to follow long ownership rather than predictive buying.',
+        },
+        {
+          question: 'Are there recommendations by space or occasion?',
+          answer:
+            'The buying guide series covers first artwork for newlywed homes, starting collections under ₩400,000, office and café curation, and wedding/housewarming gifts. Each guide includes 5 curated picks and placement principles by room.',
+        },
+      ],
     },
     'art-knowledge': {
       title: 'Art Walk — Bite-sized Art Stories',
@@ -169,6 +307,32 @@ const CATEGORY_META: Record<LocaleCode, Record<StoryCategory, CategoryEditorial>
         'Understanding a work is less about “getting the right answer” and more about asking small questions: why this color, why this size, why this medium? The articles here walk you through those questions slowly, with one work at a time.',
         'We also map the broader currents of Korean contemporary art — from the 1980s minjung woodblock prints to the rise of Dansaekhwa, to the photography and media art of the 2000s — so you can see where today’s artists are coming from.',
         'When something resonates, follow the link to the gallery and explore that style up close. Browsing by medium or price range is the easiest way to start.',
+      ],
+      faqs: [
+        {
+          question: 'Contemporary art feels intimidating — how should I approach it?',
+          answer:
+            'Don’t try to find the right answer; ask small questions. "Why this color?", "Why this size?" — those are the basics of looking. Pause for one minute in front of a work, and whatever answer comes to mind is your own valid response.',
+        },
+        {
+          question: 'What are the major movements in Korean contemporary art history?',
+          answer:
+            '1970s Dansaekhwa (monochrome abstraction in dialogue with Western minimalism); 1980s minjung art (Oh Yoon, Park Jae-dong, Min Jeong-gi — woodblock prints, social realism); 1990s media art (Nam June Paik lineage); 2000s onward photography, installation, and digital diversification. A single master’s work often reveals the texture of its era.',
+        },
+        {
+          question: 'How are prints made? Are they real artworks?',
+          answer:
+            'A print is a real artwork made from an artist’s original plate (woodblock, etching, silkscreen, etc.) in a limited edition. They split into "lifetime prints" (pulled by the artist) and "estate prints" (printed posthumously by family or foundation). Both come with the artist’s signature or edition number plus a certificate.',
+        },
+        {
+          question: 'How do I find exhibitions and visit them?',
+          answer:
+            'MMCA (4 branches), the Anguk-Samcheong gallery district, the Hannam-Itaewon global galleries, the Seongsu-Euljiro alternative spaces, Gwangju Biennale, Art Busan, KIAF — the museum and gallery guide series in this magazine maps routes and visit tips.',
+        },
+        {
+          question: 'Where can I view and buy works by Korean artists?',
+          answer: `SAF Online gathers ${ARTIST_COUNT} contemporary Korean artists across painting, print, photography, sculpture, and digital art. Filter by price, browse by artist, and read magazine interviews — all on one page.`,
+        },
       ],
     },
   },
@@ -333,9 +497,15 @@ export default async function StoryCategoryPage({ params }: Props) {
     path: `/stories/category/${c}`,
   }));
 
+  // 카테고리 hub 자체 FAQPage schema — 매거진 글 FAQ와 별개로 카테고리 보편 질문.
+  // AI Overview·featured snippet에 카테고리 검색어 진입 강화.
+  const faqSchema = generateFaqPageSchema(meta.faqs, { url: pageUrl, locale });
+
   return (
     <>
-      <JsonLdScript data={[collectionSchema, breadcrumbSchema]} />
+      <JsonLdScript
+        data={[collectionSchema, breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])]}
+      />
 
       <PageHero
         title={meta.heroTitle}
@@ -449,10 +619,34 @@ export default async function StoryCategoryPage({ params }: Props) {
         </Section>
       )}
 
+      {/* 카테고리 보편 FAQ — schema와 본문 양쪽 모두 노출.
+          본문 노출은 AI 모델이 본문에서 직접 답변 추출할 때 정확도 향상에 도움. */}
+      {meta.faqs.length > 0 && (
+        <Section variant="canvas-soft" prevVariant="white">
+          <div className="max-w-3xl mx-auto px-4 sm:px-5">
+            <h2 className="text-section-title text-charcoal-deep mb-8">
+              {isEnglish ? 'Frequently asked questions' : '자주 묻는 질문'}
+            </h2>
+            <div className="space-y-6">
+              {meta.faqs.map((faq, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                  <h3 className="text-base font-bold text-charcoal-deep mb-3 break-keep">
+                    Q. {faq.question}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-charcoal break-keep">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+      )}
+
       {/* 다른 카테고리 내부 링크 — 토픽 클러스터 강화 */}
       <Section
         variant="white"
-        prevVariant={stories.length === 0 ? 'canvas-soft' : 'white'}
+        prevVariant={
+          meta.faqs.length > 0 ? 'canvas-soft' : stories.length === 0 ? 'canvas-soft' : 'white'
+        }
         className="pb-8"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-5">
