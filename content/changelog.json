@@ -1,5 +1,15 @@
 [
   {
+    "hash": "e2eb24ea",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "매거진 FAQPage schema 자동 추출 — Google AI Overview·featured snippet 진입 강화",
+    "summary": "매거진 본문의 \"## 자주 묻는 질문 / ## Frequently asked questions\" 섹션에서 Q/A 페어를 자동 추출해 schema.org FAQPage JSON-LD로 구조화. 기존 매거진 11편 + 신규 7편 = 18편에 즉시 적용. AI Overview·featured snippet 진입 우선순위 ↑.",
+    "body": "- lib/markdown-faq.ts: FAQ 섹션 추출기 + FAQPage schema 생성 함수\n  - KO(\"자주 묻는 질문\") + EN(\"Frequently asked questions\") 헤딩 모두 인식\n  - **Q. ...** A. ... 패턴 매칭, 마크다운 인라인 포맷팅 제거\n  - 다음 ## 헤딩 또는 --- horizontal rule에서 섹션 종료\n  - FAQ 없는 글은 null 반환 → JsonLdScript에 추가 안 함 (silent fallback)\n- stories/[slug]/page.tsx: blogPostingSchema + breadcrumbSchema와 함께 conditional spread로 추가\n- 테스트 10개 (한·영 추출, 마크다운 정리, 섹션 경계, schema 생성)\n\n매거진 토픽 클러스터(buying-guide·art-knowledge·artist-story) SEO 시그널 강화. 향후 새 글에도 동일 패턴 사용 시 자동 적용.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "782fcc48",
     "type": "feat",
     "scope": "seo",

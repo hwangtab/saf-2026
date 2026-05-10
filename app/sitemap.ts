@@ -5,14 +5,19 @@ import { videos as archiveVideos } from '@/content/videos';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { STORY_CATEGORIES } from '@/types';
+import { EN_INDEXABLE_PAGES, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 
 export const revalidate = 3600;
 
-// 영문 사이트는 운영하지 않음 — sitemap은 ko 단일 언어만 발행.
-// /en/* 페이지는 layout 차원에서 noindex 처리되며, 디인덱스 완료 후
-// robots.txt에서 /en/ 차단 추가 검토.
+// 기본 sitemap은 한국어 단일 발행. /en/* 대부분은 noindex(자동 번역 thin content)이라 sitemap 제외.
+// 단 EN_INDEXABLE_PAGES + EN_INDEXABLE_STORY_SLUGS 화이트리스트의 영문 페이지는 별도 entry로
+// 추가하고 hreflang alternates에 en-US 매핑을 함께 발행해 Google 발견·색인 흐름 활성화.
 function koUrl(baseUrl: string, path: string): string {
   return `${baseUrl}${path}`;
+}
+
+function enUrl(baseUrl: string, path: string): string {
+  return `${baseUrl}/en${path}`;
 }
 
 function koAlternates(baseUrl: string, path: string) {
@@ -21,6 +26,20 @@ function koAlternates(baseUrl: string, path: string) {
     languages: {
       'ko-KR': url,
       'x-default': url,
+    },
+  };
+}
+
+/**
+ * 영문도 indexable로 푼 페이지: ko + en 양방향 hreflang alternates.
+ * Google은 알려진 양쪽 URL 모두 색인 가능, 사용자 언어에 맞는 버전 노출.
+ */
+function bilingualAlternates(baseUrl: string, path: string) {
+  return {
+    languages: {
+      'ko-KR': koUrl(baseUrl, path),
+      'en-US': enUrl(baseUrl, path),
+      'x-default': koUrl(baseUrl, path),
     },
   };
 }
@@ -151,14 +170,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // 한국어 단일 언어로 발행 (영문 사이트는 noindex)
-  const staticPages: MetadataRoute.Sitemap = staticPaths.map((page) => ({
-    url: koUrl(baseUrl, page.path),
-    lastModified: page.lastModified || now,
-    changeFrequency: page.changeFrequency,
-    priority: page.priority,
-    alternates: koAlternates(baseUrl, page.path),
-  }));
+  // 한국어 단일 발행 + EN_INDEXABLE_PAGES 화이트리스트는 ko/en 양방향 alternates
+  const staticPages: MetadataRoute.Sitemap = staticPaths.map((page) => {
+    const enIndexable = EN_INDEXABLE_PAGES.has(page.path);
+    return {
+      url: koUrl(baseUrl, page.path),
+      lastModified: page.lastModified || now,
+      changeFrequency: page.changeFrequency,
+      priority: page.priority,
+      alternates: enIndexable
+        ? bilingualAlternates(baseUrl, page.path)
+        : koAlternates(baseUrl, page.path),
+    };
+  });
+
+  // EN_INDEXABLE_PAGES의 영문 URL 별도 entry — Google이 명시적으로 발견하도록.
+  const staticEnPages: MetadataRoute.Sitemap = staticPaths
+    .filter((page) => EN_INDEXABLE_PAGES.has(page.path))
+    .map((page) => ({
+      url: enUrl(baseUrl, page.path),
+      lastModified: page.lastModified || now,
+      changeFrequency: page.changeFrequency,
+      priority: page.priority,
+      alternates: bilingualAlternates(baseUrl, page.path),
+    }));
 
   const legalPages: MetadataRoute.Sitemap = legalPaths.map((page) => ({
     url: koUrl(baseUrl, page.path),
@@ -284,6 +319,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const storyPages: MetadataRoute.Sitemap = allStories.map((story) => {
     const storyPath = `/stories/${story.slug}`;
+    const enIndexable = EN_INDEXABLE_STORY_SLUGS.has(story.slug);
 
     // 이미지: thumbnail 우선, 없으면 body 마크다운 첫 번째 이미지
     let storyImageUrl: string | null = story.thumbnail || null;
@@ -299,12 +335,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
-      alternates: koAlternates(baseUrl, storyPath),
+      alternates: enIndexable
+        ? bilingualAlternates(baseUrl, storyPath)
+        : koAlternates(baseUrl, storyPath),
       ...(safeSitemapImageUrl(absoluteStoryImage)
         ? { images: [safeSitemapImageUrl(absoluteStoryImage)!] }
         : {}),
     };
   });
+
+  // EN_INDEXABLE_STORY_SLUGS의 영문 URL 별도 entry.
+  const storyEnPages: MetadataRoute.Sitemap = allStories
+    .filter((story) => EN_INDEXABLE_STORY_SLUGS.has(story.slug))
+    .map((story) => {
+      const storyPath = `/stories/${story.slug}`;
+      let storyImageUrl: string | null = story.thumbnail || null;
+      if (!storyImageUrl && story.body) {
+        const match = story.body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+        storyImageUrl = match?.[1] ?? null;
+      }
+      const absoluteStoryImage =
+        storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
+
+      return {
+        url: enUrl(baseUrl, storyPath),
+        lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+        alternates: bilingualAlternates(baseUrl, storyPath),
+        ...(safeSitemapImageUrl(absoluteStoryImage)
+          ? { images: [safeSitemapImageUrl(absoluteStoryImage)!] }
+          : {}),
+      };
+    });
 
   const videoWatchPages: MetadataRoute.Sitemap = archiveVideos.map((video) => {
     const path = `/archive/2023/videos/${video.youtubeId}`;
@@ -322,6 +385,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticPages,
+    ...staticEnPages,
     ...legalPages,
     ...categoryPages,
     ...storyCategoryPages,
@@ -329,6 +393,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...artistPages,
     ...newsPages,
     ...storyPages,
+    ...storyEnPages,
     ...videoWatchPages,
   ];
 }
