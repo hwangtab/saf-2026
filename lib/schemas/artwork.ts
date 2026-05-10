@@ -603,7 +603,13 @@ export function generateArtworkListSchema(
   artworks: Artwork[],
   locale: 'ko' | 'en' = 'ko',
   limit = 30,
-  pageUrl?: string
+  pageUrl?: string,
+  options?: {
+    /** ItemList의 name 오버라이드 — 매거진 큐레이션·작가 페이지 등 컨텍스트별 명명 */
+    name?: string;
+    /** ItemList의 description 오버라이드 */
+    description?: string;
+  }
 ) {
   const isEnglish = locale === 'en';
 
@@ -612,10 +618,10 @@ export function generateArtworkListSchema(
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     '@id': `${listUrl}#item-list`,
-    name: isEnglish ? 'SAF Online Artworks' : '씨앗페 온라인 출품작',
-    description: isEnglish
-      ? 'Artwork list from SAF Online'
-      : '씨앗페 온라인에 출품된 예술가들의 작품 목록',
+    name: options?.name ?? (isEnglish ? 'SAF Online Artworks' : '씨앗페 온라인 출품작'),
+    description:
+      options?.description ??
+      (isEnglish ? 'Artwork list from SAF Online' : '씨앗페 온라인에 출품된 예술가들의 작품 목록'),
     numberOfItems: Math.min(artworks.length, limit),
     itemListOrder: 'https://schema.org/ItemListUnordered',
     // ItemList는 schema.org 사양상 offers 속성을 갖지 않음 — GSC가 "offers 속성은

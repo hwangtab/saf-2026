@@ -1,5 +1,15 @@
 [
   {
+    "hash": "db1ba516",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 페이지 hero에 외부 권위 링크(homepage·instagram) UI 노출",
+    "summary": "작가의 homepage와 instagram이 schema sameAs에는 들어가지만 UI 가시화가 안 되어 있던 갭 해결. PageHero ShareButtonsWrapper 옆에 작은 link 그룹으로 노출. 거장 작가 페이지에서 사용자 trust + 외부 link 트래픽 + Google entity 확신 강화.",
+    "body": "- Globe icon: \"작가 홈페이지 / Homepage\" — artistMeta.homepage가 있을 때만\n- Instagram icon: artistMeta.instagram이 있을 때만\n- target=\"_blank\" rel=\"noopener noreferrer nofollow\" 처리\n- aria-label에 \"새 탭\" / \"opens in new tab\" 명시\n- 한·영 라벨 분기\n\nWikipedia·MMCA·달진닷컴 같은 권위 article은 페이지 하단의 RelatedArticles 컴포넌트가 별도 노출 중. 이번 변경은 작가 본인 채널만 hero에 추가.",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "8c96f9a8",
     "type": "feat",
     "scope": "seo",

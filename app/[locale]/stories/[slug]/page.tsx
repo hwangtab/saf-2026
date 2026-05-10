@@ -8,7 +8,7 @@ import {
   getSupabaseArtworksByArtist,
 } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import { generateBlogPostingSchema } from '@/lib/schemas/content';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { OG_IMAGE } from '@/lib/constants';
@@ -255,6 +255,19 @@ export default async function StoryDetailPage({ params }: Props) {
     },
   ];
 
+  // 매거진 본문에 직접 인용된 작품(artworksSource='inline') = 큐레이터가 의도적으로 추천한 5점.
+  // 이를 ItemList VisualArtwork carousel schema로 발행하면 Google 검색·AI Overview에서
+  // 작품 carousel rich result 진입 가능. inline이 아닌 fallback일 땐 발행 안 함 (의도된 큐레이션 아님).
+  const inlineCurationSchema =
+    artworksSource === 'inline' && relatedArtworks.length > 0
+      ? generateArtworkListSchema(relatedArtworks, locale === 'en' ? 'en' : 'ko', 10, pageUrl, {
+          name: isEn ? `Curated artworks in: ${title}` : `이 글에서 큐레이션한 작품: ${title}`,
+          description: isEn
+            ? `${relatedArtworks.length} artworks recommended in the SAF Magazine article "${title}".`
+            : `씨앗페 매거진 "${title}"에서 큐레이션한 ${relatedArtworks.length}점.`,
+        })
+      : null;
+
   // BlogPosting schema 생성 — relatedArtworks·relatedStories hydrate된 이후이라
   // mentions 필드를 정확한 작품 title·관련 매거진 title로 채울 수 있음.
   // mentions는 schema.org에서 "이 글이 참조하는 entity" 시그널 — AI Overview·Knowledge Graph
@@ -288,7 +301,12 @@ export default async function StoryDetailPage({ params }: Props) {
   return (
     <>
       <JsonLdScript
-        data={[blogPostingSchema, breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])]}
+        data={[
+          blogPostingSchema,
+          breadcrumbSchema,
+          ...(faqSchema ? [faqSchema] : []),
+          ...(inlineCurationSchema ? [inlineCurationSchema] : []),
+        ]}
       />
       <PageHero
         title={title}
