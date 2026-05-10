@@ -24,6 +24,7 @@ import GscPanel from './_components/GscPanel';
 import InsightsPanel from './_components/InsightsPanel';
 import StoryAttributionPanel from './_components/StoryAttributionPanel';
 import WebVitalsPanel from './_components/WebVitalsPanel';
+import CtaClicksPanel from './_components/CtaClicksPanel';
 import { getTranslations, getLocale } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -348,6 +349,19 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
           description={t('sectionRumDesc')}
         />
         <WebVitalsPanel data={data.webVitals} />
+      </section>
+
+      {/* ============================================================ */}
+      {/* VII. CTA 클릭 — 외부 conversion (donate / share)             */}
+      {/* ============================================================ */}
+      <section className="space-y-8">
+        <MajorSectionHeader
+          id="section-cta"
+          index="07"
+          title={t('sectionCtaTitle')}
+          description={t('sectionCtaDesc')}
+        />
+        <CtaClicksPanel data={data.ctaClicks} />
       </section>
     </div>
   );

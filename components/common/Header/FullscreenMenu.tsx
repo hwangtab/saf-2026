@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { EXTERNAL_LINKS } from '@/lib/constants';
+import { trackEvent } from '@/lib/analytics/track';
 import type { NavigationItem } from '@/types';
 import styles from './FullscreenMenu.module.css';
 
@@ -270,7 +271,14 @@ export default function FullscreenMenu({
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
-              onClick={onClose}
+              onClick={() => {
+                trackEvent('donate_click', {
+                  position: 'fullscreen-menu',
+                  target: 'join_member',
+                  page_path: window.location.pathname,
+                });
+                onClose();
+              }}
             >
               {t('joinMember')}
             </a>

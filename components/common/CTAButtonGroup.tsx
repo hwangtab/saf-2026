@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils/cn';
 import { EXTERNAL_LINKS } from '@/lib/constants';
 import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface CTAButtonGroupProps {
   donateText?: string;
@@ -14,6 +15,8 @@ interface CTAButtonGroupProps {
   variant?: 'default' | 'large';
   className?: string;
   vertical?: boolean;
+  /** 트래킹용 위치 식별자 (ex: 'home-hero', 'about-bottom'). 미지정 시 'cta-group'. */
+  trackingPosition?: string;
 }
 
 /**
@@ -37,6 +40,7 @@ export default function CTAButtonGroup({
   variant = 'default',
   className,
   vertical = false,
+  trackingPosition = 'cta-group',
 }: CTAButtonGroupProps) {
   const tCta = useTranslations('cta');
   const resolvedDonateText = donateText ?? tCta('donateNow');
@@ -52,6 +56,23 @@ export default function CTAButtonGroup({
   const isDonateExternal = donateHref?.startsWith('http');
   const isPurchaseExternal = purchaseHref?.startsWith('http');
 
+  // 두 외부 링크는 conversion 의미가 다름 — donate(SocialFunch 후원금) vs join(조합원 가입 폼).
+  // 어드민 패널에서 후원 vs 가입 funnel 분리 분석을 위해 target 파라미터로 식별.
+  const donateTarget =
+    donateHref === EXTERNAL_LINKS.DONATE
+      ? 'donate'
+      : donateHref === EXTERNAL_LINKS.JOIN_MEMBER
+        ? 'join_member'
+        : 'other';
+
+  const handleDonateClick = () => {
+    trackEvent('donate_click', {
+      position: trackingPosition,
+      target: donateTarget,
+      page_path: typeof window !== 'undefined' ? window.location.pathname : null,
+    });
+  };
+
   return (
     <div className={containerClasses}>
       <LinkButton
@@ -60,6 +81,7 @@ export default function CTAButtonGroup({
         variant="primary"
         size={buttonSize}
         leadingIcon={<Handshake className="h-5 w-5" />}
+        onClick={handleDonateClick}
       >
         {resolvedDonateText}
       </LinkButton>

@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
 import { BRAND_COLORS } from '@/lib/colors';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface ShareButtonsProps {
   url: string;
@@ -40,17 +41,33 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
     ensureLoaded,
   } = useKakaoShareSDK();
 
+  // 공유 채널별로 한 번씩만 trackEvent 호출 — 어드민이 channel·page_path 분포 분석 가능.
+  // page_path는 props로 받은 url(공유 대상 page URL)에서 pathname만 추출해 device·세션 무관하게
+  // "어떤 페이지가 어떤 채널로 공유되는가" 측정.
+  const trackShare = (channel: 'facebook' | 'twitter' | 'kakao' | 'sms' | 'copy_link') => {
+    let pagePath: string | null = null;
+    try {
+      pagePath = new URL(url).pathname;
+    } catch {
+      pagePath = null;
+    }
+    trackEvent('share_click', { channel, page_path: pagePath });
+  };
+
   const handleFacebookShare = () => {
+    trackShare('facebook');
     const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(title)}`;
     openSharePopup(fbUrl);
   };
 
   const handleTwitterShare = () => {
+    trackShare('twitter');
     const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
     openSharePopup(twitterUrl);
   };
 
   const handleSmsShare = () => {
+    trackShare('sms');
     const body = encodeURIComponent(`${title}\n${url}`);
     window.location.href = `sms:?&body=${body}`;
   };
@@ -58,6 +75,7 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
+      trackShare('copy_link');
       setCopyStatus('copied');
       setTimeout(() => setCopyStatus('idle'), 2000);
     } catch (err) {
@@ -95,6 +113,7 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
     const shareMethod = window.Kakao.Share || window.Kakao.Link;
 
     if (shareMethod) {
+      trackShare('kakao');
       shareMethod.sendDefault({
         objectType: 'feed',
         content: {

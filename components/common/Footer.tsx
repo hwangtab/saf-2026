@@ -4,6 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
+import TrackedExternalLink from '@/components/common/TrackedExternalLink';
 
 // force-static에서 layout의 setRequestLocale이 sub-component(Footer)에 전파되지 않아
 // default locale로 fallback하는 회귀가 있어 locale을 prop으로 명시 전달.
@@ -108,14 +109,14 @@ export default async function Footer({ locale }: { locale: string }) {
                     </Link>
                   </li>
                   <li>
-                    <a
+                    <TrackedExternalLink
                       href={EXTERNAL_LINKS.JOIN_MEMBER}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="text-gray-300 hover:text-primary transition-colors"
+                      eventName="donate_click"
+                      eventParams={{ position: 'footer', target: 'join_member' }}
                     >
                       {tNav('joinMember')}
-                    </a>
+                    </TrackedExternalLink>
                   </li>
                   <li>
                     <a

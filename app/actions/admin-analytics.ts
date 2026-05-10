@@ -246,6 +246,39 @@ export type AnalyticsData = {
       poorCount: number;
     }>;
   };
+  /**
+   * CTA 클릭 (donate / share) — 외부 conversion 의도 추적.
+   * 기존 patternd:
+   * - donate_click: CTAButtonGroup·Footer·FullscreenMenu에서 발화. target 파라미터로
+   *   join_member(조합원 가입 폼) vs donate(socialfunch 후원) 분리
+   * - share_click: ShareButtons 5채널(facebook/twitter/kakao/sms/copy_link). 어떤
+   *   페이지가 어떤 채널로 공유되는지 측정 → 콘텐츠 viral 진단
+   */
+  ctaClicks: {
+    donate: {
+      totalClicks: number;
+      uniqueClickers: number;
+      donateTargetClicks: number;
+      joinMemberTargetClicks: number;
+      positionDistribution: Array<{
+        position: string;
+        target: string;
+        clicks: number;
+        uniqueClickers: number;
+      }>;
+      daily: Array<{ date: string; clicks: number; uniqueClickers: number }>;
+    };
+    share: {
+      totalClicks: number;
+      uniqueClickers: number;
+      channelDistribution: Array<{
+        channel: string;
+        clicks: number;
+        uniqueClickers: number;
+      }>;
+      topPages: Array<{ pagePath: string; clicks: number; uniqueClickers: number }>;
+    };
+  };
 };
 
 const PERIOD_DAYS: Record<AnalyticsPeriod, number> = {
@@ -405,6 +438,37 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     p75_value: number;
     poor_count: number;
   };
+  type DonateSummaryRow = {
+    total_clicks: number;
+    unique_clickers: number;
+    donate_target_clicks: number;
+    join_member_target_clicks: number;
+  };
+  type DonatePositionRow = {
+    position_name: string;
+    target: string;
+    clicks: number;
+    unique_clickers: number;
+  };
+  type DonateDailyRow = {
+    day: string;
+    clicks: number;
+    unique_clickers: number;
+  };
+  type ShareSummaryRow = {
+    total_clicks: number;
+    unique_clickers: number;
+  };
+  type ShareChannelRow = {
+    channel: string;
+    clicks: number;
+    unique_clickers: number;
+  };
+  type SharePageRow = {
+    page_path: string;
+    clicks: number;
+    unique_clickers: number;
+  };
 
   const [
     summaryRes,
@@ -440,6 +504,12 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     webVitalsSummaryRes,
     webVitalsDailyRes,
     webVitalsLcpWorstRes,
+    donateSummaryRes,
+    donatePositionRes,
+    donateDailyRes,
+    shareSummaryRes,
+    shareChannelRes,
+    sharePagesRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -505,6 +575,16 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       target_metric: 'LCP',
       lim: 10,
     }),
+    untypedRpc<DonateSummaryRow[]>('get_donate_click_summary', { since_ts: sinceTs }),
+    untypedRpc<DonatePositionRow[]>('get_donate_click_position_distribution', {
+      since_ts: sinceTs,
+    }),
+    untypedRpc<DonateDailyRow[]>('get_donate_click_daily', { since_ts: sinceTs }),
+    untypedRpc<ShareSummaryRow[]>('get_share_click_summary', { since_ts: sinceTs }),
+    untypedRpc<ShareChannelRow[]>('get_share_click_channel_distribution', {
+      since_ts: sinceTs,
+    }),
+    untypedRpc<SharePageRow[]>('get_top_shared_pages', { since_ts: sinceTs, lim: 10 }),
   ]);
 
   // Summary
@@ -886,6 +966,51 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
+  // CTA 클릭 (donate / share) — Phase B
+  const donateSummaryRow = Array.isArray(donateSummaryRes.data) ? donateSummaryRes.data[0] : null;
+  const shareSummaryRow = Array.isArray(shareSummaryRes.data) ? shareSummaryRes.data[0] : null;
+  const ctaClicks: AnalyticsData['ctaClicks'] = {
+    donate: {
+      totalClicks: Number(donateSummaryRow?.total_clicks ?? 0),
+      uniqueClickers: Number(donateSummaryRow?.unique_clickers ?? 0),
+      donateTargetClicks: Number(donateSummaryRow?.donate_target_clicks ?? 0),
+      joinMemberTargetClicks: Number(donateSummaryRow?.join_member_target_clicks ?? 0),
+      positionDistribution: Array.isArray(donatePositionRes.data)
+        ? donatePositionRes.data.map((row) => ({
+            position: row.position_name,
+            target: row.target,
+            clicks: Number(row.clicks),
+            uniqueClickers: Number(row.unique_clickers),
+          }))
+        : [],
+      daily: Array.isArray(donateDailyRes.data)
+        ? donateDailyRes.data.map((row) => ({
+            date: row.day,
+            clicks: Number(row.clicks),
+            uniqueClickers: Number(row.unique_clickers),
+          }))
+        : [],
+    },
+    share: {
+      totalClicks: Number(shareSummaryRow?.total_clicks ?? 0),
+      uniqueClickers: Number(shareSummaryRow?.unique_clickers ?? 0),
+      channelDistribution: Array.isArray(shareChannelRes.data)
+        ? shareChannelRes.data.map((row) => ({
+            channel: row.channel,
+            clicks: Number(row.clicks),
+            uniqueClickers: Number(row.unique_clickers),
+          }))
+        : [],
+      topPages: Array.isArray(sharePagesRes.data)
+        ? sharePagesRes.data.map((row) => ({
+            pagePath: row.page_path,
+            clicks: Number(row.clicks),
+            uniqueClickers: Number(row.unique_clickers),
+          }))
+        : [],
+    },
+  };
+
   // Real User Monitoring (Web Vitals 자체 적재 기반)
   const webVitals: AnalyticsData['webVitals'] = {
     summary: Array.isArray(webVitalsSummaryRes.data)
@@ -937,5 +1062,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     crossLinks,
     gsc,
     webVitals,
+    ctaClicks,
   };
 }

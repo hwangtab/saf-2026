@@ -19,6 +19,8 @@ interface LinkButtonProps extends ButtonStyleProps {
   iconLayout?: IconLayout;
   iconClassName?: string;
   className?: string;
+  /** 분석 트래킹 등 navigate 보조 작업용. preventDefault 가능. */
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
 function toInternalHref(href: string): string | null {
@@ -65,6 +67,7 @@ export default function LinkButton({
   iconLayout = 'inline',
   iconClassName = '',
   className = '',
+  onClick,
 }: LinkButtonProps) {
   const internalHref = toInternalHref(href);
   const resolvedSize = (size ?? 'md') as ButtonSize;
@@ -122,6 +125,7 @@ export default function LinkButton({
         className={styles}
         target={external ? '_blank' : undefined}
         rel={external ? 'noopener noreferrer' : undefined}
+        onClick={onClick}
       >
         {content}
       </a>
@@ -129,7 +133,7 @@ export default function LinkButton({
   }
 
   return (
-    <Link href={internalHref} className={styles}>
+    <Link href={internalHref} className={styles} onClick={onClick}>
       {content}
     </Link>
   );
