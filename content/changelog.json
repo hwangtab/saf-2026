@@ -1,5 +1,15 @@
 [
   {
+    "hash": "c4e763cb",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "매거진 카테고리 hub에 FAQ 섹션 + FAQPage schema 추가",
+    "summary": "stories/category/[category] 페이지(buying-guide·art-knowledge·artist-story)에 카테고리별 보편 질문 5개 + FAQPage schema 발행. 매거진 글의 자체 FAQ와 별개로 카테고리 hub 검색어(\"미술 작품 구매\", \"현대미술 감상\" 등)에 AI Overview·featured snippet 진입 강화.",
+    "body": "- CategoryEditorial 인터페이스에 faqs 필드 추가\n- ko·en 각 카테고리 5개 Q/A (총 30 Q/A) 작성\n  - artist-story: 작가 인터뷰·연대 작가·구매 동선 관련\n  - buying-guide: 첫 구매 예산·매체 차이·액자/배송·투자 관점·용도별 가이드\n  - art-knowledge: 현대미술 감상법·한국 미술사·판화 원리·전시 정보\n- 본문 UI: 다른 카테고리 cross-link 위에 FAQ 섹션 노출 (canvas-soft 배경, white 카드)\n- JSON-LD: generateFaqPageSchema로 FAQPage 발행 (CollectionPage·BreadcrumbList와 함께)",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "9a01e705",
     "type": "feat",
     "scope": "seo",

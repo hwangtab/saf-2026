@@ -296,20 +296,7 @@ export default async function ArtistPage({ params }: Props) {
     ...(artistMeta?.instagram ? [artistMeta.instagram] : []),
   ];
 
-  const personSchema = generateEnhancedArtistSchema({
-    name: displayArtistName,
-    description: schemaDescription,
-    image: representativeArtwork.images[0] ?? '',
-    url: pageUrl,
-    jobTitle: 'Artist',
-    history: schemaHistory,
-    sameAs,
-    artworks: artistArtworks.map((a) => ({
-      id: a.id,
-      title: locale === 'en' && a.title_en ? a.title_en : a.title,
-      image: a.images[0] ?? '',
-    })),
-  });
+  // personSchema는 relatedStories hydrate된 이후 생성하도록 아래로 이동.
 
   // Related magazine stories — 두 경로 모두 매칭:
   //   (1) tags에 작가명이 포함된 글 (작가-인터뷰 시리즈, 거장 단독 글 등)
@@ -340,6 +327,29 @@ export default async function ArtistPage({ params }: Props) {
   // 작품 detail에서만 visible이었던 RelatedArticles를 작가 페이지에도 노출 — entity 신뢰도 +
   // 사용자 dwell time 향상. 거장 작가(오윤·박재동·박불똥 등) 페이지가 풍부해져 page 1 진입 가속.
   const relatedArticles = getArticlesByArtist(artistName);
+
+  // Person schema 생성 — relatedStories hydrate 이후라 subjectOf 필드를 정확한 매거진 글로 채움.
+  // 매거진 → 작가(BlogPosting.mentions)가 양방향으로 작가 → 매거진(Person.subjectOf)으로 발행되어
+  // entity 그래프 양방향화. AI Overview·Knowledge Graph entity 매칭에 직접 시그널.
+  const personSchema = generateEnhancedArtistSchema({
+    name: displayArtistName,
+    description: schemaDescription,
+    image: representativeArtwork.images[0] ?? '',
+    url: pageUrl,
+    jobTitle: 'Artist',
+    history: schemaHistory,
+    sameAs,
+    artworks: artistArtworks.map((a) => ({
+      id: a.id,
+      title: locale === 'en' && a.title_en ? a.title_en : a.title,
+      image: a.images[0] ?? '',
+    })),
+    relatedStories: relatedStories.map((s) => ({
+      url: buildLocaleUrl(`/stories/${s.slug}`, locale),
+      name: locale === 'en' && s.title_en ? s.title_en : s.title,
+      datePublished: s.published_at,
+    })),
+  });
 
   // Breadcrumb Schema: Home > Artworks > Artist Name
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });

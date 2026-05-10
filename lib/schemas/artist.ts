@@ -14,10 +14,22 @@ export interface ArtistSchemaInput {
   sameAs?: readonly string[];
 }
 
+/** Person.subjectOf 또는 mentionedIn에 들어갈 BlogPosting 항목 (관련 매거진) */
+export interface ArtistRelatedStory {
+  /** 매거진 글 절대 URL */
+  url: string;
+  /** 매거진 글 제목 */
+  name: string;
+  /** 발행일 (ISO 8601) */
+  datePublished?: string;
+}
+
 // Enhanced artist schema input for SEO optimization
 export interface EnhancedArtistSchemaInput extends ArtistSchemaInput {
   history?: string;
   artworks?: Array<{ id: string; title: string; image: string }>;
+  /** 이 작가를 다룬 매거진 글 목록 — Person.subjectOf로 발행되어 양방향 entity 그래프 형성 */
+  relatedStories?: readonly ArtistRelatedStory[];
 }
 
 /** sameAs URL 정규화 + 중복 제거. 빈 문자열 / null / undefined 제거. */
@@ -239,6 +251,18 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
             image: absImg,
           };
         }),
+      }),
+    // 이 작가를 다룬 매거진 글 — Person.subjectOf로 schema에 명시.
+    // 매거진 → 작가(Person mentions) 단방향이던 것을 작가 → 매거진(Person.subjectOf)으로
+    // 거꾸로도 발행해 entity 그래프 양방향화. AI Overview·Knowledge Graph entity 매칭에 직접 시그널.
+    ...(artist.relatedStories &&
+      artist.relatedStories.length > 0 && {
+        subjectOf: artist.relatedStories.map((s) => ({
+          '@type': 'BlogPosting',
+          name: s.name,
+          url: s.url,
+          ...(s.datePublished ? { datePublished: s.datePublished } : {}),
+        })),
       }),
   };
 }
