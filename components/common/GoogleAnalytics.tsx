@@ -19,9 +19,13 @@ export default function GoogleAnalytics() {
     };
     if (typeof w.gtag === 'function') return;
     w.dataLayer = w.dataLayer || [];
-    const gtag: GtagFn = function (...args) {
-      w.dataLayer!.push(args);
-    };
+    // GA4 official stub은 `function gtag(){dataLayer.push(arguments)}` 패턴 (Arguments 객체).
+    // spread `(...args) => push(args)`로 하면 진짜 Array로 push되는데, gtag.js 내부의
+    // Consent Mode 처리·Tag-2.0 처리 일부 분기가 Arguments-shape를 strict하게 검사한다는
+    // 보고가 있어 표준 stub으로 통일. (5/1~10 collect 0건 회귀의 잔여 가설 제거용)
+    const gtag = function (this: void) {
+      w.dataLayer!.push(arguments);
+    } as unknown as GtagFn;
     w.gtag = gtag;
     // Consent Mode v2 명시: 2024년 이후 gtag.js는 consent 신호 없이 wait_for_update가
     // timeout되면 collect 차단(2026-05-01 무수신 전환 추정 원인). 한국 사이트는 EU
