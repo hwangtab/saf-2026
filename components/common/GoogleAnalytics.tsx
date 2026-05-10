@@ -23,6 +23,18 @@ export default function GoogleAnalytics() {
       w.dataLayer!.push(args);
     };
     w.gtag = gtag;
+    // Consent Mode v2 명시: 2024년 이후 gtag.js는 consent 신호 없이 wait_for_update가
+    // timeout되면 collect 차단(2026-05-01 무수신 전환 추정 원인). 한국 사이트는 EU
+    // GDPR 대상 아니라 default granted로 명시. EU 사용자 추가될 때 region별 분기 도입.
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+      analytics_storage: 'granted',
+      functionality_storage: 'granted',
+      personalization_storage: 'granted',
+      security_storage: 'granted',
+    });
     gtag('js', new Date());
     gtag('config', GA_ID, { page_path: window.location.pathname });
   }, []);
