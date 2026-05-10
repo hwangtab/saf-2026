@@ -19,6 +19,30 @@ interface Props {
   data: AnalyticsData['insights'];
 }
 
+function Stat({
+  label,
+  value,
+  sub,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-gray-500">{label}</p>
+      <p
+        className={`mt-1 text-2xl font-bold tracking-tight ${highlight ? 'text-success-a11y' : 'text-gray-900'}`}
+      >
+        {value}
+      </p>
+      {sub && <p className="mt-0.5 text-xs text-gray-500">{sub}</p>}
+    </div>
+  );
+}
+
 export default async function InsightsPanel({ data }: Props) {
   const t = await getTranslations('admin.analytics');
   const numberFormatter = new Intl.NumberFormat();
@@ -160,29 +184,5 @@ export default async function InsightsPanel({ data }: Props) {
         )}
       </AdminCard>
     </section>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  sub,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div>
-      <p className="text-xs font-medium text-gray-500">{label}</p>
-      <p
-        className={`mt-1 text-2xl font-bold tracking-tight ${highlight ? 'text-success-a11y' : 'text-gray-900'}`}
-      >
-        {value}
-      </p>
-      {sub && <p className="mt-0.5 text-xs text-gray-500">{sub}</p>}
-    </div>
   );
 }

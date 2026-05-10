@@ -458,6 +458,7 @@
       "medianPagesPerSession": "Median",
       "exitPagesTitle": "Top Exit Pages",
       "exitPagesDesc": "High exit rate suggests UI/CTA review. Pages with fewer than 5 views are excluded as noise.",
+      "noPageData": "No exit page data",
       "exitCount": "Exits",
       "exitRate": "Exit rate",
       "visitorRecurrenceTitle": "New vs Returning Visitors",

@@ -88,7 +88,7 @@ export function TopPagesChart({ data }: Props) {
             />
             <Bar
               dataKey="views"
-              fill={BRAND_COLORS.danger.a11y}
+              fill={BRAND_COLORS.primary.strong}
               radius={[0, 4, 4, 0]}
               barSize={20}
               className="cursor-pointer"

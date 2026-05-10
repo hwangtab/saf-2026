@@ -458,6 +458,7 @@
       "medianPagesPerSession": "중앙값",
       "exitPagesTitle": "주요 이탈 페이지",
       "exitPagesDesc": "이 페이지에서 사이트를 떠나는 비율이 높음 — UI/CTA 점검 신호. 5회 미만 노출 페이지는 노이즈로 제외.",
+      "noPageData": "이탈 페이지 데이터가 없습니다",
       "exitCount": "이탈 수",
       "exitRate": "이탈률",
       "visitorRecurrenceTitle": "신규 vs 재방문자",

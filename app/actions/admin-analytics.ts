@@ -25,11 +25,13 @@ export type AnalyticsData = {
   osDistribution: Array<{ os: string; count: number }>;
   hourlyDistribution: Array<{ hour: number; views: number; visitors: number }>;
   /**
-   * 빠른 win 4종 — 기존 page_views 데이터로 산출 가능한 경영자 인사이트.
+   * 경영자 인사이트 — 기존 page_views 데이터로 산출 가능.
    * - sessionDepth: avg/median pages per session (engagement)
    * - topExitPages: 어디서 사이트 떠나는지 (CRO 직격)
-   * - visitorRecurrence: 신규 vs 재방문자
    * - utmDistribution: 캠페인·매체별 traffic (마케팅 ROI)
+   *
+   * 신규 vs 재방문자(visitorRecurrence)는 Vercel Drain의 deviceId가 daily-salted라
+   * 측정 불가능 — 12,335 device 중 24h+ 재방문 0건 확인. UI·RPC 호출 모두 제거.
    */
   insights: {
     sessionDepth: {
@@ -44,12 +46,6 @@ export type AnalyticsData = {
       totalViews: number;
       exitRate: number;
     }>;
-    visitorRecurrence: {
-      newVisitors: number;
-      returningVisitors: number;
-      newVisitorPageviews: number;
-      returningVisitorPageviews: number;
-    };
     utmDistribution: Array<{
       utmSource: string;
       utmMedium: string;
@@ -383,12 +379,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     total_views: number;
     exit_rate: number;
   };
-  type VisitorRecurrenceRow = {
-    new_visitors: number;
-    returning_visitors: number;
-    new_visitor_pageviews: number;
-    returning_visitor_pageviews: number;
-  };
   type UtmRow = {
     utm_source: string;
     utm_medium: string;
@@ -560,7 +550,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     topArtworkSourcesRes,
     sessionDepthRes,
     exitPagesRes,
-    visitorRecurrenceRes,
     utmDistRes,
     commerceFunnelSummaryRes,
     artworkFunnelRes,
@@ -612,7 +601,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     }),
     untypedRpc<SessionDepthRow[]>('get_pv_session_depth', { since_ts: sinceTs }),
     untypedRpc<ExitPageRow[]>('get_pv_top_exit_pages', { since_ts: sinceTs, lim: 10 }),
-    untypedRpc<VisitorRecurrenceRow[]>('get_pv_visitor_recurrence', { since_ts: sinceTs }),
     untypedRpc<UtmRow[]>('get_pv_utm_distribution', { since_ts: sinceTs, lim: 20 }),
     untypedRpc<CommerceFunnelSummaryRow[]>('get_commerce_funnel_summary', { since_ts: sinceTs }),
     untypedRpc<ArtworkFunnelRow[]>('get_top_artwork_funnel', { since_ts: sinceTs, lim: 20 }),
@@ -936,11 +924,8 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
-  // Phase A 인사이트 — 마이그레이션 적용 전엔 RPC 없어 0/[] fallback.
+  // 인사이트 — visitorRecurrence는 deviceId daily-salt로 측정 불가라 제거됨.
   const sessionDepthRow = Array.isArray(sessionDepthRes.data) ? sessionDepthRes.data[0] : null;
-  const visitorRecurrenceRow = Array.isArray(visitorRecurrenceRes.data)
-    ? visitorRecurrenceRes.data[0]
-    : null;
 
   const insights: AnalyticsData['insights'] = {
     sessionDepth: {
@@ -957,12 +942,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
           exitRate: Number(row.exit_rate),
         }))
       : [],
-    visitorRecurrence: {
-      newVisitors: Number(visitorRecurrenceRow?.new_visitors ?? 0),
-      returningVisitors: Number(visitorRecurrenceRow?.returning_visitors ?? 0),
-      newVisitorPageviews: Number(visitorRecurrenceRow?.new_visitor_pageviews ?? 0),
-      returningVisitorPageviews: Number(visitorRecurrenceRow?.returning_visitor_pageviews ?? 0),
-    },
     utmDistribution: Array.isArray(utmDistRes.data)
       ? utmDistRes.data.map((row) => ({
           utmSource: row.utm_source,

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import LinkButton from '@/components/ui/LinkButton';
-import TrackClick from '@/components/common/TrackingLink';
+import { trackEvent } from '@/lib/analytics/track';
 import TrustBadges from '@/components/features/TrustBadges';
 import { Phone, Mail, CheckCircle, Clock, ArrowRight } from 'lucide-react';
 
@@ -150,23 +150,21 @@ export default function ArtworkPurchaseCTA({
       {/* A분기: toss 결제 모드 + DB 작품 — 내부 체크아웃 */}
       {isTossMode && hasActionablePrice && (
         <>
-          <TrackClick
-            event="purchase_click"
-            properties={{
-              artwork_id: artworkId,
-              artwork_title: artworkTitle,
-              artist: artist,
-            }}
+          <LinkButton
+            href={`/checkout/${artworkId}`}
+            variant="primary"
+            size="lg"
+            className="w-full gap-3 rounded-xl shadow-[0_0_20px_rgba(33,118,255,0.15)]"
+            onClick={() =>
+              trackEvent('purchase_click', {
+                artwork_id: artworkId,
+                artwork_title: artworkTitle,
+                artist: artist,
+              })
+            }
           >
-            <LinkButton
-              href={`/checkout/${artworkId}`}
-              variant="primary"
-              size="lg"
-              className="w-full gap-3 rounded-xl shadow-[0_0_20px_rgba(33,118,255,0.15)]"
-            >
-              {t('buyOnline')}
-            </LinkButton>
-          </TrackClick>
+            {t('buyOnline')}
+          </LinkButton>
 
           <TrustBadges />
 
@@ -185,24 +183,22 @@ export default function ArtworkPurchaseCTA({
       {/* A분기: legacy 작품 — 외부 링크 */}
       {!isTossMode && shopUrl && (
         <>
-          <TrackClick
-            event="purchase_click"
-            properties={{
-              artwork_id: artworkId,
-              artwork_title: artworkTitle,
-              artist: artist,
-            }}
+          <LinkButton
+            href={`${shopUrl}${shopUrl.includes('?') ? '&' : '?'}utm_source=saf2026&utm_medium=web&utm_campaign=artwork&utm_content=${artworkId}`}
+            variant="primary"
+            size="lg"
+            external
+            className="w-full text-lg gap-3 rounded-xl shadow-[0_0_20px_rgba(33,118,255,0.15)]"
+            onClick={() =>
+              trackEvent('purchase_click', {
+                artwork_id: artworkId,
+                artwork_title: artworkTitle,
+                artist: artist,
+              })
+            }
           >
-            <LinkButton
-              href={`${shopUrl}${shopUrl.includes('?') ? '&' : '?'}utm_source=saf2026&utm_medium=web&utm_campaign=artwork&utm_content=${artworkId}`}
-              variant="primary"
-              size="lg"
-              external
-              className="w-full text-lg gap-3 rounded-xl shadow-[0_0_20px_rgba(33,118,255,0.15)]"
-            >
-              {t('buyOnline')}
-            </LinkButton>
-          </TrackClick>
+            {t('buyOnline')}
+          </LinkButton>
 
           <TrustBadges />
 
