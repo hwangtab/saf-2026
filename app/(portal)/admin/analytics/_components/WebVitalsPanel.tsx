@@ -148,9 +148,11 @@ export default async function WebVitalsPanel({ data }: Props) {
                 <h3 className="text-base font-semibold text-gray-900">{t('wvDailyTitle')}</h3>
                 <p className="mt-1 text-xs text-gray-500">{t('wvDailyDesc')}</p>
               </AdminCardHeader>
-              <div className="overflow-x-auto">
+              {/* sticky header + max-height scroll: 90d 기간(5 metric × 90일 = 최대 450행)도
+                  전체 표시. 임의 50행 slice는 90d 선택 시 최근 10일밖에 안 보이는 회귀였음. */}
+              <div className="max-h-[600px] overflow-auto">
                 <table className="min-w-full divide-y divide-gray-200 text-sm">
-                  <thead className="bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <thead className="sticky top-0 z-10 bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
                     <tr>
                       <th className="px-4 py-2 text-left">{t('gscDateColumn')}</th>
                       <th className="px-4 py-2 text-left">{t('wvMetricColumn')}</th>
@@ -160,30 +162,27 @@ export default async function WebVitalsPanel({ data }: Props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 bg-white">
-                    {[...data.dailyP75]
-                      .reverse()
-                      .slice(0, 50)
-                      .map((row) => (
-                        <tr key={`${row.date}-${row.metricName}`}>
-                          <td className="px-4 py-2 tabular-nums text-gray-700">
-                            {dateFormatter.format(new Date(row.date))}
-                          </td>
-                          <td className="px-4 py-2 font-mono text-xs font-semibold text-gray-900">
-                            {row.metricName}
-                          </td>
-                          <td className="px-4 py-2 text-right tabular-nums text-gray-600">
-                            {numberFormatter.format(row.sampleSize)}
-                          </td>
-                          <td
-                            className={`px-4 py-2 text-right tabular-nums font-semibold ${getRatingColor(row.metricName, row.p75Value)}`}
-                          >
-                            {formatMetric(row.metricName, row.p75Value)}
-                          </td>
-                          <td className="px-4 py-2 text-right tabular-nums text-gray-600">
-                            {percentFormatter.format(row.goodRate)}
-                          </td>
-                        </tr>
-                      ))}
+                    {[...data.dailyP75].reverse().map((row) => (
+                      <tr key={`${row.date}-${row.metricName}`}>
+                        <td className="px-4 py-2 tabular-nums text-gray-700">
+                          {dateFormatter.format(new Date(row.date))}
+                        </td>
+                        <td className="px-4 py-2 font-mono text-xs font-semibold text-gray-900">
+                          {row.metricName}
+                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                          {numberFormatter.format(row.sampleSize)}
+                        </td>
+                        <td
+                          className={`px-4 py-2 text-right tabular-nums font-semibold ${getRatingColor(row.metricName, row.p75Value)}`}
+                        >
+                          {formatMetric(row.metricName, row.p75Value)}
+                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                          {percentFormatter.format(row.goodRate)}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

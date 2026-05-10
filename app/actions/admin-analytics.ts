@@ -967,8 +967,50 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   };
 
   // CTA 클릭 (donate / share) — Phase B
+  // RPC 에러는 Promise.all 안에서 swallow되므로(fulfilled with error data) 진단 로깅 추가.
+  // 빈 결과(0건)와 실패(권한·SQL 에러)를 운영 로그에서 구분 가능.
+  const ctaRpcResults = [
+    ['get_donate_click_summary', donateSummaryRes],
+    ['get_donate_click_position_distribution', donatePositionRes],
+    ['get_donate_click_daily', donateDailyRes],
+    ['get_share_click_summary', shareSummaryRes],
+    ['get_share_click_channel_distribution', shareChannelRes],
+    ['get_top_shared_pages', sharePagesRes],
+    ['get_web_vitals_summary', webVitalsSummaryRes],
+    ['get_web_vitals_daily_p75', webVitalsDailyRes],
+    ['get_web_vitals_worst_pages', webVitalsLcpWorstRes],
+  ] as const;
+  for (const [name, res] of ctaRpcResults) {
+    if (res.error) {
+      console.error(`[admin-analytics] RPC ${name} failed:`, res.error);
+    }
+  }
+
   const donateSummaryRow = Array.isArray(donateSummaryRes.data) ? donateSummaryRes.data[0] : null;
   const shareSummaryRow = Array.isArray(shareSummaryRes.data) ? shareSummaryRes.data[0] : null;
+
+  // donate daily — 0인 날 행 추가 (트래픽 없는 날과 데이터 누락 구분 위해 dailyTrend와 동일 패턴)
+  const donateDailyMap = new Map<string, { clicks: number; uniqueClickers: number }>();
+  if (Array.isArray(donateDailyRes.data)) {
+    for (const row of donateDailyRes.data) {
+      donateDailyMap.set(row.day, {
+        clicks: Number(row.clicks),
+        uniqueClickers: Number(row.unique_clickers),
+      });
+    }
+  }
+  const donateDaily: Array<{ date: string; clicks: number; uniqueClickers: number }> = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86_400_000);
+    const dateStr = d.toISOString().slice(0, 10);
+    const entry = donateDailyMap.get(dateStr);
+    donateDaily.push({
+      date: dateStr,
+      clicks: entry?.clicks ?? 0,
+      uniqueClickers: entry?.uniqueClickers ?? 0,
+    });
+  }
+
   const ctaClicks: AnalyticsData['ctaClicks'] = {
     donate: {
       totalClicks: Number(donateSummaryRow?.total_clicks ?? 0),
@@ -983,13 +1025,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
             uniqueClickers: Number(row.unique_clickers),
           }))
         : [],
-      daily: Array.isArray(donateDailyRes.data)
-        ? donateDailyRes.data.map((row) => ({
-            date: row.day,
-            clicks: Number(row.clicks),
-            uniqueClickers: Number(row.unique_clickers),
-          }))
-        : [],
+      daily: donateDaily,
     },
     share: {
       totalClicks: Number(shareSummaryRow?.total_clicks ?? 0),
