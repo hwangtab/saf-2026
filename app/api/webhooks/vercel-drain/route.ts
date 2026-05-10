@@ -74,6 +74,18 @@ function isOptionalStringOrNumber(value: unknown): value is string | number | un
   return value === undefined || typeof value === 'string' || typeof value === 'number';
 }
 
+/**
+ * Vercel Drain의 sessionId/deviceId가 0 또는 '0' sentinel일 때 NULL로 처리.
+ * SDK가 미설정 상태를 0으로 default 보내는 회귀 (2026-04-17 이후 추정).
+ * 정상 ID는 hex string("ad8f...") 또는 numeric > 0.
+ */
+function isMeaningfulId(value: unknown): boolean {
+  if (value === undefined || value === null) return false;
+  if (typeof value === 'number') return value !== 0 && Number.isFinite(value);
+  if (typeof value === 'string') return value.length > 0 && value !== '0';
+  return false;
+}
+
 function isValidTimestamp(value: unknown): value is number {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
     return false;
@@ -283,8 +295,11 @@ export async function POST(request: NextRequest) {
     os_name: e.osName ?? null,
     client_name: e.clientName ?? null,
     device_type: e.deviceType ?? null,
-    session_id: e.sessionId != null ? String(e.sessionId) : null,
-    device_id: e.deviceId != null ? String(e.deviceId) : null,
+    // Vercel Drain SDK가 sessionId 미설정 시 0 또는 '0'을 sentinel로 보내는 회귀 발견
+    // (2026-04-17~05-10 동안 22,206 PV 모두 session_id='0'으로 적재). 0은 합법 세션 식별자가
+    // 아니라 sentinel이라 NULL 처리. deviceId도 동일 패턴 방어.
+    session_id: isMeaningfulId(e.sessionId) ? String(e.sessionId) : null,
+    device_id: isMeaningfulId(e.deviceId) ? String(e.deviceId) : null,
     event_name: e.eventName ?? null,
     event_data: parseEventData(e),
     event_timestamp: new Date(e.timestamp).toISOString(),
