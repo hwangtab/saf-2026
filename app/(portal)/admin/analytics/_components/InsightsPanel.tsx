@@ -3,15 +3,17 @@ import type { AnalyticsData } from '@/app/actions/admin-analytics';
 import { getTranslations } from 'next-intl/server';
 
 /**
- * 사용자 행동 인사이트 패널 — Phase A 빠른 win 4종.
+ * 사용자 행동 인사이트 패널.
  *
  * 1. 세션 깊이 (avg/median pages per session)
  * 2. 주요 이탈 페이지 (CRO 직격)
- * 3. 신규 vs 재방문자 비율
- * 4. UTM 캠페인 분포
+ * 3. UTM 캠페인 분포
  *
- * 모두 page_views 테이블 + 새 RPC 4개로 산출. UTM은 query_params 컬럼(2026-05-08~ 추가)
- * 기반이라 그 이전 트래픽은 미포함.
+ * 신규 vs 재방문자는 측정 불가 (Vercel Drain의 deviceId가 daily-salted privacy-first
+ * identifier — 같은 사용자도 다음 방문 시 다른 deviceId 발급). 12,335 device 중
+ * 24시간 이상 재방문 패턴 0건이 결정적 증거. 이 한계는 webhook 코드로 fix 불가.
+ *
+ * UTM은 query_params 컬럼(2026-05-08~ 추가) 기반이라 그 이전 트래픽은 미포함.
  */
 interface Props {
   data: AnalyticsData['insights'];
@@ -20,13 +22,6 @@ interface Props {
 export default async function InsightsPanel({ data }: Props) {
   const t = await getTranslations('admin.analytics');
   const numberFormatter = new Intl.NumberFormat();
-
-  const totalVisitors =
-    data.visitorRecurrence.newVisitors + data.visitorRecurrence.returningVisitors;
-  const newVisitorRate =
-    totalVisitors > 0
-      ? Math.round((data.visitorRecurrence.newVisitors / totalVisitors) * 1000) / 10
-      : 0;
 
   return (
     <section className="space-y-6">
@@ -56,30 +51,6 @@ export default async function InsightsPanel({ data }: Props) {
           <Stat
             label={t('medianPagesPerSession')}
             value={String(data.sessionDepth.medianPagesPerSession)}
-          />
-        </div>
-      </AdminCard>
-
-      {/* 신규 vs 재방문자 */}
-      <AdminCard className="flex flex-col">
-        <AdminCardHeader className="rounded-t-2xl">
-          <h3 className="text-base font-semibold text-gray-900">{t('visitorRecurrenceTitle')}</h3>
-        </AdminCardHeader>
-        <div className="grid grid-cols-2 gap-4 p-6 sm:grid-cols-3">
-          <Stat
-            label={t('newVisitors')}
-            value={numberFormatter.format(data.visitorRecurrence.newVisitors)}
-            sub={`${numberFormatter.format(data.visitorRecurrence.newVisitorPageviews)} ${t('pageViews')}`}
-          />
-          <Stat
-            label={t('returningVisitors')}
-            value={numberFormatter.format(data.visitorRecurrence.returningVisitors)}
-            sub={`${numberFormatter.format(data.visitorRecurrence.returningVisitorPageviews)} ${t('pageViews')}`}
-          />
-          <Stat
-            label={t('newVisitorRate')}
-            value={totalVisitors > 0 ? `${newVisitorRate}%` : '—'}
-            highlight
           />
         </div>
       </AdminCard>
