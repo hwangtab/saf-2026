@@ -1,6 +1,7 @@
 'use server';
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
+import { isGa4Configured, runGa4Report } from '@/lib/ga4-client';
 
 export type AnalyticsPeriod = '7d' | '30d' | '90d';
 
@@ -246,6 +247,31 @@ export type AnalyticsData = {
       poorCount: number;
     }>;
   };
+  /**
+   * GA4 페이지 보고서 — page_title·activeUsers·engagementTime 등 자체 page_views에 없는
+   * GA4 standard metric 직접 fetch. 호출 실패(env 미설정·API quota·일시 장애) 시 빈 배열로
+   * graceful fallback — admin 페이지가 GA4 fail로 깨지지 않도록.
+   *
+   * 컬럼 의미 (GA4 화면과 동일):
+   * - pageTitle: 페이지의 <title> (path보다 운영자가 알아보기 쉬움)
+   * - pagePath: URL path (cross-reference용)
+   * - screenPageViews: 페이지 조회수
+   * - activeUsers: 활성 사용자 (28일 기준)
+   * - viewsPerUser: 활성 사용자당 조회수
+   * - avgEngagementSeconds: 활성 사용자당 평균 참여 시간(초) — userEngagementDuration / activeUsers
+   * - eventCount: 페이지에서 발생한 이벤트 수 (page_view + 자동 + 커스텀 합계)
+   *
+   * 수익(totalRevenue)은 사이트가 e-commerce 측정 미설정이라 의미 없어 제외.
+   */
+  pageReport: Array<{
+    pageTitle: string;
+    pagePath: string;
+    screenPageViews: number;
+    activeUsers: number;
+    viewsPerUser: number;
+    avgEngagementSeconds: number;
+    eventCount: number;
+  }>;
   /**
    * CTA 클릭 (조합원 가입 / share) — 외부 conversion 의도 추적.
    * 기존 패턴:
@@ -583,6 +609,44 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     }),
     untypedRpc<SharePageRow[]>('get_top_shared_pages', { since_ts: sinceTs, lim: 10 }),
   ]);
+
+  // GA4 page report — RPC와 별도 try/catch. env 미설정·일시 장애 시 빈 배열로 graceful
+  // fallback해 admin 페이지가 깨지지 않도록. period에 맞춰 NdaysAgo 형식 사용.
+  let pageReport: AnalyticsData['pageReport'] = [];
+  if (isGa4Configured()) {
+    try {
+      const report = await runGa4Report({
+        startDate: `${days}daysAgo`,
+        endDate: 'today',
+        dimensions: [{ name: 'pageTitle' }, { name: 'pagePath' }],
+        metrics: [
+          { name: 'screenPageViews' },
+          { name: 'activeUsers' },
+          { name: 'screenPageViewsPerUser' },
+          { name: 'userEngagementDuration' },
+          { name: 'eventCount' },
+        ],
+        orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
+        limit: 30,
+      });
+      pageReport = report.rows.map((row) => {
+        const activeUsers = Number(row.metricValues[1]?.value ?? 0);
+        const engagementSeconds = Number(row.metricValues[3]?.value ?? 0);
+        return {
+          pageTitle: row.dimensionValues[0]?.value ?? '(untitled)',
+          pagePath: row.dimensionValues[1]?.value ?? '',
+          screenPageViews: Number(row.metricValues[0]?.value ?? 0),
+          activeUsers,
+          viewsPerUser: Number(row.metricValues[2]?.value ?? 0),
+          // userEngagementDuration는 모든 사용자의 합 — 활성 사용자당 평균으로 변환.
+          avgEngagementSeconds: activeUsers > 0 ? engagementSeconds / activeUsers : 0,
+          eventCount: Number(row.metricValues[4]?.value ?? 0),
+        };
+      });
+    } catch (err) {
+      console.error('[admin-analytics] GA4 page report failed:', err);
+    }
+  }
 
   // Summary
   const summaryRow = Array.isArray(summaryRes.data) ? summaryRes.data[0] : null;
@@ -1095,5 +1159,6 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     gsc,
     webVitals,
     ctaClicks,
+    pageReport,
   };
 }

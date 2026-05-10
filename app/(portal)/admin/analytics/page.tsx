@@ -25,6 +25,7 @@ import InsightsPanel from './_components/InsightsPanel';
 import StoryAttributionPanel from './_components/StoryAttributionPanel';
 import WebVitalsPanel from './_components/WebVitalsPanel';
 import CtaClicksPanel from './_components/CtaClicksPanel';
+import PageReportPanel from './_components/PageReportPanel';
 import { getTranslations, getLocale } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -195,6 +196,9 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
           <TopPagesChart data={data.topPages} />
           <DevicePieChart data={data.deviceDistribution} />
         </div>
+
+        {/* GA4 페이지 보고서 — page_title·engagement 등 자체 page_views 보강 */}
+        <PageReportPanel data={data.pageReport} />
 
         {/* 브라우저 / OS 분포 */}
         <BrowserOsChart browserData={data.browserDistribution} osData={data.osDistribution} />
