@@ -272,9 +272,8 @@ export default function FullscreenMenu({
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
               onClick={() => {
-                trackEvent('donate_click', {
+                trackEvent('member_join_click', {
                   position: 'fullscreen-menu',
-                  target: 'join_member',
                   page_path: typeof window !== 'undefined' ? window.location.pathname : null,
                 });
                 onClose();

@@ -3,13 +3,14 @@ import type { AnalyticsData } from '@/app/actions/admin-analytics';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 /**
- * CTA Clicks 패널 — donate / share 외부 conversion 측정.
+ * CTA Clicks 패널 — 조합원 가입 / share 외부 conversion 측정.
  *
  * 기존 5개 대섹션이 다루지 않던 사각지대:
- * - donate_click: 외부 도메인 이탈이라 page_view·referrer로 안 잡힘
+ * - member_join_click: 외부 도메인(JOIN_MEMBER 폼) 이탈이라 page_view·referrer로 안 잡힘.
+ *   후원함(socialfunch)은 종료된 캠페인이라 측정 대상 아님 — 단일 conversion target.
  * - share_click: 사이트 viral 확산 측정 (어떤 콘텐츠가 공유되는가)
  *
- * 데이터 source: page_views.event_name='donate_click' / 'share_click' (자체 적재).
+ * 데이터 source: page_views.event_name='member_join_click' / 'share_click' (자체 적재).
  */
 
 interface Props {
@@ -39,49 +40,44 @@ export default async function CtaClicksPanel({ data }: Props) {
     day: '2-digit',
   });
 
-  const hasDonate = data.donate.totalClicks > 0;
+  const hasMemberJoin = data.memberJoin.totalClicks > 0;
   const hasShare = data.share.totalClicks > 0;
 
   return (
     <section className="space-y-8">
-      {/* ========================== Donate ========================== */}
+      {/* ========================== 조합원 가입 ========================== */}
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{t('ctaDonateTitle')}</h2>
-          <p className="mt-1 text-sm text-gray-500">{t('ctaDonateDesc')}</p>
+          <h2 className="text-lg font-semibold text-gray-900">{t('ctaMemberJoinTitle')}</h2>
+          <p className="mt-1 text-sm text-gray-500">{t('ctaMemberJoinDesc')}</p>
         </div>
 
-        {!hasDonate ? (
+        {!hasMemberJoin ? (
           <AdminCard className="flex flex-col">
-            <AdminEmptyState title={t('ctaDonateNoData')} description={t('ctaDonateNoDataDesc')} />
+            <AdminEmptyState
+              title={t('ctaMemberJoinNoData')}
+              description={t('ctaMemberJoinNoDataDesc')}
+            />
           </AdminCard>
         ) : (
           <>
-            {/* 4-stat 요약 */}
+            {/* 2-stat 요약 (단일 destination이라 target 분기 없음) */}
             <AdminCard className="p-6">
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4">
                 <Stat
                   label={t('ctaTotalClicks')}
-                  value={numberFormatter.format(data.donate.totalClicks)}
+                  value={numberFormatter.format(data.memberJoin.totalClicks)}
                   highlight
                 />
                 <Stat
                   label={t('ctaUniqueClickers')}
-                  value={numberFormatter.format(data.donate.uniqueClickers)}
-                />
-                <Stat
-                  label={t('ctaDonateTarget')}
-                  value={numberFormatter.format(data.donate.donateTargetClicks)}
-                />
-                <Stat
-                  label={t('ctaJoinMemberTarget')}
-                  value={numberFormatter.format(data.donate.joinMemberTargetClicks)}
+                  value={numberFormatter.format(data.memberJoin.uniqueClickers)}
                 />
               </div>
             </AdminCard>
 
-            {/* Position × Target 분포 */}
-            {data.donate.positionDistribution.length > 0 && (
+            {/* Position 분포 — 어드민 운영자가 어느 페이지·위치 CTA가 효과적인지 식별 */}
+            {data.memberJoin.positionDistribution.length > 0 && (
               <AdminCard className="flex flex-col">
                 <AdminCardHeader className="rounded-t-2xl">
                   <h3 className="text-base font-semibold text-gray-900">{t('ctaPositionTitle')}</h3>
@@ -92,19 +88,15 @@ export default async function CtaClicksPanel({ data }: Props) {
                     <thead className="bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
                       <tr>
                         <th className="px-4 py-2 text-left">{t('ctaPositionColumn')}</th>
-                        <th className="px-4 py-2 text-left">{t('ctaTargetColumn')}</th>
                         <th className="px-4 py-2 text-right">{t('ctaClicksColumn')}</th>
                         <th className="px-4 py-2 text-right">{t('ctaUniqueColumn')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
-                      {data.donate.positionDistribution.map((row) => (
-                        <tr key={`${row.position}-${row.target}`}>
+                      {data.memberJoin.positionDistribution.map((row) => (
+                        <tr key={row.position}>
                           <td className="px-4 py-2 font-mono text-xs text-gray-700">
                             {row.position}
-                          </td>
-                          <td className="px-4 py-2 font-mono text-xs text-gray-700">
-                            {row.target}
                           </td>
                           <td className="px-4 py-2 text-right tabular-nums font-semibold text-gray-900">
                             {numberFormatter.format(row.clicks)}
@@ -121,7 +113,7 @@ export default async function CtaClicksPanel({ data }: Props) {
             )}
 
             {/* 일자별 추이 */}
-            {data.donate.daily.length > 0 && (
+            {data.memberJoin.daily.length > 0 && (
               <AdminCard className="flex flex-col">
                 <AdminCardHeader className="rounded-t-2xl">
                   <h3 className="text-base font-semibold text-gray-900">{t('ctaDailyTitle')}</h3>
@@ -137,7 +129,7 @@ export default async function CtaClicksPanel({ data }: Props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
-                      {[...data.donate.daily].reverse().map((row) => (
+                      {[...data.memberJoin.daily].reverse().map((row) => (
                         <tr key={row.date}>
                           <td className="px-4 py-2 tabular-nums text-gray-700">
                             {dateFormatter.format(new Date(row.date))}

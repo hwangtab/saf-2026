@@ -56,19 +56,11 @@ export default function CTAButtonGroup({
   const isDonateExternal = donateHref?.startsWith('http');
   const isPurchaseExternal = purchaseHref?.startsWith('http');
 
-  // 두 외부 링크는 conversion 의미가 다름 — donate(SocialFunch 후원금) vs join(조합원 가입 폼).
-  // 어드민 패널에서 후원 vs 가입 funnel 분리 분석을 위해 target 파라미터로 식별.
-  const donateTarget =
-    donateHref === EXTERNAL_LINKS.DONATE
-      ? 'donate'
-      : donateHref === EXTERNAL_LINKS.JOIN_MEMBER
-        ? 'join_member'
-        : 'other';
-
+  // 후원함(socialfunch)은 종료된 캠페인 — 조합원 가입(JOIN_MEMBER)만 단일 conversion target.
+  // prop 이름 `donateHref`는 historical naming(미변경 회피)이지만 실제 의미는 가입 폼 이동.
   const handleDonateClick = () => {
-    trackEvent('donate_click', {
+    trackEvent('member_join_click', {
       position: trackingPosition,
-      target: donateTarget,
       page_path: typeof window !== 'undefined' ? window.location.pathname : null,
     });
   };

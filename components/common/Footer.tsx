@@ -112,8 +112,8 @@ export default async function Footer({ locale }: { locale: string }) {
                     <TrackedExternalLink
                       href={EXTERNAL_LINKS.JOIN_MEMBER}
                       className="text-gray-300 hover:text-primary transition-colors"
-                      eventName="donate_click"
-                      eventParams={{ position: 'footer', target: 'join_member' }}
+                      eventName="member_join_click"
+                      eventParams={{ position: 'footer' }}
                     >
                       {tNav('joinMember')}
                     </TrackedExternalLink>

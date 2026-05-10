@@ -17,14 +17,14 @@ interface TrackedDonateButtonProps extends ButtonStyleProps {
 }
 
 /**
- * 후원/가입 CTA — 자동 `donate_click` 트래킹.
+ * 조합원 가입 CTA — 자동 `member_join_click` 트래킹.
  *
  * server component(homepage·transparency·our-proof·archive 등)에서 LinkButton을 직접
- * 쓰면 onClick으로 트래킹을 못 박는다. 이 컴포넌트는 'use client'라 onClick 가능 +
- * `target` 파라미터(donate vs join_member)는 href로 자동 분기.
+ * 쓰면 onClick으로 트래킹을 못 박는다. 이 컴포넌트는 'use client'라 onClick 가능.
  *
- * `position` prop은 필수 — admin 패널의 position×target 분포에서 호출처를 식별하기 위함.
- * 같은 position이 여러 호출처에서 쓰이면 분포가 의미 없어짐. 호출처마다 고유 식별자 부여.
+ * 후원함(socialfunch)은 이미 종료된 캠페인이라 측정 대상 아님. 단일 conversion target은
+ * 조합원 가입 폼(JOIN_MEMBER). `position` prop은 필수 — admin 패널의 position 분포에서
+ * 호출처를 식별. 같은 position이 여러 호출처에서 쓰이면 분포 무의미.
  */
 export default function TrackedDonateButton({
   children,
@@ -36,17 +36,9 @@ export default function TrackedDonateButton({
   iconLayout,
   className,
 }: TrackedDonateButtonProps) {
-  const target =
-    href === EXTERNAL_LINKS.DONATE
-      ? 'donate'
-      : href === EXTERNAL_LINKS.JOIN_MEMBER
-        ? 'join_member'
-        : 'other';
-
   const handleClick = () => {
-    trackEvent('donate_click', {
+    trackEvent('member_join_click', {
       position,
-      target,
       page_path: typeof window !== 'undefined' ? window.location.pathname : null,
     });
   };

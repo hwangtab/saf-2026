@@ -247,22 +247,20 @@ export type AnalyticsData = {
     }>;
   };
   /**
-   * CTA 클릭 (donate / share) — 외부 conversion 의도 추적.
-   * 기존 patternd:
-   * - donate_click: CTAButtonGroup·Footer·FullscreenMenu에서 발화. target 파라미터로
-   *   join_member(조합원 가입 폼) vs donate(socialfunch 후원) 분리
+   * CTA 클릭 (조합원 가입 / share) — 외부 conversion 의도 추적.
+   * 기존 패턴:
+   * - member_join_click: CTAButtonGroup·Footer·FullscreenMenu·TrackedDonateButton에서
+   *   발화. 조합원 가입 폼(JOIN_MEMBER) 단일 destination — 후원함(socialfunch)은 종료된
+   *   캠페인이라 측정 대상 아님
    * - share_click: ShareButtons 5채널(facebook/twitter/kakao/sms/copy_link). 어떤
    *   페이지가 어떤 채널로 공유되는지 측정 → 콘텐츠 viral 진단
    */
   ctaClicks: {
-    donate: {
+    memberJoin: {
       totalClicks: number;
       uniqueClickers: number;
-      donateTargetClicks: number;
-      joinMemberTargetClicks: number;
       positionDistribution: Array<{
         position: string;
-        target: string;
         clicks: number;
         uniqueClickers: number;
       }>;
@@ -438,19 +436,16 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     p75_value: number;
     poor_count: number;
   };
-  type DonateSummaryRow = {
+  type MemberJoinSummaryRow = {
     total_clicks: number;
     unique_clickers: number;
-    donate_target_clicks: number;
-    join_member_target_clicks: number;
   };
-  type DonatePositionRow = {
+  type MemberJoinPositionRow = {
     position_name: string;
-    target: string;
     clicks: number;
     unique_clickers: number;
   };
-  type DonateDailyRow = {
+  type MemberJoinDailyRow = {
     day: string;
     clicks: number;
     unique_clickers: number;
@@ -504,9 +499,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     webVitalsSummaryRes,
     webVitalsDailyRes,
     webVitalsLcpWorstRes,
-    donateSummaryRes,
-    donatePositionRes,
-    donateDailyRes,
+    memberJoinSummaryRes,
+    memberJoinPositionRes,
+    memberJoinDailyRes,
     shareSummaryRes,
     shareChannelRes,
     sharePagesRes,
@@ -575,11 +570,13 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       target_metric: 'LCP',
       lim: 10,
     }),
-    untypedRpc<DonateSummaryRow[]>('get_donate_click_summary', { since_ts: sinceTs }),
-    untypedRpc<DonatePositionRow[]>('get_donate_click_position_distribution', {
+    untypedRpc<MemberJoinSummaryRow[]>('get_member_join_click_summary', {
       since_ts: sinceTs,
     }),
-    untypedRpc<DonateDailyRow[]>('get_donate_click_daily', { since_ts: sinceTs }),
+    untypedRpc<MemberJoinPositionRow[]>('get_member_join_click_position_distribution', {
+      since_ts: sinceTs,
+    }),
+    untypedRpc<MemberJoinDailyRow[]>('get_member_join_click_daily', { since_ts: sinceTs }),
     untypedRpc<ShareSummaryRow[]>('get_share_click_summary', { since_ts: sinceTs }),
     untypedRpc<ShareChannelRow[]>('get_share_click_channel_distribution', {
       since_ts: sinceTs,
@@ -966,13 +963,13 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
-  // CTA 클릭 (donate / share) — Phase B
+  // CTA 클릭 (조합원 가입 / share) — Phase B
   // RPC 에러는 Promise.all 안에서 swallow되므로(fulfilled with error data) 진단 로깅 추가.
   // 빈 결과(0건)와 실패(권한·SQL 에러)를 운영 로그에서 구분 가능.
   const ctaRpcResults = [
-    ['get_donate_click_summary', donateSummaryRes],
-    ['get_donate_click_position_distribution', donatePositionRes],
-    ['get_donate_click_daily', donateDailyRes],
+    ['get_member_join_click_summary', memberJoinSummaryRes],
+    ['get_member_join_click_position_distribution', memberJoinPositionRes],
+    ['get_member_join_click_daily', memberJoinDailyRes],
     ['get_share_click_summary', shareSummaryRes],
     ['get_share_click_channel_distribution', shareChannelRes],
     ['get_top_shared_pages', sharePagesRes],
@@ -986,25 +983,27 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     }
   }
 
-  const donateSummaryRow = Array.isArray(donateSummaryRes.data) ? donateSummaryRes.data[0] : null;
+  const memberJoinSummaryRow = Array.isArray(memberJoinSummaryRes.data)
+    ? memberJoinSummaryRes.data[0]
+    : null;
   const shareSummaryRow = Array.isArray(shareSummaryRes.data) ? shareSummaryRes.data[0] : null;
 
-  // donate daily — 0인 날 행 추가 (트래픽 없는 날과 데이터 누락 구분 위해 dailyTrend와 동일 패턴)
-  const donateDailyMap = new Map<string, { clicks: number; uniqueClickers: number }>();
-  if (Array.isArray(donateDailyRes.data)) {
-    for (const row of donateDailyRes.data) {
-      donateDailyMap.set(row.day, {
+  // member_join daily — 0인 날 행 추가 (트래픽 없는 날과 데이터 누락 구분 위해 dailyTrend와 동일 패턴)
+  const memberJoinDailyMap = new Map<string, { clicks: number; uniqueClickers: number }>();
+  if (Array.isArray(memberJoinDailyRes.data)) {
+    for (const row of memberJoinDailyRes.data) {
+      memberJoinDailyMap.set(row.day, {
         clicks: Number(row.clicks),
         uniqueClickers: Number(row.unique_clickers),
       });
     }
   }
-  const donateDaily: Array<{ date: string; clicks: number; uniqueClickers: number }> = [];
+  const memberJoinDaily: Array<{ date: string; clicks: number; uniqueClickers: number }> = [];
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(Date.now() - i * 86_400_000);
     const dateStr = d.toISOString().slice(0, 10);
-    const entry = donateDailyMap.get(dateStr);
-    donateDaily.push({
+    const entry = memberJoinDailyMap.get(dateStr);
+    memberJoinDaily.push({
       date: dateStr,
       clicks: entry?.clicks ?? 0,
       uniqueClickers: entry?.uniqueClickers ?? 0,
@@ -1012,20 +1011,17 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
   }
 
   const ctaClicks: AnalyticsData['ctaClicks'] = {
-    donate: {
-      totalClicks: Number(donateSummaryRow?.total_clicks ?? 0),
-      uniqueClickers: Number(donateSummaryRow?.unique_clickers ?? 0),
-      donateTargetClicks: Number(donateSummaryRow?.donate_target_clicks ?? 0),
-      joinMemberTargetClicks: Number(donateSummaryRow?.join_member_target_clicks ?? 0),
-      positionDistribution: Array.isArray(donatePositionRes.data)
-        ? donatePositionRes.data.map((row) => ({
+    memberJoin: {
+      totalClicks: Number(memberJoinSummaryRow?.total_clicks ?? 0),
+      uniqueClickers: Number(memberJoinSummaryRow?.unique_clickers ?? 0),
+      positionDistribution: Array.isArray(memberJoinPositionRes.data)
+        ? memberJoinPositionRes.data.map((row) => ({
             position: row.position_name,
-            target: row.target,
             clicks: Number(row.clicks),
             uniqueClickers: Number(row.unique_clickers),
           }))
         : [],
-      daily: donateDaily,
+      daily: memberJoinDaily,
     },
     share: {
       totalClicks: Number(shareSummaryRow?.total_clicks ?? 0),
