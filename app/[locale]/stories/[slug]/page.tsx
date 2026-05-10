@@ -27,6 +27,7 @@ import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 import { extractFaqFromBody, generateFaqPageSchema } from '@/lib/markdown-faq';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
+import { generateInlineCrossLinks } from '@/lib/inline-cross-links';
 
 export const dynamic = 'force-static';
 export const revalidate = 1800;
@@ -268,6 +269,18 @@ export default async function StoryDetailPage({ params }: Props) {
         })
       : null;
 
+  // 본문 끝에 같은 카테고리 다른 글 추천 inline markdown 자동 추가.
+  // UI "관련 글" 카드 섹션이 이미 있지만, 본문 inline 텍스트 link는 Google·AI에 더 강한 신호.
+  const sameCategoryStories = allStories.filter((s) => s.category === story.category);
+  const inlineCrossLinksMarkdown = generateInlineCrossLinks({
+    currentSlug: story.slug,
+    sameCategoryStories,
+    isEnglish: isEn,
+    categoryLabelKo: CATEGORY_LABELS_KO[story.category],
+    categoryLabelEn: CATEGORY_LABELS_EN[story.category],
+  });
+  const bodyWithCrossLinks = body + inlineCrossLinksMarkdown;
+
   // BlogPosting schema 생성 — relatedArtworks·relatedStories hydrate된 이후이라
   // mentions 필드를 정확한 작품 title·관련 매거진 title로 채울 수 있음.
   // mentions는 schema.org에서 "이 글이 참조하는 entity" 시그널 — AI Overview·Knowledge Graph
@@ -330,7 +343,7 @@ export default async function StoryDetailPage({ params }: Props) {
           )}
 
           <div className="motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.2s]">
-            <MarkdownRenderer content={body} />
+            <MarkdownRenderer content={bodyWithCrossLinks} />
           </div>
 
           <div className="mt-10 text-lg font-semibold tracking-tight text-primary motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.25s]">

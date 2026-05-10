@@ -1,5 +1,15 @@
 [
   {
+    "hash": "041d78b1",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "매거진 큐레이션 작품 ItemList(VisualArtwork) carousel schema 발행",
+    "summary": "매거진 본문에 직접 인용된 작품(artworksSource='inline') = 큐레이터가 의도한 추천 5점에 대해 ItemList VisualArtwork schema 발행. Google AI Overview·검색 carousel rich result에 작품 목록 진입 가능.",
+    "body": "- generateArtworkListSchema에 options.name·description 오버라이드 추가\n  매거진 큐레이션 컨텍스트 명명 (예: \"이 글에서 큐레이션한 작품: 신혼집 거실에 처음 거는 한 점\")\n- stories/[slug]/page.tsx: artworksSource==='inline' && relatedArtworks.length > 0일 때만 schema 추가\n  fallback(artist-fallback·recent-fallback)은 의도된 큐레이션이 아니므로 제외 — Google에 잘못된 시그널 방지\n\n스토리당 schema 5층:\n1. BlogPosting (mentions·isPartOf·articleSection·keywords)\n2. BreadcrumbList\n3. FAQPage (본문에서 자동 추출)\n4. ItemList(VisualArtwork) — 큐레이션 작품 5점 (이번 추가)",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "db1ba516",
     "type": "feat",
     "scope": "seo",
