@@ -38,6 +38,7 @@ const STATIC_SKIP_PATHS = new Set([
   '/manifest.webmanifest',
   '/robots.txt',
   '/sitemap.xml',
+  '/feed.xml',
   '/llms.txt',
   '/llms-full.txt',
 ]);
@@ -100,6 +101,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|images/|fonts/|reports/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|llms.txt|llms-full.txt).*)',
+    '/((?!api|_next/static|_next/image|images/|fonts/|reports/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|feed.xml|llms.txt|llms-full.txt).*)',
   ],
 };
