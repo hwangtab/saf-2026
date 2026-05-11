@@ -12,6 +12,7 @@
  */
 
 import { getCategoryLabel } from '@/lib/artwork-category';
+import { getEditionLabel, getMaterialLabel, getSizeLabel } from '@/lib/artwork-material';
 
 interface ArtworkInput {
   title: string;
@@ -32,10 +33,21 @@ export function generateArtworkOverview(artwork: ArtworkInput, locale: 'ko' | 'e
   const title = (locale === 'en' && artwork.title_en) || artwork.title;
   const artist = (locale === 'en' && artwork.artist_en) || artwork.artist;
   const category = artwork.category ? getCategoryLabel(artwork.category, locale) : null;
-  const material = isMeaningful(artwork.material) ? artwork.material : null;
-  const size = isMeaningful(artwork.size) ? artwork.size : null;
+  const rawMaterial = isMeaningful(artwork.material) ? artwork.material : null;
+  const rawSize = isMeaningful(artwork.size) ? artwork.size : null;
   const year = isMeaningful(artwork.year) ? artwork.year : null;
-  const edition = isMeaningful(artwork.edition) ? artwork.edition : null;
+  const rawEdition = isMeaningful(artwork.edition) ? artwork.edition : null;
+  // EN 분기에서 raw material/size/edition을 합성문에 끼워 넣으면 KO leak (e.g., '한지에
+  // 피그먼트 프린트', '에디션 1') — 코드 매핑 helper로 영문화.
+  const material =
+    rawMaterial != null
+      ? locale === 'en'
+        ? getMaterialLabel(rawMaterial, 'en')
+        : rawMaterial
+      : null;
+  const size = rawSize != null ? (locale === 'en' ? getSizeLabel(rawSize, 'en') : rawSize) : null;
+  const edition =
+    rawEdition != null ? (locale === 'en' ? getEditionLabel(rawEdition, 'en') : rawEdition) : null;
 
   if (!material && !year && !size) return null;
 
@@ -49,7 +61,14 @@ export function generateArtworkOverview(artwork: ArtworkInput, locale: 'ko' | 'e
     else if (year) techParts.push(`Created in ${year}`);
     else if (material) techParts.push(`Made on ${material}`);
     if (size) techParts.push(`measuring ${size}`);
-    if (edition) techParts.push(`from an edition (${edition})`);
+    // edition은 getEditionLabel이 "Edition N/M" 형식 또는 raw 숫자 ("1/5") 반환.
+    // 자연어 흐름 위해 "from an edition of ..." 패턴으로 통일.
+    if (edition) {
+      const editionDisplay = edition.toLowerCase().startsWith('edition ')
+        ? edition.slice('edition '.length)
+        : edition;
+      techParts.push(`from an edition of ${editionDisplay}`);
+    }
 
     const s2 = techParts.length > 0 ? ' ' + techParts.join(', ') + '.' : '';
     const s3 = ' Available as an original Korean contemporary artwork at SAF Online.';
@@ -66,7 +85,11 @@ export function generateArtworkOverview(artwork: ArtworkInput, locale: 'ko' | 'e
   else if (year) techParts.push(`${year}년 작`);
   else if (material) techParts.push(`${material} 작업`);
   if (size) techParts.push(`크기 ${size}`);
-  if (edition) techParts.push(`에디션 ${edition}`);
+  // edition은 raw DB 값에 이미 '에디션' prefix가 포함된 경우 다수 — 중복 prefix 방지
+  if (edition) {
+    const editionDisplay = edition.startsWith('에디션') ? edition : `에디션 ${edition}`;
+    techParts.push(editionDisplay);
+  }
 
   const s2 = techParts.length > 0 ? ' ' + techParts.join(', ') + '.' : '';
   const s3 = ' 씨앗페에 출품된 한국 현대미술 원본이다.';

@@ -136,3 +136,44 @@ export function getMaterialLabel(value: string | null | undefined, locale: strin
   if (locale !== 'en') return trimmed;
   return MATERIAL_EN_MAP[trimmed] ?? trimmed;
 }
+
+/**
+ * 작품 크기 표기 영문화.
+ *
+ * artworks.size 컬럼에서 한국어로 등장하는 패턴은 사실상 '확인 중' 1종 + 숫자/단위 표기.
+ * 숫자·단위(cm·mm·호 등)는 locale 무관해 그대로 통과. KO 텍스트만 매핑.
+ */
+const SIZE_EN_MAP: Record<string, string> = {
+  '확인 중': 'TBD',
+  미정: 'TBD',
+};
+
+export function getSizeLabel(value: string | null | undefined, locale: string): string {
+  const trimmed = (value ?? '').trim();
+  if (!trimmed) return '';
+  if (locale !== 'en') return trimmed;
+  return SIZE_EN_MAP[trimmed] ?? trimmed;
+}
+
+/**
+ * 작품 에디션 표기 영문화.
+ *
+ * DB 실제 패턴:
+ * - '에디션 N/M' / '에디션 N' (주류)
+ * - '에디션N/M' (공백 누락)
+ * - '에디션 14, 16, 18' (여러 번호 콤마 구분)
+ * - 'N/M' / 'N' (prefix 없음, 영어권 호환 형태)
+ *
+ * '에디션' prefix를 'Edition'으로 치환. 숫자만 있는 경우는 그대로 통과(이미 영어권 호환).
+ */
+const EDITION_KO_PREFIX = /^에디션\s*/;
+
+export function getEditionLabel(value: string | null | undefined, locale: string): string {
+  const trimmed = (value ?? '').trim();
+  if (!trimmed) return '';
+  if (locale !== 'en') return trimmed;
+  if (EDITION_KO_PREFIX.test(trimmed)) {
+    return trimmed.replace(EDITION_KO_PREFIX, 'Edition ');
+  }
+  return trimmed;
+}

@@ -6,6 +6,7 @@ import { getArtformForSchema, classifyArtworkMedium } from '@/lib/art-taxonomy';
 import { getCategoryLabel } from '@/lib/artwork-category';
 import { Artwork } from '@/types';
 import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from './utils';
+import { getMaterialLabel, getSizeLabel, getEditionLabel } from '@/lib/artwork-material';
 import { createBreadcrumbSchema } from './breadcrumb';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import {
@@ -28,16 +29,10 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   const isEnglish = locale === 'en';
   const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
   const artistForLocale = isEnglish && artwork.artist_en ? artwork.artist_en : artwork.artist;
-  const materialForLocale = sanitizeForLocale(
-    artwork.material,
-    locale,
-    isEnglish ? 'Original details in Korean' : ''
-  );
-  const sizeForLocale = sanitizeForLocale(
-    artwork.size,
-    locale,
-    isEnglish ? 'Original details in Korean' : ''
-  );
+  // material·size는 코드 매핑(MATERIAL_EN_MAP·SIZE_EN_MAP)으로 영문화 — 미매핑 시 원본 KO 유지.
+  // 이전 'Original details in Korean' fallback은 사용자에 "번역 미완료" 인상 + 정보 손실 → 제거.
+  const materialForLocale = getMaterialLabel(artwork.material, locale);
+  const sizeForLocale = getSizeLabel(artwork.size, locale);
 
   const summary = [
     isEnglish ? `Artist: ${artistForLocale}` : `작가: ${artwork.artist}`,
@@ -252,16 +247,8 @@ export function generateArtworkJsonLd(
   const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
   const artistForLocale = isEnglish && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0] ?? '');
-  const materialForLocale = sanitizeForLocale(
-    artwork.material,
-    locale,
-    isEnglish ? 'Original details in Korean' : ''
-  );
-  const sizeForLocale = sanitizeForLocale(
-    artwork.size,
-    locale,
-    isEnglish ? 'Original details in Korean' : ''
-  );
+  const materialForLocale = getMaterialLabel(artwork.material, locale);
+  const sizeForLocale = getSizeLabel(artwork.size, locale);
   const profileForLocale = sanitizeForLocale(
     isEnglish ? artwork.profile_en || artwork.profile : artwork.profile,
     locale
@@ -274,11 +261,7 @@ export function generateArtworkJsonLd(
     isEnglish ? artwork.history_en || artwork.history : artwork.history,
     locale
   );
-  const editionForLocale = sanitizeForLocale(
-    artwork.edition,
-    locale,
-    isEnglish ? 'Original details in Korean' : ''
-  );
+  const editionForLocale = getEditionLabel(artwork.edition, locale);
 
   const schemaDescription =
     descriptionForLocale ||
@@ -391,9 +374,9 @@ export function generateArtworkJsonLd(
         };
 
   // Classify artwork medium for better SEO categorization.
-  // 항상 raw artwork.material(KO 원본)로 분류 — taxonomy keywords가 KO/EN 양쪽을 인지하지만
-  // /en에서 materialForLocale은 'Original details in Korean' fallback일 수 있어 분류 누락 위험.
-  // 분류 결과의 name/alternateName은 locale별 swap으로 처리하므로 raw material만 분류 입력.
+  // raw artwork.material(KO 원본)로 분류 — taxonomy keywords가 KO/EN 양쪽 인지. 분류 결과의
+  // name/alternateName은 locale별 swap. materialForLocale은 사용자 표시용 변환된 값이라
+  // 분류 입력으로는 부적합.
   const mediumCategory = classifyArtworkMedium(artwork.material || '');
   const exhibitionSchemaState = getExhibitionSchemaState(locale);
 

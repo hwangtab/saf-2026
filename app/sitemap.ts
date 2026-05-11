@@ -100,6 +100,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date('2026-01-01'),
     },
     {
+      path: '/petition/oh-yoon',
+      changeFrequency: 'monthly',
+      priority: 0.8,
+      lastModified: new Date('2026-01-01'),
+    },
+    {
       path: '/archive/2026',
       changeFrequency: 'monthly',
       priority: 0.85,
