@@ -16,11 +16,17 @@ import '@/styles/globals.css';
  * 인증 페이지는 noindex라 SEO 영향은 적지만, <html lang>은 사용자 locale에 맞춰 발행.
  */
 
-const notoSansKR = Noto_Sans_KR({
-  weight: ['400', '500', '700', '900'],
+/**
+ * Pretendard Variable이 globals.css에 import되어 한글·라틴 본문을 담당.
+ * Noto Sans KR은 한자 fallback 전용으로 weight 400만, preload: false로 로드.
+ * 자세한 내용은 app/[locale]/layout.tsx 주석 참조.
+ */
+const hanjaFallback = Noto_Sans_KR({
+  weight: '400',
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-han',
   display: 'optional',
+  preload: false,
   adjustFontFallback: true,
 });
 
@@ -49,7 +55,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   const skipToMain = locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동';
 
   return (
-    <html lang={locale} className={notoSansKR.variable} suppressHydrationWarning>
+    <html lang={locale} className={hanjaFallback.variable} suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />

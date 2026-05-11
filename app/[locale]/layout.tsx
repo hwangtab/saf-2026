@@ -29,11 +29,20 @@ import '@/styles/globals.css';
  * 현재: [locale]/layout.tsx가 root로 승격, <html lang={locale}>로 정적 prerender 호환 + 정확.
  */
 
-const notoSansKR = Noto_Sans_KR({
-  weight: ['400', '500', '700', '900'],
+/**
+ * Pretendard Variable이 globals.css에 import되어 한글·라틴 본문을 담당.
+ * Noto Sans KR은 한자(U+3400+ CJK Unified Ideographs) fallback 전용으로 weight 400만 로드.
+ * - preload: false — 한자가 없는 페이지에서 강제 preload 회피 (한자 페이지에서만 lazy 다운로드)
+ * - subsets: ['latin'] — Next.js는 subsets와 무관하게 폰트가 가진 unicode-range를 모두 발행하므로
+ *   ['latin']을 지정해도 결과 CSS에는 한자 unicode-range가 포함됨
+ * - variable: '--font-han' — Tailwind fontFamily chain의 두 번째 family로 사용
+ */
+const hanjaFallback = Noto_Sans_KR({
+  weight: '400',
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-han',
   display: 'optional',
+  preload: false,
   adjustFontFallback: true,
 });
 
@@ -169,7 +178,7 @@ export default async function LocaleLayout({
   const localBusinessSchema = generateLocalBusinessSchema(localeForSchema);
 
   return (
-    <html lang={locale} className={notoSansKR.variable} suppressHydrationWarning>
+    <html lang={locale} className={hanjaFallback.variable} suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />

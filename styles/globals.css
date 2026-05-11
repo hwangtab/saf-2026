@@ -1,3 +1,9 @@
+/* Pretendard Variable — 한글·라틴 본문 폰트.
+   dynamic-subset CSS가 unicode-range로 92개 woff2를 분할하므로 페이지에 등장하는 글자만 lazy load.
+   한자(U+3400 이상 CJK Unified Ideographs)는 Pretendard 글리프 없음 →
+   tailwind.config.ts fontFamily chain에서 두 번째 family인 Noto Sans KR(`var(--font-han)`)로 자동 fallback. */
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+
 :root {
   /* Gallery White Cube edition — 작품 색이 chrome에서 왜곡되지 않도록 화이트 스케일 */
   --color-canvas: #fafafc; /* Gallery Pearl */

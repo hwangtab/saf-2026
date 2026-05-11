@@ -10,9 +10,12 @@ const config: Config = {
         slate: {}, // slate 팔레트 비활성화 — gray 브랜드 토큰 사용
       },
       fontFamily: {
-        // 기본 폰트 (본문) — Noto Sans KR
+        // 기본 폰트 (본문) — Pretendard Variable (한글·라틴) + Noto Sans KR fallback (한자 U+3400+).
+        // Pretendard는 한자 글리프가 없으므로 한자는 자동으로 다음 family인 var(--font-han)으로 떨어짐.
+        // var(--font-han)은 [locale]·(auth)·(portal) layout에서 next/font/google Noto Sans KR로 등록.
         sans: [
-          'var(--font-sans)',
+          'Pretendard Variable',
+          'var(--font-han)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
@@ -21,16 +24,23 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
-        // 히어로 타이틀 — Noto Sans KR. weight는 globals.css 또는 컴포넌트에서 font-black/font-bold 명시
+        // 히어로 타이틀 — Pretendard Variable. weight는 globals.css/컴포넌트에서 font-black/font-bold 명시
         display: [
-          'var(--font-sans)',
+          'Pretendard Variable',
+          'var(--font-han)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
           'sans-serif',
         ],
-        // 섹션 제목 — Noto Sans KR Bold (본문 변수 재사용, weight는 globals.css에서 명시)
-        section: ['var(--font-sans)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        // 섹션 제목 — Pretendard Variable Bold (weight는 globals.css/컴포넌트에서 명시)
+        section: [
+          'Pretendard Variable',
+          'var(--font-han)',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif',
+        ],
       },
       backgroundImage: {
         'gradient-portal': 'radial-gradient(circle at top, #EDF3FF 0%, #F7F8FA 38%, #FFFFFF 100%)',
