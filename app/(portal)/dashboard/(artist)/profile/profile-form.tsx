@@ -9,13 +9,20 @@ import { CheckMarkIcon } from '@/components/ui/Icons';
 import { AdminFieldLabel, AdminInput, AdminTextarea } from '@/app/admin/_components/admin-ui';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import { getStoragePathsForRemoval } from '@/lib/utils/form-helpers';
+import type { Tables } from '@/types/supabase';
 
 const initialState: ActionState = {
   message: '',
   error: false,
 };
 
-export function ProfileForm({ artist, userId }: { artist: any; userId: string }) {
+export function ProfileForm({
+  artist,
+  userId,
+}: {
+  artist: Tables<'artists'> | null;
+  userId: string;
+}) {
   const locale = useLocale();
   const t = useTranslations('dashboard.profileForm');
   const [state, formAction, isPending] = useActionState(updateArtistProfile, initialState);

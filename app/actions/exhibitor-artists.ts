@@ -7,6 +7,11 @@ import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getString, getStoragePathFromPublicUrl } from '@/lib/utils/form-helpers';
 import { validateTextLength, validateUrl, validateEmail } from '@/lib/utils/input-validation';
 import { logExhibitorAction } from './activity-log-writer';
+import type { Tables } from '@/types/supabase';
+
+type ExhibitorArtistWithCount = Tables<'artists'> & {
+  artworks: { count: number }[] | null;
+};
 
 export async function getExhibitorArtists() {
   const user = await requireExhibitor();
@@ -16,13 +21,14 @@ export async function getExhibitorArtists() {
     .from('artists')
     .select('*, artworks(count)')
     .eq('owner_id', user.id)
-    .order('name_ko');
+    .order('name_ko')
+    .returns<ExhibitorArtistWithCount[]>();
 
   if (error) throw error;
 
-  return (artists || []).map((artist) => ({
+  return (artists ?? []).map((artist) => ({
     ...artist,
-    artwork_count: (artist.artworks as unknown as { count: number }[] | undefined)?.[0]?.count || 0,
+    artwork_count: artist.artworks?.[0]?.count ?? 0,
   }));
 }
 

@@ -106,9 +106,6 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
 
   const isEditing = !!artist.id;
 
-  // Debug logging - Removed
-  // console.log('ArtistEditForm Render:', { artist, isEditing, linkedProfile });
-
   // Debounced search effect
   const [debouncedQuery, setDebouncedQuery] = useState('');
 

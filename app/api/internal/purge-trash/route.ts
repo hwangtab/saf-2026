@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import type { Database } from '@/types/supabase';
 export const runtime = 'nodejs';
 
 const SYSTEM_ACTOR_ID = '00000000-0000-0000-0000-000000000000';
@@ -168,7 +169,11 @@ function collectProfilePaths(snapshot: Record<string, unknown>): string[] {
   return path ? [path] : [];
 }
 
-async function removeStoragePaths(supabase: any, bucket: 'artworks' | 'profiles', paths: string[]) {
+async function removeStoragePaths(
+  supabase: SupabaseClient<Database>,
+  bucket: 'artworks' | 'profiles',
+  paths: string[]
+) {
   if (paths.length === 0) return { removed: 0, failed: 0 };
 
   const CHUNK_SIZE = 100;

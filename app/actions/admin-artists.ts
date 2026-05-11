@@ -50,6 +50,11 @@ function parseApplicationContact(contact: string | null | undefined) {
   };
 }
 
+// `artworks(count)` aggregate는 `{ count: number }[]` 형태로 들어와 첫 원소만 사용.
+type ArtistWithArtworkCount = Tables<'artists'> & {
+  artworks: { count: number }[] | null;
+};
+
 export async function getArtistsWithArtworkCount() {
   await requireAdmin();
   const supabase = await requireAdminClient();
@@ -57,13 +62,14 @@ export async function getArtistsWithArtworkCount() {
   const { data: artists, error } = await supabase
     .from('artists')
     .select('*, artworks(count)')
-    .order('name_ko');
+    .order('name_ko')
+    .returns<ArtistWithArtworkCount[]>();
 
   if (error) throw error;
 
-  return (artists || []).map((artist: any) => ({
+  return (artists ?? []).map((artist) => ({
     ...artist,
-    artwork_count: artist.artworks?.[0]?.count || 0,
+    artwork_count: artist.artworks?.[0]?.count ?? 0,
   }));
 }
 
@@ -103,17 +109,20 @@ export async function getArtistsPaginated(params: GetArtistsPaginatedParams = {}
     data: artists,
     count,
     error,
-  } = await query.order('name_ko').range(offset, offset + limit - 1);
+  } = await query
+    .order('name_ko')
+    .range(offset, offset + limit - 1)
+    .returns<ArtistWithArtworkCount[]>();
 
   if (error) throw error;
 
-  const totalItems = count || 0;
+  const totalItems = count ?? 0;
   const totalPages = Math.ceil(totalItems / limit);
 
   return {
-    artists: (artists || []).map((artist: any) => ({
+    artists: (artists ?? []).map((artist) => ({
       ...artist,
-      artwork_count: artist.artworks?.[0]?.count || 0,
+      artwork_count: artist.artworks?.[0]?.count ?? 0,
     })),
     pagination: {
       currentPage: page,

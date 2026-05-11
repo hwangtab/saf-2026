@@ -1,6 +1,6 @@
 'use client';
 
-import { track } from '@vercel/analytics';
+import { trackEvent } from '@/lib/analytics/track';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
@@ -41,18 +41,14 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position,
   const imgUrl = resolveArtworkImageUrl(artwork.images[0] ?? '');
 
   function handleClick() {
-    try {
-      track('story_to_artwork_click', {
-        story_slug: storySlug,
-        artwork_id: artwork.id,
-        artist: artwork.artist,
-        position,
-        source,
-      });
-    } catch (error) {
-      // 분석 실패가 navigation을 막아선 안 됨 — 조용히 로깅만.
-      console.error('[RelatedArtworkCard] analytics track failed:', error);
-    }
+    // trackEvent는 내부에서 try/catch — navigation 막지 않음 + Vercel/GA4 이중 송신.
+    trackEvent('story_to_artwork_click', {
+      story_slug: storySlug,
+      artwork_id: artwork.id,
+      artist: artwork.artist,
+      position,
+      source,
+    });
   }
 
   return (

@@ -93,6 +93,17 @@ const ARTWORK_SELECT_COLUMNS =
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
+// `.from('artworks').select('..., artists(...)')` 결과 row. supabase는 1:1 FK 조인을
+// single object로 반환하지만, query에 따라 array로 떨어지기도 해 union으로 받음.
+type ArtworkWithArtistRow = ArtworkRow & {
+  artists: ArtistRow | ArtistRow[] | null;
+};
+
+function pickArtist(artists: ArtistRow | ArtistRow[] | null | undefined): ArtistRow | null {
+  if (!artists) return null;
+  return Array.isArray(artists) ? (artists[0] ?? null) : artists;
+}
+
 function pickRandomItems<T>(items: T[], limit: number): T[] {
   const shuffled = [...items];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -142,16 +153,15 @@ const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {
     `
     )
     .eq('is_hidden', false)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .returns<ArtworkWithArtistRow[]>();
 
   if (error) {
     console.error('Error fetching artworks from Supabase:', error);
     return fallbackArtworks;
   }
 
-  return (data || []).map((item) =>
-    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
-  );
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
 };
 
 const getSupabaseArtworksCached = unstable_cache(
@@ -181,16 +191,15 @@ const getSupabaseHomepageArtworkCandidatesUncached = async (limit: number): Prom
     `
     )
     .eq('is_hidden', false)
-    .limit(limit * 3);
+    .limit(limit * 3)
+    .returns<ArtworkWithArtistRow[]>();
 
   if (error) {
     console.error('Error fetching homepage artworks from Supabase:', error);
     return fallbackArtworks;
   }
 
-  return (data || []).map((item) =>
-    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
-  );
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
 };
 
 const getSupabaseHomepageArtworksCached = unstable_cache(
@@ -225,16 +234,15 @@ const getSupabaseArtworksByCategoriesUncached = async (
     )
     .eq('is_hidden', false)
     .in('category', categories)
-    .limit(limit * 3);
+    .limit(limit * 3)
+    .returns<ArtworkWithArtistRow[]>();
 
   if (error) {
     console.error('Error fetching artworks by categories from Supabase:', error);
     return fallbackArtworks.filter((a) => categories.includes(a.category || ''));
   }
 
-  return (data || []).map((item) =>
-    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
-  );
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
 };
 
 const getSupabaseArtworksByCategoriesCached = unstable_cache(
@@ -276,7 +284,7 @@ const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | nul
     )
     .eq('id', id)
     .eq('is_hidden', false)
-    .maybeSingle();
+    .maybeSingle<ArtworkWithArtistRow>();
 
   if (error) {
     console.error(`Error fetching artwork ${id} from Supabase:`, error);
@@ -287,7 +295,7 @@ const getSupabaseArtworkByIdUncached = async (id: string): Promise<Artwork | nul
     return getArtworkById(id) || null;
   }
 
-  return mapArtworkRow(artwork as ArtworkRow, artwork.artists as unknown as ArtistRow | null);
+  return mapArtworkRow(artwork, pickArtist(artwork.artists));
 };
 
 const getSupabaseArtworkByIdCached = unstable_cache(
@@ -326,16 +334,15 @@ const getSupabaseArtworksByArtistUncached = async (artistName: string): Promise<
     )
     .eq('artists.name_ko', artistName)
     .eq('is_hidden', false)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .returns<ArtworkWithArtistRow[]>();
 
   if (error) {
     console.error(`Error fetching artworks for artist ${artistName}:`, error);
     return fallbackArtworks.filter((a) => a.artist === artistName);
   }
 
-  return (data || []).map((item) =>
-    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
-  );
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
 };
 
 const getSupabaseArtworksByArtistCached = unstable_cache(
@@ -372,16 +379,15 @@ const getArtworksByCategoryLightUncached = async (
     .eq('category', category)
     .eq('sold', false)
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .limit(limit)
+    .returns<ArtworkWithArtistRow[]>();
 
   if (error) {
     console.error(`Error fetching artworks by category ${category}:`, error);
     return fallbackArtworks.filter((a) => a.category === category && !a.sold).slice(0, limit);
   }
 
-  return (data || []).map((item) =>
-    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
-  );
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
 };
 
 const getArtworksByCategoryLightCached = unstable_cache(
@@ -460,16 +466,15 @@ const getRecentlySoldArtworksUncached = async (limit: number): Promise<Artwork[]
     .eq('is_hidden', false)
     .not('sold_at', 'is', null)
     .order('sold_at', { ascending: false })
-    .limit(limit);
+    .limit(limit)
+    .returns<ArtworkWithArtistRow[]>();
 
   if (error) {
     console.error('Error fetching recently sold artworks:', error);
     return [];
   }
 
-  return (data || []).map((item) =>
-    mapArtworkRow(item as ArtworkRow, item.artists as unknown as ArtistRow | null)
-  );
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
 };
 
 const getRecentlySoldArtworksCached = unstable_cache(
@@ -559,10 +564,12 @@ const getPopularArtistNamesUncached = async (limit: number): Promise<string[]> =
   if (!hasSupabaseConfig || !supabase) {
     return Array.from(new Set(fallbackArtworks.map((a) => a.artist))).slice(0, limit);
   }
+  type PopularRow = { artist_id: string | null; artists: { name: string } | null };
   const { data, error } = await supabase
     .from('artworks')
     .select('artist_id, artists(name)')
-    .eq('is_hidden', false);
+    .eq('is_hidden', false)
+    .returns<PopularRow[]>();
 
   if (error) {
     console.error('Error fetching popular artist names:', error);
@@ -570,9 +577,8 @@ const getPopularArtistNamesUncached = async (limit: number): Promise<string[]> =
   }
 
   const counts = new Map<string, number>();
-  for (const row of data || []) {
-    const artistRow = row as unknown as { artists: { name: string } | null };
-    const name = artistRow.artists?.name?.trim();
+  for (const row of data ?? []) {
+    const name = row.artists?.name?.trim();
     if (!name) continue;
     counts.set(name, (counts.get(name) || 0) + 1);
   }
@@ -600,7 +606,8 @@ const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]>
   const { data, error } = await supabase
     .from('testimonials')
     .select('*')
-    .order('category', { ascending: true });
+    .order('category', { ascending: true })
+    .returns<TestimonialRow[]>();
 
   if (error) {
     console.error('Error fetching testimonials from Supabase:', error);
@@ -608,8 +615,7 @@ const getSupabaseTestimonialsUncached = async (): Promise<TestimonialCategory[]>
   }
 
   // Group by category
-  const grouped = (data || []).reduce<Record<string, TestimonialCategory>>((acc, item) => {
-    const row = item as unknown as TestimonialRow;
+  const grouped = (data ?? []).reduce<Record<string, TestimonialCategory>>((acc, row) => {
     if (!acc[row.category]) {
       acc[row.category] = {
         category: row.category,
@@ -726,15 +732,15 @@ const getSupabaseReviewsUncached = async (): Promise<ExhibitionReview[]> => {
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
-    .order('date', { ascending: false });
+    .order('date', { ascending: false })
+    .returns<ReviewRow[]>();
 
   if (error) {
     console.error('Error fetching reviews from Supabase:', error);
     return exhibitionReviews;
   }
 
-  const reviews = (data || []).map((item) => {
-    const row = item as unknown as ReviewRow;
+  const reviews = (data ?? []).map((row) => {
     const parsedRating =
       typeof row.rating === 'number' ? row.rating : parseFloat(String(row.rating));
     return {
@@ -778,15 +784,15 @@ const getSupabaseNewsUncached = async (): Promise<NewsArticle[]> => {
   const { data, error } = await supabase
     .from('news')
     .select('*')
-    .order('date', { ascending: false });
+    .order('date', { ascending: false })
+    .returns<NewsRow[]>();
 
   if (error) {
     console.error('Error fetching news from Supabase:', error);
     return newsArticles;
   }
 
-  return (data || []).map((item) => {
-    const row = item as unknown as NewsRow;
+  return (data ?? []).map((row) => {
     return {
       id: row.id,
       title: sanitizeTextForRscPayload(row.title),

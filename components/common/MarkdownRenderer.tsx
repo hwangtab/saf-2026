@@ -1,11 +1,11 @@
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import clsx from 'clsx';
-import type { Components } from 'react-markdown';
-import React from 'react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { resolveOptimizedArtworkImageUrl } from '@/lib/utils';
+import type { Components } from 'react-markdown';
 
 const ARTWORK_LINK_PATTERN =
   /^\/(?:en\/)?artworks\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;

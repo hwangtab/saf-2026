@@ -7,6 +7,7 @@ import {
   AdminPageHeader,
   AdminPageTitle,
 } from '@/app/admin/_components/admin-ui';
+import type { Tables } from '@/types/supabase';
 
 type Props = {
   searchParams: Promise<{
@@ -15,6 +16,23 @@ type Props = {
     q?: string;
     sort?: string;
   }>;
+};
+
+// Supabase nested embed는 1:N 관계를 single이 아닌 array로 반환할 수 있어
+// artists를 union으로 받은 뒤 아래 mapping에서 평탄화한다.
+type ArtistRef = Pick<Tables<'artists'>, 'name_ko'>;
+type AdminArtworkRow = Pick<
+  Tables<'artworks'>,
+  | 'id'
+  | 'title'
+  | 'admin_product_name'
+  | 'status'
+  | 'is_hidden'
+  | 'images'
+  | 'created_at'
+  | 'category'
+> & {
+  artists: ArtistRef | ArtistRef[] | null;
 };
 
 export default async function AdminArtworksPage({ searchParams }: Props) {
@@ -27,11 +45,18 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
     .select(
       'id, title, admin_product_name, status, is_hidden, images, created_at, category, artists(name_ko)'
     )
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .returns<AdminArtworkRow[]>();
 
-  const normalizedArtworks = (artworks || []).map((artwork: any) => ({
+  // DB status/is_hidden은 nullable이지만 어드민 UI(`ArtworkItem`)는 non-null을 요구.
+  // production 데이터에 null이 들어오면 가장 보수적인 active 상태로 fallback.
+  const normalizedArtworks = (artworks ?? []).map((artwork) => ({
     ...artwork,
-    artists: Array.isArray(artwork.artists) ? artwork.artists[0] || null : artwork.artists || null,
+    status: artwork.status ?? 'available',
+    is_hidden: artwork.is_hidden ?? false,
+    artists: Array.isArray(artwork.artists)
+      ? (artwork.artists[0] ?? null)
+      : (artwork.artists ?? null),
   }));
 
   return (

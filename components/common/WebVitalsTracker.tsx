@@ -42,7 +42,8 @@ declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
 
-    dataLayer?: any[];
+    // GA4 dataLayer는 push로만 쓰고 read 하지 않음 — 정확한 shape 무관.
+    dataLayer?: unknown[];
   }
 }
 

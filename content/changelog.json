@@ -1,5 +1,175 @@
 [
   {
+    "hash": "26f9f6d4",
+    "type": "fix",
+    "scope": "admin/analytics",
+    "subject": "구매 CTA 클릭 라벨 misleading — mode 페이로드로 toss/external 분리",
+    "summary": "사용자 제보 — '외부 구매(Cafe24)' 패널이 39 클릭 표시되는데 현재 모든 작품은 토스 자체결제 path. ArtworkPurchaseCTA의 두 분기가 같은 purchase_click 이벤트로 집계되어 잘못된 라벨로 합산됨",
+    "body": "수정:\n- ArtworkPurchaseCTA: 두 onClick 분기에 mode 파라미터 추가\n  · isTossMode 분기 → mode: 'toss' (/checkout 자체결제)\n  · !isTossMode + shopUrl 분기 → mode: 'external' (legacy 쇼핑몰)\n- RPC 마이그레이션(20260511094946): get_purchase_click_summary + get_top_purchase_clicked_artworks가 mode별 분리 집계 (DROP + CREATE — 기존 row 함수 시그니처 변경)\n- admin-analytics.ts: PurchaseSummaryRow + PurchaseArtworkRow에 toss_clicks/external_clicks/legacy_clicks 필드 추가\n- CtaClicksPanel: 3-stat → 6-stat (total·unique·distinct + toss·external·legacy 분리). TOP 표에 toss/external 컬럼 추가\n- i18n: 라벨 '외부 구매(Cafe24)' → '구매 CTA 클릭' / description 정정 + 5개 신규 키 (mode breakdown)\n\n데이터 영향:\n- 직전 적재된 38건은 mode 페이로드 없음 → 'legacy' 분류로 표시 (사용자가 합산 misleading 인식)\n- 미래 적재분부터 toss/external 명확히 분리",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "772bf7dd",
+    "type": "fix",
+    "scope": "admin/mobile-nav",
+    "subject": "모바일 메뉴 하단 잘림·스크롤 불가 — 3단 flex column 재구조화",
+    "summary": "사용자 제보 — 모바일 admin 메뉴에서 '구매자 관리' 등 하단 항목이 잘리고 스크롤 불가능. 근원 layout 결함 3가지 일괄 fix",
+    "body": "진단:\n- nav.h-full 안에 또 div.h-full nested → inner div가 nav 높이 초과해 footer(SignOut)가 viewport 아래로 밀려남\n- nav items 영역에 overflow-y-auto 없음 → 메뉴 길어도 스크롤 불가\n- h-full(=height:100%)이 iOS Safari dynamic viewport(URL bar 변동) 미대응 → 자체 viewport 잘릴 수 있음\n\n근원적 수정:\n- nav 자체를 flex flex-col + h-[100dvh] 단일 column으로 재구조화\n- 내부 nested h-full div 제거 (잘못된 중첩 계층)\n- 3단 구조: shrink-0 header → flex-1 overflow-y-auto items → shrink-0 footer\n- overscroll-contain — items 스크롤이 body로 새지 않도록 (drawer 외부 스크롤 방지)\n- footer pb-[max(1rem,env(safe-area-inset-bottom))] — iOS notch·home indicator 안전 마진\n\n영향:\n- 모든 메뉴 항목(구매자 관리·매출 현황·작가별 판매 등) 화면 안에서 접근 가능\n- 향후 메뉴 항목 추가돼도 스크롤로 자연 처리\n- iOS Safari URL bar 펼침/접힘 시에도 정확한 viewport 높이 유지",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "0061ad94",
+    "type": "fix",
+    "scope": "admin/analytics",
+    "subject": "모든 42개 RPC 호출에 에러 logging 통일",
+    "summary": "기존 13개 RPC(CTA·web_vitals) 만 logging됐고, 핵심 traffic·commerce·GSC RPC 29개는 silent fail. allRpcResults 단일 forEach로 통일",
+    "body": "수정:\n- Promise.all 직후에 allRpcResults 배열 신설 (42 RPC 모두 [name, res] 형태)\n- 기존 ctaRpcResults 블록 제거 (allRpcResults에 통합 — 중복 제거)\n- forEach loop 한 곳에서 모든 RPC 결과의 error 필드 체크 후 console.error\n- error 메시지에 RPC 이름 포함 — 운영 로그에서 어느 RPC 실패인지 즉시 식별\n\n영향:\n- 운영자가 admin 페이지 진입 시 0/빈 결과 표시되면 runtime logs 확인하면 진짜 실패인지 빈 데이터인지 즉시 구분\n- Supabase advisors 같은 외부 도구와 cross-reference 가능\n- 직전 session_id sentinel 회귀(get_pv_top_exit_pages 0 row) 같은 silent 회귀를 조기 감지",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "13cf8b29",
+    "type": "fix",
+    "scope": "admin/analytics",
+    "subject": "6개 잔여 issue 정리 — RPC 회귀·trackEvent 통일·dead path 제거",
+    "summary": "직전 GSC sync fix 후 추가 코드 리뷰에서 식별한 일관성 이슈 일괄 정리",
+    "body": "수정:\n- get_pv_top_exit_pages RPC: COALESCE(session_id, device_id) fallback (20260511022953 마이그레이션) — session_id sentinel '0'→NULL fix 후속 회귀로 모든 row 제외되어 0 결과. 검증: TOP 10 정상 반환 (/petition/oh-yoon 68.5% exit rate 등)\n- ArtworkPurchaseCTA: TrackingLink wrapper → trackEvent helper 직접 호출 — purchase_click이 GA4에도 송신 (이중 송신 architecture 일관성)\n- TopPagesChart: bar 색상 danger.a11y → primary.strong (인기 차트에 빨간 색상은 의미 misleading)\n- admin-analytics.ts: visitorRecurrence 타입·RPC 호출·매핑 dead path 모두 제거 — UI는 이미 측정 불가로 카드 제거됐는데 RPC는 매번 호출 중. 페이지 진입 시 1 RPC 절약\n- InsightsPanel: Stat 함수를 파일 상단으로 이동 — CtaClicksPanel과 패턴 일관성\n- i18n: noPageData 키 admin.analytics namespace에 추가 (ko/en) — InsightsPanel이 사용하는데 키 없어 raw key 'noPageData' 노출 위험\n\n이슈 3 (admin-analytics 에러 로깅 범위 불완전) 미진행 — 의미 큰 변경이라 별도 PR 가치",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "47b0c85e",
+    "type": "fix",
+    "scope": "cron",
+    "subject": "x-vercel-cron header 검증 제거 — 모든 internal cron 403 회복",
+    "summary": "Vercel cron은 Bearer CRON_SECRET 외에 magic header를 부착하지 않음. 잘못된 header 검증으로 7일+ 동안 모든 internal cron이 403 거부되어 데이터 적재 중단",
+    "body": "진단:\n- gsc_metrics 0 row, 다른 테이블도 비슷한 양상 의심으로 Vercel logs 점검\n- expire-stale-orders·reconcile-payments·gsc-sync 모두 7일간 403\n- 원인: validateInternalCronRequest가 `x-vercel-cron` header 존재 여부를 production에서 추가 검증. Vercel cron 실제 payload엔 그 header가 없음\n\n수정:\n- validateInternalCronRequest를 Bearer CRON_SECRET 단일 검증으로 단순화\n- canBypassMissingVercelCronHeader 함수 + INTERNAL_CRON_EMERGENCY_BYPASS_* env 분기 제거 (잘못된 검증 자체가 사라져 emergency bypass도 무용)\n- 테스트도 동일하게 정정 — production에서 Bearer만으로 통과 확인 + 회귀 보호 케이스 추가\n\n보안 모델:\n- CRON_SECRET이 random + production env에 sealed라 Bearer 검증만으로 외부 우회 불가\n- timing-safe compare로 timing attack 방어 유지\n\n영향:\n- 다음 deploy 즉시 reconcile-payments + expire-stale-orders 매 10분 정상 실행\n- gsc-sync는 다음 KST 05:00에 정상 실행 (또는 manual trigger로 즉시 backfill 가능)\n- Toss 결제 reconciliation 7일+ 누락분이 일시 catch-up",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "6ad390ef",
+    "type": "feat",
+    "scope": "admin/analytics",
+    "subject": "Phase C 트래킹 (purchase + locale_switch) + TopPagesChart 차별화",
+    "summary": "3단계 묶음 진행 — 데이터 무결성 점검 결과 정리, Phase C 트래킹 두 종 추가, TopPagesChart와 PageReportPanel 차별화",
+    "body": "[1단계] 데이터 무결성 점검:\n- gsc_metrics 0 row 발견 (cron은 등록·env 정상이나 7일 동안 1번만 호출 + 그 1번도 x-vercel-cron header 누락으로 403). 별도 운영 fix 필요 (emergency bypass 또는 plan 점검)\n- orders 78건 88% cancel은 정상 funnel dropout\n- artwork_sales·artworks 모두 정상\n\n[2단계] Phase C 트래킹:\n- LanguageSwitcher onClick에 trackEvent('locale_switch', { from_locale, to_locale, page_path })\n- purchase_click은 ArtworkPurchaseCTA에 이미 트래킹 적재 중 — RPC + 패널만 추가\n- 신규 RPC 4종 (20260511012145_phase_c_tracking_rpc.sql, supabase MCP apply 완료):\n  · get_purchase_click_summary, get_top_purchase_clicked_artworks\n  · get_locale_switch_summary, get_locale_switch_pages\n- admin-analytics.ts: ctaClicks 타입에 purchase + localeSwitch 추가, 4 RPC 호출/매핑/error logging\n- CtaClicksPanel: 외부 구매 섹션(3-stat + TOP artwork) + 언어 전환 섹션(4-stat + 페이지 분포) 추가\n- i18n 14개 키 추가\n\n[3단계] TopPagesChart 차별화:\n- 제목 '인기 페이지' → '인기 페이지 (실시간)'\n- description 명시: 자체 page_views 5분 반영 vs PageReportPanel은 GA4 24h lag지만 풍부 metric\n- source 차이 명확화로 두 패널 공존 의미 부여\n\noutbound_click(외부 링크 일반)은 호출처 wrapping 큰 작업이라 Phase D로 분리",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "db0e99e0",
+    "type": "feat",
+    "scope": "admin/analytics",
+    "subject": "PageReportPanel 정렬 토글 + CSV export 통합",
+    "summary": "운영자가 5개 metric 기준 자유 정렬 + 기존 CSV에 페이지 보고서 섹션 추가",
+    "body": "신규 client component (PageReportTable):\n- server PageReportPanel을 server wrapper(i18n+locale 전달)로 단순화하고 표 부분을 'use client' 분리\n- useState로 sortKey 관리, useMemo로 정렬 + maxValue 메모이제이션\n- 5개 정렬 chip: 조회수·활성 사용자·사용자당 조회수·평균 참여 시간·이벤트 수\n- 활성 정렬 컬럼은 헤더에 ▼ 표시 + 해당 컬럼만 progress bar 적용 (다른 컬럼 정렬 시 bar 자동 이동)\n\nCSV export 통합:\n- AnalyticsCsvExport에 'GA4 페이지 보고서' 섹션 추가\n- 8컬럼: 순위·페이지 제목·경로·조회수·활성 사용자·사용자당 조회수·평균 참여 시간(초)·이벤트 수\n- 기존 9개 섹션과 동일한 BOM + UTF-8 패턴\n\ni18n: pageReportSortBy 키 1쌍 추가\n\n배경: 직전 PageReportPanel UI 개선(rank·progress bar·engagement 색상)으로 시각화는 강해졌지만 운영자가 \"engagement 깊은 페이지\" 또는 \"이벤트 많은 페이지\" 기준으로 정렬해서 보고 싶을 때 server 호출 다시 필요했음. 클라이언트 정렬로 즉각 reordering + CSV 외부 분석",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "2edc2cb6",
+    "type": "feat",
+    "scope": "admin/analytics",
+    "subject": "PageReportPanel UI 개선 — rank·progress bar·engagement 색상 등급",
+    "summary": "표 안에 시각적 hierarchy 추가로 운영자가 인기·깊이 한눈에 파악",
+    "body": "수정:\n- rank 컬럼 신설 (TOP 3은 charcoal-deep 강조, 나머지 muted) — 순위 즉시 식별\n- page title 2줄 line-clamp + path는 mono small (페이지 식별·기술 정보 분리)\n- 조회수에 inline progress bar (1위 대비 비율) — 페이지 간 popularity 즉시 비교\n- engagement time 색상 등급 4단계:\n  · <60s: text-gray-500 (가벼운 체류)\n  · 60s~5m: text-gray-700 (평균)\n  · 5m~10m: text-primary-strong + medium (깊은 정독)\n  · 10m+: text-success-a11y + semibold (매우 깊은 정독)\n- max-h를 640px로 확장 (rank + bar로 행 높이 약간 증가 보정)\n\n배경: 직전 GA4 데이터 검증에서 흥미로운 패턴 발견 — 금융 재난 보고서 1명/23분, 취도 작품 1명/18분 등 깊이 읽히는 콘텐츠가 표에 묻혀 안 보임. 색상 등급으로 즉시 부각\n\n검증:\n- ga4-page-report-probe.js로 30일 데이터 32 rows 정상 fetch 확인\n- max-h-[640px] sticky thead로 90d 기간(30 limit이라 30 rows 최대)도 정상 표시",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "ae73dae1",
+    "type": "fix",
+    "scope": "admin/analytics",
+    "subject": "신규 vs 재방문자 카드 제거 — Vercel Drain deviceId daily-salt로 측정 불가",
+    "summary": "'신규 100% / 재방문 0%'로 표시되던 카드는 데이터 한계의 정확한 표현이지만 운영자가 가짜로 오해할 수 있어 제거. 측정 불가능 사유를 패널 description에 명시",
+    "body": "진단 (사용자 의심 제기):\n- '재방문자 0 / 신규 비율 100%' 비정상 의심\n- page_views 데이터 점검 결과: 12,335 distinct device 중 24시간 이상 재방문 device 0건(devices_with_multiday_visits=0)이 결정적 증거\n- 결론: Vercel Web Analytics SDK가 privacy-first daily-salted deviceId 사용 — 같은 사용자가 다음 방문 시 다른 deviceId 발급\n- get_pv_visitor_recurrence RPC 자체는 정상. 데이터 source가 device-level recurrence를 추적할 수 없는 구조\n\n수정:\n- InsightsPanel.tsx: 신규 vs 재방문자 AdminCard 블록 + totalVisitors/newVisitorRate 계산 제거. 패널 헤더 주석으로 측정 불가 사유 명시\n- i18n: insightsDescription·sectionBehaviorDesc에서 '재방문률/new vs returning' 언급 제거 + 측정 불가 사유 명시 (ko/en 양쪽)\n\n기존 RPC get_pv_visitor_recurrence는 그대로 유지 — admin-analytics.ts에서 호출 후 패널이 사용 안 함. 적재 변경·DB drop 불필요. 향후 재사용 가능\n\n부수: 같은 한계가 다른 패널의 '고유 방문자' 라벨에도 적용됨(실은 daily-unique session 측정). 그건 별도 라벨링 작업이라 우선 핵심 부분만 정리",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "c8add431",
+    "type": "feat",
+    "scope": "admin/analytics",
+    "subject": "GA4 페이지 보고서 패널 — 페이지 제목·engagement·이벤트 수 추가",
+    "summary": "GA4 어드민의 \"페이지 및 화면\" 보고서를 자체 admin 분석 페이지에 노출. 자체 page_views에 없는 page_title·engagement time을 GA4 Data API로 직접 fetch. 수익 컬럼은 e-commerce 측정 미설정이라 제외",
+    "body": "신규:\n- lib/ga4-client.ts — GA4 Data API server-side helper (OAuth refresh token + access token 캐시 + runReport). 메모리 project_ga4_oauth_workflow의 자동화 패턴을 server action용으로 포팅\n- app/(portal)/admin/analytics/_components/PageReportPanel.tsx — 6컬럼 표 (제목/path · 조회수 · 활성사용자 · 사용자당 조회수 · 평균 참여 시간 · 이벤트 수). max-h-[600px] sticky header\n\n수정:\n- admin-analytics.ts: AnalyticsData에 pageReport 필드 추가. RPC 호출 다음에 GA4 별도 try/catch — env 미설정·일시 장애 시 빈 배열로 graceful fallback\n- page.tsx 섹션 I (트래픽): TopPagesChart 다음에 PageReportPanel 통합\n- i18n: ko/en 11개 키 추가 (pageReport*)\n\n배경:\n- GA4 화면 데이터를 자체 admin에 노출하라는 사용자 요청 — 외부 GA4 UI 안 들어가도 확인 가능\n- engagement time(userEngagementDuration / activeUsers) = 활성 사용자당 평균 참여 시간 — 자체 page_views로는 산출 불가\n- pageTitle은 webhook payload에 안 들어와 자체 적재 불가\n\nenv 가이드 (production 배포에 필요):\n- GA4_PROPERTY_ID = 531750491 (public)\n- GA4_OAUTH_CLIENT_ID / SECRET / REFRESH_TOKEN (sensitive — .env.local에 이미 있음, Vercel UI에서 4개 production env 추가)\n- 미설정 상태면 admin 페이지에 \"GA4 데이터 없음\" empty state 노출",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "6382b792",
+    "type": "fix",
+    "scope": "webhook",
+    "subject": "Vercel Drain sessionId='0' sentinel을 NULL 처리 + session_depth RPC device_id fallback",
+    "summary": "4/17부터 22,206 PV 모두 session_id='0' 단일 값으로 적재된 회귀 발견. webhook이 sentinel 값을 NULL 처리하도록 수정 + 기존 row backfill + RPC를 device_id fallback으로 보강",
+    "body": "진단 (사용자 의심 제기):\n- admin/analytics 세션 깊이가 \"1 세션 / 22,203 PV / 평균 22,203\" 으로 비정상 표시\n- distinct_session_ids = 1, distinct_devices = 11,994 — 모든 row의 session_id가 literal '0'\n- 4/17부터 시작 (Vercel Drain SDK 변경 추정 — sessionId 미설정 상태를 0/'0' sentinel로 default 송신)\n- webhook handler line 286의 `e.sessionId != null ? String(e.sessionId) : null` 체크가 0(falsy)을 통과시켜 String(0)='0'을 적재\n\n수정:\n- isMeaningfulId() 헬퍼 신설 — 0/'0'/empty string sentinel 거부\n- session_id, device_id 모두 isMeaningfulId 통해 NULL 분기 강제\n- backfill SQL: UPDATE page_views SET session_id=NULL WHERE session_id='0' (이미 적용)\n- get_pv_session_depth RPC: COALESCE(session_id, device_id) fallback — 4/17 이후 데이터도 device-level 세션 통계로 의미 있는 값 산출\n\n검증:\n- session depth 정정 후: 총 11,994 세션 / 22,206 PV / 평균 1.85 / 중앙값 1.00 (정상)\n- 향후 webhook은 sentinel 안 박고 미래 row만 정상 session_id 적재 (Vercel SDK가 정상 ID 보내는 경우)\n\n남은 한계:\n- 4/17 이후 row의 진짜 session_id 정보는 영구 손실\n- device-level fallback은 30분 inactivity 기반 정확한 세션 분할 아님 (1 device = 1 session 단순화)\n- 향후 정확도 보강 필요 시 timestamp-window-based session 재계산",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "5ca59cf5",
+    "type": "fix",
+    "scope": "admin/analytics",
+    "subject": "잔여 3건 정리 — daily gap-fill, daily slice 적응, RPC 에러 로깅",
+    "summary": "이전 코드 리뷰의 Low #7·#8·Medium #4 마무리",
+    "body": "수정:\n- WebVitalsPanel daily 50행 임의 slice 제거 (Low #7) — `max-h-[600px] overflow-auto` + sticky header로 90d 기간(450행) 전체 표시. 50행은 30d 기간에서도 metric 5종 × 10일만 보이는 회귀였음\n- ctaClicks.donate.daily 날짜 0-fill (Low #8) — dailyTrend와 동일 패턴. 클릭 0인 날과 데이터 누락 운영자가 구분 가능\n- 9개 신규 RPC(donate*, share*, web_vitals*)에 RPC 에러 console.error 로깅 추가 (Medium #4) — Promise.all로 swallow되던 권한·SQL 에러를 운영 로그에서 진단 가능",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "17cbeedb",
+    "type": "feat",
+    "scope": "analytics",
+    "subject": "donate_click 트래킹 8개 잔존 위치 + CTAButtonGroup trackingPosition 명시 5곳",
+    "summary": "코드 리뷰가 식별한 1차 트래킹 누락. 메인·transparency·our-proof·archive/2026 페이지의 LinkButton 직접 사용처 8개 위치 + CTAButtonGroup default position 미명시 5곳 정리",
+    "body": "신규 컴포넌트:\n- TrackedDonateButton — 'use client' wrapper로 server page에서도 자동 트래킹. position prop 필수, EXTERNAL_LINKS.DONATE/JOIN_MEMBER에 따라 target 자동 분기\n\n수정 (LinkButton 직접 사용 → TrackedDonateButton 8곳):\n- app/[locale]/page.tsx (home-our-reality)\n- app/[locale]/transparency/page.tsx (transparency-en, transparency-ko) + unused EXTERNAL_LINKS import 제거\n- app/[locale]/our-proof/page.tsx (our-proof-en, our-proof-ko)\n- app/[locale]/archive/2026/page.tsx (archive-2026-en, archive-2026-ko)\n\n수정 (CTAButtonGroup trackingPosition 명시 5곳):\n- app/[locale]/about/page.tsx (about-en, about-ko)\n- app/[locale]/our-reality/page.tsx (our-reality)\n- app/[locale]/archive/2023/page.tsx (archive-2023)\n- components/features/GalleryCampaignBanner.tsx (gallery-campaign-banner)\n\n배경 — production page_views 검증:\n- web_vitals 23건 정상 적재(Phase A 작동 확인)\n- donate_click·share_click 0건 — 부분적으로 트래킹 누락이 원인으로 의심됨. 핵심 conversion CTA가 다수 페이지에서 자동 트래킹 대상에서 제외됐었음\n- 13곳 모두 정리한 결과 어드민 분석 패널의 position×target 분포가 의미 있는 값을 가질 수 있게 됨",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "918bf58f",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "Phase A·B 코드 리뷰 후속 — gtag stub 회귀 차단 + 5개 잔존 이슈 정리",
+    "summary": "feature-dev:code-reviewer가 식별한 High 1·Medium 3·Low 1 이슈 정리. 핵심은 WebVitalsTracker의 spread stub이 GoogleAnalytics 표준 stub을 오염시켜 5/1~10 GA4 무수신 회귀를 재유발할 수 있는 경로를 제거",
+    "body": "수정:\n- WebVitalsTracker.tsx (High #1): sendToGA·mount ping 양쪽에 있던 stub 등록(`(...args) => push(args)` + `function gtagStub(){push(arguments)}`) 제거. gtag 미등록 상태면 GA4 hit은 그냥 손실(자체 Vercel Analytics 적재는 살아있어 admin 패널 영향 없음). stub 등록은 GoogleAnalytics.tsx 단일 출처 원칙\n- ShareButtons.tsx (Medium #6): copy_link 트래킹을 try-clipboard 시작 직후로 이동 — 다른 4채널과 일관성 + clipboard API 실패(보안 정책·HTTP) 시 측정 누락 방지\n- TrackedExternalLink.tsx (Medium #5): page_path를 spread 앞으로 이동 — 호출자가 eventParams.page_path 명시 시 호출자 우선\n- FullscreenMenu.tsx (High #2): donate_click pathname 접근에 typeof window 가드 추가 — 다른 호출처(CTAButtonGroup·TrackedExternalLink) 패턴과 일관성\n- CtaClicksPanel.tsx (Medium #3): share empty state가 ctaDonateNoDataDesc 재사용하던 것 → ctaShareNoDataDesc 별도 키 추가 + 사용\n\ni18n: ko/en admin namespace에 ctaShareNoDataDesc 키 1쌍 추가\n\n미해결(우선순위 낮음, 사용자 결정 필요):\n- WebVitalsPanel daily 50행 slice 임의성 (Low #7)\n- CTA daily에 날짜 gap-fill 없음 (Low #8)\n- get_donate_click_summary silent fail 로깅 (Medium #4)",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "38ab7307",
+    "type": "feat",
+    "scope": "admin/analytics",
+    "subject": "donate / share CTA 트래킹 + 패널 — 외부 conversion 사각지대 측정",
+    "summary": "후원 CTA(JOIN_MEMBER·DONATE) + 공유 5채널 클릭을 자체 page_views 테이블에 적재하고, 신규 RPC 6종 + CtaClicksPanel(섹션 VII)로 admin 분석 페이지에 노출",
+    "body": "신규 helper (lib/analytics/track.ts):\n- trackEvent(name, params) — Vercel Analytics(자체 페이지뷰 적재) + GA4 gtag 양쪽 동시 송신\n- 호출부 안전성: try/catch 분리, SSR safe, value 타입 string|number|boolean|null\n\n트래킹 추가:\n- CTAButtonGroup donate 버튼 → donate_click { position, target: 'donate'|'join_member', page_path }\n- Footer JOIN_MEMBER 링크 → TrackedExternalLink 컴포넌트로 wrap (server component 내 client 트래킹 패턴)\n- FullscreenMenu JOIN_MEMBER → onClick에서 trackEvent + onClose\n- ShareButtons 5채널(facebook/twitter/kakao/sms/copy_link) → share_click { channel, page_path }\n- LinkButton에 onClick prop 추가 (분석 navigate 보조 작업용)\n\n신규 RPC (20260510230757_cta_clicks_rpc.sql, supabase MCP apply 완료):\n- get_donate_click_summary, _position_distribution(target=join_member vs donate), _daily\n- get_share_click_summary, _channel_distribution, get_top_shared_pages(TOP 10)\n- position은 PG reserved keyword라 컬럼명 position_name으로 우회(20260508110000 card_position 패턴 동일)\n\n신규 패널 (page.tsx 섹션 VII: CTA 클릭):\n- CtaClicksPanel — donate 4-stat 요약 + position×target 분포 + 일자별 추이 + share 요약·채널 분포·TOP 10 페이지\n\ni18n: ko/en admin namespace에 ctaDonate*·ctaShare* 등 28개 키 추가. 모든 사용자 노출 텍스트 i18n.\n\n기존 패널과 중복 0:\n- 외부 도메인 이탈은 기존 page_view·UTM·referrer에 안 잡혀 사각지대였음\n- 후원·가입·공유는 SAF 핵심 conversion KPI라 별도 측정 가치 큼",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "00336a8d",
+    "type": "feat",
+    "scope": "admin/analytics",
+    "subject": "RUM 패널 추가 — Web Vitals 자체 적재 기반 p75 분포·일자별 추이·LCP 느린 페이지",
+    "summary": "WebVitalsTracker가 GA4와 동시에 자체 page_views 테이블에 적재하도록 확장하고, 신규 RPC 3종으로 LCP/CLS/INP/FCP/TTFB의 p75·median·avg·rating 분포를 어드민 패널 VI에 신설",
+    "body": "이중 송신 — 어드민 패널은 자체 테이블 (GA4 의존 0):\n- WebVitalsTracker: 기존 gtag('event','web_vitals',...) 옆에 track('web_vitals',...) 추가 (Vercel Analytics → Drain webhook → page_views.event_data jsonb)\n- 인프라 추가 0건 — page_views.event_name + event_data + GIN 인덱스가 cross-link 마이그레이션(20260508110000)에서 이미 갖춰져 있음\n\n신규 RPC (20260510224728_web_vitals_rpc.sql, supabase MCP apply 완료):\n- get_web_vitals_summary(since_ts) — metric별 p75/median/avg + good/needs-improvement/poor 카운트\n- get_web_vitals_daily_p75(since_ts) — 일자별 metric × p75 추이 (회귀 진단)\n- get_web_vitals_worst_pages(since_ts, target_metric, lim) — p75 LCP 가장 느린 페이지 TOP 10 (3샘플 floor)\n\n신규 패널 (page.tsx 섹션 VI: 실측 성능 / RUM):\n- WebVitalsPanel — metric 요약 표 + 일자별 p75 추이 + LCP 느린 페이지\n- 임계 색상: good ≤ 임계 = success, poor ≥ 임계 = danger, 그 사이 sun-strong (Google CWV 공식 기준)\n- 단위 자동 분기: LCP·FCP·TTFB·INP는 ms, CLS는 score(0~1), LCP/FCP/TTFB는 큰 값일 땐 초로\n\ni18n: ko/en admin namespace에 wvTitle 등 25개 키 추가. 모든 사용자 노출 텍스트 i18n.\n\n기존 패널과 중복 0:\n- 기존 5개 대섹션(트래픽/매출/매거진/사용자행동/SEO) 어디에도 RUM 데이터 없었음\n- PSI는 lab 시뮬레이션 — 이 패널은 실측이라 ground truth로 회귀 진단",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "f7470c9c",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "매거진 본문 cross-link 위치를 마지막 CTA link 앞으로 이동 — UX 개선",
+    "summary": "이전 commit(1e68824f)에서 cross-link을 본문 끝에 단순 append했는데, 매거진 글 컨벤션상 본문은 마지막에 [씨앗페에서 ... 보기 →](/...) 형태의 CTA link로 끝남. cross-link이 그 뒤에 와서 흐름이 어색했음. 마지막 CTA link 또는 horizontal rule(---) 직전에 삽입하도록 변경.",
+    "body": "- insertCrossLinksBeforeFinalCta(): body 끝에서 거꾸로 훑으며 horizontal rule 또는 단독 markdown link 라인을 anchor로 찾고, 그 직전에 cross-link 섹션 삽입\n- anchor 못 찾으면 단순 append (fallback)\n- 자연스러운 흐름: \"본문 → 다른 글 추천 → 마무리 CTA\"\n- stories/[slug]/page.tsx에서 단순 string concat 대신 헬퍼 사용\n- 테스트 8개 (한·영 markdown 생성 + 4가지 anchor 패턴)",
+    "date": "2026-05-10",
+    "author": "황경하"
+  },
+  {
     "hash": "1e68824f",
     "type": "feat",
     "scope": "seo",

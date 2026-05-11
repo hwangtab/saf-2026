@@ -1,6 +1,6 @@
 'use client';
 
-import { track } from '@vercel/analytics';
+import { trackEvent } from '@/lib/analytics/track';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import type { Story } from '@/types';
@@ -40,18 +40,14 @@ export default function RelatedMagazineCard({
   const thumbUrl = story.thumbnail || extractFirstImage(story.body);
 
   function handleClick() {
-    try {
-      track('artwork_to_story_click', {
-        artwork_id: artworkId,
-        artwork_artist: artworkArtist,
-        story_slug: story.slug,
-        story_category: story.category,
-        position,
-      });
-    } catch (error) {
-      // 분석 실패가 navigation을 막아선 안 됨 — 조용히 로깅만.
-      console.error('[RelatedMagazineCard] analytics track failed:', error);
-    }
+    // trackEvent는 내부에서 try/catch — navigation 막지 않음 + Vercel/GA4 이중 송신.
+    trackEvent('artwork_to_story_click', {
+      artwork_id: artworkId,
+      artwork_artist: artworkArtist,
+      story_slug: story.slug,
+      story_category: story.category,
+      position,
+    });
   }
 
   return (
