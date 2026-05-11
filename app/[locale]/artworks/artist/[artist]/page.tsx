@@ -46,13 +46,16 @@ import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-// 이전 force-static + dynamicParams=true에서 ISR이 stale 500을 prerender 결과로 보관하던
-// 회귀가 force-dynamic 우회(baf05ceb)로 검증됨 — 새 lambda 실행 시 200 정상 응답. 새 빌드는
-// 이전 ISR 캐시를 무효화하므로 force-static 복원 시 첫 hit 시 SSG에서 새 코드로 200 캐시.
-// dynamicParams=true + revalidate=3600으로 on-demand SSG 패턴 복원.
-export const dynamic = 'force-static';
-export const dynamicParams = true;
-export const revalidate = 3600;
+// force-dynamic 영구 유지 — force-static 환경에서만 발생하는 production-only throw 회귀
+// (류연복·천지윤·송광호·이문호 등). dev mode는 200 정상 응답, force-dynamic도 200, 오직
+// SSG/ISR 빌드 prerender 시점에만 'TypeError: Invalid character' throw하고 그게 ISR에 stale
+// 500으로 박힘. force-static 복원 시도(27d33770) 후 동일 회귀 재발 확인. throw origin은
+// Vercel build 환경에서만 재현되어 trace 캡처 어려움.
+// Trade-off: 매 요청 lambda(~200~500ms TTFB 증가) vs CDN 캐시 성능. 작가 페이지는 트래픽
+// 1% 미만이라 cost 영향 작음. SEO는 영향 없음 (Googlebot 첫 hit 시 SSR로 정상 200).
+// 근본 origin 파악되면 force-static 재시도 가능.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface Props {
   params: Promise<{
