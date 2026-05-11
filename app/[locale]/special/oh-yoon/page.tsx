@@ -142,8 +142,8 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
 
   const ohYoonPerson = {
     '@type': 'Person',
-    name: '오윤',
-    alternateName: 'Oh Yoon',
+    name: isEnglish ? 'Oh Yoon' : '오윤',
+    alternateName: isEnglish ? '오윤' : 'Oh Yoon',
     jobTitle: isEnglish ? 'Artist' : '화가',
     description: isEnglish
       ? "Oh Yoon (1946–1986) was a pivotal figure in Korean people's art (minjung misul), known for bold woodblock prints depicting the lives of workers and farmers."
