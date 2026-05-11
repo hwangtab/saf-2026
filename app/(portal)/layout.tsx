@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
+import localFont from 'next/font/local';
 import { Noto_Sans_KR } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
@@ -15,12 +16,23 @@ import '@/styles/portal.css';
  * 관리자·작가 포털은 KO 전용이라 <html lang="ko"> 고정.
  */
 
-const notoSansKR = Noto_Sans_KR({
-  weight: ['400', '500', '700', '900'],
-  subsets: ['latin'],
+// Pretendard Std Variable — [locale] layout 주석 참고. KS X 1001 한글 + Latin 단일 woff2.
+const pretendard = localFont({
+  src: '../../public/fonts/PretendardStdVariable.woff2',
   variable: '--font-sans',
-  display: 'optional',
-  adjustFontFallback: true,
+  display: 'swap',
+  weight: '45 920',
+  style: 'normal',
+  adjustFontFallback: 'Arial',
+});
+
+const notoSansKrHanja = Noto_Sans_KR({
+  weight: '400',
+  subsets: [],
+  variable: '--font-han',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
 });
 
 export const viewport: Viewport = {
@@ -47,7 +59,11 @@ export default async function PortalLayout({ children }: { children: React.React
   const t = await getTranslations('a11y');
 
   return (
-    <html lang="ko" className={notoSansKR.variable} suppressHydrationWarning>
+    <html
+      lang="ko"
+      className={`${pretendard.variable} ${notoSansKrHanja.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />

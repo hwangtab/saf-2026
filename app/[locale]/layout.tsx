@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
 import { Noto_Sans_KR } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
@@ -29,12 +30,33 @@ import '@/styles/globals.css';
  * 현재: [locale]/layout.tsx가 root로 승격, <html lang={locale}>로 정적 prerender 호환 + 정확.
  */
 
-const notoSansKR = Noto_Sans_KR({
-  weight: ['400', '500', '700', '900'],
-  subsets: ['latin'],
+/**
+ * Pretendard Std Variable (v1.3.9) — KS X 1001 표준 한글(2350자) + Latin 단일 woff2 (291KB).
+ * next/font/local로 self-host되어 `<link rel="preload" as="font">`가 HTML head에 자동 삽입됨.
+ * 이전 옵션 B(globals.css @import) 회귀(caaf9a21 → 5f6aa2c9): preload tag 누락 + render-blocking
+ * CSS chunk 3개로 LCP 5.3s→6.5s 악화. 이번에는 next/font 최적화를 받아야 회귀 회피.
+ *
+ * 변수 폰트 weight 범위 45~920 (Pretendard 사양). adjustFontFallback로 metric 보정 → CLS 0 유지.
+ * KS X 1001에 없는 한자/고문은 아래 notoSansKrHanja(preload: false)로 자동 fallback.
+ */
+const pretendard = localFont({
+  src: '../../public/fonts/PretendardStdVariable.woff2',
   variable: '--font-sans',
-  display: 'optional',
-  adjustFontFallback: true,
+  display: 'swap',
+  weight: '45 920',
+  style: 'normal',
+  adjustFontFallback: 'Arial',
+});
+
+// 한자 fallback — KS X 1001 범위 밖 글리프(고문/CJK 확장)는 시스템 명조체 대신 Noto Sans KR로.
+// preload: false라 HTML head에 preload link 안 만들어짐 (한자 페이지에서만 lazy load).
+const notoSansKrHanja = Noto_Sans_KR({
+  weight: '400',
+  subsets: [],
+  variable: '--font-han',
+  display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
 });
 
 export const viewport: Viewport = {
@@ -169,7 +191,11 @@ export default async function LocaleLayout({
   const localBusinessSchema = generateLocalBusinessSchema(localeForSchema);
 
   return (
-    <html lang={locale} className={notoSansKR.variable} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${pretendard.variable} ${notoSansKrHanja.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />

@@ -10,9 +10,11 @@ const config: Config = {
         slate: {}, // slate 팔레트 비활성화 — gray 브랜드 토큰 사용
       },
       fontFamily: {
-        // 기본 폰트 (본문) — Noto Sans KR
+        // 기본 폰트 (본문) — Pretendard Std Variable (KS X 1001 한글 + Latin).
+        // var(--font-han) = Noto Sans KR (preload: false, lazy) — KS X 1001 밖 한자/고문 fallback.
         sans: [
           'var(--font-sans)',
+          'var(--font-han)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
@@ -21,16 +23,23 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
-        // 히어로 타이틀 — Noto Sans KR. weight는 globals.css 또는 컴포넌트에서 font-black/font-bold 명시
+        // 히어로 타이틀 — Pretendard. weight는 globals.css 또는 컴포넌트에서 font-black/font-bold 명시
         display: [
           'var(--font-sans)',
+          'var(--font-han)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
           'sans-serif',
         ],
-        // 섹션 제목 — Noto Sans KR Bold (본문 변수 재사용, weight는 globals.css에서 명시)
-        section: ['var(--font-sans)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        // 섹션 제목 — Pretendard Bold (본문 변수 재사용, weight는 globals.css에서 명시)
+        section: [
+          'var(--font-sans)',
+          'var(--font-han)',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif',
+        ],
       },
       backgroundImage: {
         'gradient-portal': 'radial-gradient(circle at top, #EDF3FF 0%, #F7F8FA 38%, #FFFFFF 100%)',
