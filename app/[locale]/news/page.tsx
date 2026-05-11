@@ -147,6 +147,10 @@ const SOURCE_NAME_MAP: Record<string, { ko: string; en: string }> = {
   아시아경제: { ko: '아시아경제', en: 'Asia Economy' },
   ABC뉴스: { ko: 'ABC뉴스', en: 'ABC News' },
   소셜임팩트뉴스: { ko: '소셜임팩트뉴스', en: 'Social Impact News' },
+  경기종합뉴스: { ko: '경기종합뉴스', en: 'Gyeonggi News' },
+  공직신문: { ko: '공직신문', en: 'Public Service News' },
+  이로운넷: { ko: '이로운넷', en: 'Ilon Net' },
+  EBN: { ko: 'EBN', en: 'EBN' },
 };
 
 const localizeSourceName = (source: string, locale: LocaleCode): string => {
