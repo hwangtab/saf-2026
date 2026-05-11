@@ -131,6 +131,10 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   return {
     ...baseMetadata,
     keywords: keywordBase.filter((k): k is string => Boolean(k)),
+    // 영문 작품 detail은 noindex — 348개 × en/ko = thin/duplicate content risk.
+    // 작품 description_en이 충실치 않은 경우 Google "Crawled, not indexed" 판정 자주 발생.
+    // 한국어 작품 detail은 index 유지 (검색 트래픽 핵심).
+    ...(isEnglish ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       ...baseMetadata.openGraph,
       type: 'website',

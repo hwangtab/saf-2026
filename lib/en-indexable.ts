@@ -1,24 +1,46 @@
 /**
- * 영문 페이지 indexable 화이트리스트 — 단일 출처.
+ * 영문 페이지 sitemap·hreflang 화이트리스트 — 단일 출처.
  *
- * [locale]/layout.tsx의 generateMetadata는 영문 페이지를 기본 robots: { index: false, follow: true }
- * 로 막아둠 (자동 번역 thin content 회피). 그러나 영문 본문이 직접 작성된 일부 페이지·매거진 글은
- * indexable로 풀어 해외 컬렉터 long-tail entry로 활용.
+ * 2026-05-11 i18n backfill 296 rows 후 정책 변경:
+ * - 과거: layout에서 영문 전체 noindex + 이 화이트리스트로 일부만 index 허용
+ * - 현재: layout robots 차단 제거 → 영문 기본 index 허용. 이 화이트리스트는 sitemap의
+ *   `bilingualAlternates` (hreflang ko/en 양방향) 발행 대상.
  *
- * Next.js metadata 머지 규칙: 페이지 generateMetadata에서 robots를 명시하면 layout robots 객체가
- * 통째로 교체됨. 따라서 indexable로 풀려는 페이지에서 robots: { index: true, follow: true,
- * googleBot: {...} } 형태로 명시 필요.
+ * sitemap에 명시 발행되면 Google이 ko↔en alternate를 인지해:
+ * 1. duplicate content penalty 차단
+ * 2. 사용자 검색 언어에 맞는 변형 우선 노출
+ * 3. 영문 검색 쿼리에 영문 페이지 인입
+ *
+ * 화이트리스트 외 페이지(작품 detail·매거진 detail·category·artist 등)는 각 generateMetadata
+ * 에서 `isEn ? robots: { index: false }` 명시로 noindex 처리.
  *
  * 추가 시 주의사항:
- * - 자동 번역(getTranslations·copy.en) 페이지는 절대 화이트리스트에 넣지 말 것
- * - 영문 본문이 직접 hand-written이거나, body_en 컬럼에 충분한 영어 본문이 있는 경우만 허용
- * - 페이지 추가 시 production에서 영문 본문 직접 확인 + en/ko 양쪽 다 자연스러운지 검증
+ * - 영문 본문이 native level인 페이지만 추가
+ * - 페이지별 generateMetadata에 robots noindex 없는지 확인 (없어야 sitemap 색인 의미 있음)
  */
 
 import type { Metadata } from 'next';
 
-/** 영문에서 indexable로 푼 정적 페이지 path 화이트리스트 */
-export const EN_INDEXABLE_PAGES: ReadonlySet<string> = new Set(['/about']);
+/**
+ * 영문에서 sitemap bilingualAlternates 발행 대상.
+ * 핵심 정보 페이지 — i18n backfill로 native quality 확보됨.
+ * '' = 홈.
+ */
+export const EN_INDEXABLE_PAGES: ReadonlySet<string> = new Set([
+  '',
+  '/about',
+  '/our-reality',
+  '/our-proof',
+  '/transparency',
+  '/petition/oh-yoon',
+  '/special/oh-yoon',
+  '/archive',
+  '/archive/2023',
+  '/archive/2026',
+  '/news',
+  '/artworks',
+  '/stories',
+]);
 
 /** 영문에서 indexable로 푼 매거진 story slug 화이트리스트 */
 export const EN_INDEXABLE_STORY_SLUGS: ReadonlySet<string> = new Set([

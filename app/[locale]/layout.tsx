@@ -55,23 +55,22 @@ export async function generateMetadata({
       ? 'Korean contemporary art, original artworks for sale, art gallery, artist mutual aid, SAF Online, Seed Art Festival, paintings, prints, sculpture, photography, Seoul art exhibition'
       : '한국 현대미술, 미술 작품 구매, 작품 원본 구매, 회화 원본, 판화 원본, 사진 작품, 조각 작품, 서울 전시회, 현대미술 전시회, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 예술인 금융 차별, 예술인 대출',
     authors: [{ name: isEn ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME }],
-    // 영문 사이트는 색인 제외 (자동 번역 수준이라 thin/duplicate content). follow는 유지해 내부
-    // 링크 발견·평가에는 영향 없음. /ko는 root layout robots를 그대로 inherit (index:true).
-    // Next.js metadata 머지 규칙상 자식이 robots를 설정하면 부모 robots 객체가 통째로 교체됨 →
-    // /en만 명시 override해 googleBot 디렉티브 함께 유지. 페이지별 robots는 그쪽이 우선.
-    ...(isEn && {
-      robots: {
-        index: false,
-        follow: true,
-        googleBot: {
-          index: false,
-          follow: true,
-          'max-snippet': -1,
-          'max-image-preview': 'large' as const,
-          'max-video-preview': -1,
-        },
+    // hreflang alternates — Google에 ko/en이 같은 콘텐츠의 언어 변형임을 명시.
+    // duplicate content penalty 차단 + 사용자 검색 언어에 맞는 변형 서빙.
+    // x-default는 한국 사이트라 ko로 지정 (Google이 unmatched locale에 ko 서빙).
+    // 페이지별 metadata가 alternates를 override할 수 있어 detail 페이지는 자체 canonical 사용.
+    alternates: {
+      languages: {
+        ko: '/',
+        en: '/en',
+        'x-default': '/',
       },
-    }),
+    },
+    // 영문 색인 정책 (2026-05-11 i18n backfill 296 rows 완료 후 부분 허용):
+    // - layout 자체 robots 차단 제거 → 영문 핵심 페이지(home·about·our-reality·our-proof·
+    //   transparency·petition·archive·news·artworks listing·stories listing) 색인 허용
+    // - 작품 detail·매거진 detail·category·artist 페이지는 각 페이지의 generateMetadata
+    //   에서 isEn noindex 명시 (thin/duplicate content 위험 차단)
     openGraph: {
       type: 'website',
       locale: isEn ? 'en_US' : 'ko_KR',

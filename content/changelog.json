@@ -1,5 +1,15 @@
 [
   {
+    "hash": "4cb93f80",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "/en SEO metadata + JSON-LD schema KO leak 완전 차단",
+    "summary": "이전 7039e846가 visible UI 한국어 leak을 해결했지만 SEO metadata와",
+    "body": "JSON-LD 구조화 데이터는 여전히 KO. Google·AI crawler가 /en 페이지를 한국\n브랜드로 인식하는 회귀를 root layout → [locale] layout으로 metadata/schema\n주체 이전해 차단.\n\n[증상]\n/en 페이지에 다음 KO leak — Google SERP description·rich result·AI crawler 영향:\n- <meta name=\"description\"> KO (페이지 override 없으면 root KO inherit)\n- <meta name=\"keywords\"> 모든 /en 페이지 한국어\n- <meta name=\"author\"> '한국스마트협동조합' 모든 /en 페이지\n- <meta property=\"og:title/description/locale\"> KO inherit\n- Organization JSON-LD: name='한국스마트협동조합', description=KO, knowsAbout=[KO 키워드]\n- WebSite JSON-LD: name='씨앗페 온라인', description=KO\n- ArtGallery JSON-LD: name='씨앗페 온라인 (...)', streetAddress=KO, paymentAccepted=KO\n\n[원인]\napp/layout.tsx (root)는 모든 라우트가 공유하므로 dynamic API 사용 시 전체 라우트가\ndynamic(ƒ)으로 강제됨 → 정적 렌더링 호환 위해 KO 기본값으로 하드코딩.\n설계 의도였지만 /en SEO 부정 영향이 누적.\n\n[수정]\n- app/[locale]/layout.tsx generateMetadata 확장:\n  - description/keywords/authors/openGraph(title/desc/locale/siteName)/twitter 모두 locale별 분기\n  - /ko: KO 명시 (root에서 제거된 fallback 보전)\n  - /en: EN 명시 (override)\n  - robots는 /en에만 noindex 적용 (/ko inherit root index:true)\n- app/[locale]/layout.tsx body에 locale-aware JSON-LD 추가:\n  - generateOrganizationSchema(locale), generateWebsiteSchema(locale), generateLocalBusinessSchema(locale)\n  - setRequestLocale 덕에 정적 prerender 호환\n- app/layout.tsx 정리:\n  - locale-specific 필드(description/keywords/authors/openGraph KO/twitter KO) 제거\n  - 3개 JsonLdScript 호출 + generator import 제거\n  - Twitter site handle만 locale-agnostic 유지\n  - 주석 갱신\n- lib/schemas/organization.ts:\n  - Organization.address.streetAddress: isEnglish ? ADDRESS_EN : ADDRESS\n  - LocalBusiness.address.streetAddress: isEnglish ? EXHIBITION.ADDRESS_EN : EXHIBITION.ADDRESS\n- lib/constants.ts:\n  - EXHIBITION.ADDRESS_EN '41-1, Insadong-gil, Jongno-gu, Seoul' 추가\n\n[검증]\ndev server fetch:\n- /en JSON-LD: 11개 중 1개만 KO 잔존 (Organization.legalName/alternateName — 한국 법인\n  등록명, schema.org 의도된 사용)\n- /en metadata 태그: KO leak 0건\n- /ko 회귀 없음: keywords/author/og:title 모두 KO 정상",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "2a0fa4f7",
     "type": "fix",
     "scope": "admin/analytics",

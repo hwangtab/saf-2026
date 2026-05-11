@@ -392,6 +392,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: meta.description,
     keywords: meta.keywords,
     alternates: createLocaleAlternates(categoryPath, locale),
+    // 영문 매거진 카테고리는 noindex — 자동 fallback 콘텐츠 thin content risk.
+    // 한국어 카테고리는 index 유지.
+    ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title: meta.title,
       description: meta.description,
