@@ -22,13 +22,14 @@ export interface StorySeoOverride {
 
 export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
   'editions-explained': {
-    titleKo: '한정판 에디션 뜻과 종류 — 원화·한정판·오픈 에디션 차이 | 씨앗페 매거진',
-    titleEn:
-      'What Are Limited Editions? Original vs Limited vs Open Editions Explained | SAF Magazine',
+    // GSC: "에디션 뜻" 225 imp / 0 click — 검색어 정확 매칭으로 title 시작어 변경.
+    // 이전 title이 "한정판 에디션 뜻"으로 시작해 "에디션 뜻" 단독 검색자에게 매칭 약함.
+    titleKo: '에디션 뜻 — 미술 작품 5/10, AP, EA 의미 | 원화·한정판 에디션 가이드',
+    titleEn: 'Edition Meaning in Art — What 1/10, 5/20, AP, EA Mean | Original vs Limited Guide',
     descriptionKo:
-      '한정판 에디션이란? 원화와 판화의 차이, 에디션 번호 읽는 법까지. 미술 작품을 구매하기 전 반드시 알아야 할 에디션 개념을 정리합니다.',
+      '에디션은 미술 작품의 발행 번호. ‘5/10’은 10점 한정 중 5번째 작품이라는 뜻. 원화·한정판·오픈 에디션의 차이와 가격에 미치는 영향을 씨앗페 작품 사례로 정리합니다.',
     descriptionEn:
-      'What does "limited edition" mean in art? Original vs limited vs open editions, edition numbering basics, and what to check before buying.',
+      'An edition number marks an artwork’s print run. ‘5/10’ means the 5th print of 10 total. See the differences between original, limited, and open editions with real SAF artwork examples.',
   },
   'world-of-printmaking': {
     titleKo: '판화 뜻과 종류 — 원본이 여러 장이라고? 판화의 세계 | 씨앗페 매거진',

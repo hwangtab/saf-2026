@@ -34,7 +34,11 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
-import { resolveArtworkImageUrlForPreset, shuffleArray } from '@/lib/utils';
+import {
+  resolveArtworkImageUrlForPreset,
+  resolveOptimizedArtworkImageUrl,
+  shuffleArray,
+} from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
@@ -280,24 +284,40 @@ export default async function ArtworkDetailPage({ params }: Props) {
         }
       : purchaseFaqSchema;
 
-  // LCP preload — 모바일은 slider 프리셋(400w) / 데스크톱은 detail(1600w)
-  // imageSrcSet + imageSizes로 <picture> + media query 분기에 맞춰 브라우저가 올바른 URL 선택
-  const lcpImageSrc = artwork.images?.[0]
+  // LCP preload — ArtworkImage <picture> 와 media query·srcset 정확히 매칭.
+  //   모바일(<768px): mobileSrc(slider 400w) 단독 fetch
+  //   데스크톱(>=768px): desktop1x(detail 1600w) + desktop2x(hero 1920w) DPR 분기
+  // 이전엔 단일 link에 imageSrcSet width descriptor가 실제 width와 불일치(`767w`/`1920w`로
+  // mislabel)였고 모바일 DPR 2.x에서 preload가 1600w를 fetch해 picture가 결국 400w를 다시
+  // fetch — double download. media query로 분리해 picture와 1:1 매칭, double download 차단.
+  const lcpImageMobile = artwork.images?.[0]
     ? resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')
     : null;
-  const lcpImageSrcSetDesktop = artwork.images?.[0]
+  const lcpImageDesktop1x = artwork.images?.[0]
     ? resolveArtworkImageUrlForPreset(artwork.images[0], 'detail')
+    : null;
+  const lcpImageDesktop2x = artwork.images?.[0]
+    ? resolveOptimizedArtworkImageUrl(artwork.images[0], { width: 1920, quality: 80 })
     : null;
 
   return (
     <>
-      {lcpImageSrc && lcpImageSrcSetDesktop && (
+      {lcpImageMobile && (
         <link
           rel="preload"
           as="image"
-          href={lcpImageSrc}
-          imageSrcSet={`${lcpImageSrc} 767w, ${lcpImageSrcSetDesktop} 1920w`}
-          imageSizes="(max-width: 767px) 100vw, 50vw"
+          href={lcpImageMobile}
+          media="(max-width: 767px)"
+          fetchPriority="high"
+        />
+      )}
+      {lcpImageDesktop1x && lcpImageDesktop2x && (
+        <link
+          rel="preload"
+          as="image"
+          href={lcpImageDesktop1x}
+          imageSrcSet={`${lcpImageDesktop1x} 1x, ${lcpImageDesktop2x} 2x`}
+          media="(min-width: 768px)"
           fetchPriority="high"
         />
       )}
