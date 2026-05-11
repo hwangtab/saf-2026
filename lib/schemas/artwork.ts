@@ -3,6 +3,7 @@ import { SITE_URL, CAMPAIGN, MERCHANT_POLICIES, CONTACT } from '@/lib/constants'
 import { createPageMetadata } from '@/lib/seo';
 import { formatArtistName } from '@/lib/utils';
 import { getArtformForSchema, classifyArtworkMedium } from '@/lib/art-taxonomy';
+import { getCategoryLabel } from '@/lib/artwork-category';
 import { Artwork } from '@/types';
 import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from './utils';
 import { createBreadcrumbSchema } from './breadcrumb';
@@ -68,6 +69,9 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     (descSnippet ? `${descSnippet}... ` : '') +
     (profileSnippet ? `${profileSnippet}...` : '');
 
+  // /en keywords·meta에 KO category(회화·판화 등)가 그대로 들어가던 누락 — locale별 라벨 매핑
+  const categoryForLocale = artwork.category ? getCategoryLabel(artwork.category, locale) : null;
+
   const keywordBase = isEnglish
     ? [
         artistForLocale,
@@ -75,8 +79,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         materialForLocale,
         'Korean art',
         'original artwork',
-        artwork.category || null,
-        artwork.category ? `buy ${artwork.category}` : null,
+        categoryForLocale,
+        categoryForLocale ? `buy ${categoryForLocale}` : null,
         'SAF Online',
         'buy artwork',
       ]
@@ -152,7 +156,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
                 `"${titleForLocale}" by ${artistForLocale}`,
                 artwork.year ? `(${artwork.year})` : '',
                 materialForLocale ? `— ${materialForLocale}` : '',
-                artwork.category ? `— ${artwork.category}` : '',
+                categoryForLocale ? `— ${categoryForLocale}` : '',
                 '| SAF Online',
               ]
                 .filter(Boolean)
@@ -182,7 +186,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
                 `"${titleForLocale}" by ${artistForLocale}`,
                 artwork.year ? `(${artwork.year})` : '',
                 materialForLocale ? `— ${materialForLocale}` : '',
-                artwork.category ? `— ${artwork.category}` : '',
+                categoryForLocale ? `— ${categoryForLocale}` : '',
                 '| SAF Online',
               ]
                 .filter(Boolean)
@@ -403,13 +407,13 @@ export function generateArtworkJsonLd(
     // GSC가 PeopleAudience 고정값을 "audience 개체 유형이 잘못됨"으로 16건 보고함.
     // 모든 작품에 동일 적용되는 의류 카탈로그성 필드라 SEO 가치도 없어 제거.
     artform: getArtformForSchema(materialForLocale || ''),
-    // Category for faceted navigation SEO
+    // Category for faceted navigation SEO — name/alternateName은 locale별로 swap
     ...(mediumCategory && {
       category: {
         '@type': 'Thing',
         '@id': `${SITE_URL}/artworks?medium=${mediumCategory.id}`,
-        name: mediumCategory.name,
-        alternateName: mediumCategory.nameEn,
+        name: isEnglish ? mediumCategory.nameEn : mediumCategory.name,
+        alternateName: isEnglish ? mediumCategory.name : mediumCategory.nameEn,
       },
     }),
     image: {

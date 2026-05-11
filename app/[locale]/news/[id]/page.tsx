@@ -7,6 +7,7 @@ import { generateNewsArticleSchema, createBreadcrumbSchema } from '@/lib/seo-uti
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { OG_IMAGE } from '@/lib/constants';
 import { resolveLocale } from '@/lib/server-locale';
+import { localizeNewsSource } from '@/lib/news-source';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import LinkButton from '@/components/ui/LinkButton';
@@ -38,14 +39,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const pageUrl = buildLocaleUrl(path, locale);
   const isEn = locale === 'en';
   const localizedTitle = isEn ? article.title_en?.trim() || article.title : article.title;
+  const localizedSource = localizeNewsSource(article.source, locale);
   const localizedRawDesc = isEn
     ? article.description_en?.trim() || article.description
     : article.description;
   const description = localizedRawDesc
     ? localizedRawDesc.substring(0, 160)
     : isEn
-      ? `Coverage by ${article.source}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
-      : `${article.source}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
+      ? `Coverage by ${localizedSource}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
+      : `${localizedSource}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
 
   return {
     title: localizedTitle,
@@ -55,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           'SAF Online',
           'Korean artist financial discrimination',
           'artist mutual aid',
-          article.source,
+          localizedSource,
           'art news',
           'Korean art',
         ]
@@ -63,7 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           '씨앗페',
           '예술인 금융 차별',
           '상호부조 기금',
-          article.source,
+          localizedSource,
           '예술인 뉴스',
           '씨앗페 보도',
         ],
@@ -77,7 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       publishedTime: article.date,
       modifiedTime: article.date,
-      authors: [article.source],
+      authors: [localizedSource],
       section: locale === 'en' ? 'News' : '언론 보도',
       images: article.thumbnail
         ? [{ url: article.thumbnail, width: 1200, height: 630, alt: localizedTitle }]
@@ -112,14 +114,15 @@ export default async function NewsArticlePage({ params }: Props) {
 
   const isEn = locale === 'en';
   const localizedTitle = isEn ? article.title_en?.trim() || article.title : article.title;
+  const localizedSource = localizeNewsSource(article.source, locale);
   const localizedDescriptionRaw = isEn
     ? article.description_en?.trim() || article.description
     : article.description;
   const description = localizedDescriptionRaw
     ? localizedDescriptionRaw.substring(0, 160)
     : isEn
-      ? `Coverage by ${article.source}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
-      : `${article.source}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
+      ? `Coverage by ${localizedSource}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
+      : `${localizedSource}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
 
   const articleSchema = generateNewsArticleSchema({
     title: localizedTitle,
@@ -127,7 +130,7 @@ export default async function NewsArticlePage({ params }: Props) {
     datePublished: article.date,
     image: article.thumbnail || OG_IMAGE.url,
     url: buildLocaleUrl(`/news/${article.id}`, locale),
-    sourceName: article.source,
+    sourceName: localizedSource,
     locale,
   });
 
@@ -144,7 +147,7 @@ export default async function NewsArticlePage({ params }: Props) {
       <JsonLdScript data={[articleSchema, breadcrumbSchema]} />
       <PageHero
         title={localizedTitle}
-        description={`${article.source} · ${article.date}`}
+        description={`${localizedSource} · ${article.date}`}
         breadcrumbItems={breadcrumbItems}
       />
       <Section>

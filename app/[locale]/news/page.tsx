@@ -8,6 +8,7 @@ import PageHero from '@/components/ui/PageHero';
 import Badge from '@/components/ui/Badge';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { getSupabaseNews } from '@/lib/supabase-data';
+import { localizeNewsSource } from '@/lib/news-source';
 import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
 import { containsHangul } from '@/lib/search-utils';
@@ -140,24 +141,9 @@ type HighlightQuote = {
   highlights?: string[];
 };
 
-const SOURCE_NAME_MAP: Record<string, { ko: string; en: string }> = {
-  한겨레: { ko: '한겨레', en: 'Hankyoreh' },
-  '월간 믹싱': { ko: '월간 믹싱', en: 'Mixing Magazine' },
-  뉴스아트: { ko: '뉴스아트', en: 'NewsArt' },
-  아시아경제: { ko: '아시아경제', en: 'Asia Economy' },
-  ABC뉴스: { ko: 'ABC뉴스', en: 'ABC News' },
-  소셜임팩트뉴스: { ko: '소셜임팩트뉴스', en: 'Social Impact News' },
-  경기종합뉴스: { ko: '경기종합뉴스', en: 'Gyeonggi News' },
-  공직신문: { ko: '공직신문', en: 'Public Service News' },
-  이로운넷: { ko: '이로운넷', en: 'Ilon Net' },
-  EBN: { ko: 'EBN', en: 'EBN' },
-};
-
-const localizeSourceName = (source: string, locale: LocaleCode): string => {
-  const mapped = SOURCE_NAME_MAP[source];
-  if (!mapped) return source;
-  return locale === 'en' ? mapped.en : mapped.ko;
-};
+// 매핑은 lib/news-source.ts로 추출 — 목록·detail 페이지 공통 사용.
+const localizeSourceName = (source: string, locale: LocaleCode): string =>
+  localizeNewsSource(source, locale);
 
 const localizeArticleDescription = (
   description: string,

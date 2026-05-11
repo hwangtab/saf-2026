@@ -299,7 +299,9 @@ export default async function StoryDetailPage({ params }: Props) {
     locale,
     articleSection: categoryLabel,
     categoryUrl,
-    keywords: story.tags ?? undefined,
+    // story.tags는 DB에 KO만 저장 (tags_en 컬럼 부재). /en에 KO 키워드 발행하면
+    // BlogPosting.keywords에 한국어 노출 누락 — 영문 검색 시그널 의미 없음. /en은 생략.
+    keywords: isEn ? undefined : (story.tags ?? undefined),
     mentions: [
       ...relatedArtworks.map((art) => ({
         type: 'Product' as const,
