@@ -17,6 +17,7 @@ import {
   generateExhibitionSchema,
   generateFAQSchema,
   generateCampaignSchema,
+  createBreadcrumbSchema,
 } from '@/lib/seo-utils';
 import {
   generateArtworkPurchaseHowTo,
@@ -235,6 +236,14 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
             cssSelector: ['h1'],
           },
         }}
+      />
+      {/* BreadcrumbList — 홈은 self-reference 단일 노드지만 네이버 풍부결과 가이드 권장.
+          다른 detail/category 페이지의 breadcrumb chain과 일관성 유지 + 검색 엔진이
+          siteNavigationElement로 인식하는 보조 신호. */}
+      <JsonLdScript
+        data={createBreadcrumbSchema([
+          { name: locale === 'en' ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
+        ])}
       />
       <JsonLdScript data={generateExhibitionSchema([], locale)} />
       <JsonLdScript data={generateCampaignSchema(locale)} />
