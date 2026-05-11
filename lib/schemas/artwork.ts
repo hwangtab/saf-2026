@@ -304,9 +304,11 @@ export function generateArtworkJsonLd(
   };
 
   // Shipping details for e-commerce SEO
+  // @id 제거 — 340+ 작품에서 동일 `#shipping-domestic` 공유 시 schema.org graph상
+  // 단일 정책 노드로 병합되어 일부 파서가 충돌. inline OfferShippingDetails로 발행하면
+  // Google이 작품별 독립 정책으로 인식 (정책 내용은 동일해도 그래프 위치 명확).
   const shippingDetails = {
     '@type': 'OfferShippingDetails',
-    '@id': `${SITE_URL}#shipping-domestic`,
     shippingRate: {
       '@type': 'MonetaryAmount',
       value: MERCHANT_POLICIES.SHIPPING.rate.toString(),
@@ -389,7 +391,8 @@ export function generateArtworkJsonLd(
     '@type': 'VisualArtwork',
     '@id': `${SITE_URL}/artworks/${artwork.id}`,
     name: titleForLocale,
-    inLanguage: isEnglish ? 'en' : 'ko',
+    // BCP 47 형식 (en-US, ko-KR) — ItemPage 노드(line ~555)와 일관성 통일.
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     // GSC가 PeopleAudience 고정값을 "audience 개체 유형이 잘못됨"으로 16건 보고함.
     // 모든 작품에 동일 적용되는 의류 카탈로그성 필드라 SEO 가치도 없어 제거.
     artform: getArtformForSchema(materialForLocale || ''),
