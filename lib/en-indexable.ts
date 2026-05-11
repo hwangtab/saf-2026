@@ -52,23 +52,34 @@ export const EN_INDEXABLE_STORY_SLUGS: ReadonlySet<string> = new Set([
 /**
  * 영문 페이지의 robots 메타데이터를 결정.
  * - locale === 'en' && indexable === true → 색인 허용 + GoogleBot 디렉티브 명시
- * - 그 외 → undefined 반환 (layout의 기본 robots 사용)
+ * - locale === 'en' && indexable === false → 명시 noindex (canonical=ko의 약한 신호 보강)
+ * - locale === 'ko' → undefined (layout 기본 robots 사용)
+ *
+ * canonical만으로는 Google이 100% 따르지 않는 경우가 있어 noindex 메타 명시가 안전망.
+ * 외부 링크로 발견된 비-EN_INDEXABLE 영문 페이지가 색인되는 시나리오 차단.
  */
 export function resolveEnRobots(
   locale: string,
   indexable: boolean
 ): Metadata['robots'] | undefined {
-  if (locale !== 'en' || !indexable) return undefined;
+  if (locale !== 'en') return undefined;
 
-  return {
-    index: true,
-    follow: true,
-    googleBot: {
+  if (indexable) {
+    return {
       index: true,
       follow: true,
-      'max-snippet': -1,
-      'max-image-preview': 'large',
-      'max-video-preview': -1,
-    },
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+        'max-video-preview': -1,
+      },
+    };
+  }
+
+  return {
+    index: false,
+    follow: true,
   };
 }

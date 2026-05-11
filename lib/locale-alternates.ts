@@ -1,5 +1,5 @@
 import { SITE_URL } from '@/lib/constants';
-import { EN_INDEXABLE_PAGES } from '@/lib/en-indexable';
+import { EN_INDEXABLE_PAGES, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 
 export type LocaleCode = 'ko' | 'en';
 
@@ -30,7 +30,13 @@ export function createLocaleAlternates(path: string, locale: LocaleCode = 'ko', 
   const normalized = normalizePath(path);
   // EN_INDEXABLE_PAGES는 '/about'·'' 형태 (홈은 빈 문자열). normalize 결과의 '/'를 ''로 매핑.
   const lookupPath = normalized === '/' ? '' : normalized;
-  const isEnIndexable = EN_INDEXABLE_PAGES.has(lookupPath);
+  // 매거진 detail (/stories/{slug})은 별도 EN_INDEXABLE_STORY_SLUGS 화이트리스트.
+  const storySlug = lookupPath.startsWith('/stories/')
+    ? lookupPath.slice('/stories/'.length)
+    : null;
+  const isEnIndexable =
+    EN_INDEXABLE_PAGES.has(lookupPath) ||
+    (storySlug !== null && EN_INDEXABLE_STORY_SLUGS.has(storySlug));
 
   const koUrl = withLocalePrefix(path, 'ko');
   const enUrl = withLocalePrefix(path, 'en');

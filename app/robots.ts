@@ -15,11 +15,16 @@ export default function robots(): MetadataRoute.Robots {
           // GSC "감수중 2,382 / 색인되지 않음 251" 알림의 직접 원인 (2026-05-11 PDF).
           '/_next/static/',
           '/_next/image',
-          // 영문 작품·매거진 detail·category·artist는 페이지 meta robots noindex 처리됨
-          // (lib/schemas/artwork.ts + stories/[slug]/page.tsx + artworks/artist/[artist]/page.tsx 등).
+          // 영문 작품 detail·category·artist는 페이지 meta robots noindex 처리됨
+          // (lib/schemas/artwork.ts + artworks/artist/[artist]/page.tsx 등).
           // robots.txt 추가 차단으로 crawl 자체 방지 — budget 절약 + GSC noise 감소.
           '/en/artworks/',
-          '/en/stories/',
+          // news detail도 동일 — createLocaleAlternates canonical=ko + helper 미적용.
+          // 영문 본문 자동 fallback 수준이라 thin content 위험. crawl 차단으로 비용 절약.
+          '/en/news/',
+          // /en/stories/는 차단하지 않음 — EN_INDEXABLE_STORY_SLUGS 3편(2026-05 i18n
+          // backfill에서 native quality 확보)이 indexable. 비-화이트리스트 슬러그는
+          // resolveEnRobots(indexable=false) → 명시 noindex 메타로 색인 차단.
           // 인증·관리자·체크아웃 영역
           // (영문 사이트는 2026-05-11 i18n backfill 296 rows 후 정책 변경 — 핵심 13개 페이지
           //  + 매거진 3개는 indexable로 푸르고 sitemap에 hreflang ko/en 양방향 발행 중.)
