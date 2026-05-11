@@ -1,5 +1,4 @@
 import { SITE_URL } from '@/lib/constants';
-import { EN_INDEXABLE_PAGES, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 
 export type LocaleCode = 'ko' | 'en';
 
@@ -19,45 +18,36 @@ export function buildLocaleUrl(path: string, locale: LocaleCode): string {
   return withLocalePrefix(path, locale);
 }
 
-// EN_INDEXABLE_PAGES 화이트리스트(2026-05-11 i18n backfill 후 정책)에 포함된 페이지는
-// 양방향 hreflang(ko-KR + en-US + x-default) 발행. 그 외 페이지는 ko-only.
-// canonical은 호출 시 전달된 locale에 따라 결정 — locale 인자 생략 시 기본 'ko' (기존 호환).
-//
-// koOnly 파라미터는 더 이상 동작에 영향 없음 (sitemap이 단일 출처 — EN_INDEXABLE 화이트리스트).
-// 향후 영문 운영 페이지 추가 시 lib/en-indexable.ts의 화이트리스트에 추가하면 자동 반영.
-export function createLocaleAlternates(path: string, locale: LocaleCode = 'ko', _koOnly?: boolean) {
-  void _koOnly;
-  const normalized = normalizePath(path);
-  // EN_INDEXABLE_PAGES는 '/about'·'' 형태 (홈은 빈 문자열). normalize 결과의 '/'를 ''로 매핑.
-  const lookupPath = normalized === '/' ? '' : normalized;
-  // 매거진 detail (/stories/{slug})은 별도 EN_INDEXABLE_STORY_SLUGS 화이트리스트.
-  const storySlug = lookupPath.startsWith('/stories/')
-    ? lookupPath.slice('/stories/'.length)
-    : null;
-  const isEnIndexable =
-    EN_INDEXABLE_PAGES.has(lookupPath) ||
-    (storySlug !== null && EN_INDEXABLE_STORY_SLUGS.has(storySlug));
-
+/**
+ * 2026-05-11 fdf91485 정책 전환: 영문 핵심 페이지 색인 허용 — i18n backfill 296 rows 완료 후.
+ *
+ * 이전(2026-04 ~ 2026-05-10): 영문 전체 noindex, en hreflang 미발행, canonical 항상 KO.
+ * 현재: 영문 색인 페이지에 self-canonical + 양방향 hreflang 발행. KO-only 페이지(작품 detail·
+ *      매거진 detail body_en 부재·category·artist·terms·privacy 등)는 ko canonical 유지로
+ *      Google에 "/en은 KO의 변형, 색인은 KO 쪽만" 시그널 (consolidation).
+ *
+ * @param path - 페이지 경로 (예: '/our-reality')
+ * @param locale - 현재 페이지 locale (canonical 결정)
+ * @param koOnly - true면 /en 변형 없음 (KO canonical + ko hreflang only, en 발행 안 함)
+ *                작품 detail·매거진 body_en 부재·category 페이지 등 thin content 회피용
+ */
+export function createLocaleAlternates(path: string, locale: LocaleCode = 'ko', koOnly = false) {
   const koUrl = withLocalePrefix(path, 'ko');
   const enUrl = withLocalePrefix(path, 'en');
-
-  if (isEnIndexable) {
-    return {
-      canonical: locale === 'en' ? enUrl : koUrl,
-      languages: {
-        'ko-KR': koUrl,
-        'en-US': enUrl,
-        'x-default': koUrl,
-      },
-    };
-  }
-
-  // 비-EN_INDEXABLE: ko 단일 색인 — 영문 페이지는 canonical=ko로 자동 색인 제외.
+  // koOnly: 양 locale 모두 KO canonical로 consolidate.
+  // 양방향: self-canonical (Google 권고 — canonical이 indexable이어야 hreflang 효력).
+  const canonicalUrl = koOnly ? koUrl : locale === 'en' ? enUrl : koUrl;
   return {
-    canonical: koUrl,
-    languages: {
-      'ko-KR': koUrl,
-      'x-default': koUrl,
-    },
+    canonical: canonicalUrl,
+    languages: koOnly
+      ? {
+          'ko-KR': koUrl,
+          'x-default': koUrl,
+        }
+      : {
+          'ko-KR': koUrl,
+          'en-US': enUrl,
+          'x-default': koUrl,
+        },
   };
 }

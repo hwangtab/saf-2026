@@ -10,6 +10,7 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { localizeStoryAuthor } from '@/lib/story-author';
 import { Link } from '@/i18n/navigation';
 import StoriesCategoryFilter from '@/components/stories/StoriesCategoryFilter';
 import type { StoryCategory } from '@/types';
@@ -278,7 +279,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                         {featured.author && (
                           <>
                             <span>·</span>
-                            <span>{featured.author}</span>
+                            <span>{localizeStoryAuthor(featured.author, locale)}</span>
                           </>
                         )}
                       </div>
@@ -349,7 +350,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                             {story.author && (
                               <>
                                 <span>·</span>
-                                <span>{story.author}</span>
+                                <span>{localizeStoryAuthor(story.author, locale)}</span>
                               </>
                             )}
                           </div>

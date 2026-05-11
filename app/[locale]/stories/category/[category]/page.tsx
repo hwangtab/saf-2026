@@ -13,6 +13,7 @@ import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { ARTIST_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
+import { localizeStoryAuthor } from '@/lib/story-author';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { getSupabaseStories } from '@/lib/supabase-data';
 import { generateFaqPageSchema } from '@/lib/markdown-faq';
@@ -609,7 +610,7 @@ export default async function StoryCategoryPage({ params }: Props) {
                         {story.author && (
                           <>
                             <span>·</span>
-                            <span>{story.author}</span>
+                            <span>{localizeStoryAuthor(story.author, locale)}</span>
                           </>
                         )}
                       </div>

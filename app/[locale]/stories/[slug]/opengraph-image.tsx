@@ -4,6 +4,7 @@ import path from 'path';
 import { getSupabaseStories, getSupabaseStoryBySlug } from '@/lib/supabase-data';
 import { routing } from '@/i18n/routing';
 import { BRAND_COLORS } from '@/lib/colors';
+import { localizeStoryAuthor } from '@/lib/story-author';
 import type { StoryCategory } from '@/types';
 
 export const runtime = 'nodejs';
@@ -67,7 +68,7 @@ export default async function Image({ params }: Props) {
   const category = (story?.category ?? 'art-knowledge') as StoryCategory;
   const colors = CATEGORY_COLORS[category];
   const categoryLabel = isEn ? colors.labelEn : colors.labelKo;
-  const author = story?.author ?? '';
+  const author = localizeStoryAuthor(story?.author ?? '', isEn ? 'en' : 'ko');
 
   const fontPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf');
   const fontData = fs.readFileSync(fontPath);
