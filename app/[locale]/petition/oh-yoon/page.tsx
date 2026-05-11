@@ -79,7 +79,9 @@ export async function generateMetadata({
   const deadline = formatPetitionDeadline(locale);
   const base = createStandardPageMetadata(
     t('metaTitle'),
-    t('metaDescription', { deadlineFull: deadline.full }),
+    // KO 템플릿은 {deadlineShort}, EN 템플릿은 {deadlineFull}로 변수명이 다름 — 둘 다 전달해
+    // next-intl FORMATTING_ERROR 회귀 방지 (locale별 의도된 길이 차이는 보존).
+    t('metaDescription', { deadlineFull: deadline.full, deadlineShort: deadline.short }),
     PAGE_URL,
     PETITION_OH_YOON_PATH,
     locale
@@ -348,7 +350,10 @@ export default async function PetitionOhYoonPage({
               <ShareButtonsWrapper
                 url={PAGE_URL}
                 title={statementText}
-                description={t('metaDescription', { deadlineFull: deadline.full })}
+                description={t('metaDescription', {
+                  deadlineFull: deadline.full,
+                  deadlineShort: deadline.short,
+                })}
                 imageUrl={`${SITE_URL}/images/petition-oh-yoon/mural-1.png`}
               />
             </div>
