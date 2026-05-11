@@ -32,12 +32,8 @@ import '@/styles/globals.css';
 /**
  * Pretendard Std Variable (v1.3.9) — KS X 1001 표준 한글(2350자) + Latin 단일 woff2 (291KB).
  * next/font/local로 self-host되어 `<link rel="preload" as="font">`가 HTML head에 자동 삽입됨.
- * 이전 옵션 B(globals.css @import) 회귀(caaf9a21 → 5f6aa2c9): preload tag 누락 + render-blocking
- * CSS chunk 3개로 LCP 5.3s→6.5s 악화. 옵션 A(34453240) → TBT 130→330ms 회귀(두 폰트 시스템 운영).
- * 옵션 F: next/font/google Noto_Sans_KR 제거 + 한자 영역만 custom woff2 subset → 단일 폰트 시스템.
  *
- * 변수 폰트 weight 범위 45~920 (Pretendard 사양). adjustFontFallback로 metric 보정 → CLS 0 유지.
- * KS X 1001에 없는 한자/고문은 아래 notoSansKrHanja(preload: false, unicode-range로 격리)로 lazy fallback.
+ * 한자 영역(U+4E00-9FFF 등)은 Pretendard 미지원 → 시스템 sans fallback chain으로 떨어짐.
  */
 const pretendard = localFont({
   src: '../../public/fonts/PretendardStdVariable.woff2',
@@ -46,25 +42,6 @@ const pretendard = localFont({
   weight: '45 920',
   style: 'normal',
   adjustFontFallback: 'Arial',
-});
-
-// 한자 fallback — Noto Sans KR Regular에서 KS X 1001 한자(4888자) + 코드베이스 사용 한자 + Compatibility 영역
-// 만 추출한 custom subset (749KB woff2, SIL OFL). preload: false + unicode-range로 격리되어 한자 글리프가
-// 실제 노출되는 페이지에서만 브라우저가 lazy 다운로드 (작가명 한자, 작품명 한자 등). LCP/TBT 영향 0.
-// 이전 옵션 A의 next/font/google Noto_Sans_KR(다중 chunk subset)을 단일 woff2로 교체 — TBT 회복 목표.
-const notoSansKrHanja = localFont({
-  src: '../../public/fonts/NotoSansKR-Hanja-subset.woff2',
-  variable: '--font-han',
-  display: 'swap',
-  weight: '400',
-  style: 'normal',
-  preload: false,
-  adjustFontFallback: false,
-  declarations: [
-    // U+4E00-9FFF (CJK Unified Ideographs) + U+F900-FAFF (CJK Compatibility) — 한자 영역만
-    // 매칭. Pretendard가 커버하는 한글/Latin 영역에서는 절대 다운로드 안 됨 (브라우저 native).
-    { prop: 'unicode-range', value: 'U+4E00-9FFF, U+F900-FAFF' },
-  ],
 });
 
 export const viewport: Viewport = {
@@ -199,11 +176,7 @@ export default async function LocaleLayout({
   const localBusinessSchema = generateLocalBusinessSchema(localeForSchema);
 
   return (
-    <html
-      lang={locale}
-      className={`${pretendard.variable} ${notoSansKrHanja.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />

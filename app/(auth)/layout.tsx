@@ -26,18 +26,6 @@ const pretendard = localFont({
   adjustFontFallback: 'Arial',
 });
 
-// 한자 fallback — Noto Sans KR custom subset (KS X 1001 + 코드베이스 한자). [locale] layout 주석 참고.
-const notoSansKrHanja = localFont({
-  src: '../../public/fonts/NotoSansKR-Hanja-subset.woff2',
-  variable: '--font-han',
-  display: 'swap',
-  weight: '400',
-  style: 'normal',
-  preload: false,
-  adjustFontFallback: false,
-  declarations: [{ prop: 'unicode-range', value: 'U+4E00-9FFF, U+F900-FAFF' }],
-});
-
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -63,11 +51,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   const skipToMain = locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동';
 
   return (
-    <html
-      lang={locale}
-      className={`${pretendard.variable} ${notoSansKrHanja.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />

@@ -11,10 +11,9 @@ const config: Config = {
       },
       fontFamily: {
         // 기본 폰트 (본문) — Pretendard Std Variable (KS X 1001 한글 + Latin).
-        // var(--font-han) = Noto Sans KR (preload: false, lazy) — KS X 1001 밖 한자/고문 fallback.
+        // 한자(KS X 1001 미포함)는 시스템 sans fallback chain으로 떨어짐.
         sans: [
           'var(--font-sans)',
-          'var(--font-han)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
@@ -26,20 +25,13 @@ const config: Config = {
         // 히어로 타이틀 — Pretendard. weight는 globals.css 또는 컴포넌트에서 font-black/font-bold 명시
         display: [
           'var(--font-sans)',
-          'var(--font-han)',
           '-apple-system',
           'BlinkMacSystemFont',
           'system-ui',
           'sans-serif',
         ],
         // 섹션 제목 — Pretendard Bold (본문 변수 재사용, weight는 globals.css에서 명시)
-        section: [
-          'var(--font-sans)',
-          'var(--font-han)',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'sans-serif',
-        ],
+        section: ['var(--font-sans)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-portal': 'radial-gradient(circle at top, #EDF3FF 0%, #F7F8FA 38%, #FFFFFF 100%)',
