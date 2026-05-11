@@ -1,4 +1,5 @@
 import { SITE_URL } from '@/lib/constants';
+import { EN_INDEXABLE_PAGES } from '@/lib/en-indexable';
 
 export type LocaleCode = 'ko' | 'en';
 
@@ -18,16 +19,34 @@ export function buildLocaleUrl(path: string, locale: LocaleCode): string {
   return withLocalePrefix(path, locale);
 }
 
-// 영문 사이트는 운영하지 않음 — canonical은 항상 ko URL.
-// /en/* 페이지는 layout에서 noindex 처리되며, en hreflang 미발행으로 시그널 정리.
+// EN_INDEXABLE_PAGES 화이트리스트(2026-05-11 i18n backfill 후 정책)에 포함된 페이지는
+// 양방향 hreflang(ko-KR + en-US + x-default) 발행. 그 외 페이지는 ko-only.
+// canonical은 호출 시 전달된 locale에 따라 결정 — locale 인자 생략 시 기본 'ko' (기존 호환).
 //
-// @deprecated locale·koOnly 파라미터는 더 이상 동작에 영향 없음 (2026-04 영문 색인 정리).
-// 신규 호출부는 createLocaleAlternates(path) 단일 인자로 작성. 17개 기존 호출자는 점진적으로 정리 가능.
-// 향후 영문 운영을 재개할 경우 이 함수만 되돌리면 호출부 변경 없이 복구 가능하도록 시그니처는 유지.
-export function createLocaleAlternates(path: string, _locale?: LocaleCode, _koOnly?: boolean) {
-  void _locale;
+// koOnly 파라미터는 더 이상 동작에 영향 없음 (sitemap이 단일 출처 — EN_INDEXABLE 화이트리스트).
+// 향후 영문 운영 페이지 추가 시 lib/en-indexable.ts의 화이트리스트에 추가하면 자동 반영.
+export function createLocaleAlternates(path: string, locale: LocaleCode = 'ko', _koOnly?: boolean) {
   void _koOnly;
+  const normalized = normalizePath(path);
+  // EN_INDEXABLE_PAGES는 '/about'·'' 형태 (홈은 빈 문자열). normalize 결과의 '/'를 ''로 매핑.
+  const lookupPath = normalized === '/' ? '' : normalized;
+  const isEnIndexable = EN_INDEXABLE_PAGES.has(lookupPath);
+
   const koUrl = withLocalePrefix(path, 'ko');
+  const enUrl = withLocalePrefix(path, 'en');
+
+  if (isEnIndexable) {
+    return {
+      canonical: locale === 'en' ? enUrl : koUrl,
+      languages: {
+        'ko-KR': koUrl,
+        'en-US': enUrl,
+        'x-default': koUrl,
+      },
+    };
+  }
+
+  // 비-EN_INDEXABLE: ko 단일 색인 — 영문 페이지는 canonical=ko로 자동 색인 제외.
   return {
     canonical: koUrl,
     languages: {

@@ -10,11 +10,19 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: [
-          // 영문 사이트 전체 차단 — /en/* 페이지는 layout 차원에서 noindex 처리되며
-          // 운영하지 않는 자동 번역 수준이라 thin/duplicate content. 크롤 예산 절약 +
-          // GSC "크롤링됨 - 색인 생성 안 됨" 버킷 정리 (2026-05 GSC: 1992 → 감소 예상).
-          '/en/',
-          // 인증·관리자·체크아웃 영역 (/en/* 차단으로 자동 커버되지만 명시 유지)
+          // Next.js 빌드 산출물 — 페이지 콘텐츠 아니라 JS/CSS/폰트/이미지 변형.
+          // ?dpl=... deployment hash가 빌드마다 변경되어 무한 신규 URL 발생 → crawl budget 낭비.
+          // GSC "감수중 2,382 / 색인되지 않음 251" 알림의 직접 원인 (2026-05-11 PDF).
+          '/_next/static/',
+          '/_next/image',
+          // 영문 작품·매거진 detail·category·artist는 페이지 meta robots noindex 처리됨
+          // (lib/schemas/artwork.ts + stories/[slug]/page.tsx + artworks/artist/[artist]/page.tsx 등).
+          // robots.txt 추가 차단으로 crawl 자체 방지 — budget 절약 + GSC noise 감소.
+          '/en/artworks/',
+          '/en/stories/',
+          // 인증·관리자·체크아웃 영역
+          // (영문 사이트는 2026-05-11 i18n backfill 296 rows 후 정책 변경 — 핵심 13개 페이지
+          //  + 매거진 3개는 indexable로 푸르고 sitemap에 hreflang ko/en 양방향 발행 중.)
           '/api/',
           '/admin/',
           '/dashboard/',
