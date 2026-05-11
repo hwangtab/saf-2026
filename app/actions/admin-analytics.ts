@@ -659,6 +659,59 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     untypedRpc<LocaleSwitchPageRow[]>('get_locale_switch_pages', { since_ts: sinceTs, lim: 10 }),
   ]);
 
+  // 모든 RPC 결과 에러 logging — Promise.all 안에서 swallow되는 error를 운영 로그에 노출.
+  // 빈 결과(0 row)와 실패(권한·SQL 에러)를 운영자가 구분 가능 + Supabase advisors 같은
+  // 외부 도구로 cross-reference 가능. 35+ RPC를 단일 forEach로 통일.
+  const allRpcResults = [
+    ['get_pv_summary', summaryRes],
+    ['get_pv_daily_trend', trendRes],
+    ['get_pv_top_pages', pagesRes],
+    ['get_pv_device_distribution', deviceRes],
+    ['get_pv_top_referrers', referrerRes],
+    ['get_pv_country_distribution', countryRes],
+    ['get_pv_browser_distribution', browserRes],
+    ['get_pv_os_distribution', osRes],
+    ['get_pv_hourly_distribution', hourlyRes],
+    ['get_pv_realtime_visitors', realtimeRes],
+    ['get_cross_link_summary', crossLinkSummaryRes],
+    ['get_top_converting_stories', topConvertingStoriesRes],
+    ['get_top_clicked_artworks_from_stories', topClickedArtworksRes],
+    ['get_story_to_artwork_source_distribution', sourceDistRes],
+    ['get_story_to_artwork_position_distribution', positionDistRes],
+    ['get_top_artwork_to_story_artworks', topArtworkSourcesRes],
+    ['get_pv_session_depth', sessionDepthRes],
+    ['get_pv_top_exit_pages', exitPagesRes],
+    ['get_pv_utm_distribution', utmDistRes],
+    ['get_commerce_funnel_summary', commerceFunnelSummaryRes],
+    ['get_top_artwork_funnel', artworkFunnelRes],
+    ['get_revenue_daily_trend', revenueTrendRes],
+    ['get_artist_commerce_dashboard', artistDashboardRes],
+    ['get_story_attributed_revenue', storyAttributionRes],
+    ['get_gsc_top_queries', gscTopQueriesRes],
+    ['get_gsc_top_pages', gscTopPagesRes],
+    ['get_gsc_low_ctr_queries', gscLowCtrRes],
+    ['get_gsc_daily_trend', gscDailyTrendRes],
+    ['get_gsc_sync_status', gscSyncStatusRes],
+    ['get_member_join_click_summary', memberJoinSummaryRes],
+    ['get_member_join_click_position_distribution', memberJoinPositionRes],
+    ['get_member_join_click_daily', memberJoinDailyRes],
+    ['get_share_click_summary', shareSummaryRes],
+    ['get_share_click_channel_distribution', shareChannelRes],
+    ['get_top_shared_pages', sharePagesRes],
+    ['get_web_vitals_summary', webVitalsSummaryRes],
+    ['get_web_vitals_daily_p75', webVitalsDailyRes],
+    ['get_web_vitals_worst_pages', webVitalsLcpWorstRes],
+    ['get_purchase_click_summary', purchaseSummaryRes],
+    ['get_top_purchase_clicked_artworks', purchaseArtworksRes],
+    ['get_locale_switch_summary', localeSwitchSummaryRes],
+    ['get_locale_switch_pages', localeSwitchPagesRes],
+  ] as const;
+  for (const [name, res] of allRpcResults) {
+    if (res.error) {
+      console.error(`[admin-analytics] RPC ${name} failed:`, res.error);
+    }
+  }
+
   // GA4 page report — RPC와 별도 try/catch. env 미설정·일시 장애 시 빈 배열로 graceful
   // fallback해 admin 페이지가 깨지지 않도록. period에 맞춰 NdaysAgo 형식 사용.
   let pageReport: AnalyticsData['pageReport'] = [];
@@ -1067,29 +1120,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
-  // CTA 클릭 (조합원 가입 / share) — Phase B
-  // RPC 에러는 Promise.all 안에서 swallow되므로(fulfilled with error data) 진단 로깅 추가.
-  // 빈 결과(0건)와 실패(권한·SQL 에러)를 운영 로그에서 구분 가능.
-  const ctaRpcResults = [
-    ['get_member_join_click_summary', memberJoinSummaryRes],
-    ['get_member_join_click_position_distribution', memberJoinPositionRes],
-    ['get_member_join_click_daily', memberJoinDailyRes],
-    ['get_share_click_summary', shareSummaryRes],
-    ['get_share_click_channel_distribution', shareChannelRes],
-    ['get_top_shared_pages', sharePagesRes],
-    ['get_web_vitals_summary', webVitalsSummaryRes],
-    ['get_web_vitals_daily_p75', webVitalsDailyRes],
-    ['get_web_vitals_worst_pages', webVitalsLcpWorstRes],
-    ['get_purchase_click_summary', purchaseSummaryRes],
-    ['get_top_purchase_clicked_artworks', purchaseArtworksRes],
-    ['get_locale_switch_summary', localeSwitchSummaryRes],
-    ['get_locale_switch_pages', localeSwitchPagesRes],
-  ] as const;
-  for (const [name, res] of ctaRpcResults) {
-    if (res.error) {
-      console.error(`[admin-analytics] RPC ${name} failed:`, res.error);
-    }
-  }
+  // CTA 클릭 (조합원 가입 / share) — Phase B (에러 로깅은 위 allRpcResults에 통합됨)
 
   const memberJoinSummaryRow = Array.isArray(memberJoinSummaryRes.data)
     ? memberJoinSummaryRes.data[0]
