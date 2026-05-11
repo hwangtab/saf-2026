@@ -390,8 +390,11 @@ export function generateArtworkJsonLd(
           shippingDetails,
         };
 
-  // Classify artwork medium for better SEO categorization
-  const mediumCategory = classifyArtworkMedium(materialForLocale || '');
+  // Classify artwork medium for better SEO categorization.
+  // 항상 raw artwork.material(KO 원본)로 분류 — taxonomy keywords가 KO/EN 양쪽을 인지하지만
+  // /en에서 materialForLocale은 'Original details in Korean' fallback일 수 있어 분류 누락 위험.
+  // 분류 결과의 name/alternateName은 locale별 swap으로 처리하므로 raw material만 분류 입력.
+  const mediumCategory = classifyArtworkMedium(artwork.material || '');
   const exhibitionSchemaState = getExhibitionSchemaState(locale);
 
   const productSchema = {

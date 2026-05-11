@@ -30,7 +30,16 @@ const PORTAL_AUTH_ROOTS = [
 ] as const;
 
 // i18n·인증 미들웨어를 건너뛸 정적·API 루트.
-const STATIC_SKIP_ROOTS = ['/api', '/_next', '/images', '/fonts', '/reports'] as const;
+// /.well-known은 IETF 표준 경로 (security.txt, Apple Pay merchant validation, WebAuthn 등) —
+// 향후 추가 시 intlProxy가 페이지 라우트로 처리해 /feed.xml 같은 500 회귀 방지.
+const STATIC_SKIP_ROOTS = [
+  '/api',
+  '/_next',
+  '/images',
+  '/fonts',
+  '/reports',
+  '/.well-known',
+] as const;
 
 const STATIC_SKIP_PATHS = new Set([
   '/favicon.ico',
@@ -101,6 +110,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|images/|fonts/|reports/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|feed.xml|llms.txt|llms-full.txt).*)',
+    '/((?!api|_next/static|_next/image|images/|fonts/|reports/|\\.well-known/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|feed.xml|llms.txt|llms-full.txt).*)',
   ],
 };
