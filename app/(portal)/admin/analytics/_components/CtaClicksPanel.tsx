@@ -275,7 +275,7 @@ export default async function CtaClicksPanel({ data }: Props) {
         ) : (
           <>
             <AdminCard className="p-6">
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                 <Stat
                   label={t('ctaTotalClicks')}
                   value={numberFormatter.format(data.purchase.totalClicks)}
@@ -288,6 +288,18 @@ export default async function CtaClicksPanel({ data }: Props) {
                 <Stat
                   label={t('ctaPurchaseDistinctArtworks')}
                   value={numberFormatter.format(data.purchase.distinctArtworks)}
+                />
+                <Stat
+                  label={t('ctaPurchaseTossClicks')}
+                  value={numberFormatter.format(data.purchase.tossClicks)}
+                />
+                <Stat
+                  label={t('ctaPurchaseExternalClicks')}
+                  value={numberFormatter.format(data.purchase.externalClicks)}
+                />
+                <Stat
+                  label={t('ctaPurchaseLegacyClicks')}
+                  value={numberFormatter.format(data.purchase.legacyClicks)}
                 />
               </div>
             </AdminCard>
@@ -305,6 +317,8 @@ export default async function CtaClicksPanel({ data }: Props) {
                       <tr>
                         <th className="px-4 py-2 text-left">{t('ctaPurchaseArtworkColumn')}</th>
                         <th className="px-4 py-2 text-right">{t('ctaClicksColumn')}</th>
+                        <th className="px-4 py-2 text-right">{t('ctaPurchaseTossColumn')}</th>
+                        <th className="px-4 py-2 text-right">{t('ctaPurchaseExternalColumn')}</th>
                         <th className="px-4 py-2 text-right">{t('ctaUniqueColumn')}</th>
                       </tr>
                     </thead>
@@ -319,6 +333,12 @@ export default async function CtaClicksPanel({ data }: Props) {
                           </td>
                           <td className="px-4 py-2 text-right tabular-nums font-semibold text-gray-900">
                             {numberFormatter.format(row.clicks)}
+                          </td>
+                          <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                            {numberFormatter.format(row.tossClicks)}
+                          </td>
+                          <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                            {numberFormatter.format(row.externalClicks)}
                           </td>
                           <td className="px-4 py-2 text-right tabular-nums text-gray-600">
                             {numberFormatter.format(row.uniqueClickers)}

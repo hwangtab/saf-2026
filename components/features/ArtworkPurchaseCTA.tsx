@@ -160,6 +160,9 @@ export default function ArtworkPurchaseCTA({
                 artwork_id: artworkId,
                 artwork_title: artworkTitle,
                 artist: artist,
+                // mode: 자체 토스 결제(/checkout) vs 외부 쇼핑몰(legacy shopUrl) 분리.
+                // 어드민 패널이 두 destination을 정확히 구분해 conversion 측정.
+                mode: 'toss',
               })
             }
           >
@@ -194,6 +197,7 @@ export default function ArtworkPurchaseCTA({
                 artwork_id: artworkId,
                 artwork_title: artworkTitle,
                 artist: artist,
+                mode: 'external',
               })
             }
           >

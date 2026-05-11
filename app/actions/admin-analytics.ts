@@ -299,19 +299,27 @@ export type AnalyticsData = {
       topPages: Array<{ pagePath: string; clicks: number; uniqueClickers: number }>;
     };
     /**
-     * Purchase clicks — ArtworkPurchaseCTA의 외부 쇼핑몰(Cafe24) 이동 클릭.
-     * 자체 결제 funnel(orders 테이블)과 별개로 legacy artwork의 외부 conversion 측정.
+     * Purchase clicks — ArtworkPurchaseCTA의 구매 CTA 클릭.
+     * 두 destination 분리 측정:
+     * - mode='toss': 자체 토스 결제(/checkout) 이동 — 현재 주력 결제 경로
+     * - mode='external': legacy 외부 쇼핑몰(shopUrl, Cafe24 등) 이동 — 일부 legacy 작품만
+     * - legacyClicks: mode 페이로드 없는 historical 데이터 (2026-05-11 mode 분리 이전)
      */
     purchase: {
       totalClicks: number;
       uniqueClickers: number;
       distinctArtworks: number;
+      tossClicks: number;
+      externalClicks: number;
+      legacyClicks: number;
       topArtworks: Array<{
         artworkId: string;
         artworkTitle: string;
         artist: string;
         clicks: number;
         uniqueClickers: number;
+        tossClicks: number;
+        externalClicks: number;
       }>;
     };
     /**
@@ -510,6 +518,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     total_clicks: number;
     unique_clickers: number;
     distinct_artworks: number;
+    toss_clicks: number;
+    external_clicks: number;
+    legacy_clicks: number;
   };
   type PurchaseArtworkRow = {
     artwork_id: string;
@@ -517,6 +528,8 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     artist: string;
     clicks: number;
     unique_clickers: number;
+    toss_clicks: number;
+    external_clicks: number;
   };
   type LocaleSwitchSummaryRow = {
     total_switches: number;
@@ -1186,6 +1199,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
         totalClicks: Number(sumRow?.total_clicks ?? 0),
         uniqueClickers: Number(sumRow?.unique_clickers ?? 0),
         distinctArtworks: Number(sumRow?.distinct_artworks ?? 0),
+        tossClicks: Number(sumRow?.toss_clicks ?? 0),
+        externalClicks: Number(sumRow?.external_clicks ?? 0),
+        legacyClicks: Number(sumRow?.legacy_clicks ?? 0),
         topArtworks: Array.isArray(purchaseArtworksRes.data)
           ? purchaseArtworksRes.data.map((row) => ({
               artworkId: row.artwork_id,
@@ -1193,6 +1209,8 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
               artist: row.artist ?? '',
               clicks: Number(row.clicks),
               uniqueClickers: Number(row.unique_clickers),
+              tossClicks: Number(row.toss_clicks ?? 0),
+              externalClicks: Number(row.external_clicks ?? 0),
             }))
           : [],
       };
