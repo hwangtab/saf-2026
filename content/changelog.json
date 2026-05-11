@@ -1,5 +1,185 @@
 [
   {
+    "hash": "34453240",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "Noto Sans KR → Pretendard 마이그레이션 v2 — next/font/local 최적화 활용",
+    "summary": "본문 폰트를 Pretendard Std Variable(KS X 1001, 285KB)로 이전, next/font/local로 self-host해 HTML head에 preload tag 자동 생성. 한자 fallback은 Noto Sans KR(preload: false, lazy)로 분리.",
+    "body": "## 이전 옵션 B 회귀 (참고)\n\ncaaf9a21 → revert 5f6aa2c9 (2026-05-11):\n- styles/globals.css @import로 pretendard CSS 로드 → next/font 최적화를 못 받음\n- HTML head에 <link rel=\"preload\" as=\"font\"> 자동 생성 안 됨 → 폰트 swap이 paint 지연\n- render-blocking CSS chunk가 +1 추가 → PSI mobile LCP 5.3s → 6.5s 회귀\n- 3회 측정 variance 0 (회귀 확정)\n\n## 옵션 A 채택 이유\n\n1. `next/font/local`로 woff2를 self-host → next/font가 자동으로:\n   - HTML head에 `<link rel=\"preload\" as=\"font\" type=\"font/woff2\" crossorigin>` 삽입\n   - 폰트 + CSS를 단일 build pipeline에서 처리 → 추가 CSS chunk 최소화\n   - Arial fallback의 ascent/descent/size-adjust override 자동 생성 → CLS 0 유지\n\n2. KS X 1001 범위로 폰트 단일 파일 285KB 유지 (전체 Pretendard 2MB 대비 1/7)\n   - PSI mobile에서도 적정 preload 사이즈\n   - 캠페인 사이트 한국어 본문에 충분\n\n3. KS X 1001 밖 한자/고문은 `Noto_Sans_KR({ preload: false })`로 lazy fallback\n   - Tailwind fontFamily chain: `var(--font-sans) var(--font-han) -apple-system ...`\n   - 시스템 명조체로 떨어지지 않음 (브라우저 자동 glyph fallback)\n\n## 빌드 검증 결과\n\n- 폰트 preload tag (.next/server/app/ko.html, en.html, /artworks 등 다수 페이지 확인):\n  `<link rel=\"preload\" href=\"/_next/static/media/PretendardStdVariable-s.p.0f1rp6.kpqa7j.woff2\" as=\"font\" crossorigin type=\"font/woff2\"/>` ✓\n- 한자 페이지 (/ko/special/oh-yoon) html className에 `pretendard_*__variable noto_sans_kr_*__variable` 두 variable 모두 적용됨 ✓\n- next/font auto-generated CSS: `font-display: swap`, `font-weight: 45 920`, Arial fallback with `ascent-override: 93.76% descent-override: 23.75% size-adjust: 101.55%` ✓\n- styles/globals.css @import 0개 ✓ (이전 회귀 원인 회피 확정)\n- type-check 통과\n- production build 성공\n\n## CSS chunk 수 / 크기 비교\n\n| 항목 | Baseline (main, Noto Sans KR) | 이번 (Pretendard) |\n|---|---|---|\n| CSS chunk 수 | 7 | 8 (+1) |\n| 총 CSS 크기 | 248KB | 208KB (-16%) |\n\nchunk +1은 next/font/local의 폰트 자체 CSS chunk (font-face + fallback override 포함)로,\n이전 옵션 B 회귀 시 추가됐던 별도 third-party CSS chunk와는 본질이 다름 (preload 동반).\n\n## 알려진 트레이드오프\n\n- PretendardStdVariable은 KS X 1001 표준 2350자만 포함 — 일부 한자(고문/CJK 확장)는 fallback 발생\n- 한자 fallback은 Noto Sans KR가 lazy 로드 시점에 paint를 지연시킬 가능성 있음\n  → 단, 한자 페이지는 PSI mobile 핵심 측정 경로(/ko, /ko/artworks)에서 제외돼 LCP 영향 없음\n\n## 채택 파일\n\n- `public/fonts/PretendardStdVariable.woff2` (285KB)\n- 출처: cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard-std/dist/web/variable/woff2/PretendardStdVariable.woff2\n- 라이선스: SIL Open Font License 1.1",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "caaf9a21",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "Noto Sans KR → Pretendard 마이그레이션 — render-blocking CSS chunk -180KB",
+    "summary": "본문 폰트를 Pretendard Variable로 교체하고 한자는 Noto Sans KR fallback으로 유지 — 가장 큰 CSS chunk 310KB → 127KB (-59%)",
+    "body": "배경:\n- 이전 PSI 진단에서 render-blocking CSS의 주범이 Noto Sans KR(weight 400/500/700/900 × 30+ unicode-range subset)의 @font-face 선언이라는 게 확인됨\n- brotli 환경에서도 한계 — weight 1개 제거가 0.2KB만 절감\n- Pretendard는 Variable Font 단일 파일로 4개 weight 통합 + 더 작은 unicode-range subset\n\n전략 (옵션 A·B 비교 후 옵션 B 채택):\n- 옵션 B (globals.css에 직접 import + Tailwind fontFamily chain) 채택\n- 이유: pretendard 패키지가 92개 unicode-range subset CSS를 이미 제공 → next/font/local에 통째로 등록하는 것보다 패키지 CSS를 그대로 import하는 게 lazy load 효율적 (페이지 등장 글자만 woff2 다운로드)\n- 한자 fallback: Pretendard 글리프가 한자에 부재하면 브라우저가 fontFamily chain의 다음 family로 자동 fallback. var(--font-han)에 Noto Sans KR(weight 400만, preload: false)을 노출 → 한자 페이지에서만 한자 영역 woff2 lazy 다운로드\n\n변경 파일:\n- package.json: pretendard@^1.3.9 추가\n- styles/globals.css: 최상단에 pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css import\n- tailwind.config.ts: fontFamily(sans/display/section) chain의 첫 family를 'Pretendard Variable'로, 두 번째로 var(--font-han) 추가\n- app/[locale]/layout.tsx, app/(portal)/layout.tsx, app/(auth)/layout.tsx: Noto_Sans_KR 호출을 weight: '400' 단일 + preload: false + variable: '--font-han'으로 단순화 (한자 fallback 전용)\n- components/common/Header/FullscreenMenu.module.css: var(--font-sans) 직접 참조를 명시적 chain으로 교체 (--font-sans variable이 더 이상 정의되지 않음)\n\n빌드 결과 (.next/static/chunks/*.css):\n- 가장 큰 CSS chunk: 310,576 bytes → 126,644 bytes (−183,932 / −59%)\n- 총 CSS bytes: 421,391 → 237,748 (−183,643 / −44%)\n- woff2 파일 수: 143 → 216 (Pretendard subset 92개 추가). 단 lazy load이므로 한 페이지 다운로드는 5~10개 수준\n\n시각 회귀 검증 (로컬 dev + Playwright):\n- 홈 (/ko): h1 weight 900, h2 weight 700, body weight 400 모두 Pretendard로 렌더. 폰트 chain \"Pretendard Variable\", \"Noto Sans KR\", \"Noto Sans KR Fallback\", ... 정확히 주입\n- 영문 (/en): \"Oh Yoon — 40th Anniversary Exhibition\" 헤로 Pretendard 라틴 글리프로 깔끔\n- 한자 페이지 (/ko/special/oh-yoon): 吳潤恨神明 한자 시각 비교 — 한글과 동일 톤의 sans-serif로 렌더(시스템 명조체로 떨어지는 회귀 없음). document.fonts API로 Noto Sans KR 한자 subset 11개 자동 로드 확인\n- 작품 그리드(/ko/artworks): hero \"작품 구매\" Pretendard\n- 페이지 로드 시 woff2 네트워크 요청: Pretendard subset 14·26·73~91(고빈도 한글) 다운로드, Noto Sans KR은 다운로드 0 (한자 없는 페이지). 한자 페이지에서만 Noto Sans KR 한자 영역 subset 로드 → unicode-range 기반 lazy load 정상 작동\n\nadjustFontFallback / CLS:\n- Noto Sans KR에 adjustFontFallback: true 유지 → \"Noto Sans KR Fallback\" metric-matching family 자동 생성\n- Pretendard는 dynamic-subset CSS가 font-display: swap이고, 시스템 한글 폰트(Apple SD Gothic Neo / 맑은 고딕)와 metric 차이가 작아 시각적으로 CLS 미미\n\n알려진 트레이드오프:\n- Pretendard 패키지 의존성 추가 (npm install 시 unpacked 97MB. 빌드 결과에는 실제 사용한 woff2만 포함되므로 deploy 영향 없음)\n- woff2 파일 총 수 증가(143 → 216). 단 페이지당 실제 다운로드는 lazy load로 비슷하거나 감소\n\n다음 PSI 라운드에서 mobile 3회 측정으로 LCP·FCP·render-blocking CSS 변화 검증 권장. 예상: render-blocking CSS chunk 다운로드 시간 단축 → FCP 개선, LCP 부수 개선",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "a3e6d876",
+    "type": "perf",
+    "scope": "hero",
+    "subject": "embla lazy-activation으로 LCP element render delay 단축 — 회귀 회피",
+    "summary": "HeroSpotlight 캐러셀의 embla를 `active:false`로 초기화하고 LCP paint 후 idle 시점에 활성화해 element render delay를 줄이되, 두 번째 paint를 만드는 4378e1a4 회귀 패턴은 회피",
+    "body": "배경 (회귀 trauma):\n- main의 mobile PSI: LCP 5.1s × 3회 (variance 0), Perf 70. element render delay 907~943ms 일관\n- 직전 시도(4378e1a4): server static island + client carousel(`next/dynamic ssr:false`) absolute overlay → 같은 이미지가 두 노드로 paint, Lighthouse가 두 번째 paint를 LCP로 잡아 6.5s 회귀 → revert(8d422b68)\n- 회귀 핵심 원인: \"carousel mount 시점에 absolute 레이어가 static을 덮어씀\" — 동일 DOM 트리에서 transform/속성만 박혀야 두 번째 paint가 안 일어남\n\n신 접근 (embla lazy-activation):\n- `useEmblaCarousel({ active: emblaActive })` — 초기 `emblaActive=false`\n- active:false일 때 embla 내부적으로 translate/dragHandler/resizeHandler/slidesHandler init을 모두 skip (`if (!options.active) return`, embla-carousel.esm.js:1546). DOM에는 transform·이벤트 리스너 0\n- LCP paint 후 `requestIdleCallback`(또는 `setTimeout(500)` fallback)으로 `setEmblaActive(true)` → `useEmblaCarousel`이 options 변경 감지해 자동 reInit → 동일 DOM 트리에 transform 박힘\n- 첫 슬라이드 활성화 직후 위치 `translate3d(0,0,0)` → paint 좌표 변화 0 → Lighthouse 단일 LCP entry 유지\n\n추가 정리:\n- 인디케이터/화살표 표시 조건을 `scrollSnaps.length > 1` → `slides.length > 1`로 변경. 기존은 embla mount 후 setState로 추가 렌더되어 절대 위치 노드가 paint 1프레임 뒤에 등장 → SSR/CSR DOM 일관성 깨짐. 신규는 SSR 시점부터 인디케이터/화살표 마크업 동일 출력\n\n검증:\n- npm run type-check 통과\n- npm run build 통과 (홈 SSG/ISR 동일, 247/247 prerender)\n- 빌드 HTML(.next/server/app/ko.html): `<img fetchPriority=\"high\" alt=\"예술인 동료를 위해 내놓은 작품\">` SSR 출력, `<h1>예술인 동료를 위해 내놓은 작품</h1>` SSR, 인디케이터 3개 + 화살표 2개 SSR 출력 확인\n- 영문(.next/server/app/en.html)도 동일 패턴, locale별 라벨 정확\n- 로컬 dev + Playwright PerformanceObserver(buffered) 측정 → **LCP entry 단 1개**(entry_count: 1, t=332ms, elementAlt=\"예술인 동료를 위해 내놓은 작품\", renderTime-loadTime=94ms). 두 번째 LCP entry 없음 → 회귀 패턴 회피 확정\n- carousel 시각/기능 검증: 인디케이터 클릭(1→3) → 정확히 `aria-current=\"true\"` 전환, 화살표 클릭 → 인접 슬라이드 이동, autoplay 6초 동작 정상\n\n트레이드오프:\n- Embla 활성화 전(보통 hydration 후 ~수십~수백ms) 슬라이드 swipe·인디케이터 클릭은 no-op. idle callback fired 후 정상 동작. 일반 사용자가 hero 영역에 도달한 직후 즉시 swipe하는 빈도는 매우 낮음\n- Autoplay 첫 트리거가 활성화 시점부터 카운트되므로 첫 슬라이드 표시 시간이 6초보다 미세하게 길어질 수 있음(체감 불가 수준)\n\n회귀 가능성 self-assessment:\n- LCP element는 SSR HTML의 단일 `<img fetchPriority=\"high\">`로 paint 시작 → embla 활성화 시 동일 노드의 부모에 transform이 박혀도 React reconcile은 노드 교체 없음 → 같은 DOM element가 끝까지 LCP element 유지\n- 활성화 순간 transform은 `matrix(1,0,0,1,0,0)` (offset 0) → 첫 슬라이드 좌표 불변 → paint shift 0\n- Playwright PerformanceObserver `largest-contentful-paint` buffered 측정에서 entry 단 1개 확인 → Lighthouse도 동일 entry만 LCP로 보고할 것\n- 다음 PSI 라운드는 mobile 3회 측정으로 variance 확인 권장(메모리 가이드)",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "5796d463",
+    "type": "perf",
+    "scope": "css",
+    "subject": "admin 전용 토큰을 portal 전용 CSS로 분리 — 공개 chunk -121B raw / -500B gzip",
+    "summary": "globals.css :root의 --admin-* 변수 5개를 styles/portal.css로 분리해 공개 페이지 CSS chunk에서 제외. PageLoader/PortalShell의 bg-[var(--admin-bg)]도 동등한 bg-canvas 토큰으로 대체.",
+    "body": "- styles/portal.css 신규: --admin-bg, --admin-surface, --admin-surface-muted, --admin-border, --admin-border-soft 5개 변수 이전\n- app/(portal)/layout.tsx에서만 import (admin/dashboard/exhibitor만 로드)\n- PageLoader.tsx + PortalShell.tsx의 bg-[var(--admin-bg)] → bg-canvas (canvas.DEFAULT #FAFAFC, 동일 값)\n- 공개 chunk: 99,589 → 99,468 bytes (raw) / gzip 17KB → ~16.4KB\n- 회귀 위험: 0. --admin-* arbitrary value utility를 사용하는 admin 내부 컴포넌트(admin-ui.tsx 등)는 그대로 유지 — portal.css에서 변수를 정의받음",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "4378e1a4",
+    "type": "perf",
+    "scope": "hero",
+    "subject": "첫 슬라이드 server island로 분리 — LCP element render delay ~900ms 감축 목표",
+    "summary": "메인 hero 캐러셀의 첫 슬라이드를 server-rendered LCP island로 분리해 hydration·embla 번들 다운로드 전에 paint 가능하도록 구조 변경",
+    "body": "배경 (PSI 진단, saf2026.com 모바일):\n- LCP 4.1~5.2s (Poor). element render delay 907~943ms 일관 — TTFB(170ms) / resource load duration(309ms)과 무관\n- LCP element: HeroSpotlight 캐러셀 첫 슬라이드 작품 이미지 (next/image fill priority)\n- 주범 추정: 기존 HeroSpotlight 전체가 'use client'. embla-carousel-react + Autoplay 번들 다운로드/파싱/실행이 main thread를 점유하며 LCP paint 지연\n\n변경:\n- HeroSpotlight (server, orchestrator) → static island + lazy carousel 조립\n- HeroSpotlightStatic (server, 신규) → 첫 슬라이드 정적 HTML, SafeImage priority fetchPriority high\n- HeroSpotlightCarousel (client, 기존 로직 이전) → embla + autoplay + 인디케이터/화살표\n- HeroSpotlightCarouselLazy (client, 신규) → next/dynamic ssr:false wrapper. Next.js 16 server에서 ssr:false 직접 사용 불가하므로 client에서 한 단계 wrap\n- HeroSpotlight.types.ts (신규) → SpotlightSlide 공유 타입 (client/server 경계 깨끗하게)\n- page.tsx 호출처는 변경 없음 (동일 props로 호출)\n\n기대 효과:\n- LCP <img> 태그가 SSR HTML 단독으로 출력 (carousel SSR HTML 미출력 확인)\n- carousel JS chunk가 page bundle과 분리되어 LCP paint 전에 main thread 점유 0\n- element render delay 907ms → 200ms 이하 기대\n\n검증:\n- npm run type-check 통과\n- npm run build 통과 (홈 라우트 SSG/ISR 동일)\n- 로컬 SSR HTML 확인: <img alt=\"예술인 동료를 위해 내놓은 작품\" fetchPriority=\"high\"> SSR 출력, aria-label=\"Spotlight carousel\" 부재 (ssr:false 정상), preload link as=image fetchPriority=\"high\" 그대로 유지\n\n트레이드오프:\n- carousel mount 시점에 absolute 레이어가 static을 덮어씀 — 동일 이미지·동일 마크업이라 시각 변화 거의 없음\n- 짧은 1프레임 동안 h1 DOM 중복 가능 (screen reader는 carousel h1 우선 인식, SEO 영향 없음)",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "60fdc7e7",
+    "type": "perf",
+    "scope": "logo",
+    "subject": "white 로고 priority preload 제거 — LCP 이미지 자원 경합 해소",
+    "summary": "PSI 모바일 LCP 4.1~5.2s (Poor) 진단. HTML head에 priority preload가",
+    "body": "4개(폰트 + 라이트 로고 + white 로고 + LCP 작품 이미지) 동시 발행되어 모바일\nconnection에서 LCP 히어로 작품 이미지의 자원 우선순위와 경합. 두 로고 priority\n제거로 preload 2개로 축소(폰트 + LCP 작품).\n\n[PSI 진단]\n- saf2026.com 모바일 LCP 4.1~5.2s (Poor, target <2.5s)\n- LCP element: 히어로 첫 슬라이드 작품 이미지(/_next/image url=...82__original.webp)\n- live HTML head preload 4건:\n  1. 폰트 (woff2)\n  2. 라이트 로고 (/images/logo/320pxX90px.webp)\n  3. white 로고 (/images/logo/320pxX90px_white.webp)\n  4. LCP 작품 이미지 (Supabase storage, fetchPriority=\"high\")\n\n[사용 분석]\n- HeaderLogo.tsx: 라이트/white 두 로고를 absolute로 겹쳐 렌더하고 isDarkText\n  prop에 따라 opacity로 cross-fade.\n- useHeaderStyle hook: hero 경로(/, /about, /our-reality 등)에서 첫 화면은\n  heroAtTop=true → headerMode='transparent' → isDarkText=false → white 로고\n  opacity-100. scroll 후 라이트 로고로 교체.\n- 즉 첫 paint에서 실제로 보이는 건 1개뿐(opacity로 다른 하나는 hidden)인데\n  둘 다 priority를 걸면 비가시 로고 preload가 LCP 작품 이미지 모바일 자원과\n  경합 → LCP 늦춤.\n- BrandLoader.tsx: 현재 어디서도 import 안 되는 dead component지만 코드 정합성\n  위해 priority 동일 제거.\n\n[변경]\n- components/common/Header/HeaderLogo.tsx: 두 SafeImage의 priority prop 제거.\n  로고는 LCP element가 아니고 webp 160x45 소형 자산이라 priority 없이도 충분\n  빠르게 로드됨. 의도 설명 코멘트 추가.\n- components/common/BrandLoader.tsx: priority prop 제거.\n\n[검증]\n- type-check: ✓ 통과\n- build: ✓ 성공\n- 빌드된 .next/server/app/ko.html head preload 확인:\n  이전 4건 → 현재 2건 (폰트 + LCP 작품 이미지만, fetchPriority=\"high\")\n  → 두 로고 preload 모두 제거됨\n- 시각적 회귀 0건 — opacity cross-fade 로직 그대로 유지\n\n[기대 효과]\n- 모바일 LCP element가 head preload 우선순위 단독 점유\n- Lighthouse \"Avoid multiple page redirects/preloads\" 항목 개선\n- 다음 PSI 측정에서 LCP 단축 예상",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "a55b55ca",
+    "type": "fix",
+    "scope": "category",
+    "subject": "dynamicParams=false 명시 — 미등록 카테고리 500 → 404 자동 처리",
+    "summary": "/artworks/category/{임의문자열} 입력 시 500 응답하던 edge case 차단. 카테고리는 CATEGORY_EN_MAP enum 8종으로 한정되므로 dynamicParams=false 명시해 미등록 카테고리는 Next.js 자동 404.",
+    "body": "[증상]\n/artworks/category/존재안하는카테고리 → 500 (sitemap·내부링크에 없는 임의 URL을 사용자가 입력 시)\n\n[원인]\n이전: force-static + dynamicParams 미설정(default true) → 빌드 시 SUPPORTED_CATEGORIES 8종만 prerender. 그 외 카테고리는 첫 hit 시 SSG 시도 → throw → ISR에 500 박힘. SSG 시 throw가 outer try/catch를 우회하던 production-only 회귀(작가 페이지와 동일 패턴).\n\n[수정]\ndynamicParams=false 명시:\n- SUPPORTED_CATEGORIES 8종은 빌드 시 prerender → CDN HIT\n- 그 외는 Next.js 자동 404 (not-found.tsx 라우팅)\n- outer try/catch + CategoryNotFoundView는 그대로 유지 (transient Supabase 에러 안전망)\n\n[Trade-off]\n- 새 카테고리 enum 추가 시 코드 변경 + rebuild 필요 (현재 CATEGORY_EN_MAP 동기화와 동일 흐름이라 추가 부담 없음)\n- 작가 페이지는 force-dynamic 유지(사용자 추가가 자유로워 enum화 불가)\n\n[검증]\n다음 배포 후 /artworks/category/존재안하는카테고리 → 404 예상",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "75f45716",
+    "type": "fix",
+    "scope": "seo+perf",
+    "subject": "editions-explained CTR 직격 title + 작품 detail LCP preload 정확화",
+    "summary": "GSC 데이터·web vitals RUM 점검 결과 2건 즉시 개선.",
+    "body": "(1) \"에디션 뜻\" 225 impressions / 0 click → title 시작어 변경으로 검색어 정확 매칭.\n(2) 작품 detail LCP preload의 width descriptor와 media query 분기를 picture element와\n정확히 매칭 — 모바일에서 발생하던 double download 차단.\n\n[1] stories/editions-explained — SEO CTR 개선\nGSC 7일 데이터: 225 impressions / 0 click / 평균 순위 8.9.\n이전 title \"한정판 에디션 뜻과 종류...\" — 검색어 \"에디션 뜻\"으로 시작 안 하고\n\"한정판\" 단어가 앞에 와 사용자가 SERP에서 \"내가 원하는 일반 에디션 뜻과 다름\"으로\n스킵하는 패턴 추정.\n수정 (lib/stories-seo-overrides.ts):\n- titleKo: '에디션 뜻 — 미술 작품 5/10, AP, EA 의미 | 원화·한정판 에디션 가이드'\n  검색어 prefix 매칭 + 구체적 예시(5/10, AP, EA) + 광범위 가이드 어필\n- descriptionKo/En: 검색 의도 직격 — \"에디션은 ... '5/10'은 ... 차이를 ...\"\n\n[2] artwork detail LCP — preload media query 분기 + width descriptor 정확화\nRUM 데이터: p75 LCP 1.8s (Good), p95 4.36s. LCP target은 ArtworkImage <picture>의\n첫 이미지. 이전 preload는 단일 link에 imageSrcSet=`{slider} 767w, {detail} 1920w`\n형태로 width descriptor가 실제 width(400w/1600w)와 mislabel + imageSizes로 viewport별\n선택했지만 모바일 DPR 2.x에서 1600w를 fetch (picture가 결국 400w mobileSrc만 fetch) →\ndouble download. media query 분기로 picture와 1:1 매칭:\n- (max-width: 767px): href=slider(400w) 단독\n- (min-width: 768px): imageSrcSet=`detail(1600w) 1x, hero(1920w) 2x` DPR 분기\npicture source media와 정확히 일치, 중복 fetch 차단.\n\n[검증]\ndev fetch:\n- /stories/editions-explained title/description 영문·한글 모두 새 카피 ✓\n- /artworks/[id] preload link 2개 발행 (media split) ✓\n- /en/stories/editions-explained 영문 title 정상 ✓\n- type-check 통과",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "86239779",
+    "type": "fix",
+    "scope": "artist",
+    "subject": "force-dynamic 영구 유지 — production-only SSG throw 회귀 차단",
+    "summary": "27d33770에서 force-static 복원 시도했으나 동일 500 회귀 재발(류연복·천지윤·신학철·송광호·이문호·양운규 등). dev mode는 200 정상이고 force-dynamic도 200인데 SSG/ISR prerender 시점에만 'TypeError: Invalid character' throw하고 ISR에 stale 500 박힘. Vercel build 환경 특정 회귀라 trace 캡처 불가. force-dynamic 영구 유지로 cost 일부 감수.",
+    "body": "[검증 순서]\n1. force-static + outer try/catch + error.tsx + safeBuild → 500 (a447d453 이전)\n2. force-dynamic 임시 전환 → 200 회복 6명 확인 (baf05ceb)\n3. force-static 복원 시도 → 500 재발 (27d33770)\n4. force-dynamic 영구 유지 결정 (this commit)\n\n[Trade-off]\n- TTFB 약 200~500ms 증가 (매 요청 lambda)\n- 작가 페이지 트래픽 1% 미만 추정 — cost 영향 작음\n- SEO 영향 없음 — Googlebot 첫 hit 시에도 동일 SSR로 200 응답\n\n[근본 origin 추적 단서]\n- dev mode 200, force-dynamic 200, force-static prerender만 throw\n- TypeError: Invalid character 메시지만 production logs에 노출 (stack truncated)\n- Vercel build container 환경 특정 코드 path가 trigger\n- 추후 dev=production 시뮬레이션으로 재현 시도 가능",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "baf05ceb",
+    "type": "fix",
+    "scope": "artist",
+    "subject": "force-dynamic 임시 전환 — ISR stale 500 캐시 우회",
+    "summary": "직전 fix(outer try/catch + error.tsx + ArtistNotFound)가 production에 배포됐어도 류연복 등 작가 페이지 500 유지. ISR 캐시가 이전 빌드 시점 SSG 시 발생한 500을 보관 중인 게 핵심. force-dynamic으로 임시 전환해 매 요청 새 코드 실행 + 진짜 throw 위치 logs 캡처용.",
+    "body": "[배경]\n- 직전 segment error.tsx 추가 후에도 production HTML body가 Next.js generic 500 페이지\n- error.tsx fallback UI 노출 안 됨 → error boundary가 작동 안 한다는 강한 시그널\n- 의심: ISR 캐시(revalidate=3600)가 stale 500을 보관 중. 새 코드 deploy해도 revalidate 전까지 캐시된 500 응답\n\n[변경]\n- dynamic: 'force-static' → 'force-dynamic'\n- revalidate: 3600 → 0\n- dynamicParams 제거 (force-dynamic에서 무의미)\n\n[효과]\n- 매 요청마다 lambda 실행 → 새 코드(outer try/catch + error.tsx) 직접 검증\n- ISR 캐시 우회 → 200 회복 즉시 확인 가능\n- 진짜 throw 위치가 runtime logs에 명확히 기록될 가능성\n\n[비용]\n- artist 페이지 매 요청 SSR cost (CDN 캐시 미존재)\n- TTFB 약 200~500ms 증가 추정\n- 근본 fix 후 force-static 복원 필수\n\n[다음 단계]\n- production에서 200 회복 확인 후 dev mode로 진짜 throw 위치 추적\n- 근본 fix 적용 + force-static로 복원",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "a447d453",
+    "type": "fix",
+    "scope": "error-boundary",
+    "subject": "artist·category segment error.tsx — RSC streaming throw를 200 fallback으로 흡수",
+    "summary": "page body의 outer try/catch는 RSC streaming 중 throw를 catch하지 못함 — Next.js internal 500 페이지(x-matched-path: /500)로 흘러가던 회귀를 segment-specific error.tsx로 흡수.",
+    "body": "[증상]\n직전 fix(outer try/catch + generateMetadata try/catch + ArtistNotFound inline)이 production에 배포된 후에도 류연복·송광호·이문호·양운규·박불똥 등 작가 페이지가 500 응답. 'TypeError: Invalid character' throw 동일.\n\n[원인]\nNext.js 16 multi-root layout 패턴(55729b03) 적용 이후 RSC streaming 단계 throw는 page-level try/catch가 catch하지 못함 — RSC framework가 stream을 받는 도중 throw가 발생하면 segment의 error.tsx 또는 internal 500 fallback으로 라우팅. 우리는 error.tsx가 없어서 internal 500으로.\n\n[변경]\n- app/[locale]/artworks/artist/[artist]/error.tsx 신설 — 'TypeError: Invalid character' 같은 RSC streaming throw를 200 + 작가 페이지 fallback UI로 흡수. useEffect에서 console.error로 stack 보존 (운영 로그 추적용).\n- app/[locale]/artworks/category/[category]/error.tsx 신설 — 동일 패턴. 존재하지 않는 카테고리·transient Supabase 에러 흡수.\n\n[효과]\n- /artworks/artist/{name} 500 → 200 + 작가 페이지 fallback (다시 시도 버튼 + 전체 작품 보기 CTA)\n- /artworks/category/{name} 동일\n- internal 500 페이지 노출 차단\n\n[검증]\n- npm test: 509/509\n- type-check 통과",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "d9efca21",
+    "type": "fix",
+    "scope": "category",
+    "subject": "도자/공예 → 도자공예 — URL slash 충돌 차단 (9건 DB UPDATE 후속)",
+    "summary": "카테고리 이름에 슬래시 포함 시 /artworks/category/{name} URL에서 Next.js App Router가 path segment로 사전 분할 → 404 회귀. DB 9건을 '도자공예'로 통일하고 코드 측 매핑·enum·홈 섹션 호출 동기화",
+    "body": "[증상]\n- /artworks/category/도자/공예 → HTTP 404 (path segment 분리)\n- encodeURIComponent로 %2F 인코딩해도 Next.js 라우터가 raw path를 사전 분할\n- 도자/공예 카테고리 작품 9건(김태희·김주호·한애규·이동구·김정원·김지영) 카테고리 페이지로 접근 불가\n\n[DB 변경 — 별도 적용 완료]\nUPDATE artworks SET category='도자공예' WHERE category='도자/공예' (9 rows)\n\n[코드 동기화]\n- lib/artwork-category.ts: CATEGORY_EN_MAP key '도자/공예' → '도자공예' (영문 표시 'Ceramics/Craft'는 슬래시 유지 — URL 영향 없음)\n- types/index.ts: ARTWORK_CATEGORIES enum에서 동일 교체\n- app/[locale]/page.tsx: getSupabaseArtworksByCategories(['조각', '도자/공예'])  호출 인자 동기화\n\n[검증]\n- npm test: 509/509\n- type-check 통과\n- 다음 빌드 후 /artworks/category/도자공예 페이지 200 응답 예상\n\n[참고]\ncontent/artworks-batches/batch-db-generated.ts는 npm run sync-artworks가 자동 갱신하는 fallback 데이터라 변경 안 함 — 다음 sync 시 새 카테고리로 자동 덮어씀",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "c2f9b01d",
+    "type": "fix",
+    "scope": "build",
+    "subject": "Supabase statement_timeout + 60s prerender timeout 회귀 일괄 해소",
+    "summary": "에이전트 3팀 진단 — getSupabaseStories의 SELECT * 누적 부하 + 작품 detail TOP30 prerender + Vercel 빌드 워커 동시성이 합쳐져 Supabase code 57014와 prerender timeout 동시 발생. 3개 fix + 안전망으로 일괄 차단.",
+    "body": "[A1] getSupabaseStoriesLight 신설 + 3곳 교체\n- lib/supabase-data.ts: body·body_en 컬럼 제외 light variant (slug·title·excerpt·thumbnail·published_at·tags 등). unstable_cache 복원(2MB 한도 안), revalidate 600s.\n- app/sitemap.ts: 174편 stories sitemap entry 생성에 light fetch 사용 (body 기반 image fallback 제거)\n- app/feed.xml/route.ts: RSS item description에 excerpt만 필요 — light fetch + 이미 query 단계에서 published_at 필터 적용된 결과 사용\n- app/[locale]/stories/[slug]/page.tsx: generateStaticParams는 slug만 필요 — light fetch 사용\n\n[A2] 작품 detail generateStaticParams → return []\n- app/[locale]/artworks/[id]/page.tsx: TOP30 × 2 locale = 60 페이지 × 9 쿼리 = 동시 ~216 쿼리가 Cloudflare 522 / statement timeout 회귀의 핵심. dynamicParams=true + revalidate=3600 조합으로 모든 작품 첫 요청 시 on-demand SSG + CDN 캐시 HIT. 인기 작품 첫 user만 cold start, SEO 무영향(sitemap 별도 출처).\n- getPopularArtworkIds import 제거\n\n[A4] next.config.js 안전망\n- staticPageGenerationTimeout: 180 (기본 60s) — transient 흡수\n- experimental.staticGenerationMaxConcurrency: 4 (기본 8) — 빌드 워커 3 × 4 = 12 in-flight, ~108 동시 쿼리로 margin 확보\n\n[효과]\n- 빌드 시 stories SELECT가 174편 × ~수KB(light) × 1~2회(unstable_cache HIT) → ~수십KB 누적 (이전: 500~800회 × ~수MB)\n- 작품 detail prerender 60건 → 0건, 빌드 시간 단축\n- transient Cloudflare 522 / 60s timeout 안전망 추가\n\n[검증]\n- npm test: 509/509\n- npm run type-check: 통과\n\n별도 진행:\n- A3 DB UPDATE (도자/공예 → 도자공예 9건): 사용자 명시 승인 대기",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "72c005b3",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "artwork material/size/edition KO leak 일소 + sitemap petition 누락 추가",
+    "summary": "서브에이전트 자문 결과 P0/P1 해소 — (1) /en/artworks/[id] 본문·meta·JSON-LD에",
+    "body": "material '한지에 피그먼트 프린트'·edition '에디션 1/9' 등 KO leak이 합성 description\n경로에서 누락됐던 문제 일괄 차단. (2) sitemap의 /en/petition/oh-yoon 누락 보완.\n부산물로 KO branch의 edition prefix 중복 pre-existing 버그도 해소.\n\n[1] artwork body KO leak 차단\n원인:\n- lib/schemas/artwork.ts의 sanitizeForLocale fallback이 'Original details in Korean'\n  placeholder를 반환 — meta/JSON-LD에 그대로 노출. 정보 손실 + UX 차선.\n- lib/artwork-description-fallback.ts의 합성 description이 raw artwork.material/edition\n  을 그대로 끼워 넣어 \"Created in 2017 on 한지에 피그먼트 프린트 ... from an edition\n  (에디션 1/9)\" 식으로 KO 누출.\n\n수정:\n- lib/artwork-material.ts: getSizeLabel('확인 중'→'TBD') + getEditionLabel('에디션 N/M'\n  →'Edition N/M') 신규. 기존 getMaterialLabel과 동일 패턴.\n- lib/schemas/artwork.ts: 4개 sanitizeForLocale 호출(material·size·edition × 메타/JSON-LD)\n  을 getMaterialLabel/getSizeLabel/getEditionLabel로 교체. placeholder 문자열 제거.\n- lib/artwork-description-fallback.ts: EN 분기에서 getMaterialLabel/getSizeLabel/\n  getEditionLabel로 합성 — \"Created in 2017 on Pigment print on hanji, measuring\n  66x45cm, from an edition of 1/9\" 식으로 자연어화.\n- KO 분기는 edition이 '에디션' prefix 포함 시 중복 prefix 방지 (pre-existing 버그).\n\n[2] sitemap /en/petition/oh-yoon 누락\n서브에이전트(code-architect) 발견: EN_INDEXABLE_PAGES에 '/petition/oh-yoon' 등록됐으나\napp/sitemap.ts staticPaths에 entry 없어 sitemap의 staticEnPages에서 발행 안 되던\ndead entry. staticPaths에 추가해 발행 정합화.\n\n[검증]\ndev fetch /en/artworks/56c2c3f3-... (Agent #3가 leak 보고했던 동일 UUID):\n- '한지에 피그먼트 프린트': 0건 ✓\n- '에디션 1': 0건 ✓\n- 'Original details in Korean': 0건 ✓\n- visible KO: 0건 ✓\n- JSON-LD KO: 0건 ✓\ntype-check 통과.",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "f35f816e",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "네이버 서치 어드바이저 권장치 충족 — 제목·설명 단축 (#9)",
+    "summary": "네이버 서치 어드바이저가 사이트 제목 40자·설명 80자·OG 제목 40자 권장치를",
+    "body": "초과한다고 경고. 핵심 키워드(한국 현대미술, 원본, 회화·판화·조각, 씨앗페)를 유지하면서\n홈 메타 3종을 단축.\n\n[변경 전 → 후]\n- KO metaTitle: 41자 → 32자\n  \"한국 현대미술 작품 348점 · 회화 판화 사진 조각 원본 구매 | 씨앗페\"\n  → \"씨앗페 — 한국 현대미술 원본 348점 · 회화 판화 조각\"\n- KO metaDescription: 112자 → 69자\n  → \"112명 작가의 회화·판화·사진·조각 원본. 구매가 354건 저금리 대출이 된\n    예술인 상호부조 기금. 무료 배송·7일 반품.\"\n- root layout title.default: 동일하게 단축 (metadata 미명시 라우트 fallback)\n- EN metaTitle / metaDescription: 일관성 위해 동일 톤으로 단축\n\n[참고]\n- OG title은 [locale]/page.tsx가 t('metaTitle') 직접 사용 → 같이 단축됨\n- \"씨앗페 — \" 접두로 브랜드 인지도 보존 (Google sitename 기능과 별개로\n  네이버 SERP에는 브랜드 prefix가 효과적)\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-11",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "ac54b8d9",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "artwork mediumCategory 분류 + proxy .well-known/ skip 추가",
+    "summary": "서브에이전트 코드 리뷰에서 발견된 2건 — VisualArtwork.category 누락 위험과",
+    "body": "향후 .well-known/ 라우트 추가 시 회귀 가능성 사전 차단.\n\n[1] lib/schemas/artwork.ts — classifyArtworkMedium 입력을 materialForLocale에서\nartwork.material(raw)로 변경.\n\n원인: materialForLocale은 /en에서 _en 없으면 'Original details in Korean' fallback\n문자열로 치환됨. 그걸 classifyArtworkMedium에 넘기면 keywords 매칭 실패 → null →\nVisualArtwork.category 필드 통째로 누락. 분류 결과의 name/alternateName은 이미\nlocale별 swap 처리하므로, 입력은 raw KO material만으로 충분.\n\n영향: /en 작품 detail의 JSON-LD에 medium category(Painting/Print/Photography 등)가\n정상 발행되어 faceted search SEO 시그널 회복.\n\n[2] proxy.ts — STATIC_SKIP_ROOTS + matcher에 /.well-known/ 추가.\n\n원인: /feed.xml 500 회귀(296fb0a7)와 동일 패턴 — 정적 라우트가 intlProxy로 흘러\n페이지 처리 시도되며 500. 현재 .well-known 라우트 없어 증상 없지만, Apple Pay\nmerchant validation, security.txt, WebAuthn passkeys 등 IETF 표준 경로 추가 시\n즉시 회귀. preventive 차단.",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "eaf55f34",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "detail 페이지 3종 잔여 KO leak 일괄 차단 — artwork·story·news",
+    "summary": "광범위 잔여 점검에서 발견된 detail 페이지의 메타·JSON-LD KO leak 일괄 해소.",
+    "body": "artwork category·medium category, story tags, news source 3가지 데이터 라벨이\n영문 페이지에 한국어 그대로 노출되던 누락.\n\n[증상]\n- /en/artworks/[id]\n  - <meta name=\"keywords\">: '회화,buy 회화' 등 KO category\n  - <meta property=\"og:image:alt\">: '... — 회화 | SAF Online' KO category\n  - <meta name=\"twitter:image:alt\">: 동일\n  - VisualArtwork JSON-LD category.name: '유화' (medium KO)\n- /en/stories/[slug] BlogPosting JSON-LD keywords: ['겨울', '큐레이션', '씨앗페' ...]\n- /en/news/[id]\n  - <meta name=\"keywords\">: '월간 믹싱' source KO\n  - <meta property=\"article:author\">: '월간 믹싱'\n  - NewsArticle JSON-LD author.name + publisher: '월간 믹싱'\n  - PageHero description: '월간 믹싱 · 2025-...'\n\n[수정]\n1. lib/schemas/artwork.ts:\n   - getCategoryLabel(artwork.category, locale) 추가 — KO category → EN 매핑\n   - keywords·og:alt·twitter:alt 모두 locale-aware categoryForLocale 사용\n   - VisualArtwork.category.name/alternateName: locale별 mediumCategory.name/nameEn swap\n\n2. lib/news-source.ts (신규):\n   - SOURCE_NAME_MAP 10종 outlet → EN 라벨 매핑을 list/detail 공통 lib로 추출\n   - localizeNewsSource() helper export\n\n3. app/[locale]/news/page.tsx:\n   - 인라인 SOURCE_NAME_MAP 제거 → lib/news-source.ts에서 import\n   - localizeSourceName은 thin wrapper로 유지 (기존 호출 호환)\n\n4. app/[locale]/news/[id]/page.tsx:\n   - generateMetadata + page에 localizedSource = localizeNewsSource(...) 도입\n   - description·keywords·openGraph.authors·JSON-LD sourceName·PageHero\n     description 5곳 모두 localized 사용\n\n5. app/[locale]/stories/[slug]/page.tsx:\n   - BlogPosting.keywords: /en일 때 undefined (DB tags_en 컬럼 부재, KO 발행 무의미)\n\n[검증]\ndev fresh fetch:\n- /en/artworks/[id]: UI:0 meta:0 jsonld:0 ✓\n- /en/stories/[slug]: UI:0 meta:0 jsonld:0 ✓\n- /en/news/[id]:     UI:0 meta:0 jsonld:0 ✓\n- type-check 통과",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "58a96844",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "예약 발행 글(published_at > now) public 경로 제외",
+    "summary": "RSS validator가 'Implausible date' 경고 — 35편 매거진이 5/14~12/1 예약 발행 상태인데 sitemap·listing·detail·RSS·OG 모두 노출되고 있었음",
+    "body": "원인:\n- stories 테이블에 35편이 is_published=true + published_at 미래 (계절별 큐레이션·작가 인터뷰 시리즈로 의도적 예약)\n- getSupabaseStories()가 is_published=true만 필터하고 published_at 미래 체크 안 함\n- 결과: 미발행 글이 색인·OG 공유·RSS 발행됨\n\n근원 fix (단일 출처):\n- lib/supabase-data.ts: getSupabaseStores Supabase query에 .lte('published_at', new Date().toISOString()) 추가\n- 모든 public path(sitemap·feed·listing·detail·category·opengraph) 자동 보호\n- getSupabaseStoryBySlug도 같은 함수 재사용 → 미래 slug 직접 진입 시 not found\n\ndefense-in-depth:\n- app/feed.xml/route.ts: 추가로 published_at <= now 클라이언트 사이드 필터 (fallback path 안전망)\n\n영향:\n- RSS validator 'Implausible date' 경고 해소\n- sitemap에서 미래 글 발행 안 함 → Google이 미발행 글 색인 시도 안 함\n- 매거진 listing·detail에서 미래 글 비노출\n- 5/14 이후 예약 글이 published_at 도래 시 자동 노출 (변경 없이)\n\nadmin/dashboard 큐레이션은 별도 함수라 영향 없음 — 예약 발행 글 관리 그대로 가능",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "f9285564",
     "type": "fix",
     "scope": "admin",

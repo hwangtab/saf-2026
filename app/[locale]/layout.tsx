@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
-import { Noto_Sans_KR } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -34,10 +33,11 @@ import '@/styles/globals.css';
  * Pretendard Std Variable (v1.3.9) — KS X 1001 표준 한글(2350자) + Latin 단일 woff2 (291KB).
  * next/font/local로 self-host되어 `<link rel="preload" as="font">`가 HTML head에 자동 삽입됨.
  * 이전 옵션 B(globals.css @import) 회귀(caaf9a21 → 5f6aa2c9): preload tag 누락 + render-blocking
- * CSS chunk 3개로 LCP 5.3s→6.5s 악화. 이번에는 next/font 최적화를 받아야 회귀 회피.
+ * CSS chunk 3개로 LCP 5.3s→6.5s 악화. 옵션 A(34453240) → TBT 130→330ms 회귀(두 폰트 시스템 운영).
+ * 옵션 F: next/font/google Noto_Sans_KR 제거 + 한자 영역만 custom woff2 subset → 단일 폰트 시스템.
  *
  * 변수 폰트 weight 범위 45~920 (Pretendard 사양). adjustFontFallback로 metric 보정 → CLS 0 유지.
- * KS X 1001에 없는 한자/고문은 아래 notoSansKrHanja(preload: false)로 자동 fallback.
+ * KS X 1001에 없는 한자/고문은 아래 notoSansKrHanja(preload: false, unicode-range로 격리)로 lazy fallback.
  */
 const pretendard = localFont({
   src: '../../public/fonts/PretendardStdVariable.woff2',
@@ -48,15 +48,23 @@ const pretendard = localFont({
   adjustFontFallback: 'Arial',
 });
 
-// 한자 fallback — KS X 1001 범위 밖 글리프(고문/CJK 확장)는 시스템 명조체 대신 Noto Sans KR로.
-// preload: false라 HTML head에 preload link 안 만들어짐 (한자 페이지에서만 lazy load).
-const notoSansKrHanja = Noto_Sans_KR({
-  weight: '400',
-  subsets: [],
+// 한자 fallback — Noto Sans KR Regular에서 KS X 1001 한자(4888자) + 코드베이스 사용 한자 + Compatibility 영역
+// 만 추출한 custom subset (749KB woff2, SIL OFL). preload: false + unicode-range로 격리되어 한자 글리프가
+// 실제 노출되는 페이지에서만 브라우저가 lazy 다운로드 (작가명 한자, 작품명 한자 등). LCP/TBT 영향 0.
+// 이전 옵션 A의 next/font/google Noto_Sans_KR(다중 chunk subset)을 단일 woff2로 교체 — TBT 회복 목표.
+const notoSansKrHanja = localFont({
+  src: '../../public/fonts/NotoSansKR-Hanja-subset.woff2',
   variable: '--font-han',
   display: 'swap',
+  weight: '400',
+  style: 'normal',
   preload: false,
   adjustFontFallback: false,
+  declarations: [
+    // U+4E00-9FFF (CJK Unified Ideographs) + U+F900-FAFF (CJK Compatibility) — 한자 영역만
+    // 매칭. Pretendard가 커버하는 한글/Latin 영역에서는 절대 다운로드 안 됨 (브라우저 native).
+    { prop: 'unicode-range', value: 'U+4E00-9FFF, U+F900-FAFF' },
+  ],
 });
 
 export const viewport: Viewport = {

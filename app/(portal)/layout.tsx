@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 import localFont from 'next/font/local';
-import { Noto_Sans_KR } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { BRAND_COLORS } from '@/lib/colors';
@@ -26,13 +25,16 @@ const pretendard = localFont({
   adjustFontFallback: 'Arial',
 });
 
-const notoSansKrHanja = Noto_Sans_KR({
-  weight: '400',
-  subsets: [],
+// 한자 fallback — Noto Sans KR custom subset (KS X 1001 + 코드베이스 한자). [locale] layout 주석 참고.
+const notoSansKrHanja = localFont({
+  src: '../../public/fonts/NotoSansKR-Hanja-subset.woff2',
   variable: '--font-han',
   display: 'swap',
+  weight: '400',
+  style: 'normal',
   preload: false,
   adjustFontFallback: false,
+  declarations: [{ prop: 'unicode-range', value: 'U+4E00-9FFF, U+F900-FAFF' }],
 });
 
 export const viewport: Viewport = {
