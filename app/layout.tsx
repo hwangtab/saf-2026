@@ -59,6 +59,9 @@ export const metadata: Metadata = {
     apple: '/images/icons/icon-192.png',
   },
   // RSS auto-discovery — Feedly·구독 서비스가 사이트 진입 시 <head>의 link로 feed URL 인식.
+  // /en 페이지에서 한국어 매거진 피드를 가리키는 게 이상적이지 않지만, 영문 매거진은
+  // EN_INDEXABLE_STORY_SLUGS 3편뿐이라 별도 RSS 가치 낮음. 페이지별 alternates override가
+  // Next.js metadata merge에서 types까지 같이 날리는 부수효과가 있어 root에 유지.
   alternates: {
     types: {
       'application/rss+xml': '/feed.xml',
