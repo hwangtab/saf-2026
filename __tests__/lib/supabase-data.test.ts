@@ -79,34 +79,32 @@ describe('Supabase fallback: query error', () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-key';
 
-    // Mock supabase module with error-returning client
+    // Mock supabase module with error-returning client.
+    // `.returns()`는 PostgREST query builder의 typed-result chain 메서드 — await 시
+    // `{ data, error }`로 resolve되므로 동일 객체에 self-ref로 stub.
+    const errorPayload = () => {
+      const payload: { data: null; error: { message: string }; returns: () => unknown } = {
+        data: null,
+        error: { message: 'connection refused' },
+        returns: () => payload,
+      };
+      return payload;
+    };
     jest.mock('@/lib/supabase', () => ({
       hasSupabaseConfig: true,
       supabase: {
-        from: (table: string) => ({
+        from: (_table: string) => ({
           select: () => ({
             eq: () => ({
-              order: () => ({
-                data: null,
-                error: { message: 'connection refused' },
-              }),
+              order: () => errorPayload(),
               neq: () => ({
                 neq: () => ({
-                  limit: () => ({
-                    data: null,
-                    error: { message: 'connection refused' },
-                  }),
+                  limit: () => errorPayload(),
                 }),
               }),
-              maybeSingle: () => ({
-                data: null,
-                error: { message: 'connection refused' },
-              }),
+              maybeSingle: () => errorPayload(),
             }),
-            order: () => ({
-              data: null,
-              error: { message: 'connection refused' },
-            }),
+            order: () => errorPayload(),
           }),
         }),
       },

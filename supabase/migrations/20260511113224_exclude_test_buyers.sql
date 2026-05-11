@@ -9,6 +9,9 @@ AS $$
   SELECT email IS NOT NULL AND email IN ('contact@kosmart.org', 'hwangtab@gmail.com');
 $$;
 
+-- commerce RPC들이 SECURITY DEFINER 함수 안에서 호출하므로 explicit grant 필요.
+GRANT EXECUTE ON FUNCTION is_test_buyer_email(text) TO service_role;
+
 -- 1) commerce funnel summary
 CREATE OR REPLACE FUNCTION get_commerce_funnel_summary(since_ts timestamptz)
 RETURNS TABLE(

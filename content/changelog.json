@@ -1,5 +1,25 @@
 [
   {
+    "hash": "2faa0c8c",
+    "type": "fix",
+    "scope": "admin/analytics",
+    "subject": "더미·테스트 데이터 정리 — admin path 705건 삭제·cross-link 12건 backfill·테스트 buyer 제외",
+    "summary": "사용자 의심 — 어드민 분석 더미/잘못된 데이터 점검. 4가지 영역 일괄 정리",
+    "body": "발견·수정:\nA. page_views 누설 705건: /admin/* 637, /dashboard 11, /login·/signup·/onboarding 57 — webhook의 PORTAL_PATH_PREFIXES filter 추가 이전 historical 잔존. 삭제 완료\nB. cross-link event_data NULL 13건 backfill:\n   - story_to_artwork_click 12건 → path에서 story_slug 추출 (`/stories/{slug}`)\n   - artwork_to_story_click 1건 → path에서 artwork_id UUID 추출\n   - RelatedArtworkCard·RelatedMagazineCard를 trackEvent helper로 통일 (Vercel+GA4 이중 송신)\nC. orders 테스트 buyer 제외 RPC 마이그레이션(20260511113224):\n   - 황경하(contact@kosmart.org, hwangtab@gmail.com) buyer 61/78건 (78%)\n   - is_test_buyer_email() helper function 신설\n   - get_commerce_funnel_summary·get_top_artwork_funnel·get_revenue_daily_trend·get_artist_commerce_dashboard·get_story_attributed_revenue 5개 RPC에 NOT is_test_buyer_email(buyer_email) 필터 추가\n   - 검증: 90일 commerce funnel orders_paid 8→0 (테스트 7+실1 → 정상 0)\n\n영향:\n- 어드민 페이지의 모든 commerce·매출 통계가 진짜 외부 사용자 트래픽만 반영\n- 결제 funnel·작가별 매출·매거진 매출 기여 모든 분석에서 테스트 noise 제거\n- 향후 관리자 추가 시 is_test_buyer_email() 함수만 수정하면 자동 반영",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "7039e846",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "/en 페이지 breadcrumb·Footer KO leak 일괄 수정",
+    "summary": "force-static + Suspense 경계에서 setRequestLocale의 request scope가",
+    "body": "끊겨 getTranslations('namespace')가 default locale(ko)로 fallback되던 패턴을\n30개 파일에 일괄 적용 — 모든 호출에 명시 locale 전달.\n\n[증상]\n- /en 모든 페이지 Footer 전체 한국어 노출 (15+ 라벨: 탐색·참여·구매·온라인 갤러리 등)\n- /en/our-reality, /our-proof, /transparency, /news, /archive 브레드크럼 KO (\"우리의 현실\" 등)\n- /en 헤더 logo aria-label \"씨앗페 온라인 홈\"\n- Footer 사업자 정보 대표자명·통신판매신고번호 KO format\n\n[원인]\naf693bae가 root layout과 메인 page에만 적용한 fix를 Footer와 sub-page들이\n받지 못함. getTranslations(namespace)는 request scope를 읽는데 Suspense 경계\n또는 force-static prerender에서 scope가 끊겨 ko fallback.\n\n[수정]\n1. components/common/Footer.tsx: locale prop 받도록 변경, 모든 t() 호출에 명시 locale\n2. app/[locale]/layout.tsx, app/(auth)/layout.tsx: <Footer locale={locale} /> 전달\n3. 30개 [locale]/* 페이지: getTranslations('ns') → getTranslations({ locale, namespace: 'ns' })\n   - sed 일괄 적용 후 4개 파일(locale 변수 없던 곳)에만 추가로 변수 도입\n4. lib/constants.ts: REPRESENTATIVE_NAME_EN, MAIL_ORDER_REPORT_NUMBER_EN 추가\n   Footer.tsx에서 isEn 분기로 사용\n\n[검증]\ndev server에서 /en 13개 페이지 fetch 후 한국어 잔존 확인:\n- UI 라벨: /en 전부 0건\n- 데이터 콘텐츠(증언 인용, 작가명, 작품명, 한국 언론사명) 잔존 — 의도된 한국어",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "26f9f6d4",
     "type": "fix",
     "scope": "admin/analytics",

@@ -377,7 +377,7 @@ const getArtworksByCategoryLightUncached = async (
     .select(`${ARTWORK_SELECT_COLUMNS}, artists (${ARTIST_SELECT_COLUMNS})`)
     .eq('is_hidden', false)
     .eq('category', category)
-    .eq('sold', false)
+    .eq('status', 'available')
     .order('created_at', { ascending: false })
     .limit(limit)
     .returns<ArtworkWithArtistRow[]>();
@@ -564,10 +564,13 @@ const getPopularArtistNamesUncached = async (limit: number): Promise<string[]> =
   if (!hasSupabaseConfig || !supabase) {
     return Array.from(new Set(fallbackArtworks.map((a) => a.artist))).slice(0, limit);
   }
-  type PopularRow = { artist_id: string | null; artists: { name: string } | null };
+  // artists 테이블 컬럼은 `name_ko`/`name_en`. 과거 `name` 사용은 PostgREST error로
+  // production logs에 매번 `column artists_1.name does not exist` 기록되며 빌드 인기 작가
+  // prerender가 fallback으로 떨어졌음.
+  type PopularRow = { artist_id: string | null; artists: { name_ko: string | null } | null };
   const { data, error } = await supabase
     .from('artworks')
-    .select('artist_id, artists(name)')
+    .select('artist_id, artists(name_ko)')
     .eq('is_hidden', false)
     .returns<PopularRow[]>();
 
@@ -578,7 +581,7 @@ const getPopularArtistNamesUncached = async (limit: number): Promise<string[]> =
 
   const counts = new Map<string, number>();
   for (const row of data ?? []) {
-    const name = row.artists?.name?.trim();
+    const name = row.artists?.name_ko?.trim();
     if (!name) continue;
     counts.set(name, (counts.get(name) || 0) + 1);
   }

@@ -38,6 +38,13 @@ jest.mock('next-intl', () => ({
   useLocale: () => 'ko',
 }));
 
+// @vercel/analytics는 ESM-only (`.mjs` + `export`). jest 기본 transform이 node_modules를
+// 무시해 `SyntaxError: Unexpected token 'export'`로 분석 import 체인 전체 깨짐.
+// 글로벌 mock으로 우회 — 어차피 테스트에선 송신 검증 X.
+jest.mock('@vercel/analytics', () => ({
+  track: jest.fn(),
+}));
+
 // Mock @/i18n/navigation (locale-aware navigation)
 jest.mock('@/i18n/navigation', () => {
   const React = require('react');
