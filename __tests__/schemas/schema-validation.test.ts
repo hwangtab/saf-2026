@@ -365,6 +365,51 @@ describe('generateArtworkJsonLd', () => {
     );
     expect(productSchema.isPartOf.location['@type']).toBe('Place');
   });
+
+  it('should emit subjectOf Article entries from mentionedInStories option', () => {
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko', undefined, {
+      mentionedInStories: [
+        { slug: 'spring-curation-saf', title: '봄 큐레이션', titleEn: 'Spring Curation' },
+        { slug: 'minjung-art-intro', title: '민중미술이란', titleEn: null },
+      ],
+    });
+    expect(productSchema.subjectOf).toHaveLength(2);
+    expect(productSchema.subjectOf[0]).toEqual({
+      '@type': 'Article',
+      '@id': 'https://www.saf2026.com/stories/spring-curation-saf',
+      headline: '봄 큐레이션',
+      url: 'https://www.saf2026.com/stories/spring-curation-saf',
+    });
+    expect(productSchema.subjectOf[1].headline).toBe('민중미술이란');
+  });
+
+  it('should localize subjectOf headline and URL when locale is en', () => {
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'en', undefined, {
+      mentionedInStories: [
+        { slug: 'spring-curation-saf', title: '봄 큐레이션', titleEn: 'Spring Curation' },
+      ],
+    });
+    expect(productSchema.subjectOf[0].headline).toBe('Spring Curation');
+    expect(productSchema.subjectOf[0]['@id']).toBe(
+      'https://www.saf2026.com/en/stories/spring-curation-saf'
+    );
+  });
+
+  it('should omit subjectOf when mentionedInStories is empty or missing', () => {
+    const { productSchema: a } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
+    expect(a).not.toHaveProperty('subjectOf');
+    const { productSchema: b } = generateArtworkJsonLd(
+      baseArtwork,
+      '100000',
+      false,
+      'ko',
+      undefined,
+      {
+        mentionedInStories: [],
+      }
+    );
+    expect(b).not.toHaveProperty('subjectOf');
+  });
 });
 
 describe('generateArtworkMetadata', () => {

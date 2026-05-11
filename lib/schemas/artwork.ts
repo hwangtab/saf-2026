@@ -233,7 +233,12 @@ export function generateArtworkJsonLd(
   numericPrice: string,
   isInquiry: boolean,
   locale: 'ko' | 'en' = 'ko',
-  breadcrumbLabels?: { home: string; artworks: string; category?: { name: string; path: string } }
+  breadcrumbLabels?: { home: string; artworks: string; category?: { name: string; path: string } },
+  options?: {
+    // 이 작품을 본문/주제로 다룬 매거진. VisualArtwork.subjectOf로 송출해 매거진→작품
+    // mentions와 양방향 그래프를 닫는다. 호출처에서 slice(0, 3)된 동일 목록을 전달.
+    mentionedInStories?: Array<{ slug: string; title: string; titleEn?: string | null }>;
+  }
 ) {
   const isEnglish = locale === 'en';
   const titleForLocale = isEnglish && artwork.title_en ? artwork.title_en : artwork.title;
@@ -484,6 +489,17 @@ export function generateArtworkJsonLd(
         value: historyForLocale.substring(0, 200),
       },
     ].filter(Boolean),
+    ...(options?.mentionedInStories?.length && {
+      subjectOf: options.mentionedInStories.map((s) => {
+        const storyUrl = buildLocaleUrl(`/stories/${s.slug}`, locale);
+        return {
+          '@type': 'Article',
+          '@id': storyUrl,
+          headline: isEnglish && s.titleEn ? s.titleEn : s.title,
+          url: storyUrl,
+        };
+      }),
+    }),
     potentialAction: [
       {
         '@type': 'BuyAction',

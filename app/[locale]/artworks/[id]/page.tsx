@@ -40,6 +40,7 @@ import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
+import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -158,10 +159,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // Get related articles for this artist (static content)
   const relatedArticles = getArticlesByArtist(artwork.artist);
 
-  // Get related magazine stories from Supabase (tags include artist name)
-  const relatedMagazineStories = allStories
-    .filter((s) => s.tags?.some((tag) => tag === artwork.artist))
-    .slice(0, 3);
+  // 관련 매거진: (1) 작가 태그 매칭 + (2) 본문에 이 작품 uuid를 직접 인용한 글.
+  // 매거진→작품 인용은 schema.org mentions로 이미 송출 중이고, 그 역방향을 작품 페이지에서
+  // 노출해 양방향 entity graph를 닫는다. 작가 매칭을 우선하고 본문 인용을 보충해 슬롯 채움.
+  const tagMatchedStories = allStories.filter((s) => s.tags?.some((tag) => tag === artwork.artist));
+  const tagMatchedIds = new Set(tagMatchedStories.map((s) => s.id));
+  const bodyMentionedStories = allStories.filter(
+    (s) => !tagMatchedIds.has(s.id) && extractArtworkIdsFromBody(s.body).includes(artwork.id)
+  );
+  const relatedMagazineStories = [...tagMatchedStories, ...bodyMentionedStories].slice(0, 3);
   const localizeDataValue = (value: string | null | undefined): string | null => {
     if (!value) return null;
     if (locale !== 'en') return value;
@@ -227,6 +233,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
       home: tBreadcrumbs('home'),
       artworks: tBreadcrumbs('artworks'),
       category: categoryBreadcrumb,
+    },
+    {
+      mentionedInStories: relatedMagazineStories.map((s) => ({
+        slug: s.slug,
+        title: s.title,
+        titleEn: s.title_en,
+      })),
     }
   );
 
