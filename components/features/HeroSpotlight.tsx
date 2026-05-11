@@ -36,43 +36,21 @@ interface HeroSpotlightProps {
  * RSC 제약: 함수 props는 server → client 전달 불가하므로 a11y 라벨은
  * 컴포넌트 내부에서 useTranslations로 직접 처리. 슬라이드 콘텐츠(title/desc 등)는
  * server에서 미리 풀어 SSR HTML에 정적 노출 → SEO 유지.
- *
- * ── LCP lazy-hydration 전략 (2026-05-11) ─────────────────────────────────────
- * 기존: 컴포넌트 hydrate 즉시 embla `active:true`로 init →
- *   translate/resize/dragHandler/slidesHandler init이 main thread를 점유,
- *   PSI element render delay 907~943ms 일관 → mobile LCP 5.1s.
- *
- * 신: embla를 `active:false`로 초기 init → SSR DOM 그대로 유지(transform 없음,
- *   ref 등록만), LCP paint 완료 후 idle 시점에 `reInit({ active:true })` 호출 →
- *   embla 정상 활성화. 동일 DOM 트리에서 transform만 박히므로 *두 번째 paint
- *   가 일어나지 않음* — 4378e1a4 회귀 패턴(server static + client absolute
- *   overlay = 두 paint 충돌)을 구조적으로 회피.
- *
- *   첫 슬라이드 translate3d(0,0,0)이라 활성화 순간 위치 변화 0. 인디케이터/
- *   화살표는 slides.length 기반으로 SSR/CSR 모두 일관 렌더(scrollSnaps 의존
- *   제거) — DOM mount 후 추가되는 절대 위치 노드 없음. LCP element는 단일
- *   <img>로 시작해 끝까지 동일 노드.
  */
 export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
   const t = useTranslations('home.nowShowing');
 
-  // embla 활성 여부. 초기 false → SSR DOM과 hydration 결과가 비트 단위로 동일
-  // (translate transform 없음, drag/resize listener 없음). LCP paint 후 idle에 true 전환.
-  const [emblaActive, setEmblaActive] = useState(false);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: 'start', active: emblaActive },
-    [
-      Autoplay({
-        delay: 6000,
-        stopOnInteraction: false,
-        stopOnMouseEnter: true,
-        stopOnFocusIn: true,
-      }),
-    ]
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [
+    Autoplay({
+      delay: 6000,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+      stopOnFocusIn: true,
+    }),
+  ]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
   const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi]);
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
@@ -83,54 +61,13 @@ export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
 
-  // embla 이벤트 구독 — active 토글 시점에 emblaApi 재생성되지 않고 reactivate되므로
-  // 동일 emblaApi에 대해 'select'/'reInit' 핸들러를 한 번 등록하면 충분.
   useEffect(() => {
     if (!emblaApi) return;
+    setScrollSnaps(emblaApi.scrollSnapList());
     emblaApi.on('select', onSelect);
     emblaApi.on('reInit', onSelect);
-    return () => {
-      emblaApi.off('select', onSelect);
-      emblaApi.off('reInit', onSelect);
-    };
+    onSelect();
   }, [emblaApi, onSelect]);
-
-  // LCP 보호용 lazy hydration: hydrate 후 idle 시점에 embla 활성화.
-  // requestIdleCallback이 없는 환경(Safari < 17)에서는 setTimeout fallback.
-  // 단일 슬라이드면 carousel 동작 자체가 의미 없으므로 활성화 생략 (DOM 변경 0).
-  useEffect(() => {
-    if (slides.length <= 1) return;
-
-    let cancelled = false;
-    const activate = () => {
-      if (cancelled) return;
-      setEmblaActive(true);
-    };
-
-    type RIC = (cb: () => void, opts?: { timeout?: number }) => number;
-    const ric: RIC | undefined = (window as unknown as { requestIdleCallback?: RIC })
-      .requestIdleCallback;
-    if (typeof ric === 'function') {
-      const handle = ric(activate, { timeout: 2000 });
-      return () => {
-        cancelled = true;
-        const cic = (window as unknown as { cancelIdleCallback?: (h: number) => void })
-          .cancelIdleCallback;
-        if (typeof cic === 'function') cic(handle);
-      };
-    }
-    // Fallback: 1프레임 + 500ms — LCP 측정 종료(보통 ~2.5s 이내) 이후 활성화
-    const tid = window.setTimeout(activate, 500);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(tid);
-    };
-  }, [slides.length]);
-
-  // 인디케이터/화살표 표시 여부는 slides.length로 직접 판정 — SSR/CSR 일관.
-  // 기존 scrollSnaps.length 기반은 emblaApi mount 후 setState로 추가 렌더링되어
-  // 절대 위치 노드가 paint 1프레임 뒤에 들어가는 미세 layout 변화 유발.
-  const hasMultipleSlides = slides.length > 1;
 
   return (
     <section aria-label="Spotlight carousel" className="relative overflow-hidden bg-charcoal-deep">
@@ -142,11 +79,11 @@ export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
         </div>
       </div>
 
-      {/* 점 인디케이터 — 하단 중앙. SSR/CSR 동일 출력(LCP paint와 같은 프레임). */}
-      {hasMultipleSlides && (
+      {/* 점 인디케이터 — 하단 중앙 */}
+      {scrollSnaps.length > 1 && (
         <div className="absolute bottom-12 md:bottom-16 left-0 right-0 z-20 flex justify-center gap-2 pointer-events-none">
           <div className="flex gap-2 pointer-events-auto">
-            {slides.map((_, idx) => (
+            {scrollSnaps.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
@@ -172,7 +109,7 @@ export default function HeroSpotlight({ slides }: HeroSpotlightProps) {
       )}
 
       {/* 좌우 화살표 — 데스크톱만 (호버 시 진하게) */}
-      {hasMultipleSlides && (
+      {scrollSnaps.length > 1 && (
         <>
           <button
             type="button"
