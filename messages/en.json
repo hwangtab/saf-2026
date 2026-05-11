@@ -395,6 +395,38 @@
     "smsAria": "Share via SMS",
     "smsTitle": "Share via text message"
   },
+  "purchaseGuide": {
+    "modalTitle": "Purchase and service guide",
+    "viewAll": "View purchase guide",
+    "cards": {
+      "shippingLabel": "Shipping",
+      "shippingText": "Conditional free shipping",
+      "secureLabel": "Secure payment",
+      "secureText": "SSL secure payment system",
+      "certificateLabel": "Certificate",
+      "certificateText": "Certificate of authenticity included",
+      "refundLabel": "Cancel/Refund",
+      "refundText": "Withdrawal possible within 7 days after delivery"
+    },
+    "sections": {
+      "serviceTitle": "Service overview",
+      "serviceDescription": "Each order covers one physical artwork based on the listed details. Processing flow: <strong>payment confirmation → final condition check → shipment</strong>.",
+      "serviceContact": "Contact: {phone} / {email} (Weekdays 10:00–18:00 KST)",
+      "paymentTitle": "Payment",
+      "paymentDescription": "Payments are processed securely via TossPayments.",
+      "paymentNote": "Order confirmation timing may vary depending on payment method approval.",
+      "shippingTitle": "Shipping",
+      "shippingFeeLabel": "Shipping fee:",
+      "shippingFeeValue": "Conditional free shipping",
+      "shippingTier1": "Order below <strong>KRW 200,000: KRW 4,000</strong>",
+      "shippingTier2": "Order <strong>KRW 200,000 or above: Free</strong>",
+      "shippingDeliveryTime": "Typical delivery: 3–4 business days after payment confirmation",
+      "refundTitle": "Cancellation and refund",
+      "refundItem1": "Withdrawal due to change of mind is available <strong>within 7 days</strong> after delivery.",
+      "refundItem2": "Defects or wrong delivery are eligible for exchange/refund at seller expense.",
+      "refundItem3": "Return shipping for change-of-mind cases is buyer-paid; refunds are processed to the original payment method <strong>within 3 business days</strong> after return inspection."
+    }
+  },
   "artworkCard": {
     "untitled": "Untitled",
     "unknownArtist": "Unknown artist",
