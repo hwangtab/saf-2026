@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `한국 현대미술 작품 ${ARTWORK_COUNT}점 · 회화 판화 사진 조각 원본 구매 | 씨앗페`,
+    default: `씨앗페 — 한국 현대미술 원본 ${ARTWORK_COUNT}점 · 회화 판화 조각`,
     // 브랜드 suffix 제거 — Google SERP의 sitename 기능이 도메인 기반으로 브랜드를 자동 표시
     // (반복되는 "| 씨앗페 온라인 갤러리" 픽셀 낭비 방지). 페이지 단위로 브랜드 노출이 필요하면
     // generateMetadata에서 absolute title로 명시하거나 필요한 곳만 수동으로 붙임.
