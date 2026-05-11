@@ -1,5 +1,45 @@
 [
   {
+    "hash": "c20e9c56",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "ArtworkCard aria-label '자세히 보기' 하드코딩 영문화",
+    "summary": "잔여 점검 중 /en 페이지의 모든 작품 카드 aria-label에 한국어 \"자세히",
+    "body": "보기\" suffix 노출 발견 — 스크린리더 영문 사용자에게 KO 노출되던 a11y 회귀.\n\n[증상]\n/en/* 페이지의 ArtworkCard 컴포넌트 aria-label:\n  \"Newlywed Mr. Lee (李씨) — Lee Incheol 자세히 보기\"\nKO/EN locale 무관하게 마지막 \"자세히 보기\"만 한국어 하드코딩.\n\n[원인]\ncomponents/ui/ArtworkCard.tsx:288 aria-label에 직접 KO 텍스트 박힘.\nuseTranslations('artworkCard') 객체는 이미 존재하지만 viewDetailsAria 키 부재.\n\n[수정]\n- messages/ko.json artworkCard.viewDetailsAria 추가: \"{title} — {artist} 자세히 보기\"\n- messages/en.json artworkCard.viewDetailsAria 추가: \"View {title} by {artist}\"\n- components/ui/ArtworkCard.tsx: hardcoded 백틱 → t('viewDetailsAria', {title, artist})\n\n[검증]\ndev fetch /en 홈: \"자세히 보기\" 잔존 0건 (이전 N건 — 페이지 작품 카드 수만큼)\n\n[추가 발견 — 보고만]\ncomponents/features/PurchaseGuide.tsx — /en/artworks/[id] dialog로 사용되는데\nhardcoded KO 30+ 라인 (결제·배송·환불 안내). /en 사용자가 dialog 열면 KO 노출.\n스코프 크고 영문 카피 작성 필요해 별도 PR로 분리 권장.",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "30c6bc49",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "OG 이미지 마감일을 PETITION_OH_YOON_DEADLINE_ISO 단일 출처로 통일",
+    "summary": "직전 hardcoded 5/10→5/20 정정 후속 — OG 이미지가 hardcoded라 또 누락 위험. constants에서 자동 추출로 통일",
+    "body": "수정:\n- app/[locale]/petition/oh-yoon/opengraph-image.tsx: PETITION_OH_YOON_DEADLINE_ISO import 후 slice(0, 10)으로 YYYY-MM-DD 추출\n- ko: '2026.05.20 마감 · 1만 명' (자동 생성)\n- en: 'By 2026-05-20 · 10,000 names' (자동 생성)\n\n배경:\n- 직전 마감일 5/20 연장 시 DB row + opengraph-image.tsx 둘 다 hardcoded 5/10 잔존 → 서명 차단 + OG 표시 둘 다 회귀\n- 향후 마감일 변경 시 (NEXT_PUBLIC_PETITION_DEADLINE env 또는 constants.ts default) OG 이미지도 자동 갱신\n\n잔존 점검 결과(이상 없음):\n- pg_cron 미설치 → close_petition 자동 cron 없음 (5/20 마감 시점 운영자 수동 close 필요)\n- 다른 hardcoded 5/10 검색 → opengraph-image만 발견 (정정 완료)",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "fe9349b3",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "/en hreflang/canonical 복원 + stories author 영문화 + layout alternates 정리",
+    "summary": "fdf91485 정책 전환(영문 핵심 페이지 색인 허용)의 효과를 무효화하던 3개",
+    "body": "잔여 문제 해결 — createLocaleAlternates가 여전히 KO-only로 stale, layout이 잘못된\nhomepage hardcoded alternates 발행, /en/stories author 4종 KO 노출.\n\n[P0] lib/locale-alternates.ts — SEO 정책 복원 (CRITICAL)\n이전 상태: locale·koOnly 파라미터 모두 ignore, canonical=KO + ko hreflang only.\n→ /en 페이지에 robots: index 박혀 있지만 canonical이 KO를 가리켜 Google이 duplicate로\n  무시하고 en hreflang 미발행으로 /en 존재 자체 모름. 정책 전환 100% 무효화.\n수정: locale 인자로 self-canonical 결정, koOnly false면 양방향 hreflang(ko-KR + en-US +\n  x-default) 발행. koOnly true(작품 detail·매거진 body_en 부재·category 등)는 KO canonical\n  유지로 consolidation. 17개 호출처 모두 이미 올바른 인자 전달 중이라 코드 변경 불필요.\n\n[P2] app/[locale]/layout.tsx — 잘못된 alternates fallback 제거\n이전 상태: layout-level `alternates: { languages: { ko: '/', en: '/en', 'x-default': '/' } }`\n가 모든 페이지에 homepage hardcoded fallback으로 발행 → 페이지별 path-specific\nhreflang과 함께 5개 발행되어 Google 혼란.\n수정: layout alternates 블록 제거. 페이지별 createLocaleAlternates가 단독으로 발행.\n\n[P1] /en/stories author 4종 영문화\nDB stories.author 컬럼이 KO 4종(\"SAF 매거진\"·\"SAF 매거진 편집부\"·\"씨앗페 매거진\"·\"씨앗페\n편집팀\")이고 author_en 컬럼 부재. 직접 렌더 4개 파일(stories list·detail·category·OG image)\n에서 KO 그대로 노출되던 누락.\n- lib/story-author.ts (신규): localizeStoryAuthor() helper — 4종 KO를 EN(\"SAF Magazine\"\n  통일 + Editorial Team 구분)으로 매핑. 향후 author_en DB 컬럼 추가 시 fallback으로 활용 가능\n- app/[locale]/stories/page.tsx: featured + grid 2곳\n- app/[locale]/stories/category/[category]/page.tsx: grid 1곳\n- app/[locale]/stories/[slug]/page.tsx: openGraph.authors + JSON-LD authorName + PageHero\n  description + 본문 byline 총 4곳\n- app/[locale]/stories/[slug]/opengraph-image.tsx: OG image 텍스트 1곳\n\n[검증]\ndev fetch:\n- /en/our-reality: canonical='/en/our-reality' (self) + ko-KR + en-US + x-default 발행 ✓\n- /en/privacy (koOnly): canonical=KO + ko-KR + x-default만 (en 미발행) ✓\n- /en/artworks (bilingual): canonical='/en/artworks' + 양방향 hreflang ✓\n- /en/stories: 4종 author KO 잔존 0건, 모두 \"SAF Magazine\"/\"SAF Magazine Editorial Team\" 변환 ✓",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "e143e87f",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "오윤 청원 마감일 hardcoded 5/10 → 5/20 정정 — 서명 차단 긴급 복구",
+    "summary": "사용자 제보 — production에서 5/11부터 서명이 차단됨. 마감일을 5/20으로 연장했지만 두 곳의 옛 5/10이 남아 sign_petition RPC가 PETITION_CLOSED 반환",
+    "body": "긴급 fix:\n- DB petitions.deadline_at: 2026-05-10 14:59:59 UTC → 2026-05-20 14:59:59 UTC (UPDATE 적용 완료, 즉시 서명 재개)\n- app/[locale]/petition/oh-yoon/opengraph-image.tsx: OG 이미지 '2026.05.10 마감' → '2026.05.20 마감' (ko·en 양쪽)\n\n배경:\n- 직전 마감일 연장 commit에서 lib/petition/constants.ts default는 5/20으로 변경됨\n- 그러나 DB petitions 테이블에 row가 따로 있고 그게 5/10으로 박혀 있었음\n- sign_petition RPC가 v_petition.deadline_at <= now() 체크해 PETITION_CLOSED 반환\n- OG 이미지 텍스트는 표시 정합성 문제 (서명 차단과는 별개지만 같은 시리즈 누락)\n\n검증:\n- DB SELECT 결과 deadline_at=2026-05-20 확인\n- production 서명 즉시 재개됨 (deploy 무관, DB UPDATE는 production runtime에 직접 반영)\n\n후속 모니터링:\n- pg_cron이 자동으로 close_petition 호출하는 schedule이 deadline_at 기반인지 확인\n- close_petition은 deadline에 자동 invoke되므로 5/20 자정 KST에 자동 마감",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "62f03157",
     "type": "fix",
     "scope": "seo",

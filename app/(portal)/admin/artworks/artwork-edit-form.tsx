@@ -398,7 +398,7 @@ export function ArtworkEditForm({
             <label htmlFor="edition_type" className="block text-sm font-medium text-gray-700 mb-2">
               에디션 유형 <span className="text-danger">*</span>
             </label>
-            <select
+            <AdminSelect
               id="edition_type"
               name="edition_type"
               value={editionType}
@@ -408,28 +408,22 @@ export function ArtworkEditForm({
                   setEditionLimit('');
                 }
               }}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             >
               <option value="unique">Unique (1점)</option>
               <option value="limited">Limited (한정판)</option>
               <option value="open">Open (무제한)</option>
-            </select>
+            </AdminSelect>
           </div>
 
           <div>
             <label htmlFor="tax_type" className="block text-sm font-medium text-gray-700 mb-2">
               과세구분
             </label>
-            <select
-              id="tax_type"
-              name="tax_type"
-              defaultValue={artwork.tax_type || 'B'}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
-            >
+            <AdminSelect id="tax_type" name="tax_type" defaultValue={artwork.tax_type || 'B'}>
               <option value="B">면세</option>
               <option value="A">과세</option>
               <option value="C">영세</option>
-            </select>
+            </AdminSelect>
           </div>
 
           <div>
@@ -440,7 +434,7 @@ export function ArtworkEditForm({
               분류
             </label>
             <input type="hidden" name="category" value={categoryValue} />
-            <select
+            <AdminSelect
               id="category_select"
               value={categoryMode === 'custom' ? '__custom__' : categoryPreset}
               onChange={(e) => {
@@ -453,7 +447,6 @@ export function ArtworkEditForm({
                   setCategoryCustom('');
                 }
               }}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             >
               <option value="">선택해주세요</option>
               {ARTWORK_CATEGORIES.map((cat) => (
@@ -462,7 +455,7 @@ export function ArtworkEditForm({
                 </option>
               ))}
               <option value="__custom__">직접입력</option>
-            </select>
+            </AdminSelect>
             {categoryMode === 'custom' && (
               <input
                 type="text"

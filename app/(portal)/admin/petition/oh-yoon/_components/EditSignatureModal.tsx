@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
 import Modal from '@/components/ui/Modal';
+import Select from '@/components/ui/Select';
 import { REGIONS, getRegionByKey } from '@/lib/petition/regions';
 import { updateSignature } from '@/app/actions/petition-admin';
 
@@ -110,18 +111,18 @@ export default function EditSignatureModal({ row, onClose }: EditSignatureModalP
             <label htmlFor="edit-region-top" className={LABEL_BASE}>
               {t('editLabelRegionTop')}
             </label>
-            <select
+            <Select
               id="edit-region-top"
               value={regionTop}
               onChange={(e) => handleRegionTopChange(e.target.value)}
-              className={INPUT_BASE}
+              className="py-2 text-sm"
             >
               {REGIONS.map((r) => (
                 <option key={r.key} value={r.key}>
                   {r.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
@@ -129,11 +130,11 @@ export default function EditSignatureModal({ row, onClose }: EditSignatureModalP
               {t('editLabelRegionSub')}
             </label>
             {subOptions.length > 0 ? (
-              <select
+              <Select
                 id="edit-region-sub"
                 value={regionSub}
                 onChange={(e) => setRegionSub(e.target.value)}
-                className={INPUT_BASE}
+                className="py-2 text-sm"
               >
                 <option value="">—</option>
                 {subOptions.map((s) => (
@@ -141,7 +142,7 @@ export default function EditSignatureModal({ row, onClose }: EditSignatureModalP
                     {s}
                   </option>
                 ))}
-              </select>
+              </Select>
             ) : (
               <input
                 id="edit-region-sub"

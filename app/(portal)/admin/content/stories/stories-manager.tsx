@@ -2,6 +2,7 @@
 
 import { createStory, updateStory, deleteStory } from '@/app/actions/admin-content';
 import { CRUDManager } from '../_components/CRUDManager';
+import Select from '@/components/ui/Select';
 
 type StoryItem = {
   id: string;
@@ -71,13 +72,13 @@ export function StoriesManager({ stories }: { stories: StoryItem[] }) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input name="title_en" placeholder="제목 (영어, 선택)" className={inputClass} />
-            <select name="category" className={inputClass}>
+            <Select name="category" className="rounded-md py-2 text-sm">
               {CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <textarea name="excerpt" placeholder="요약 (한국어)" rows={2} className={inputClass} />
           <textarea
@@ -144,13 +145,17 @@ export function StoriesManager({ stories }: { stories: StoryItem[] }) {
               placeholder="제목 (영어, 선택)"
               className={inputClass}
             />
-            <select name="category" defaultValue={item.category} className={inputClass}>
+            <Select
+              name="category"
+              defaultValue={item.category}
+              className="rounded-md py-2 text-sm"
+            >
               {CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <textarea
             name="excerpt"

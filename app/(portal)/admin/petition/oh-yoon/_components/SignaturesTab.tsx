@@ -6,6 +6,7 @@ import clsx from 'clsx';
 
 import { getRegionByKey } from '@/lib/petition/regions';
 import { deleteSignature } from '@/app/actions/petition-admin';
+import Select from '@/components/ui/Select';
 
 import EditSignatureModal from './EditSignatureModal';
 import type { AdminSignatureRow } from './types';
@@ -89,10 +90,11 @@ export default function SignaturesTab({ signatures, signaturesTotal }: Signature
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <select
+          <Select
             value={filter}
             onChange={(e) => setFilter(e.target.value as Filter)}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            wrapperClassName="w-auto"
+            className="w-auto py-1.5 text-sm"
           >
             <option value="all">{t('signaturesFilterAll')}</option>
             <option value="committee">{t('signaturesFilterCommittee')}</option>
@@ -100,7 +102,7 @@ export default function SignaturesTab({ signatures, signaturesTotal }: Signature
               {t('signaturesFilterDuplicates', { count: duplicateNames.size })}
             </option>
             <option value="masked">{t('signaturesFilterMasked')}</option>
-          </select>
+          </Select>
           <input
             type="search"
             value={search}

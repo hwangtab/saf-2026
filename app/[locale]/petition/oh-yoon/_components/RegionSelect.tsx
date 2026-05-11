@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { REGIONS, getRegionLabel, getSubregionLabel, getSubregions } from '@/lib/petition/regions';
+import Select from '@/components/ui/Select';
 
 interface RegionSelectProps {
   topValue: string;
@@ -13,11 +14,6 @@ interface RegionSelectProps {
   disabled?: boolean;
   required?: boolean;
 }
-
-const SELECT_BASE =
-  'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-charcoal-deep ' +
-  'focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ' +
-  'disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed';
 
 export default function RegionSelect({
   topValue,
@@ -35,13 +31,12 @@ export default function RegionSelect({
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      <select
+      <Select
         id={topId}
         value={topValue}
         onChange={(e) => onChange(e.target.value, '')}
         disabled={disabled}
         required={required}
-        className={SELECT_BASE}
       >
         <option value="" disabled>
           {t('formRegionTopPlaceholder')}
@@ -51,15 +46,14 @@ export default function RegionSelect({
             {getRegionLabel(r, locale)}
           </option>
         ))}
-      </select>
+      </Select>
 
-      <select
+      <Select
         id={subId}
         value={subValue}
         onChange={(e) => onChange(topValue, e.target.value)}
         disabled={disabled || subs.length === 0}
         required={subRequired}
-        className={SELECT_BASE}
         aria-label={t('formRegionSubAriaLabel')}
       >
         <option value="">
@@ -70,7 +64,7 @@ export default function RegionSelect({
             {getSubregionLabel(topValue, s, locale)}
           </option>
         ))}
-      </select>
+      </Select>
     </div>
   );
 }

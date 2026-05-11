@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import Select from '@/components/ui/Select';
 import type { AdminAuditRow } from './types';
 
 const ACTION_LABEL_KEYS: Record<string, string> = {
@@ -45,10 +46,11 @@ export default function AuditLogTab({ audit }: { audit: AdminAuditRow[] }) {
   return (
     <div className="space-y-4">
       <header className="flex flex-wrap items-center gap-2">
-        <select
+        <Select
           value={actionFilter}
           onChange={(e) => setActionFilter(e.target.value)}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          wrapperClassName="w-auto"
+          className="w-auto py-1.5 text-sm"
         >
           <option value="">{t('auditFilterAll')}</option>
           {ACTIONS.map((a) => (
@@ -56,7 +58,7 @@ export default function AuditLogTab({ audit }: { audit: AdminAuditRow[] }) {
               {actionLabel(a)}
             </option>
           ))}
-        </select>
+        </Select>
         <input
           type="search"
           value={search}

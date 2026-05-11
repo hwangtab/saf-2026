@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
+import Select from '@/components/ui/Select';
 import { submitFeedback } from '@/app/actions/feedback';
 import { useToast } from '@/lib/hooks/useToast';
 import type { FeedbackCategory } from '@/types';
@@ -65,18 +66,18 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           >
             {t('category')}
           </label>
-          <select
+          <Select
             id="feedback-category"
             name="category"
             required
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus-visible:outline-none focus-visible:border-gray-900 focus-visible:ring-1 focus-visible:ring-gray-900"
+            className="py-2 focus:ring-gray-900 focus:border-gray-900"
           >
             {CATEGORY_KEYS.map((key) => (
               <option key={key} value={key}>
                 {categoryLabelMap[key]}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div>

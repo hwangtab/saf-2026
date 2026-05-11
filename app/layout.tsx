@@ -58,6 +58,12 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/images/icons/icon-192.png',
   },
+  // RSS auto-discovery — Feedly·구독 서비스가 사이트 진입 시 <head>의 link로 feed URL 인식.
+  alternates: {
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
   // openGraph/twitter도 [locale]/layout.tsx에서 locale별 명시 설정 — /en 페이지에서
   // KO og:title·og:description leak 방지. (auth)·(portal) 라우트는 noindex라 OG 무관.
   // Twitter site handle은 (locale-agnostic이라) 여기 유지 — locale-specific override 시
