@@ -77,15 +77,22 @@ export function AdminMobileNav() {
               aria-hidden="true"
             />
 
-            {/* Slide-out Drawer */}
+            {/* Slide-out Drawer.
+                레이아웃 구조: 3단 column flex (header — scrollable items — footer).
+                - h-[100dvh]: iOS Safari의 dynamic viewport (URL bar 변동) 정확히 채움.
+                  h-full(=100%)는 parent height 의존이라 body가 100vh 보장 안 되면 잘림.
+                - 안쪽 `<div h-full>` 중복 제거 — 단일 flex column으로 통일.
+                - items 영역 `overflow-y-auto` — 메뉴 길어도 스크롤 가능.
+                - footer `pb-[env(safe-area-inset-bottom)]` — iOS notch·home indicator
+                  영역에 SignOut이 가려지지 않게 안전 마진. */}
             <nav
               id="mobile-nav-drawer"
-              className="fixed top-0 left-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 ease-in-out xl:hidden translate-x-0"
+              className="fixed top-0 left-0 h-[100dvh] w-64 bg-white z-50 flex flex-col xl:hidden"
               role="dialog"
               aria-modal="true"
               aria-label={t('adminMenu')}
             >
-              <div className="flex items-center justify-between border-b border-gray-100 p-4">
+              <div className="shrink-0 flex items-center justify-between border-b border-gray-100 p-4">
                 <span className="text-lg font-bold text-gray-900">SAF Admin</span>
                 <button
                   type="button"
@@ -104,48 +111,44 @@ export function AdminMobileNav() {
                   </svg>
                 </button>
               </div>
-              <div className="flex flex-col h-full">
-                <div className="p-4 flex-1 space-y-3">
-                  {adminNavGroups.map((group, gi) => (
-                    <div key={group.label ?? group.items.map((item) => item.href).join('|')}>
-                      {gi > 0 && <div className="mb-3 border-t border-gray-100" />}
-                      <div className="space-y-1">
-                        {group.items.map((item) => {
-                          const targetPath = item.href.split('?')[0];
-                          const isReviewQueueItem = item.href.includes('status=pending');
-                          const isUsersItem = item.href === '/admin/users';
+              <div className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-3">
+                {adminNavGroups.map((group, gi) => (
+                  <div key={group.label ?? group.items.map((item) => item.href).join('|')}>
+                    {gi > 0 && <div className="mb-3 border-t border-gray-100" />}
+                    <div className="space-y-1">
+                      {group.items.map((item) => {
+                        const targetPath = item.href.split('?')[0];
+                        const isReviewQueueItem = item.href.includes('status=pending');
+                        const isUsersItem = item.href === '/admin/users';
 
-                          const isActive = isReviewQueueItem
-                            ? pathname === '/admin/users' && isReviewQueueMode
-                            : isUsersItem
-                              ? pathname === '/admin/users' && !isReviewQueueMode
-                              : pathname.startsWith(targetPath);
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              prefetch={
-                                item.href.startsWith('/admin/changelog') ? false : undefined
-                              }
-                              aria-current={isActive ? 'page' : undefined}
-                              className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
-                                isActive
-                                  ? 'bg-primary-surface text-primary-strong ring-1 ring-inset ring-primary-a11y/20'
-                                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                              }`}
-                              onClick={() => setIsOpen(false)}
-                            >
-                              {item.label}
-                            </Link>
-                          );
-                        })}
-                      </div>
+                        const isActive = isReviewQueueItem
+                          ? pathname === '/admin/users' && isReviewQueueMode
+                          : isUsersItem
+                            ? pathname === '/admin/users' && !isReviewQueueMode
+                            : pathname.startsWith(targetPath);
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            prefetch={item.href.startsWith('/admin/changelog') ? false : undefined}
+                            aria-current={isActive ? 'page' : undefined}
+                            className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
+                              isActive
+                                ? 'bg-primary-surface text-primary-strong ring-1 ring-inset ring-primary-a11y/20'
+                                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                            }`}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
                     </div>
-                  ))}
-                </div>
-                <div className="border-t border-gray-100 p-4 flex justify-center">
-                  <SignOutButton />
-                </div>
+                  </div>
+                ))}
+              </div>
+              <div className="shrink-0 border-t border-gray-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] flex justify-center">
+                <SignOutButton />
               </div>
             </nav>
           </>,
