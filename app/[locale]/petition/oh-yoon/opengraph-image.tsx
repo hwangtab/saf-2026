@@ -5,6 +5,7 @@ import path from 'path';
 import { BRAND_COLORS } from '@/lib/colors';
 import { routing } from '@/i18n/routing';
 import { SITE_URL } from '@/lib/constants';
+import { PETITION_OH_YOON_DEADLINE_ISO } from '@/lib/petition/constants';
 
 export const runtime = 'nodejs';
 export const alt =
@@ -38,7 +39,12 @@ export default async function Image({ params }: Props) {
   const subtitle = isKo
     ? '차기 서울시장께 드리는 시민 청원'
     : "A citizens' petition to Seoul's next mayor";
-  const meta = isKo ? '2026.05.20 마감 · 1만 명' : 'By 2026-05-20 · 10,000 names';
+  // PETITION_DEADLINE_ISO 단일 출처에서 YYYY-MM-DD 추출 — 마감일 변경 시 자동 갱신.
+  // hardcoded 날짜는 5/10 → 5/20 변경 시 누락 회귀 원인이라 helper화.
+  const isoDate = PETITION_OH_YOON_DEADLINE_ISO.slice(0, 10); // '2026-05-20'
+  const meta = isKo
+    ? `${isoDate.replace(/-/g, '.')} 마감 · 1만 명`
+    : `By ${isoDate} · 10,000 names`;
   const brand = isKo ? '씨앗페 SAF2026' : 'SAF 2026';
   const host = SITE_URL.replace(/^https?:\/\//, '');
 
