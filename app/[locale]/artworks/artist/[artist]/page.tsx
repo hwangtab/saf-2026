@@ -46,12 +46,12 @@ import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-// /artworks/[id]와 같은 패턴 — TOP N 인기 작가만 빌드 시 prerender, 나머지는 dynamicParams=true로
-// on-demand SSG. 작품 수가 많은 활발한 작가가 검색 트래픽 대부분을 흡수.
-// admin 수정/삭제 시 revalidatePath('/artworks/artist/...') 호출하면 즉시 무효화.
-export const dynamic = 'force-static';
-export const dynamicParams = true;
-export const revalidate = 3600;
+// 임시 force-dynamic — 일부 작가 페이지(류연복·송광호 등)가 'TypeError: Invalid character'
+// throw로 500 응답하던 회귀가 ISR 캐시에 stale 500을 보관해 fix 코드가 production에 들어가도
+// 즉시 회복 안 되던 상황. force-dynamic으로 매 요청 lambda 실행 → outer try/catch +
+// error.tsx 동작 검증. 근본 throw 위치 파악 후 다시 force-static로 복원 예정.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface Props {
   params: Promise<{
