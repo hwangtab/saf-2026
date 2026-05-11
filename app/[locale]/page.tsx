@@ -314,7 +314,7 @@ async function CategorySections({ locale }: { locale: string }) {
       getSupabaseArtworksByCategories(['회화', '한국화', '드로잉'], 12),
       getSupabaseArtworksByCategories(['판화', '사후판화', '아트프린트'], 12),
       getSupabaseArtworksByCategories(['사진', '디지털아트', '혼합매체'], 12),
-      getSupabaseArtworksByCategories(['조각', '도자/공예'], 12),
+      getSupabaseArtworksByCategories(['조각', '도자공예'], 12),
     ]);
 
   const sections: {
