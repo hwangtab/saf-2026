@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import {
   getSupabaseStories,
+  getSupabaseStoriesLight,
   getSupabaseStoryBySlug,
   getSupabaseArtworks,
   getSupabaseArtworksByArtist,
@@ -58,7 +59,8 @@ const CATEGORY_LABELS_EN: Record<StoryCategory, string> = {
 };
 
 export async function generateStaticParams() {
-  const stories = await getSupabaseStories();
+  // slug만 필요 — body 제외 light fetch로 빌드 시 statement timeout 차단.
+  const stories = await getSupabaseStoriesLight();
   return stories.flatMap((story) =>
     routing.locales.map((locale) => ({ locale, slug: story.slug }))
   );

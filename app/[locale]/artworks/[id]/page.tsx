@@ -13,7 +13,6 @@ import {
   getSupabaseTestimonials,
   getSupabaseStories,
   getSupabaseArtistNoticeByName,
-  getPopularArtworkIds,
 } from '@/lib/supabase-data';
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import { getMaterialLabel } from '@/lib/artwork-material';
@@ -80,11 +79,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return generateArtworkMetadata(artwork, locale);
 }
 
-// 빌드 시 인기 작품 TOP 30 × 2 locale = 60 페이지 prerender. 작품당 8 Supabase 쿼리라
-// 약 480 쿼리로 빌드 부하 안전. 나머지 ~328 작품은 첫 요청 시 SSG (그 후 캐시).
+// 빌드 시 prerender 0건 — TOP 30 × 2 locale = 60 페이지 × 9 Supabase 쿼리 = 동시 ~216
+// 쿼리가 Cloudflare 522 / statement timeout 회귀를 유발. dynamicParams=true + revalidate=3600
+// 조합으로 모든 작품이 첫 요청 시 on-demand SSG → CDN 캐시 HIT. 인기 작품 첫 user만
+// cold start(~2~4s) 경험, SEO 영향 0 (sitemap은 별도 출처). 빌드 시간 대폭 단축.
 export async function generateStaticParams() {
-  const ids = await getPopularArtworkIds(30);
-  return ids.flatMap((id) => ['ko', 'en'].map((locale) => ({ locale, id })));
+  return [];
 }
 
 export default async function ArtworkDetailPage({ params }: Props) {

@@ -1,5 +1,5 @@
 import { SITE_URL, CONTACT } from '@/lib/constants';
-import { getSupabaseStories } from '@/lib/supabase-data';
+import { getSupabaseStoriesLight } from '@/lib/supabase-data';
 
 /**
  * RSS 2.0 feed — 씨앗페 매거진(stories) 통합 피드.
@@ -30,16 +30,12 @@ function cdata(text: string): string {
 }
 
 export async function GET() {
-  const stories = await getSupabaseStories();
-  const now = Date.now();
+  // RSS 항목은 title/link/excerpt/category/published_at만 필요 — body·body_en 제외 light fetch
+  // 사용해 빌드 시 statement timeout 회귀를 차단. getSupabaseStoriesLight는 이미
+  // is_published=true + published_at <= now 필터를 query 단계에서 적용함.
+  const stories = await getSupabaseStoriesLight();
 
-  // is_published=true + published_at <= now (예약 발행 글 제외).
-  // RSS validator가 미래 날짜를 "Implausible date" 경고로 발행 — 35편이 5/14~12/1 예약
-  // 발행 상태였음 (계절별 큐레이션·작가 인터뷰 시리즈).
-  const publishedStories = stories
-    .filter((s) => s.is_published && new Date(s.published_at).getTime() <= now)
-    .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
-    .slice(0, 50);
+  const publishedStories = stories.slice(0, 50);
 
   const siteUrl = SITE_URL.replace(/\/$/, '');
   const feedUrl = `${siteUrl}/feed.xml`;

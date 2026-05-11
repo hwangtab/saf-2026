@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL, CAMPAIGN } from '@/lib/constants';
-import { getSupabaseArtworks, getSupabaseNews, getSupabaseStories } from '@/lib/supabase-data';
+import { getSupabaseArtworks, getSupabaseNews, getSupabaseStoriesLight } from '@/lib/supabase-data';
 import { videos as archiveVideos } from '@/content/videos';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
@@ -55,10 +55,12 @@ function safeSitemapImageUrl(url: string | null | undefined): string | null {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
+  // sitemap은 stories의 slug·published_at·updated_at만 필요 — body 제외 light fetch로
+  // 빌드 시 statement timeout(57014) 회귀 차단.
   const [allArtworks, allNews, allStories] = await Promise.all([
     getSupabaseArtworks(),
     getSupabaseNews(),
-    getSupabaseStories(),
+    getSupabaseStoriesLight(),
   ]);
   const now = new Date();
 
@@ -327,12 +329,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const storyPath = `/stories/${story.slug}`;
     const enIndexable = EN_INDEXABLE_STORY_SLUGS.has(story.slug);
 
-    // 이미지: thumbnail 우선, 없으면 body 마크다운 첫 번째 이미지
-    let storyImageUrl: string | null = story.thumbnail || null;
-    if (!storyImageUrl && story.body) {
-      const match = story.body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
-      storyImageUrl = match?.[1] ?? null;
-    }
+    // light fetch라 body 없음 — thumbnail만 사용. body 첫 이미지 fallback은 빌드 시
+    // statement timeout 회귀 트레이드오프로 포기 (story가 thumbnail 안 채운 경우 image 누락).
+    const storyImageUrl: string | null = story.thumbnail || null;
     const absoluteStoryImage =
       storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
 
@@ -355,11 +354,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((story) => EN_INDEXABLE_STORY_SLUGS.has(story.slug))
     .map((story) => {
       const storyPath = `/stories/${story.slug}`;
-      let storyImageUrl: string | null = story.thumbnail || null;
-      if (!storyImageUrl && story.body) {
-        const match = story.body.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
-        storyImageUrl = match?.[1] ?? null;
-      }
+      // light fetch라 body 없음 — thumbnail만 사용.
+      const storyImageUrl: string | null = story.thumbnail || null;
       const absoluteStoryImage =
         storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
 
