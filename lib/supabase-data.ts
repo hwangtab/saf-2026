@@ -878,10 +878,11 @@ const getSupabaseStoriesUncached = async (): Promise<Story[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    // 빈 fallbackStories([])가 unstable_cache에 600초 캐시되면 매거진 전체가
-    // 비어 보이는 사고가 발생. throw로 캐시 저장을 막고 stale 데이터 유지.
+    // unstable_cache 제거 이후로 throw가 페이지를 500으로 만드는 부작용만 남음
+    // (React cache는 request-scope라 캐시 오염 위험 없음). transient Supabase 응답 지연이
+    // /artworks/artist/[name] 페이지 500을 발생시키던 회귀 — 빈 배열 fallback으로 변경.
     console.error('Error fetching stories from Supabase:', error);
-    throw new Error(`Supabase stories fetch failed: ${error.message}`);
+    return [];
   }
 
   return (data || []).map((item) => mapStoryRow(item as StoryRow));
