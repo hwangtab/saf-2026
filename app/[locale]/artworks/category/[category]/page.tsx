@@ -31,6 +31,10 @@ import { getCategorySeoContent } from '@/lib/category-seo-content';
 
 export const dynamic = 'force-static';
 export const revalidate = 600;
+// 카테고리는 사실상 CATEGORY_EN_MAP enum — generateStaticParams에 등록된 8종만 prerender.
+// dynamicParams=false 명시로 그 외 카테고리는 자동 404 (이전: default true → 첫 hit SSG 시
+// throw 후 ISR에 500 박힘. 사용자가 의도적으로 잘못된 URL 입력 시 발생하던 edge case 차단).
+export const dynamicParams = false;
 
 interface Props {
   params: Promise<{ locale: string; category: string }>;
