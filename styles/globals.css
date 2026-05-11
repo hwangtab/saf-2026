@@ -10,12 +10,8 @@
   --color-gray-100: #e6eaf0;
   --color-gray-200: #d1d7e0;
   --color-gray-400: #8f98a5;
-  /* Gallery 모노톤: 관리자 chrome도 cool blue 톤 제거, gallery white scale로 통일 */
-  --admin-bg: #fafafc; /* gallery-pearl */
-  --admin-surface: #ffffff; /* gallery-canvas */
-  --admin-surface-muted: #f7f8fa; /* gray-50 */
-  --admin-border: #e0e0e0; /* gallery-hairline */
-  --admin-border-soft: #efefef;
+  /* `--admin-*` 변수는 styles/portal.css로 이전 — admin/dashboard/exhibitor
+     라우트(app/(portal)/layout.tsx)에서만 로드되어 공개 페이지 CSS chunk에서 제외 */
 }
 
 @tailwind base;

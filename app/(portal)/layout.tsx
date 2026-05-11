@@ -8,6 +8,7 @@ import NavigationProgress from '@/components/layout/NavigationProgress';
 import ToastProvider from '@/components/providers/ToastProvider';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
 import '@/styles/globals.css';
+import '@/styles/portal.css';
 
 /**
  * Multi-root layout — (portal) 라우트(/admin, /dashboard, /exhibitor)의 root.

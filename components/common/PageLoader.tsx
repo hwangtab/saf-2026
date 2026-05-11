@@ -11,7 +11,7 @@ export default function PageLoader() {
     <div
       className={
         isProtectedSurface
-          ? 'relative flex min-h-screen w-full items-center justify-center bg-[var(--admin-bg)]'
+          ? 'relative flex min-h-screen w-full items-center justify-center bg-canvas'
           : 'flex w-full items-center justify-center'
       }
       style={isProtectedSurface ? undefined : { minHeight: 'calc(100vh - 200px)' }}
