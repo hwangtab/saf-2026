@@ -11,6 +11,11 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  // 빌드 시 prerender 페이지당 60s timeout이 기본 — 작품 detail이 9개 Supabase 쿼리를
+  // 직렬 실행하다 Cloudflare transient 지연 시 60s 초과로 retry 3회 모두 실패 → 빌드 ERROR.
+  // 180s로 상향해 transient 흡수. 근본 fix(getSupabaseStoriesLight + generateStaticParams 0)는
+  // 별도 적용되어 일반 빌드는 영향 없고 안전망 역할만 수행.
+  staticPageGenerationTimeout: 180,
   // Vercel Image Optimization 사용 — next-image-export-optimizer + Supabase render endpoint 조합에서
   // 마이그레이션. Vercel Edge가 한국 리전에서 자체 변환·캐시·전송 (장기 immutable cache).
   // SafeImage가 호출 시 Supabase render URL을 raw object URL로 자동 정리해 Vercel에 전달.
@@ -50,7 +55,12 @@ const nextConfig = {
       { protocol: 'https', hostname: 'cdn.eroun.net' },
     ],
   },
-  experimental: {},
+  experimental: {
+    // 빌드 워커 3개 × 기본 8 = 24 동시 페이지 in-flight. 페이지당 9 Supabase 쿼리면
+    // ~216 동시 쿼리로 Cloudflare 522 / statement timeout 회귀 가능. 4로 낮춰 12 in-flight
+    // (~108 쿼리)로 안전 margin 확보.
+    staticGenerationMaxConcurrency: 4,
+  },
   reactStrictMode: true,
   async redirects() {
     return [

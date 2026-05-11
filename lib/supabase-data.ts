@@ -16,6 +16,20 @@ import { stories as fallbackStories } from '@/content/stories';
 import { containsHangul } from '@/lib/search-utils';
 import type { ArtistNoticeRecord } from '@/lib/artist-notice';
 
+// 빌드 phase 한정 module-level memo — 600+ 페이지를 prerender하면서 동일 쿼리를
+// 반복 호출하면 Supabase statement_timeout 폭주(2026-05-11 회귀, 494c40b5 unstable_cache
+// 제거 직후 발생). React cache는 request-scope라 SSG 페이지마다 새로 fetch함.
+// 빌드 phase에서만 process가 살아있는 동안 한 번만 fetch하도록 module memo 도입.
+// dev/prod runtime은 worker lifecycle별로 memo가 비워지고 page-level revalidate가 SSG
+// 시점을 결정하므로 staleness 위험 없음.
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+const buildMemo = new Map<string, Promise<unknown>>();
+function memoForBuild<T>(key: string, fn: () => Promise<T>): Promise<T> {
+  if (!isBuildPhase) return fn();
+  if (!buildMemo.has(key)) buildMemo.set(key, fn());
+  return buildMemo.get(key) as Promise<T>;
+}
+
 type ArtworkRow = {
   id: string;
   artist_id: string | null;
@@ -171,7 +185,7 @@ const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {
 // revalidate가 SSG 시점을 결정하므로 추가 Data Cache 레이어 없어도 Supabase 호출 빈도 동일.
 export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
   try {
-    return await getSupabaseArtworksUncached();
+    return await memoForBuild('artworks', getSupabaseArtworksUncached);
   } catch (err) {
     console.error('getSupabaseArtworks fallback:', err);
     return fallbackArtworks;
@@ -899,12 +913,77 @@ const getSupabaseStoriesUncached = async (): Promise<Story[]> => {
 // React cache()로 request-scope 중복 제거만 유지.
 export const getSupabaseStories = cache(async (): Promise<Story[]> => {
   try {
-    return await getSupabaseStoriesUncached();
+    return await memoForBuild('stories', getSupabaseStoriesUncached);
   } catch (err) {
     console.error('getSupabaseStories fallback to empty array:', err);
     return fallbackStories;
   }
 });
+
+// sitemap·RSS·generateStaticParams 등 body·body_en 컬럼이 필요 없는 경로 전용 경량 fetch.
+// 174편 × body 평균 8KB가 빌드 시 500~800회 누적되며 Supabase statement timeout(57014) 회귀를
+// 일으키던 핵심 원인. 컬럼을 메타데이터만으로 축소하면 payload 약 95% 감소 → light variant는
+// 2MB 한도 안에 들어와 unstable_cache 복원 가능.
+export type StoryLight = {
+  id: string;
+  slug: string;
+  title: string;
+  title_en?: string;
+  category: Story['category'];
+  excerpt: string;
+  excerpt_en?: string;
+  thumbnail?: string;
+  author?: string;
+  published_at: string;
+  updated_at?: string;
+  tags?: string[];
+};
+
+const getSupabaseStoriesLightUncached = async (): Promise<StoryLight[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackStories.map(({ body: _b, body_en: _be, ...rest }) => rest);
+  }
+
+  const { data, error } = await supabase
+    .from('stories')
+    .select(
+      'id, slug, title, title_en, category, excerpt, excerpt_en, thumbnail, author, published_at, updated_at, tags'
+    )
+    .eq('is_published', true)
+    .lte('published_at', new Date().toISOString())
+    .order('published_at', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching stories (light) from Supabase:', error);
+    return fallbackStories.map(({ body: _b, body_en: _be, ...rest }) => rest);
+  }
+
+  return (data || []).map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    title: sanitizeTextForRscPayload(row.title),
+    title_en: sanitizeNullableTextForRscPayload(row.title_en) || undefined,
+    category: row.category as Story['category'],
+    excerpt: sanitizeTextForRscPayload(row.excerpt || ''),
+    excerpt_en: sanitizeNullableTextForRscPayload(row.excerpt_en) || undefined,
+    thumbnail: row.thumbnail || undefined,
+    author: sanitizeNullableTextForRscPayload(row.author) || undefined,
+    published_at: row.published_at,
+    updated_at: row.updated_at || undefined,
+    tags: row.tags || undefined,
+  }));
+};
+
+const getSupabaseStoriesLightCached = unstable_cache(
+  async () => getSupabaseStoriesLightUncached(),
+  ['supabase-stories-light-v1'],
+  { revalidate: 600, tags: ['stories'] }
+);
+
+export const getSupabaseStoriesLight = cache(
+  async (): Promise<StoryLight[]> => getSupabaseStoriesLightCached()
+);
 
 export const getSupabaseStoryBySlug = cache(async (slug: string): Promise<Story | null> => {
   const all = await getSupabaseStories();
