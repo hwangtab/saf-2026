@@ -1,5 +1,15 @@
 [
   {
+    "hash": "2a0fa4f7",
+    "type": "fix",
+    "scope": "admin/analytics",
+    "subject": "잔여 점검 후속 — is_test_buyer_email grant + purchase_click 마지막 NULL backfill",
+    "summary": "직전 더미 데이터 정리 후 추가 점검에서 발견한 2건 정리",
+    "body": "수정:\n- supabase/migrations/20260511113224_exclude_test_buyers.sql: is_test_buyer_email() service_role GRANT 보정 (마이그레이션에서 빠뜨림). production DB는 직접 GRANT로 정정 완료\n- page_views purchase_click 마지막 NULL 1건 backfill — path /artworks/153 (numeric ID legacy artwork) → mode='external' (실제 historical cafe24 클릭)\n\n최종 purchase_click 분포:\n- total 44 / toss 43 / external 1 (historical legacy 1건만) / legacy 0\n- 사용자 직관 정확 — 현재 사이트는 토스 일색, cafe24는 1건 historical만\n\n잔존 알림(별도 결정):\n- orders 테이블에 황경하 buyer 71건 — RPC가 자동 제외해 admin 패널 영향 0\n- 감사·환불 추적 historical 가치 있어 테이블 자체는 정리하지 않음",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "2faa0c8c",
     "type": "fix",
     "scope": "admin/analytics",
