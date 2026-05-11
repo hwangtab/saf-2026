@@ -15,17 +15,11 @@ import '@/styles/portal.css';
  * 관리자·작가 포털은 KO 전용이라 <html lang="ko"> 고정.
  */
 
-/**
- * Pretendard Variable이 globals.css에 import되어 한글·라틴 본문을 담당.
- * Noto Sans KR은 한자 fallback 전용으로 weight 400만, preload: false로 로드.
- * 자세한 내용은 app/[locale]/layout.tsx 주석 참조.
- */
-const hanjaFallback = Noto_Sans_KR({
-  weight: '400',
+const notoSansKR = Noto_Sans_KR({
+  weight: ['400', '500', '700', '900'],
   subsets: ['latin'],
-  variable: '--font-han',
+  variable: '--font-sans',
   display: 'optional',
-  preload: false,
   adjustFontFallback: true,
 });
 
@@ -53,7 +47,7 @@ export default async function PortalLayout({ children }: { children: React.React
   const t = await getTranslations('a11y');
 
   return (
-    <html lang="ko" className={hanjaFallback.variable} suppressHydrationWarning>
+    <html lang="ko" className={notoSansKR.variable} suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />
