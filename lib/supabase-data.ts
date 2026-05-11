@@ -164,18 +164,19 @@ const getSupabaseArtworksUncached = async (): Promise<Artwork[]> => {
   return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
 };
 
-const getSupabaseArtworksCached = unstable_cache(
-  async () => getSupabaseArtworksUncached(),
-  ['supabase-artworks-v3'],
-  {
-    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
-    tags: ['artworks'],
+// unstable_cache 제거 — 365개 작품 전체에 description/history의 ko+en이 누적되며
+// 2.14MB로 Vercel Data Cache 2MB 한도 초과 (dev/prod 모두 cache write 실패 경고).
+// /en/special/oh-yoon·/en/artworks/artist/* 등 전체 작품 목록을 사용하는 페이지마다 동일
+// 경고 폭주. stories와 동일 패턴(react cache request-scope만 유지) 적용 — 페이지 레벨
+// revalidate가 SSG 시점을 결정하므로 추가 Data Cache 레이어 없어도 Supabase 호출 빈도 동일.
+export const getSupabaseArtworks = cache(async (): Promise<Artwork[]> => {
+  try {
+    return await getSupabaseArtworksUncached();
+  } catch (err) {
+    console.error('getSupabaseArtworks fallback:', err);
+    return fallbackArtworks;
   }
-);
-
-export const getSupabaseArtworks = cache(
-  async (): Promise<Artwork[]> => getSupabaseArtworksCached()
-);
+});
 
 const getSupabaseHomepageArtworkCandidatesUncached = async (limit: number): Promise<Artwork[]> => {
   if (!hasSupabaseConfig || !supabase) {
