@@ -1,5 +1,75 @@
 [
   {
+    "hash": "62f03157",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "EN_INDEXABLE 양방향 hreflang 자동 전파 + en stories 색인 허용",
+    "summary": "createLocaleAlternates가 EN_INDEXABLE_PAGES·STORY_SLUGS 인지해 영문 hreflang 자동 발행, resolveEnRobots는 비-indexable 영문 페이지에 명시 noindex, robots는 /en/stories/ 풀고 /en/news/ 추가",
+    "body": "- lib/locale-alternates.ts: EN_INDEXABLE_PAGES + EN_INDEXABLE_STORY_SLUGS 자동 인지로 양방향 hreflang(ko-KR + en-US + x-default) 자동 발행. createPageMetadata/createStandardPageMetadata 사용 페이지 16곳(핵심 13개 + 매거진 3편)에 자동 전파. 기존엔 helper가 항상 ko canonical만 반환해 영문 indexable 페이지의 production HTML에 en-US hreflang이 누락된 silent 부채.\n- lib/en-indexable.ts: resolveEnRobots를 indexable=false에서 {index:false, follow:true} 명시 반환. canonical=ko의 약한 신호 보강 — 외부 링크로 발견된 비-EN_INDEXABLE 영문 페이지가 색인되는 시나리오 차단.\n- app/robots.ts: /en/stories/ 차단 제거(EN_INDEXABLE_STORY_SLUGS 3편 native quality indexable). /en/news/ 차단 추가(helper 미적용 + 자동 fallback 영문 본문 thin content 위험).\n\n영향: 영문 검색 유입 진입로 16곳 확보. 비-indexable 영문 페이지는 canonical=ko + 명시 noindex 이중 안전망.",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "f37d296b",
+    "type": "fix",
+    "scope": "supabase",
+    "subject": "stories 에러 시 500 → 빈 배열 fallback",
+    "summary": "unstable_cache 제거 이후 throw가 페이지 500만 일으키고 캐시 오염 위험은 없어진 상태 — transient 지연이 /artworks/artist/[name] 500을 만들던 회귀 차단",
+    "body": null,
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "843eaee6",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "petition/oh-yoon — FORMATTING_ERROR 회귀 방지",
+    "summary": "ko/en 템플릿이 deadlineShort·deadlineFull로 변수명이 다른데 한쪽만 전달해 next-intl FORMATTING_ERROR가 났던 문제 — generateMetadata와 ShareButtonsWrapper 둘 다 동시 전달",
+    "body": null,
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "55fd3214",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "robots.txt에 _next/static·_next/image 차단 + 영문 detail 추가 — GSC '감수중 2,382' 해소",
+    "summary": "사용자 GSC PDF 알림 — 2,382건의 색인 큐 URL이 모두 /_next/static/chunks/*, /_next/static/media/*, /_next/static/css/* (Next.js 빌드 산출물). robots.txt에 차단 없어 Google이 무한 크롤링 시도",
+    "body": "문제:\n- ?dpl=... deployment hash가 빌드마다 변경 → 무한 신규 URL 발생\n- crawl budget 낭비 → 진짜 페이지 색인 순위 희석\n- GSC index report noise → 운영자 알림 빈도 증가\n\n수정 (robots.txt 추가 차단):\n- /_next/static/ — JS chunks·CSS·fonts (페이지 콘텐츠 아님)\n- /_next/image — next/image optimization endpoint (?url= 변형 무한)\n- /en/artworks/ — 영문 작품 detail·category·artist 페이지 (페이지 meta noindex로 이미 차단 중. robots.txt 추가로 crawl 자체 방지)\n- /en/stories/ — 영문 매거진 detail·category 페이지 (body_en 없는 매거진 noindex 이미 처리)\n\n배경:\n- 직전 영문 부분 색인 정책 변경(fdf91485)으로 핵심 13개 페이지 + 매거진 3개는 indexable\n- 이번 변경은 그 외 영문 detail 페이지 + 빌드 산출물 전체 crawl 차단\n- 페이지 meta noindex와 robots.txt 차단이 함께 작용 — robots.txt가 더 강한 차단(fetch 자체 금지)\n\nGSC 효과 (다음 sitemap 재크롤 후 점진적):\n- \"감수중 2,382 / 색인되지 않음 251\" 카운트 감소\n- crawl budget이 핵심 페이지(home·petition·about 등)에 집중\n- 영문 핵심 페이지 색인 시간 단축",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "fdf91485",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "영문 페이지 부분 색인 허용 — i18n backfill 296 rows 후속 정책 변경",
+    "summary": "과거 '영문 자동번역 thin content' 가정으로 layout 전체 noindex였으나 직전 296 rows 수동 backfill로 핵심 페이지 native quality 확보. 부분 색인 정책으로 전환",
+    "body": "변경 정책 (C 옵션):\n- 핵심 페이지(home·about·our-reality·our-proof·transparency·petition·archive·news·artworks listing·stories listing): index 허용\n- 작품 detail(/artworks/{id}) + 매거진 detail(/stories/{slug}, body_en 없음) + category·artist 페이지: noindex 유지 (thin/duplicate content risk)\n\n수정:\n- app/[locale]/layout.tsx: isEn noindex 블록 제거 + alternates.languages (ko/en/x-default) hreflang 추가\n- lib/schemas/artwork.ts: generateArtworkMetadata에 isEnglish noindex 명시 (작품 detail 차단)\n- app/[locale]/stories/category/[category]/page.tsx: locale === 'en' noindex 명시\n- lib/en-indexable.ts: EN_INDEXABLE_PAGES 의미 변경 (layout noindex 우회 → sitemap bilingualAlternates 발행 대상). 13 페이지로 확장 + 정책 변경 docstring 업데이트\n\n기존 정상 처리(이미 isEn noindex 명시되어 있던 페이지):\n- app/[locale]/artworks/artist/[artist]/page.tsx\n- app/[locale]/artworks/category/[category]/page.tsx\n- app/[locale]/stories/[slug]/page.tsx (body_en 없을 때)\n\nGSC 알림(wnc_10031170) 직접 원인 해결:\n- 사이트맵 submitted 724 / indexed 0 (모두 noindex) 회귀\n- 정정 후 핵심 페이지만 sitemap bilingual alternates 발행, 작품·매거진 detail은 단일 ko 발행 + 영문 자체 noindex\n- duplicate penalty risk 차단",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "68677772",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작품 상세 ↔ 매거진 양방향 entity graph 마무리 — VisualArtwork.subjectOf + 본문 인용 역참조",
+    "summary": "매거진→작품 mentions의 역방향(작품→매거진 subjectOf)을 채워 schema.org 그래프 닫음. 본문에 작품 uuid를 직접 인용한 매거진도 작품 상세에 노출.",
+    "body": "[배경]\n매거진(BlogPosting.mentions)에서 작품을 가리키는 방향은 이미 송출 중. 그 반대편(작품→매거진)은 빈 상태 — VisualArtwork에 subjectOf 누락, 작품 상세 UI에는 작가 태그 매칭만으로 매거진을 묶고 있어 본문 인용 매거진은 누락됐다.\n\n[변경]\n- app/[locale]/artworks/[id]/page.tsx\n  - relatedMagazineStories를 (1) 작가 태그 매칭 + (2) 본문에 이 작품 uuid를 직접 인용한 매거진의 union으로 확장 (작가 매칭 우선, 중복 제거)\n  - 동일 목록을 generateArtworkJsonLd의 새 옵션으로 전달\n\n- lib/schemas/artwork.ts\n  - generateArtworkJsonLd에 옵션 인자 추가: { mentionedInStories?: Array<{slug,title,titleEn}> }\n  - productSchema에 subjectOf 배열로 Article 노드 inject (en이면 titleEn 우선, locale별 url 빌더로 /en prefix 처리)\n  - 비어있을 때는 필드 자체 생략\n\n- __tests__/schemas/schema-validation.test.ts\n  - subjectOf 송출/locale localized URL·headline/빈 목록 생략 케이스 3건 추가\n\n[검증]\n- npm test: 509/509 pass (schema-validation 69)\n- npm run type-check / npm run build: 통과",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "5577dc88",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "/en/news 언론사명 4개 누락분 SOURCE_NAME_MAP에 추가",
+    "summary": "잔여 점검 중 /en/news에 KO 언론사명 노출 발견 — SOURCE_NAME_MAP에",
+    "body": "등록되지 않은 4개 outlet이 KO 그대로 fallback되던 누락. 영문 라벨 추가.\n\n[증상]\n/en/news 페이지 article card에 '경기종합뉴스', '공직신문', '이로운넷', 'EBN'\n4개가 KO로 노출. 나머지 6개(한겨레, 아시아경제, ABC뉴스 등)는 EN 라벨 정상.\n\n[원인]\nSOURCE_NAME_MAP에 등록된 outlet만 localizeSourceName이 EN으로 변환 —\nDB의 source 컬럼은 KO 단일 값이라 map에 없으면 fallback으로 KO 그대로 사용.\nDB news 테이블 source 컬럼 distinct 10개 vs MAP 6개 → 4개 누락.\n\n[수정]\n- 경기종합뉴스 → Gyeonggi News\n- 공직신문 → Public Service News\n- 이로운넷 → Ilon Net\n- EBN → EBN (영문 약자 그대로)\n\n[검증]\ndev cache 클리어 후 /en/news fetch:\n- visible UI KO: 0건\n- article card source 라벨: 모두 EN ('Public Service News', 'Gyeonggi News' 등)\n- JSON-LD Organization.name은 의도된 KO (publisher 정식 명칭)\n\n[부가 확인]\n이전 보고된 \"잔여 KO 콘텐츠\" — testimonials, artwork titles, news titles —\n모두 DB에 _en 컬럼이 정상 채워져 있음 (testimonials 15/15, news 32/32,\nartworks 365/365). 이전 dev 검증이 잘못 보고된 이유는 worktree에 .env.local\n부재로 Supabase fallback(KO만 있는 static 파일)이 사용된 것.",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "4cb93f80",
     "type": "fix",
     "scope": "i18n",

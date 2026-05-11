@@ -38,7 +38,7 @@ export default async function Image({ params }: Props) {
   const subtitle = isKo
     ? '차기 서울시장께 드리는 시민 청원'
     : "A citizens' petition to Seoul's next mayor";
-  const meta = isKo ? '2026.05.10 마감 · 1만 명' : 'By 2026-05-10 · 10,000 names';
+  const meta = isKo ? '2026.05.20 마감 · 1만 명' : 'By 2026-05-20 · 10,000 names';
   const brand = isKo ? '씨앗페 SAF2026' : 'SAF 2026';
   const host = SITE_URL.replace(/^https?:\/\//, '');
 
