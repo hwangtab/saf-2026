@@ -1,13 +1,42 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
+import { Noto_Sans_KR } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import { BRAND_COLORS } from '@/lib/colors';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import PageLoader from '@/components/common/PageLoader';
 import ToastProvider from '@/components/providers/ToastProvider';
+import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
+import '@/styles/globals.css';
+
+/**
+ * Multi-root layout — (auth) 라우트(/login, /signup 등)의 root.
+ * 인증 페이지는 noindex라 SEO 영향은 적지만, <html lang>은 사용자 locale에 맞춰 발행.
+ */
+
+const notoSansKR = Noto_Sans_KR({
+  weight: ['400', '500', '700', '900'],
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'optional',
+  adjustFontFallback: true,
+});
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: BRAND_COLORS.primary.DEFAULT,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/images/icons/icon-192.png',
+  },
   robots: {
     index: false,
     follow: false,
@@ -20,19 +49,28 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   const skipToMain = locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동';
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <ToastProvider>
-        <a href="#main-content" className="skip-to-main">
-          {skipToMain}
-        </a>
-        <Header />
-        <main id="main-content" className="flex-1">
-          <Suspense fallback={<PageLoader />}>{children}</Suspense>
-        </main>
-        <Suspense>
-          <Footer locale={locale} />
-        </Suspense>
-      </ToastProvider>
-    </NextIntlClientProvider>
+    <html lang={locale} className={notoSansKR.variable} suppressHydrationWarning>
+      <head>
+        <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
+        <link rel="dns-prefetch" href="https://dapi.kakao.com" />
+      </head>
+      <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ToastProvider>
+            <a href="#main-content" className="skip-to-main">
+              {skipToMain}
+            </a>
+            <Header />
+            <main id="main-content" className="flex-1">
+              <Suspense fallback={<PageLoader />}>{children}</Suspense>
+            </main>
+            <Suspense>
+              <Footer locale={locale} />
+            </Suspense>
+          </ToastProvider>
+        </NextIntlClientProvider>
+        <GlobalAnalyticsGate />
+      </body>
+    </html>
   );
 }
