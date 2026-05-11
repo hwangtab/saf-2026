@@ -204,7 +204,25 @@ export async function generateStaticParams() {
   return names.flatMap((artist) => ['ko', 'en'].map((locale) => ({ locale, artist })));
 }
 
-export default async function ArtistPage({ params }: Props) {
+export default async function ArtistPage(props: Props) {
+  // schema 빌더 외에도 작가 페이지 body 일부 흐름(SafeImage·RelatedMagazineCard 등)이
+  // 'TypeError: Invalid character' throw하는 케이스가 관측됨 — generateStaticParams로
+  // prerender된 인기 작가(이철수·오윤 등)는 same throw에서도 200 응답하지만 그 외 작가는
+  // 첫 hit SSG 단계에서 throw → 500. outer try/catch로 안전망 + console.error로 stack
+  // 보존 (logs에서 정확한 origin 추적용). catch 시 ArtistNotFound 렌더 + 200 응답.
+  try {
+    return await renderArtistPage(props);
+  } catch (err) {
+    const { artist } = await props.params;
+    console.error(
+      `[artist-page] body render failed for "${decodeURIComponent(artist)}":`,
+      err instanceof Error ? err.stack : err
+    );
+    return <ArtistNotFound />;
+  }
+}
+
+async function renderArtistPage({ params }: Props) {
   const { locale: rawLocale, artist } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
