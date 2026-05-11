@@ -6,8 +6,11 @@ import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import TrackedExternalLink from '@/components/common/TrackedExternalLink';
 
-// force-static에서 layout의 setRequestLocale이 sub-component(Footer)에 전파되지 않아
-// default locale로 fallback하는 회귀가 있어 locale을 prop으로 명시 전달.
+/**
+ * force-static + Suspense 경계에서 setRequestLocale의 request scope가 끊겨
+ * default locale(ko)로 fallback되던 i18n leak — locale prop을 명시 전달받고
+ * setRequestLocale도 다시 호출해 sub-component까지 안전 전파 (af693bae 후속).
+ */
 export default async function Footer({ locale }: { locale: string }) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'footer' });
@@ -226,7 +229,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 <p>
                   {t('businessInfo', {
                     org: isEn ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
-                    rep: CONTACT.REPRESENTATIVE_NAME,
+                    rep: isEn ? CONTACT.REPRESENTATIVE_NAME_EN : CONTACT.REPRESENTATIVE_NAME,
                     bizNo: CONTACT.BUSINESS_REGISTRATION_NUMBER,
                   })}
                 </p>
@@ -234,7 +237,9 @@ export default async function Footer({ locale }: { locale: string }) {
                   {t('addressInfo', {
                     address: isEn ? CONTACT.ADDRESS_EN : CONTACT.ADDRESS,
                     postalCode: CONTACT.POSTAL_CODE,
-                    mailOrder: CONTACT.MAIL_ORDER_REPORT_NUMBER,
+                    mailOrder: isEn
+                      ? CONTACT.MAIL_ORDER_REPORT_NUMBER_EN
+                      : CONTACT.MAIL_ORDER_REPORT_NUMBER,
                   })}
                 </p>
               </div>

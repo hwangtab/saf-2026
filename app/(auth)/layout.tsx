@@ -16,11 +16,11 @@ export const metadata: Metadata = {
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const locale = (await getLocale()) === 'en' ? 'en' : 'ko';
-  const messages = await getMessages();
+  const messages = await getMessages({ locale });
   const skipToMain = locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동';
 
   return (
-    <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages}>
       <ToastProvider>
         <a href="#main-content" className="skip-to-main">
           {skipToMain}
