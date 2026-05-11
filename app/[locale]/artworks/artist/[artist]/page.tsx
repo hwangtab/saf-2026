@@ -61,7 +61,21 @@ interface Props {
 }
 
 // Generate metadata for Artist Page
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  // generateMetadata 단계에서 throw해도 페이지 전체 500으로 응답되던 회귀 차단.
+  // throw 시 안전한 noindex metadata 반환 → body try/catch가 ArtistNotFound 렌더 담당.
+  try {
+    return await buildArtistMetadata(props);
+  } catch (err) {
+    console.error(`[artist-page] metadata build failed:`, err instanceof Error ? err.stack : err);
+    return {
+      title: 'Artist',
+      robots: { index: false, follow: true },
+    };
+  }
+}
+
+async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
   const { locale: rawLocale, artist } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);

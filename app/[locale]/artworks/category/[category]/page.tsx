@@ -1,9 +1,11 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale, getLocale } from 'next-intl/server';
+import { Palette } from 'lucide-react';
 
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import LinkButton from '@/components/ui/LinkButton';
+import ScrollToTopOnMount from '@/components/common/ScrollToTopOnMount';
 import { SAWTOOTH_BOTTOM_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -147,21 +149,59 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function CategoryPage({ params }: Props) {
+async function CategoryNotFoundView() {
+  const locale = await getLocale().catch(() => 'ko');
+  const isEn = locale === 'en';
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-canvas-soft pt-20">
+      <ScrollToTopOnMount />
+      <div className="max-w-md px-6 text-center">
+        <Palette aria-hidden="true" className="mx-auto h-16 w-16 text-charcoal-muted mb-6" />
+        <h1 className="mb-4 text-2xl font-bold text-charcoal">
+          {isEn ? 'Category Not Found' : '카테고리를 찾을 수 없습니다'}
+        </h1>
+        <p className="mb-8 leading-relaxed text-charcoal-muted">
+          {isEn
+            ? 'This category may have been removed or does not exist. Browse all artworks instead.'
+            : '해당 카테고리는 존재하지 않거나 변경됐을 수 있습니다. 전체 작품을 둘러보세요.'}
+        </p>
+        <LinkButton href="/artworks" variant="primary">
+          {isEn ? 'Browse All Artworks' : '전체 작품 보기'}
+        </LinkButton>
+      </div>
+    </div>
+  );
+}
+
+export default async function CategoryPage(props: Props) {
+  // force-static + notFound() 회귀 + body 렌더 단계 throw 양쪽 흡수.
+  try {
+    return await renderCategoryPage(props);
+  } catch (err) {
+    const { category } = await props.params;
+    console.error(
+      `[category-page] render failed for "${decodeURIComponent(category)}":`,
+      err instanceof Error ? err.stack : err
+    );
+    return <CategoryNotFoundView />;
+  }
+}
+
+async function renderCategoryPage({ params }: Props) {
   const { locale: rawLocale, category: rawCategory } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const category = decodeURIComponent(rawCategory);
 
   if (!SUPPORTED_CATEGORIES.includes(category)) {
-    notFound();
+    return <CategoryNotFoundView />;
   }
 
   const allArtworks = await getSupabaseArtworks();
   const categoryArtworks = allArtworks.filter((a) => a.category === category);
 
   if (categoryArtworks.length === 0) {
-    notFound();
+    return <CategoryNotFoundView />;
   }
 
   const listArtworks: ArtworkListItem[] = categoryArtworks.map(

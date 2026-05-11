@@ -871,10 +871,14 @@ const getSupabaseStoriesUncached = async (): Promise<Story[]> => {
     return fallbackStories;
   }
 
+  // 예약 발행(published_at > now)은 public 경로에서 제외 — listing·detail·sitemap·RSS·OG
+  // 모두 이 함수를 거치므로 단일 출처에서 미래 글 차단. admin 큐레이션은 별도 함수.
+  // RSS validator가 미래 날짜 "Implausible date" 경고로 처음 발견(2026-05-11 PDF).
   const { data, error } = await supabase
     .from('stories')
     .select('*')
     .eq('is_published', true)
+    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
     .order('created_at', { ascending: false });
 

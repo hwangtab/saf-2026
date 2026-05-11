@@ -31,9 +31,13 @@ function cdata(text: string): string {
 
 export async function GET() {
   const stories = await getSupabaseStories();
+  const now = Date.now();
 
+  // is_published=true + published_at <= now (예약 발행 글 제외).
+  // RSS validator가 미래 날짜를 "Implausible date" 경고로 발행 — 35편이 5/14~12/1 예약
+  // 발행 상태였음 (계절별 큐레이션·작가 인터뷰 시리즈).
   const publishedStories = stories
-    .filter((s) => s.is_published)
+    .filter((s) => s.is_published && new Date(s.published_at).getTime() <= now)
     .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
     .slice(0, 50);
 

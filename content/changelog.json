@@ -1,5 +1,15 @@
 [
   {
+    "hash": "f9285564",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "대시보드 실시간 방문자 카드 색칠 제거 — 다른 stat 카드와 통일",
+    "summary": "어드민 대시보드 실시간 방문자 카드만 bg-success/10(연두색) + 녹색 텍스트로 칠해져 옆 카드들의 white 톤과 어긋나던 문제. 공통 StatCard로 교체.",
+    "body": "- 손수 만든 AdminCard + bg-success/10 마크업 제거, 공통 StatCard 사용\n- /admin/analytics 링크 추가 (다른 site analytics 카드와 동일 동작)\n- \"실시간\" 의미는 subtitle \"최근 5분\"이 이미 전달하므로 색 강조 불필요\n- 갤러리 white cube 원칙 (chrome 무채색, color comes only from artworks) 부합",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "a876c6b8",
     "type": "fix",
     "scope": "seo",
