@@ -46,12 +46,13 @@ import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
-// 임시 force-dynamic — 일부 작가 페이지(류연복·송광호 등)가 'TypeError: Invalid character'
-// throw로 500 응답하던 회귀가 ISR 캐시에 stale 500을 보관해 fix 코드가 production에 들어가도
-// 즉시 회복 안 되던 상황. force-dynamic으로 매 요청 lambda 실행 → outer try/catch +
-// error.tsx 동작 검증. 근본 throw 위치 파악 후 다시 force-static로 복원 예정.
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// 이전 force-static + dynamicParams=true에서 ISR이 stale 500을 prerender 결과로 보관하던
+// 회귀가 force-dynamic 우회(baf05ceb)로 검증됨 — 새 lambda 실행 시 200 정상 응답. 새 빌드는
+// 이전 ISR 캐시를 무효화하므로 force-static 복원 시 첫 hit 시 SSG에서 새 코드로 200 캐시.
+// dynamicParams=true + revalidate=3600으로 on-demand SSG 패턴 복원.
+export const dynamic = 'force-static';
+export const dynamicParams = true;
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{
