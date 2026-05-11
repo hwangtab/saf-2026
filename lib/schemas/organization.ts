@@ -34,7 +34,7 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
     ],
     address: {
       '@type': 'PostalAddress',
-      streetAddress: CONTACT.ADDRESS,
+      streetAddress: isEnglish ? CONTACT.ADDRESS_EN : CONTACT.ADDRESS,
       postalCode: CONTACT.POSTAL_CODE,
       addressLocality: isEnglish ? 'Seoul' : '서울시',
       addressCountry: 'KR',
@@ -131,7 +131,7 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
     email: CONTACT.EMAIL,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: EXHIBITION.ADDRESS,
+      streetAddress: isEnglish ? EXHIBITION.ADDRESS_EN : EXHIBITION.ADDRESS,
       postalCode: EXHIBITION.POSTAL_CODE,
       addressLocality: isEnglish ? 'Seoul' : '서울시',
       addressCountry: 'KR',

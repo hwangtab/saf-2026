@@ -1,14 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
-import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
-import { ARTWORK_COUNT, ARTIST_COUNT, LOAN_COUNT } from '@/lib/site-stats';
-import {
-  generateOrganizationSchema,
-  generateWebsiteSchema,
-  generateLocalBusinessSchema,
-} from '@/lib/seo-utils';
+import { OG_IMAGE, SITE_URL } from '@/lib/constants';
+import { ARTWORK_COUNT } from '@/lib/site-stats';
 import { BRAND_COLORS } from '@/lib/colors';
 import '@/styles/globals.css';
 
@@ -56,35 +50,21 @@ export const metadata: Metadata = {
     // generateMetadata에서 absolute title로 명시하거나 필요한 곳만 수동으로 붙임.
     template: '%s',
   },
-  description: `${ARTIST_COUNT}명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 작품 판매 수익은 ${LOAN_COUNT}건의 저금리 대출로 이어진 예술인 상호부조 기금이 됩니다. 무료 배송·7일 이내 반품.`,
-  keywords:
-    '한국 현대미술, 미술 작품 구매, 작품 원본 구매, 회화 원본, 판화 원본, 사진 작품, 조각 작품, 서울 전시회, 현대미술 전시회, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 예술인 금융 차별, 예술인 대출',
-  authors: [{ name: CONTACT.ORGANIZATION_NAME }],
+  // description/keywords/authors는 [locale]/layout.tsx에서 locale별로 명시 설정.
+  // 여기서 KO 기본값을 두면 /en 페이지에 한국어 leak이 발생해 SEO·일관성 회귀.
+  // /ko 페이지는 [locale]/layout.tsx generateMetadata가 빈 객체 반환해 root metadata 그대로 사용 →
+  // /ko 전용 description/keywords는 페이지별 generateMetadata 또는 home.metaDescription 등에서 처리.
   icons: {
     icon: '/favicon.ico',
     apple: '/images/icons/icon-192.png',
   },
-  openGraph: {
-    type: 'website',
-    locale: 'ko_KR',
-    title: `씨앗페 온라인 | 한국 현대미술 원본 작품 ${ARTWORK_COUNT}점`,
-    description: `${ARTIST_COUNT}명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 구매 수익이 ${LOAN_COUNT}건의 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`,
-    siteName: '씨앗페 온라인',
-    images: [
-      {
-        url: OG_IMAGE.url,
-        width: OG_IMAGE.width,
-        height: OG_IMAGE.height,
-        alt: OG_IMAGE.alt,
-      },
-    ],
-  },
+  // openGraph/twitter도 [locale]/layout.tsx에서 locale별 명시 설정 — /en 페이지에서
+  // KO og:title·og:description leak 방지. (auth)·(portal) 라우트는 noindex라 OG 무관.
+  // Twitter site handle은 (locale-agnostic이라) 여기 유지 — locale-specific override 시
+  // [locale]/layout.tsx에서 자동 머지.
   twitter: {
-    card: 'summary_large_image',
     site: '@saf2026',
-    title: `씨앗페 온라인 | 한국 현대미술 원본 작품 ${ARTWORK_COUNT}점`,
-    description: `${ARTIST_COUNT}명 한국 작가의 회화·판화·사진·조각 원본. 구매가 ${LOAN_COUNT}건 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`,
-    images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }],
+    images: [{ url: OG_IMAGE.url }],
   },
   robots: {
     index: true,
@@ -110,15 +90,13 @@ export const metadata: Metadata = {
 
 // 루트 layout은 모든 라우트(공개·포털·인증)가 공유하므로 dynamic API(getLocale 등)를 호출하면
 // 전체 라우트가 dynamic(ƒ)으로 강제됨. 정적 렌더링 활성화를 위해 locale-aware 처리는 [locale]
-// 하위 layout으로 위임하고, 여기선 한국어 기본값으로 고정.
+// 하위 layout으로 위임:
+// - description/keywords/authors/openGraph/twitter → [locale]/layout.tsx generateMetadata
+// - Organization/WebSite/LocalBusiness JSON-LD → [locale]/layout.tsx body 렌더
 //
-// SEO 영향: /en/* 페이지의 <html lang>이 'ko'로 표시되지만 metadata.alternates에 hreflang이
-// 정확히 박혀 Google이 페이지 언어를 인식. <html lang>은 보조 신호이며 실제 SEO 결정은
-// hreflang + content language 우선.
+// <html lang>은 정적 prerender 호환 위해 'ko' 고정 — metadata.alternates의 hreflang으로
+// Google이 페이지 언어를 인식하고, <html lang>은 보조 신호.
 const ROOT_LOCALE = 'ko' as const;
-const organizationSchema = generateOrganizationSchema(ROOT_LOCALE);
-const websiteSchema = generateWebsiteSchema(ROOT_LOCALE);
-const localBusinessSchema = generateLocalBusinessSchema(ROOT_LOCALE);
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -134,10 +112,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         {children}
-
-        <JsonLdScript data={organizationSchema} />
-        <JsonLdScript data={websiteSchema} />
-        <JsonLdScript data={localBusinessSchema} />
 
         <GlobalAnalyticsGate />
       </body>

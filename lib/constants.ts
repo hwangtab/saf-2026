@@ -66,6 +66,7 @@ export const EXHIBITION = {
   DATE: '2026년 1월 14일 - 2026년 1월 26일',
   LOCATION: '인사아트센터 3층 G&J 갤러리',
   ADDRESS: '서울시 종로구 인사동길 41-1',
+  ADDRESS_EN: '41-1, Insadong-gil, Jongno-gu, Seoul',
   POSTAL_CODE: '03145',
   LAT: 37.573,
   LNG: 126.986,
