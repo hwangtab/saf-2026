@@ -1,5 +1,65 @@
 [
   {
+    "hash": "a876c6b8",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "oh-yoon Person schema name locale-aware — /en JSON-LD KO leak 차단",
+    "summary": "/en/special/oh-yoon ExhibitionEvent.about에 임베디드된 Person schema의",
+    "body": "name이 항상 '오윤'(KO) 고정이고 alternateName만 'Oh Yoon'(EN)이라 영문 페이지\nJSON-LD에 한국어 이름이 primary로 노출되던 누락. locale별로 name/alternateName\nswap.\n\n[증상]\n/en/special/oh-yoon JSON-LD:\n  ExhibitionEvent.about (Person):\n    name: '오윤'           ← /en에서 KO primary 노출\n    alternateName: 'Oh Yoon'\n영문 사용자 대상 검색·rich result에 한국어 이름이 우선 매칭.\n\n[수정]\napp/[locale]/special/oh-yoon/page.tsx:144-146\n- name: isEnglish ? 'Oh Yoon' : '오윤'\n- alternateName: isEnglish ? '오윤' : 'Oh Yoon'\n\n[검증]\n- /en JSON-LD Person.name='Oh Yoon', alternateName='오윤' ✓\n- /ko JSON-LD Person.name='오윤', alternateName='Oh Yoon' ✓ (회귀 없음)\n- /en/special/oh-yoon JSON-LD KO leak: 0건 (intentional legalName/alternateName 제외)\n\n[기타 종합 점검 — 모두 clean]\n- /en 15개 라우트 UI/meta/JSON-LD KO leak: 0건\n- /feed.xml /sitemap.xml /robots.txt: HTTP 200 ✓\n- dev 로그 cache 2MB 경고: 0건 (494c40b5 fix 효과 지속)\n- 500/404 응답: 0건",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "e0fc8f2f",
+    "type": "fix",
+    "scope": "artist",
+    "subject": "page body 전체를 try/catch로 wrap — schema 외 위치 throw도 ArtistNotFound로 fallback",
+    "summary": "직전 safeBuild는 schema 빌더 5개만 보호. SafeImage·RelatedMagazineCard 등 body 렌더 중 throw하는 경우 페이지 500 그대로. outer try/catch로 모든 throw를 ArtistNotFound 렌더 + 200 응답으로 흡수.",
+    "body": "[증상]\n직전 fix 배포 후에도 production에서 동일 작가들이 500 유지:\n- 류연복(작품 4개), 송광호, 이문호, 양운규, 박불똥, 김현*, 박상*, 박수*, 박성* 등\n- runtime logs: 'TypeError: Invalid character' throw 동일 메시지\n- 이철수(generateStaticParams TOP30 포함)는 같은 throw에서도 200 응답 — prerender된 HTML 사용\n\n[원인]\nsafeBuild는 5개 schema 빌더만 try/catch. body의 다른 흐름(component 렌더, 외부 fetch, JSX 단계)에서 throw 시 페이지 전체 500. force-static + dynamicParams=true 환경에서 첫 hit가 SSG 시 throw하면 stale 500이 ISR에 박혀 revalidate까지 계속 500 응답.\n\n[변경]\n- export default function ArtistPage를 outer try/catch wrapper로 변경\n- body 본문을 inner renderArtistPage(props)로 분리\n- catch 시 console.error로 stack 보존 + ArtistNotFound 렌더 (robots noindex 메타 자동 적용)\n- A패턴(작품 0건)은 기존 inline ArtistNotFound 분기 유지, 이건 B패턴(예상치 못한 throw) 안전망\n\n[효과]\n- 정상 데이터 작가도 throw 시 500 대신 200 + noindex\n- runtime logs에 정확한 throw 위치·stack 보존 → 후속 origin 추적용 단서\n- prerender 안 된 작가도 첫 hit이 200 응답 → ISR 캐시도 200으로 박힘\n\n[검증]\n- npm test: 509/509\n- npm run type-check + npm run build: 통과\n- production 배포 후 류연복·천지윤·신학철·송광호 등 200 회복 예상",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "494c40b5",
+    "type": "fix",
+    "scope": "perf",
+    "subject": "getSupabaseArtworks unstable_cache 제거 — 2.14MB 캐시 한도 초과",
+    "summary": "365개 작품 전체 + ko/en description·history 누적이 Vercel Data Cache 2MB",
+    "body": "한도(2,248,618 bytes 측정)를 초과해 모든 작품 목록 사용 페이지에서 cache write\n실패 경고 폭주. stories에 이미 적용한 패턴(unstable_cache 제거, React cache만 유지,\n페이지 레벨 revalidate에 위임) 동일 적용.\n\n[증상]\ndev/prod 모두 동일 경고 폭주:\n  \"Failed to set Next.js data cache for unstable_cache ... items over 2MB\n   can not be cached (2248618 bytes)\"\n영향 페이지(동일 cache key 5a577ba1...):\n- /en/special/oh-yoon, /(en/)?artworks/artist/[name], /(en/)?artworks 등\n- cache write 실패만 발생, 페이지 응답 자체는 정상 (300s revalidate fallback)\n\n[원인]\ngetSupabaseArtworksCached가 unstable_cache로 365 rows × 평균 ~6KB 직렬화 → 2.14MB.\nNext.js 데이터 캐시(IS Vercel KV) 한 entry 2MB 상한. 빌드시·런타임 양쪽에서 경고.\n\n[수정]\n- unstable_cache wrapper 제거, React cache(request-scope)만 유지\n- try/catch + fallbackArtworks 안전망 (transient 에러 시 fallback 정적 데이터)\n- 페이지 레벨 revalidate(/artworks: 1800s, /artworks/[id]: 1800s 등)가 SSG 시점을\n  결정하므로 Vercel Data Cache 추가 레이어 없어도 Supabase 실제 호출 빈도 동일\n\n[검증]\ndev fetch 후 grep:\n- \"items over 2MB can not be cached\" 경고: 0건 (이전 페이지당 N건 발생)\n- /en/special/oh-yoon, /en/artworks/artist/박생광, /en/artworks: 모두 HTTP 200",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "296fb0a7",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "/feed.xml HTTP 500 — proxy i18n middleware skip 목록에 누락",
+    "summary": "2eebf888에서 RSS feed 신설 시 proxy.ts의 i18n middleware skip 목록에",
+    "body": "/feed.xml을 추가하지 않아 next-intl middleware가 페이지 라우트로 처리하려\n시도해 500 회귀. STATIC_SKIP_PATHS + matcher 양쪽에 추가해 정적 라우트로 처리.\n\n[증상]\nGET /feed.xml → 500 Internal Server Error\n에러: \"No intl context found. Have you configured the provider?\"\nHTML body는 not-found.tsx 페이지 (next-error: not-found)\n- RSS reader·Feedly·구독 서비스 발견 시 모두 실패\n- HTML <link rel=\"alternate\" type=\"application/rss+xml\"> auto-discovery도 무효화\n\n[원인]\nproxy.ts의 두 가지 skip 메커니즘에 /feed.xml 누락:\n1. STATIC_SKIP_PATHS Set (런타임 분기) — sitemap.xml·robots.txt 등 정적 라우트 우회용\n2. config.matcher regex (정규식 exclusion) — Next.js가 미들웨어를 호출할지 결정\n다른 정적 라우트(sitemap.xml·robots.txt·llms.txt 등)는 두 곳 모두 등록되어 있으나\nfeed.xml만 누락 — intlProxy(next-intl middleware)로 흘러가 페이지 라우트 매칭\n시도, Link 컴포넌트가 intl context 외부에서 렌더되며 throw → not-found 페이지가\n대신 렌더되며 동일 에러 재발 → 결국 500.\n\n[수정]\n- STATIC_SKIP_PATHS에 '/feed.xml' 추가\n- config.matcher regex에 `feed.xml` 추가\n\n[검증]\n- GET /feed.xml → HTTP 200 ✓\n- RSS 2.0 XML 정상 출력 (channel + items, 매거진 50건)\n- type-check 통과",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "2eebf888",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "RSS feed 추가 — 매거진(stories) /feed.xml + HTML auto-discovery link",
+    "summary": "네이버 서치콘솔·Feedly·구독 서비스 대응 RSS 2.0 피드 신설",
+    "body": "신규 파일:\n- app/feed.xml/route.ts — RSS 2.0 XML 생성. 매거진 글 published_at 내림차순 최근 50건\n  · channel: title·link·atom:self·description·language·copyright·lastBuildDate·generator\n  · item: title·link·guid·pubDate·category·author·description(CDATA)\n  · XML escape + CDATA wrapper로 HTML 본문·특수 문자 안전 처리\n  · revalidate 3600초 (ISR — 신규 매거진 발행 1시간 내 반영)\n  · Cache-Control: public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400\n\n수정:\n- app/layout.tsx: metadata.alternates.types에 'application/rss+xml': '/feed.xml' 추가\n  · 사이트 진입 시 <head>에 <link rel=\"alternate\" type=\"application/rss+xml\"> 자동 송출\n  · Feedly·구독 서비스가 URL만으로 RSS 자동 발견\n\n콘텐츠 범위:\n- 매거진(stories) only — 뉴스는 외부 링크라 RSS 부적합\n- 한국어 콘텐츠 (영문 자동 fallback 수준이라 미포함)\n- 최근 50건 (RSS 일반적 limit)\n\n사용처:\n- 네이버 서치콘솔: 사이트맵과 별도로 RSS 등록 가능\n- 외부 syndication·뉴스레터 자동화\n- 사용자 구독 (Feedly·Inoreader 등)",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
+    "hash": "f993c3b3",
+    "type": "fix",
+    "scope": "artist",
+    "subject": "/artworks/artist/[name] 500 회귀 + i18n placeholder mismatch 일괄 fix",
+    "summary": "작가 페이지 500 회귀 두 패턴(notFound force-static 회귀 + schema 빌더 throw)을 inline 렌더 + try/catch로 우회. artistPage.shareTitle KO 템플릿 {count} 누락도 동시 수정",
+    "body": "[증상]\nproduction runtime logs:\n- /artworks/artist/{이름} 다수가 500 응답 — 류호*, 이동*, 양운*, 손은*, 박상*, 박수*, 박성*, 김현*, 박불* 등 절반 이상\n- 일부는 notFound() 분기(작가 미존재·작품 hidden)에서 500\n- 일부는 'TypeError: Invalid character' throw로 500 (류연복·송광호·이문호 등 정상 데이터)\n- production 검증: 류연복·천지윤·신학철 페이지가 HTTP 500\n\n[A패턴 — notFound() force-static 회귀]\nforce-static 환경에서 notFound() 호출이 not-found.tsx 렌더 대신 500 status를 던지는\nVercel + Next.js 16 환경 회귀. 코드 주석에는 force-dynamic 환경의 한계로 기록됐지만\nartist 페이지는 force-static이라 동작이 다름. 처리:\n- artistArtworks.length === 0 → notFound() 대신 ArtistNotFound 컴포넌트 inline 렌더\n- generateMetadata.notFound 분기에 robots: noindex 명시 추가\n\n[B패턴 — schema 빌더 throw]\n정상 데이터 작가 페이지도 schema 빌딩 단계에서 throw — 정확한 원인 추적 어려움\n(production logs는 stack truncate, dev 재현 어려움). 우회:\n- safeBuild(label, fn) helper 도입\n- 5개 schema 빌더(person/breadcrumb/aggregateOffer/itemList/collectionPage) 각각\n  try/catch로 wrap → throw 시 null + console.error로 stack 기록\n- JsonLdScript render에 null 체크 추가 (페이지 정상 렌더, schema만 누락)\n- 추후 runtime logs에서 정확한 origin 추적용 단서 확보\n\n[부가 — i18n FORMATTING_ERROR 위험]\nko/en 메시지 placeholder 변수 mismatch 16건 audit 후 실제 위험 1건만 확인:\n- artistPage.shareTitle KO 템플릿이 {count} 사용하는데 호출은 {artist}만 전달 →\n  KO에서 매번 FORMATTING_ERROR. 호출 측에 count: artistArtworks.length 추가.\n나머지 15건은 호출 측이 충분한 변수 전달(unused만 발생) — fix 불필요.\n\n[변경]\n- app/[locale]/artworks/artist/[artist]/page.tsx\n  - notFound() 두 곳 모두 inline 처리 (metadata + page body)\n  - safeBuild helper + 5개 schema 빌더 try/catch wrap\n  - JsonLdScript null-safe render\n  - shareTitle 호출에 count 변수 추가\n  - import notFound 제거 (미사용)\n\n[검증]\n- npm test: 509/509\n- npm run type-check + npm run build: 통과",
+    "date": "2026-05-11",
+    "author": "황경하"
+  },
+  {
     "hash": "c20e9c56",
     "type": "fix",
     "scope": "i18n",
