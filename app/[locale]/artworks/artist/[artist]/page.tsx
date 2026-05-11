@@ -8,6 +8,7 @@ import {
   getPopularArtistNames,
 } from '@/lib/supabase-data';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
+import ArtistNotFound from './not-found';
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import { getArtistExternalLinks } from '@/lib/artist-external-links';
@@ -33,7 +34,6 @@ import {
 } from '@/lib/utils';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -70,8 +70,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'artistPage' });
 
   if (artistArtworks.length === 0) {
+    // force-static + notFound() 조합이 Vercel에서 500을 던지는 회귀가 있어 inline 렌더로
+    // 처리. metadata도 명시 noindex로 검색 색인 제외.
     return {
       title: t('notFound'),
+      robots: { index: false, follow: true },
     };
   }
 
@@ -218,10 +221,11 @@ export default async function ArtistPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: 'artistPage' });
 
   if (artistArtworks.length === 0) {
-    // 작품 전체 숨김된 작가는 not-found.tsx 렌더(noindex 메타) — 신학철 케이스.
-    // Vercel + Next.js 16 + force-dynamic 환경에서 status 200으로 응답하는 한계는 실측 확인됨.
-    // SEO 측면에선 noindex 메타로 색인 제거 효과 동일.
-    notFound();
+    // force-static + notFound() 조합이 Vercel에서 500 status를 던지는 회귀가 측정됨
+    // (신학철·천지윤·작가 없음 케이스). not-found.tsx와 동일한 ArtistNotFound 컴포넌트를
+    // 직접 렌더해 200 + noindex 메타로 응답. force-dynamic 환경 회귀 주석은 force-static
+    // 전환 후 무효.
+    return <ArtistNotFound />;
   }
 
   // Use the first artwork's image as the hero background
@@ -328,28 +332,45 @@ export default async function ArtistPage({ params }: Props) {
   // 사용자 dwell time 향상. 거장 작가(오윤·박재동·박불똥 등) 페이지가 풍부해져 page 1 진입 가속.
   const relatedArticles = getArticlesByArtist(artistName);
 
+  // 일부 작가 페이지(류연복·송광호·이문호 등)가 schema 빌딩 단계에서 'TypeError: Invalid
+  // character' throw → 페이지 전체 500이 되던 회귀 우회. 각 빌더를 안전하게 감싸 throw 시
+  // null + stack 로깅 → 페이지는 정상 렌더, schema만 누락(추후 logs에서 정확한 origin 추적).
+  const safeBuild = <T,>(label: string, fn: () => T): T | null => {
+    try {
+      return fn();
+    } catch (err) {
+      console.error(
+        `[artist-page] ${label} schema build failed for "${artistName}":`,
+        err instanceof Error ? err.stack : err
+      );
+      return null;
+    }
+  };
+
   // Person schema 생성 — relatedStories hydrate 이후라 subjectOf 필드를 정확한 매거진 글로 채움.
   // 매거진 → 작가(BlogPosting.mentions)가 양방향으로 작가 → 매거진(Person.subjectOf)으로 발행되어
   // entity 그래프 양방향화. AI Overview·Knowledge Graph entity 매칭에 직접 시그널.
-  const personSchema = generateEnhancedArtistSchema({
-    name: displayArtistName,
-    description: schemaDescription,
-    image: representativeArtwork.images[0] ?? '',
-    url: pageUrl,
-    jobTitle: 'Artist',
-    history: schemaHistory,
-    sameAs,
-    artworks: artistArtworks.map((a) => ({
-      id: a.id,
-      title: locale === 'en' && a.title_en ? a.title_en : a.title,
-      image: a.images[0] ?? '',
-    })),
-    relatedStories: relatedStories.map((s) => ({
-      url: buildLocaleUrl(`/stories/${s.slug}`, locale),
-      name: locale === 'en' && s.title_en ? s.title_en : s.title,
-      datePublished: s.published_at,
-    })),
-  });
+  const personSchema = safeBuild('person', () =>
+    generateEnhancedArtistSchema({
+      name: displayArtistName,
+      description: schemaDescription,
+      image: representativeArtwork.images[0] ?? '',
+      url: pageUrl,
+      jobTitle: 'Artist',
+      history: schemaHistory,
+      sameAs,
+      artworks: artistArtworks.map((a) => ({
+        id: a.id,
+        title: locale === 'en' && a.title_en ? a.title_en : a.title,
+        image: a.images[0] ?? '',
+      })),
+      relatedStories: relatedStories.map((s) => ({
+        url: buildLocaleUrl(`/stories/${s.slug}`, locale),
+        name: locale === 'en' && s.title_en ? s.title_en : s.title,
+        datePublished: s.published_at,
+      })),
+    })
+  );
 
   // Breadcrumb Schema: Home > Artworks > Artist Name
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
@@ -358,21 +379,20 @@ export default async function ArtistPage({ params }: Props) {
     { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
     { name: formattedName, url: pageUrl },
   ];
-  const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const breadcrumbSchema = safeBuild('breadcrumb', () => createBreadcrumbSchema(breadcrumbItems));
 
   const artistPageUrl = buildLocaleUrl(
     `/artworks/artist/${encodeURIComponent(artistName)}`,
     locale
   );
   // AggregateOffer: 작가명 검색 시 가격 범위를 리치 스니펫에 노출
-  const aggregateOfferSchema = generateGalleryAggregateOffer(artistArtworks, locale, artistPageUrl);
-  const itemListSchema = generateArtworkListSchema(
-    artistArtworks,
-    locale,
-    artistArtworks.length,
-    artistPageUrl
+  const aggregateOfferSchema = safeBuild('aggregateOffer', () =>
+    generateGalleryAggregateOffer(artistArtworks, locale, artistPageUrl)
   );
-  const collectionPageSchema = {
+  const itemListSchema = safeBuild('itemList', () =>
+    generateArtworkListSchema(artistArtworks, locale, artistArtworks.length, artistPageUrl)
+  );
+  const collectionPageSchema = safeBuild('collectionPage', () => ({
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     '@id': `${artistPageUrl}#webpage`,
@@ -384,7 +404,7 @@ export default async function ArtistPage({ params }: Props) {
     isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${artistPageUrl}#item-list` },
-  };
+  }));
 
   // LCP preload — 모바일은 slider(400w) / 데스크톱은 hero(1920w)
   const lcpMobileUrl = representativeArtwork.images?.[0]
@@ -406,11 +426,11 @@ export default async function ArtistPage({ params }: Props) {
           fetchPriority="high"
         />
       )}
-      <JsonLdScript data={personSchema} />
-      <JsonLdScript data={breadcrumbSchema} />
-      <JsonLdScript data={collectionPageSchema} />
+      {personSchema && <JsonLdScript data={personSchema} />}
+      {breadcrumbSchema && <JsonLdScript data={breadcrumbSchema} />}
+      {collectionPageSchema && <JsonLdScript data={collectionPageSchema} />}
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-      <JsonLdScript data={itemListSchema} />
+      {itemListSchema && <JsonLdScript data={itemListSchema} />}
       <PageHero
         title={formattedName}
         description={heroDescription}
@@ -419,7 +439,7 @@ export default async function ArtistPage({ params }: Props) {
       >
         <ShareButtonsWrapper
           url={pageUrl}
-          title={t('shareTitle', { artist: formattedName })}
+          title={t('shareTitle', { artist: formattedName, count: artistArtworks.length })}
           description={t('shareDescription', { artist: formattedName })}
         />
         {/* 작가 외부 권위 링크 — homepage·instagram이 schema sameAs에는 들어가지만
