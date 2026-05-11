@@ -285,7 +285,7 @@ function ArtworkCard({
       <Link
         href={getHref(artwork, returnTo)}
         className="absolute inset-0 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-2xl"
-        aria-label={`${safeTitle} — ${safeArtist} 자세히 보기`}
+        aria-label={t('viewDetailsAria', { title: safeTitle, artist: safeArtist })}
       />
 
       <div

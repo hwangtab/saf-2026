@@ -401,7 +401,8 @@
     "pendingInfo": "Detailed information coming soon",
     "originalKoreanData": "Original details in Korean",
     "soldBadge": "SOLD",
-    "reservedBadge": "Reserved"
+    "reservedBadge": "Reserved",
+    "viewDetailsAria": "View {title} by {artist}"
   },
   "trustBadges": {
     "authenticity": "100% authenticity guaranteed",
