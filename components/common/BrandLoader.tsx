@@ -23,7 +23,6 @@ export default async function BrandLoader({ minHeight = '80vh' }: BrandLoaderPro
           height={90}
           className="w-72 md:w-96 max-w-[85vw] h-auto"
           placeholder="empty"
-          priority
         />
       </div>
 

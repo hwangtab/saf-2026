@@ -18,6 +18,13 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
       className="flex items-center gap-2 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
     >
       <div className="relative h-9 w-40">
+        {/*
+          로고는 LCP element가 아니므로 priority 제거. 라이트/white 두 버전을
+          opacity로 cross-fade 하면서 둘 다 priority를 걸면 첫 paint에서 보이지
+          않는 쪽 preload가 LCP 히어로 작품 이미지의 모바일 자원 우선순위와
+          경합해 LCP를 늦춤. fetchpriority="high" 없이도 webp 160x45 소형 자산은
+          충분히 빠르게 로드됨.
+        */}
         <SafeImage
           src="/images/logo/320pxX90px.webp"
           alt={tA11y('logoAlt')}
@@ -27,7 +34,6 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
             'absolute inset-0 h-9 w-auto object-contain transition-opacity duration-300',
             isDarkText ? 'opacity-100' : 'opacity-0'
           )}
-          priority
         />
         <SafeImage
           src="/images/logo/320pxX90px_white.webp"
@@ -39,7 +45,6 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
             'absolute inset-0 h-9 w-auto object-contain transition-opacity duration-300',
             isDarkText ? 'opacity-0' : 'opacity-100'
           )}
-          priority
         />
       </div>
       <span className="sr-only">{tA11y('homeLink')}</span>
