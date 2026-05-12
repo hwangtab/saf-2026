@@ -5,13 +5,27 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import IdleMount from '@/components/common/IdleMount';
 
 import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
 
+// AuthButtons는 createSupabaseBrowserClient를 정적 import → 다이나믹 청크가 @supabase/ssr
+// 전체 SDK(~186KB raw / ~49KB gzip)를 포함. 모든 공개 페이지 헤더에서 fire되어
+// PSI mobile bundle audit에서 "80% unused JS" 최상위 chunk로 검출됨.
+// IdleMount로 requestIdleCallback까지 mount를 지연 — placeholder가 동일 크기라 CLS=0,
+// 사용자에게는 인증 상태가 paint 후 ~50-200ms 늦게 채워지는 정도라 체감 회귀 없음.
+//
+// size="xs"의 AuthButtons 내부 fallback이 h-9 w-20을 쓰므로 IdleMount placeholder도
+// 정확히 동일하게 맞춰 두 단계 mount(idle → mounted-loading → mounted-resolved) 전체에서
+// 동일한 박스를 유지 — CLS=0.
+const AUTH_BUTTONS_PLACEHOLDER = (
+  <div className="h-9 w-20 bg-gray-100/50 animate-pulse rounded-full" />
+);
+
 const AuthButtons = dynamic(() => import('@/components/auth/AuthButtons'), {
   ssr: false,
-  loading: () => <div className="h-10 w-24 bg-gray-100/50 animate-pulse rounded-full" />,
+  loading: () => AUTH_BUTTONS_PLACEHOLDER,
 });
 
 interface DesktopNavProps {
@@ -101,16 +115,18 @@ export default function DesktopNav({
           {t('orderStatus')}
         </Link>
 
-        <AuthButtons
-          size="xs"
-          variant="white"
-          buttonClassName={clsx(
-            utilityButtonClassName,
-            // cva 기본 hover/active scale 무효화 — utility의 transition-colors가 transform transition을
-            // 덮어써 scale이 즉시 토글되며 떨림 현상 발생
-            'hover:scale-100 active:scale-100 hover:shadow-none'
-          )}
-        />
+        <IdleMount fallback={AUTH_BUTTONS_PLACEHOLDER}>
+          <AuthButtons
+            size="xs"
+            variant="white"
+            buttonClassName={clsx(
+              utilityButtonClassName,
+              // cva 기본 hover/active scale 무효화 — utility의 transition-colors가 transform transition을
+              // 덮어써 scale이 즉시 토글되며 떨림 현상 발생
+              'hover:scale-100 active:scale-100 hover:shadow-none'
+            )}
+          />
+        </IdleMount>
 
         <LanguageSwitcher className={textColor} compact />
       </div>
