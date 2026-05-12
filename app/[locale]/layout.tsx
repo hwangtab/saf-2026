@@ -13,6 +13,7 @@ import Footer from '@/components/common/Footer';
 import ToastProvider from '@/components/providers/ToastProvider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
+import WebVitalsTracker from '@/components/common/WebVitalsTracker';
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
@@ -178,6 +179,13 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
       <head>
+        {/* LCP 이미지가 Supabase Storage origin에서 변환되므로 preconnect로 DNS+TLS 병렬화. */}
+        <link
+          rel="preconnect"
+          href="https://vqejnuntjnxzpgwfndtv.supabase.co"
+          crossOrigin="anonymous"
+        />
+        <link rel="dns-prefetch" href="https://vqejnuntjnxzpgwfndtv.supabase.co" />
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
@@ -204,6 +212,10 @@ export default async function LocaleLayout({
           </ToastProvider>
         </NextIntlClientProvider>
         <GlobalAnalyticsGate />
+        {/* RUM 측정 — web-vitals 5.x attribution build로 LCP/INP/CLS/FCP/TTFB + 원인 element/url을
+            GA4 web_vitals event + Vercel Analytics track + 자체 Supabase page_views로 전송.
+            비용 0 (web-vitals npm 무료 + GA4 무료). Vercel Speed Insights($)의 무료 대체. */}
+        <WebVitalsTracker />
       </body>
     </html>
   );
