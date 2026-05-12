@@ -73,10 +73,30 @@ export const NOW_SHOWING: NowShowingItem[] = [
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
     startDate: '2026-08-01',
+    // PM 콘텐츠 확정 전 임시 종료일. 2026-12-31 이후 자동 fallback (강석태 hero).
+    // PM 결정 후 실제 드로잉전 폐막일로 갱신 필요. heroPriority > 0 항목은 endDate 필수
+    // (영구 hero 점유 방지 운영 정책).
+    endDate: '2026-12-31',
     status: 'coming-soon',
     heroPriority: 5,
   },
 ];
+
+/**
+ * **운영 정책 (2026-05-12 PM 회의 결정)**
+ *
+ * - **영구 fallback** (강석태 `all-artworks`): `heroPriority: 0` + `endDate` 없음.
+ *   다른 항목 모두 만료/비활성 시 hero를 영구 점유.
+ * - **시한성 특별전** (oh-yoon-40th, park-saenggwang 등): `heroPriority >= 5` + **`endDate` 필수**.
+ *   endDate 누락 시 영구 hero 점유 → fallback 복귀 불가 (회귀 패턴).
+ * - **미래 시작 항목**: `startDate` 미래로 지정 시 `getActiveShowingItems()` 필터에 의해
+ *   해당 일자까지 자동 숨김 + 활성 풀에서 제외.
+ *
+ * 신규 특별전 추가 절차:
+ * 1. NOW_SHOWING 배열에 항목 추가 (slug, i18nKey, href, imageUrl, startDate, endDate, status, heroPriority).
+ * 2. messages/{ko,en}.json `home.nowShowing.{i18nKey}{Title|Desc|Status|Cta}` 4종 추가.
+ * 3. 특별전이 끝나면 endDate 도달로 자동 fallback. 별도 코드 수정 X.
+ */
 
 export function getActiveShowingItems(now: Date = new Date()): NowShowingItem[] {
   return NOW_SHOWING.filter((item) => {
