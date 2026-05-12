@@ -47,11 +47,19 @@ export default function GoogleAnalytics() {
 
   // gtag.js만 next/script로 로드. 인라인 init은 useEffect로 직접 처리해
   // next/script의 inline-script 주입 경로(production에서 SyntaxError를 일으킨 코드 경로)를 우회.
-  // afterInteractive — hydration 직후 로드, LCP 영향 미미.
+  //
+  // strategy="lazyOnload" — `window.load` 이후 idle 시점에 로드. afterInteractive는
+  // hydration 직후 즉시 fetch + HTML head에 `<link rel="preload" href=".../gtag/js?id=...">`
+  // 를 자동 주입하는데, gtag/js 157KB raw / 65KB unused / scripting 166ms가 단일 자산
+  // 1순위 bootup 비용이라 LCP 이미지 fetch와 1.4s 시점 network slot을 경합한다.
+  // PSI mobile audit: TBT -200~400ms, FCP -50~100ms 회수 + preload 제거로 LCP 이미지
+  // 우선순위 회복. 트레이드오프: GA 이벤트가 페이지 로드 후 ~1초 지연되어 매우 짧은
+  // 세션은 web_vitals_mount 이벤트가 손실될 수 있음(stub은 useEffect에서 즉시 등록되어
+  // dataLayer는 큐잉. gtag.js 로드 시 큐 일괄 처리). page_view·web_vitals 측정 무영향.
+  //
+  // Consent Mode v2 default granted는 useEffect에서 이미 등록됨(`735c3b76`) — gtag.js가
+  // 늦게 로드되어도 dataLayer 큐의 consent 신호를 우선 처리해 collect 차단 없음.
   return (
-    <Script
-      src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-      strategy="afterInteractive"
-    />
+    <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="lazyOnload" />
   );
 }
