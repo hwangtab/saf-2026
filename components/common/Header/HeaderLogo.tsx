@@ -15,6 +15,11 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
   return (
     <Link
       href="/"
+      // 로고는 모든 페이지 chrome — viewport에 항상 들어오므로 prefetch 시
+      // 홈 RSC payload(~35KB)가 routes 이동 없이 매번 fetch. PSI mobile network
+      // audit에서 home self-prefetch가 138KB 차지. 로고 클릭은 사용자 의도적 행동이라
+      // 100~300ms 지연 허용 가능. (카드 5 — RSC prefetch 축소)
+      prefetch={false}
       className="flex items-center gap-2 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
     >
       <div className="relative h-9 w-40">

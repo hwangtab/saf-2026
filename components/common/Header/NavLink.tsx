@@ -60,7 +60,11 @@ export default function NavLink({
   }
 
   return (
-    <Link href={item.href} onClick={onClick} className={className}>
+    // Chrome navigation Link — viewport에 항상 들어와 매 페이지 RSC prefetch fire.
+    // PSI mobile audit에서 12개 prefetch가 308KB. nav item당 ~20-30KB 절감.
+    // 사용자 클릭 시 100~300ms 지연이 더 큰 LCP/네트워크 이득.
+    // (카드 5 — RSC prefetch 308KB 축소)
+    <Link href={item.href} onClick={onClick} className={className} prefetch={false}>
       <span className="block">{item.name}</span>
       {isSubItem && item.description && (
         <span className="block text-xs text-charcoal-soft font-normal mt-0.5 whitespace-normal">

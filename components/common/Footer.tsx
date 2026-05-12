@@ -29,7 +29,11 @@ export default async function Footer({ locale }: { locale: string }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
               {/* Organization Info with Logo */}
               <div>
-                <Link href="/" className="flex items-start gap-3 mb-6 inline-flex">
+                {/* Footer 전체 — 모든 페이지 chrome으로 viewport 진입 시 RSC prefetch 308KB 차지.
+                    홈 self-prefetch 4개 중 2개가 Header+Footer 로고. fold-below라 사용자
+                    스크롤 도달 시 실제 클릭하는 빈도 낮음 → prefetch={false} 일괄 적용.
+                    클릭 시 100~300ms 지연. (카드 5 — RSC prefetch 축소) */}
+                <Link href="/" prefetch={false} className="flex items-start gap-3 mb-6 inline-flex">
                   <SafeImage
                     src="/images/logo/320pxX90px_feet.webp"
                     alt={tA11y('logoAlt')}
@@ -50,6 +54,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/our-reality"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('ourReality')}
@@ -58,6 +63,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/our-proof"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('ourProof')}
@@ -66,6 +72,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/transparency"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('transparency')}
@@ -74,6 +81,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/news"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('news')}
@@ -82,6 +90,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/stories"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('magazine')}
@@ -90,6 +99,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/archive"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('archive')}
@@ -106,6 +116,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/artworks"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('buyArt')}
@@ -154,6 +165,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <Link
                       href="/orders"
+                      prefetch={false}
                       className="text-gray-300 hover:text-primary transition-colors"
                     >
                       {tNav('orderStatus')}
@@ -246,6 +258,7 @@ export default async function Footer({ locale }: { locale: string }) {
               <div className="mb-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-gray-300">
                 <Link
                   href="/privacy"
+                  prefetch={false}
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
                   {t('privacyPolicy')}
@@ -255,6 +268,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 </span>
                 <Link
                   href="/terms"
+                  prefetch={false}
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
                   {t('termsOfService')}
@@ -264,6 +278,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 </span>
                 <Link
                   href="/refund-policy"
+                  prefetch={false}
                   className="hover:text-primary transition-colors link-underline-offset"
                 >
                   {t('refundPolicy')}

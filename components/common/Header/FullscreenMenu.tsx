@@ -204,6 +204,7 @@ export default function FullscreenMenu({
                         <li key={subItem.href} className="text-center">
                           <Link
                             href={subItem.href}
+                            prefetch={false}
                             className="block py-1 text-lg text-charcoal-muted hover:text-primary"
                             onClick={onClose}
                           >
@@ -219,7 +220,12 @@ export default function FullscreenMenu({
                     </ul>
                   </details>
                 ) : (
-                  <Link href={item.href} className={styles.navLink} onClick={onClose}>
+                  <Link
+                    href={item.href}
+                    prefetch={false}
+                    className={styles.navLink}
+                    onClick={onClose}
+                  >
                     {item.name}
                   </Link>
                 )}
@@ -233,6 +239,7 @@ export default function FullscreenMenu({
           <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
             <Link
               href="/orders"
+              prefetch={false}
               className="inline-flex w-full items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
               onClick={onClose}
             >
@@ -252,6 +259,7 @@ export default function FullscreenMenu({
           <div className="mb-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-charcoal-muted">
             <Link
               href="/privacy"
+              prefetch={false}
               className="hover:text-primary transition-colors"
               onClick={onClose}
             >
@@ -260,7 +268,12 @@ export default function FullscreenMenu({
             <span className="text-gray-400" aria-hidden="true">
               |
             </span>
-            <Link href="/terms" className="hover:text-primary transition-colors" onClick={onClose}>
+            <Link
+              href="/terms"
+              prefetch={false}
+              className="hover:text-primary transition-colors"
+              onClick={onClose}
+            >
               {tFooter('termsOfService')}
             </Link>
             <span className="text-gray-400" aria-hidden="true">

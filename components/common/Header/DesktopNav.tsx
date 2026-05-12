@@ -110,8 +110,8 @@ export default function DesktopNav({
           <span>{tSearch('searchButton')}</span>
         </button>
 
-        {/* Utility Menu (Order Status) */}
-        <Link href="/orders" className={utilityButtonClassName}>
+        {/* Utility Menu (Order Status) — chrome utility, 매 페이지 prefetch 회피 */}
+        <Link href="/orders" prefetch={false} className={utilityButtonClassName}>
           {t('orderStatus')}
         </Link>
 
