@@ -71,10 +71,9 @@ export const NOW_SHOWING: NowShowingItem[] = [
     href: '/artworks/artist/박생광',
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
-    // PM 확정: 박생광 드로잉전 2026-06-15 폐막. startDate는 합리적 추정(1개월 전).
-    // 실제 개막일과 다르면 갱신 필요 — endDate 기준이 startDate보다 늦어야 활성 가능.
-    startDate: '2026-05-15',
-    endDate: '2026-06-15',
+    // PM 잠정: 박생광 드로잉전 2026-05-18 개막 ~ 2026-06-17 폐막 (잠정값, 갤러리 일정 확정 후 갱신).
+    startDate: '2026-05-18',
+    endDate: '2026-06-17',
     status: 'on',
     heroPriority: 5,
   },
