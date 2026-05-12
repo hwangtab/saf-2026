@@ -42,6 +42,7 @@ const pretendard = localFont({
   weight: '45 920',
   style: 'normal',
   adjustFontFallback: 'Arial',
+  preload: false,
 });
 
 export const viewport: Viewport = {
