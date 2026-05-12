@@ -295,7 +295,7 @@ async function HeroSpotlightSection({ locale }: { locale: string }) {
 
   return (
     <div className="relative">
-      <HeroSpotlight slides={slides} />
+      <HeroSpotlight slides={slides} locale={locale} />
       <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
     </div>
   );
