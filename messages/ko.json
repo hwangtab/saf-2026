@@ -184,9 +184,6 @@
     "nowShowing": {
       "title": "스포트라이트",
       "subtitle": "한 작가의 한 시기를 한 자리에 — 기간 한정 코너",
-      "prevSlide": "이전 슬라이드",
-      "nextSlide": "다음 슬라이드",
-      "goToSlide": "{n}번 슬라이드로 이동",
       "allArtworksStatus": "온라인 갤러리",
       "allArtworksTitle": "예술인 동료를 위해 내놓은 작품",
       "allArtworksDesc": "한국 현대미술 회화·판화·사진·조각 — 작품 구매가 예술인 상호부조 기금이 됩니다",
