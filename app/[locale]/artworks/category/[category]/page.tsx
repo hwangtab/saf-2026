@@ -14,7 +14,7 @@ import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
-import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
+import { CATEGORY_EN_MAP, getCategoryDisplayName } from '@/lib/artwork-category';
 import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import {
@@ -72,7 +72,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'categoryPage' });
 
   const isEnglish = locale === 'en';
-  const displayCategory = isEnglish ? getCategoryEnName(category) : category;
+  // 홈 카테고리 라벨(`사진·미디어`/`입체·공예`)과 카테고리 페이지 h1 일치 — getCategoryDisplayName.
+  // 매핑 없는 slug(`회화`/`판화` 등)는 한국어 slug 그대로, 영문은 CATEGORY_EN_MAP fallback.
+  const displayCategory = getCategoryDisplayName(category, locale);
 
   const title = t('title', { category: displayCategory });
   const description = t('metaDescription', {
@@ -213,7 +215,8 @@ async function renderCategoryPage({ params }: Props) {
   );
 
   const isEnglish = locale === 'en';
-  const displayCategory = isEnglish ? getCategoryEnName(category) : category;
+  // 카테고리 페이지 hero/breadcrumb/share title 등 모두 동일 group 라벨 사용.
+  const displayCategory = getCategoryDisplayName(category, locale);
   const t = await getTranslations({ locale, namespace: 'categoryPage' });
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
@@ -282,7 +285,7 @@ async function renderCategoryPage({ params }: Props) {
   // 관련 카테고리 (현재 카테고리 제외, 작품 수 기준 정렬)
   const categoryCounts = SUPPORTED_CATEGORIES.map((cat) => ({
     category: cat,
-    displayName: isEnglish ? getCategoryEnName(cat) : cat,
+    displayName: getCategoryDisplayName(cat, locale),
     count: allArtworks.filter((a) => a.category === cat).length,
     path: `/artworks/category/${encodeURIComponent(cat)}`,
   }))

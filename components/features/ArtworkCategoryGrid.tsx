@@ -258,8 +258,11 @@ function InlineGridCard({
         </p>
         <p
           className={cn(
-            'text-xs mt-2 line-clamp-1 min-h-[1rem]',
-            isDark ? 'text-white/55' : 'text-charcoal-soft'
+            // 큐레이터 톤 메타 라벨 — text-caption-meta utility (font-display 미적용,
+            // tracking-[0.12em] + uppercase + xs). 영어 재료는 uppercase 변환, 한글은 영향 X.
+            // line-clamp-1 + min-h-[1rem] CLS 보호 유지.
+            'text-caption-meta mt-2 line-clamp-1 min-h-[1rem]',
+            isDark ? 'text-white/55' : null
           )}
         >
           {(() => {

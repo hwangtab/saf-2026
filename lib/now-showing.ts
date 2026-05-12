@@ -59,6 +59,9 @@ export const NOW_SHOWING: NowShowingItem[] = [
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp',
     startDate: '2026-04-01',
+    // PM 콘텐츠 확정 전 임시 종료일. 2026-12-31 이후 자동 fallback (강석태 hero).
+    // PM 결정 후 실제 종료일로 갱신 필요.
+    endDate: '2026-12-31',
     status: 'on',
     heroPriority: 0,
   },

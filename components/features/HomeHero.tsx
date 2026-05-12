@@ -60,9 +60,12 @@ export default async function HomeHero({ locale }: { locale: string }) {
         className="object-cover"
       />
 
-      {/* 다크 그라디언트 — DESIGN.md §4 PageHero 톤(`from-charcoal-deep via-charcoal to-primary-strong/70`)
-          준수. 텍스트 가독성 확보. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-charcoal-deep/85 via-charcoal-deep/45 to-charcoal-deep/75" />
+      {/* 다크 그라디언트 — DESIGN.md §4 PageHero 톤 준수 (charcoal-deep → charcoal → primary-strong).
+          기존 charcoal-deep 단일 알파 톤(85/45/75)에서 색조 위계 추가:
+          상단 charcoal-deep/85 (텍스트 안전구역) → 중간 charcoal/45 (작품 노출 maximize)
+          → 하단 primary-strong/70 (브랜드 블루 미세 베일, 작품 이미지와 혼합돼 갤러리 톤).
+          알파 유지로 LCP 이미지 가시성 보호 — fully opaque은 작품 element가 시각적으로 사라짐. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-charcoal-deep/85 via-charcoal/45 to-primary-strong/70" />
 
       {/* 텍스트 블록 — 중앙 정렬, hero 톤 */}
       <div className="relative z-10 flex h-full min-h-[70svh] md:min-h-[85svh] flex-col items-center justify-center px-4 pt-24 pb-32 md:pb-40 text-center text-white">

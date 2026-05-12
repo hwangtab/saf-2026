@@ -329,12 +329,11 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               {isEnglish ? (
                 <>
-                  Primary banking exclusion rate{' '}
-                  <strong className="text-primary-strong">84.9%</strong>
+                  Primary banking exclusion rate <strong className="text-sun-strong">84.9%</strong>
                 </>
               ) : (
                 <>
-                  제1금융권 배제율 <strong className="text-primary-strong">84.9%</strong>
+                  제1금융권 배제율 <strong className="text-sun-strong">84.9%</strong>
                 </>
               )}
             </p>
@@ -406,13 +405,13 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               {isEnglish ? (
                 <>
-                  Predatory product exposure <strong className="text-primary-strong">48.6%</strong>{' '}
+                  Predatory product exposure <strong className="text-sun-strong">48.6%</strong>{' '}
                   (15%+ APR)
                 </>
               ) : (
                 <>
-                  고리대금 상품 노출률 <strong className="text-primary-strong">48.6%</strong> (연
-                  15% 이상)
+                  고리대금 상품 노출률 <strong className="text-sun-strong">48.6%</strong> (연 15%
+                  이상)
                 </>
               )}
             </p>
@@ -474,11 +473,11 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
               {isEnglish ? (
                 <>
                   Creative-stoppage rate among debt-collection survivors{' '}
-                  <strong className="text-danger">88.3%</strong>
+                  <strong className="text-sun-strong">88.3%</strong>
                 </>
               ) : (
                 <>
-                  채권추심 경험자의 창작 중단율 <strong className="text-danger">88.3%</strong>
+                  채권추심 경험자의 창작 중단율 <strong className="text-sun-strong">88.3%</strong>
                 </>
               )}
             </p>
