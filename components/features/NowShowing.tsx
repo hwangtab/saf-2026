@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import { Link } from '@/i18n/navigation';
-import { getActiveShowingItems, type NowShowingItem } from '@/lib/now-showing';
+import { getNowShowingCards, type NowShowingItem } from '@/lib/now-showing';
 
 /**
  * Now Showing — 메인 페이지 hero 직하 시한성 큐레이션 전시·캠페인 섹션.
@@ -12,7 +12,7 @@ import { getActiveShowingItems, type NowShowingItem } from '@/lib/now-showing';
  * 항목 0건이면 섹션 자체 렌더 X.
  */
 export default async function NowShowing({ locale }: { locale: string }) {
-  const items = getActiveShowingItems();
+  const items = getNowShowingCards();
   if (items.length === 0) return null;
 
   const t = await getTranslations({ locale, namespace: 'home.nowShowing' });

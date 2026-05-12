@@ -124,9 +124,19 @@ export function getHeroSlide(now: Date = new Date()): NowShowingItem {
 /**
  * fold-below "Now Showing" 그리드에 노출할 카드 목록.
  *
- * 현재는 `getActiveShowingItems()`와 동일하지만, 추후 hero 슬라이드 중복 노출 회피/우선순위
- * 재정렬 등이 필요해질 때 이 셀렉터만 수정하면 된다.
+ * **`getActiveShowingItems()`와 다른 점**: `startDate` 미래(coming-soon) 항목도 노출한다.
+ * 박생광 드로잉전처럼 "곧 시작" 예고 카드는 그리드에 미리 보여 사용자 기대감 형성.
+ * 만료(endDate < now)만 필터.
+ *
+ * hero 선택(`getHeroSlide()`)은 별도로 활성(`getActiveShowingItems()`) 풀에서만 결정하므로
+ * coming-soon 항목이 hero를 점유하지 않는다 — 그리드 카드만 미리 노출.
+ *
+ * status 'coming-soon'은 카드 UI에서 자동으로 "준비 중" 배지(어두운 톤) + 클릭 가능
+ * (작가 페이지 등 임시 진입처)으로 렌더된다.
  */
 export function getNowShowingCards(now: Date = new Date()): NowShowingItem[] {
-  return getActiveShowingItems(now);
+  return NOW_SHOWING.filter((item) => {
+    if (item.endDate && new Date(item.endDate) < now) return false;
+    return true;
+  });
 }
