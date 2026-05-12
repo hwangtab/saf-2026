@@ -63,12 +63,60 @@ function ImageFigure({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
+/**
+ * react-markdown `img` 콜백 — module-level 함수로 분리해 element identity 검사
+ * ({@link elementRendersFigure})가 minify 후에도 안전하게 동작하게 한다.
+ */
+const MarkdownImage: NonNullable<Components['img']> = ({ src, alt }) => {
+  if (!src || typeof src !== 'string') return null;
+  return <ImageFigure src={src} alt={alt ?? undefined} />;
+};
+
+/**
+ * 본문에 `[![alt](img)](/artworks/uuid)` 또는 단독 이미지 라인이 있을 때, react-markdown은
+ * 이를 `<p>` 안에 감싼다. 우리 `img` 콜백이 `<figure>` (block-level)를 렌더하면
+ * `<p><figure>...</figure></p>`라는 **invalid HTML**이 SSR로 송출된다. 브라우저 파서는
+ * `<figure>` 직전에 `<p>`를 자동 종료해 SSR DOM과 다른 트리를 만들고, 결과적으로
+ * React 19 hydration mismatch (#418) 발생 (commit c391a8d0·07244912·3b77e20b 계열).
+ *
+ * `<p>` children 안에 figure/이미지 링크가 있으면 paragraph wrapping 자체를 제거해
+ * `<figure>`가 형제로 정상 렌더되도록 한다.
+ *
+ * 검출 로직: react-markdown은 `<p>`의 children에 **렌더 전** React element (커스텀 컴포넌트
+ * 함수 reference)를 패스한다. element의 `type`이 우리 커스텀 `img` 콜백(MarkdownImage)
+ * 또는 그 컴포넌트가 렌더하는 `ImageFigure` 자체이거나, 그를 children으로 감싼
+ * `<a>`/`<Link>`이면 block-level로 판정.
+ */
+function elementRendersFigure(element: React.ReactElement): boolean {
+  const type = element.type as unknown;
+  return type === ImageFigure || type === MarkdownImage;
+}
+
+function containsBlockLevelChild(children: React.ReactNode): boolean {
+  return React.Children.toArray(children).some((child) => {
+    if (!React.isValidElement(child)) return false;
+    if (elementRendersFigure(child)) return true;
+    // `<a>` 또는 `<Link>`가 image-link 패턴: 자식에 figure를 렌더하는 element가 있으면 block.
+    const props = child.props as { children?: React.ReactNode } | undefined;
+    if (props?.children) {
+      return React.Children.toArray(props.children).some(
+        (inner) => React.isValidElement(inner) && elementRendersFigure(inner)
+      );
+    }
+    return false;
+  });
+}
+
 function createMarkdownComponents(locale: string = 'ko'): Components {
   return {
-    img({ src, alt }) {
-      if (!src || typeof src !== 'string') return null;
-      return <ImageFigure src={src} alt={alt ?? undefined} />;
+    p({ children }) {
+      // figure/image-link이 안에 있으면 `<p>` 제거 — invalid HTML 방지 (위 주석 참조).
+      if (containsBlockLevelChild(children)) {
+        return <>{children}</>;
+      }
+      return <p>{children}</p>;
     },
+    img: MarkdownImage,
     a({ href, children }) {
       if (!isSafeHref(href)) return <>{children}</>;
       // [![alt](img)](/artworks/id) → 클릭 가능한 figure
