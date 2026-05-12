@@ -17,6 +17,14 @@ export default async function NowShowing({ locale }: { locale: string }) {
 
   const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
 
+  const cards = items.map((item) => ({
+    item,
+    status: t(`${item.i18nKey}Status` as 'ohYoon40thStatus'),
+    title: t(`${item.i18nKey}Title` as 'ohYoon40thTitle'),
+    desc: t(`${item.i18nKey}Desc` as 'ohYoon40thDesc'),
+    cta: t(`${item.i18nKey}Cta` as 'ohYoon40thCta'),
+  }));
+
   return (
     <Section variant="canvas-soft" className="py-16 md:py-20">
       <div className="container-max">
@@ -25,8 +33,15 @@ export default async function NowShowing({ locale }: { locale: string }) {
           <p className="mt-3 text-body-large text-charcoal-muted">{t('subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-          {items.map((item) => (
-            <ShowingCard key={item.slug} item={item} locale={locale} />
+          {cards.map(({ item, status, title, desc, cta }) => (
+            <ShowingCard
+              key={item.slug}
+              item={item}
+              status={status}
+              title={title}
+              desc={desc}
+              cta={cta}
+            />
           ))}
         </div>
       </div>
@@ -34,14 +49,19 @@ export default async function NowShowing({ locale }: { locale: string }) {
   );
 }
 
-async function ShowingCard({ item, locale }: { item: NowShowingItem; locale: string }) {
-  const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
-
-  const status = t(`${item.i18nKey}Status` as 'ohYoon40thStatus');
-  const title = t(`${item.i18nKey}Title` as 'ohYoon40thTitle');
-  const desc = t(`${item.i18nKey}Desc` as 'ohYoon40thDesc');
-  const cta = t(`${item.i18nKey}Cta` as 'ohYoon40thCta');
-
+function ShowingCard({
+  item,
+  status,
+  title,
+  desc,
+  cta,
+}: {
+  item: NowShowingItem;
+  status: string;
+  title: string;
+  desc: string;
+  cta: string;
+}) {
   const inner = (
     <article className="group h-full overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-[16/10] overflow-hidden bg-canvas">

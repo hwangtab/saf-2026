@@ -114,7 +114,7 @@ export default async function HomeHero({ locale }: { locale: string }) {
       />
 
       {slide.href ? (
-        <Link href={slide.href} className="block h-full">
+        <Link href={slide.href} className="block h-full" aria-label={`${title} — ${cta}`}>
           {inner}
         </Link>
       ) : (
