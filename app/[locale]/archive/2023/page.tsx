@@ -303,7 +303,9 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
                     />
                   </div>
                   <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="font-sans font-bold text-xl mb-2">{localizedArtworkTitle}</h3>
+                    <h3 className="font-sans font-semibold text-xl mb-2">
+                      {localizedArtworkTitle}
+                    </h3>
                     <p className="text-primary font-semibold mb-3">{localizedArtworkArtist}</p>
                     <p className="text-charcoal-muted text-sm mb-4 flex-grow">
                       {isEnglish ? 'Artwork presented during SAF 2023.' : artwork.description}
@@ -383,7 +385,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
                 <Card key={video.id} className="overflow-hidden">
                   <VideoEmbed id={video.youtube_id} title={localizedVideoTitle} />
                   <div className="p-6">
-                    <h3 className="font-sans font-bold text-xl mb-2">{localizedVideoTitle}</h3>
+                    <h3 className="font-sans font-semibold text-xl mb-2">{localizedVideoTitle}</h3>
                     <p className="text-charcoal-muted text-sm mb-4 line-clamp-2">
                       {localizedVideoDescription}
                     </p>
