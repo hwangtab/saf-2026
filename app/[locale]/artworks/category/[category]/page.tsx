@@ -6,7 +6,10 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import LinkButton from '@/components/ui/LinkButton';
 import ScrollToTopOnMount from '@/components/common/ScrollToTopOnMount';
-import { SAWTOOTH_BOTTOM_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
+import {
+  SAWTOOTH_BOTTOM_SAFE_PADDING,
+  SAWTOOTH_TOP_SAFE_PADDING,
+} from '@/components/ui/SawtoothDivider';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
@@ -324,7 +327,7 @@ async function renderCategoryPage({ params }: Props) {
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
       <JsonLdScript data={generateArtworkPurchaseFAQ(locale)} />
 
-      <div className="min-h-screen">
+      <div className={`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}`}>
         <PageHero
           title={t('title', { category: displayCategory })}
           description={heroDescription}
@@ -470,7 +473,7 @@ async function renderCategoryPage({ params }: Props) {
             className="pb-12"
           >
             <div className="container-max">
-              <p className="text-sm font-medium text-gray-500 mb-3">
+              <p className="text-sm font-medium text-charcoal-muted mb-3">
                 {isEnglish ? 'Browse other categories' : '다른 카테고리 작품'}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -478,7 +481,7 @@ async function renderCategoryPage({ params }: Props) {
                   <Link
                     key={cat.category}
                     href={cat.path}
-                    className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 transition-colors"
+                    className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
                   >
                     {cat.displayName}
                     <span className="ml-1 opacity-60">{cat.count}</span>

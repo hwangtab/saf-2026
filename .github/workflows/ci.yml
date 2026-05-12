@@ -37,8 +37,8 @@ jobs:
       - name: Validate artworks
         run: npm run validate-artworks
 
-      - name: Build
-        run: npx next build
+      - name: Build (npm run build로 chain된 verify:i18n-placeholders 가드까지 실행)
+        run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
