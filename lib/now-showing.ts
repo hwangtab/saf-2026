@@ -60,7 +60,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp',
     startDate: '2026-04-01',
     status: 'on',
-    heroPriority: 10,
+    heroPriority: 0,
   },
   {
     slug: 'park-saenggwang-drawings',
@@ -78,6 +78,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
 export function getActiveShowingItems(now: Date = new Date()): NowShowingItem[] {
   return NOW_SHOWING.filter((item) => {
     if (item.endDate && new Date(item.endDate) < now) return false;
+    if (item.startDate && new Date(item.startDate) > now) return false;
     return true;
   });
 }
