@@ -7,8 +7,8 @@ name: Cache Warm (post-deploy)
 # 트리거: Vercel이 GitHub에 deployment_status: success 이벤트를 보낼 때.
 # 작동 환경: production만 (preview 제외)
 #
-# 비용: 페이지당 1번 GET = 배포당 ~7 function invocations.
-# 하루 평균 5번 배포 가정 시 월 ~1,050건 — Vercel Hobby 100k/월의 1%.
+# 비용: 페이지당 1번 GET = 배포당 ~12 function invocations.
+# 하루 평균 5번 배포 가정 시 월 ~1,800건 — Vercel Hobby 100k/월의 1.8%.
 
 on:
   deployment_status:
@@ -27,13 +27,22 @@ jobs:
         run: |
           set -u
           urls=(
+            # 핵심 진입 (홈/마켓)
             'https://www.saf2026.com/'
             'https://www.saf2026.com/ko'
             'https://www.saf2026.com/en'
             'https://www.saf2026.com/artworks'
+            # 캠페인 정체성 (마케팅 push 대상)
             'https://www.saf2026.com/petition/oh-yoon'
             'https://www.saf2026.com/special/oh-yoon'
             'https://www.saf2026.com/our-reality'
+            'https://www.saf2026.com/about'
+            'https://www.saf2026.com/our-proof'
+            'https://www.saf2026.com/archive/2026'
+            # 매거진·콘텐츠 진입 (SEO + AI citation)
+            'https://www.saf2026.com/stories'
+            # 영문 캠페인 진입
+            'https://www.saf2026.com/en/about'
           )
           failed=0
           for url in "${urls[@]}"; do
