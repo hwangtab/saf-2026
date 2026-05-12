@@ -59,8 +59,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp',
     startDate: '2026-04-01',
-    // PM 콘텐츠 확정 전 임시 종료일. 2026-12-31 이후 자동 fallback (강석태 hero).
-    // PM 결정 후 실제 종료일로 갱신 필요.
+    // PM 확정: 오윤 40주기 commemoration 2026년 말일까지. 2027-01-01 자동 fallback (강석태 hero).
     endDate: '2026-12-31',
     status: 'on',
     heroPriority: 0,
@@ -72,12 +71,11 @@ export const NOW_SHOWING: NowShowingItem[] = [
     href: '/artworks/artist/박생광',
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
-    startDate: '2026-08-01',
-    // PM 콘텐츠 확정 전 임시 종료일. 2026-12-31 이후 자동 fallback (강석태 hero).
-    // PM 결정 후 실제 드로잉전 폐막일로 갱신 필요. heroPriority > 0 항목은 endDate 필수
-    // (영구 hero 점유 방지 운영 정책).
-    endDate: '2026-12-31',
-    status: 'coming-soon',
+    // PM 확정: 박생광 드로잉전 2026-06-15 폐막. startDate는 합리적 추정(1개월 전).
+    // 실제 개막일과 다르면 갱신 필요 — endDate 기준이 startDate보다 늦어야 활성 가능.
+    startDate: '2026-05-15',
+    endDate: '2026-06-15',
+    status: 'on',
     heroPriority: 5,
   },
 ];
