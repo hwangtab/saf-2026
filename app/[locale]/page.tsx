@@ -105,6 +105,14 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
     { label: tStat('repaymentRate'), value: 95, unit: tStat('unitPercent') },
   ];
 
+  // ICU 변수 한 번에 — 토큰에 없는 키는 next-intl이 무시. 모든 호출처가 같은 객체를 받으면
+  // 신규 placeholder 도입 시 누락 회귀 차단. lib/site-stats.ts 단일 출처.
+  const counts = {
+    artistCount: ARTIST_COUNT,
+    artworkCount: ARTWORK_COUNT,
+    loanCount: LOAN_COUNT,
+  };
+
   return (
     <>
       {/* Hero — 단일 정적 LCP 이미지 + 캠페인 메시지 (HeroSpotlight 폐기 후속, 회귀 trauma 회피).
@@ -260,16 +268,8 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       <div className="hidden">
         <ShareButtonsWrapper
           url={SITE_URL}
-          title={t('shareTitle', {
-            artistCount: ARTIST_COUNT,
-            artworkCount: ARTWORK_COUNT,
-            loanCount: LOAN_COUNT,
-          })}
-          description={t('shareDescription', {
-            artistCount: ARTIST_COUNT,
-            artworkCount: ARTWORK_COUNT,
-            loanCount: LOAN_COUNT,
-          })}
+          title={t('shareTitle', counts)}
+          description={t('shareDescription', counts)}
         />
       </div>
     </>

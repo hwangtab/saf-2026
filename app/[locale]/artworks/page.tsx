@@ -109,6 +109,13 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  // ICU 변수 한 번에 — 토큰에 없는 키는 next-intl이 무시. lib/site-stats.ts 단일 출처.
+  const counts = {
+    artistCount: ARTIST_COUNT,
+    artworkCount: ARTWORK_COUNT,
+    loanCount: LOAN_COUNT,
+  };
+
   // 실시간 작품 수 (heroDescription 동적화용)
   const availableCount = artworks.filter((a) => !a.sold).length;
   const dynamicHeroDescription =
@@ -207,16 +214,8 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
         >
           <ShareButtonsWrapper
             url={PAGE_URL}
-            title={t('shareTitle', {
-              artistCount: ARTIST_COUNT,
-              artworkCount: ARTWORK_COUNT,
-              loanCount: LOAN_COUNT,
-            })}
-            description={t('shareDescription', {
-              artistCount: ARTIST_COUNT,
-              artworkCount: ARTWORK_COUNT,
-              loanCount: LOAN_COUNT,
-            })}
+            title={t('shareTitle', counts)}
+            description={t('shareDescription', counts)}
           />
         </PageHero>
 
