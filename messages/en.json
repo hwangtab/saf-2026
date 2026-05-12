@@ -176,6 +176,10 @@
     "sectionPrint": "Print",
     "sectionPhotoMedia": "Photo & Media",
     "sectionSculpture": "Sculpture & Craft",
+    "categoryGrid": {
+      "subtitle": "Curator's selection — each work an act of voluntary solidarity",
+      "viewAll": "View all {category}"
+    },
     "statsTitle": "Artist Finance: The Reality in Numbers",
     "nowShowing": {
       "title": "Spotlight",

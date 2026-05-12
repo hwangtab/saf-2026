@@ -10,6 +10,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from 'lucide-react';
 import HomeHero from '@/components/features/HomeHero';
 import NowShowing from '@/components/features/NowShowing';
+import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import {
@@ -38,9 +39,6 @@ export const revalidate = 3600;
 
 const DynamicCounter = nextDynamic(() => import('@/components/features/DynamicCounter'));
 const FAQList = nextDynamic(() => import('@/components/features/FAQList'));
-const ArtworkHighlightSlider = nextDynamic(
-  () => import('@/components/features/ArtworkHighlightSlider')
-);
 
 type LocaleParams = { locale: string };
 
@@ -284,16 +282,17 @@ async function CategorySections({ locale }: { locale: string }) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'home' });
 
-  // 카테고리당 12점으로 제한 — 홈 카테고리 슬라이더는 시각적 hook이지 카탈로그가 아니므로
-  // 12점이면 충분 (auto-scroll loop도 자연스러움). 4 카테고리 × 20 = 80 → 4 × 12 = 48 카드로
-  // DOM/이미지/하이드레이션 비용 40% 감소 (PSI DOM 1,979 노드, JS hydration 부담 완화).
+  // 카테고리당 8점으로 제한 — 정적 그리드(desktop 4 col × 2 row = 8점, mobile 2 col × 2 row = 4점).
+  // 이전 ArtworkHighlightSlider(12점, auto-scroll loop)에서 정적 그리드로 전환하며 데이터 페치도
+  // 4 × 8 = 32 카드로 축소. 회귀 trauma 4종(server island/idleCallback/DOM enhance/font preload:false)
+  // 모두 회피하는 본질 패턴 — embla-carousel client hydration 비용 + AutoScroll RAF 제거.
   // 전체 카테고리는 viewAllHref(/artworks/category/...)에서 그리드로 안내됨.
   const [paintingArtworks, printArtworks, photoMediaArtworks, sculptureArtworks] =
     await Promise.all([
-      getSupabaseArtworksByCategories(['회화', '한국화', '드로잉'], 12),
-      getSupabaseArtworksByCategories(['판화', '사후판화', '아트프린트'], 12),
-      getSupabaseArtworksByCategories(['사진', '디지털아트', '혼합매체'], 12),
-      getSupabaseArtworksByCategories(['조각', '도자공예'], 12),
+      getSupabaseArtworksByCategories(['회화', '한국화', '드로잉'], 8),
+      getSupabaseArtworksByCategories(['판화', '사후판화', '아트프린트'], 8),
+      getSupabaseArtworksByCategories(['사진', '디지털아트', '혼합매체'], 8),
+      getSupabaseArtworksByCategories(['조각', '도자공예'], 8),
     ]);
 
   const sections: {
@@ -332,8 +331,9 @@ async function CategorySections({ locale }: { locale: string }) {
     <>
       {sections.map((section) =>
         section.artworks.length > 0 ? (
-          <ArtworkHighlightSlider
+          <ArtworkCategoryGrid
             key={section.title}
+            locale={locale}
             artworks={section.artworks}
             title={section.title}
             viewAllHref={section.viewAllHref}

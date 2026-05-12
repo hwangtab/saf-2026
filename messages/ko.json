@@ -176,6 +176,10 @@
     "sectionPrint": "판화",
     "sectionPhotoMedia": "사진·미디어",
     "sectionSculpture": "입체·공예",
+    "categoryGrid": {
+      "subtitle": "큐레이터가 고른 작품 — 한 점 한 점 작가의 자발적 연대",
+      "viewAll": "{category} 전체 보기"
+    },
     "statsTitle": "숫자로 보는 예술인 금융 현실",
     "nowShowing": {
       "title": "스포트라이트",
