@@ -4,6 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { Link } from '@/i18n/navigation';
 import { getHeroSlide } from '@/lib/now-showing';
+import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
 
 /**
  * 홈 hero — 단일 정적 LCP 이미지 + 캠페인 메시지.
@@ -35,8 +36,13 @@ export default async function HomeHero({ locale }: { locale: string }) {
   const slide = getHeroSlide();
 
   // i18n 키 풀기 — server에서 정적 SSR. SafeImage alt도 같이 풀어 사용.
+  // ICU 변수 {artistCount}/{artworkCount}: lib/site-stats.ts 단일 출처 → 작품 추가 시 hero h1
+  // 자동 갱신. 다른 슬라이드(ohYoon40th, parkSaenggwang)는 변수 토큰 없으면 next-intl이 무시.
   const status = t(`${slide.i18nKey}Status` as 'allArtworksStatus');
-  const title = t(`${slide.i18nKey}Title` as 'allArtworksTitle');
+  const title = t(`${slide.i18nKey}Title` as 'allArtworksTitle', {
+    artistCount: ARTIST_COUNT,
+    artworkCount: ARTWORK_COUNT,
+  });
   const desc = t(`${slide.i18nKey}Desc` as 'allArtworksDesc');
   const cta = t(`${slide.i18nKey}Cta` as 'allArtworksCta');
 

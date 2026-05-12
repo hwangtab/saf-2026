@@ -185,7 +185,7 @@
       "title": "Spotlight",
       "subtitle": "One artist's chapter, gathered in one corner — time-limited",
       "allArtworksStatus": "Online Gallery",
-      "allArtworksTitle": "127 Korean Artists. 365 Originals.",
+      "allArtworksTitle": "{artistCount} Korean Artists. {artworkCount} Originals.",
       "allArtworksDesc": "Direct from the studio. No gallery markup. Proceeds fund a mutual aid pool for fellow artists.",
       "allArtworksCta": "Browse all artworks",
       "ohYoon40thStatus": "On view",
