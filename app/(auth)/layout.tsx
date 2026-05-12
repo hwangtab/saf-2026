@@ -20,7 +20,7 @@ import '@/styles/globals.css';
 const pretendard = localFont({
   src: '../../public/fonts/PretendardStdVariable.woff2',
   variable: '--font-sans',
-  display: 'swap',
+  display: 'optional',
   weight: '45 920',
   style: 'normal',
   adjustFontFallback: 'Arial',
