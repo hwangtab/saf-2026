@@ -7,10 +7,9 @@ import LinkButton from '@/components/ui/LinkButton';
 import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
-import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from 'lucide-react';
-import HeroSpotlight, { type SpotlightSlide } from '@/components/features/HeroSpotlight';
-import { getActiveShowingItems, type NowShowingItem } from '@/lib/now-showing';
+import HomeHero from '@/components/features/HomeHero';
+import NowShowing from '@/components/features/NowShowing';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import {
@@ -110,8 +109,15 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
 
   return (
     <>
-      {/* Hero Spotlight — 풀폭 슬라이더 (1번: 전체 작품, 그 외: 시한성 큐레이션) */}
-      <HeroSpotlightSection locale={locale} />
+      {/* Hero — 단일 정적 LCP 이미지 + 캠페인 메시지 (HeroSpotlight 폐기 후속, 회귀 trauma 회피).
+          carousel 자체를 fold-below `<NowShowing />` 그리드로 이동해 LCP element를 정적 hero와 분리.
+          상세 설계 의도: components/features/HomeHero.tsx 헤더 주석 + 메모리
+          feedback_hero_server_island_regression.md. */}
+      <HomeHero locale={locale} />
+
+      {/* Now Showing 그리드 — fold-below 시한성 큐레이션 카드. hero에 노출된 동일 슬라이드도 카드로
+          한 번 더 노출(매거진 톤). 정적 SSR, hydration 0. */}
+      <NowShowing locale={locale} />
 
       {/* Mission Banner */}
       <Section variant="canvas" padding="sm">
@@ -229,8 +235,8 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           },
           // 홈페이지에서 음성검색 대응 — Hero h1만 매칭. 이전 .mission-banner /
           // .hero-subtitle selector는 실제 DOM에 존재하지 않아 schema 검사기가 4개
-          // 오류로 보고하던 회귀(빈 매칭 = 검증 실패). 현재 h1은 HeroSpotlight 슬라이드
-          // 제목으로 정상 매칭됨.
+          // 오류로 보고하던 회귀(빈 매칭 = 검증 실패). 현재 h1은 HomeHero가 노출하는
+          // 단일 캠페인 메시지(`home.nowShowing.{i18nKey}Title`)로 정상 매칭됨.
           speakable: {
             '@type': 'SpeakableSpecification',
             cssSelector: ['h1'],
@@ -273,33 +279,6 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
 }
 
 // ─── Async server sub-components ──────────────────────────────────────────────
-
-async function HeroSpotlightSection({ locale }: { locale: string }) {
-  // force-static + sub-component에서 i18n 호출 시 setRequestLocale 명시 호출 필요
-  // (next-intl 가이드). 누락하면 default locale (ko)로 fallback되어 영문 페이지에 한국어 leak.
-  setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
-  const items = getActiveShowingItems();
-
-  // i18n 키를 풀어 SpotlightSlide 형태로 변환 (server에서 미리 풀어 client 슬라이더에 전달)
-  const slides: SpotlightSlide[] = items.map((item: NowShowingItem) => ({
-    slug: item.slug,
-    href: item.href,
-    imageUrl: item.imageUrl,
-    state: item.status,
-    status: t(`${item.i18nKey}Status` as 'allArtworksStatus'),
-    title: t(`${item.i18nKey}Title` as 'allArtworksTitle'),
-    desc: t(`${item.i18nKey}Desc` as 'allArtworksDesc'),
-    cta: t(`${item.i18nKey}Cta` as 'allArtworksCta'),
-  }));
-
-  return (
-    <div className="relative">
-      <HeroSpotlight slides={slides} />
-      <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
-    </div>
-  );
-}
 
 async function CategorySections({ locale }: { locale: string }) {
   setRequestLocale(locale);
