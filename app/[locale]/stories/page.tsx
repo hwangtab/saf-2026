@@ -5,6 +5,7 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import { getSupabaseStories } from '@/lib/supabase-data';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
@@ -193,6 +194,10 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
         title={copy.heroTitle}
         description={copy.heroDescription}
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={
+          getHeroOverride('stories') ??
+          pickListingHeroImage(stories, (s) => s.thumbnail || extractFirstImage(s.body))
+        }
       />
 
       {/* Category Filter */}
