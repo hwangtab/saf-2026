@@ -41,6 +41,7 @@ const HERO_EXACT = new Set<string>([
   '/refund-policy',
   '/petition/oh-yoon',
   '/special/oh-yoon',
+  '/special/park-saenggwang',
 ]);
 
 /**

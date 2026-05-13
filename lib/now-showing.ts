@@ -71,8 +71,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
   {
     slug: 'park-saenggwang-drawings',
     i18nKey: 'parkSaenggwang',
-    // 드로잉전 페이지 준비 중 — 작가 페이지로 임시 진입 (작품 미리 보기)
-    href: '/artworks/artist/박생광',
+    href: '/special/park-saenggwang',
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
     // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-08(월) 폐막.
