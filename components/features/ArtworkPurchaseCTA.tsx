@@ -1,15 +1,11 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import dynamic from 'next/dynamic';
 import LinkButton from '@/components/ui/LinkButton';
 import { trackEvent } from '@/lib/analytics/track';
 import TrustBadges from '@/components/features/TrustBadges';
+import PurchaseGuide from '@/components/features/PurchaseGuide';
 import { Phone, Mail, CheckCircle, Clock, ArrowRight } from 'lucide-react';
-
-const PurchaseGuide = dynamic(() => import('@/components/features/PurchaseGuide'), {
-  loading: () => <div className="h-20 rounded-xl shimmer-loading" aria-hidden="true" />,
-});
 
 interface ArtworkPurchaseCTAProps {
   artworkId: string;
