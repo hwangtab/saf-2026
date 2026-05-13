@@ -141,7 +141,10 @@ html {
   word-break: keep-all;
   overflow-wrap: break-word;
   font-weight: 400;
-  overflow-x: clip;
+  /* overflow-x: clip 제거 (2026-05-13) — iOS Safari/Mobile Chrome에서 html에 overflow-x
+     설정 시 자식 `position: fixed`가 viewport 대신 html 기준으로 잡혀 스크롤에 따라
+     같이 움직이는 WebKit 버그. Header가 모바일에서 스크롤되는 회귀 차단. 가로 overflow
+     차단은 body의 overflow-x: clip만으로 충분 (body는 fixed의 containing block이 아님). */
   overscroll-behavior-x: none;
   -webkit-overflow-scrolling: touch;
   /* Modal/FullscreenMenu/GlobalSearchDialog가 body.style.overflow='hidden'로
