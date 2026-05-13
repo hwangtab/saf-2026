@@ -3254,9 +3254,36 @@ Operator of Lee Donggu Ceramics Studio`,
   박생광: {
     name_en: 'Park Saenggwang',
     profile: `평생을 일본풍의 그림을 그리는 화가로 살았지만, 생애 마지막 8년 동안 놀랍고도 대담한 예술적 변신을 성공해냈다. 토함산 해돋이, 탈, 단군, 십장생, 창, 불상, 단청, 부적, 무당 등 지극히 한국적인 주제를 선택해서, 수묵화에 강렬한 오방색의 채색을 혼합하는 독창적인 기법을 선보였다. 강렬한 색채와 자유로운 화면구성을 통해, 한국의 토속적인 정서와 민족성이 마치 들끓어 오르는 생명력으로 다가온다. 한국현대미술사의 새롭고도 독창적인 장르를 구축해낸, 수묵채색화의 거장으로 평가받고 있다.`,
-    history: ``,
+    history: `1904 경상남도 진주 출생. 호 내고(乃古)
+1920 일본 교토 도일, 다치카와미술학원 수학 (3년)
+1923 교토시립회화전문학교 입학. 다케우치 세이호(竹內栖鳳)·무라카미 가가쿠(村上華岳) 사사
+1945 광복 후 귀국, 진주에서 작품 활동
+1967 서울 이주. 홍익대·경희대 출강
+1974 일본 재이주
+1977 영구 귀국. 진화랑 개인전을 통해 화풍 전환 — 오방색·수묵채색화로 한국적 소재 본격 탐구
+1981 백상기념미술관 개인전. 무속·역사·민속·불교 도상으로 화단에 충격
+1984 문예진흥원미술관 개인전
+1985 프랑스 파리 그랑팔레 〈르 살롱전〉 특별전 초청 — 비평가들이 "한국의 피카소"로 환영. 7월 별세 (향년 81세)
+2004 탄생 100주년·작고 20주기 기념 회고전 — 갤러리현대 + 이영미술관 공동 개최, 서울·수원·창원·진주·부산 순회
+2023 〈위대한 만남: 내고 박생광·우향 박래현〉 2인전, 예술의전당 한가람미술관 — 박생광 출품 181점 중 스케치 100점 첫 본격 공개
+
+주요 소장처: 국립현대미술관(MMCA), 이영미술관, 갤러리현대 등`,
 
     profile_en: `Park Saenggwang spent most of his life painting in a Japanese-influenced style, but in the final eight years of his career, he achieved an astonishing and bold artistic transformation. He chose quintessentially Korean subjects—the sunrise over Tohamsan Mountain, traditional masks, Dangun (the mythical founder of Korea), the ten longevity symbols, windows, Buddhist statues, dancheong (traditional decorative painting), talismans, and shamans—and pioneered an original technique that combined powerful obangsaek (the five cardinal colors of Korean tradition) with ink wash painting. Through intense color and free compositional structure, Korean indigenous sentiments and national identity emerge with the force of surging life energy. He is acclaimed as a master of colored ink painting who forged a new and original genre in the history of Korean contemporary art.`,
+    history_en: `1904 Born in Jinju, South Gyeongsang Province. Art name "Naego" (乃古)
+1920 Moves to Kyoto, Japan; studies at Tachikawa Art Academy (3 years)
+1923 Enters Kyoto Municipal School of Painting; studies under shin-nihonga masters Takeuchi Seihō and Murakami Kagaku
+1945 Returns to Korea after liberation; continues practice in Jinju
+1967 Moves to Seoul; lectures at Hongik University and Kyung Hee University
+1974 Returns to Japan
+1977 Permanent return to Korea. Solo exhibition at Jinhwarang inaugurates a radical turn — toward obangsaek (the five cardinal colors of Korean tradition) and Korean subjects in colored ink painting
+1981 Solo exhibition at Baeksang Memorial Museum. Shamanic, historical, folk, and Buddhist imagery shocks the Korean art world
+1984 Solo exhibition at Korean Culture and Arts Foundation Art Museum
+1985 Invited to Le Salon Special Exhibition at the Grand Palais, Paris; critics hail him as "the Korean Picasso." Dies in July, aged 81
+2004 Centennial retrospective marking 100 years since his birth (and 20 years since his death) — co-organized by Gallery Hyundai and Lee Young Contemporary Art Museum; touring Seoul, Suwon, Changwon, Jinju, and Busan
+2023 The Great Encounter: Naego Park Saeng-gwang and Uhyang Park Rae-hyun, Seoul Arts Center Hangaram Museum — 100 drawings publicly shown for the first time among 181 works contributed
+
+Major collections: National Museum of Modern and Contemporary Art (MMCA), Lee Young Contemporary Art Museum, Gallery Hyundai`,
   },
   강레아: {
     name_en: 'Kang Lea',

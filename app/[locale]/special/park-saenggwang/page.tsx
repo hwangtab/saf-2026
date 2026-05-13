@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import SafeImage from '@/components/common/SafeImage';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import ParkSaenggwangDrawingGallery from '@/components/special/ParkSaenggwangDrawingGallery';
@@ -397,13 +398,18 @@ export default async function ParkSaenggwangPage({
 
           {/* Section 2 — 박생광 Bio (3열 비대칭 grid: 인물 / 본문 / 카드). */}
           <div className="grid lg:grid-cols-[280px_1fr_1fr] gap-8 lg:gap-16 mb-32 items-start">
-            {/* Portrait — 박생광 실 인물 사진이 없으므로 작품 이미지로 대체 가능. 일단 placeholder 마크업. */}
+            {/* Portrait — 박생광 흑백 인물 사진. 페이지 톤(드로잉전 흑백 매체)과 일치. */}
             <div className="flex flex-col items-center lg:items-start lg:sticky lg:top-24">
               <figure className="relative w-full max-w-[260px] lg:max-w-none">
-                <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(253,202,64,0.3)] overflow-hidden bg-canvas-strong aspect-[3/4] flex items-center justify-center">
-                  <span className="text-charcoal-soft text-sm font-medium tracking-widest uppercase px-4 text-center">
-                    {isEnglish ? 'Park Saeng-gwang\n1904 – 1985' : '박생광\n1904 – 1985'}
-                  </span>
+                <div className="border-4 border-charcoal shadow-[8px_8px_0px_0px_rgba(253,202,64,0.3)] overflow-hidden">
+                  <SafeImage
+                    src="/images/park-saenggwang.webp"
+                    alt={isEnglish ? 'Park Saeng-gwang (1904–1985)' : '박생광 작가 (1904–1985)'}
+                    width={400}
+                    height={533}
+                    className="w-full object-cover"
+                    priority
+                  />
                 </div>
                 <figcaption className="mt-3 text-xs text-charcoal-soft font-medium tracking-widest uppercase text-center">
                   {isEnglish ? 'Park Saeng-gwang, 1904–1985' : '박생광, 1904–1985'}
