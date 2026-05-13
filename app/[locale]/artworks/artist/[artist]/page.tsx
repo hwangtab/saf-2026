@@ -27,11 +27,7 @@ import {
   generateArtworkListSchema,
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import {
-  formatArtistName,
-  resolveArtworkImageUrl,
-  resolveArtworkImageUrlForPreset,
-} from '@/lib/utils';
+import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -450,26 +446,11 @@ async function renderArtistPage({ params }: Props) {
     mainEntity: { '@id': `${artistPageUrl}#item-list` },
   }));
 
-  // LCP preload — 모바일은 slider(400w) / 데스크톱은 hero(1920w)
-  const lcpMobileUrl = representativeArtwork.images?.[0]
-    ? resolveArtworkImageUrlForPreset(representativeArtwork.images[0], 'slider')
-    : null;
-  const lcpDesktopUrl = representativeArtwork.images?.[0]
-    ? resolveArtworkImageUrlForPreset(representativeArtwork.images[0], 'hero')
-    : null;
+  // LCP preload는 PageHero가 자동 발행 — customBackgroundImage 받으면 lib/hero-image
+  // 단일 출처로 mobile/desktop 1x/2x 모두 정확히 매칭된 preload 생성.
 
   return (
     <div className="min-h-screen">
-      {lcpMobileUrl && lcpDesktopUrl && (
-        <link
-          rel="preload"
-          as="image"
-          href={lcpMobileUrl}
-          imageSrcSet={`${lcpMobileUrl} 767w, ${lcpDesktopUrl} 1920w`}
-          imageSizes="100vw"
-          fetchPriority="high"
-        />
-      )}
       {personSchema && <JsonLdScript data={personSchema} />}
       {breadcrumbSchema && <JsonLdScript data={breadcrumbSchema} />}
       {collectionPageSchema && <JsonLdScript data={collectionPageSchema} />}
