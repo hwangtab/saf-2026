@@ -71,6 +71,14 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     descriptionEn:
       'Biennale, art fair, residency, diaspora, documenta — essential art world terms in one place.',
   },
+  'artwork-tax-guide': {
+    // GSC: 358 imp / 7 click (CTR 1.96%, pos 6.7) — 노출 풍부하나 CTR 낮음. 검색 의도
+    // ("미술품 세금", "양도소득세", "부가세") 매칭 키워드를 title 앞에 배치해 SERP CTR 직격.
+    titleKo: '미술품 세금 가이드 — 작품 양도소득세·부가세·예술인 공제 | 씨앗페',
+    titleEn: 'Korean Art Tax Guide — Capital Gains, VAT, Artist Deductions | SAF Magazine',
+    // description은 story.excerpt fallback 사용 — 본문과 일치 보장 (실제 본문과 어긋난
+    // 메타는 GSC quality flag 위험).
+  },
 };
 
 /** 슬러그로 SEO 오버라이드 조회. 매핑 없으면 undefined. */

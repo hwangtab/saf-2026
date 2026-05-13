@@ -38,6 +38,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { getArtistSeoOverride } from '@/lib/artist-seo-overrides';
 import { containsHangul } from '@/lib/search-utils';
 import { ArrowRight, Globe, Instagram } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
@@ -142,9 +143,16 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const count = artistArtworks.length;
-  const metaTitle = displayCategory
-    ? t('metaTitleWithCategory', { artist: formattedName, count, category: displayCategory })
-    : t('metaTitleWithoutCategory', { artist: formattedName, count });
+  // Artist SEO override (caching·청원 등 특별 컨텍스트 있는 작가는 generic title 대신 SERP CTR 직격
+  // 워딩 사용). 매핑 없으면 generic fallback. description은 generic 유지(가격대·재고 동적 정보가
+  // user intent 매칭에 더 강하므로).
+  const artistOverride = getArtistSeoOverride(artistName);
+  const overrideTitle = locale === 'en' ? artistOverride?.titleEn : artistOverride?.titleKo;
+  const metaTitle =
+    overrideTitle ??
+    (displayCategory
+      ? t('metaTitleWithCategory', { artist: formattedName, count, category: displayCategory })
+      : t('metaTitleWithoutCategory', { artist: formattedName, count }));
 
   const categoryForDesc = displayCategory ?? '';
   const seoDescription = priceRange
