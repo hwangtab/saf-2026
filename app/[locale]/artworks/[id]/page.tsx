@@ -34,11 +34,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkCard from '@/components/ui/ArtworkCard';
-import {
-  resolveArtworkImageUrlForPreset,
-  resolveOptimizedArtworkImageUrl,
-  shuffleArray,
-} from '@/lib/utils';
+import { shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import { containsHangul } from '@/lib/search-utils';
@@ -284,43 +280,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
         }
       : purchaseFaqSchema;
 
-  // LCP preload — ArtworkImage <picture> 와 media query·srcset 정확히 매칭.
-  //   모바일(<768px): mobileSrc(slider 400w) 단독 fetch
-  //   데스크톱(>=768px): desktop1x(detail 1600w) + desktop2x(hero 1920w) DPR 분기
-  // 이전엔 단일 link에 imageSrcSet width descriptor가 실제 width와 불일치(`767w`/`1920w`로
-  // mislabel)였고 모바일 DPR 2.x에서 preload가 1600w를 fetch해 picture가 결국 400w를 다시
-  // fetch — double download. media query로 분리해 picture와 1:1 매칭, double download 차단.
-  const lcpImageMobile = artwork.images?.[0]
-    ? resolveArtworkImageUrlForPreset(artwork.images[0], 'slider')
-    : null;
-  const lcpImageDesktop1x = artwork.images?.[0]
-    ? resolveArtworkImageUrlForPreset(artwork.images[0], 'detail')
-    : null;
-  const lcpImageDesktop2x = artwork.images?.[0]
-    ? resolveOptimizedArtworkImageUrl(artwork.images[0], { width: 1920, quality: 80 })
-    : null;
+  // LCP preload는 ArtworkImage의 <picture>가 자체 fetchPriority="high" + Vercel Edge/Next.js의
+  // 자동 preload 인젝션으로 처리. 페이지 레벨에서 별도 <link rel="preload">를 추가하면 같은
+  // URL을 두 번 hint하는 형태(production HTML pos 440/707 + pos 7624/7891)가 되어 우선순위
+  // 경쟁만 발생 — 측정 결과 dedupe로 1회 fetch지만 hint 자체가 잉여. 페이지 레벨 추가 제거.
 
   return (
     <>
-      {lcpImageMobile && (
-        <link
-          rel="preload"
-          as="image"
-          href={lcpImageMobile}
-          media="(max-width: 767px)"
-          fetchPriority="high"
-        />
-      )}
-      {lcpImageDesktop1x && lcpImageDesktop2x && (
-        <link
-          rel="preload"
-          as="image"
-          href={lcpImageDesktop1x}
-          imageSrcSet={`${lcpImageDesktop1x} 1x, ${lcpImageDesktop2x} 2x`}
-          media="(min-width: 768px)"
-          fetchPriority="high"
-        />
-      )}
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
       <JsonLdScript data={faqSchema} />
       <Section
