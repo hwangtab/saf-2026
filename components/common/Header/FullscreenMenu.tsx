@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { usePathname } from '@/i18n/navigation';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+import { ChevronDown } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { EXTERNAL_LINKS } from '@/lib/constants';
@@ -181,23 +182,13 @@ export default function FullscreenMenu({
                 {item.items && item.items.length > 0 ? (
                   <details className="group">
                     <summary
-                      className={`${styles.navLink} list-none cursor-pointer flex items-center justify-center relative w-full`}
+                      className={`${styles.navLink} list-none cursor-pointer flex items-center justify-center gap-2`}
                     >
-                      <span className="text-center">{item.name}</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="transition-transform duration-200 group-open:rotate-180 absolute right-0 top-1/2 -translate-y-1/2 text-gray-400"
-                      >
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
+                      <span>{item.name}</span>
+                      <ChevronDown
+                        aria-hidden="true"
+                        className="h-5 w-5 text-gray-400 transition-transform duration-200 group-open:rotate-180"
+                      />
                     </summary>
                     <ul className="mt-4 space-y-3">
                       {item.items.map((subItem) => (
