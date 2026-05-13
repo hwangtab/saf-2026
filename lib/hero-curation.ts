@@ -24,6 +24,9 @@
  * 시즌 큐레이션이 필요할 때만 매핑 추가.
  */
 export const HERO_CURATION_OVERRIDES: Record<string, string> = {
+  // /artworks listing — 자동 DB-driven 첫 작품(현재 박생광)이 의도에 부적합. 다양한 작품
+  // 구매 메시지에 어울리는 정적 큐레이션 자산으로 override.
+  artworks: '/images/hero/3.jpg',
   // 캠페인 스토리텔링 페이지 — public/images/hero/N.jpg 작가 작품 큐레이션
   about: '/images/hero/8.jpg',
   'our-reality': '/images/hero/16.jpg',
