@@ -206,14 +206,17 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
             className="absolute top-0 left-0 h-px w-px"
           />
           <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="inline-block relative mb-8 animate-stamp [animation-fill-mode:both]">
+            {/* Hero entry 애니메이션 제거 (2026-05-13) — animate-stamp·fade-in-up + fill-mode:both
+                패턴이 SSR/hydration mismatch로 CLS 0.316 회귀를 일으킴 (text-7xl/8xl h1 + multi-line
+                인 oh-yoon만 임계 초과). transform 효과 손실되지만 정적 entry로 CLS 0 보장. */}
+            <div className="inline-block relative mb-8">
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
                 {isEnglish ? 'Oh Yoon 40th Anniversary' : '오윤 40주기 특별전'}
               </span>
               <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:200ms]">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black">
               {isEnglish ? (
                 <>
                   The Blade of the People,
@@ -235,7 +238,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               )}
             </h1>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6 animate-fade-in-up opacity-0 [animation-fill-mode:both] [animation-delay:400ms]">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6">
               {isEnglish ? (
                 <>
                   A short yet powerful life. The spirit of an era, carved in print.
