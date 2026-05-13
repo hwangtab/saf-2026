@@ -1,5 +1,255 @@
 [
   {
+    "hash": "d5d7b69d",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "close cron 자동화 — 5/20 마감 후 is_active 자동 false 전환",
+    "summary": "petition 마감일 자정 직후 1시간 내 자동 close — UX 폼 잔존 위험 차단",
+    "body": "배경:\n- 오윤 구의동 벽화 보존 시민 청원 마감일 2026-05-20T23:59:59+09:00 (9일 앞)\n- sign_petition RPC는 deadline_at <= now() 체크해 PETITION_CLOSED 반환하지만,\n  petitions.is_active = false 자동 전환 메커니즘이 코드 경로엔 없음\n- pg_cron(petition_auto_close, hourly)이 DB에 등록되어 있으나 Supabase Studio\n  수동 활성화 작업 미확인 — Vercel cron이 보장된 fallback\n\n변경:\n- app/api/internal/close-petition/route.ts 신규\n  * Bearer CRON_SECRET 인증 (validateInternalCronRequest)\n  * createSupabaseAdminClient + close_petitions_due() RPC 호출\n  * close된 청원 발생 시 revalidatePath(/petition/oh-yoon, /en/petition/oh-yoon)\n  * runtime = nodejs, dynamic = force-dynamic\n- vercel.json crons[] 추가\n  * \"5 * * * *\" — 매시간 5분에 실행 (UTC 기준, 자정 후 5분 이내 close 보장)\n\n회귀 안전성:\n- close_petitions_due()는 deadline_at <= now() AND is_active = true 조건만 close\n- 만료 전 청원·이미 close된 청원은 noop (idempotent)\n- DB pg_cron과 병행 실행해도 close_petition이 ON CONFLICT 처리 + idempotent UPDATE\n\n검증:\n- npm run type-check 통과 (close_petitions_due RPC 타입 일치)\n- ESLint 통과\n- 기존 cron 패턴(purge-trash, expire-stale-orders) 일관\n\n운영 가이드:\n- Vercel CRON_SECRET 환경변수 이미 등록되어 있음 (기존 cron 4개가 의존)\n- 마감 직후 (2026-05-21 00:05 KST) 자동 close → snapshot 동결 → UI 폼 사라짐\n- 수동 close 필요 시 admin 페이지의 forceCloseCampaign() 그대로 작동",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "8c0d628b",
+    "type": "fix",
+    "scope": "blindspots",
+    "subject": "CI verify 가드 우회 차단 + category 페이지 sawtooth/색상 토큰",
+    "summary": "블라인드스팟 점검 3건 fix — CI에서 verify:i18n-placeholders 실행 보장, category 페이지 sawtooth padding + 브랜드 색상 토큰 적용",
+    "body": "3 패널 블라인드스팟 점검 발견 P0/P1 3건 즉시 fix:\n\n[P0 #3] CI verify 가드 우회 차단\n- .github/workflows/ci.yml의 Build step이 `npx next build` 직접 실행 → `npm run build` chain 끝의 `verify:i18n-placeholders` skip\n- → `npm run build`로 교체. CI에서 i18n raw placeholder 가드 자동 실행 보장\n- 미래 raw 노출 회귀를 PR 단계에서 차단\n\n[P1 #10] category 페이지 SAWTOOTH_TOP_SAFE_PADDING 누락\n- /artworks/category/[category]/page.tsx 최상위 컨테이너 `<div className=\"min-h-screen\">`만 적용\n- Footer/FooterSlider 위쪽 sawtooth(position=\"top\")가 페이지 마지막 24~40px를 덮어쓰므로 SAWTOOTH_TOP_SAFE_PADDING(`pb-24 md:pb-32`) 필요 (CLAUDE.md 명시 규칙)\n- → import 추가 + `min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}` 적용. 시각 회귀(톱니 ↔ 콘텐츠 겹침) 해소\n\n[P1 #11] category 페이지 Tailwind 기본 팔레트 사용\n- \"다른 카테고리 작품\" 섹션에서 text-gray-500, gray-600, gray-200, gray-100 사용 (DESIGN.md §2 위반)\n- → text-charcoal-muted, text-charcoal, border-gallery-hairline, hover:bg-canvas-strong 등 브랜드 토큰 교체\n\n검증:\n- type-check + build 통과\n- verify:i18n-placeholders 정상 실행 (426 HTML, 0 raw placeholders)\n- 시각 회귀 없음 (브랜드 토큰 매핑 동등 색상)\n\n미해결 (별도 라운드 필요):\n- P0 #1: 에러 알림 채널 (Sentry 등) 도입 - 인프라 결정\n- P0 #2: petition close cron 추가 - API route + vercel.json (sign_petition RPC는 이미 deadline 차단)\n- P1 #4: Supabase Storage 백업 자동화\n- P1 #5: cache-warm 대상 확대 (oh-yoon/stories/news/about)\n- P1 #6: CLAUDE.md \"127명\" → ARTIST_COUNT 동적 참조 (사용자 결정 영역)\n- P1 #7: LOAN_COUNT 갱신 (운영 데이터)\n- P1 #8/9: support fieldDistribution/our-reality 통계 중복 관리 통합\n- P1 #12: ArtworkImage badge i18n 키 외부화",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "c25d571b",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "raw placeholder 사전 버그 검증 + CI 빌드 가드 추가",
+    "summary": "ICU 변수 raw 노출 위험을 빌드 후 자동 검사하는 가드 추가, 호출처 DRY 통일",
+    "body": "배경:\n- i18n 키 다수에 `{artistCount}`, `{artworkCount}`, `{loanCount}` ICU 변수가\n  박혀 있음 (messages/ko.json·en.json의 home·seo·artworksPage 네임스페이스).\n- 호출처가 variables 객체를 누락하면 next-intl이 토큰을 그대로 출력 → SERP\n  description·OG·schema.org·JSON-LD에 raw 텍스트 노출 → CTR 손실 + E-E-A-T 약화.\n- 빌드 출력에서 `grep -rE '\\\\{(artistCount|artworkCount|loanCount)\\\\}'`로 raw 매칭\n  다수 발견되나, 대부분 `__next_f.push` flight payload + NextIntlClientProvider\n  serialized messages 안에 위치 (정상 — 클라이언트 런타임 substitute 용 템플릿).\n- 사용자 노출 영역(meta tags, JSON-LD description, body 텍스트)은 현재 모두 정상\n  substitute 되어 0건. 그러나 회귀 차단을 위한 자동 가드는 부재.\n\n변경:\n1. scripts/verify-i18n-placeholders.mjs (신규 CI 가드)\n   - .next/server/app/**/*.html 전수 검사\n   - `<script>` 본문은 제외(flight payload·next-intl serialized messages 정상)\n   - `<script type=\\\"application/ld+json\\\">`은 보존 (SEO 가시 영역)\n   - meta·body·일반 attribute에서 raw `{artistCount|artworkCount|loanCount}` 매칭 시\n     첫 5건 컨텍스트 출력 후 exit 1\n2. package.json: build script에 chain → `next build && npm run verify:i18n-placeholders`\n3. app/[locale]/page.tsx, app/[locale]/artworks/page.tsx\n   - ShareButtonsWrapper의 inline 변수 객체(`{ artistCount, artworkCount, loanCount }`\n     중복 작성) → 함수 상단 `counts` 객체 재사용으로 DRY 통일\n   - 신규 placeholder 도입 시 한 곳만 갱신하면 모든 호출처 자동 반영\n\n검증:\n- npx tsc --noEmit: pass\n- npm test (52 suites, 509 tests): all pass\n- next build + verify:i18n-placeholders: 148 HTML 검사, 0 raw 매칭\n- 메타 description (ko/en/artworks): `{artistCount}` → 112, `{artworkCount}` → 348,\n  `{loanCount}` → 354로 정상 substitute 확인\n- 합성 회귀 (raw `{artistCount}` 주입) → 가드가 exit 1 + 컨텍스트 출력 확인\n\n회귀 차단:\n- CI 가드가 빌드 후 자동 실행되어 신규 i18n 키·호출처에서 variables 누락 시 즉시 fail\n- 단일 출처: lib/site-stats.ts (ARTIST_COUNT / ARTWORK_COUNT / LOAN_COUNT)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "fc1eb2c7",
+    "type": "fix",
+    "scope": "home",
+    "subject": "hero h1 카피 동적 변수화 — ARTIST_COUNT/ARTWORK_COUNT 자동 주입",
+    "summary": "3 패널 PM 회의 만장일치 — ICU 변수로 hero h1 자동 동기화. \"동적 변수 SEO 불리\" myth 검증 + 사이트 전체 패턴 일치. 이전 하드코딩 카피(127/365)가 실제 데이터(112/348)와 불일치였던 정합성 버그 동시 fix",
+    "body": "3 패널 합의:\n- copywriting 패널: ICU 변수 + ARTIST_COUNT/ARTWORK_COUNT 주입 (옵션 A). 단복수 처리 불필요 (>= 100명 보장)\n- seo-audit 패널: \"동적 변수 = SEO 불리\"는 myth. force-static SSG/ISR에서 빌드 시점에 변수 주입 완료 → final HTML byte-identical. 숫자(127/365)는 long-tail로 ranking 가중치 0, \"한국 작가/원본\" 핵심 키워드는 정적 유지\n- content-strategy 패널: 사이트 전체 generateMetadata/OG/schema.org/about/artworks 등 10+ 키가 이미 ICU 변수 패턴. hero h1만 고립된 예외였음\n\n변경:\n- messages/ko.json: \"한국 작가 127인, 365점 원본\" → \"한국 작가 {artistCount}인, {artworkCount}점 원본\"\n- messages/en.json: \"127 Korean Artists. 365 Originals.\" → \"{artistCount} Korean Artists. {artworkCount} Originals.\"\n- components/features/HomeHero.tsx: t(`${slide.i18nKey}Title`)에 ARTIST_COUNT/ARTWORK_COUNT 변수 주입. 다른 슬라이드는 토큰 없어 next-intl 무시\n- components/features/NowShowing.tsx: 동일 패턴, ShowingCard 카드 제목도 자동 갱신\n\n빌드 검증:\n- KO h1: \"한국 작가 112인, 348점 원본\" (실제 데이터 ARTIST_COUNT=112, ARTWORK_COUNT=348)\n- EN h1: \"112 Korean Artists. 348 Originals.\"\n- ⚠️ 이전 하드코딩 \"127인, 365점\"은 실제 데이터와 다른 잘못된 숫자 → 동적 변수화로 자동 정합성 보장\n\n발견: 코드베이스 전체에 사전 raw placeholder 노출 다수 ({artistCount}, {loanCount} 등이 메타데이터·schema에서 변수 미주입). 본 commit은 hero h1만 fix. 사전 버그(home.heroDescription, home.shareDescription, home.metaDescription, seo.siteDescription, artworksPage.metaDescription 등)는 별도 라운드 필요.\n\n운영 효과:\n- 작가/작품 추가 시 hero h1 자동 갱신, 카피 파일 수동 갱신 불필요\n- SERP title vs h1 mismatch 위험 제거 (E-E-A-T 신호 정합성)\n- 사이트 전체 ICU 변수 패턴과 일치",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "97ebba4f",
+    "type": "feat",
+    "scope": "home",
+    "subject": "hero h1 컬렉터 타겟 카피 전환 — 작품 가치 + funneling 구조",
+    "summary": "3 패널 PM 회의 만장일치 결정 — 캠페인 톤이 P1·P2(매출 핵심) 신진·중견 컬렉터를 hero 첫 화면에서 잃음. h1을 작품 가치(127인·365점·원본·직거래)로, subtitle을 가격 신뢰+캠페인 한 줄로 재배치",
+    "body": "배경 — 3 패널 회의 결론:\n- copywriting 패널: 현재 카피(32점)에 숫자·SEO·도록 톤 결핍, 추천 43점대 후보 3종\n- marketing-psychology 패널: \"내놓은\"이 자선 처분품 시그널 → 컬렉터 가치 평가 시스템 자체가 영수증으로 전환. Scarcity·Authority·Identity 부재\n- customer-research 패널: P1 신진 컬렉터(30~45세, 자기표현·잠재자산) + P2 중견(45~65세, 컬렉션 서사·미래 가치) 모두 -2/5 반응. P3 후원자만 +4/5인데 가격대 30~200만원으로 매출 견인 불가\n\n변경:\n- KO h1: \"예술인 동료를 위해 내놓은 작품\" → \"한국 작가 127인, 365점 원본\"\n- KO desc: \"한국 현대미술 회화·판화·사진·조각 — 작품 구매가 예술인 상호부조 기금이 됩니다\" → \"작가가 직접 출품한 원본. 화랑 마진 없는 직거래. 수익은 동료 예술인 상호부조 기금으로.\"\n- EN h1: \"Works Offered for Fellow Artists\" → \"127 Korean Artists. 365 Originals.\"\n- EN desc: \"Direct from the studio. No gallery markup. Proceeds fund a mutual aid pool for fellow artists.\"\n\nFunneling 구조:\n- Hero (above-fold): 작품 가치 (Scarcity 365점 원본 + Authority 127인 큐레이션)\n- Subtitle: 가격 신뢰(작가 직접·화랑 마진 없음) + 캠페인 한 줄(상호부조 기금)\n- Fold-below (NowShowing + 작품 그리드): 작품 큐레이션\n- /our-reality: 캠페인 deep dive (P3 후원자)\n- 결과: P1·P2 작품 가치로 컨버전 시작 → fold-below에서 사회 가치 정당화 부스터 → 재구매·추천 향상\n\n캠페인 정체성 보존:\n- \"수익은 동료 예술인 상호부조 기금으로\" subtitle 마지막 줄에 명확히 유지\n- 캠페인 톤 0%가 아닌 funneling으로 깊이 분리\n- /our-reality, /about, footer 페이지에서 상호부조 메커니즘 deep dive 유지\n\nSEO 효과:\n- \"한국 작가\", \"원본\", \"365점\" 등 컬렉터 long-tail 검색 키워드 대응\n- 영문은 \"127 Korean Artists\", \"Originals\", \"No gallery markup\" 직접 신뢰 키워드",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "9917235a",
+    "type": "fix",
+    "scope": "home",
+    "subject": "hero gradient 단순화 + 박생광 coming-soon 카드 노출",
+    "summary": "사용자 피드백 반영 — primary-strong 블루 베일이 작품 색감 해침 → charcoal-deep 단일 톤 복귀. 박생광 드로잉전 startDate 미래여도 그리드 카드 노출(준비 중 배지)",
+    "body": "(1) HomeHero gradient — primary-strong/70 제거\n- Before: from-charcoal-deep/85 via-charcoal/45 to-primary-strong/70 (DESIGN.md §4 가이드 적용)\n- After: from-charcoal-deep/85 via-charcoal-deep/30 to-charcoal-deep/70 (단일 charcoal-deep tonal)\n- PM 결정(2026-05-13): \"작품 그대로 나오는 게 좋다, 푸르스름하면 작품 이미지 해친다\"\n- 중간 알파 30%로 작품 가시성 maximize. 상단/하단 70~85%는 텍스트 가독성 유지\n\n(2) NowShowing 그리드 — coming-soon 카드 미리 노출\n- getNowShowingCards()를 getActiveShowingItems()와 분리: startDate 미래여도 노출 (endDate만 필터)\n- 박생광 startDate 2026-05-18 미래여도 \"준비 중\" 배지(어두운 톤)로 카드 그리드에 미리 표시\n- 사용자 의도(\"커밍순 같은 느낌으로 있어야지\") 정확 반영\n- hero 선택(getHeroSlide())은 별도로 활성 풀(getActiveShowingItems)만 사용 — coming-soon이 hero 점유 X\n\n운영 결과:\n- hero: 강석태(평상시 fallback) → 5/18부터 박생광(priority 5 활성)\n- 그리드 카드: 강석태(라이브) + 오윤 40주기(전시 중) + 박생광(준비 중) 3장 항상 노출(endDate 만료 전까지)",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "b78b8101",
+    "type": "perf",
+    "scope": "rum",
+    "subject": "WebVitalsTracker mount 활성 + Supabase preconnect 추가",
+    "summary": "휴면 RUM 인프라 깨움 + LCP origin DNS+TLS 병렬화. Vercel Speed Insights($) 대신 web-vitals + GA4 무료 활용. PSI lab variance 한계 해소",
+    "body": "3 패널 PM 회의 결과 — 최우선 카드 2건 적용 (D1 + B1):\n\n[D1] WebVitalsTracker root layout mount\n- components/common/WebVitalsTracker.tsx 이미 완성됐으나 어떤 layout에도 mount 안 됨 (휴면 인프라)\n- admin analytics WebVitalsPanel은 자체 page_views 테이블에서 데이터 조회 코드만 있고 측정기는 작동 X\n- 이번 mount로 실사용자 LCP/INP/CLS/FCP/TTFB + attribution(어떤 element/url 원인) → GA4 web_vitals event + Vercel track + 자체 Supabase 적재 시작\n- Vercel Speed Insights는 Pro plan $10 + $0.65/data point 유료. web-vitals 5.x + GA4는 비용 0\n- 2~4주 후 admin/analytics 패널에서 실 p75 LCP 분포 + 어떤 페이지/이미지가 LCP 병목인지 확인\n\n[B1] Supabase Storage preconnect + dns-prefetch\n- hero LCP 이미지가 Vercel Image Optimization을 거치지만 cache miss 시 Supabase origin 조회\n- preconnect로 HTML parse와 병렬로 DNS+TLS+TCP 단축\n- 효과: 30~150ms LCP 절감 (cold cache 시점 측정 인스턴스 기준)\n- 회귀 위험: 0 (paint 좌표/JS mount/font 변경 없음, trauma 5종 무관)\n\n배경 (3 패널 다회 측정 분석):\n- PSI mobile 10회: Perf 56~93 / LCP 2.9~4.9s / TBT 90~1250ms variance 매우 큼\n- m5 best case (Perf 93 / LCP 2.85s) = Edge cache hot + 운 좋은 인스턴스 (운 좋은 outlier)\n- m3 worst (TBT 1253ms) = 같은 빌드인데 PSI 인스턴스 CPU contention 100% noise\n- 단일 카드 50~200ms 효과는 lab variance 안에 묻혀 검증 불가\n- 진짜 다음 단계 = real-user 측정 인프라 + 데이터 수집\n\n기대 효과: 2주 후 admin/analytics 실사용자 LCP p75 분포 + 한국 5G/LTE 환경 실 LCP 확인 가능 (lab 추측 → 실측 전환)",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "e50a4fdb",
+    "type": "fix",
+    "scope": "home",
+    "subject": "박생광 드로잉전 일정 — 5/18 개막 ~ 6/17 폐막 (잠정)",
+    "summary": "PM 잠정 일정 적용. 갤러리 공식 일정 확정 후 갱신 필요",
+    "body": null,
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "926ab18a",
+    "type": "fix",
+    "scope": "home",
+    "subject": "NowShowing 콘텐츠 확정 — 오윤 2026-12-31, 박생광 5/15~6/15",
+    "summary": "PM 콘텐츠 확정값 적용 — 오윤 40주기 연말까지, 박생광 드로잉전 5/15 개막 ~ 6/15 폐막. heroPriority 5로 박생광 기간엔 자동 hero 교체",
+    "body": "PM 콘텐츠 확정:\n- 오윤 40주기 특별전 endDate: 2026-12-31 (40주기 commemoration 2026년 말까지)\n- 박생광 드로잉전 endDate: 2026-06-15 폐막\n- 박생광 startDate: 2026-05-15 (1개월 전시 추정 — 실제 개막일 다르면 PM 갱신)\n\n운영 시나리오:\n- 2026-05-12 ~ 2026-05-14: 강석태 hero (박생광 미활성)\n- 2026-05-15 ~ 2026-06-15: 박생광 hero (priority 5 활성)\n- 2026-06-16 ~ 2026-12-31: 강석태 hero (박생광 만료 + 오윤 priority 0)\n- 2027-01-01 이후: 강석태 영구 fallback (모든 특별전 만료)",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "255a97bc",
+    "type": "fix",
+    "scope": "home",
+    "subject": "park-saenggwang endDate 추가 + heroPriority 운영 정책 명시",
+    "summary": "시한성 특별전 영구 hero 점유 회귀 방지 — heroPriority > 0 항목은 endDate 필수 정책 명시. park-saenggwang 임시 endDate 2026-12-31 추가",
+    "body": "PM 회의 후속 분석 발견:\n- park-saenggwang-drawings: startDate 2026-08-01 + heroPriority 5 + endDate 없음 → 8/1 도달 후 영구 hero 점유, fallback(강석태) 복귀 불가능\n- oh-yoon-40th와 동일 패턴 (HeroSpotlight 회귀 trauma \"fallback 복귀 불가\"의 데이터 버전)\n\n운영 정책 결정:\n- 영구 fallback (priority 0): endDate 없음 OK\n- 시한성 특별전 (priority >= 5): endDate 필수\n- 신규 특별전 추가 시 endDate 누락 검증 가이드 주석 추가\n\npark-saenggwang endDate 2026-12-31 임시 (PM 폐막일 확정 후 갱신 필요). 코드 주석에 정책 명시",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "6c08d8a2",
+    "type": "feat",
+    "scope": "home,category",
+    "subject": "PM 3관점 회의 권장안 5건 — sun token + curator utility + h1 라벨 + gradient + endDate",
+    "summary": "PM 3관점 회의(SEO + CRO + 콘텐츠 전략) 권장안 5건 통합 적용 — 통계 sun token, 작품 메타 큐레이터 톤, 카테고리 h1 라벨 통일, hero gradient DESIGN.md 준수, oh-yoon endDate 추가",
+    "body": "## PM 3관점 회의 결정 5건 (SEO + CRO + 콘텐츠 전략 합의)\n\n### 1. /our-reality 통계 숫자 sun token 적용\n- 84.9% / 48.6% / 88.3% 강조 텍스트 — `text-primary-strong` / `text-danger` → `text-sun-strong`\n- DESIGN.md §2 가이드 준수: \"sun token = 숫자·통계·가격 강조 텍스트 전용\"\n- CRO 효과: 노란색 attention vs 블루 navigation 위계 구분, 작품 색과 충돌하는 chrome 배경 사용 회피\n- STAGE 1/2/3 라벨·bullet은 primary-strong 유지 (위계 분리)\n\n### 2. ArtworkCategoryGrid InlineGridCard 큐레이터 톤\n- 메타 라인(매체·사이즈)에 `.text-caption-meta` utility 적용 — uppercase + tracking-[0.12em] + text-charcoal-soft\n- 영문 재료(Oil on Canvas → OIL ON CANVAS) 큐레이터 톤 변환, 한글 재료는 영향 없음\n- line-clamp-1 + min-h-[1rem] CLS 보호 유지 — 카드 height 회귀 0\n- 작품명/작가명/가격은 그대로 (트레이드오프 — text-artwork-title 직접 적용 시 카드 height 폭증 회귀)\n\n### 3. 카테고리 페이지 h1 라벨 통일\n- 홈 카테고리 라벨(`사진·미디어`/`입체·공예`)과 카테고리 페이지 h1 mismatch 해결\n- 신규 매핑: `CATEGORY_DISPLAY_KO`/`CATEGORY_DISPLAY_EN` + `getCategoryDisplayName()` 헬퍼\n- slug `사진` → \"사진·미디어 작품 구매\" / \"Photo & Media artworks\"\n- slug `조각` → \"입체·공예 작품 구매\" / \"Sculpture & Craft artworks\"\n- 매핑 없는 slug(`회화`/`판화` 등)는 원래 값 그대로 — backward compat\n- breadcrumb·share title·관련 카테고리 chip까지 일관 적용\n- DB category 값은 그대로 유지(원자 `사진`/`조각`) — 매핑은 표시용 한정\n\n### 4. HomeHero gradient DESIGN.md §4 준수\n- 기존: `from-charcoal-deep/85 via-charcoal-deep/45 to-charcoal-deep/75` (단일 톤 알파)\n- 신규: `from-charcoal-deep/85 via-charcoal/45 to-primary-strong/70` (3톤 위계)\n- DESIGN.md §4 PageHero 가이드(`from-charcoal-deep via-charcoal to-primary-strong/70`) 알파 결합\n- LCP 이미지 가시성 보호 위해 알파 유지 (fully opaque 시 작품 element 시각적 소실)\n- 하단 primary-strong/70이 작품 이미지와 혼합돼 미세 갤러리 톤 + 브랜드 일관성\n\n### 5. oh-yoon-40th endDate 임시 2026-12-31 추가\n- `lib/now-showing.ts` 항목에 `endDate: '2026-12-31'` 추가\n- 2026-12-31 이후 자동 fallback (강석태 hero, getActiveShowingItems 자동 필터)\n- PM 콘텐츠 확정 후 실제 종료일로 갱신 필요 (주석 명시)\n\n## 회귀 trauma 회피 검증 (5종 패턴 모두 회피)\n\n- client carousel 0건 신규 — 5건 변경 모두 server component / 정적 데이터 / utility class\n- HomeHero·NowShowing·ArtworkCategoryGrid 서버 컴포넌트 패턴 유지\n- SafeImage 직접 사용 (next/image 미사용)\n- i18n locale 명시 전달 유지\n- `'use client'` 추가 0\n- hydration footprint 변화 0\n\n## 검증\n\n- `npm run type-check` 통과\n- `npm run build` 통과 (12 categories prerender 모두 정상)\n- 빌드 HTML 확인: 사진.html h1 \"사진·미디어 작품 구매\", 조각.html h1 \"입체·공예 작품 구매\", 회화.html h1 \"회화 작품 구매\" (회귀 없음)\n- 빌드 HTML: `text-sun-strong` 3회 (84.9%/48.6%/88.3%), `text-caption-meta` 32회 (4 카테고리 × 8 카드)\n- HomeHero gradient: `from-charcoal-deep/85 via-charcoal/45 to-primary-strong/70` 빌드 HTML 노출 확인\n- Playwright 시각 검증 (desktop 1280×800 + mobile 390×844):\n  - 홈 hero: 하단 primary-strong/70 푸른 톤 미세 확인 (작품 이미지 가시성 보호)\n  - 카테고리 페이지: 사진·미디어, 입체·공예 h1 + breadcrumb 정확 노출\n  - /our-reality stage1/stage2: 84.9%·48.6% 노란색 sun-strong 정확 노출, STAGE label은 blue 유지\n  - 작품 카드 그리드: 메타 라벨 uppercase + tracking 적용, 카드 height 회귀 0\n  - NowShowing 오윤 40주기: endDate 추가 후에도 active 노출 정상",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "9103f3c4",
+    "type": "fix",
+    "scope": "hydration",
+    "subject": "/stories/[slug] React #418 mismatch — figure-inside-p 무효 HTML 차단",
+    "summary": "매거진 본문 이미지가 <p><figure></p> 형태로 렌더되어 React 19 hydration mismatch(#418)가 발생하던 회귀를 차단",
+    "body": "브라우저 reproduction (`/ko/stories/oh-yun-song-of-the-blade`)에서 console 1건의 React #418\n(HTML mismatch). 모든 매거진 detail 페이지가 영향(다른 stories slug에서도 동일 재현).\n\nRoot cause:\n- 매거진 마크다운 본문에 단독 이미지 라인 또는 [![alt](img)](/artworks/uuid) 패턴이 있으면\n  react-markdown이 <p> 안에 감싼다.\n- 우리 `img` 콜백이 <figure>(block-level)를 렌더하면 SSR HTML이 <p><figure>...</figure></p>로\n  송출 — HTML 스펙상 <p>는 <figure>를 자식으로 가질 수 없는 invalid 구조.\n- 브라우저 HTML 파서는 <figure> 직전에 <p>를 자동 종료해 SSR DOM과 React tree가 어긋나\n  hydration mismatch 발생. dev 모드 에러 메시지: `<p> cannot contain a nested <figcaption>`.\n\n이전 hydration 회귀와 동일 계열:\n- c391a8d0 fix(hydration): formatCurrentDate SSR/client 시점 차이\n- 07244912 fix(hydration): path-rules locale prefix strip\n- 3b77e20b fix(hydration): hero-routes + analytics-gate locale prefix strip\n\nFix pattern:\n- MarkdownRenderer에 커스텀 `p` 콜백 추가 — children 트리에 figure/image-link이 있으면\n  paragraph wrapping을 제거하고 children을 fragment로 직접 렌더 (figure가 형제로 떠오름)\n- 검출은 element identity로 — `MarkdownImage`/`ImageFigure` 함수 reference 매칭이라\n  production minify 후에도 안전 (커스텀 `img` 콜백을 module-level `MarkdownImage`로 분리)\n- 검출 범위: 1) 직접 자식, 2) <a>/<Link>가 감싼 image-link 패턴(자식의 children 1단계 깊이까지)\n\n검증:\n- npm run type-check 통과\n- npm run lint 통과 (errors 0)\n- npm run build 통과 (Next.js 16.2.6 Turbopack)\n- npm test 통과 (52 suites, 509 tests)\n- 로컬 dev 재현:\n  - /ko/stories/oh-yun-song-of-the-blade: console.error 0건 (수정 전 1건)\n  - /ko/stories/lee-yun-yop-artist-guide: 0건\n  - /ko/stories/under-500k-small-size-collection-guide: 0건\n  - /en/stories/oh-yun-song-of-the-blade: 0건\n  - /ko/stories/lee-cheol-soo-artist-guide: 0건\n  - /ko/stories/park-jae-dong-artist-guide: 0건\n- 다른 MarkdownRenderer 사용처(/news/[slug]): hydration 정상, figure 렌더 영향 없음\n- 시각: <figure>가 <p> 바깥으로 떠오르지만 globals.css의 `.markdown-content` 스타일이\n  자식 figure에 동일 적용 — 외관 변경 없음\n\n알려진 트레이드오프:\n- p 콜백에서 React.Children.toArray로 children 트리를 inspect — 일반 텍스트 단락에서도\n  매 render마다 검사 (O(n))하지만 단락당 children 수는 적어 무시 가능\n- 1단계 깊이만 검사 — 만약 향후 <span>이 <a>를 감싸고 그 안에 <ImageFigure>가 있는\n  더 깊은 패턴이 추가되면 재귀 검사 필요. 현재 매거진 컨벤션상 발생 없음",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "23e97db0",
+    "type": "perf",
+    "scope": "home",
+    "subject": "카테고리 그리드 정적화 — 4× ArtworkHighlightSlider 폐기, mobile main thread 1100ms 해제",
+    "summary": "홈 카테고리(회화·판화·사진·미디어·입체·공예) 4개 embla auto-scroll 슬라이더를 정적 SSR 그리드로 전환해 mobile 4x CPU throttle에서 1100ms 메인 스레드 블록을 본질적으로 제거",
+    "body": "회귀 trauma 4종(server island overlay / idleCallback / DOM enhance / font preload:false)을\n모두 회피하는 본질 패턴 — commit 50c363e6 + e0a7f0f0(HeroSpotlight 폐기 + HomeHero + NowShowing)와\n동일한 옵션 B 접근을 fold-below 카테고리 슬라이더 4개로 확장.\n\nPSI 측정 배경(Panel 1):\n- 새 chunk 0vkigdy-wvwx_.js 24KB = embla-carousel-auto-scroll\n- bootup +296ms, mainthread-work +1128ms (회화·판화·사진·입체 4× embla forced reflow + AutoScroll RAF)\n- 최대 4 × 12 = 48 ArtworkCard client hydration\n\n사용자 결정(PM 권한 위임):\n- 카드 수: mobile 4점(grid-cols-2 × 2 row), desktop 8점(md:grid-cols-4 × 2 row)\n- 5~8번째 카드는 `hidden md:block`로 CSS 분기 — 결정적 SSR HTML 유지\n- \"전체 보기 →\" CTA: 그리드 하단 큰 임팩트 버튼 + 슬라이드 swipe 어포던스 보완\n- 카드 디자인: NowShowing 톤(rounded-2xl + gallery-hairline + hover:-translate-y-1)과 일관\n\n변경:\n- components/features/ArtworkCategoryGrid.tsx (신규, server component, hydration 0)\n  - 인라인 server card 내장 — ArtworkCard(client component, useState/useEffect/memo) 미사용\n  - 정적 Link + SafeImage + 정적 텍스트만, 모든 hover는 CSS 전환\n  - DESIGN.md Gallery White Cube + Card hover 표준(hover:-translate-y-1 hover:shadow-xl)\n  - i18n locale 명시 전달(getTranslations({ locale, namespace }))\n- app/[locale]/page.tsx\n  - ArtworkHighlightSlider nextDynamic import 제거\n  - CategorySections의 4× ArtworkHighlightSlider → ArtworkCategoryGrid 교체\n  - 카테고리당 데이터 페치 12점 → 8점 축소(desktop 노출 한도)\n- messages/ko.json + en.json: home.categoryGrid.{subtitle, viewAll} 추가\n- components/features/ArtworkHighlightSlider.tsx 삭제 — 다른 페이지 사용처 없음\n\n검증:\n- npm run type-check 통과\n- npm run build 통과 (Next.js 16.2.6 Turbopack)\n- .next/server/app/ko.html 검사:\n  - embla__/embla- 마크업: 0건 (이전: 4× 카테고리 × 슬라이드 × 컨테이너 다수)\n  - \"grid-cols-2 md:grid-cols-4\" 8건 (4 카테고리 정상 렌더)\n  - \"큐레이터가 고른 작품\" subtitle 9건, \"{카테고리} 전체 보기\" 4건 정상 노출\n  - \"재생/일시정지\" 슬라이더 버튼 텍스트 0건 (기금 \"재생\"은 schema JSON 내 별개 텍스트)\n- 홈 react-loadable-manifest: embla-carousel-auto-scroll 25KB chunk가 홈 페이지 dynamic\n  import 트리에서 더 이상 호출되지 않음(다른 페이지 RelatedArtworksSlider만 사용 유지)\n\n회귀 회피 검증:\n- 모든 그리드 컴포넌트 server component('use client' 0건)\n- dynamic import + ssr:false 미사용 — 회귀 trauma 1과 동일 패턴 위험 없음\n- idleCallback/requestIdleCallback 미사용 — 회귀 trauma 2 회피\n- CLS 0 유지 — aspect-[4/5] + min-h 계산 일관, hover translate는 transform만 사용\n- font preload 변경 0 — 회귀 trauma 4 회피\n\n알려진 트레이드오프:\n- 카테고리별 작품 노출 4점(mobile) / 8점(desktop)으로 줄어듦 — 이전 12점 auto-scroll loop 대비\n- 자동 스크롤 어포던스 소멸 — 그리드 하단 큰 \"전체 보기 →\" CTA로 보완(swipe 대신 카테고리 페이지 진입 유도)\n- 회귀 시 즉시 revert 가능 — 메인 세션이 PSI 측정 후 결정",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "e0a7f0f0",
+    "type": "fix",
+    "scope": "home",
+    "subject": "hero 정책 강석태 fallback + Now Showing 3col + startDate 필터",
+    "summary": "옵션 B 미세 조정 — 오윤 heroPriority 0으로 강석태 평상시 hero 즉시 달성, NowShowing 카드 그리드 desktop 3 col, getActiveShowingItems 미래 startDate 필터",
+    "body": "3 패널 검토 발견:\n- 패널 3: oh-yoon-40th heroPriority 10 + endDate 없음 → 영구 hero (결정 1 미달성). priority 0으로 낮춰 강석태 평상시 hero 자동 fallback\n- 패널 2: NowShowing 그리드 sm:grid-cols-2 (2 col) → 결정 3(desktop 3 col) 미준수. md:grid-cols-3 + max-w-6xl 적용\n- getActiveShowingItems가 startDate 필터 안 함 → 박생광 미래 startDate(2026-08-01)인데 그리드 노출. startDate 필터 추가로 활성 기간만 노출\n\n기대 효과: 캠페인 정체성 fold-above 노출(강석태 hero), 시각 결정 준수, 박생광 8/1 도달 전 미노출\n\nF1(홈 ArtworkHighlightSlider 4개 client embla 정적 그리드 전환)은 디자인 결정 동반 필요 — 별도 라운드",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "50c363e6",
+    "type": "perf",
+    "scope": "home",
+    "subject": "HeroSpotlight 폐기 + 정적 hero + Now Showing 그리드 — LCP carousel hydration 비용 본질 제거",
+    "summary": "회귀 trauma 4종 본질 해결책 적용 — hero에서 client carousel 자체를 제거하고 단일 정적 hero로 대체. fold-below NowShowing 그리드로 시한성 큐레이션 이동.",
+    "body": "## 회귀 trauma 회피 (4종 모두 본질 차원에서 무효화)\n\nmobile 4x throttle 환경에서 검증된 PSI 회귀 4건:\n- (1) server island + carousel overlay → LCP +1.5s (DOM 노드 교체)\n- (2) embla idleCallback lazy → TBT +1070ms (idle 시점 long task)\n- (3) DOM enhance (server + client enhancer) → Element render delay +1600ms (vanilla embla forced reflow)\n- (4) Pretendard preload:false → TBT +260ms (font/이미지 네트워크 큐 경합)\n\n본질 해결책: client carousel + mobile 4x throttle 조합 회피 불가 → hero에서 carousel 자체 제거.\n\n## 사용자 결정 (PM 권한 위임)\n\n1. **정적 hero = 1번 슬라이드 그대로** — 강석태 작품 + 캠페인 정체성 메시지 (\"예술인 동료를 위해 내놓은 작품\"). 단일 LCP element 명확.\n2. **특별전 hero 자동 교체 정책** — lib/now-showing.ts 데이터 기반. heroPriority 필드 추가, getHeroSlide() 함수가 활성 항목 중 priority 최대 1개 선택. 평상시 fallback(priority 0) ↔ 활성 특별전(priority 5~10) 자동 전환, endDate 경과 시 자동 fallback 복귀.\n3. **fold-below \"Now Showing\" 그리드** — 기존 components/features/NowShowing.tsx 그대로 활용 (server component, hydration 0, Card hover DESIGN.md §4 표준 hover:-translate-y-1 hover:shadow-xl 이미 적용). hero 직후 sawtooth divider, 그 다음 NowShowing.\n\n## 변경 파일\n\n- **신규** components/features/HomeHero.tsx — server component, 단일 정적 LCP 이미지(SafeImage priority + fetchPriority=\"high\" + quality=60 + sizes=\"100vw\"), h1 = slide.title, data-hero-sentinel 마커, SawtoothDivider bottom. `'use client'` 없음, hydration 0.\n- **확장** lib/now-showing.ts — heroPriority?: number 필드 추가, getHeroSlide() / getNowShowingCards() 셀렉터 신설. 데이터 항목 3개에 priority 부여 (all-artworks: 0, oh-yoon-40th: 10, park-saenggwang: 5).\n- **수정** app/[locale]/page.tsx — HeroSpotlightSection async sub-component 제거 → <HomeHero locale={locale} /> + <NowShowing locale={locale} /> 직접 사용. 미사용 SawtoothDivider import 정리. speakable JSON-LD 주석에 HomeHero 매칭 명시.\n- **삭제** components/features/HeroSpotlight.tsx (206줄) — embla + autoplay 기반 carousel hero. 주석 메모(역사 기록)는 HomeHero.tsx, lib/now-showing.ts, page.tsx에 남김.\n- **수정** package.json + package-lock.json — embla-carousel-autoplay 의존성 제거 (오직 HeroSpotlight에서만 사용했음). embla-carousel-react는 ArtworkHighlightSlider, RelatedArtworksSlider에서 계속 사용하므로 유지.\n\n## 검증\n\n- npm run type-check 통과 (tsc strict)\n- npm run build 통과 (Turbopack)\n- npm test hero-routes 통과 (58/58)\n- ESLint 0 errors (warning only)\n\n빌드 HTML 검증 (.next/server/app/ko.html + en.html):\n- `<link rel=\"preload\" as=\"image\" fetchPriority=\"high\">` LCP 이미지용 자동 생성 ✓\n- `<img fetchPriority=\"high\" decoding=\"async\" sizes=\"100vw\" srcSet=\"...\">` 단일 LCP element 1개 정확히 SSR ✓\n- `<h1>` = 현재 시각(2026-05-11) 기준 활성 특별전(oh-yoon-40th, priority 10) 자동 선택 → \"오윤 40주기 특별전\" (ko) / \"Oh Yoon — 40th Anniversary Exhibition\" (en). i18n locale 명시 전달(getTranslations({locale})) 정상 동작.\n- 평상시 fallback 동작 정상: getHeroSlide() 로직이 active 중 priority 최대 선택, 특별전 endDate 경과 시 자동으로 강석태 슬라이드(priority 0)로 복귀.\n\ndev 시각 검증 (`/ko` 798KB SSR):\n- hero h1 + 3개 NowShowing 카드 h3 (\"예술인 동료를 위해 내놓은 작품\" / \"오윤 40주기 특별전\" / \"박생광 드로잉전\") ✓\n- Card hover 패턴 (hover:-translate-y-1 hover:shadow-xl) 3개 매칭 ✓\n- `data-hero-sentinel=\"true\"` 실제 DOM 1건 (Header 투명화 sentinel 작동) ✓\n- 영문 페이지(`/en`) hero locale 분기 정상 ✓\n\nbundle:\n- embla-carousel-autoplay 코드 chunks에서 0건 (완전 제거 확인)\n- .next/static/chunks/ 142 files / 6.3M\n\n## 알려진 트레이드오프\n\n- 현재 데이터의 oh-yoon-40th 항목에 endDate가 없어 영구 활성 → 영구 hero 점유. 콘텐츠 결정 사항이므로 데이터 그대로 둠. 사용자가 endDate를 설정하면 그 후 평상시 fallback(강석태 슬라이드)으로 자동 복귀.\n- hero에서 노출된 슬라이드도 fold-below 그리드 카드로 한 번 더 노출(매거진 톤). 의도된 동작.\n- production PSI mobile 3회 측정으로 회귀 trauma 진짜 본질 해결 여부 최종 검증 필요. dev/desktop 신뢰 금지(메모리 feedback_hero_server_island_regression.md 일관 경고).",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "96de2960",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "Pretendard preload:false — LCP 이미지 우선순위 확보",
+    "summary": "폰트 preload 제거. adjustFontFallback Arial이 metric 보정해 paint 좌표 변화 0. LCP 이미지가 폰트(291KB)와 네트워크 경합 없이 우선 fetch",
+    "body": "3 패널 회의 결과 적용:\n- 패널 1 분석: 회귀 3의 진짜 원인은 vanilla embla mount의 forced reflow (font:optional 아님). font-display-insight는 양쪽 score 1 동일\n- 패널 3 추천 TOP 1 (위험 낮음): Pretendard preload 제거 + display:swap 유지\n- 안전 메커니즘: adjustFontFallback:'Arial'이 이미 metric 보정 적용 중 → swap 시 paint 좌표 변화 0 → CLS 0 유지\n- preload 제거로 폰트 download가 CSS parse 후 정상 시작. LCP 이미지(49KB)와 네트워크 큐 경합 해소\n\n기대 효과: LCP -300~600ms, FCP -100~300ms (mobile 4x throttle 기준)\n\n검증: HTML head에서 폰트 preload tag 0건 확인, LCP 이미지 preload는 유지",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "51a0a84c",
+    "type": "perf",
+    "scope": "hero",
+    "subject": "Progressive Enhancement 패턴 — HeroSpotlight server component + client enhancer로 LCP render delay 단축",
+    "summary": "HeroSpotlight를 Server Component로 변환하고 vanilla embla를 사용하는 client island를 분리해, 첫 슬라이드 LCP element를 SSR HTML에서 그대로 paint하면서도 이전 LCP+1.5s / TBT 28x 회귀 패턴을 모두 회피",
+    "body": "회귀 trauma 2건 회피 설계:\n- 회귀 1 (commit 4378e1a4 → revert 8d422b68): server island + carousel ssr:false absolute overlay → DOM 노드 교체로 두 번째 paint가 LCP 측정 → LCP +1.5s\n- 회귀 2 (commit a3e6d876 → revert 2a008e27): embla active:false + requestIdleCallback → PSI mobile 4x throttle에서 idle 시점에 embla mount + autoplay + handler 등록이 한 long task로 묶여 TBT 40→1110ms (28배 폭증)\n\n본 패턴 본질 차이:\n- DOM 노드 교체 없음 — server가 모든 슬라이드/dots/arrows의 정적 마크업을 SSR. enhancer는 querySelector로 같은 DOM에 vanilla embla를 부착할 뿐. SSR로 paint된 첫 슬라이드 img element가 그대로 LCP element로 측정됨\n- embla mount이 useEffect에서 정상 실행 — requestIdleCallback/setTimeout 지연 없음. 마운트 시점은 기존 useEmblaCarousel 훅과 동일하므로 long task 폭증 가능성 X\n\n변경 파일:\n- components/features/HeroSpotlight.tsx — Server Component로 변환 (getTranslations({locale}) 명시 전달), 정적 dots/arrows 마크업 + <HeroSpotlightEnhancer/> mount\n- components/features/HeroSpotlightSlideCard.tsx — 신규, Server Component, 슬라이드 정적 마크업\n- components/features/HeroSpotlightEnhancer.tsx — 신규, Client island, vanilla embla(`embla-carousel`) + Autoplay 플러그인 사용. dots/arrows에 querySelector 이벤트 위임, embla select 이벤트로 aria-current + indicator span classList mutate\n- app/[locale]/page.tsx — HeroSpotlightSection에서 locale을 HeroSpotlight에 명시 전달\n- package.json — embla-carousel 8.6.0을 명시적 dep 추가 (기존엔 embla-carousel-react 트랜시티브 의존)\n\n벤더 비교:\n- 기존 embla-carousel-react 훅 사용 vs 신규 vanilla embla-carousel — react wrapper ~10KB 절감. autoplay 플러그인은 동일 패키지 그대로 사용\n\n검증 결과:\n- type-check 통과, lint 통과 (0 errors), build 통과 (Turbopack)\n- jest 509 tests 통과\n- SSR HTML 출력 확인 (KO/EN 모두): data-embla-slide x3, data-embla-dot x3, data-embla-viewport/prev/next 모두 존재, 첫 슬라이드 <img fetchPriority=\"high\"> SSR된 srcSet 완비\n- 로컬 dev (Playwright) 인터랙션 검증:\n  - embla mount 시 container 'translate3d(-2550px,0,0)' 정상 (loop 모드 pre-scroll)\n  - prev/next 버튼 클릭: 0→1, 1→0 정상 전환\n  - 임의 dot 클릭 (index 2): 0→2 정상\n  - autoplay 동작 확인 (페이지 로드 후 6초 경과시 dot active 인덱스 자동 이동)\n  - 첫 슬라이드 LCP element가 SSR된 <img> 그대로 (DOM 노드 교체 0)\n  - dots aria-current toggle + indicator span class mutate 정상\n  - EN locale에서 i18n 메시지 정상 해석 ('Go to slide 1', 'Previous slide', 'Works Offered for Fellow Artists')\n  - href localized prefix ('/en/artworks') 적용 확인\n\n자체 회귀 위험 평가:\n- LCP element 안정성: 첫 슬라이드 <img>가 SSR HTML에 fetchPriority='high' + srcSet 완비된 상태로 paint. enhancer mount 이후에도 img 노드 동일성 유지 → Lighthouse가 동일 element를 LCP로 측정 (회귀 1 본질 회피)\n- TBT: embla mount이 useEffect 동기 실행. dots/arrows 이벤트 리스너 부착은 microtask 수준의 빠른 querySelector + addEventListener. PSI 4x throttle 환경에서도 단일 task < 50ms 추정 (회귀 2 본질 회피). 단 production PSI mobile 3회 측정으로 variance 확인 필수\n- 시각 회귀: h1 styling, gradient overlay, sawtooth divider, dot/arrow 위치/색상 모두 기존 동일. 카드 hover 효과(group hover:text-charcoal-deep) 유지\n- 기능 회귀: autoplay 6s + hover-pause + focus-pause, prev/next, dot 점프, swipe, keyboard 접근성 모두 vanilla embla 기본 동작으로 유지. embla-carousel-react는 wrapper만 vanilla 그대로라 동작 차이 없음\n- prefers-reduced-motion 존중 — autoplay 플러그인 마운트 자체를 비활성화 (기존 코드보다 더 보수적)\n\n남은 검증 (메인 세션):\n- production PSI mobile 3회 측정으로 LCP/TBT variance 확인 — variance 크니 단일 측정 신뢰 X\n- 회귀 시 즉시 revert 가능 (4파일 + package.json)",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "e909bb30",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "Pretendard display swap → optional — LCP 이미지 preload 경합 해소",
+    "summary": "폰트 display:optional로 전환해 폰트 preload priority를 낮춰 LCP 이미지와의 825ms 네트워크 경합 단축. CLS 영향은 adjustFontFallback Arial로 완화",
+    "body": "PSI panel 1 분석:\n- LCP breakdown에서 Resource load delay 825ms가 최대 단일 phase\n- 원인: Pretendard 291KB woff2와 LCP 이미지(48KB)가 동일 826ms 시점에 High priority로 preload되며 경합\n- display:optional은 폰트 로드 지연 시 swap 없이 fallback 유지 → preload priority 낮춤\n\n기대 효과: LCP Resource load delay -100~300ms",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "b174d019",
+    "type": "perf",
+    "scope": "bundle",
+    "subject": "browserslist를 baseline widely available로 통합 — 빌드 chunk -100KB",
+    "summary": "package.json browserslist를 'supports es6-module and last 2 years and not dead' 단일 query로 통합. 빌드 총 chunk 크기 6.3M → 6.2M (-100KB / -1.5%), chunk 수 136 → 135. Lighthouse legacy-javascript-insight가 보고한 14KB polyfill 절감 후보 추적 결과, Array.prototype.at·flat·flatMap·Object.fromEntries·Promise.allSettled가 Next.js hardcoded polyfill-module.js(1.4KB)와 polyfill-nomodule.js(112KB)에서 inject되어 browserslist만으로는 제거 불가했지만, 더 명확한 modern target 명시로 SWC compile 단계의 잔여 polyfill 코드 일부가 제거됨.",
+    "body": "- before: [\"Chrome >= 90\", \"Firefox >= 90\", \"Safari >= 14\", \"Edge >= 90\", \"iOS >= 14\", \"Samsung >= 14\"] — 6.3M / 136 chunks\n- after: [\"supports es6-module and last 2 years and not dead\"] — 6.2M / 135 chunks\n- type-check 통과, build 통과 (Turbopack)\n- nomodule polyfill 112KB chunk는 그대로 유지 (Next.js 내부 hardcoded — browserslist로 제어 불가) — modern 브라우저는 noModule 속성 무시\n- Top chunk 1.56MB는 동일 (-54 bytes), polyfill chunk 232KB는 동일 위치 유지\n\n검증:\n- `npm run type-check`: ✓\n- `npm run build` (Turbopack): ✓\n- chunk size 측정: 일관성 확인 (baseline 2회 빌드 = 6.3M 동일)\n\n영향:\n- 모바일 TBT 미미한 개선 추정 (-100KB / total 6.2M)\n- 회귀 위험 0: target은 여전히 Safari 17.5+ / Chrome 동일 / iOS 17.5+를 커버 (es6-module 지원 + 최근 2년)\n- 후속 — Next.js 16+에서 nomodule polyfill 비활성화 옵션이 노출되면 추가 -112KB 가능",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "14d4f058",
+    "type": "perf",
+    "scope": "prefetch",
+    "subject": "chrome Link prefetch={false} 적용 — RSC prefetch 12개→0개 축소",
+    "summary": "Header/Footer chrome Link 일괄 prefetch={false} — PSI mobile RSC prefetch 308KB·홈 self-prefetch 4건 제거 → LCP -100~200ms 목표",
+    "body": "PSI audit panel 3: 홈 mobile network에서 RSC prefetch 12개가 308KB 차지.\n4건이 홈 자기 자신을 prefetch(137KB 중복) — Header logo + Footer logo가 매\n페이지에서 `/` prefetch fire. mobile 4G에서 LCP 이미지 fetch와 동일 slot 경합.\n\n변경 Link:\n- components/common/Header/HeaderLogo.tsx: `/` 로고\n- components/common/Header/NavLink.tsx: 모든 nav 메뉴 + dropdown sub-items\n- components/common/Header/DesktopNav.tsx: `/orders` utility\n- components/common/Header/FullscreenMenu.tsx: 모바일 메뉴 nav + utility + privacy/terms\n- components/common/Footer.tsx: logo + 12개 내부 Link (Explore + Get Involved + privacy/terms/refund)\n\n원칙:\n- chrome(모든 페이지 매 viewport) = `prefetch={false}` — 사용자가 정말 클릭할\n  때만 fetch. 클릭 시 100~300ms 지연 허용.\n- content/CTA Link 유지: HeroSpotlight 슬라이드(회귀 trauma), 홈 missionLearnMore,\n  ArtworkCard(작품 상세 = 사용자 핵심 경로), Hero/Section 내부 CTA.\n\n검증:\n- npm run type-check 통과\n- npm run build 통과 (Next.js 16.2.6 Turbopack)\n- 로컬 prod 측정 (Playwright Chromium):\n  - Before (HEAD 38a36d2f): /orders, /news, /stories, /archive, /transparency,\n    /our-proof, /about, /special/oh-yoon, /petition/oh-yoon, /artworks,\n    /stories/category/* 등 70+ RSC prefetch fire. `/?_rsc=` 2건 (홈 self).\n  - After: chrome RSC prefetch 0건. `/?_rsc=` 0건. content CTA 3건만 잔존\n    (Hero /artworks, mission /our-reality, AuthButtons /login — 모두 사용자\n    클릭 가능성 큰 핵심 경로).\n\n트레이드오프:\n- chrome Link 클릭 시 사용자 체감 100~300ms 지연. mobile 4G LCP 가치가 더 큼.\n- SEO 영향 없음 — RSC prefetch는 검색 엔진 크롤링과 무관.",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "38a36d2f",
+    "type": "perf",
+    "scope": "archive",
+    "subject": "작품 카드 H3 한자 weight mismatch 해소 — Pretendard 단독 시각 회귀 회복",
+    "summary": "archive 2023 작품·영상 카드 H3 font-bold → font-semibold (한자 시각 회귀 해소)",
+    "body": "채택 옵션: (c) — H3 weight 700 → 600 낮추기 (시각 패널 최우선 권장)\n\n배경:\n- HEAD 24091f31 이후 Pretendard 단독, 한자는 시스템 sans fallback (macOS Apple SD Gothic Neo / Win Microsoft YaHei)\n- `/ko/archive/2023` 작품 카드 H3가 `font-sans font-bold text-xl` (700) 이라 한글 Pretendard Bold + 한자 시스템 Bold weight·자형 mismatch 시각 회귀 발생\n- 영향 한자 작품: 섬진淸流, 기원(龜), 꽃이 피다 - 1757佛 (3건)\n\n옵션 비교:\n- (a) 데이터 정제(한글 음역 표기): 콘텐츠 변경은 사용자 결정 영역이라 보수적, 시도하지 않음\n- (b) Noto Sans KR 한자 unicode-range subset: commit 34453240 두 폰트 운영 트라우마 (TBT 130→330ms) 회피\n- (c) font-weight 700 → 600: SemiBold가 시스템 한자 fonts와 자형·두께 자연스럽게 어울림. 추가 폰트 0KB, 코드 변경 1단어\n\n변경:\n- app/[locale]/archive/2023/page.tsx:306 — 작품 카드 H3 font-bold → font-semibold\n- app/[locale]/archive/2023/page.tsx:386 — 영상 카드 H3 font-bold → font-semibold\n\n검증:\n- npm run type-check: 통과 (next typegen + tsc --noEmit)\n- npm run build: 통과 (모든 라우트 정상 빌드)\n- 시각 비교 screenshot (mobile 393x851 + desktop 1280x800):\n  - visual-audit/han-h3/02-mobile-han-zoom-after.png (섬진淸流)\n  - visual-audit/han-h3/03-mobile-han-gui-after.png (기원(龜))\n  - visual-audit/han-h3/04-mobile-han-1757-after.png (꽃이 피다 - 1757佛)\n  - visual-audit/han-h3/05-desktop-han-h3-after.png (3 cards desktop)\n- 다른 페이지 영향 검증:\n  - archive/2026: H3 모두 font-bold (700) 그대로 유지 — 영향 없음\n  - text-artwork-title curator utility, text-card-title 등 시스템 미수정\n  - stories, artworks, our-reality 등 font-display font-bold 패턴 미수정 (scope 좁힘)\n\n트레이드오프:\n- 작품명 stamp 임팩트가 SemiBold로 약간 줄어듦 — 크기(text-xl) 유지로 보완\n- archive 2023 한정. archive 페이지 외 다른 곳 한자 H3 회귀 발견 시 동일 패턴으로 따로 처리",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "6c251d45",
+    "type": "perf",
+    "scope": "bundle",
+    "subject": "AuthButtons mount idle-deferral — Supabase SDK chunk(~186KB raw / ~49KB gzip) TBT 윈도우 제거",
+    "summary": "PSI mobile audit '80% unused JS' 1위 청크(@supabase/ssr SDK)가 헤더 hydrate 즉시 받아오는 패턴을 IdleMount로 requestIdleCallback까지 지연 — LCP/TBT 측정 윈도우와 경쟁 제거",
+    "body": "식별:\n- PSI audit panel 3 → `154qgppd...js` 49KB raw / 39KB unused (80%)\n- chunk 정체: `@supabase/auth-js`, `@supabase/storage-js`, `@supabase/functions-js`, `@supabase/postgrest-js` 의 SDK 합본\n- 경로 추적: `DesktopNav` → `dynamic(AuthButtons)` → static import `createSupabaseBrowserClient` → `@supabase/ssr`\n- DesktopNav는 `hidden lg:flex` CSS-only 가림이라 모바일에서도 React 트리 mount → dynamic chunk fire\n- homepage build manifest에는 없지만 react-loadable-manifest에서 모든 공개 라우트가 참조 (Header → DesktopNav 경로)\n\n수정:\n- 신규 `components/common/IdleMount.tsx` — `requestIdleCallback` 기반(미지원 시 setTimeout 200ms fallback) 자식 마운트 지연 wrapper\n- `DesktopNav.tsx`에서 `<AuthButtons>`를 `<IdleMount fallback={...}>`로 감쌈\n- placeholder 박스 size=\"xs\" AuthButtons 내부 fallback(h-9 w-20)과 정확히 일치 → 3단계 mount(idle → dynamic loading → resolved) 모두 동일 박스로 CLS=0\n- FullscreenMenu(모바일)는 그대로 둠. 메뉴 자체가 user-initiated open이므로 그 시점의 chunk 로드는 INP 측정에 미포함\n\n검증:\n- npm run type-check: ✓\n- npm run build: ✓ (chunk hash 동일, 186KB chunk는 그대로 lazy 그룹에 존재. 변경된 건 trigger 시점뿐)\n- npm test -- Header AuthButtons IdleMount: 9 passed\n- ESLint: 0 errors\n- chunk 크기 동일 (Supabase SDK 코드 자체는 그대로) — 본 카드의 목적은 chunk 분해 시도였으나 SDK는 분해 불가 단일 의존성. 대안으로 '로드 시점 deferral'을 채택: PSI 측정 윈도우(LCP/TBT)와 청크 다운로드 경쟁 제거\n\n기대 효과:\n- TBT: AuthButtons chunk 다운로드/parse(204ms)가 idle 이후로 밀려 측정 윈도우 -100~-200ms\n- LCP element render delay: 같은 메인 스레드 경쟁 완화 → -50~-100ms 회수 기대\n- INP: 청크가 main thread를 점유하지 않으므로 첫 interaction에 영향 없음\n- CLS: placeholder 동일 박스 → 0 유지\n\n제외(out of scope):\n- 1.5MB `0.1jtlr241e...js`, 934KB `0i-aa58093u8x.js` 청크는 `/artworks/[id]` 전용 (homepage 미참조) — 카드 2 범위 밖\n- HeroSpotlight 일체 미수정 (memory `feedback_hero_server_island_regression` 준수)\n- 다른 fold-below 컴포넌트(DynamicCounter/FAQList/ArtworkHighlightSlider)는 이미 dynamic — 추가 적용 불필요\n\n트레이드오프:\n- 로그인된 사용자 자기 dashboard 버튼이 paint 후 ~50-200ms 늦게 visible. 동일 크기 placeholder(animate-pulse)가 자리 잡고 있어 잔여 회귀 없음\n- requestIdleCallback 미지원 브라우저(Safari 16-)는 setTimeout 200ms로 fallback — UX 동일",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "a4b5d8bf",
+    "type": "perf",
+    "scope": "ga",
+    "subject": "gtag/js lazyOnload 전환 + preload 제거 — TBT -200~400ms 목표",
+    "summary": "GA gtag.js 로드를 hydration 직후(afterInteractive)에서 window.load 후 idle(lazyOnload)로 전환. PSI mobile audit에서 gtag/js가 157KB raw / 65KB unused / scripting 166ms로 단일 자산 1순위 bootup 비용이었고, HTML head에 자동 주입된 preload link가 LCP 히어로 이미지 fetch와 1.4s 시점 network slot을 경합. lazyOnload 전환으로 preload 제거 + main thread bootup 비용을 idle phase로 이동, PSI 패널 합의 기준 TBT -200~400ms / FCP -50~100ms 회수 + LCP 이미지 우선순위 회복.",
+    "body": "- components/common/GoogleAnalytics.tsx: strategy \"afterInteractive\" → \"lazyOnload\"\n- 빌드된 HTML head에서 gtag preload <link> 0건 확인 (ko.html, ko/artworks.html, ko/about.html, en.html)\n- gtag stub + Consent Mode v2 default granted는 useEffect에서 mount 즉시 등록되어 dataLayer 큐잉\n- gtag.js가 idle에 로드되면 큐 일괄 처리 — consent 신호 먼저 적용, collect 차단 없음 (735c3b76 회귀 차단 유지)\n\n트레이드오프:\n- GA 이벤트 ~1초 지연 (window.load 이후 idle). 매우 짧은 세션(<1s)에서 web_vitals_mount 손실 가능\n- page_view·web_vitals 측정 무영향 — dataLayer 큐가 모든 이벤트를 보존",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "24091f31",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "한자 fallback 제거 — Pretendard 단독, 한자는 시스템 sans fallback",
+    "summary": "한자 fallback Noto Sans KR 폰트 시스템 제거. Pretendard 단독 운영으로 모바일 woff2 다운로드 부담 + main-thread cost 모두 해소 시도",
+    "body": "PSI 진단 흐름:\n- 옵션 A (next/font/google Noto_Sans_KR 한자 fallback): TBT 130→330ms 회귀\n- 옵션 F (custom 한자 subset 732KB): mobile LCP 5.3→8.6s, TBT 330→1260ms 폭망\n- 가설: 두 폰트 시스템 운영보다 모바일 한자 woff2 다운로드 자체가 LCP/TBT 회귀의 진짜 원인\n- 이번 시도: Pretendard 단독 + 한자는 시스템 sans fallback chain으로 떨어짐 (시각 회귀 trade-off)\n\n변경:\n- app/[locale]/layout.tsx, app/(portal)/layout.tsx, app/(auth)/layout.tsx — notoSansKrHanja localFont 호출 + className variable 제거\n- tailwind.config.ts — fontFamily chain에서 var(--font-han) 제거\n- public/fonts/NotoSansKR-Hanja-subset.woff2 삭제\n\n검증:\n- 폰트 preload Pretendard 1개 (HTML head 자동 생성)\n- CSS chunks 7개, 총 128KB (F와 동일)\n- woff2 파일 1개 (291KB Pretendard만)\n\n트레이드오프:\n- 한자(작가명·작품명 一·吳·朴·全琫準 등) 시각 회귀 — 시스템 sans (macOS PingFang SC, Windows YaHei 등)로 폰트 통일성 깨짐\n- PSI 검증 후 시각 회귀 vs 성능 trade-off 결정",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
+    "hash": "6883cbae",
+    "type": "perf",
+    "scope": "fonts",
+    "subject": "한자 custom subset 통합 — next/font/google 의존 제거 + 두 폰트 시스템 단일화",
+    "summary": "Pretendard + Noto Sans KR 한자 subset을 next/font/local 단일 시스템으로 통합. 옵션 A의 TBT 회귀(130→330ms) 원인이었던 next/font/google 다중 청크 운영을 제거하고, 한자 영역만 추출한 woff2(732KB) 한 파일로 lazy fallback.",
+    "body": "배경:\n- 옵션 B(caaf9a21 → 5f6aa2c9): globals.css @import 회귀 — render-blocking CSS, preload 손실, LCP 5.3→6.5s\n- 옵션 A(34453240, 직전 HEAD): next/font/local Pretendard + next/font/google Noto_Sans_KR(preload:false). preload·CSS chunk 개선됐지만 TBT 130→330ms 폭증 (두 폰트 시스템 main-thread cost)\n- 옵션 F(이번): next/font/google Noto_Sans_KR 제거. 한자 영역만 별도 custom woff2 subset으로 만들어 next/font/local 단일 시스템에 통합\n\n폰트 출처 + subset:\n- Source: Noto Sans KR Regular (Google notofonts/noto-cjk, SIL OFL 1.1)\n- Tool: pyftsubset (fonttools) + woff2 brotli\n- Unicode range: U+4E00-9FFF (CJK Unified Ideographs) + U+F900-FAFF (CJK Compatibility)\n- Whitelist: KS X 1001 한자 4888자 + 코드베이스 한자(审, 畫) = 4890자 (한국 통용 한자 완전 커버)\n- 결과 파일: public/fonts/NotoSansKR-Hanja-subset.woff2 (732KB)\n\n통합 방식:\n- next/font/local에 별도 호출(declarations 옵션으로 unicode-range U+4E00-9FFF, U+F900-FAFF 명시)\n- preload: false → HTML head에 preload link 없음 (Pretendard 1개만 preload)\n- 브라우저 native unicode-range fallback으로 한자 글리프 노출 페이지에서만 lazy 다운로드\n- tailwind config은 그대로(var(--font-sans), var(--font-han) fallback 체인 유지)\n\n검증 결과:\n- type-check ✅ build ✅ (Next.js 16.2.6 Turbopack)\n- HTML head 폰트 preload: PretendardStdVariable 1개만 (ko.html, en.html 모두 1개)\n- CSS chunks: 8개 → 7개 (next/font/google Noto_Sans_KR CSS chunk 제거)\n- woff2 파일: dynamic subset 120개+ → 2개 (Pretendard 285KB + Hanja 732KB)\n- 정적 HTML 한자 커버리지: 1729회 노출 / 145 unique 모두 subset에 포함 (누락 0)\n- @font-face: unicode-range:U+4E00-9FFF,U+F900-FAFF로 격리되어 한자 페이지에서만 woff2 fetch\n\n알려진 트레이드오프:\n- 한자 페이지 첫 방문 시 732KB woff2 lazy fetch (옵션 A는 글리프별 작은 chunk 다중)\n- 코드베이스에 새 한자 추가 시 KS X 1001 미포함 글리프는 시스템 명조체 fallback (현재 코드베이스에 KS X 1001 외 한자 없음 — 审/畫 둘 다 화이트리스트에 추가)",
+    "date": "2026-05-12",
+    "author": "황경하"
+  },
+  {
     "hash": "34453240",
     "type": "perf",
     "scope": "fonts",

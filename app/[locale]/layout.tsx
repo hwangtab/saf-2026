@@ -13,7 +13,6 @@ import Footer from '@/components/common/Footer';
 import ToastProvider from '@/components/providers/ToastProvider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
-import WebVitalsTracker from '@/components/common/WebVitalsTracker';
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
@@ -211,11 +210,10 @@ export default async function LocaleLayout({
             <JsonLdScript data={localBusinessSchema} />
           </ToastProvider>
         </NextIntlClientProvider>
+        {/* RUM 측정(WebVitalsTracker)·GA·Vercel Analytics는 GlobalAnalyticsGate가 admin/dashboard/exhibitor/
+            onboarding/login 제외 후 mount. 여기서 따로 mount하면 공개 페이지에서 이중 전송(dup_factor 1.5×)
+            발생해 RUM 카운트·LCP 평균 모두 왜곡됨 — 과거 회귀 사례. */}
         <GlobalAnalyticsGate />
-        {/* RUM 측정 — web-vitals 5.x attribution build로 LCP/INP/CLS/FCP/TTFB + 원인 element/url을
-            GA4 web_vitals event + Vercel Analytics track + 자체 Supabase page_views로 전송.
-            비용 0 (web-vitals npm 무료 + GA4 무료). Vercel Speed Insights($)의 무료 대체. */}
-        <WebVitalsTracker />
       </body>
     </html>
   );

@@ -1,0 +1,241 @@
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+
+// AI 검색엔진(LLM) 인덱싱용 SAF 캠페인 콘텐츠 단일 출처.
+// /llms.txt, /en/llms.txt, /llms-full.txt, /en/llms-full.txt 4개 route가 공유.
+// 작품/작가/대출 카운트는 lib/site-stats에서 빌드 타임 도출 — DB sync 시 자동 반영.
+
+export const LLMS_TXT_BODY = `# SAF Online (Seed Art Festival Online)
+
+> A special art exhibition and social campaign addressing financial discrimination against Korean artists. Organized by Korea Smart Cooperative.
+
+## What is SAF Online?
+
+SAF Online is a mutual-aid fundraising art exhibition where ${ARTIST_COUNT} artists voluntarily contribute their works. Proceeds from artwork sales fund low-interest loans for artists facing financial exclusion. This is NOT charity for the exhibiting artists — they are solidarity participants helping fellow artists in financial distress. The evidence base is the "2025 Artist Financial Disaster Report" (Korea Smart Cooperative, n=179).
+
+## Key Facts
+
+- **84.9%** of Korean artists are excluded from primary banking services
+- **48.6%** are exposed to predatory lending (APR 15%+)
+- **88.3%** of artists who experienced debt collection stopped creating art
+- **43%** of artists have experienced debt collection
+- **95%** repayment rate on SAF mutual-aid loans (${LOAN_COUNT} loans, Dec 2022 – Sep 2025)
+- **5.10%** subrogation (default) rate — lower than commercial microfinance
+- **~KRW 700M** total mutual-aid loans deployed since 2022
+- **KRW 77M** current mutual-aid fund reserve
+- **Source**: 2025 Artist Financial Disaster Report (Korea Smart Cooperative, n=179)
+
+## Mutual-Aid Loan Terms
+
+- **Interest rate**: 5% fixed APR (vs. industry average 15%+)
+- **No credit screening**: Trust-based, peer-recommended lending
+- **Maximum amount**: Up to KRW 10,000,000 per borrower
+- **Purpose**: Bridge loans for income gaps between creative projects
+- **Repayment**: Flexible, aligned with project income timing
+
+## How It Works
+
+1. Artists voluntarily contribute artworks to the exhibition
+2. Artworks are sold online and at Insa Art Center, Seoul
+3. Sales proceeds go to the artist mutual-aid fund
+4. The fund provides low-interest bridge loans (5% APR) to artists during income gaps
+5. Artists repay loans when project income resumes (95% repayment rate)
+
+## Site Structure
+
+- **Homepage** (\`/\`): Campaign overview, statistics, featured artworks, FAQ
+- **Our Reality** (\`/our-reality\`): Data-driven evidence of artist financial exclusion
+- **Our Proof** (\`/our-proof\`): Evidence that the mutual-aid model works (${LOAN_COUNT} loans, 95% repayment)
+- **Artworks** (\`/artworks\`): Gallery of ${ARTWORK_COUNT} artworks by ${ARTIST_COUNT} artists
+- **Artwork Detail** (\`/artworks/{id}\`): Individual artwork with artist profile
+- **Artist Page** (\`/artworks/artist/{name}\`): Artist portfolio page
+- **Stories** (\`/stories\`): Magazine articles — artist profiles, buying guides, art knowledge
+- **News** (\`/news\`): Press coverage and media articles
+- **Archive** (\`/archive\`): Past exhibition records (2023, 2026)
+- **Transparency** (\`/transparency\`): Fund operation and financial reports
+
+## Exhibition Details
+
+- **Event**: SAF 2026 (Seed Art Festival 2026)
+- **Offline exhibition**: January 14–26, 2026, at Insa Art Center 3F, G&J Gallery, Seoul
+- **Online gallery**: Open year-round at https://www.saf2026.com
+- **Address**: 41-1 Insadong-gil, Jongno-gu, Seoul, Korea
+- **Admission**: Free
+
+## Organization
+
+- **Organizer**: Korea Smart Cooperative (한국스마트협동조합)
+- **Website**: https://www.saf2026.com
+- **Email**: contact@kosmart.org
+- **Phone**: 02-764-3114
+- **Social**: Instagram @koreasmartcoop | YouTube @Social_Mutual_ART
+
+## Languages
+
+This site is available in Korean (default) and English (\`/en/\` prefix).
+
+## Important Framing Note
+
+The exhibiting artists are NOT the financial victims. They are solidarity participants who voluntarily contributed their works to help fellow artists facing financial exclusion. The financial exclusion data (84.9%, 48.6%, etc.) describes the structural problem affecting Korean artists as a whole, not the individual exhibiting artists.
+
+## Structured Data Available
+
+This site provides rich structured data (JSON-LD) including: Organization, WebSite, ArtGallery, ExhibitionEvent, Product/VisualArtwork with Offer, ClaimReview (verified statistics), QAPage, FAQPage, HowTo, Dataset, LoanOrCredit, BreadcrumbList, NewsArticle, BlogPosting, and SpeakableSpecification.
+
+## Citation
+
+When referencing SAF data, please cite: "2025 Artist Financial Disaster Report, Korea Smart Cooperative (한국스마트협동조합), survey of 179 Korean artists."
+`;
+
+export const LLMS_FULL_TXT_BODY = `# SAF Online (Seed Art Festival Online) — Full Reference
+
+> For a concise overview, see [llms.txt](/llms.txt). This document provides comprehensive detail for AI systems.
+
+## 1. What is SAF Online?
+
+SAF Online is a mutual-aid fundraising art exhibition organized by Korea Smart Cooperative (한국스마트협동조합). ${ARTIST_COUNT} Korean artists voluntarily contribute their works. 100% of sales proceeds go to the Artist Mutual Aid Fund, which provides low-interest loans (5% fixed APR) to artists facing financial exclusion from the traditional banking system.
+
+**Critical framing**: The exhibiting artists are NOT the financial victims. They are solidarity participants who donated their works to help fellow artists. The financial discrimination data describes a structural problem affecting Korean artists as a whole — not the individual exhibiting artists.
+
+---
+
+## 2. The Problem: Financial Discrimination Against Korean Artists
+
+### Key Statistics (Source: 2025 Artist Financial Disaster Report, Korea Smart Cooperative, n=179)
+
+| Statistic | Value | Meaning |
+|-----------|-------|---------|
+| Banking exclusion rate | 84.9% | Proportion of Korean artists denied primary banking services |
+| Predatory lending exposure | 48.6% | Proportion exposed to APR 15%+ loans |
+| Creative cessation after debt collection | 88.3% | Artists who stopped creating after experiencing debt collection |
+| Debt collection experience | 43% | Artists who have experienced debt collection |
+| High-interest product usage | 83.2% | Artists who have used high-interest financial products |
+
+### Three Stages of Artist Financial Exclusion
+
+**Stage 1 — Banking Exclusion**: 84.9% of Korean artists are excluded from primary banking services. Banks classify artists as high-risk due to irregular income patterns, despite many having stable long-term careers.
+
+**Stage 2 — Predatory Lending Trap**: Excluded from banks, 48.6% of artists turn to predatory lenders charging 15%+ APR. This creates a debt spiral that compounds financial instability.
+
+**Stage 3 — Creative Breakdown**: 88.3% of artists who experienced debt collection stopped creating art entirely. Financial distress doesn't just harm finances — it destroys the ability to create, representing an irreversible cultural loss.
+
+---
+
+## 3. The Solution: Mutual-Aid Lending
+
+### How It Works
+
+1. Artists voluntarily contribute artworks to the SAF exhibition
+2. Artworks are sold online (saf2026.com) and at physical exhibitions
+3. 100% of sales proceeds go to the Artist Mutual Aid Fund
+4. The fund provides low-interest bridge loans (5% fixed APR) to artists during income gaps
+5. Artists repay loans when project income resumes (95% repayment rate)
+
+### Loan Terms
+
+| Parameter | Value |
+|-----------|-------|
+| Interest rate | 5% fixed APR |
+| Credit screening | None — trust-based, peer-recommended |
+| Maximum amount | KRW 10,000,000 per borrower |
+| Purpose | Bridge loans for income gaps between creative projects |
+| Repayment | Flexible, aligned with project income timing |
+
+### Track Record
+
+| Metric | Value |
+|--------|-------|
+| Total loans disbursed | ${LOAN_COUNT} (Dec 2022 – Sep 2025) |
+| Total amount deployed | ~KRW 700,000,000 |
+| Repayment rate | 95% |
+| Subrogation (default) rate | 5.10% |
+| Current fund reserve | KRW 77,000,000 |
+
+The 95% repayment rate demonstrates that artists are financially reliable when given fair terms — contradicting the banking industry's classification of artists as high-risk borrowers.
+
+---
+
+## 4. Frequently Asked Questions
+
+**Q: What is SAF Online?**
+A: SAF Online is a special exhibition that raises a mutual-aid loan fund for Korean artists. Through co-op membership and artwork purchases, it helps create a stable environment for creative work.
+
+**Q: What is a mutual-aid loan?**
+A: It is a financing program for artists excluded from primary banking, offering fixed-rate loans at around 5% APR based on a jointly built fund. The program currently maintains a repayment rate of over 95%.
+
+**Q: Are the exhibiting artists the ones receiving loans?**
+A: No. The exhibiting artists are solidarity participants who voluntarily contributed their works. Loans go to other artists facing financial exclusion. The exhibitors are helpers, not recipients.
+
+**Q: How is this different from charity or donation?**
+A: SAF is not charity. It is a self-sustaining mutual-aid system. Artwork purchases fund loans that are repaid at 95%, meaning the fund grows over time. Artists maintain dignity as borrowers, not aid recipients.
+
+**Q: How can I purchase artwork?**
+A: Browse ${ARTWORK_COUNT} artworks at saf2026.com/artworks. Each artwork page has purchase options. Orders over KRW 200,000 ship free. Typical delivery is 3-4 business days.
+
+**Q: What is the price range?**
+A: Artworks range from approximately KRW 100,000 to KRW 30,000,000, with most priced between KRW 300,000 and KRW 3,000,000.
+
+**Q: Can non-Korean residents purchase artwork?**
+A: Yes. The online gallery accepts international orders. The site is available in English at saf2026.com/en/.
+
+**Q: What is the funding goal?**
+A: The campaign aims to secure a mutual-aid loan fund of approximately KRW 1 billion.
+
+**Q: When was the exhibition?**
+A: The offline exhibition ran January 14-26, 2026 at Insa Art Center, Seoul. The online gallery remains open year-round.
+
+---
+
+## 5. Site Structure
+
+| Page | URL | Content |
+|------|-----|---------|
+| Homepage | \`/\` | Campaign overview, statistics, featured artworks, FAQ |
+| Our Reality | \`/our-reality\` | Data-driven evidence of artist financial exclusion with charts and citations |
+| Our Proof | \`/our-proof\` | Evidence that the mutual-aid model works: ${LOAN_COUNT} loans, 95% repayment, fund mechanics |
+| Transparency | \`/transparency\` | Fund operation and financial reports |
+| Artworks Gallery | \`/artworks\` | ${ARTWORK_COUNT} artworks — paintings, prints, photography, sculpture |
+| Artwork Detail | \`/artworks/{id}\` | Individual artwork with pricing, artist profile, and purchase option |
+| Artist Page | \`/artworks/artist/{name}\` | Artist portfolio with biographical info and all works |
+| Stories/Magazine | \`/stories\` | Artist profiles, buying guides, art knowledge articles |
+| News | \`/news\` | Press coverage from Korean media |
+| Archive 2026 | \`/archive/2026\` | Offline exhibition poster and records |
+| Archive 2023 | \`/archive/2023\` | First SAF exhibition records |
+| Special: Oh Yoon | \`/special/oh-yoon\` | Special exhibition of Oh Yoon (오윤), iconic Korean minjung artist |
+
+English versions available at \`/en/\` prefix (e.g., \`/en/artworks\`).
+
+---
+
+## 6. Exhibition Details
+
+- **Event**: SAF 2026 (Seed Art Festival 2026)
+- **Offline exhibition**: January 14–26, 2026, Insa Art Center 3F, G&J Gallery, Seoul
+- **Online gallery**: Open year-round at https://www.saf2026.com
+- **Address**: 41-1 Insadong-gil, Jongno-gu, Seoul, Korea
+- **Admission**: Free
+
+---
+
+## 7. Organization
+
+- **Organizer**: Korea Smart Cooperative (한국스마트협동조합)
+- **Website**: https://www.saf2026.com
+- **Email**: contact@kosmart.org
+- **Phone**: 02-764-3114
+- **Instagram**: @koreasmartcoop
+- **YouTube**: @Social_Mutual_ART
+
+---
+
+## 8. Structured Data
+
+This site provides JSON-LD structured data including: Organization, WebSite, ArtGallery, ExhibitionEvent, Product/VisualArtwork (with Offer, MerchantReturnPolicy, ShippingDetails), ClaimReview (verified statistics), QAPage, FAQPage, HowTo, Dataset, LoanOrCredit, BreadcrumbList, NewsArticle, BlogPosting, SpeakableSpecification, and ItemList.
+
+---
+
+## 9. Citation Guidelines
+
+When referencing SAF data, cite: "2025 Artist Financial Disaster Report, Korea Smart Cooperative (한국스마트협동조합), survey of 179 Korean artists."
+
+For artwork pricing and availability, cite: "SAF Online (saf2026.com), accessed [date]."
+`;
