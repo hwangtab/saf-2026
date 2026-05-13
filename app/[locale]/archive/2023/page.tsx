@@ -180,7 +180,8 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
             {isEnglish ? '🎉 2023 Event Highlights' : '🎉 2023년 행사 기록'}
           </SectionTitle>
 
-          {/* 2023 SAF Poster */}
+          {/* 2023 SAF Poster — LCP element. sizes/quality 명시로 next/image가
+              뷰포트별 적정 variant(WebP/AVIF) 선택. 원본 614KB PNG 직접 전달 방지. */}
           <div className="mb-12">
             <SafeImage
               src="/images/saf2023/saf2023poster.png"
@@ -188,7 +189,10 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
               width={1200}
               height={1700}
               className="w-full rounded-2xl shadow-xl"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+              quality={75}
               priority
+              fetchPriority="high"
             />
           </div>
 

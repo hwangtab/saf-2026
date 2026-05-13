@@ -126,9 +126,16 @@ const nextConfig = {
       // bfcache를 차단(Lighthouse: "Page prevented back/forward cache restoration", score 0).
       // `no-cache`만 남기면 매 요청 revalidation은 그대로 강제하면서 bfcache는 허용된다.
       // portal/auth/api/static 영역은 매칭 제외해서 personalised 응답 보호 유지.
+      //
+      // ⚠ `llms.txt`, `llms-full.txt`, `robots.txt`, `sitemap.xml`은 LLM 봇·검색 크롤러용
+      // plain text/xml 자산이며 자체 라우트(`app/llms.txt/route.ts` 등)에서 명시적으로
+      // `Cache-Control: public, max-age=3600, s-maxage=3600`을 설정한다. 여기 default
+      // 규칙이 `private, no-cache`로 덮어쓰면 Vercel Edge가 prerender 캐시(PRERENDER hit)는
+      // 활용하지만 **클라이언트/봇은 매 요청 origin re-validate**라 LLM 봇 부하·TTFB·
+      // s-maxage 모두 무효화됨. 4개 경로는 negative lookahead로 명시 제외.
       {
         source:
-          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|api|_next).*)',
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|api|_next|llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|en/llms\\.txt|en/llms-full\\.txt).*)',
         headers: [
           {
             key: 'Cache-Control',

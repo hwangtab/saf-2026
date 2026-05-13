@@ -100,7 +100,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? [{ url: article.thumbnail, alt: localizedTitle }]
         : [{ url: OG_IMAGE.url, alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
-    // 뉴스 콘텐츠는 _en 채워진 후 영어 페이지도 색인 가능. 미채움 fallback 시에도 OK.
+    // 영문 news detail은 noindex — robots.ts에서 `/en/news/` prefix crawl 차단됨 +
+    // EN_INDEXABLE_PAGES 화이트리스트는 `/news` list만 포함(detail 슬러그 없음). 외부 발견 시
+    // layout 기본 `index: true` 응답을 막아 정합성 확보. 다른 영문 detail
+    // (artworks/[id], artworks/artist/[artist], artworks/category/[category]) 정책과 일관.
+    ...(isEn ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
