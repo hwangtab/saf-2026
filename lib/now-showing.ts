@@ -26,7 +26,13 @@ export interface NowShowingItem {
   startDate: string;
   /** 종료일 — 지나면 자동 숨김. 무기한이면 생략 */
   endDate?: string;
-  status: NowShowingStatus;
+  /**
+   * 카드 배지 상태 override (optional).
+   * - 미지정(default): `getCardStatus()`가 startDate 기준 자동 derive
+   *   ('coming-soon' if startDate > now, else 'on')
+   * - 지정 시: 자동 derive 무시하고 그대로 사용. 예외 케이스(예: 일시 중단, 준비 중 메시지)에만
+   */
+  status?: NowShowingStatus;
   /**
    * Hero 슬롯 우선순위. 활성 항목 중 값이 가장 높은 1개가 `HomeHero`의 단일 정적 LCP 이미지가 된다.
    * 모든 활성 항목이 동률이거나 미지정이면 배열 순서를 따른다.
@@ -49,7 +55,6 @@ export const NOW_SHOWING: NowShowingItem[] = [
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp',
     startDate: '2026-01-01',
-    status: 'on',
     heroPriority: 0,
   },
   {
@@ -61,7 +66,6 @@ export const NOW_SHOWING: NowShowingItem[] = [
     startDate: '2026-04-01',
     // PM 확정: 오윤 40주기 commemoration 2026년 말일까지. 2027-01-01 자동 fallback (강석태 hero).
     endDate: '2026-12-31',
-    status: 'on',
     heroPriority: 0,
   },
   {
@@ -75,10 +79,8 @@ export const NOW_SHOWING: NowShowingItem[] = [
     // 장소: 서울시 은평구 통일로 870 M타워 6층. 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)
     startDate: '2026-05-20',
     endDate: '2026-06-08',
-    // 5/20 개막 이전엔 'coming-soon' (어두운 톤 배지 + animate-ping dot 없음).
-    // 5/20 당일 도래 시 'on'으로 수동 변경하거나, NowShowing.tsx에서 startDate 기준 자동 derive
-    // 도입(별도 라운드). 잊어도 큰 회귀 아님 — 카드는 표시되고 색상만 어색.
-    status: 'coming-soon',
+    // status 미지정 — getCardStatus()가 startDate 기준 자동 derive.
+    // 5/20 이전엔 'coming-soon'(어두운 톤 배지), 5/20 ~ 6/8 동안 'on'(success 배지 + ping dot).
     heroPriority: 5,
   },
 ];
@@ -143,4 +145,19 @@ export function getNowShowingCards(now: Date = new Date()): NowShowingItem[] {
     if (item.endDate && new Date(item.endDate) < now) return false;
     return true;
   });
+}
+
+/**
+ * 카드 배지 상태 자동 derive.
+ *
+ * - `item.status` 명시 지정 시 그대로 사용 (예외 케이스 override).
+ * - 미지정 시: `startDate`가 미래면 'coming-soon', 아니면 'on'.
+ *
+ * 이전엔 entry 정의에 `status: 'on'` 또는 `'coming-soon'` 하드코딩이라 시작일 도래해도
+ * 수동 변경 필요했음(잊으면 카드 색상이 어색). 자동 derive로 코드 수정 없이 시즌 자동 전환.
+ */
+export function getCardStatus(item: NowShowingItem, now: Date = new Date()): NowShowingStatus {
+  if (item.status) return item.status;
+  if (item.startDate && new Date(item.startDate) > now) return 'coming-soon';
+  return 'on';
 }

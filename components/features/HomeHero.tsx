@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import SafeImage from '@/components/common/SafeImage';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { Link } from '@/i18n/navigation';
-import { getHeroSlide } from '@/lib/now-showing';
+import { getCardStatus, getHeroSlide } from '@/lib/now-showing';
 import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
 
 /**
@@ -34,6 +34,8 @@ import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
 export default async function HomeHero({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
   const slide = getHeroSlide();
+  // 자동 derive — entry에 status 명시 X면 startDate 기준 'coming-soon'/'on' 결정.
+  const slideStatus = getCardStatus(slide);
 
   // i18n 키 풀기 — server에서 정적 SSR. SafeImage alt도 같이 풀어 사용.
   // ICU 변수 {artistCount}/{artworkCount}: lib/site-stats.ts 단일 출처 → 작품 추가 시 hero h1
@@ -75,12 +77,12 @@ export default async function HomeHero({ locale }: { locale: string }) {
       <div className="relative z-10 flex h-full min-h-[70svh] md:min-h-[85svh] flex-col items-center justify-center px-4 pt-24 pb-32 md:pb-40 text-center text-white">
         <span
           className={`mb-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase ${
-            slide.status === 'on'
+            slideStatus === 'on'
               ? 'bg-success/90 text-white'
               : 'bg-white/15 text-white backdrop-blur-sm'
           }`}
         >
-          {slide.status === 'on' && (
+          {slideStatus === 'on' && (
             <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />

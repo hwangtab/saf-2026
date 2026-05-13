@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import { Link } from '@/i18n/navigation';
-import { getNowShowingCards, type NowShowingItem } from '@/lib/now-showing';
+import { getCardStatus, getNowShowingCards, type NowShowingItem } from '@/lib/now-showing';
 import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
 
 /**
@@ -21,8 +21,11 @@ export default async function NowShowing({ locale }: { locale: string }) {
   // ICU 변수 {artistCount}/{artworkCount}: allArtworks 슬라이드(강석태)만 사용. 다른 슬라이드는
   // 토큰 없으면 next-intl이 무시 — 항상 동일 호출 안전. lib/site-stats.ts 단일 출처.
   const counts = { artistCount: ARTIST_COUNT, artworkCount: ARTWORK_COUNT };
+  const now = new Date();
   const cards = items.map((item) => ({
     item,
+    // 자동 derive — entry에 status 명시 X면 startDate 기준 'coming-soon'/'on' 결정.
+    derivedStatus: getCardStatus(item, now),
     status: t(`${item.i18nKey}Status` as 'ohYoon40thStatus'),
     title: t(`${item.i18nKey}Title` as 'ohYoon40thTitle', counts),
     desc: t(`${item.i18nKey}Desc` as 'ohYoon40thDesc'),
@@ -37,10 +40,11 @@ export default async function NowShowing({ locale }: { locale: string }) {
           <p className="mt-3 text-body-large text-charcoal-muted">{t('subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-          {cards.map(({ item, status, title, desc, cta }) => (
+          {cards.map(({ item, derivedStatus, status, title, desc, cta }) => (
             <ShowingCard
               key={item.slug}
               item={item}
+              derivedStatus={derivedStatus}
               status={status}
               title={title}
               desc={desc}
@@ -55,12 +59,14 @@ export default async function NowShowing({ locale }: { locale: string }) {
 
 function ShowingCard({
   item,
+  derivedStatus,
   status,
   title,
   desc,
   cta,
 }: {
   item: NowShowingItem;
+  derivedStatus: 'on' | 'coming-soon';
   status: string;
   title: string;
   desc: string;
@@ -79,12 +85,12 @@ function ShowingCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         <span
           className={`absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-            item.status === 'on'
+            derivedStatus === 'on'
               ? 'bg-success/90 text-white'
               : 'bg-charcoal-deep/85 text-white backdrop-blur-sm'
           }`}
         >
-          {item.status === 'on' && (
+          {derivedStatus === 'on' && (
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
