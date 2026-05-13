@@ -49,18 +49,39 @@ npm run trash:purge:expired:dry            # Preview expired trash purge
 npm run trash:purge:expired                # Purge expired trash items
 ```
 
-### CLI Tools (로컬에 설치됨)
+### Supabase: MCP 우선 정책
 
-| CLI        | 버전 (2026-04 기준) | 인증 상태          | 대표 용도                                                               |
-| ---------- | ------------------- | ------------------ | ----------------------------------------------------------------------- |
-| `vercel`   | 51.7.0              | 로그인 완료        | 배포, `vercel env pull/add`, 로그 확인, 프리뷰 URL 생성                 |
-| `supabase` | 2.84.2              | 프로젝트 링크 완료 | 마이그레이션(`db push`, `migration new`), 타입 생성, 로컬 DB, 로그 조회 |
+**Supabase 작업은 `mcp__claude_ai_Supabase__*` 도구 우선**. CLI(`supabase`)는 MCP가 못 하거나 로컬 dev DB 작업에만 사용.
 
-- 둘 다 `Bash` 툴로 바로 호출 가능. 별도 설치 명령 제안 불필요
-- 프로덕션·공유 리소스에 영향을 주는 명령(`vercel deploy --prod`, `supabase db push`, 데이터 삭제 등)은 실행 전 사용자 확인 필수
-- 읽기 전용/조회(`vercel ls`, `vercel env ls`, `supabase projects list`, `supabase migration list` 등)는 승인 없이 자유롭게 사용
-- Supabase CLI 최신 버전은 2.90.0이지만 업그레이드는 사용자 판단. 현 버전으로 충분히 동작함
-- MCP도 연결되어 있음(`mcp__claude_ai_Supabase__*`, `mcp__claude_ai_Vercel__*`) — 다건 조회·대시보드성 작업은 MCP가 더 빠를 수 있음
+**Why**: MCP는 단건 단위라 blast radius가 명확. CLI `supabase db push`는 로컬 migrations 디렉토리의 **모든 pending migration**을 한 번에 production에 적용 — 다른 사람이 추가한 미적용 migration까지 같이 올라가는 사고 위험. 2026-05-13 검증: 회귀 monitoring migration 1건 적용 의도였으나 로컬에 pending 5건이 더 있었음. MCP `apply_migration`이었기에 1건만 안전하게 적용.
+
+| 작업                  | MCP 도구 (우선)                                      | CLI fallback                           |
+| --------------------- | ---------------------------------------------------- | -------------------------------------- |
+| Migration 단건 적용   | `mcp__claude_ai_Supabase__apply_migration`           | (없음 — CLI는 일괄만)                  |
+| Migration 일괄 적용   | (없음 — 명시적으로 1건씩)                            | `supabase db push` (사용자 컨펌 필수)  |
+| 적용된 migration 목록 | `mcp__claude_ai_Supabase__list_migrations`           | `supabase migration list`              |
+| 임의 SQL 실행/조회    | `mcp__claude_ai_Supabase__execute_sql`               | `supabase db query`                    |
+| 로그 조회             | `mcp__claude_ai_Supabase__get_logs`                  | `supabase logs`                        |
+| Advisors (보안·성능)  | `mcp__claude_ai_Supabase__get_advisors`              | (없음)                                 |
+| 타입 생성             | `mcp__claude_ai_Supabase__generate_typescript_types` | `supabase gen types typescript`        |
+| 로컬 dev DB 기동      | (없음)                                               | `supabase start` / `supabase db reset` |
+| Edge function 배포    | `mcp__claude_ai_Supabase__deploy_edge_function`      | `supabase functions deploy`            |
+
+- **Project ID**: `vqejnuntjnxzpgwfndtv` (MCP 호출 시 `project_id` 파라미터)
+- **위험 작업** (`apply_migration`, DML/DDL을 담은 `execute_sql`, `pause_project` 등)은 사용자 컨펌 필수
+- **읽기 전용** (`list_*`, `get_*`, `search_docs`)은 승인 없이 자유롭게 사용
+- Migration 파일은 여전히 `supabase/migrations/`에 작성 — 코드 리뷰·git 이력 보존. MCP `apply_migration`의 `query` 파라미터에 본문 전달
+
+### Vercel CLI
+
+| CLI      | 버전 (2026-04 기준) | 인증 상태   | 대표 용도                                               |
+| -------- | ------------------- | ----------- | ------------------------------------------------------- |
+| `vercel` | 51.7.0              | 로그인 완료 | 배포, `vercel env pull/add`, 로그 확인, 프리뷰 URL 생성 |
+
+- `Bash` 툴로 바로 호출. 별도 설치 명령 제안 불필요
+- 프로덕션 영향 명령(`vercel deploy --prod`, env 추가/삭제 등)은 실행 전 사용자 확인 필수
+- 읽기 전용(`vercel ls`, `vercel env ls`, `vercel logs` 등)은 자유롭게 사용
+- MCP도 연결됨(`mcp__claude_ai_Vercel__*`) — 대시보드성 조회·deployment 목록은 MCP가 빠를 수 있음
 
 ## Architecture
 
