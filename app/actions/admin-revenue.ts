@@ -321,7 +321,13 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const [firstSoldResult, latestSoldResult, soldWithoutSoldAtResult] = await Promise.all([
     fetchBoundarySoldDate(supabase, true),
     fetchBoundarySoldDate(supabase, false),
-    supabase.from('artwork_sales').select('id', { count: 'exact', head: true }).is('sold_at', null),
+    // voided_at 필터 추가 — 매출 집계에서 제외된 voided record까지 카운트되면
+    // 데이터 quality 경고가 노이즈화. active record 중 sold_at NULL만 신호로 사용.
+    supabase
+      .from('artwork_sales')
+      .select('id', { count: 'exact', head: true })
+      .is('sold_at', null)
+      .is('voided_at', null),
   ]);
 
   if (firstSoldResult.error) throw firstSoldResult.error;
