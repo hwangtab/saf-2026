@@ -1,4 +1,4 @@
-import { resolveArtworkImageUrlForPreset, resolveOptimizedArtworkImageUrl } from '@/lib/utils';
+import { getHeroImageUrls } from '@/lib/hero-image';
 
 interface PageHeroBackgroundProps {
   customImage: string;
@@ -6,44 +6,44 @@ interface PageHeroBackgroundProps {
 }
 
 /**
- * 작가/카테고리 페이지용 Hero 배경 이미지.
- * customImage(Supabase 작품 이미지)가 있을 때만 렌더됨.
- * 기본 Hero(이미지 없음)는 PageHero의 gradient로 처리.
+ * Hero 배경 이미지 picture/srcSet. lib/hero-image의 getHeroImageUrls helper와
+ * 단일 출처를 공유 — PageHero의 자동 preload가 같은 URL을 가리킴.
  *
- * picture + media query로 모바일/데스크탑 분기:
- * - 모바일 (<768px): slider preset (400w) 단일 URL — LCP 빠르게
- * - 데스크탑 (≥768px): 1x/2x DPR 대응 srcSet (1200w + 1920w)
+ * 분기:
+ * - 모바일 (<768px): slider preset (400w / quality 75) — LCP 빠르게
+ * - 데스크탑 (≥768px): 1x=1200w, 2x(Retina)=1920w (quality 80)
  *
- * 서버 컴포넌트로 전환 — hash 계산 단순화, hydration 부담 제거.
+ * 서버 컴포넌트. animate-hero-breathing은 motion-reduce에서 자동 비활성.
  */
 export default function PageHeroBackground({ customImage }: PageHeroBackgroundProps) {
-  const isRemote = customImage.startsWith('http');
+  const urls = getHeroImageUrls(customImage);
+  if (!urls) return null;
 
-  if (!isRemote) {
-    // 로컬 이미지 (거의 사용 안 함) — 단순 렌더
+  const isLocal = !customImage.startsWith('http');
+
+  if (isLocal) {
+    // 로컬 자산(/images/...). 단일 URL을 background-image로.
     return (
       <div className="absolute inset-0">
         <div
           className="absolute inset-0 animate-hero-breathing transform-gpu will-change-transform motion-reduce:!animate-none motion-reduce:!scale-100 motion-reduce:!transition-none bg-cover bg-center"
-          style={{ backgroundImage: `url(${customImage})` }}
+          style={{ backgroundImage: `url(${urls.mobile})` }}
         />
       </div>
     );
   }
 
-  // Supabase 원격 이미지 — transform URL로 다중 해상도
-  const mobileUrl = resolveArtworkImageUrlForPreset(customImage, 'slider');
-  const desktop1x = resolveOptimizedArtworkImageUrl(customImage, { width: 1200, quality: 80 });
-  const desktop2x = resolveOptimizedArtworkImageUrl(customImage, { width: 1920, quality: 80 });
-
   return (
     <div className="absolute inset-0">
       <div className="absolute inset-0 animate-hero-breathing transform-gpu will-change-transform motion-reduce:!animate-none motion-reduce:!scale-100 motion-reduce:!transition-none">
         <picture>
-          <source media="(min-width: 768px)" srcSet={`${desktop1x} 1x, ${desktop2x} 2x`} />
+          <source
+            media="(min-width: 768px)"
+            srcSet={`${urls.desktop1x} 1x, ${urls.desktop2x} 2x`}
+          />
           {}
           <img
-            src={mobileUrl}
+            src={urls.mobile}
             alt=""
             loading="eager"
             fetchPriority="high"

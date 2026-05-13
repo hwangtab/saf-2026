@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils/cn';
+import { getHeroImageUrls } from '@/lib/hero-image';
 import PageHeroBackground from './PageHeroBackground';
 import SawtoothDivider from './SawtoothDivider';
 import Breadcrumb from './Breadcrumb';
@@ -43,51 +44,77 @@ export default function PageHero({
   descriptionId,
   breadcrumbItems,
 }: PageHeroProps) {
-  return (
-    <section
-      className={cn(
-        'relative min-h-[60svh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
-        // Gallery White Cube: 다크 hero를 단색 charcoal-deep로 — Apple/Tesla 모델
-        'bg-charcoal-deep',
-        className
-      )}
-    >
-      <div
-        data-hero-sentinel="true"
-        aria-hidden="true"
-        className="absolute top-0 left-0 h-px w-px"
-      />
-      {/* 작품 이미지 배경 — customBackgroundImage 지정 시에만 (작가 페이지 등) */}
-      {customBackgroundImage && (
-        <PageHeroBackground customImage={customBackgroundImage} seed={id || title} />
-      )}
-      {/* Dark Overlay — 이미지 위 텍스트 가독성 확보, 이미지 없으면 그라디언트 그대로 */}
-      {customBackgroundImage && <div className="absolute inset-0 bg-black/60 z-10" />}
+  // 자동 preload — customBackgroundImage가 있으면 LCP hint를 head로 발행 (React 19
+  // link hoisting). 사용처에서 별도로 preload 발행 안 해도 됨 (단일 출처).
+  // mobile/desktop 분기는 media query로 정밀 매칭 — picture srcSet과 정확히 일치.
+  const heroUrls = getHeroImageUrls(customBackgroundImage);
 
-      {/* Content */}
-      <div className="relative z-10 container-max text-center w-full">
-        {breadcrumbItems && breadcrumbItems.length >= 2 && (
-          <div className="flex justify-center mb-4">
-            <Breadcrumb items={breadcrumbItems} />
-          </div>
+  return (
+    <>
+      {heroUrls && (
+        <>
+          <link
+            rel="preload"
+            as="image"
+            href={heroUrls.mobile}
+            fetchPriority="high"
+            media="(max-width: 767px)"
+          />
+          <link
+            rel="preload"
+            as="image"
+            href={heroUrls.desktop1x}
+            imageSrcSet={`${heroUrls.desktop1x} 1x, ${heroUrls.desktop2x} 2x`}
+            fetchPriority="high"
+            media="(min-width: 768px)"
+          />
+        </>
+      )}
+      <section
+        className={cn(
+          'relative min-h-[60svh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
+          // Gallery White Cube: 다크 hero를 단색 charcoal-deep로 — Apple/Tesla 모델
+          'bg-charcoal-deep',
+          className
         )}
-        <h1
-          id={id}
-          className="font-display font-black text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep text-balance"
-        >
-          {title}
-        </h1>
-        {description && (
-          <p
-            id={descriptionId}
-            className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-lg text-balance"
+      >
+        <div
+          data-hero-sentinel="true"
+          aria-hidden="true"
+          className="absolute top-0 left-0 h-px w-px"
+        />
+        {/* 작품 이미지 배경 — customBackgroundImage 지정 시에만 (작가 페이지 등) */}
+        {customBackgroundImage && (
+          <PageHeroBackground customImage={customBackgroundImage} seed={id || title} />
+        )}
+        {/* Dark Overlay — 이미지 위 텍스트 가독성 확보, 이미지 없으면 그라디언트 그대로 */}
+        {customBackgroundImage && <div className="absolute inset-0 bg-black/60 z-10" />}
+
+        {/* Content */}
+        <div className="relative z-10 container-max text-center w-full">
+          {breadcrumbItems && breadcrumbItems.length >= 2 && (
+            <div className="flex justify-center mb-4">
+              <Breadcrumb items={breadcrumbItems} />
+            </div>
+          )}
+          <h1
+            id={id}
+            className="font-display font-black text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-white drop-shadow-lg break-keep text-balance"
           >
-            {description}
-          </p>
-        )}
-        {children && <div className="mt-8 flex justify-center">{children}</div>}
-      </div>
-      <SawtoothDivider position="bottom" colorClass={dividerColor} />
-    </section>
+            {title}
+          </h1>
+          {description && (
+            <p
+              id={descriptionId}
+              className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-lg text-balance"
+            >
+              {description}
+            </p>
+          )}
+          {children && <div className="mt-8 flex justify-center">{children}</div>}
+        </div>
+        <SawtoothDivider position="bottom" colorClass={dividerColor} />
+      </section>
+    </>
   );
 }
