@@ -65,9 +65,13 @@ const config: Config = {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        // 2026-05-13 CLS 회귀 fix — transform translateY 제거. SSR HTML(opacity-0 class만)과
+        // hydration 후(opacity-0 + transform translateY(20px)) mismatch가 큰 element에서
+        // CLS 회귀를 일으킴(/special/oh-yoon 0.316 실측). motion-safe 8개 사용처 전부 자동
+        // 안전. 디자인 손실: 미세 상승감만 사라지고 0.4s ease-out fade rhythm은 유지.
         fadeInUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
         zoomIn95: {
           '0%': { opacity: '0', transform: 'scale(0.95)' },
