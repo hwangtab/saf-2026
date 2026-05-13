@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { track } from '@vercel/analytics';
 import {
   onCLS,
@@ -13,6 +14,7 @@ import {
   type LCPMetricWithAttribution,
   type Metric,
 } from 'web-vitals/attribution';
+import { stripLocale } from '@/lib/path-rules';
 
 /**
  * Web Vitals → GA4 custom event 전송 — 무료 RUM 측정.
@@ -86,7 +88,7 @@ function extractAttribution(metric: Metric): {
   }
 }
 
-function sendToGA(metric: Metric) {
+function sendToGA(metric: Metric, pagePath: string) {
   if (typeof window === 'undefined') return;
 
   // GA4는 event value를 정수로만 받음 — CLS는 ×1000으로 정수화 (0.05 → 50).
@@ -103,7 +105,7 @@ function sendToGA(metric: Metric) {
     metric_rating: metric.rating, // 'good' | 'needs-improvement' | 'poor'
     metric_delta: metric.delta,
     metric_id: metric.id,
-    page_path: window.location.pathname,
+    page_path: pagePath,
     // attribution: 어떤 element/resource가 metric에 책임 있는지 — CrUX 실측 CLS 1.00,
     // INP 느린 인터랙션 등 디버깅의 핵심 단서. 비어있을 수 있음.
     ...attribution,
@@ -133,7 +135,7 @@ function sendToGA(metric: Metric) {
       metric_name: metric.name,
       metric_value: metric.value,
       metric_rating: metric.rating,
-      page_path: window.location.pathname,
+      page_path: pagePath,
       debug_target: attribution.debug_target ?? null,
     });
   } catch (err) {
@@ -142,6 +144,18 @@ function sendToGA(metric: Metric) {
 }
 
 export default function WebVitalsTracker() {
+  const pathname = usePathname();
+  // SPA-aware page_path 캡처용 ref. web-vitals v5는 콜백을 페이지 lifetime당 1회만 등록 권장
+  // ("Do not call onCLS() more than once per page load") — useEffect deps는 절대 []. pathname
+  // 변경 시 ref만 갱신하면 콜백이 호출되는 시점(visibilitychange/pagehide)에 최신 path 캡처.
+  // window.location.pathname을 콜백 시점에 캡처하면 SPA navigation 후 다음 페이지 path가
+  // 잡혀 누적 CLS가 잘못된 페이지에 attribution됨 (관측된 /special/oh-yoon false signal 원인).
+  // stripLocale로 locale prefix 정규화 — `/ko/artworks/123`과 `/en/artworks/123`을 동일 path로.
+  const pathRef = useRef(stripLocale(pathname));
+  useEffect(() => {
+    pathRef.current = stripLocale(pathname);
+  }, [pathname]);
+
   useEffect(() => {
     // 진단: 컴포넌트가 production에서 실제 mount되는지 검증용 ping.
     // GA4에 web_vitals_mount 이벤트가 들어오면 mount 성공이고, web-vitals
@@ -152,7 +166,7 @@ export default function WebVitalsTracker() {
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       try {
         window.gtag('event', 'web_vitals_mount', {
-          page_path: window.location.pathname,
+          page_path: pathRef.current,
         });
       } catch (err) {
         console.error('[web-vitals] mount ping failed:', err);
@@ -161,11 +175,15 @@ export default function WebVitalsTracker() {
 
     // 각 metric은 페이지당 1회 자동 측정 후 콜백.
     // INP는 사용자 인터랙션 발생 시 누적 → 페이지 떠날 때 최종값 보고.
-    onLCP(sendToGA);
-    onCLS(sendToGA);
-    onINP(sendToGA);
-    onFCP(sendToGA);
-    onTTFB(sendToGA);
+    // 콜백 내부에서 pathRef.current를 사용해 보고 시점의 최신 path로 attribution.
+    // deps `[]` 절대 유지 — pathname을 deps에 넣으면 SPA navigation마다 콜백 재등록되어
+    // web-vitals 이중 등록이 발생, 데이터가 2~5배 부풀려짐 (라이브러리 명시적 금지).
+    const send = (metric: Metric) => sendToGA(metric, pathRef.current);
+    onLCP(send);
+    onCLS(send);
+    onINP(send);
+    onFCP(send);
+    onTTFB(send);
   }, []);
 
   return null;

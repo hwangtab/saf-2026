@@ -97,14 +97,20 @@ export default function ProgressBar({
           style={{ width: `${visualWidthPct}%` }}
         />
       </div>
-      {/* 보조 지표 — 모멘텀 신호 (PRD §14 OQ-6) */}
-      {(regionTopCount > 0 || recent24h > 0) && (
-        <p className="mt-2 text-xs opacity-75 tabular-nums text-center">
-          {t('heroProgressRegions', { count: regionTopCount.toLocaleString('ko-KR') })}
-          {' · '}
-          {t('heroProgressRecent24h', { count: recent24h.toLocaleString('ko-KR') })}
-        </p>
-      )}
+      {/* 보조 지표 — 모멘텀 신호 (PRD §14 OQ-6).
+          SSR에서 supabase fallback 0으로 내려와 미렌더 → useEffect refresh 후 실값 오면 추가됨
+          → Hero section 전체가 push되며 CLS 1.0 회귀 직접 원인. 항상 렌더 + invisible 토글로
+          height reserve. aria-hidden으로 screen reader엔 0건 정보 숨김(PRD §14 OQ-6 의도 유지). */}
+      <p
+        className={`mt-2 text-xs opacity-75 tabular-nums text-center ${
+          regionTopCount > 0 || recent24h > 0 ? '' : 'invisible'
+        }`}
+        aria-hidden={!(regionTopCount > 0 || recent24h > 0)}
+      >
+        {t('heroProgressRegions', { count: regionTopCount.toLocaleString('ko-KR') })}
+        {' · '}
+        {t('heroProgressRecent24h', { count: recent24h.toLocaleString('ko-KR') })}
+      </p>
     </div>
   );
 }
