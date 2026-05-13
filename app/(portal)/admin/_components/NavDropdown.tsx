@@ -8,6 +8,11 @@ import type { AdminNavItem } from './admin-nav-items';
 interface NavDropdownProps {
   label: string;
   items: AdminNavItem[];
+  /**
+   * 그룹 옆 alert dot 표시 — Web Vitals 회귀 감지에서 사용 ("분석" 그룹).
+   * 0보다 크면 작은 빨간 점 + 카운트 tooltip. 드롭다운 닫혀 있어도 즉시 인지.
+   */
+  alertCount?: number;
 }
 
 function isItemActive(item: AdminNavItem, pathname: string, isReviewQueueMode: boolean): boolean {
@@ -21,7 +26,7 @@ function isItemActive(item: AdminNavItem, pathname: string, isReviewQueueMode: b
   return pathname.startsWith(targetPath);
 }
 
-export function NavDropdown({ label, items }: NavDropdownProps) {
+export function NavDropdown({ label, items, alertCount = 0 }: NavDropdownProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -54,6 +59,13 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
         }`}
       >
         {label}
+        {alertCount > 0 && (
+          <span
+            className="ml-0.5 inline-flex h-2 w-2 rounded-full bg-danger-a11y"
+            title={`Web Vitals 회귀 ${alertCount}건`}
+            aria-label={`Web Vitals 회귀 ${alertCount}건`}
+          />
+        )}
         <svg
           className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`}
           fill="none"

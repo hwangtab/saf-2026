@@ -242,6 +242,19 @@ export type AnalyticsData = {
       p75Value: number;
       poorCount: number;
     }>;
+    /**
+     * 회귀 페이지 — metric × page_path별 p75가 Google CWV 공식 "poor" 임계 초과한 항목.
+     * admin nav "분석" 그룹 옆 alert dot + WebVitalsPanel 회귀 강조 섹션에서 사용.
+     * sample_size 10건 미만 페이지는 RPC에서 제외 — 트래픽 적은 페이지의 극단값 false alert 차단.
+     */
+    regressions: Array<{
+      metricName: string;
+      pagePath: string;
+      sampleSize: number;
+      p75Value: number;
+      poorThreshold: number;
+      poorRatio: number;
+    }>;
   };
   /**
    * GA4 페이지 보고서 — page_title·activeUsers·engagementTime 등 자체 page_views에 없는
@@ -486,6 +499,14 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     p75_value: number;
     poor_count: number;
   };
+  type WebVitalsRegressionRow = {
+    metric_name: string;
+    page_path: string;
+    sample_size: number;
+    p75_value: number;
+    poor_threshold: number;
+    poor_ratio: number;
+  };
   type MemberJoinSummaryRow = {
     total_clicks: number;
     unique_clickers: number;
@@ -577,6 +598,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     webVitalsSummaryRes,
     webVitalsDailyRes,
     webVitalsLcpWorstRes,
+    webVitalsRegressionsRes,
     memberJoinSummaryRes,
     memberJoinPositionRes,
     memberJoinDailyRes,
@@ -651,6 +673,10 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       target_metric: 'LCP',
       lim: 10,
     }),
+    untypedRpc<WebVitalsRegressionRow[]>('get_web_vitals_regressions', {
+      since_ts: sinceTs,
+      min_sample_size: 10,
+    }),
     untypedRpc<MemberJoinSummaryRow[]>('get_member_join_click_summary', {
       since_ts: sinceTs,
     }),
@@ -714,6 +740,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     ['get_web_vitals_summary', webVitalsSummaryRes],
     ['get_web_vitals_daily_p75', webVitalsDailyRes],
     ['get_web_vitals_worst_pages', webVitalsLcpWorstRes],
+    ['get_web_vitals_regressions', webVitalsRegressionsRes],
     ['get_purchase_click_summary', purchaseSummaryRes],
     ['get_top_purchase_clicked_artworks', purchaseArtworksRes],
     ['get_locale_switch_summary', localeSwitchSummaryRes],
@@ -1267,6 +1294,16 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
           poorCount: Number(row.poor_count),
         }))
       : [],
+    regressions: Array.isArray(webVitalsRegressionsRes.data)
+      ? webVitalsRegressionsRes.data.map((row) => ({
+          metricName: row.metric_name,
+          pagePath: row.page_path,
+          sampleSize: Number(row.sample_size),
+          p75Value: Number(row.p75_value ?? 0),
+          poorThreshold: Number(row.poor_threshold),
+          poorRatio: Number(row.poor_ratio ?? 0),
+        }))
+      : [],
   };
 
   return {
@@ -1290,4 +1327,42 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     ctaClicks,
     pageReport,
   };
+}
+
+/**
+ * admin nav "분석" 그룹 옆 alert dot 표시용 — 회귀 페이지 개수만 빠르게.
+ *
+ * 회귀 = 최근 7일 윈도우에서 metric × page_path별 p75가 Google CWV 공식 "poor"
+ * 임계 초과 (LCP > 4s, INP > 500ms, CLS > 0.25, FCP > 3s, TTFB > 1.8s).
+ * sample_size 10건 미만 페이지 자동 제외 (false alert 차단).
+ *
+ * 매 admin 페이지 로드 시 호출되므로 가벼움 유지. getAnalyticsData 전체 호출 X.
+ * 에러 시 0 반환 — alert 미표시는 silent fallback (admin 페이지 깨짐 방지).
+ */
+export async function getWebVitalsRegressionCount(): Promise<number> {
+  try {
+    await requireAdmin();
+    const supabase = await requireAdminClient();
+    const sinceTs = new Date(Date.now() - 7 * 86_400_000).toISOString();
+
+    type RpcResult<T> = { data: T | null; error: unknown };
+    const untypedRpc = supabase.rpc.bind(supabase) as unknown as <T>(
+      name: string,
+      args?: Record<string, unknown>
+    ) => Promise<RpcResult<T>>;
+
+    const res = await untypedRpc<number>('get_web_vitals_regression_count', {
+      since_ts: sinceTs,
+      min_sample_size: 10,
+    });
+
+    if (res.error) {
+      console.error('[admin-analytics] get_web_vitals_regression_count failed:', res.error);
+      return 0;
+    }
+    return typeof res.data === 'number' ? res.data : 0;
+  } catch (err) {
+    console.error('[admin-analytics] getWebVitalsRegressionCount caught:', err);
+    return 0;
+  }
 }

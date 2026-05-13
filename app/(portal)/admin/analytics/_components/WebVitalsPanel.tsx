@@ -85,6 +85,70 @@ export default async function WebVitalsPanel({ data }: Props) {
         </AdminCard>
       ) : (
         <>
+          {/* 회귀 강조 — admin nav alert dot의 출처. 가장 먼저 노출. */}
+          <AdminCard className="flex flex-col">
+            <AdminCardHeader
+              className={`rounded-t-2xl ${
+                data.regressions.length > 0 ? 'bg-danger-a11y/5 ring-1 ring-danger-a11y/20' : ''
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-semibold text-gray-900">{t('wvRegressionsTitle')}</h3>
+                {data.regressions.length > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-danger-a11y/10 px-2 py-0.5 text-xs font-semibold text-danger-a11y">
+                    <span className="inline-flex h-1.5 w-1.5 rounded-full bg-danger-a11y" />
+                    {data.regressions.length}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-xs text-gray-500">{t('wvRegressionsDesc')}</p>
+            </AdminCardHeader>
+            {data.regressions.length === 0 ? (
+              <div className="px-6 py-6 text-sm text-success-a11y">{t('wvRegressionsEmpty')}</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 text-sm">
+                  <thead className="bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
+                    <tr>
+                      <th className="px-4 py-2 text-left">{t('wvMetricColumn')}</th>
+                      <th className="px-4 py-2 text-left">{t('wvPagePathColumn')}</th>
+                      <th className="px-4 py-2 text-right">{t('wvSampleColumn')}</th>
+                      <th className="px-4 py-2 text-right">{t('wvP75Column')}</th>
+                      <th className="px-4 py-2 text-right">{t('wvThresholdColumn')}</th>
+                      <th className="px-4 py-2 text-right">{t('wvPoorRatioColumn')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 bg-white">
+                    {data.regressions.map((row) => (
+                      <tr key={`${row.metricName}-${row.pagePath}`}>
+                        <td className="px-4 py-2 font-mono text-xs font-semibold text-gray-900">
+                          {row.metricName}
+                        </td>
+                        <td className="px-4 py-2 font-mono text-xs text-gray-700">
+                          {row.pagePath}
+                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                          {numberFormatter.format(row.sampleSize)}
+                        </td>
+                        <td
+                          className={`px-4 py-2 text-right tabular-nums font-semibold ${getRatingColor(row.metricName, row.p75Value)}`}
+                        >
+                          {formatMetric(row.metricName, row.p75Value)}
+                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums text-gray-500">
+                          {formatMetric(row.metricName, row.poorThreshold)}
+                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums text-danger-a11y">
+                          {percentFormatter.format(row.poorRatio)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </AdminCard>
+
           {/* metric별 요약 */}
           <AdminCard className="flex flex-col">
             <AdminCardHeader className="rounded-t-2xl">

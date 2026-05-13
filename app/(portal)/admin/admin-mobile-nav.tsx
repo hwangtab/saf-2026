@@ -8,7 +8,12 @@ import { useTranslations, useLocale } from 'next-intl';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { getAdminNavGroups } from './_components/admin-nav-items';
 
-export function AdminMobileNav() {
+interface AdminMobileNavProps {
+  /** Web Vitals 회귀 페이지 개수 — 햄버거 버튼 + Analytics item 옆 dot. */
+  regressionCount?: number;
+}
+
+export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const locale = useLocale() as 'ko' | 'en';
@@ -48,7 +53,7 @@ export function AdminMobileNav() {
       {/* Hamburger Button */}
       <button
         type="button"
-        className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+        className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
         onClick={() => setIsOpen(true)}
         aria-label={t('openMenu')}
         aria-expanded={isOpen}
@@ -63,6 +68,13 @@ export function AdminMobileNav() {
             d="M4 6h16M4 12h16M4 18h16"
           />
         </svg>
+        {regressionCount > 0 && (
+          <span
+            className="absolute top-1.5 right-1.5 inline-flex h-2 w-2 rounded-full bg-danger-a11y ring-2 ring-white"
+            aria-label={`Web Vitals 회귀 ${regressionCount}건`}
+            title={`Web Vitals 회귀 ${regressionCount}건`}
+          />
+        )}
       </button>
 
       {/* Portal for Overlay and Drawer - renders at document.body to avoid z-index stacking context issues */}
@@ -126,20 +138,28 @@ export function AdminMobileNav() {
                           : isUsersItem
                             ? pathname === '/admin/users' && !isReviewQueueMode
                             : pathname.startsWith(targetPath);
+                        const hasAnalyticsAlert =
+                          item.href === '/admin/analytics' && regressionCount > 0;
                         return (
                           <Link
                             key={item.href}
                             href={item.href}
                             prefetch={item.href.startsWith('/admin/changelog') ? false : undefined}
                             aria-current={isActive ? 'page' : undefined}
-                            className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
+                            className={`flex items-center justify-between rounded-md px-3 py-2 text-base font-medium transition-colors ${
                               isActive
                                 ? 'bg-primary-surface text-primary-strong ring-1 ring-inset ring-primary-a11y/20'
                                 : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                             }`}
                             onClick={() => setIsOpen(false)}
                           >
-                            {item.label}
+                            <span>{item.label}</span>
+                            {hasAnalyticsAlert && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-danger-a11y/10 px-2 py-0.5 text-xs font-semibold text-danger-a11y">
+                                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-danger-a11y" />
+                                {regressionCount}
+                              </span>
+                            )}
                           </Link>
                         );
                       })}

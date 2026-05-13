@@ -4,22 +4,25 @@ import { AdminMobileNav } from './admin-mobile-nav';
 import { AdminDesktopNav } from './admin-desktop-nav';
 import PortalShell from '@/components/layout/PortalShell';
 import { getTranslations } from 'next-intl/server';
+import { getWebVitalsRegressionCount } from '@/app/actions/admin-analytics';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
   const t = await getTranslations('admin.common');
+  // 회귀 페이지 개수 — analytics 그룹 옆 alert dot. RPC 실패 시 0 반환 (silent fallback).
+  const regressionCount = await getWebVitalsRegressionCount();
   return (
     <PortalShell
       title="SAF Admin"
       titleHref="/admin/dashboard"
       mobileNav={
         <Suspense fallback={null}>
-          <AdminMobileNav />
+          <AdminMobileNav regressionCount={regressionCount} />
         </Suspense>
       }
       nav={
         <Suspense fallback={null}>
-          <AdminDesktopNav />
+          <AdminDesktopNav regressionCount={regressionCount} />
         </Suspense>
       }
       badge={
