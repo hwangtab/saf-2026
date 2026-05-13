@@ -29,6 +29,8 @@ export const HERO_CURATION_OVERRIDES: Record<string, string> = {
   'our-reality': '/images/hero/16.jpg',
   'our-proof': '/images/hero/15.jpg',
   transparency: '/images/hero/9.jpg',
+  // /news 자동 thumbnail 추출 실패(외부 기사 thumbnail 미저장 다수) — 큐레이션 fallback
+  news: '/images/hero/4.jpg',
   // Archive — 2023은 실제 전시 사진, 2026은 작품 큐레이션
   archive: '/images/hero/2.jpg',
   'archive/2026': '/images/hero/13.jpg',
