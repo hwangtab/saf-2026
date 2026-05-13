@@ -6,6 +6,7 @@ import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import StatCard from '@/components/ui/StatCard';
 import { CONTACT, SITE_URL } from '@/lib/constants';
@@ -161,6 +162,7 @@ export default async function TransparencyPage({
           description="Every loan, every repayment, every won — published openly. Here is the full operational record of the artist mutual aid fund."
           descriptionId="transparency-hero-description"
           breadcrumbItems={breadcrumbItems}
+          customBackgroundImage={getHeroOverride('transparency')}
         >
           <ShareButtonsWrapper
             url={pageUrl}
@@ -342,6 +344,7 @@ export default async function TransparencyPage({
         description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금 운용 전 과정을 투명하게 공개합니다."
         descriptionId="transparency-hero-description"
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={getHeroOverride('transparency')}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}

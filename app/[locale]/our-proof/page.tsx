@@ -6,6 +6,7 @@ import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
@@ -204,6 +205,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           description={`Mutual-aid finance is not a theory. ${LOAN_COUNT} loans and a 95% repayment rate prove that trust-based lending to artists works.`}
           descriptionId="proof-hero-description"
           breadcrumbItems={breadcrumbItems}
+          customBackgroundImage={getHeroOverride('our-proof')}
         >
           <ShareButtonsWrapper
             url={pageUrl}
@@ -521,6 +523,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
         description={`예술인 상호부조 대출의 실제 성과. ${LOAN_COUNT}건, 약 7억 원의 신뢰가 데이터로 증명되었습니다.`}
         descriptionId="proof-hero-description"
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={getHeroOverride('our-proof')}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
