@@ -1,6 +1,6 @@
 'use client';
 
-import { Link } from '@/i18n/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -11,10 +11,24 @@ interface HeaderLogoProps {
 
 export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
   const tA11y = useTranslations('a11y');
+  const pathname = usePathname();
+  // next-intl usePathname()은 locale prefix를 제거한 경로 반환 — '/' = 홈.
+  const isHome = pathname === '/';
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // 홈에 있을 때 로고 클릭은 next.js Link가 no-op이라 사용자가 무반응으로 인식.
+    // prevent + smooth scroll-to-top으로 "맨 위로 이동" 의도 만족.
+    // prefers-reduced-motion: reduce인 사용자는 브라우저가 자동으로 instant 처리.
+    if (isHome) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <Link
       href="/"
+      onClick={handleClick}
       // 로고는 모든 페이지 chrome — viewport에 항상 들어오므로 prefetch 시
       // 홈 RSC payload(~35KB)가 routes 이동 없이 매번 fetch. PSI mobile network
       // audit에서 home self-prefetch가 138KB 차지. 로고 클릭은 사용자 의도적 행동이라
