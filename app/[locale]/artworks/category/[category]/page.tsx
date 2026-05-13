@@ -18,6 +18,7 @@ import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { CATEGORY_EN_MAP, getCategoryDisplayName } from '@/lib/artwork-category';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import {
@@ -333,6 +334,10 @@ async function renderCategoryPage({ params }: Props) {
           description={heroDescription}
           descriptionId="category-hero-description"
           breadcrumbItems={breadcrumbItems}
+          customBackgroundImage={
+            getHeroOverride(`artworks/category/${category}`) ??
+            pickListingHeroImage(categoryArtworks, (a) => (!a.sold && a.images?.[0]) || undefined)
+          }
         >
           <ShareButtonsWrapper
             url={`${SITE_URL}${categoryPath}`}

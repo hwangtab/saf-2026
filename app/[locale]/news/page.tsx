@@ -8,6 +8,7 @@ import PageHero from '@/components/ui/PageHero';
 import Badge from '@/components/ui/Badge';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { getSupabaseNews } from '@/lib/supabase-data';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { localizeNewsSource } from '@/lib/news-source';
 import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
@@ -427,6 +428,9 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
         description={copy.heroDescription}
         descriptionId="news-hero-description"
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={
+          getHeroOverride('news') ?? pickListingHeroImage(newsArticles, (a) => a.thumbnail)
+        }
       >
         <ShareButtonsWrapper
           url={canonicalUrl}

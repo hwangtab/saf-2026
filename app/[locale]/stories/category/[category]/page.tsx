@@ -16,6 +16,7 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 import { localizeStoryAuthor } from '@/lib/story-author';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { getSupabaseStories } from '@/lib/supabase-data';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { generateFaqPageSchema } from '@/lib/markdown-faq';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
@@ -515,6 +516,10 @@ export default async function StoryCategoryPage({ params }: Props) {
         title={meta.heroTitle}
         description={meta.heroDescription}
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={
+          getHeroOverride(`stories/category/${category}`) ??
+          pickListingHeroImage(stories, (s) => s.thumbnail || extractFirstImage(s.body))
+        }
       >
         <ShareButtonsWrapper
           url={`${SITE_URL}${categoryPath}`}

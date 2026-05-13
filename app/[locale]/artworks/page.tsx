@@ -23,6 +23,7 @@ import {
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
 import { Link } from '@/i18n/navigation';
@@ -211,6 +212,10 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
           description={dynamicHeroDescription}
           descriptionId="page-hero-description"
           breadcrumbItems={breadcrumbItems}
+          customBackgroundImage={
+            getHeroOverride('artworks') ??
+            pickListingHeroImage(artworks, (a) => (!a.sold && a.images?.[0]) || undefined)
+          }
         >
           <ShareButtonsWrapper
             url={PAGE_URL}
