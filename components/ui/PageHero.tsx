@@ -87,8 +87,12 @@ export default function PageHero({
         {customBackgroundImage && (
           <PageHeroBackground customImage={customBackgroundImage} seed={id || title} />
         )}
-        {/* Dark Overlay — 이미지 위 텍스트 가독성 확보, 이미지 없으면 그라디언트 그대로 */}
-        {customBackgroundImage && <div className="absolute inset-0 bg-black/60 z-10" />}
+        {/* Dark Overlay — 그라디언트(상하단 진하고 중앙 옅게)로 이미지가 보이면서 텍스트
+            가독성도 유지. 균일 black/60은 이미지를 단색처럼 보이게 만들어 hero 추가 의미가
+            사라졌던 회귀 차단. 흰 텍스트 + drop-shadow-lg와 결합해 가독성 보장. */}
+        {customBackgroundImage && (
+          <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/55 via-black/25 to-black/55" />
+        )}
 
         {/* Content */}
         <div className="relative z-10 container-max text-center w-full">
