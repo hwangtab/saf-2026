@@ -1,6 +1,8 @@
 'use client';
 
 import { memo, useCallback, useTransition } from 'react';
+// 필터 적용 시 scrollToTop 호출하지 않음 — FilterBar가 sticky라 사용자가 보고 있던
+// 그리드 위치를 잃지 않고 자리에서 결과만 즉시 교체되는 것이 정상 UX.
 import { useRouter } from 'next/navigation';
 import MasonryGallery from './MasonryGallery';
 import SearchBar from './SearchBar';
@@ -45,56 +47,17 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
   const totalPricedCount = priceBucketCounts.reduce((acc, b) => acc + b.count, 0);
 
-  // 필터 적용 후 페이지 상단으로 부드럽게 스크롤. 사용자가 깊이 스크롤한 상태에서
-  // 필터를 누르면 결과가 화면 밖에 있어 혼란스러운 UX를 방지.
-  // prefers-reduced-motion 사용자에겐 즉시 점프 (브라우저 자동 처리).
-  const scrollToTop = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  // Handler for artist button click - navigate to artist page (scroll: 기본값 → top)
+  // Handler for artist button click - navigate to artist page (다른 페이지로 navigate라 기본 scroll-to-top 유지)
   const handleArtistClick = useCallback(
     (artist: string) => {
       const nextPath =
         selectedArtist === artist ? '/artworks' : `/artworks/artist/${encodeURIComponent(artist)}`;
 
       startNavigationTransition(() => {
-        // scroll: false 제거 — 다른 페이지로 navigate 시 새 페이지 상단부터 보여야 정상 UX
         router.push(nextPath);
       });
     },
     [selectedArtist, router, startNavigationTransition]
-  );
-
-  // 로컬 state 필터 setter 래핑 — 적용 직후 상단으로 스크롤
-  const handleSortChange = useCallback(
-    (opt: typeof sortOption) => {
-      setSortOption(opt);
-      scrollToTop();
-    },
-    [setSortOption, scrollToTop]
-  );
-  const handleStatusChange = useCallback(
-    (opt: typeof statusFilter) => {
-      setStatusFilter(opt);
-      scrollToTop();
-    },
-    [setStatusFilter, scrollToTop]
-  );
-  const handleCategoryChange = useCallback(
-    (opt: typeof categoryFilter) => {
-      setCategoryFilter(opt);
-      scrollToTop();
-    },
-    [setCategoryFilter, scrollToTop]
-  );
-  const handlePriceChange = useCallback(
-    (opt: typeof priceBucket) => {
-      setPriceBucket(opt);
-      scrollToTop();
-    },
-    [setPriceBucket, scrollToTop]
   );
 
   // 작가명순일 때만 작가 네비게이션 표시
@@ -117,9 +80,9 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
             <FilterBar
               statusFilter={statusFilter}
-              setStatusFilter={handleStatusChange}
+              setStatusFilter={setStatusFilter}
               sortOption={sortOption}
-              setSortOption={handleSortChange}
+              setSortOption={setSortOption}
             />
           </div>
 
@@ -129,7 +92,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               <CategoryFilter
                 categories={categoryCounts}
                 selected={categoryFilter}
-                onSelect={handleCategoryChange}
+                onSelect={setCategoryFilter}
                 totalCount={artworks.length}
               />
             </div>
@@ -141,7 +104,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               <PriceRangeFilter
                 buckets={priceBucketCounts}
                 selected={priceBucket}
-                onSelect={handlePriceChange}
+                onSelect={setPriceBucket}
                 totalCount={totalPricedCount}
               />
             </div>
