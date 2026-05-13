@@ -153,6 +153,7 @@ export default async function NewsArticlePage({ params }: Props) {
         title={localizedTitle}
         description={`${localizedSource} · ${article.date}`}
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={article.thumbnail || undefined}
       />
       <Section>
         <div className="max-w-3xl mx-auto">
