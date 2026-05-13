@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import { getSupabaseTestimonials } from '@/lib/supabase-data';
@@ -186,6 +187,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
     <>
       <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews]} />
       <PageHero
+        customBackgroundImage={getHeroOverride('our-reality')}
         title={isEnglish ? 'Our Reality' : '우리의 현실'}
         description={
           isEnglish

@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import PageHero from '@/components/ui/PageHero';
+import { getHeroOverride } from '@/lib/hero-curation';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL, CONTACT } from '@/lib/constants';
@@ -109,6 +110,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
     <>
       <JsonLdScript data={[breadcrumbSchema, collectionSchema]} />
       <PageHero
+        customBackgroundImage={getHeroOverride('archive')}
         title={isEnglish ? 'Archive' : '아카이브'}
         description={
           isEnglish

@@ -6,6 +6,7 @@ import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { CONTACT, EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
@@ -133,6 +134,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
       <>
         <JsonLdScript data={[eventSchema, breadcrumbSchema, webPageSchema, howToSchema]} />
         <PageHero
+          customBackgroundImage={getHeroOverride('archive/2026')}
           title="2026 Offline Exhibition"
           description="A 12-day exhibition record at Insa Art Center"
           dividerColor="text-danger/10"
@@ -228,6 +230,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
     <>
       <JsonLdScript data={[eventSchema, breadcrumbSchema, webPageSchema, howToSchema]} />
       <PageHero
+        customBackgroundImage={getHeroOverride('archive/2026')}
         title="2026 오프라인 전시"
         description="인사아트센터에서 진행된 12일간의 기록"
         dividerColor="text-danger/10"

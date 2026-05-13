@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import { getHeroOverride } from '@/lib/hero-curation';
 import SectionTitle from '@/components/ui/SectionTitle';
 import StatCard from '@/components/ui/StatCard';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
@@ -101,6 +102,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           title="About SAF"
           description="Art that funds. A campaign that proves trust-based finance works for artists."
           breadcrumbItems={breadcrumbItems}
+          customBackgroundImage={getHeroOverride('about')}
         >
           <ShareButtonsWrapper
             url={PAGE_URL}
@@ -478,6 +480,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         title="씨앗페 소개"
         description={`작품이 금융이 됩니다. 예술인 금융 차별에 맞서는 ${ARTIST_COUNT}명의 연대, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 씨앗페의 구조를 소개합니다.`}
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={getHeroOverride('about')}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}

@@ -4,6 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import VideoEmbed from '@/components/features/VideoEmbed';
@@ -160,6 +161,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
     <>
       <JsonLdScript data={[breadcrumbSchema, collectionSchema]} />
       <PageHero
+        customBackgroundImage={getHeroOverride('archive/2023')}
         title={isEnglish ? 'SAF 2023 Offline Exhibition' : '2023 오프라인 전시'}
         description={
           isEnglish

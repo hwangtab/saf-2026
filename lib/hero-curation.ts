@@ -24,7 +24,15 @@
  * 시즌 큐레이션이 필요할 때만 매핑 추가.
  */
 export const HERO_CURATION_OVERRIDES: Record<string, string> = {
-  // 'artworks': '/images/hero/artworks-featured.webp',
+  // 캠페인 스토리텔링 페이지 — public/images/hero/N.jpg 작가 작품 큐레이션
+  about: '/images/hero/8.jpg',
+  'our-reality': '/images/hero/16.jpg',
+  'our-proof': '/images/hero/15.jpg',
+  transparency: '/images/hero/9.jpg',
+  // Archive — 2023은 실제 전시 사진, 2026은 작품 큐레이션
+  archive: '/images/hero/2.jpg',
+  'archive/2026': '/images/hero/13.jpg',
+  'archive/2023': '/images/saf2023/IMG_0292.webp',
 };
 
 export function getHeroOverride(pageKey: string): string | undefined {
