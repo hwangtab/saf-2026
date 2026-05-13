@@ -182,7 +182,10 @@ export default function FullscreenMenu({
                 {item.items && item.items.length > 0 ? (
                   <details className="group">
                     <summary
-                      className={`${styles.navLink} list-none cursor-pointer flex items-center justify-center gap-2`}
+                      // !flex — styles.navLink의 `display: block`을 Tailwind utility로 override.
+                      // CSS module/utility specificity 동일에서 정의 순서가 module 우선이라
+                      // 일반 `flex`만으로는 block이 살아남아 자식(span+chevron)이 줄바꿈됨.
+                      className={`${styles.navLink} list-none cursor-pointer !flex items-center justify-center gap-2`}
                     >
                       <span>{item.name}</span>
                       <ChevronDown
