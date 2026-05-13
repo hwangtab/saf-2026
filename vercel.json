@@ -21,10 +21,6 @@
     {
       "path": "/api/internal/gsc-sync",
       "schedule": "0 20 * * *"
-    },
-    {
-      "path": "/api/internal/close-petition",
-      "schedule": "5 * * * *"
     }
   ],
   "git": {
