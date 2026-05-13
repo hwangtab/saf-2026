@@ -182,16 +182,18 @@ export default function FullscreenMenu({
                 {item.items && item.items.length > 0 ? (
                   <details className="group">
                     <summary
-                      // !flex — styles.navLink의 `display: block`을 Tailwind utility로 override.
-                      // CSS module/utility specificity 동일에서 정의 순서가 module 우선이라
-                      // 일반 `flex`만으로는 block이 살아남아 자식(span+chevron)이 줄바꿈됨.
-                      className={`${styles.navLink} list-none cursor-pointer !flex items-center justify-center gap-2`}
+                      // !flex — styles.navLink의 `display: block` override (CSS module 우선순위 회피).
+                      // 텍스트는 박스 정중앙(justify-center)에 두고 chevron은 텍스트 anchor의 absolute로
+                      // 빼서 텍스트 너비 계산에서 분리 — 텍스트만 음영 박스 중앙에 오고 화살표는 그 옆.
+                      className={`${styles.navLink} list-none cursor-pointer !flex items-center justify-center`}
                     >
-                      <span>{item.name}</span>
-                      <ChevronDown
-                        aria-hidden="true"
-                        className="h-5 w-5 text-gray-400 transition-transform duration-200 group-open:rotate-180"
-                      />
+                      <span className="relative">
+                        {item.name}
+                        <ChevronDown
+                          aria-hidden="true"
+                          className="absolute left-full top-1/2 -translate-y-1/2 ml-2 h-5 w-5 text-gray-400 transition-transform duration-200 group-open:rotate-180"
+                        />
+                      </span>
                     </summary>
                     <ul className="mt-4 space-y-3">
                       {item.items.map((subItem) => (
