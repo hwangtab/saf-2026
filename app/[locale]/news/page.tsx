@@ -47,11 +47,11 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
   ko: {
     pageTitle: '언론 보도',
     pageDescription:
-      '언론이 주목한 씨앗페 온라인. 예술인 금융 차별과 상호부조를 다룬 주요 언론 보도·인터뷰·칼럼을 모아 캠페인의 사회적 의미와 예술 현장의 목소리를 전합니다.',
+      '언론이 주목한 씨앗페 온라인. 예술인 금융 차별과 상호부조를 다룬 주요 언론 보도·인터뷰·칼럼을 모아 씨앗페의 사회적 의미와 예술 현장의 목소리를 전합니다.',
     heroTitle: '언론 보도',
-    heroDescription: '씨앗페 캠페인을 조명한 기사와 인터뷰를 모았습니다.',
+    heroDescription: '씨앗페를 조명한 기사와 인터뷰를 모았습니다.',
     shareTitle: '언론 보도 | 씨앗페 온라인',
-    shareDescription: '씨앗페 캠페인을 다룬 언론 보도를 한 눈에 확인해보세요.',
+    shareDescription: '씨앗페를 다룬 언론 보도를 한 눈에 확인해보세요.',
     highlightsBadge: '언론 하이라이트',
     highlightsTitle: '언론이 짚어낸 예술인 금융 위기의 핵심 메시지',
     highlightsDescription:
@@ -62,16 +62,16 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     originalKoreanArticleTitle: '원문 기사 (한국어)',
     originalKoreanArticleDescription: '이 기사의 본문은 한국어로 제공됩니다.',
     collectionName: '씨앗페 온라인 언론 보도',
-    collectionDescription: '주요 매체가 보도한 씨앗페 캠페인 기사 모음입니다.',
+    collectionDescription: '주요 매체가 보도한 씨앗페 기사 모음입니다.',
   },
   en: {
     pageTitle: 'Press',
     pageDescription:
       'Media coverage of SAF Online. Explore major stories and columns about financial exclusion among artists.',
     heroTitle: 'Press',
-    heroDescription: 'A curated collection of articles and interviews covering the SAF campaign.',
+    heroDescription: 'A curated collection of articles and interviews covering SAF.',
     shareTitle: 'Press | SAF Online',
-    shareDescription: 'Browse media coverage and interviews about the SAF campaign.',
+    shareDescription: 'Browse media coverage and interviews about SAF.',
     highlightsBadge: 'Press Highlights',
     highlightsTitle: 'Key Messages the Press Highlighted',
     highlightsDescription:
@@ -83,7 +83,7 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     originalKoreanArticleDescription:
       'This article body is currently available in Korean. Open the source to read the original coverage.',
     collectionName: 'SAF Online Press Coverage',
-    collectionDescription: 'A collection of media coverage about the SAF campaign.',
+    collectionDescription: 'A collection of media coverage about SAF.',
   },
 };
 
@@ -103,8 +103,8 @@ export async function generateMetadata({
       : `씨앗페 언론 보도 ${count}건 · 한겨레·경향·KBS 기사·인터뷰`;
   const dynamicDescription =
     locale === 'en'
-      ? `${count} press articles and interviews about the SAF Online campaign and Korean artist financial exclusion. Curated by major outlets.`
-      : `씨앗페 캠페인과 예술인 금융 차별을 다룬 주요 언론의 기사·인터뷰 ${count}건. 한겨레·경향신문·KBS 등 보도 원문 링크와 인용 모음.`;
+      ? `${count} press articles and interviews about SAF Online and Korean artist financial exclusion. Curated by major outlets.`
+      : `씨앗페와 예술인 금융 차별을 다룬 주요 언론의 기사·인터뷰 ${count}건. 한겨레·경향신문·KBS 등 보도 원문 링크와 인용 모음.`;
   const pageUrl = buildLocaleUrl('/news', locale);
 
   return {
