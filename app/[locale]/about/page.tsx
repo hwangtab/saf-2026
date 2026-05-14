@@ -126,7 +126,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   Banks see &ldquo;no steady paycheck&rdquo; and close the door.{' '}
                   <strong className="text-primary-strong">84.9%</strong> of artists are excluded
                   from mainstream banking. <strong className="text-primary-strong">48.6%</strong>{' '}
-                  are pushed into predatory lending at 15%+ annual interest.
+                  are pushed into high-interest lending at 15%+ annual interest.
                 </p>
                 <p>
                   This is not a personal failure. It is a <strong>structural crisis</strong> — and
