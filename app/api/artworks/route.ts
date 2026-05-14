@@ -7,7 +7,8 @@ export async function GET() {
   try {
     const artworks = await getSupabaseHomepageArtworks(30);
 
-    // Footer 슬라이더에 필요한 최소 필드만 필터링하여 전송량 최소화
+    // Footer 슬라이더에 필요한 최소 필드만 필터링하여 전송량 최소화.
+    // category/edition은 ArtworkCard 매체별 진품 라벨(getMediumLabel)에 필요 — Sprint 2 회귀 fix.
     const minimizedArtworks = artworks.map((artwork) => ({
       id: artwork.id,
       artist: artwork.artist,
@@ -15,6 +16,8 @@ export async function GET() {
       images: artwork.images || [],
       price: artwork.price,
       sold: artwork.sold,
+      category: artwork.category,
+      edition: artwork.edition,
     }));
 
     return NextResponse.json(minimizedArtworks, {

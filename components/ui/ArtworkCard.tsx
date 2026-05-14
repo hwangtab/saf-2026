@@ -269,7 +269,12 @@ function ArtworkCard({
               {getSafeArtist(artwork, unknownArtistLabel, locale)}
             </p>
             {showMediumLabel && (
-              <p className="text-[10px] font-semibold text-primary-strong mt-1 truncate uppercase tracking-wide">
+              // slider 카드 폭 160~200px — 한국어 "사후 발행 한정판 6/20" 같은 긴 라벨이
+              // 잘리지 않게 line-clamp-2 허용. title attr로 fallback 풀텍스트.
+              <p
+                className="text-[10px] font-semibold text-primary-strong mt-1 leading-tight uppercase tracking-wide line-clamp-2 break-keep"
+                title={mediumLabelText ?? undefined}
+              >
                 {mediumLabelText}
               </p>
             )}

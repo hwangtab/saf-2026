@@ -38,7 +38,11 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
   const line2Label = isEn ? 'For the artist' : '작가에게는';
   const line2Value = isEn ? 'the next month of their practice' : '다음 작업의 한 달';
   const line3Label = isEn ? 'For a fellow artist' : '동료 작가에게는';
-  const line3Value = isEn ? 'a new ₩3,000,000 path opening' : '새로 열리는 ₩3,000,000의 길';
+  // 매뉴얼 8.3 한국어 원문 "새로 열리는 ₩3,000,000의 길"은 그대로. 영문은 단순 직역(₩ 기호 단독)이
+  // 영문 화폐 컨벤션과 충돌해 부자연스러워, 의미(저금리 상호부조 대출 길)를 보강한 자연스러운 영문.
+  const line3Value = isEn
+    ? 'a new ₩3,000,000 path of low-interest support'
+    : '새로 열리는 ₩3,000,000의 길';
   const footer = isEn
     ? `${loanCountFormatted} artists have walked this path; 95% returned to make it possible for the next.`
     : `${loanCountFormatted}명이 이 길을 걸었고, 95%가 다음 사람을 위해 돌아왔습니다.`;
