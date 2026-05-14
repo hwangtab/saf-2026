@@ -39,11 +39,11 @@ const PAGE_URL = `${SITE_URL}/about`;
 const PAGE_COPY = {
   ko: {
     title: `씨앗페 소개 · 예술인 상호부조 플랫폼 | ${ARTIST_COUNT}명 작가, ${LOAN_COUNT}건 대출`,
-    description: `씨앗페는 금융 차별을 푸는 예술인 상호부조 플랫폼입니다. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.`,
+    description: `한국스마트협동조합이 운영해온 예술인 상호부조 플랫폼. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품 한 점이 동료 작가의 다음 한 달이 되는 구조를 소개합니다.`,
   },
   en: {
-    title: 'About SAF · Mutual-Aid Campaign for Korean Artists',
-    description: `SAF is a mutual-aid campaign against financial discrimination toward Korean artists. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — art becomes finance.`,
+    title: 'About SAF · Mutual-Aid Platform for Korean Artists',
+    description: `A mutual-aid platform operated by Korea Smart Cooperative. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — each piece becomes a fellow artist's next month of practice.`,
   },
 } as const;
 
@@ -100,14 +100,14 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
         <PageHero
           title="About SAF"
-          description="Art that funds. A campaign that proves trust-based finance works for artists."
+          description={`A platform where each artwork becomes a fellow artist's next month of practice. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — operated by Korea Smart Cooperative.`}
           breadcrumbItems={breadcrumbItems}
           customBackgroundImage={getHeroOverride('about')}
         >
           <ShareButtonsWrapper
             url={PAGE_URL}
             title="About SAF — SAF Online"
-            description="Learn how SAF turns art sales into low-interest loans for Korean artists facing financial exclusion."
+            description="Learn how each artwork sold becomes a fellow Korean artist's next month of practice through SAF's mutual-aid platform."
           />
         </PageHero>
 
@@ -115,22 +115,24 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <Section variant="white">
           <div className="container-max">
             <div className="max-w-3xl mx-auto text-balance">
-              <SectionTitle className="mb-8">The problem we solve</SectionTitle>
+              <SectionTitle className="mb-8">The structure we work on</SectionTitle>
               <div className="space-y-6 text-lg text-charcoal">
                 <p>
-                  Korean artists live on irregular, project-based income. Between exhibitions and
-                  commissions, there are <strong>&ldquo;income gaps&rdquo;</strong> — months where
-                  rent, food, and material costs keep running but revenue stops.
+                  Korean artists earn project-by-project. Between exhibitions and commissions,{' '}
+                  <strong>&ldquo;income gaps&rdquo;</strong> appear — months where rent, food, and
+                  material costs keep running while revenue pauses.
                 </p>
                 <p>
-                  Banks see &ldquo;no steady paycheck&rdquo; and close the door.{' '}
-                  <strong className="text-primary-strong">84.9%</strong> of artists are excluded
-                  from mainstream banking. <strong className="text-primary-strong">48.6%</strong>{' '}
-                  are pushed into high-interest lending at 15%+ annual interest.
+                  Mainstream banking is built around steady paychecks.{' '}
+                  <strong className="text-primary-strong">84.9%</strong> of artists have limited
+                  access to first-tier banks, and{' '}
+                  <strong className="text-primary-strong">48.6%</strong> end up relying on
+                  high-interest credit at 15%+ annual rates.
                 </p>
                 <p>
-                  This is not a personal failure. It is a <strong>structural crisis</strong> — and
-                  SAF exists to break it.
+                  This isn&rsquo;t something individuals can fix alone. It&rsquo;s a{' '}
+                  <strong>structural gap</strong> in the financial system — and SAF was built to
+                  reshape it, together with the artists who joined.
                 </p>
               </div>
             </div>
@@ -478,14 +480,14 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
       <PageHero
         title="씨앗페 소개"
-        description={`작품이 금융이 됩니다. 예술인 금융 차별에 맞서는 ${ARTIST_COUNT}명의 연대, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 씨앗페의 구조를 소개합니다.`}
+        description={`작품 한 점이 동료 작가의 다음 한 달이 되는 플랫폼. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 한국스마트협동조합이 운영해온 예술인 상호부조의 구조를 소개합니다.`}
         breadcrumbItems={breadcrumbItems}
         customBackgroundImage={getHeroOverride('about')}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
           title="씨앗페 소개 — 씨앗페 온라인"
-          description="작품 판매가 예술인 저금리 대출로 이어지는 상호부조 플랫폼, 씨앗페를 소개합니다."
+          description="작품 한 점이 동료 작가의 다음 한 달이 되는 예술인 상호부조 플랫폼, 씨앗페를 소개합니다."
         />
       </PageHero>
 
@@ -493,25 +495,25 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <Section variant="white">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-balance">
-            <SectionTitle className="mb-8">우리가 해결하려는 문제</SectionTitle>
+            <SectionTitle className="mb-8">우리가 풀어가는 구조</SectionTitle>
             <div className="space-y-6 text-lg text-charcoal">
               <p>
-                예술인들은 정기적인 급여가 아닌, 프로젝트 기반의 불규칙한 소득을 얻습니다. 공연과
-                공연 사이, 전시와 전시 사이 발생하는 <strong>&ldquo;소득 공백기&rdquo;</strong>에도
-                월세와 식비, 창작 재료비는 계속 발생합니다.
+                예술인의 소득은 프로젝트 단위로 들어옵니다. 공연과 공연 사이, 전시와 전시 사이의{' '}
+                <strong>&ldquo;소득 공백기&rdquo;</strong>에도 월세와 식비, 창작 재료비는 계속
+                필요합니다.
               </p>
               <p>
-                은행은 &ldquo;고정 소득 없음&rdquo;이라는 이유로 문을 닫습니다.{' '}
-                <strong className="text-primary-strong">84.9%</strong>의 예술인이 제1금융권에서
-                배제되고, <strong className="text-primary-strong">48.6%</strong>가 연 15% 이상의
-                고금리 대출에 내몰립니다.
+                현행 금융 시스템은 &ldquo;고정 소득&rdquo;을 기준으로 설계되어 있습니다.{' '}
+                <strong className="text-primary-strong">84.9%</strong>의 예술인이 제1금융권에 접근
+                하기 어렵고, <strong className="text-primary-strong">48.6%</strong>가 연 15% 이상의
+                고금리 시장에 의존하게 됩니다.
               </p>
               <p>
-                이것은 개인의 실패가 아닙니다.{' '}
+                이것은 개인이 풀 수 있는 문제가 아닙니다.{' '}
                 <strong>
-                  시스템이 만든 <span className="text-charcoal-deep">구조적 위기</span>
+                  시스템의 <span className="text-charcoal-deep">구조적 격차</span>
                 </strong>
-                이며, 씨앗페는 이 악순환을 끊기 위해 존재합니다.
+                이며, 씨앗페는 그 구조를 함께 바꾸기 위해 만들어졌습니다.
               </p>
             </div>
           </div>
