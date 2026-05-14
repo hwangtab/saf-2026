@@ -9,6 +9,7 @@ import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from 'lucide-react';
 import HomeHero from '@/components/features/HomeHero';
+import AboutIdentity from '@/components/features/AboutIdentity';
 import NowShowing from '@/components/features/NowShowing';
 import MasterArtists from '@/components/features/MasterArtists';
 import EntryLevelArtworks from '@/components/features/EntryLevelArtworks';
@@ -125,6 +126,11 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           상세 설계 의도: components/features/HomeHero.tsx 헤더 주석 + 메모리
           feedback_hero_server_island_regression.md. */}
       <HomeHero locale={locale} />
+
+      {/* About 정체성 ribbon — 매뉴얼 6.4 [C].
+          Hero[B] 직후 30초 인지 영역 — "한국 작가 N명, 작품 N점 / 예술인 상호부조 플랫폼".
+          1단 첫 구매자에게 "미술 플랫폼" 인상 우선, 상호부조 보조 톤 (매뉴얼 톤 원칙). */}
+      <AboutIdentity locale={locale} />
 
       {/* Now Showing 그리드 — fold-below 시한성 큐레이션 카드. hero에 노출된 동일 슬라이드도 카드로
           한 번 더 노출(매거진 톤). 정적 SSR, hydration 0. */}
