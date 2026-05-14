@@ -642,8 +642,8 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
                   >
                     purchase a participating artist&rsquo;s work
                   </Link>
-                  , the proceeds become a fund that helps fellow artists trapped by predatory
-                  lending.
+                  , the proceeds become a mutual-aid fund that opens low-interest loans for fellow
+                  artists.
                 </p>
               </>
             ) : (
