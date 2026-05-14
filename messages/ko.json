@@ -181,6 +181,17 @@
       "viewAll": "{category} 전체 보기"
     },
     "statsTitle": "숫자로 보는 예술인 금융 현실",
+    "aboutIdentity": {
+      "headline": "한국 작가 {artistCount}명, 작품 {artworkCount}점",
+      "subtitle": "한국스마트협동조합이 운영하는 예술인 상호부조 플랫폼",
+      "statOperationLabel": "운영",
+      "statOperationValue": "온라인 24시간",
+      "statArtistsLabel": "연대 작가",
+      "statArtistsValue": "{artistCount}명",
+      "statLoansLabel": "누적 대출",
+      "statLoansValue": "{loanCount}건",
+      "learnMore": "씨앗페 소개"
+    },
     "masterArtists": {
       "title": "한국 현대미술의 거장들",
       "subtitle": "오윤·박생광·신학철·민정기·이철수·박불똥 — 한국 미술사가 기억하는 작가들의 작품을 진입 가능한 가격대에 만나보세요.",

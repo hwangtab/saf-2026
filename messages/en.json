@@ -181,6 +181,17 @@
       "viewAll": "View all {category}"
     },
     "statsTitle": "Artist Finance: The Reality in Numbers",
+    "aboutIdentity": {
+      "headline": "{artistCount} Korean Artists. {artworkCount} Original Works.",
+      "subtitle": "A mutual-aid platform for artists, operated by Korea Smart Cooperative",
+      "statOperationLabel": "Open",
+      "statOperationValue": "24/7 online",
+      "statArtistsLabel": "Solidarity artists",
+      "statArtistsValue": "{artistCount}",
+      "statLoansLabel": "Loans funded",
+      "statLoansValue": "{loanCount}",
+      "learnMore": "About SAF"
+    },
     "masterArtists": {
       "title": "Masters of Korean Contemporary Art",
       "subtitle": "Oh Yoon, Park Saeng-gwang, Shin Hak-chul, Min Joung-ki, Lee Chul-soo, Park Bul-ttong — meet the works of artists Korean art history remembers, at accessible prices.",
