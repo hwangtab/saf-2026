@@ -11,6 +11,7 @@ import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from
 import HomeHero from '@/components/features/HomeHero';
 import NowShowing from '@/components/features/NowShowing';
 import MasterArtists from '@/components/features/MasterArtists';
+import EntryLevelArtworks from '@/components/features/EntryLevelArtworks';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
@@ -175,6 +176,10 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           </Link>
         </div>
       </Section>
+
+      {/* 30만원 이하 첫 그림 — 매뉴얼 6.4 [H] + 9.2 컬렉션 4.
+          페르소나 A·1단 첫 구매자 진입 동선. 가격 ₩100,000~₩300,000 + 작가 단위 dedupe + sold/reserved 제외. */}
+      <EntryLevelArtworks locale={locale} />
 
       {/* Category Artwork Sections — 직접 await로 SSR. 이전 Suspense fallback(60vh)
           → 실제 콘텐츠(약 350vh) 전환 시 290vh layout shift → CLS 1.0 → GSC 100% URL
