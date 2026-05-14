@@ -39,11 +39,11 @@ const PAGE_URL = `${SITE_URL}/about`;
 const PAGE_COPY = {
   ko: {
     title: `씨앗페 소개 · 예술인 상호부조 플랫폼 | ${ARTIST_COUNT}명 작가, ${LOAN_COUNT}건 대출`,
-    description: `씨앗페는 금융 차별을 푸는 예술인 상호부조 플랫폼입니다. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.`,
+    description: `한국스마트협동조합이 운영해온 예술인 상호부조 플랫폼. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품 한 점이 동료 작가의 다음 한 달이 되는 구조를 소개합니다.`,
   },
   en: {
-    title: 'About SAF · Mutual-Aid Campaign for Korean Artists',
-    description: `SAF is a mutual-aid campaign against financial discrimination toward Korean artists. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — art becomes finance.`,
+    title: 'About SAF · Mutual-Aid Platform for Korean Artists',
+    description: `A mutual-aid platform operated by Korea Smart Cooperative. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — each piece becomes a fellow artist's next month of practice.`,
   },
 } as const;
 
@@ -100,14 +100,14 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
         <PageHero
           title="About SAF"
-          description="Art that funds. A campaign that proves trust-based finance works for artists."
+          description={`A platform where each artwork becomes a fellow artist's next month of practice. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — operated by Korea Smart Cooperative.`}
           breadcrumbItems={breadcrumbItems}
           customBackgroundImage={getHeroOverride('about')}
         >
           <ShareButtonsWrapper
             url={PAGE_URL}
             title="About SAF — SAF Online"
-            description="Learn how SAF turns art sales into low-interest loans for Korean artists facing financial exclusion."
+            description="Learn how each artwork sold becomes a fellow Korean artist's next month of practice through SAF's mutual-aid platform."
           />
         </PageHero>
 
@@ -478,14 +478,14 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
       <PageHero
         title="씨앗페 소개"
-        description={`작품이 금융이 됩니다. 예술인 금융 차별에 맞서는 ${ARTIST_COUNT}명의 연대, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 씨앗페의 구조를 소개합니다.`}
+        description={`작품 한 점이 동료 작가의 다음 한 달이 되는 플랫폼. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 한국스마트협동조합이 운영해온 예술인 상호부조의 구조를 소개합니다.`}
         breadcrumbItems={breadcrumbItems}
         customBackgroundImage={getHeroOverride('about')}
       >
         <ShareButtonsWrapper
           url={PAGE_URL}
           title="씨앗페 소개 — 씨앗페 온라인"
-          description="작품 판매가 예술인 저금리 대출로 이어지는 상호부조 플랫폼, 씨앗페를 소개합니다."
+          description="작품 한 점이 동료 작가의 다음 한 달이 되는 예술인 상호부조 플랫폼, 씨앗페를 소개합니다."
         />
       </PageHero>
 
