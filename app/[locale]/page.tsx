@@ -3,8 +3,6 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import nextDynamic from 'next/dynamic';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { Link } from '@/i18n/navigation';
-import LinkButton from '@/components/ui/LinkButton';
-import TrackedDonateButton from '@/components/common/TrackedDonateButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from 'lucide-react';
@@ -15,7 +13,7 @@ import MasterArtists from '@/components/features/MasterArtists';
 import EntryLevelArtworks from '@/components/features/EntryLevelArtworks';
 import EmergingArtists from '@/components/features/EmergingArtists';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
-import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
+import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import {
   generateExhibitionSchema,
@@ -41,7 +39,6 @@ import type { Artwork } from '@/types';
 export const dynamic = 'force-static';
 export const revalidate = 3600;
 
-const DynamicCounter = nextDynamic(() => import('@/components/features/DynamicCounter'));
 const FAQList = nextDynamic(() => import('@/components/features/FAQList'));
 
 type LocaleParams = { locale: string };
@@ -101,15 +98,6 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
   const locale = rawLocale === 'en' ? 'en' : 'ko';
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'home' });
-  const tStat = await getTranslations({ locale, namespace: 'statistics' });
-
-  // 매뉴얼 4.6 A1.2 — 메인 "고리대금 48.6%" 통계 제거 (/our-reality로 이전).
-  // 매뉴얼 3.5 메인 신뢰 시그널 5~10% 절제 원칙 + Part 8.4 메커니즘 라이브 카운터(354건/95%)에
-  // 부합하도록 회복 톤 통계 2종(누적 대출 354건·상환율 95%)으로 압축.
-  const counterItems = [
-    { label: tStat('supportedArtists'), value: LOAN_COUNT, unit: tStat('unitPeople') },
-    { label: tStat('repaymentRate'), value: 95, unit: tStat('unitPercent') },
-  ];
 
   // ICU 변수 한 번에 — 토큰에 없는 키는 next-intl이 무시. 모든 호출처가 같은 객체를 받으면
   // 신규 placeholder 도입 시 누락 회귀 차단. lib/site-stats.ts 단일 출처.
@@ -198,38 +186,9 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           페르소나 B "내가 먼저 발견" 자긍심 자극. 거장 6명 제외 + 작가별 1점 dedupe + sold/reserved 제외. */}
       <EmergingArtists locale={locale} />
 
-      {/* Impact Stats + CTA */}
-      <Section variant="white" prevVariant="canvas" className="pb-20">
-        <div className="container-max">
-          <SectionTitle className="mb-12">{t('statsTitle')}</SectionTitle>
-          {/* DynamicCounter는 dynamic import 아닌 직접 import이고 SSR 결과가
-              fallback(h-32 = 128px)과 다름(모바일 1열 3카드 ~480px). 회귀로 CLS 1.0
-              유발. CategorySections·HomeFAQSection과 동일 패턴으로 Suspense 제거 —
-              SSR 후 hydrate 시 카드 높이가 안정적. */}
-          <DynamicCounter items={counterItems} locale={locale} />
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
-            <TrackedDonateButton
-              position="home-our-reality"
-              variant="primary"
-              size="lg"
-              className="w-full sm:w-auto justify-center min-w-[180px]"
-            >
-              {t('joinMemberLink')}
-            </TrackedDonateButton>
-            <LinkButton
-              href={EXTERNAL_LINKS.LOAN_INFO}
-              external
-              variant="primary"
-              size="lg"
-              className="w-full sm:w-auto justify-center min-w-[180px]"
-            >
-              {t('applyLoan')}
-            </LinkButton>
-          </div>
-        </div>
-      </Section>
-
-      {/* FAQ */}
+      {/* FAQ — 직전이 EmergingArtists variant="white" (Impact Stats 제거 후속).
+          354건/95% 통계는 AboutIdentity ribbon에 이미 노출 + Mission Banner [F]에 "어떻게 가능한가요?
+          → /our-reality" 동선 + Footer 회원 가입 CTA로 충분. 매뉴얼 4.5 "예술인 금융 현실" 죄책감 톤 제거. */}
       <Section variant="canvas" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('faqTitle')}</SectionTitle>
