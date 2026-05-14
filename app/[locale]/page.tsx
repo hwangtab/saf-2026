@@ -12,6 +12,7 @@ import HomeHero from '@/components/features/HomeHero';
 import NowShowing from '@/components/features/NowShowing';
 import MasterArtists from '@/components/features/MasterArtists';
 import EntryLevelArtworks from '@/components/features/EntryLevelArtworks';
+import EmergingArtists from '@/components/features/EmergingArtists';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
@@ -186,6 +187,10 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           CLS 회귀 회복. ISR 캐시(revalidate=3600)라 서버 응답 빠르니 streaming 이득보다
           정적 SSR이 CWV에 유리. */}
       <CategorySections locale={locale} />
+
+      {/* 신진 작가 발견 — 매뉴얼 6.4 [G] + 9.2 컬렉션 3.
+          페르소나 B "내가 먼저 발견" 자긍심 자극. 거장 6명 제외 + 작가별 1점 dedupe + sold/reserved 제외. */}
+      <EmergingArtists locale={locale} />
 
       {/* Impact Stats + CTA */}
       <Section variant="white" prevVariant="canvas" className="pb-20">
