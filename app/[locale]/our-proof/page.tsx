@@ -8,7 +8,6 @@ import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
-import TestimonialCard from '@/components/ui/TestimonialCard';
 import StatCard from '@/components/ui/StatCard';
 import { CONTACT, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
@@ -380,43 +379,9 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           </div>
         </Section>
 
-        <Section variant="canvas" prevVariant="white">
-          <div className="container-max">
-            <SectionTitle className="mb-12">Voices from artists</SectionTitle>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <TestimonialCard
-                quote="When I urgently needed hospital expenses, mutual-aid lending let me focus on recovery instead of debt pressure."
-                author="Kim"
-                context="Visual Artist"
-                borderColor="border-primary"
-                contextColor="text-primary-strong"
-              />
-              <TestimonialCard
-                quote="I had been denied at every bank. Here, I was recognized as an artist with a viable future."
-                author="Lee"
-                context="Independent Film Director"
-                borderColor="border-charcoal-deep"
-                contextColor="text-charcoal-deep"
-              />
-              <TestimonialCard
-                quote="The program enabled my exhibition preparation when production costs were impossible to cover."
-                author="Park"
-                context="Installation Artist"
-                borderColor="border-primary"
-                contextColor="text-primary-strong"
-              />
-              <TestimonialCard
-                quote="Knowing my repayments can support another artist makes me even more responsible."
-                author="Choi"
-                context="Musical Actor"
-                borderColor="border-primary-strong"
-                contextColor="text-primary-strong"
-              />
-            </div>
-          </div>
-        </Section>
+        {/* Recovery testimonials moved to /our-reality (manual 4.6 A1.5). */}
 
-        <Section variant="primary-surface" prevVariant="canvas">
+        <Section variant="primary-surface" prevVariant="white">
           <div id="proof-qa-section" className="container-max">
             <SectionTitle className="mb-12">Traditional finance vs mutual-aid lending</SectionTitle>
             <div className="overflow-x-auto">
@@ -664,8 +629,8 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 <div>
                   <h3 className="text-card-title mb-2">연 5% 고정금리</h3>
                   <p className="text-charcoal-muted text-balance">
-                    프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고리대금 대출 대비
-                    평균 14%p 이상 이자 부담을 덜어줍니다.
+                    프로젝트형·긴급생활형 상품 모두 연 5% 고정금리로 설계되어 고금리 대출 대비 평균
+                    14%p 이상 이자 부담을 덜어줍니다.
                   </p>
                 </div>
               </div>
@@ -698,45 +663,10 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
         </div>
       </Section>
 
-      {/* Testimonials Section */}
-      <Section variant="canvas" prevVariant="white">
-        <div className="container-max">
-          <SectionTitle className="mb-12">예술인들의 증언</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <TestimonialCard
-              quote="급하게 병원비가 필요했는데, 어디서도 돈을 빌릴 수 없었어요. 상호부조 대출 덕분에 치료에만 집중할 수 있었습니다."
-              author="김OO"
-              context="시각 예술가"
-              borderColor="border-primary"
-              contextColor="text-primary-strong"
-            />
-            <TestimonialCard
-              quote="은행 문턱이 너무 높았는데, 여기서는 저를 '예술인'으로 인정해주더군요. 단순한 대출이 아니라 큰 위로와 응원이었습니다."
-              author="이OO"
-              context="독립 영화감독"
-              borderColor="border-charcoal-deep"
-              contextColor="text-charcoal-deep"
-            />
-            <TestimonialCard
-              quote="다음 전시 준비 자금이 막막했는데, 덕분에 무사히 작품을 완성하고 전시를 열 수 있었습니다. 이 제도가 없었다면 불가능했을 거예요."
-              author="박OO"
-              context="설치 미술가"
-              borderColor="border-primary"
-              contextColor="text-primary-strong"
-            />
-            <TestimonialCard
-              quote="내 상환금이 다른 동료 예술가에게 희망이 된다는 사실이 저를 더 책임감 있게 만듭니다. 우리는 서로의 안전망입니다."
-              author="최OO"
-              context="뮤지컬 배우"
-              borderColor="border-primary-strong"
-              contextColor="text-primary-strong"
-            />
-          </div>
-        </div>
-      </Section>
+      {/* Recovery testimonials moved to /our-reality (manual 4.6 A1.5). */}
 
       {/* Statistics Comparison */}
-      <Section variant="primary-surface" prevVariant="canvas">
+      <Section variant="primary-surface" prevVariant="white">
         <div id="proof-qa-section" className="container-max">
           <SectionTitle className="mb-12">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
@@ -813,10 +743,10 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
               </TrackedDonateButton>
             </div>
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
-              <h3 className="text-card-title mb-3">작품을 구매해 예술인을 응원하세요</h3>
+              <h3 className="text-card-title mb-3">작품으로 동료 작가의 다음을 만듭니다</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                작품 한 점의 구매가 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다. 온라인
-                갤러리에서 작품을 만나보세요.
+                작품 한 점의 구매가 예술인 상호부조 기금이 되어 동료 작가의 저금리 대출로
+                이어집니다. 온라인 갤러리에서 작품을 만나보세요.
               </p>
               <LinkButton href="/artworks" variant="secondary" size="md">
                 작품 구매하기

@@ -211,8 +211,8 @@ export default async function Image({ params }: Props) {
                 }}
               >
                 {isEn
-                  ? `${availableCount} available · Direct from gallery`
-                  : `${availableCount}점 구매 가능 · 화랑 직매`}
+                  ? `${availableCount} available · Direct from artist`
+                  : `${availableCount}점 구매 가능 · 작가 직매`}
               </div>
             )}
           </div>
