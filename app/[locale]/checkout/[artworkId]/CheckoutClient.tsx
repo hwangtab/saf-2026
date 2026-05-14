@@ -13,6 +13,7 @@ import { createOrder, cancelPendingOrder, createBankTransferOrder } from '@/app/
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
+import TrustBadges from '@/components/features/TrustBadges';
 
 /**
  * 결제 옵션 — 각 버튼의 cardOptions에 따라 Toss 결제창이 분기.
@@ -396,6 +397,11 @@ export default function CheckoutClient({
         <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
           {submitting ? t('processingShort') : t('payNow')}
         </Button>
+
+        {/* 매뉴얼 10.6 결제 페이지 신뢰 시그널 — 진품·청약철회·배송·결제보안·작가 직접 출품 5개. */}
+        <div className="mt-6">
+          <TrustBadges variant="checkout" />
+        </div>
       </div>
     </div>
   );
