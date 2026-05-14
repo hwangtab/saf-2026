@@ -181,6 +181,11 @@
       "viewAll": "View all {category}"
     },
     "statsTitle": "Artist Finance: The Reality in Numbers",
+    "masterArtists": {
+      "title": "Masters of Korean Contemporary Art",
+      "subtitle": "Oh Yoon, Park Saeng-gwang, Shin Hak-chul, Min Joung-ki, Lee Chul-soo, Park Bul-ttong — meet the works of artists Korean art history remembers, at accessible prices.",
+      "viewAll": "Browse all works"
+    },
     "nowShowing": {
       "title": "Spotlight",
       "subtitle": "One artist's chapter, gathered in one corner — time-limited",

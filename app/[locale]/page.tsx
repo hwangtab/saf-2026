@@ -10,6 +10,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from 'lucide-react';
 import HomeHero from '@/components/features/HomeHero';
 import NowShowing from '@/components/features/NowShowing';
+import MasterArtists from '@/components/features/MasterArtists';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import { EXTERNAL_LINKS, OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
@@ -126,6 +127,10 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       {/* Now Showing 그리드 — fold-below 시한성 큐레이션 카드. hero에 노출된 동일 슬라이드도 카드로
           한 번 더 노출(매거진 톤). 정적 SSR, hydration 0. */}
       <NowShowing locale={locale} />
+
+      {/* 한국 현대미술의 거장 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2.
+          시한성 NowShowing[D] 직후 영구 거장 라인업 [E]. 페르소나 B "왜 이 사이트인가" 첫 인지 자산. */}
+      <MasterArtists locale={locale} />
 
       {/* Mission Banner */}
       <Section variant="canvas" padding="sm">
