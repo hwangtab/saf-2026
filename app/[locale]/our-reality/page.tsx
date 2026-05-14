@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
+import TestimonialCard from '@/components/ui/TestimonialCard';
 import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
@@ -256,8 +257,88 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
         );
       })}
 
+      {/* 회복의 길 — /our-proof에서 이전 (매뉴얼 4.6 A1.5). 고통 증언 → 회복 사례 흐름으로
+          매뉴얼 8.5 6단 구조의 "354건의 길" 영역. */}
+      <Section variant="white" prevVariant="canvas-soft">
+        <div className="container-max">
+          <SectionTitle className="mb-4">
+            {isEnglish ? 'Paths of Recovery' : '회복의 길'}
+          </SectionTitle>
+          <p className="text-charcoal-muted mb-12 max-w-3xl">
+            {isEnglish
+              ? 'The same artists, after the mutual-aid lending program — recovery in their own words.'
+              : '같은 예술인들이, 상호부조 대출을 만난 이후 — 회복의 목소리.'}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {isEnglish ? (
+              <>
+                <TestimonialCard
+                  quote="When I urgently needed hospital expenses, mutual-aid lending let me focus on recovery instead of debt pressure."
+                  author="Kim"
+                  context="Visual Artist"
+                  borderColor="border-primary"
+                  contextColor="text-primary-strong"
+                />
+                <TestimonialCard
+                  quote="I had been denied at every bank. Here, I was recognized as an artist with a viable future."
+                  author="Lee"
+                  context="Independent Film Director"
+                  borderColor="border-charcoal-deep"
+                  contextColor="text-charcoal-deep"
+                />
+                <TestimonialCard
+                  quote="The program enabled my exhibition preparation when production costs were impossible to cover."
+                  author="Park"
+                  context="Installation Artist"
+                  borderColor="border-primary"
+                  contextColor="text-primary-strong"
+                />
+                <TestimonialCard
+                  quote="Knowing my repayments can support another artist makes me even more responsible."
+                  author="Choi"
+                  context="Musical Actor"
+                  borderColor="border-primary-strong"
+                  contextColor="text-primary-strong"
+                />
+              </>
+            ) : (
+              <>
+                <TestimonialCard
+                  quote="급하게 병원비가 필요했는데, 어디서도 돈을 빌릴 수 없었어요. 상호부조 대출 덕분에 치료에만 집중할 수 있었습니다."
+                  author="김OO"
+                  context="시각 예술가"
+                  borderColor="border-primary"
+                  contextColor="text-primary-strong"
+                />
+                <TestimonialCard
+                  quote="은행 문턱이 너무 높았는데, 여기서는 저를 '예술인'으로 인정해주더군요. 단순한 대출이 아니라 큰 위로와 응원이었습니다."
+                  author="이OO"
+                  context="독립 영화감독"
+                  borderColor="border-charcoal-deep"
+                  contextColor="text-charcoal-deep"
+                />
+                <TestimonialCard
+                  quote="다음 전시 준비 자금이 막막했는데, 덕분에 무사히 작품을 완성하고 전시를 열 수 있었습니다. 이 제도가 없었다면 불가능했을 거예요."
+                  author="박OO"
+                  context="설치 미술가"
+                  borderColor="border-primary"
+                  contextColor="text-primary-strong"
+                />
+                <TestimonialCard
+                  quote="내 상환금이 다른 동료 예술가에게 희망이 된다는 사실이 저를 더 책임감 있게 만듭니다. 우리는 서로의 안전망입니다."
+                  author="최OO"
+                  context="뮤지컬 배우"
+                  borderColor="border-primary-strong"
+                  contextColor="text-primary-strong"
+                />
+              </>
+            )}
+          </div>
+        </div>
+      </Section>
+
       {/* 도입: 금융의 재정의 */}
-      <Section variant="white" prevVariant="canvas">
+      <Section variant="white" prevVariant="white">
         <div className="container-max">
           <div className="max-w-3xl mx-auto text-balance">
             <SectionTitle className="mb-8">
@@ -596,7 +677,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
                   >
                     출품 작가들의 작품을 구매
                   </Link>
-                  하면 판매 수익이 고리대금에 고통받는 예술인들을 돕는 기금이 됩니다.
+                  하면 판매 수익이 예술인 상호부조 기금이 되어 다음 작가의 저금리 대출로 이어집니다.
                 </p>
               </>
             )}

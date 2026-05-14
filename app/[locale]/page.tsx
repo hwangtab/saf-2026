@@ -99,9 +99,11 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
   const t = await getTranslations({ locale, namespace: 'home' });
   const tStat = await getTranslations({ locale, namespace: 'statistics' });
 
+  // 매뉴얼 4.6 A1.2 — 메인 "고리대금 48.6%" 통계 제거 (/our-reality로 이전).
+  // 매뉴얼 3.5 메인 신뢰 시그널 5~10% 절제 원칙 + Part 8.4 메커니즘 라이브 카운터(354건/95%)에
+  // 부합하도록 회복 톤 통계 2종(누적 대출 354건·상환율 95%)으로 압축.
   const counterItems = [
-    { label: tStat('exclusionRate'), value: 84.9, unit: tStat('unitPercent') },
-    { label: tStat('predatoryLending'), value: 48.6, unit: tStat('unitPercent') },
+    { label: tStat('supportedArtists'), value: LOAN_COUNT, unit: tStat('unitPeople') },
     { label: tStat('repaymentRate'), value: 95, unit: tStat('unitPercent') },
   ];
 

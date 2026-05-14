@@ -38,8 +38,8 @@ export const revalidate = false;
 const PAGE_URL = `${SITE_URL}/about`;
 const PAGE_COPY = {
   ko: {
-    title: `씨앗페 소개 · 예술인 상호부조 캠페인 | ${ARTIST_COUNT}명 작가, ${LOAN_COUNT}건 대출`,
-    description: `씨앗페는 금융 차별에 맞서는 예술인 상호부조 캠페인입니다. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.`,
+    title: `씨앗페 소개 · 예술인 상호부조 플랫폼 | ${ARTIST_COUNT}명 작가, ${LOAN_COUNT}건 대출`,
+    description: `씨앗페는 금융 차별을 푸는 예술인 상호부조 플랫폼입니다. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품이 금융이 되는 구조를 소개합니다.`,
   },
   en: {
     title: 'About SAF · Mutual-Aid Campaign for Korean Artists',
@@ -485,7 +485,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <ShareButtonsWrapper
           url={PAGE_URL}
           title="씨앗페 소개 — 씨앗페 온라인"
-          description="작품 판매가 예술인 저금리 대출로 이어지는 상호부조 캠페인, 씨앗페를 소개합니다."
+          description="작품 판매가 예술인 저금리 대출로 이어지는 상호부조 플랫폼, 씨앗페를 소개합니다."
         />
       </PageHero>
 
