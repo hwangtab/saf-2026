@@ -1,11 +1,15 @@
 /**
- * 한국 현대미술 거장 6명 정의 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2.
+ * 한국 현대미술 거장 라인업 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2 기반, **운영 결정 반영**.
  *
- * 매뉴얼 결정: 씨앗페만의 가장 강력한 차별 자산. 페르소나 B에게 "왜 이 사이트인가" 즉시 전달.
- * 메인 페이지 [E] 영역에 6명 카드 노출 — 작가 페이지로 deep-link.
+ * 매뉴얼 9.2는 6명(오윤·박생광·신학철·민정기·이철수·박불똥)을 권장하나, 운영 정책상
+ * 작가가 의도적으로 hidden 상태일 수 있음 → 라인업은 **운영 큐레이션 결과**가 우선.
  *
- * 6인 라인업 (매뉴얼 9.2): 오윤·박생광·신학철·민정기·이철수·박불똥.
- * 생몰년·짧은 정체성 문구는 매뉴얼 4.8.2 강점 자산을 카피로 표현.
+ * 현재 라인업 (2026-05-14): 오윤·박생광·민정기·이철수·박불똥 (5명).
+ * - **신학철 제외**: 작품 전체가 의도적 비공개(is_hidden) 상태. 카드 cover 이미지 fetch 실패 +
+ *   작가 페이지가 비어 있어 deep-link 의미 없음. user 운영 결정으로 hidden 유지.
+ *
+ * 라인업 변경 시: lib/emerging-artists.ts의 MASTER_ARTIST_NAMES 동기화 필수
+ * (Sprint 4a/4c PR merge 후 import로 통합 예정).
  *
  * 정적 정의 — Supabase 부담 없이 빌드 시점에 카드 메타 확정. 작가별 대표작 이미지는
  * MasterArtists 컴포넌트에서 `getSupabaseArtworksByArtist` 첫 항목 fetch로 동적 결정.
@@ -39,14 +43,6 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: '1904–1985',
     taglineKo: '오방색 한국화의 거장',
     taglineEn: 'Master of obangsaek Korean painting',
-  },
-  {
-    artistName: '신학철',
-    artistNameEn: 'Shin Hak-chul',
-    yearsKo: '1943–',
-    yearsEn: 'b. 1943',
-    taglineKo: '현대사를 그린 회화의 거장',
-    taglineEn: 'Painter of modern Korean history',
   },
   {
     artistName: '민정기',
