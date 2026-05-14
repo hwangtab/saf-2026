@@ -173,6 +173,9 @@ export interface ArtworkCardData {
   size?: string;
   artist_en?: string;
   title_en?: string;
+  // 매뉴얼 5.8 매체별 진품 라벨용. category(회화·판화·사후판화·…) + edition(N/M 패턴) 노출.
+  category?: string;
+  edition?: string;
 }
 
 export interface Video {

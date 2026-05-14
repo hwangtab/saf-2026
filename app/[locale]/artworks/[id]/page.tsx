@@ -16,6 +16,8 @@ import {
 } from '@/lib/supabase-data';
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import { getMaterialLabel } from '@/lib/artwork-material';
+import { getMediumLabel } from '@/lib/medium-labels';
+import PrideBox from '@/components/features/PrideBox';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
@@ -217,6 +219,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const displayArtist = locale === 'en' && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const hasActionablePrice = parsedPrice !== Infinity;
 
+  // 매뉴얼 5.8 매체별 진품 라벨 — Sprint 2 5 매체(회화·한국화·드로잉·판화·사후판화)만 처리.
+  const mediumLabel = getMediumLabel({ category: artwork.category, edition: artwork.edition });
+  const mediumLabelText = mediumLabel ? (locale === 'en' ? mediumLabel.en : mediumLabel.ko) : null;
+
   // Generate JSON-LD schemas — breadcrumb에 카테고리 계층 포함
   const categoryBreadcrumb = artwork.category
     ? {
@@ -410,6 +416,19 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </p>
               </header>
 
+              {/* 매뉴얼 5.8 매체별 진품 라벨 박스 — Sprint 2 5 매체만 노출.
+                  작품 detail [2] 진품성 정체성 영역. 우측 column header 직후, 스펙 테이블 위. */}
+              {mediumLabelText && (
+                <div className="rounded-2xl border border-gray-200 bg-canvas-soft px-6 py-5 shadow-sm">
+                  <p className="text-xs uppercase tracking-widest text-charcoal-muted mb-1">
+                    {locale === 'en' ? 'Authenticity' : '진품성'}
+                  </p>
+                  <p className="text-xl md:text-2xl font-bold text-charcoal-deep break-keep">
+                    {mediumLabelText}
+                  </p>
+                </div>
+              )}
+
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
                   {/* 분류 */}
@@ -602,6 +621,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
             artworks={recentlySold}
             totalCount={totalSoldCount}
             locale={locale}
+          />
+
+          {/* 매뉴얼 8.3 자긍심 박스 — 작품 detail 마지막 [13] 영역.
+              회복 서사 4원칙(결말=회복 / 주체=컬렉터 / 시간=현재진행형 / 위치=정체성 마무리). */}
+          <PrideBox
+            artwork={{ category: artwork.category, edition: artwork.edition }}
+            locale={locale === 'en' ? 'en' : 'ko'}
           />
         </article>
       </Section>

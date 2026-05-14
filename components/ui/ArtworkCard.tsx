@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { containsHangul } from '@/lib/search-utils';
 import { getMaterialLabel } from '@/lib/artwork-material';
+import { getMediumLabel } from '@/lib/medium-labels';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 type ArtworkCardTheme = 'light' | 'dark';
@@ -220,6 +221,12 @@ function ArtworkCard({
   const showMaterial = isDisplayable(artwork.material);
   const showSize = isDisplayable(artwork.size);
 
+  // 매뉴얼 5.8 매체별 진품 라벨. Sprint 2 5 매체(회화·한국화·드로잉·판화·사후판화)만 처리,
+  // 나머지는 null → 미노출. sold 작품은 sold-date 배지와 겹쳐서 숨김.
+  const mediumLabel = getMediumLabel(artwork);
+  const showMediumLabel = mediumLabel && !artwork.sold;
+  const mediumLabelText = locale === 'en' ? mediumLabel?.en : mediumLabel?.ko;
+
   if (variant === 'slider') {
     return (
       // Link는 Embla의 슬라이드 요소이므로 transition-transform을 걸면 안 됨
@@ -261,6 +268,11 @@ function ArtworkCard({
             <p className="text-xs text-gray-500 truncate">
               {getSafeArtist(artwork, unknownArtistLabel, locale)}
             </p>
+            {showMediumLabel && (
+              <p className="text-[10px] font-semibold text-primary-strong mt-1 truncate uppercase tracking-wide">
+                {mediumLabelText}
+              </p>
+            )}
             <p className="text-sm font-semibold text-charcoal mt-1">{localizedPrice}</p>
           </div>
         </div>
@@ -324,6 +336,11 @@ function ArtworkCard({
         )}
         {artwork.sold && artwork.sold_at && (
           <SoldDateBadge soldAt={artwork.sold_at} variant="gallery" locale={locale} />
+        )}
+        {showMediumLabel && (
+          <div className="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase rounded bg-canvas-soft/95 backdrop-blur-sm text-charcoal-deep shadow-sm">
+            {mediumLabelText}
+          </div>
         )}
       </div>
 
