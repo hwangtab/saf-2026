@@ -143,18 +143,18 @@ export interface BuyerEmailData {
 
 const BUYER_EMAIL_SUBJECTS: Record<EmailLocale, Record<BuyerEmailType, string>> = {
   ko: {
-    payment_confirmed: '[씨앗페] 결제가 완료되었습니다',
+    payment_confirmed: '[씨앗페] 감사합니다. 작품을 준비하고 있습니다',
     virtual_account_issued: '[씨앗페] 가상계좌 입금 안내',
-    deposit_confirmed: '[씨앗페] 입금이 확인되었습니다',
+    deposit_confirmed: '[씨앗페] 입금이 확인되었습니다. 작품을 준비하고 있습니다',
     shipped: '[씨앗페] 작품이 발송되었습니다',
     delivered: '[씨앗페] 작품이 배송 완료되었습니다',
     refunded: '[씨앗페] 환불이 처리되었습니다',
     auto_cancelled: '[씨앗페] 주문이 자동 취소되었습니다',
   },
   en: {
-    payment_confirmed: '[SAF] Your payment is complete',
+    payment_confirmed: "[SAF] Thank you. We're preparing your artwork",
     virtual_account_issued: '[SAF] Virtual account deposit instructions',
-    deposit_confirmed: '[SAF] Your deposit has been confirmed',
+    deposit_confirmed: '[SAF] Deposit confirmed — preparing your artwork',
     shipped: '[SAF] Your artwork has shipped',
     delivered: '[SAF] Your artwork has been delivered',
     refunded: '[SAF] Your refund has been processed',
