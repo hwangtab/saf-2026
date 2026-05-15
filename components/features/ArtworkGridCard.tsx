@@ -2,6 +2,7 @@ import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { containsHangul } from '@/lib/search-utils';
 import { getMaterialLabel } from '@/lib/artwork-material';
+import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import type { Artwork } from '@/types';
@@ -49,6 +50,11 @@ export default function ArtworkGridCard({
 }: ArtworkGridCardProps) {
   const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
   const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
+  // 매뉴얼 5.8 매체별 진품 라벨 — ArtworkCard와 동일 위치(좌상단). sold/reserved 시 우상단 배지와
+  // 겹치지 않게 좌상단. sold일 때는 라벨 자동 숨김 (배지는 그대로).
+  const mediumLabel = getMediumLabel({ category: artwork.category, edition: artwork.edition });
+  const showMediumLabel = mediumLabel && !artwork.sold;
+  const mediumLabelText = locale === 'en' ? mediumLabel?.en : mediumLabel?.ko;
   const rawMaterial = artwork.material;
   const hasMaterialForAlt =
     rawMaterial &&
@@ -106,6 +112,11 @@ export default function ArtworkGridCard({
         {artwork.reserved && !artwork.sold && (
           <div className="absolute top-3 right-3 px-3 py-1 text-sm rounded-md shadow-md bg-charcoal-deep text-white font-bold">
             {reservedLabel}
+          </div>
+        )}
+        {showMediumLabel && (
+          <div className="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase rounded bg-canvas-soft/95 backdrop-blur-sm text-charcoal-deep shadow-sm">
+            {mediumLabelText}
           </div>
         )}
       </div>

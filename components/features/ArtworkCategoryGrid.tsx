@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { containsHangul } from '@/lib/search-utils';
 import { getMaterialLabel } from '@/lib/artwork-material';
+import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import type { Artwork } from '@/types';
@@ -196,6 +197,10 @@ function InlineGridCard({
   const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
   const showMaterial = Boolean(artwork.material);
   const showSize = Boolean(artwork.size);
+  // 매뉴얼 5.8 매체별 진품 라벨 — ArtworkCard·ArtworkGridCard와 동일 좌상단 위치.
+  const mediumLabel = getMediumLabel({ category: artwork.category, edition: artwork.edition });
+  const showMediumLabel = mediumLabel && !artwork.sold;
+  const mediumLabelText = locale === 'en' ? mediumLabel?.en : mediumLabel?.ko;
 
   const isDark = theme === 'dark';
 
@@ -236,6 +241,11 @@ function InlineGridCard({
         {artwork.reserved && !artwork.sold && (
           <div className="absolute top-3 right-3 px-3 py-1 text-sm rounded-md shadow-md bg-charcoal-deep text-white font-bold">
             {reservedLabel}
+          </div>
+        )}
+        {showMediumLabel && (
+          <div className="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase rounded bg-canvas-soft/95 backdrop-blur-sm text-charcoal-deep shadow-sm">
+            {mediumLabelText}
           </div>
         )}
       </div>

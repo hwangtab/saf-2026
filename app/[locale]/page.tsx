@@ -12,6 +12,7 @@ import NowShowing from '@/components/features/NowShowing';
 import MasterArtists from '@/components/features/MasterArtists';
 import EntryLevelArtworks from '@/components/features/EntryLevelArtworks';
 import EmergingArtists from '@/components/features/EmergingArtists';
+import JoinCommunityCTA from '@/components/features/JoinCommunityCTA';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
@@ -186,10 +187,13 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           페르소나 B "내가 먼저 발견" 자긍심 자극. 거장 6명 제외 + 작가별 1점 dedupe + sold/reserved 제외. */}
       <EmergingArtists locale={locale} />
 
-      {/* FAQ — 직전이 EmergingArtists variant="white" (Impact Stats 제거 후속).
-          354건/95% 통계는 AboutIdentity ribbon에 이미 노출 + Mission Banner [F]에 "어떻게 가능한가요?
-          → /our-reality" 동선 + Footer 회원 가입 CTA로 충분. 매뉴얼 4.5 "예술인 금융 현실" 죄책감 톤 제거. */}
-      <Section variant="canvas" prevVariant="white" className="pb-24 md:pb-32">
+      {/* 회원 가입 CTA [L] — 매뉴얼 6.4 [L].
+          Impact Stats 제거 후 메인에서 회원 가입 동선이 Footer만 남았던 회귀 보강.
+          작품 구매 외 더 깊이 함께하는 보조 동선, 절제된 톤. */}
+      <JoinCommunityCTA locale={locale} />
+
+      {/* FAQ — 직전이 JoinCommunityCTA variant="canvas-soft". */}
+      <Section variant="canvas" prevVariant="canvas-soft" className="pb-24 md:pb-32">
         <div className="container-max">
           <SectionTitle className="mb-12">{t('faqTitle')}</SectionTitle>
           {/* FAQ도 동일 — Suspense fallback(30vh) → real content 변동으로 CLS 누적.
