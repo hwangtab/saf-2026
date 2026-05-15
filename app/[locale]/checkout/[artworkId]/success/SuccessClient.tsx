@@ -6,6 +6,7 @@ import LinkButton from '@/components/ui/LinkButton';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { formatUsd } from '@/lib/utils/currency';
+import { LOAN_COUNT } from '@/lib/site-stats';
 
 interface Props {
   paymentKey: string;
@@ -247,7 +248,8 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
     );
   }
 
-  // Success
+  // Success — 매뉴얼 8.6 결제 완료 자긍심 메시지
+  const loanCountFormatted = LOAN_COUNT.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR');
   return (
     <div
       className={`min-h-screen bg-canvas-soft flex items-center justify-center pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
@@ -255,10 +257,14 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
       <div className="max-w-lg w-full mx-auto px-4">
         <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
           <p className="text-5xl mb-4">✓</p>
-          <h1 className="text-2xl font-bold text-charcoal mb-2">{t('paymentSuccess')}</h1>
-          <p className="text-sm text-gray-500 mb-8">{t('successThankYou')}</p>
+          <h1 className="text-2xl font-bold text-charcoal mb-2 break-keep text-balance">
+            {t('paymentSuccess')}
+          </h1>
+          <p className="text-sm text-gray-500 mb-8 break-keep text-balance">
+            {t('successThankYou')}
+          </p>
 
-          <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-8">
+          <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-6">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">{t('orderNo')}</span>
               <span className="font-mono font-semibold text-charcoal">{orderId}</span>
@@ -269,6 +275,16 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
                 {formatAmount(Number(amount), currency)}
               </span>
             </div>
+          </div>
+
+          {/* 매뉴얼 8.6 자긍심 박스 — 회복 서사 톤. 죄책감·평가 톤 회피하고 컬렉터를 "동료"로 초대. */}
+          <div className="rounded-xl border border-gray-200 bg-canvas-soft p-5 mb-8 text-left">
+            <p className="text-sm font-semibold text-charcoal-deep mb-1.5 break-keep text-balance">
+              {t('successPrideHead')}
+            </p>
+            <p className="text-sm text-charcoal-muted leading-relaxed break-keep text-balance">
+              {t('successPrideBody', { loanCount: loanCountFormatted })}
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
