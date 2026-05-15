@@ -35,7 +35,7 @@ import { getCategoryLabel } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
-import ArtworkCard from '@/components/ui/ArtworkCard';
+import ArtworkGridCard from '@/components/features/ArtworkGridCard';
 import { shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
@@ -114,6 +114,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
     getTranslations({ locale, namespace: 'artworkDetail' }),
     getTranslations({ locale, namespace: 'breadcrumbs' }),
   ]);
+  const tCard = await getTranslations({ locale, namespace: 'artworkCard' });
 
   if (!artwork) {
     // 삭제·숨김 작품은 not-found.tsx 렌더(noindex 메타).
@@ -581,7 +582,18 @@ export default async function ArtworkDetailPage({ params }: Props) {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {otherWorks.map((other) => (
-                  <ArtworkCard key={other.id} artwork={other} variant="gallery" />
+                  <ArtworkGridCard
+                    key={other.id}
+                    artwork={other}
+                    locale={locale}
+                    untitledLabel={tCard('untitled')}
+                    unknownArtistLabel={tCard('unknownArtist')}
+                    pendingInfoLabel={tCard('pendingInfo')}
+                    originalKoreanDataLabel={tCard('originalKoreanData')}
+                    soldLabel={tCard('soldBadge')}
+                    reservedLabel={tCard('reservedBadge')}
+                    sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
+                  />
                 ))}
               </div>
             </div>
@@ -610,7 +622,18 @@ export default async function ArtworkDetailPage({ params }: Props) {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {sameCategoryWorks.map((other) => (
-                  <ArtworkCard key={other.id} artwork={other} variant="gallery" />
+                  <ArtworkGridCard
+                    key={other.id}
+                    artwork={other}
+                    locale={locale}
+                    untitledLabel={tCard('untitled')}
+                    unknownArtistLabel={tCard('unknownArtist')}
+                    pendingInfoLabel={tCard('pendingInfo')}
+                    originalKoreanDataLabel={tCard('originalKoreanData')}
+                    soldLabel={tCard('soldBadge')}
+                    reservedLabel={tCard('reservedBadge')}
+                    sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
+                  />
                 ))}
               </div>
             </div>
