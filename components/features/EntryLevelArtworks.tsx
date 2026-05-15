@@ -52,13 +52,17 @@ export default async function EntryLevelArtworks({ locale }: { locale: string })
             />
           ))}
         </div>
-        <div className="text-center mt-10">
+        {/* viewAll CTA — ArtworkCategoryGrid 카테고리 섹션과 동일 rounded-full 버튼 톤으로 정합. */}
+        <div className="mt-10 md:mt-12 flex justify-center">
           <Link
             href="/artworks"
-            className="inline-flex items-center gap-1 text-sm font-semibold text-primary-strong hover:underline"
+            className="group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm md:text-base font-semibold border border-charcoal/20 text-charcoal bg-white hover:bg-canvas hover:-translate-y-0.5 hover:shadow-md transition-[transform,box-shadow,background-color] duration-300"
           >
             {t('viewAll')}
-            <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            <ArrowRight
+              aria-hidden="true"
+              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+            />
           </Link>
         </div>
       </div>
