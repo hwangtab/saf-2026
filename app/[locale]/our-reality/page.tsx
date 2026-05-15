@@ -405,9 +405,13 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
         <div className="container-max">
           <div className="mb-12">
             <Ban aria-hidden="true" className="mb-4 h-12 w-12 text-primary-strong" />
-            <span className="text-sm font-bold text-primary-strong uppercase">STAGE 1</span>
+            <span className="text-sm font-bold text-primary-strong uppercase">
+              {isEnglish ? 'STRUCTURE 1' : '구조 1'}
+            </span>
             <SectionTitle className="mb-4">
-              {isEnglish ? 'Closed doors: banks turn artists away' : '닫힌 문: 은행이 거절하다'}
+              {isEnglish
+                ? 'Access gap: artists outside mainstream banking'
+                : '접근의 격차: 제도권 금융과 예술인'}
             </SectionTitle>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               {isEnglish ? (
@@ -479,11 +483,13 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
         <div className="container-max">
           <div className="mb-12">
             <AlertTriangle aria-hidden="true" className="mb-4 h-12 w-12 text-primary-strong" />
-            <span className="text-sm font-bold text-primary-strong uppercase">STAGE 2</span>
+            <span className="text-sm font-bold text-primary-strong uppercase">
+              {isEnglish ? 'STRUCTURE 2' : '구조 2'}
+            </span>
             <SectionTitle className="mb-4">
               {isEnglish
-                ? 'The cliff: pushed into predatory lending'
-                : '낭떠러지: 고리대금로 내몰리다'}
+                ? 'High-interest reliance: a structural detour'
+                : '고금리 의존: 구조가 만든 우회로'}
             </SectionTitle>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               {isEnglish ? (
@@ -548,9 +554,13 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
             <div className="text-5xl mb-4" aria-hidden="true">
               💔
             </div>
-            <span className="text-sm font-bold text-danger uppercase">STAGE 3</span>
+            <span className="text-sm font-bold text-danger uppercase">
+              {isEnglish ? 'STRUCTURE 3' : '구조 3'}
+            </span>
             <SectionTitle className="mb-4">
-              {isEnglish ? 'Collapse: creative work stops' : '파괴: 창작이 멈춘다'}
+              {isEnglish
+                ? 'Creative-time disruption: a chain effect'
+                : '창작 시간의 단절: 연쇄 효과'}
             </SectionTitle>
             <p className="text-xl text-charcoal-muted max-w-2xl leading-relaxed">
               {isEnglish ? (
@@ -604,7 +614,9 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
       <Section variant="white" prevVariant="red">
         <div className="container-max max-w-3xl">
           <SectionTitle className="mb-8">
-            {isEnglish ? 'This is not a personal failure' : '이것은 개인의 문제가 아닙니다'}
+            {isEnglish
+              ? 'This is a structural gap, not a personal one'
+              : '개인의 문제가 아닌, 구조의 문제'}
           </SectionTitle>
           <div className="space-y-6 text-lg text-charcoal">
             {isEnglish ? (
