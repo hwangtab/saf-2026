@@ -43,9 +43,10 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
   const line3Value = isEn
     ? 'a new ₩3,000,000 path of low-interest support'
     : '새로 열리는 ₩3,000,000의 길';
+  // SuccessClient / 결제 이메일 자긍심 박스와 "회복의 길" 키워드 통일 — 매뉴얼 8.5/8.6 회복 서사 톤 정합.
   const footer = isEn
-    ? `${loanCountFormatted} artists have walked this path; 95% returned to make it possible for the next.`
-    : `${loanCountFormatted}명이 이 길을 걸었고, 95%가 다음 사람을 위해 돌아왔습니다.`;
+    ? `${loanCountFormatted} artists have walked this path of recovery; 95% returned to open it for the next.`
+    : `${loanCountFormatted}명이 이 회복의 길을 걸었고, 95%가 다음 사람을 위해 돌아왔습니다.`;
 
   return (
     <section
