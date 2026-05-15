@@ -166,7 +166,7 @@ export function generateArtworkPurchaseFAQ(locale: 'ko' | 'en' = 'ko') {
         },
         {
           question: '작품 판매 수익금은 어디에 쓰이나요?',
-          answer: `작품 판매 수익이 ${CONTACT.ORGANIZATION_NAME}의 예술인 상호부조 기금이 되어, 고리대금에 고통받는 예술인들에게 저금리 대출로 지원됩니다.`,
+          answer: `작품 판매 수익이 ${CONTACT.ORGANIZATION_NAME}의 예술인 상호부조 기금이 되어, 고금리 시장에 의존하던 예술인들에게 저금리 대출로 지원됩니다.`,
         },
       ];
 

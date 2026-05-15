@@ -38,25 +38,27 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
   ];
 
   return (
-    <div className={cn('flex flex-wrap justify-center gap-2', className)}>
+    // 모바일 narrow(320~375px)에서 5개 뱃지(영문 라벨 최장 28자)가 wrap 깨지지 않게
+    // gap·padding·text 크기를 모바일에서 축소. md(768px+)부터 기존 detail 크기 유지.
+    <div className={cn('flex flex-wrap justify-center gap-1.5 md:gap-2', className)}>
       {variant === 'detail' && (
         // formattedDate는 client `new Date()`라 SSR 시점·hydration 시점 자정/timezone 차이로
         // text content가 미세하게 어긋나 React error #418 발생 가능. 이 영역에선 prop
         // drilling 부담이 커 suppressHydrationWarning으로 hydration mismatch만 silent 처리.
         <span
-          className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-success/10 border border-success/20 rounded-full text-xs font-medium text-success-a11y"
+          className="inline-flex items-center justify-center gap-1 px-2.5 py-1 md:px-3 md:py-1.5 bg-success/10 border border-success/20 rounded-full text-[11px] md:text-xs font-medium text-success-a11y"
           suppressHydrationWarning
         >
-          <Clock className="w-3.5 h-3.5 shrink-0" />
+          <Clock className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
           {t('alwaysOpen', { date: formattedDate })}
         </span>
       )}
       {badges.map(({ icon: Icon, label }) => (
         <span
           key={label}
-          className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-full text-xs font-medium text-gray-700"
+          className="inline-flex items-center justify-center gap-1 px-2.5 py-1 md:px-3 md:py-1.5 bg-gray-50 border border-gray-100 rounded-full text-[11px] md:text-xs font-medium text-gray-700"
         >
-          <Icon className="w-3.5 h-3.5 shrink-0 text-primary" />
+          <Icon className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 text-primary" />
           {label}
         </span>
       ))}
