@@ -315,16 +315,18 @@ export async function sendArtistApprovalEmail(to: string, artistName: string): P
 </body>
 </html>`;
 
-  await resendFetch(
+  // 작가 승인 이메일은 관리자가 명시적으로 발송하는 액션 — 실패 시 throw해서 감사 로그에 허위 성공 기록 방지
+  const ok = await resendFetch(
     { apiKey, from, to, subject: '[씨앗페] 작가 대시보드 이용 안내', html },
     '[artist-approval]'
   );
+  if (!ok) throw new Error('이메일 발송에 실패했습니다. Resend API 응답을 확인하세요.');
 }
 
 async function resendFetch(
   opts: { apiKey: string; from: string; to: string | string[]; subject: string; html: string },
   logPrefix: string
-): Promise<void> {
+): Promise<boolean> {
   for (let attempt = 0; attempt < 2; attempt++) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
@@ -347,7 +349,7 @@ async function resendFetch(
 
       clearTimeout(timeout);
 
-      if (res.ok) return;
+      if (res.ok) return true;
 
       const body = await res.text();
 
@@ -359,7 +361,7 @@ async function resendFetch(
       }
 
       console.error(`${logPrefix} Resend returned ${res.status}: ${body.slice(0, 500)}`);
-      return;
+      return false;
     } catch (err) {
       clearTimeout(timeout);
 
@@ -371,7 +373,8 @@ async function resendFetch(
       }
 
       console.error(`${logPrefix} Resend email failed after retry:`, err);
-      return;
+      return false;
     }
   }
+  return false;
 }

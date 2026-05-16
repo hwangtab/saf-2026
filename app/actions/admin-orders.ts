@@ -67,12 +67,14 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
   const SLA_HOURS = 72;
   const slaThreshold = new Date(Date.now() - SLA_HOURS * 3600 * 1000);
 
+  // PostgREST 기본 상한 1000행 — 초과 시 SLA 위반 행 유실 방지용 명시적 상한
   let query = supabase
     .from('orders')
     .select(
       'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, escalated_at, artwork_id, artworks(title, images, artists(name_ko))'
     )
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(2000);
 
   if (filters.status) {
     query = query.eq('status', filters.status);

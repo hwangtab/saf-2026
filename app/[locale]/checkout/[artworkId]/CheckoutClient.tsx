@@ -113,6 +113,7 @@ export default function CheckoutClient({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
+  const checkoutBegunRef = useRef(false);
 
   async function handlePayment() {
     setError(null);
@@ -151,14 +152,17 @@ export default function CheckoutClient({
     setSubmitting(true);
     let createdOrderNo: string | null = null;
 
-    trackEvent('begin_checkout', {
-      value: totalAmount,
-      currency: 'KRW',
-      artwork_id: artworkId,
-      artwork_title: artworkTitle,
-      artist,
-      payment_method: paymentChoice,
-    });
+    if (!checkoutBegunRef.current) {
+      checkoutBegunRef.current = true;
+      trackEvent('begin_checkout', {
+        value: totalAmount,
+        currency: 'KRW',
+        artwork_id: artworkId,
+        artwork_title: artworkTitle,
+        artist,
+        payment_method: paymentChoice,
+      });
+    }
 
     try {
       // 계좌이체(TRANSFER): Toss 거치지 않고 무통장 입금 흐름.
