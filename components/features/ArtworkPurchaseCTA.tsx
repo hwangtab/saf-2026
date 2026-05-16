@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
 import { trackEvent } from '@/lib/analytics/track';
@@ -61,6 +62,16 @@ export default function ArtworkPurchaseCTA({
 }: ArtworkPurchaseCTAProps) {
   const t = useTranslations('artworkDetail');
   const paymentMode = process.env.NEXT_PUBLIC_PAYMENT_MODE;
+
+  useEffect(() => {
+    trackEvent('view_item', {
+      artwork_id: artworkId,
+      artwork_title: artworkTitle,
+      artist,
+    });
+    // 마운트 1회만 — artworkId 변경은 페이지 전체 재마운트이므로 deps 불필요
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // UUID 형식이 아닌 legacy static 작품은 Supabase DB에 없으므로 Toss 결제 불가
   const isDbArtwork = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
