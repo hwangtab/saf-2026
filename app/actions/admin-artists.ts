@@ -785,6 +785,8 @@ export async function setArtistProfileStatus(artistId: string, status: ArtistPro
 
   revalidatePath('/admin/artists');
   revalidatePath(`/admin/artists/${artistId}`);
+  // 작가 대시보드는 profiles.status로 접근 제어 — 상태 변경 즉시 캐시 무효화
+  revalidatePath('/dashboard', 'layout');
 
   const statusLabel: Record<ArtistProfileStatus, string> = {
     pending: '승인 대기',

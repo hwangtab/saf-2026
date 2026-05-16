@@ -135,7 +135,7 @@ function ArtistStatusControls({
           <button
             type="button"
             onClick={() => handleStatusChange('active')}
-            disabled={isChanging}
+            disabled={isChanging || isSendingEmail}
             className="rounded-md bg-success/10 border border-success/30 px-3 py-1.5 text-xs font-medium text-success-a11y hover:bg-success/20 disabled:opacity-50"
           >
             활성으로 변경
@@ -145,7 +145,7 @@ function ArtistStatusControls({
           <button
             type="button"
             onClick={() => handleStatusChange('pending')}
-            disabled={isChanging}
+            disabled={isChanging || isSendingEmail}
             className="rounded-md bg-gray-100 border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200 disabled:opacity-50"
           >
             승인 대기로 변경
@@ -155,7 +155,7 @@ function ArtistStatusControls({
           <button
             type="button"
             onClick={() => handleStatusChange('suspended')}
-            disabled={isChanging}
+            disabled={isChanging || isSendingEmail}
             className="rounded-md bg-danger/10 border border-danger/30 px-3 py-1.5 text-xs font-medium text-danger-a11y hover:bg-danger/20 disabled:opacity-50"
           >
             정지

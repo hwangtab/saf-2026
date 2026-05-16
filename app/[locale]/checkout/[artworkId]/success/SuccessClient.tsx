@@ -96,11 +96,16 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
         }
 
         if (data.alreadyPaid || data.status === 'DONE') {
-          trackEvent('purchase', {
-            transaction_id: orderId,
-            value: Number(amount),
-            currency,
-          });
+          // sessionStorage로 새로고침 중복 발화 방지 — confirmedRef는 렌더 수명에만 유효
+          const purchaseKey = `purchase_fired_${orderId}`;
+          if (!sessionStorage.getItem(purchaseKey)) {
+            sessionStorage.setItem(purchaseKey, '1');
+            trackEvent('purchase', {
+              transaction_id: orderId,
+              value: Number(amount),
+              currency,
+            });
+          }
           setPageState('success');
         } else if (data.status === 'WAITING_FOR_DEPOSIT') {
           setVirtualAccount(data.virtualAccount ?? null);

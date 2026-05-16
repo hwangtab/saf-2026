@@ -165,11 +165,6 @@ export default function CheckoutClient({
       // createBankTransferOrder가 awaiting_deposit + artwork=reserved 처리 후
       // 우리 success page로 redirect하여 기업은행(IBK) 계좌번호 안내.
       if (paymentChoice === 'TRANSFER') {
-        trackEvent('add_payment_info', {
-          value: totalAmount,
-          currency: 'KRW',
-          payment_type: 'TRANSFER',
-        });
         const result = await createBankTransferOrder({
           artworkId,
           buyerName,
@@ -188,6 +183,12 @@ export default function CheckoutClient({
           setSubmitting(false);
           return;
         }
+        // 주문 생성 성공 후에만 이벤트 발화 — 실패 경로에서 phantom hit 방지
+        trackEvent('add_payment_info', {
+          value: totalAmount,
+          currency: 'KRW',
+          payment_type: 'TRANSFER',
+        });
         // success page에 method=BANK_TRANSFER로 redirect — confirm 호출 없이 바로 안내
         window.location.href = `${window.location.origin}/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
         await new Promise(() => {});
