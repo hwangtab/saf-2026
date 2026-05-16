@@ -15,7 +15,10 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   await requireAdmin();
   const params = await searchParams;
 
-  const orders = await getOrders({ status: params.status, q: params.q });
+  // sla_overdue, escalated 는 UI 가상 필터 — DB status 컬럼에 없으므로 제거 후 전체 조회
+  const VIRTUAL_FILTERS = new Set(['sla_overdue', 'escalated']);
+  const dbStatus = params.status && !VIRTUAL_FILTERS.has(params.status) ? params.status : undefined;
+  const orders = await getOrders({ status: dbStatus, q: params.q });
 
   return (
     <div className="space-y-6">

@@ -404,6 +404,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         setShowEscalationInput(false);
         setEscalationNote('');
         toast.success('에스컬레이션이 마킹되었습니다.');
+        router.refresh();
       } catch (err) {
         toast.error(err instanceof Error ? err.message : '에스컬레이션 마킹에 실패했습니다.');
       }
@@ -416,6 +417,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         await setOrderEscalation(order.id, null);
         setEscalatedAt(null);
         toast.success('에스컬레이션이 해제되었습니다.');
+        router.refresh();
       } catch (err) {
         toast.error(err instanceof Error ? err.message : '에스컬레이션 해제에 실패했습니다.');
       }
