@@ -283,7 +283,7 @@ export default async function TransparencyPage({
           <div className="container-max">
             <SectionTitle className="mb-12">Cumulative Impact</SectionTitle>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              <StatCard value="354" label="Total loans issued" variant="highlight" />
+              <StatCard value={String(LOAN_COUNT)} label="Total loans issued" variant="highlight" />
               <StatCard value="~KRW 700M" label="Total support deployed" variant="highlight" />
               <StatCard value="95%" label="Repayment rate" variant="highlight" />
               <StatCard
