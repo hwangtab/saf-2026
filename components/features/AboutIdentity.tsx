@@ -1,7 +1,8 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
-import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+import { LOAN_COUNT } from '@/lib/site-stats';
+import { getLiveStats } from '@/lib/live-stats';
 import { ArrowRight } from 'lucide-react';
 
 /**
@@ -20,12 +21,13 @@ import { ArrowRight } from 'lucide-react';
  */
 export default async function AboutIdentity({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'home.aboutIdentity' });
+  const { artistCount, artworkCount } = await getLiveStats();
 
   return (
     <Section variant="canvas-soft" padding="sm" className="py-12 md:py-16">
       <div className="container-max text-center">
         <h2 className="text-2xl md:text-4xl font-bold text-charcoal-deep mb-3 break-keep text-balance">
-          {t('headline', { artistCount: ARTIST_COUNT, artworkCount: ARTWORK_COUNT })}
+          {t('headline', { artistCount, artworkCount })}
         </h2>
         <p className="text-base md:text-lg text-charcoal-muted mb-8 text-balance">
           {t('subtitle')}
@@ -41,7 +43,7 @@ export default async function AboutIdentity({ locale }: { locale: string }) {
           <div>
             <p className="text-eyebrow text-charcoal-muted mb-1">{t('statArtistsLabel')}</p>
             <p className="text-xl md:text-2xl font-bold text-charcoal-deep">
-              {t('statArtistsValue', { artistCount: ARTIST_COUNT })}
+              {t('statArtistsValue', { artistCount })}
             </p>
           </div>
           <div className="hidden md:block h-8 w-px bg-gray-200" aria-hidden="true" />

@@ -13,7 +13,7 @@ import { ArrowRight } from 'lucide-react';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { SITE_URL, CONTACT } from '@/lib/constants';
-import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+import { LOAN_COUNT } from '@/lib/site-stats';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import {
@@ -110,10 +110,11 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
-  // ICU 변수 한 번에 — 토큰에 없는 키는 next-intl이 무시. lib/site-stats.ts 단일 출처.
+  // ICU 변수 — artworks 배열(Supabase 실시간)에서 직접 파생해 정적 상수와 불일치 방지.
+  const artistCount = new Set(artworks.map((a) => a.artist).filter(Boolean)).size;
   const counts = {
-    artistCount: ARTIST_COUNT,
-    artworkCount: ARTWORK_COUNT,
+    artistCount,
+    artworkCount: artworks.length,
     loanCount: LOAN_COUNT,
   };
 
@@ -246,7 +247,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
               {t('introHeading')}
             </h2>
             <div className="space-y-4 text-charcoal text-base md:text-lg leading-relaxed">
-              <p>{t('introParagraph1', { artistCount: ARTIST_COUNT })}</p>
+              <p>{t('introParagraph1', { artistCount })}</p>
               <p>{t('introParagraph2', { loanCount: LOAN_COUNT })}</p>
             </div>
           </div>

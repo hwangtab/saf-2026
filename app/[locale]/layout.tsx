@@ -6,7 +6,8 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
-import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+import { LOAN_COUNT } from '@/lib/site-stats';
+import { getLiveStats } from '@/lib/live-stats';
 import { BRAND_COLORS } from '@/lib/colors';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
@@ -66,16 +67,17 @@ export async function generateMetadata({
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
 
   const isEn = locale === 'en';
+  const { artistCount, artworkCount } = await getLiveStats();
 
   const ogTitle = isEn
-    ? `SAF Online | ${ARTWORK_COUNT} original Korean contemporary artworks`
-    : `씨앗페 온라인 | 한국 현대미술 원본 작품 ${ARTWORK_COUNT}점`;
+    ? `SAF Online | ${artworkCount} original Korean contemporary artworks`
+    : `씨앗페 온라인 | 한국 현대미술 원본 작품 ${artworkCount}점`;
   const ogDescription = isEn
-    ? `${ARTIST_COUNT} Korean artists offer paintings, prints, photography, and sculpture to support fellow artists. Sale proceeds fund ${LOAN_COUNT} low-rate mutual-aid loans. Free shipping, 7-day returns.`
-    : `${ARTIST_COUNT}명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 구매 수익이 ${LOAN_COUNT}건의 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`;
+    ? `${artistCount} Korean artists offer paintings, prints, photography, and sculpture to support fellow artists. Sale proceeds fund ${LOAN_COUNT} low-rate mutual-aid loans. Free shipping, 7-day returns.`
+    : `${artistCount}명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 구매 수익이 ${LOAN_COUNT}건의 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`;
   const twitterDescription = isEn
-    ? `${ARTIST_COUNT} Korean artists' paintings, prints, photography, and sculpture — purchases fund ${LOAN_COUNT} mutual-aid loans for fellow artists. Free shipping, 7-day returns.`
-    : `${ARTIST_COUNT}명 한국 작가의 회화·판화·사진·조각 원본. 구매가 ${LOAN_COUNT}건 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`;
+    ? `${artistCount} Korean artists' paintings, prints, photography, and sculpture — purchases fund ${LOAN_COUNT} mutual-aid loans for fellow artists. Free shipping, 7-day returns.`
+    : `${artistCount}명 한국 작가의 회화·판화·사진·조각 원본. 구매가 ${LOAN_COUNT}건 저금리 대출이 된 예술인 상호부조 기금. 무료 배송·7일 반품.`;
 
   return {
     generator: undefined,
@@ -85,7 +87,7 @@ export async function generateMetadata({
       default: tSeo('siteTitle'),
       template: tSeo('titleTemplate'),
     },
-    description: tSeo('siteDescription', { artistCount: ARTIST_COUNT, loanCount: LOAN_COUNT }),
+    description: tSeo('siteDescription', { artistCount, loanCount: LOAN_COUNT }),
     keywords: isEn
       ? 'Korean contemporary art, original artworks for sale, art gallery, artist mutual aid, SAF Online, Seed Art Festival, paintings, prints, sculpture, photography, Seoul art exhibition'
       : '한국 현대미술, 미술 작품 구매, 작품 원본 구매, 회화 원본, 판화 원본, 사진 작품, 조각 작품, 서울 전시회, 현대미술 전시회, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 예술인 금융 차별, 예술인 대출',

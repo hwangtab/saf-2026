@@ -3,7 +3,7 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import { Link } from '@/i18n/navigation';
 import { getCardStatus, getNowShowingCards, type NowShowingItem } from '@/lib/now-showing';
-import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
+import { getLiveStats } from '@/lib/live-stats';
 
 /**
  * Now Showing — 메인 페이지 hero 직하 시한성 큐레이션 전시·캠페인 섹션.
@@ -17,10 +17,8 @@ export default async function NowShowing({ locale }: { locale: string }) {
   if (items.length === 0) return null;
 
   const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
-
-  // ICU 변수 {artistCount}/{artworkCount}: allArtworks 슬라이드(강석태)만 사용. 다른 슬라이드는
-  // 토큰 없으면 next-intl이 무시 — 항상 동일 호출 안전. lib/site-stats.ts 단일 출처.
-  const counts = { artistCount: ARTIST_COUNT, artworkCount: ARTWORK_COUNT };
+  const { artistCount, artworkCount } = await getLiveStats();
+  const counts = { artistCount, artworkCount };
   const now = new Date();
   const cards = items.map((item) => ({
     item,

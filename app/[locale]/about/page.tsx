@@ -13,7 +13,8 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveEnRobots, EN_INDEXABLE_PAGES } from '@/lib/en-indexable';
 import { SITE_URL, EXTERNAL_LINKS } from '@/lib/constants';
-import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+import { LOAN_COUNT } from '@/lib/site-stats';
+import { getLiveStats } from '@/lib/live-stats';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
@@ -36,16 +37,6 @@ export const dynamic = 'force-static';
 export const revalidate = false;
 
 const PAGE_URL = `${SITE_URL}/about`;
-const PAGE_COPY = {
-  ko: {
-    title: `씨앗페 소개 · 예술인 상호부조 플랫폼 | ${ARTIST_COUNT}명 작가, ${LOAN_COUNT}건 대출`,
-    description: `한국스마트협동조합이 운영해온 예술인 상호부조 플랫폼. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품 한 점이 동료 작가의 다음 한 달이 되는 구조를 소개합니다.`,
-  },
-  en: {
-    title: 'About SAF · Mutual-Aid Platform for Korean Artists',
-    description: `A mutual-aid platform operated by Korea Smart Cooperative. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — each piece becomes a fellow artist's next month of practice.`,
-  },
-} as const;
 
 export async function generateMetadata({
   params,
@@ -55,7 +46,17 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const copy = PAGE_COPY[locale];
+  const { artistCount } = await getLiveStats();
+  const copy = {
+    ko: {
+      title: `씨앗페 소개 · 예술인 상호부조 플랫폼 | ${artistCount}명 작가, ${LOAN_COUNT}건 대출`,
+      description: `한국스마트협동조합이 운영해온 예술인 상호부조 플랫폼. ${artistCount}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품 한 점이 동료 작가의 다음 한 달이 되는 구조를 소개합니다.`,
+    },
+    en: {
+      title: 'About SAF · Mutual-Aid Platform for Korean Artists',
+      description: `A mutual-aid platform operated by Korea Smart Cooperative. ${artistCount} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — each piece becomes a fellow artist's next month of practice.`,
+    },
+  }[locale];
   const base = createStandardPageMetadata(copy.title, copy.description, PAGE_URL, '/about', locale);
   // /about은 영문 본문이 hand-written으로 충분히 풍부 — en도 indexable로 풀어 해외 컬렉터 entry 확보.
   const robots = resolveEnRobots(locale, EN_INDEXABLE_PAGES.has('/about'));
@@ -73,7 +74,17 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const pageCopy = PAGE_COPY[locale];
+  const { artistCount, artworkCount } = await getLiveStats();
+  const pageCopy = {
+    ko: {
+      title: `씨앗페 소개 · 예술인 상호부조 플랫폼 | ${artistCount}명 작가, ${LOAN_COUNT}건 대출`,
+      description: `한국스마트협동조합이 운영해온 예술인 상호부조 플랫폼. ${artistCount}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 작품 한 점이 동료 작가의 다음 한 달이 되는 구조를 소개합니다.`,
+    },
+    en: {
+      title: 'About SAF · Mutual-Aid Platform for Korean Artists',
+      description: `A mutual-aid platform operated by Korea Smart Cooperative. ${artistCount} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — each piece becomes a fellow artist's next month of practice.`,
+    },
+  }[locale];
   const pageUrl = buildLocaleUrl('/about', locale);
 
   const breadcrumbItems = [
@@ -100,7 +111,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
         <PageHero
           title="About SAF"
-          description={`A platform where each artwork becomes a fellow artist's next month of practice. ${ARTIST_COUNT} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — operated by Korea Smart Cooperative.`}
+          description={`A platform where each artwork becomes a fellow artist's next month of practice. ${artistCount} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — operated by Korea Smart Cooperative.`}
           breadcrumbItems={breadcrumbItems}
           customBackgroundImage={getHeroOverride('about')}
         >
@@ -148,7 +159,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               <StatCard
-                value={String(ARTIST_COUNT)}
+                value={String(artistCount)}
                 label="Solidarity artists"
                 variant="highlight"
               />
@@ -169,7 +180,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   step: '01',
                   Icon: Handshake,
                   label: 'Artists unite',
-                  desc: `${ARTIST_COUNT} artists voluntarily contribute works to the exhibition — not as victims, but as allies standing with peers.`,
+                  desc: `${artistCount} artists voluntarily contribute works to the exhibition — not as victims, but as allies standing with peers.`,
                 },
                 {
                   step: '02',
@@ -321,8 +332,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     SAF 2026
                   </h3>
                   <p className="text-sm text-white/80 leading-relaxed">
-                    Jan 14–26, Insa Art Center, Seoul. {ARTIST_COUNT} artists, {ARTWORK_COUNT}{' '}
-                    works. The largest SAF exhibition to date.
+                    Jan 14–26, Insa Art Center, Seoul. {artistCount} artists, {artworkCount} works.
+                    The largest SAF exhibition to date.
                   </p>
                   <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
                     View archive
@@ -480,7 +491,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
       <PageHero
         title="씨앗페 소개"
-        description={`작품 한 점이 동료 작가의 다음 한 달이 되는 플랫폼. ${ARTIST_COUNT}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 한국스마트협동조합이 운영해온 예술인 상호부조의 구조를 소개합니다.`}
+        description={`작품 한 점이 동료 작가의 다음 한 달이 되는 플랫폼. ${artistCount}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 한국스마트협동조합이 운영해온 예술인 상호부조의 구조를 소개합니다.`}
         breadcrumbItems={breadcrumbItems}
         customBackgroundImage={getHeroOverride('about')}
       >
@@ -528,7 +539,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             2022년 12월 첫 대출부터 2025년 9월까지의 누적 성과
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            <StatCard value={String(ARTIST_COUNT)} label="연대 작가" variant="highlight" />
+            <StatCard value={String(artistCount)} label="연대 작가" variant="highlight" />
             <StatCard value={`${LOAN_COUNT}건`} label="대출 실행" variant="highlight" />
             <StatCard value="~7억 원" label="누적 지원" variant="highlight" />
             <StatCard value="95%" label="상환율" variant="highlight" />
@@ -546,7 +557,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 step: '01',
                 Icon: Handshake,
                 label: '작가 연대',
-                desc: `${ARTIST_COUNT}명의 작가가 동료 예술인의 금융 차별에 맞서 자발적으로 작품을 출품합니다. 피해 당사자가 아닌, 연대자로서.`,
+                desc: `${artistCount}명의 작가가 동료 예술인의 금융 차별에 맞서 자발적으로 작품을 출품합니다. 피해 당사자가 아닌, 연대자로서.`,
               },
               {
                 step: '02',
@@ -684,7 +695,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   씨앗페 2026
                 </h3>
                 <p className="text-sm text-white/80 leading-relaxed">
-                  2026년 1월 14~26일, 인사아트센터. {ARTIST_COUNT}명 작가, {ARTWORK_COUNT}점 작품.
+                  2026년 1월 14~26일, 인사아트센터. {artistCount}명 작가, {artworkCount}점 작품.
                   역대 최대 규모의 씨앗페 전시.
                 </p>
                 <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">

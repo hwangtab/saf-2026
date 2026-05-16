@@ -15,7 +15,8 @@ import EmergingArtists from '@/components/features/EmergingArtists';
 import JoinCommunityCTA from '@/components/features/JoinCommunityCTA';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
-import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
+import { LOAN_COUNT } from '@/lib/site-stats';
+import { getLiveStats } from '@/lib/live-stats';
 import {
   generateExhibitionSchema,
   generateFAQSchema,
@@ -54,10 +55,11 @@ export async function generateMetadata({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'home' });
   const pageUrl = buildLocaleUrl('/', locale);
+  const { artistCount, artworkCount } = await getLiveStats();
 
   const counts = {
-    artistCount: ARTIST_COUNT,
-    artworkCount: ARTWORK_COUNT,
+    artistCount,
+    artworkCount,
     loanCount: LOAN_COUNT,
   };
 
@@ -100,11 +102,12 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'home' });
 
-  // ICU 변수 한 번에 — 토큰에 없는 키는 next-intl이 무시. 모든 호출처가 같은 객체를 받으면
-  // 신규 placeholder 도입 시 누락 회귀 차단. lib/site-stats.ts 단일 출처.
+  const { artistCount, artworkCount } = await getLiveStats();
+  // ICU 변수 한 번에 — 토큰에 없는 키는 next-intl이 무시.
+  // React.cache로 generateMetadata와 같은 Supabase fetch 결과 공유(중복 없음).
   const counts = {
-    artistCount: ARTIST_COUNT,
-    artworkCount: ARTWORK_COUNT,
+    artistCount,
+    artworkCount,
     loanCount: LOAN_COUNT,
   };
 

@@ -10,7 +10,7 @@ import { getHeroOverride } from '@/lib/hero-curation';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { CONTACT, EXHIBITION, EXTERNAL_LINKS, SITE_URL } from '@/lib/constants';
-import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
+import { getLiveStats } from '@/lib/live-stats';
 import { getSupabaseReviews } from '@/lib/supabase-data';
 import {
   generateExhibitionSchema,
@@ -30,16 +30,6 @@ export const dynamic = 'force-static';
 export const revalidate = 3600;
 
 const PAGE_URL = `${SITE_URL}/archive/2026`;
-const PAGE_COPY = {
-  ko: {
-    title: '2026 오프라인 전시 기록',
-    description: `서울 인사동 전시회 기록. 2026년 1월 14일~26일 인사아트센터에서 열린 씨앗페 전시 일정·포스터·도록을 확인하세요. ${ARTIST_COUNT}명 작가의 ${ARTWORK_COUNT}점 작품, 12일간의 전시 현장과 관람객 후기.`,
-  },
-  en: {
-    title: '2026 Offline Exhibition Archive',
-    description: `${ARTWORK_COUNT} original artworks by ${ARTIST_COUNT} Korean artists exhibited Jan 14–26, 2026 at Insa Art Center, Seoul. Campaign poster, digital catalog, and visitor reviews — proceeds funded the artist mutual-aid program.`,
-  },
-} as const;
 
 export async function generateMetadata({
   params,
@@ -49,7 +39,18 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const copy = PAGE_COPY[locale];
+  const { artistCount, artworkCount } = await getLiveStats();
+  const pageCopy = {
+    ko: {
+      title: '2026 오프라인 전시 기록',
+      description: `서울 인사동 전시회 기록. 2026년 1월 14일~26일 인사아트센터에서 열린 씨앗페 전시 일정·포스터·도록을 확인하세요. ${artistCount}명 작가의 ${artworkCount}점 작품, 12일간의 전시 현장과 관람객 후기.`,
+    },
+    en: {
+      title: '2026 Offline Exhibition Archive',
+      description: `${artworkCount} original artworks by ${artistCount} Korean artists exhibited Jan 14–26, 2026 at Insa Art Center, Seoul. Campaign poster, digital catalog, and visitor reviews — proceeds funded the artist mutual-aid program.`,
+    },
+  } as const;
+  const copy = pageCopy[locale];
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   return {
