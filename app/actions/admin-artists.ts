@@ -141,7 +141,7 @@ export async function getArtistById(id: string) {
   // — 안 그러면 PostgREST가 ambiguous로 거부해 admin 편집 진입이 깨짐.
   const { data, error } = await supabase
     .from('artists')
-    .select('*, profiles!artists_user_id_fkey(id, name, email)')
+    .select('*, profiles!artists_user_id_fkey(id, name, email, status)')
     .eq('id', id)
     .single();
 
@@ -756,6 +756,76 @@ export async function clearArtistNotice(artistId: string) {
       afterSnapshot: newRow,
       reversible: true,
     }
+  );
+
+  return { success: true };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Artist Status & Approval
+// ─────────────────────────────────────────────────────────────────────────────
+
+type ArtistProfileStatus = 'pending' | 'active' | 'suspended';
+
+/** 연결된 사용자 계정의 profiles.status를 직접 변경한다. */
+export async function setArtistProfileStatus(artistId: string, status: ArtistProfileStatus) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: artist, error: artistErr } = await supabase
+    .from('artists')
+    .select('user_id, name_ko')
+    .eq('id', artistId)
+    .single();
+  if (artistErr || !artist) throw new Error('작가 정보를 찾을 수 없습니다.');
+  if (!artist.user_id) throw new Error('연결된 사용자 계정이 없습니다.');
+
+  const { error } = await supabase.from('profiles').update({ status }).eq('id', artist.user_id);
+  if (error) throw error;
+
+  revalidatePath('/admin/artists');
+  revalidatePath(`/admin/artists/${artistId}`);
+
+  const statusLabel: Record<ArtistProfileStatus, string> = {
+    pending: '승인 대기',
+    active: '활성',
+    suspended: '정지',
+  };
+  await logAdminAction(
+    'artist_status_changed',
+    'artist',
+    artistId,
+    { name: artist.name_ko, status },
+    admin.id,
+    { summary: `작가 상태 변경: ${artist.name_ko} → ${statusLabel[status]}` }
+  );
+
+  return { success: true };
+}
+
+/** 작가 승인 안내 이메일을 artists.contact_email로 발송한다. */
+export async function sendArtistApprovalNotification(artistId: string) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: artist, error: artistErr } = await supabase
+    .from('artists')
+    .select('name_ko, contact_email')
+    .eq('id', artistId)
+    .single();
+  if (artistErr || !artist) throw new Error('작가 정보를 찾을 수 없습니다.');
+  if (!artist.contact_email) throw new Error('등록된 이메일이 없습니다.');
+
+  const { sendArtistApprovalEmail } = await import('@/lib/notify');
+  await sendArtistApprovalEmail(artist.contact_email, artist.name_ko ?? '작가님');
+
+  await logAdminAction(
+    'artist_approval_email_sent',
+    'artist',
+    artistId,
+    { name: artist.name_ko, email: artist.contact_email },
+    admin.id,
+    { summary: `작가 승인 이메일 발송: ${artist.name_ko}` }
   );
 
   return { success: true };

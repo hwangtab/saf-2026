@@ -10,6 +10,8 @@ import {
   searchUsersByName,
   linkArtistToUser,
   unlinkArtistFromUser,
+  setArtistProfileStatus,
+  sendArtistApprovalNotification,
 } from '@/app/actions/admin-artists';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard } from '@/app/admin/_components/admin-ui';
@@ -44,6 +46,7 @@ type Artist = {
     id: string;
     name: string;
     email: string;
+    status: string | null;
   } | null;
 };
 
@@ -57,6 +60,129 @@ type UserSearchResult = {
   name: string | null;
   email: string | null;
 };
+
+// ─── Status Badge ─────────────────────────────────────────────────────────────
+
+function StatusBadge({ status }: { status: string | null }) {
+  const map: Record<string, { label: string; classes: string }> = {
+    active: { label: '활성', classes: 'bg-success/15 text-success-a11y' },
+    pending: { label: '승인 대기', classes: 'bg-warning/15 text-charcoal-deep' },
+    suspended: { label: '정지', classes: 'bg-danger/15 text-danger-a11y' },
+  };
+  const { label, classes } = map[status ?? ''] ?? {
+    label: status ?? '—',
+    classes: 'bg-gray-100 text-gray-600',
+  };
+  return (
+    <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${classes}`}>
+      {label}
+    </span>
+  );
+}
+
+// ─── Status Controls ───────────────────────────────────────────────────────────
+
+function ArtistStatusControls({
+  artistId,
+  currentStatus,
+  contactEmail,
+}: {
+  artistId: string;
+  currentStatus: string | null;
+  contactEmail: string | null;
+}) {
+  const toast = useToast();
+  const router = useRouter();
+  const [isChanging, setIsChanging] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  async function handleStatusChange(status: 'pending' | 'active' | 'suspended') {
+    setIsChanging(true);
+    try {
+      await setArtistProfileStatus(artistId, status);
+      toast.success(
+        `상태가 "${status === 'active' ? '활성' : status === 'pending' ? '승인 대기' : '정지'}"으로 변경되었습니다.`
+      );
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '상태 변경에 실패했습니다.');
+    } finally {
+      setIsChanging(false);
+    }
+  }
+
+  async function handleSendApprovalEmail() {
+    setIsSendingEmail(true);
+    try {
+      await sendArtistApprovalNotification(artistId);
+      toast.success('승인 안내 이메일을 발송했습니다.');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '이메일 발송에 실패했습니다.');
+    } finally {
+      setIsSendingEmail(false);
+    }
+  }
+
+  const isActive = currentStatus === 'active';
+  const isPending = currentStatus === 'pending';
+  const isSuspended = currentStatus === 'suspended';
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3">
+      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">계정 상태 관리</p>
+      <div className="flex flex-wrap gap-2">
+        {!isActive && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange('active')}
+            disabled={isChanging}
+            className="rounded-md bg-success/10 border border-success/30 px-3 py-1.5 text-xs font-medium text-success-a11y hover:bg-success/20 disabled:opacity-50"
+          >
+            활성으로 변경
+          </button>
+        )}
+        {!isPending && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange('pending')}
+            disabled={isChanging}
+            className="rounded-md bg-gray-100 border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200 disabled:opacity-50"
+          >
+            승인 대기로 변경
+          </button>
+        )}
+        {!isSuspended && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange('suspended')}
+            disabled={isChanging}
+            className="rounded-md bg-danger/10 border border-danger/30 px-3 py-1.5 text-xs font-medium text-danger-a11y hover:bg-danger/20 disabled:opacity-50"
+          >
+            정지
+          </button>
+        )}
+      </div>
+      <div className="border-t border-gray-200 pt-3">
+        <button
+          type="button"
+          onClick={handleSendApprovalEmail}
+          disabled={isSendingEmail || !contactEmail}
+          className="rounded-md bg-primary-surface border border-primary-soft px-3 py-1.5 text-xs font-medium text-primary-strong hover:bg-primary-soft disabled:opacity-50"
+          title={!contactEmail ? '등록된 이메일이 없습니다' : undefined}
+        >
+          {isSendingEmail ? '발송 중...' : '승인 안내 이메일 발송'}
+        </button>
+        {!contactEmail && (
+          <p className="mt-1 text-xs text-charcoal-soft">
+            contact_email이 없어 이메일을 보낼 수 없습니다.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Email Mask ────────────────────────────────────────────────────────────────
 
 // Helper to mask email for privacy
 function maskEmail(email: string | null) {
@@ -323,6 +449,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                     <div>
                       <p className="text-sm font-medium text-success-a11y">{linkedProfile.name}</p>
                       <p className="text-sm text-success-a11y">{maskEmail(linkedProfile.email)}</p>
+                      <StatusBadge status={linkedProfile.status} />
                     </div>
                     <Button
                       type="button"
@@ -336,6 +463,16 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
                     </Button>
                   </div>
                 </div>
+
+                {/* 계정 상태 변경 */}
+                {artist.id && (
+                  <ArtistStatusControls
+                    artistId={artist.id}
+                    currentStatus={linkedProfile.status}
+                    contactEmail={artist.contact_email ?? null}
+                  />
+                )}
+
                 <p className="text-xs text-gray-500">
                   이 작가 프로필은 현재 위 사용자 계정과 연결되어 있습니다. 해당 사용자는 작가
                   대시보드를 사용할 수 있습니다.

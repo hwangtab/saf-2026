@@ -280,6 +280,47 @@ export async function sendBuyerEmail(
   }
 }
 
+/**
+ * 작가 계정 활성화 안내 이메일을 작가 본인에게 발송한다.
+ * admin 알림(notifyEmail)과 달리 NOTIFY_EMAIL_TO가 아닌 지정 수신자에게 발송.
+ */
+export async function sendArtistApprovalEmail(to: string, artistName: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from || !to) return;
+
+  const safeArtistName = escapeHtml(artistName);
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com'}/dashboard`;
+
+  const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:${BRAND_COLORS.canvas.DEFAULT};font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;">
+  <div style="max-width:520px;margin:32px auto;background:${BRAND_COLORS.gallery.canvas};border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+    <div style="background:${BRAND_COLORS.primary.strong};padding:16px 24px;">
+      <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;">씨앗페 2026 작가 계정 안내</p>
+    </div>
+    <div style="padding:24px;">
+      <p style="margin:0 0 12px;font-size:15px;color:${BRAND_COLORS.charcoal.deep};">${safeArtistName} 선생님, 안녕하세요.</p>
+      <p style="margin:0 0 16px;font-size:14px;color:${BRAND_COLORS.charcoal.DEFAULT};line-height:1.6;">
+        씨앗페 작가 대시보드 이용 안내를 드립니다.<br>
+        아래 링크를 통해 작품을 등록하고 프로필을 관리하실 수 있습니다.
+      </p>
+      <a href="${dashboardUrl}" style="display:inline-block;background:${BRAND_COLORS.primary.DEFAULT};color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:6px;font-size:14px;font-weight:600;">작가 대시보드 바로가기</a>
+    </div>
+    <div style="padding:12px 24px;background:${BRAND_COLORS.canvas.DEFAULT};border-top:1px solid ${BRAND_COLORS.gallery.hairline};">
+      <p style="margin:0;font-size:12px;color:${BRAND_COLORS.gray[400]};">씨앗페 2026 · 한국스마트협동조합 · 문의: contact@kosmart.org</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  await resendFetch(
+    { apiKey, from, to, subject: '[씨앗페] 작가 대시보드 이용 안내', html },
+    '[artist-approval]'
+  );
+}
+
 async function resendFetch(
   opts: { apiKey: string; from: string; to: string | string[]; subject: string; html: string },
   logPrefix: string
