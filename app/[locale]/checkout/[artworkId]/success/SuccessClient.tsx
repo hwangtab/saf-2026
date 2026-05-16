@@ -7,6 +7,7 @@ import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { formatUsd } from '@/lib/utils/currency';
 import { LOAN_COUNT } from '@/lib/site-stats';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface Props {
   paymentKey: string;
@@ -95,6 +96,11 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
         }
 
         if (data.alreadyPaid || data.status === 'DONE') {
+          trackEvent('purchase', {
+            transaction_id: orderId,
+            value: Number(amount),
+            currency,
+          });
           setPageState('success');
         } else if (data.status === 'WAITING_FOR_DEPOSIT') {
           setVirtualAccount(data.virtualAccount ?? null);

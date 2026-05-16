@@ -24,6 +24,7 @@ import type { OrderDetail as OrderDetailType } from '@/app/actions/admin-orders'
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 import { useToast } from '@/lib/hooks/useToast';
 import { CARRIERS, getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
+import { trackEvent } from '@/lib/analytics/track';
 
 const STATUS_LABELS: Record<string, string> = {
   pending_payment: '결제 대기',
@@ -341,6 +342,11 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
                 },
               }
             : {}),
+        });
+        trackEvent('refund', {
+          transaction_id: order.order_no,
+          value: order.total_amount,
+          currency: 'KRW',
         });
         toast.success('환불이 처리되었습니다.');
         setShowRefundModal(false);

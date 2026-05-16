@@ -14,6 +14,7 @@ import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfo } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
+import { trackEvent } from '@/lib/analytics/track';
 
 /**
  * 결제 옵션 — 각 버튼의 cardOptions에 따라 Toss 결제창이 분기.
@@ -150,11 +151,25 @@ export default function CheckoutClient({
     setSubmitting(true);
     let createdOrderNo: string | null = null;
 
+    trackEvent('begin_checkout', {
+      value: totalAmount,
+      currency: 'KRW',
+      artwork_id: artworkId,
+      artwork_title: artworkTitle,
+      artist,
+      payment_method: paymentChoice,
+    });
+
     try {
       // 계좌이체(TRANSFER): Toss 거치지 않고 무통장 입금 흐름.
       // createBankTransferOrder가 awaiting_deposit + artwork=reserved 처리 후
       // 우리 success page로 redirect하여 기업은행(IBK) 계좌번호 안내.
       if (paymentChoice === 'TRANSFER') {
+        trackEvent('add_payment_info', {
+          value: totalAmount,
+          currency: 'KRW',
+          payment_type: 'TRANSFER',
+        });
         const result = await createBankTransferOrder({
           artworkId,
           buyerName,
@@ -215,6 +230,12 @@ export default function CheckoutClient({
       // 자체창 직행: PAYMENT_CHOICES의 cardOptions가 있으면 해당 간편결제 자체창으로 직행.
       // CARD는 cardOptions undefined → 통합결제창 (DEFAULT). requestPayment는 redirect 모드
       // (successUrl 동반) → void 반환, 사용자 취소·SDK 에러는 reject되어 catch에서 처리.
+      trackEvent('add_payment_info', {
+        value: serverTotal,
+        currency: 'KRW',
+        payment_type: paymentChoice,
+      });
+
       const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
       await payment.requestPayment({
         method: 'CARD',
