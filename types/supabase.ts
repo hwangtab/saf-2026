@@ -655,6 +655,8 @@ export type Database = {
           buyer_user_id: string | null;
           cancelled_at: string | null;
           created_at: string;
+          escalated_at: string | null;
+          escalation_note: string | null;
           id: string;
           item_amount: number;
           metadata: Json | null;
@@ -684,6 +686,8 @@ export type Database = {
           buyer_user_id?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
+          escalated_at?: string | null;
+          escalation_note?: string | null;
           id?: string;
           item_amount: number;
           metadata?: Json | null;
@@ -713,6 +717,8 @@ export type Database = {
           buyer_user_id?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
+          escalated_at?: string | null;
+          escalation_note?: string | null;
           id?: string;
           item_amount?: number;
           metadata?: Json | null;

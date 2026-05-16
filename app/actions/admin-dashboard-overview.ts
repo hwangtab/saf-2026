@@ -98,6 +98,8 @@ export type DashboardOverviewStats = {
   siteAnalytics: DashboardSiteAnalytics | null;
   feedback: DashboardFeedbackSummary | null;
   pendingOrderCount: number;
+  slaOverdueCount: number;
+  escalatedCount: number;
   recentOrders: Array<{
     id: string;
     order_no: string;
@@ -238,6 +240,9 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
   const now = new Date();
   const monthBoundary = getKstMonthBoundaryIso(now);
 
+  const SLA_HOURS = 72;
+  const slaThreshold = new Date(Date.now() - SLA_HOURS * 3600 * 1000).toISOString();
+
   const [
     totalArtistsResult,
     linkedArtistsResult,
@@ -250,6 +255,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     currentMonthSoldRowsResult,
     pendingOrderCountResult,
     recentOrdersResult,
+    slaOverdueCountResult,
+    escalatedCountResult,
   ] = await Promise.all([
     supabase.from('artists').select('id', { count: 'exact', head: true }),
     supabase
@@ -293,6 +300,19 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       )
       .order('created_at', { ascending: false })
       .limit(5),
+    // SLA 위반: paid/preparing 상태로 72시간 초과
+    supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .in('status', ['paid', 'preparing'])
+      .not('paid_at', 'is', null)
+      .lt('paid_at', slaThreshold),
+    // 수동 에스컬레이션 마킹 (미해결)
+    supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .not('escalated_at', 'is', null)
+      .not('status', 'in', '(completed,cancelled,refunded)'),
   ]);
 
   const currentMonthSalesVoidColumnMissing = isMissingVoidedAtColumnError(
@@ -450,6 +470,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     siteAnalytics,
     feedback,
     pendingOrderCount: pendingOrderCountResult.count ?? 0,
+    slaOverdueCount: slaOverdueCountResult.count ?? 0,
+    escalatedCount: escalatedCountResult.count ?? 0,
     recentOrders: (recentOrdersResult.data ?? []).map((row) => {
       const artwork = Array.isArray(row.artworks) ? row.artworks[0] : row.artworks;
       const artistRow = artwork?.artists;

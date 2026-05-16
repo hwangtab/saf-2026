@@ -28,6 +28,8 @@ export type AdminOrderListItem = {
   artwork_image: string | null;
   artist_name: string | null;
   payment_method: string | null;
+  escalated_at: string | null;
+  sla_overdue: boolean;
 };
 
 export type OrderDetail = AdminOrderListItem & {
@@ -62,10 +64,13 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
   await requireAdmin();
   const supabase = await requireAdminClient();
 
+  const SLA_HOURS = 72;
+  const slaThreshold = new Date(Date.now() - SLA_HOURS * 3600 * 1000);
+
   let query = supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, artwork_id, artworks(title, images, artists(name_ko))'
+      'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, escalated_at, artwork_id, artworks(title, images, artists(name_ko))'
     )
     .order('created_at', { ascending: false });
 
@@ -95,10 +100,16 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
     const images = Array.isArray(artwork?.images) ? artwork.images : [];
     const artistRow = artwork?.artists;
     const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
+    const status = row.status as OrderStatus;
+    const sla_overdue =
+      row.paid_at != null &&
+      (status === 'paid' || status === 'preparing') &&
+      new Date(row.paid_at) < slaThreshold;
+
     return {
       id: row.id,
       order_no: row.order_no,
-      status: row.status as OrderStatus,
+      status,
       total_amount: row.total_amount,
       buyer_name: row.buyer_name,
       buyer_phone: row.buyer_phone,
@@ -109,6 +120,8 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
       artwork_image: images[0] ?? null,
       artist_name: artistName ?? null,
       payment_method: null,
+      escalated_at: (row.escalated_at as string | null) ?? null,
+      sla_overdue,
     };
   });
 }
@@ -117,10 +130,13 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   await requireAdmin();
   const supabase = await requireAdminClient();
 
+  const SLA_HOURS = 72;
+  const slaThreshold = new Date(Date.now() - SLA_HOURS * 3600 * 1000);
+
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, artwork_id, artworks(title, images, artists(name_ko))'
+      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, escalated_at, artwork_id, artworks(title, images, artists(name_ko))'
     )
     .eq('id', orderId)
     .maybeSingle();
@@ -190,6 +206,11 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     sale_voided: !!sale?.voided_at,
     shipping_carrier: order.shipping_carrier ?? null,
     tracking_number: order.tracking_number ?? null,
+    escalated_at: (order.escalated_at as string | null) ?? null,
+    sla_overdue:
+      order.paid_at != null &&
+      (order.status === 'paid' || order.status === 'preparing') &&
+      new Date(order.paid_at) < slaThreshold,
   };
 }
 
@@ -809,6 +830,39 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
     revalidatePath(`/artworks/${order.artwork_id}`);
     revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+
+  return { success: true };
+}
+
+export async function setOrderEscalation(
+  orderId: string,
+  note: string | null
+): Promise<{ success: true }> {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const escalatedAt = note ? new Date().toISOString() : null;
+
+  const { error } = await supabase
+    .from('orders')
+    .update({ escalated_at: escalatedAt, escalation_note: note })
+    .eq('id', orderId);
+
+  if (error) throw error;
+
+  await logAdminAction(
+    note ? 'order_escalated' : 'order_escalation_cleared',
+    'order',
+    orderId,
+    { note },
+    admin.id,
+    {
+      summary: note ? `주문 에스컬레이션 마킹: ${note}` : '주문 에스컬레이션 해제',
+    }
+  );
+
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
 

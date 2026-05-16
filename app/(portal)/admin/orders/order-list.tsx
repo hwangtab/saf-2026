@@ -11,12 +11,14 @@ import {
   AdminBadge,
   AdminEmptyState,
 } from '@/app/admin/_components/admin-ui';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock, AlertTriangle } from 'lucide-react';
 import type { AdminOrderListItem } from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
 const STATUS_OPTIONS = [
   { value: '', label: '전체 상태' },
+  { value: 'sla_overdue', label: '⏰ SLA 위반' },
+  { value: 'escalated', label: '🚨 에스컬레이션' },
   { value: 'pending_payment', label: '결제 대기' },
   { value: 'awaiting_deposit', label: '입금 대기' },
   { value: 'paid', label: '결제 완료' },
@@ -93,7 +95,13 @@ export function OrderList({
 
   const filtered = useMemo(() => {
     let result = orders;
-    if (statusFilter) result = result.filter((o) => o.status === statusFilter);
+    if (statusFilter === 'sla_overdue') {
+      result = result.filter((o) => o.sla_overdue);
+    } else if (statusFilter === 'escalated') {
+      result = result.filter((o) => o.escalated_at != null);
+    } else if (statusFilter) {
+      result = result.filter((o) => o.status === statusFilter);
+    }
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       result = result.filter(
@@ -167,9 +175,23 @@ export function OrderList({
                     {formatKRW(order.total_amount)}
                   </td>
                   <td className="px-4 py-3">
-                    <AdminBadge tone={statusBadgeVariant(order.status)}>
-                      {STATUS_LABELS[order.status] ?? order.status}
-                    </AdminBadge>
+                    <div className="flex flex-col gap-1">
+                      <AdminBadge tone={statusBadgeVariant(order.status)}>
+                        {STATUS_LABELS[order.status] ?? order.status}
+                      </AdminBadge>
+                      {order.sla_overdue && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-charcoal-deep">
+                          <Clock className="h-3 w-3" />
+                          SLA 위반
+                        </span>
+                      )}
+                      {order.escalated_at != null && (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-a11y">
+                          <AlertTriangle className="h-3 w-3" />
+                          에스컬레이션
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-xs text-gray-500">
                     {formatDate(order.created_at)}

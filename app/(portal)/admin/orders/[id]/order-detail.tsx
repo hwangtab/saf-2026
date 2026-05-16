@@ -19,11 +19,13 @@ import {
   updateTrackingInfo,
   confirmDeposit,
   cancelAwaitingOrder,
+  setOrderEscalation,
 } from '@/app/actions/admin-orders';
 import type { OrderDetail as OrderDetailType } from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 import { useToast } from '@/lib/hooks/useToast';
 import { CARRIERS, getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
+import { AlertTriangle, Clock } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics/track';
 
 const STATUS_LABELS: Record<string, string> = {
@@ -277,6 +279,12 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
   const [trackingCarrier, setTrackingCarrier] = useState(order.shipping_carrier ?? null);
   const [trackingNumber, setTrackingNumber] = useState(order.tracking_number ?? null);
 
+  // Escalation state
+  const [escalatedAt, setEscalatedAt] = useState(order.escalated_at);
+  const [showEscalationInput, setShowEscalationInput] = useState(false);
+  const [escalationNote, setEscalationNote] = useState('');
+  const [isEscalating, startEscalationTransition] = useTransition();
+
   const isVirtualAccount =
     order.payment_method === '가상계좌' || order.payment_method === 'VIRTUAL_ACCOUNT';
   const isBankTransfer = !order.payment_key; // 계좌이체 주문은 Toss payment_key 없음
@@ -384,6 +392,36 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
     });
   }
 
+  function handleEscalate() {
+    if (!escalationNote.trim()) {
+      toast.error('에스컬레이션 사유를 입력해주세요.');
+      return;
+    }
+    startEscalationTransition(async () => {
+      try {
+        await setOrderEscalation(order.id, escalationNote.trim());
+        setEscalatedAt(new Date().toISOString());
+        setShowEscalationInput(false);
+        setEscalationNote('');
+        toast.success('에스컬레이션이 마킹되었습니다.');
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '에스컬레이션 마킹에 실패했습니다.');
+      }
+    });
+  }
+
+  function handleClearEscalation() {
+    startEscalationTransition(async () => {
+      try {
+        await setOrderEscalation(order.id, null);
+        setEscalatedAt(null);
+        toast.success('에스컬레이션이 해제되었습니다.');
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '에스컬레이션 해제에 실패했습니다.');
+      }
+    });
+  }
+
   // Filter out 'shipped' from direct button click — handled via modal
   const directNextOptions = nextOptions.filter((opt) => opt.value !== 'shipped');
   const hasShippedOption = nextOptions.some((opt) => opt.value === 'shipped');
@@ -393,11 +431,23 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900">{order.order_no}</h1>
             <AdminBadge tone={statusBadgeVariant(order.status)}>
               {STATUS_LABELS[order.status] ?? order.status}
             </AdminBadge>
+            {order.sla_overdue && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-charcoal-deep/10 px-2 py-0.5 text-xs font-medium text-charcoal-deep">
+                <Clock className="h-3 w-3" />
+                SLA 위반
+              </span>
+            )}
+            {escalatedAt && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger-a11y">
+                <AlertTriangle className="h-3 w-3" />
+                에스컬레이션
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-500">주문일: {formatDate(order.created_at)}</p>
         </div>
@@ -448,6 +498,23 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               환불 처리
             </button>
           )}
+          {escalatedAt ? (
+            <button
+              onClick={handleClearEscalation}
+              disabled={isEscalating}
+              className="rounded-md border border-charcoal-muted/40 bg-charcoal/5 px-3 py-1.5 text-sm font-medium text-charcoal-muted hover:bg-charcoal/10 disabled:opacity-50"
+            >
+              에스컬레이션 해제
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowEscalationInput((v) => !v)}
+              disabled={isEscalating}
+              className="rounded-md border border-charcoal-deep/30 bg-charcoal-deep/5 px-3 py-1.5 text-sm font-medium text-charcoal-deep hover:bg-charcoal-deep/10 disabled:opacity-50"
+            >
+              에스컬레이션 마킹
+            </button>
+          )}
           <Link
             href="/admin/orders"
             className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
@@ -456,6 +523,36 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
           </Link>
         </div>
       </div>
+
+      {/* 에스컬레이션 입력 */}
+      {showEscalationInput && !escalatedAt && (
+        <div className="rounded-lg border border-charcoal-deep/20 bg-charcoal-deep/5 p-4">
+          <p className="mb-2 text-sm font-medium text-charcoal-deep">에스컬레이션 사유</p>
+          <div className="flex gap-2">
+            <AdminInput
+              value={escalationNote}
+              onChange={(e) => setEscalationNote(e.target.value)}
+              placeholder="사유를 입력하세요 (예: 3일 경과 미배송 확인 필요)"
+              className="flex-1"
+            />
+            <button
+              type="button"
+              onClick={handleEscalate}
+              disabled={isEscalating}
+              className="rounded-md bg-charcoal-deep px-3 py-1.5 text-xs font-medium text-white hover:bg-charcoal disabled:opacity-50"
+            >
+              {isEscalating ? '처리 중...' : '확인'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowEscalationInput(false)}
+              className="rounded-md border border-gray-200 px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-50"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* 주문 정보 */}
