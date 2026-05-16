@@ -74,8 +74,13 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
   };
 }
 
-export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
+export function generateWebsiteSchema(
+  locale: 'ko' | 'en' = 'ko',
+  counts?: { artistCount?: number; artworkCount?: number }
+) {
   const isEnglish = locale === 'en';
+  const artistCount = counts?.artistCount ?? ARTIST_COUNT;
+  const artworkCount = counts?.artworkCount ?? ARTWORK_COUNT;
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -84,8 +89,8 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
     alternateName: 'SAF Online',
     url: SITE_URL,
     description: isEnglish
-      ? `A Seoul Korean art exhibition and online gallery raising mutual-aid funds for artists. Browse and purchase ${ARTWORK_COUNT} contemporary artworks — paintings, prints, photography, and sculpture.`
-      : `서울 한국 현대미술 전시회 온라인 갤러리. ${ARTIST_COUNT}명 작가의 회화·판화·사진·조각 작품을 구매하고 예술인 상호부조 기금을 함께 만들어가세요.`,
+      ? `A Seoul Korean art exhibition and online gallery raising mutual-aid funds for artists. Browse and purchase ${artworkCount} contemporary artworks — paintings, prints, photography, and sculpture.`
+      : `서울 한국 현대미술 전시회 온라인 갤러리. ${artistCount}명 작가의 회화·판화·사진·조각 작품을 구매하고 예술인 상호부조 기금을 함께 만들어가세요.`,
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
@@ -117,8 +122,13 @@ export function generateWebsiteSchema(locale: 'ko' | 'en' = 'ko') {
   };
 }
 
-export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
+export function generateLocalBusinessSchema(
+  locale: 'ko' | 'en' = 'ko',
+  counts?: { artistCount?: number; artworkCount?: number }
+) {
   const isEnglish = locale === 'en';
+  const artistCount = counts?.artistCount ?? ARTIST_COUNT;
+  const artworkCount = counts?.artworkCount ?? ARTWORK_COUNT;
   return {
     '@context': 'https://schema.org',
     // OnlineStore 추가: Google Shopping 호환성 + 온라인 판매 명시
@@ -172,8 +182,8 @@ export function generateLocalBusinessSchema(locale: 'ko' | 'en' = 'ko') {
       '@type': 'OfferCatalog',
       name: isEnglish ? 'SAF Online Exhibition Catalog' : '씨앗페 온라인 전시 도록',
       description: isEnglish
-        ? `${ARTWORK_COUNT} original artworks by ${ARTIST_COUNT} Korean artists — the official digital exhibition catalog`
-        : `${ARTIST_COUNT}명 작가의 ${ARTWORK_COUNT}점 작품 — 씨앗페 온라인 공식 전시 도록`,
+        ? `${artworkCount} original artworks by ${artistCount} Korean artists — the official digital exhibition catalog`
+        : `${artistCount}명 작가의 ${artworkCount}점 작품 — 씨앗페 온라인 공식 전시 도록`,
       url: `${SITE_URL}/artworks`,
     },
     hasMap: EXTERNAL_LINKS.KOSMART_OFFICE_MAP,

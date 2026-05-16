@@ -54,8 +54,12 @@ export function generateHowToSchema(input: HowToInput) {
 /**
  * Pre-configured HowTo: How to purchase artwork at SAF 2026
  */
-export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
+export function generateArtworkPurchaseHowTo(
+  locale: 'ko' | 'en' = 'ko',
+  counts?: { artistCount?: number }
+) {
   const isEnglish = locale === 'en';
+  const artistCount = counts?.artistCount ?? ARTIST_COUNT;
 
   return generateHowToSchema({
     name: isEnglish ? 'How to Purchase Artwork at SAF Online' : 'SAF Online에서 작품 구매하는 방법',
@@ -68,7 +72,7 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
       ? [
           {
             name: 'Browse the artwork gallery',
-            text: `Visit the SAF Online artworks page to explore paintings, sculptures, photography, and more by ${ARTIST_COUNT} participating artists.`,
+            text: `Visit the SAF Online artworks page to explore paintings, sculptures, photography, and more by ${artistCount} participating artists.`,
             url: `${SITE_URL}/en/artworks`,
           },
           {
@@ -87,7 +91,7 @@ export function generateArtworkPurchaseHowTo(locale: 'ko' | 'en' = 'ko') {
       : [
           {
             name: '작품 갤러리 둘러보기',
-            text: `씨앗페 온라인 출품작 페이지에서 ${ARTIST_COUNT}명의 참여 작가가 출품한 회화, 조각, 사진 등 다양한 작품을 탐색합니다.`,
+            text: `씨앗페 온라인 출품작 페이지에서 ${artistCount}명의 참여 작가가 출품한 회화, 조각, 사진 등 다양한 작품을 탐색합니다.`,
             url: `${SITE_URL}/artworks`,
           },
           {
@@ -342,8 +346,13 @@ export function generateArtworkSpecificFAQ(
  * Pre-configured HowTo: How to enjoy the SAF Online Exhibition
  * Targets "전시회를 즐기다", "전시회를 즐기는 방법" search intent.
  */
-export function generateExhibitionEnjoyHowTo(locale: 'ko' | 'en' = 'ko') {
+export function generateExhibitionEnjoyHowTo(
+  locale: 'ko' | 'en' = 'ko',
+  counts?: { artistCount?: number; artworkCount?: number }
+) {
   const isEnglish = locale === 'en';
+  const artistCount = counts?.artistCount ?? ARTIST_COUNT;
+  const artworkCount = counts?.artworkCount ?? ARTWORK_COUNT;
 
   return generateHowToSchema({
     name: isEnglish
@@ -358,7 +367,7 @@ export function generateExhibitionEnjoyHowTo(locale: 'ko' | 'en' = 'ko') {
       ? [
           {
             name: 'Browse the exhibition gallery',
-            text: `Visit the online gallery at saf2026.com/en/artworks to explore ${ARTWORK_COUNT} works across painting, printmaking, photography, and sculpture by ${ARTIST_COUNT} Korean artists.`,
+            text: `Visit the online gallery at saf2026.com/en/artworks to explore ${artworkCount} works across painting, printmaking, photography, and sculpture by ${artistCount} Korean artists.`,
             url: `${SITE_URL}/en/artworks`,
           },
           {
@@ -380,7 +389,7 @@ export function generateExhibitionEnjoyHowTo(locale: 'ko' | 'en' = 'ko') {
       : [
           {
             name: '전시 갤러리 탐색',
-            text: `온라인 갤러리(saf2026.com/artworks)에서 ${ARTIST_COUNT}명 작가의 회화·판화·사진·조각 ${ARTWORK_COUNT}점을 카테고리별·가격별로 둘러보세요.`,
+            text: `온라인 갤러리(saf2026.com/artworks)에서 ${artistCount}명 작가의 회화·판화·사진·조각 ${artworkCount}점을 카테고리별·가격별로 둘러보세요.`,
             url: `${SITE_URL}/artworks`,
           },
           {

@@ -17,6 +17,7 @@ import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
+import { getLiveStats } from '@/lib/live-stats';
 import { CATEGORY_EN_MAP, getCategoryDisplayName } from '@/lib/artwork-category';
 import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveLocale } from '@/lib/server-locale';
@@ -207,7 +208,7 @@ async function renderCategoryPage({ params }: Props) {
     return <CategoryNotFoundView />;
   }
 
-  const allArtworks = await getSupabaseArtworks();
+  const [allArtworks, { artistCount }] = await Promise.all([getSupabaseArtworks(), getLiveStats()]);
   const categoryArtworks = allArtworks.filter((a) => a.category === category);
 
   if (categoryArtworks.length === 0) {
@@ -325,7 +326,7 @@ async function renderCategoryPage({ params }: Props) {
       <JsonLdScript data={collectionPageSchema} />
       <JsonLdScript data={itemListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-      <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
+      <JsonLdScript data={generateArtworkPurchaseHowTo(locale, { artistCount })} />
       <JsonLdScript data={generateArtworkPurchaseFAQ(locale)} />
 
       <div className={`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}`}>

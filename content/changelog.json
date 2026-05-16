@@ -1,5 +1,365 @@
 [
   {
+    "hash": "089e2c80",
+    "type": "feat",
+    "scope": "live-stats",
+    "subject": "Supabase 실시간 작가·작품 수 동기화 (112명/348점 → 111명/400점)",
+    "summary": "메인/About/HomeHero/NowShowing 등 정적 상수(content 파일 기반 112명/348점)를",
+    "body": "Supabase 실시간 helper(unstable_cache 300s + 'artworks' tag)로 전환해 /artworks 페이지\nlive 데이터와 정합성을 맞춤.\n\n- lib/live-stats.ts 신설: getLiveStats() → Supabase artworks 테이블에서 artist_id/status\n  집계 (is_hidden=false 필터, 기존 /artworks 가시성 정의 동일). fallback: 정적 상수.\n- unstable_cache revalidate=300s + tag='artworks': admin 작품 변경 시 자동 무효화.\n- React.cache 래핑: 동일 요청에서 generateMetadata + page body 중복 fetch 방지.\n- 전환 대상 (server 페이지 6개 + server components 3개): layout, page, about, archive/2026,\n  artworks, stories/category. HomeHero·NowShowing·AboutIdentity 직접 await 호출.\n- artworks/page.tsx: 이미 getSupabaseArtworks() 결과를 가지므로 getLiveStats() 불필요.\n  artworks 배열에서 직접 파생.\n- 정적 유지: LOAN_COUNT(354, Supabase 대응 없음), lib/schemas/*.ts, emails/*.tsx, manifest.ts.",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "6474cfa1",
+    "type": "feat",
+    "scope": "audit-enhancement",
+    "subject": "ArtworkGridCard/InlineGridCard 매체 라벨 + 메인 회원 가입 CTA (#49)",
+    "summary": "사이트 전수 체크 HIGH 1 + MEDIUM 5 fix.",
+    "body": "[HIGH 1] ArtworkGridCard + InlineGridCard 매체별 진품 라벨 추가\n- ArtworkCard(slider)에는 매체 라벨 노출, ArtworkGridCard/InlineGridCard에는 미포함 → 같은 작품이 그리드별로 라벨 유무 다른 UI 일관성 회귀\n- 매뉴얼 5.8 매체별 진품 라벨을 두 server card에 동일 좌상단 위치로 추가\n- getMediumLabel(category, edition) helper 재사용\n- sold 작품은 라벨 자동 숨김 (우상단 sold 배지와 시각 충돌 방지)\n- 영향: EntryLevelArtworks / EmergingArtists / 작품 detail Other Works·Same Category / CategorySections 5개 그리드에서 매체 라벨 노출 일관\n\n[MEDIUM 5] 메인 페이지 회원 가입 CTA 영역 재추가 (매뉴얼 [L])\n- Impact Stats 제거(PR #42) 후 메인에서 회원 가입 동선이 Footer만 남았던 회귀 보강\n- 신규 components/features/JoinCommunityCTA.tsx (server component)\n- 위치: EmergingArtists 직후, FAQ 직전 — 매뉴얼 6.4 [L] 권장 위치\n- 카피 톤: 매뉴얼 6.4 [C] 원칙 \"작품 구매 1순위, 상호부조 보조\" 부합 — 절제된 톤\n  - ko title \"더 깊이 함께하기\" / subtitle \"조합원 가입... 작품 구매 외에도 함께할 수 있는 길\"\n  - en title \"Stand with us, more deeply\" / \"walk this path together\"\n- EXTERNAL_LINKS.JOIN_MEMBER 외부 폼으로 deep-link\n- FAQ Section prevVariant=\"white\" → \"canvas-soft\"로 변경 (직전 영역 색상 정합)\n\nmessages/ko·en.json home.joinCta.{title|subtitle|cta} 키 3개 신설 (ko/en).\n\n검증:\n- npm run type-check 통과\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-15",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "88c07031",
+    "type": "feat",
+    "scope": "email",
+    "subject": "Sprint 7 — 결제 완료 이메일에 매뉴얼 8.6 자긍심 메시지 정합 (#47)",
+    "summary": "web success 페이지(Sprint 5a)에 적용한 매뉴얼 8.6 자긍심 메시지를 결제 완료 이메일에도 일관 적용.",
+    "body": "매뉴얼 매핑:\n- 8.6 헤드: 사실 톤 → 따뜻한 인사 톤 (\"감사합니다. 작품을 준비하고 있습니다\")\n- 8.6 본문: 7일 청약철회 + 진품 보증서 신뢰 시그널\n- 8.6 자긍심 박스: \"동료 작가의 다음 한 달 / N명이 이미 걸은 회복의 길\"\n- 8.6 회피: 죄책감(\"고통받는\") / 평가(\"훌륭한 결정\") 모두 미사용\n- 10.13 이메일 트리거 매핑 — \"첫 구매 후\" 카피 톤 정합\n\n변경:\n- emails/payment-confirmed.tsx 전면 보강\n  - 헤드/preview/greeting 따뜻한 인사 톤\n  - trustNote 신뢰 시그널 한 줄 (청약철회·진품 보증서)\n  - 자긍심 박스 Section + LOAN_COUNT ICU 변수 (lib/site-stats 단일 출처)\n  - inline CSS — prideBoxStyle border + canvas-soft 배경, 14px 본문\n- emails/deposit-confirmed.tsx 동일 패턴 (계좌이체 입금 확인 흐름)\n  - 카드/간편결제(payment-confirmed)와 톤 일관\n- lib/notify.ts BUYER_EMAIL_SUBJECTS\n  - payment_confirmed/deposit_confirmed ko·en 4건 subject 매뉴얼 8.6 톤 정합\n  - 이메일 inbox 첫 인상 일관 (사실 알림 → 따뜻한 인사)\n\n영향 없음:\n- virtual_account_issued/shipped/delivered/refunded/auto_cancelled 이메일 미수정\n- 결제 flow 자체 변경 X (notify 호출 시점·인자 동일)\n- Resend API 통합·환경변수·발송 조건 그대로\n\n검증:\n- npm run type-check 통과\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-15",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "62c87ea2",
+    "type": "feat",
+    "scope": "our-reality",
+    "subject": "Sprint 5b — 피해 단계 라벨 → 구조 관측 톤 정합 (매뉴얼 8.5) (#45)",
+    "summary": "/our-reality 페이지의 SectionTitle·STAGE 라벨을 매뉴얼 4.5 회피 패턴(피해·내몰림 톤) 제거하고 매뉴얼 8.5 [2단 통계 패널] 객관 톤으로 정합.",
+    "body": "[변경 카피 — ko/en 동시]\n- STAGE 1 라벨 → 구조 1 / STRUCTURE 1\n  - \"닫힌 문: 은행이 거절하다\" → \"접근의 격차: 제도권 금융과 예술인\"\n  - \"Closed doors: banks turn artists away\" → \"Access gap: artists outside mainstream banking\"\n- STAGE 2 라벨 → 구조 2 / STRUCTURE 2\n  - \"낭떠러지: 고리대금로 내몰리다\" → \"고금리 의존: 구조가 만든 우회로\"\n  - \"The cliff: pushed into predatory lending\" → \"High-interest reliance: a structural detour\"\n- STAGE 3 라벨 → 구조 3 / STRUCTURE 3\n  - \"파괴: 창작이 멈춘다\" → \"창작 시간의 단절: 연쇄 효과\"\n  - \"Collapse: creative work stops\" → \"Creative-time disruption: a chain effect\"\n- \"이것은 개인의 문제가 아닙니다\" → \"개인의 문제가 아닌, 구조의 문제\"\n  - \"This is not a personal failure\" → \"This is a structural gap, not a personal one\"\n\n매뉴얼 매핑:\n- 4.5 회피 패턴 — \"거절하다·내몰리다·파괴\" 피해·고통 톤 제거\n- 4.5 정합 톤 — \"구조·격차·단절\" 객관 톤 유지\n- 8.5 [2단 통계 패널] \"객관적 데이터\" 톤 정합\n\n페이지 구조(섹션 순서·차트·증언 데이터)는 변경 없음 — 회귀 위험 최소화.\n8.5 6단 구조 전체 reorganize는 800줄 페이지 회귀 위험 큼, 추후 별도 chore PR로 분리.\n\n검증:\n- npm run type-check 통과\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-15",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d984eb0c",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "Sprint 5a — 결제 완료 페이지 자긍심 메시지 (매뉴얼 8.6) (#44)",
+    "summary": "매뉴얼 8.6 결제 완료 페이지 권장 카피 적용. 회복 서사 톤 + 자긍심 박스 신설.",
+    "body": "매뉴얼 매핑:\n- 8.6 헤드: \"감사합니다. 작품을 준비하고 있습니다\" — 사실 정보 톤 → 따뜻한 인사 톤\n- 8.6 본문: \"7일 청약철회·진품 보증서\" — 신뢰 시그널 명시\n- 8.6 자긍심 박스: \"동료 작가에게 새로운 길 / 354명이 이미 걸은 회복의 길\"\n- 8.6 회피: 죄책감 톤(\"고통받는 예술인을 도와주셔서\") / 평가 톤(\"훌륭한 결정\") 모두 미사용\n\n변경:\n- messages/ko·en.json checkout namespace\n  - paymentSuccess: \"결제가 완료되었습니다\" → \"감사합니다. 작품을 준비하고 있습니다\" (ko/en 동시)\n  - successThankYou: 단순 구매 확인 → \"7일 청약철회 + 진품 보증서 + 이메일\" 신뢰 시그널 명시\n  - successPrideHead/successPrideBody 키 신설 (ko/en) — 자긍심 박스 2줄\n- SuccessClient.tsx success state\n  - LOAN_COUNT site-stats 변수 import + ICU loanCount 전달 (locale별 toLocaleString)\n  - 결제 정보 박스 뒤에 자긍심 박스 추가 (border + bg-canvas-soft + 좌정렬 텍스트)\n  - break-keep + text-balance 가독성 옵션 추가\n\n검증:\n- npm run type-check 통과\n- BANK_TRANSFER / virtual / error state는 변경 없음 (success state만 보강)\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-15",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "65ce4913",
+    "type": "feat",
+    "scope": "home",
+    "subject": "Sprint 4d — 매뉴얼 [C] About 정체성 영역 메인 추가 (#41)",
+    "summary": "매뉴얼 6.4 [C] About 정체성 ribbon 구현. Hero 직후 페르소나 B \"이 사이트는 무엇인가\" 30초 인지 자산.",
+    "body": "매뉴얼 매핑:\n- 6.4 [C] About 정체성 — Hero[B] 직후 ribbon 영역\n- 6.4 [C] 톤 원칙: \"1단 첫 구매자에게는 '미술 플랫폼' 인상 우선, '상호부조'는 보조\"\n- 4.8.3 자산화: \"한국스마트협동조합이 운영하는\" — 7년 운영 자산 명시\n- 매뉴얼 와이어프레임 구조: 큰 제목 + 작은 부제 + 통계 3개 가로 + About 더 보기 링크\n\n신규 파일:\n- components/features/AboutIdentity.tsx — server component\n  - 큰 제목 \"한국 작가 N명, 작품 N점\" — ARTIST_COUNT / ARTWORK_COUNT ICU 변수 (lib/site-stats.ts 단일 출처)\n  - 부제 \"한국스마트협동조합이 운영하는 예술인 상호부조 플랫폼\"\n  - 통계 3개: 운영(24시간) + 연대 작가 + 누적 대출 — 모바일 wrap·데스크탑 가로 + 구분선\n  - [씨앗페 소개] → /about deep-link\n\n수정:\n- app/[locale]/page.tsx — HomeHero 직후, NowShowing 직전 삽입\n  - Sprint 4a/4b/4c PR과 위치 분리 → 4 PR 모두 conflict 없이 main에 stack\n- messages/ko·en.json — home.aboutIdentity.{headline|subtitle|stat*Label|stat*Value|learnMore} 키 9개\n\n회귀 위험 최소화:\n- server component (hydration 0) — PSI/CWV 영향 없음\n- Supabase 쿼리 0 (lib/site-stats.ts 정적 상수만 사용)\n- 매뉴얼 톤 원칙 \"미술 플랫폼 우선, 상호부조 보조\" 부합\n\n[J] 시즌 큐레이션 제외 사유:\n- 매뉴얼 9.2 권장 분기 갱신 + 운영팀 정적 큐레이션 결정 필요\n- user 지시 \"기술 문제 안 생기는 쪽으로\" 부합 — 자동화 어려움\n- Sprint 5 이후 운영 결정 시 별도 PR로 도입\n\n검증:\n- npm run type-check 통과\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-14",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "7bcdd51a",
+    "type": "feat",
+    "scope": "home",
+    "subject": "Sprint 4c — 매뉴얼 [G] 신진 작가 발견 영역 메인 추가 (#40)",
+    "summary": "매뉴얼 6.4 [G] + 9.2 컬렉션 3 구현. 페르소나 B의 \"내가 먼저 발견했다\" 자긍심 자극.",
+    "body": "* feat(home): Sprint 4c — 매뉴얼 [G] 신진 작가 발견 영역 메인 추가\n\n\n매뉴얼 매핑:\n- 6.4 [G] 신진 작가 발견 — CategorySections 직후, Impact Stats 직전 위치 (Sprint 4a/4b PR과 conflict 회피)\n- 9.2 컬렉션 3 — 매스미디어 노출 적은 신진·중견 작가 / 작가별 1~2점 / 분기 갱신 권장\n\n신규 파일:\n- lib/emerging-artists.ts — getEmergingArtworks(limit) helper\n  - 거장 6명(오윤·박생광·신학철·민정기·이철수·박불똥) 제외\n  - sold/reserved 자동 제외\n  - 작가 단위 dedupe + shuffle (매뉴얼 9.2 \"다양성\") → 6점\n  - react cache wrapper로 page-scope 메모이즈\n  - Sprint 4a PR #38 merge 후 lib/master-artists.ts MASTER_ARTISTS import로 통합 예정 (현재 local 정의로 conflict 회피)\n- components/features/EmergingArtists.tsx — server component, 2~3열 그리드 6점\n  - 풀 0점이면 섹션 자체 미렌더 (안전 fallback)\n  - ArtworkCard gallery variant 재사용\n\n수정:\n- app/[locale]/page.tsx — CategorySections 직후 EmergingArtists 삽입\n  - Sprint 4a (NowShowing 직후)·4b (Mission Banner 직후) PR과 위치 분리 → 3개 PR 모두 conflict 없이 main에 stack\n- messages/ko·en.json — home.emergingArtists.{title|subtitle|viewAll} 키 3개\n  - ko title \"신진 작가 발견\" / subtitle \"한국 현대미술의 다음을 만드는 작가들\" (매뉴얼 원안)\n  - en title \"Discover Emerging Artists\"\n\n회귀 위험 최소화:\n- server component (hydration 0)\n- 기존 getSupabaseArtworks 캐시 재활용 — 추가 Supabase 쿼리 X\n- 풀 0점 시 미렌더 fallback\n- ArtworkCardData category/edition 전달 X — PR #36 merge 후 후속 PR로 보강 (4b와 동일 패턴)\n\n검증:\n- npm run type-check 통과\n\n\n* fix(sprint-4c): EmergingArtists server-rendered card 패턴 — hydration 0\n\n\n[HIGH] ArtworkCard hydration 부담 해소\n- 메모리 feedback_hero_server_island_regression.md 원칙: \"mobile 4× CPU throttle에서는 정적 server-rendered 패턴만이 본질 해결\"\n- 4b(EntryLevel 8 카드) + 4c(Emerging 6 카드) 합쳐 14개 client hydration → TBT 200ms+ 회귀 위험\n- ArtworkCategoryGrid InlineGridCard와 동일 server card 패턴으로 inline 정의\n\n변경:\n- EmergingArtists.tsx 전면 재작성\n  - ArtworkCard import 제거 → 자체 EmergingCard server component inline 정의\n  - 4b EntryLevelArtworks와 동일 helpers/JSX 패턴 (코드 중복은 추후 chore PR로 추출 정리)\n  - SafeImage + sold/reserved 배지 + 작품 4줄 정보\n  - hydration 0\n- lib/emerging-artists.ts MASTER_ARTIST_NAMES는 매뉴얼 9.2 원본 6명 유지\n  - 신학철은 현재 hidden이라 자동 제외되지만, 미래 hidden 해제 시 거장 emerging 풀 포함 회귀 방지\n  - 거장 라인업 운영 결정(master-artists.ts 5명)과 emerging 제외 풀(6명)이 분리되는 게 정합\n\n검증:\n- npm run type-check 통과\n- hydration 0 — 'use client' marker 없음\n\n\n---------\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-14",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3275ff51",
+    "type": "feat",
+    "scope": "home",
+    "subject": "Sprint 4b — 매뉴얼 [H] 30만원 이하 첫 그림 영역 메인 추가 (#39)",
+    "summary": "매뉴얼 6.4 [H] + 9.2 컬렉션 4 구현. 페르소나 A·1단 첫 구매자의 진입 동선.",
+    "body": "* feat(home): Sprint 4b — 매뉴얼 [H] 30만원 이하 첫 그림 영역 메인 추가\n\n\n매뉴얼 매핑:\n- 6.4 [H] 30만원 이하 첫 그림 — Mission Banner[F] 직후, CategorySections 직전 위치\n- 9.2 컬렉션 4 — 가격 ₩100,000~₩300,000 / 매체 다양(판화·아트프린트·드로잉·작은 회화) / 매월 갱신 권장\n\n신규 파일:\n- lib/entry-level.ts — getEntryLevelArtworks(limit) 가격 필터 helper\n  - 전체 풀 fetch(이미 페이지간 cached) → parsePrice 정수화 → ₩100k~₩300k 필터\n  - sold/reserved 자동 제외 (판매 동선 의미 없음)\n  - 작가 단위 dedupe — 한 작가가 가격대 점유 회피, shuffle 후 first per artist\n  - react cache wrapper로 page-scope 메모이즈\n- components/features/EntryLevelArtworks.tsx — server component, 2~3~4열 그리드 8점\n  - 풀이 0점이면 섹션 미렌더 (안전 fallback)\n  - ArtworkCard gallery variant 재사용 — sold/reserved/material/size 일관 표시\n  - \"전체 작품 보기\" footer link\n\n수정:\n- app/[locale]/page.tsx — Mission Banner 직후 EntryLevelArtworks 삽입\n- messages/ko·en.json — home.entryLevel.{title|subtitle|viewAll} 키 3개\n  - ko title \"첫 그림을 시작하는 분께 — 30만원 이하\" (매뉴얼 원안)\n  - en title \"Start Your First Collection — Under ₩300,000\"\n\n회귀 위험 최소화:\n- server component (hydration 0)\n- 기존 getSupabaseArtworks 캐시 재활용 — 추가 Supabase 쿼리 X\n- sold/reserved 제외로 결제 가능 작품만 노출\n- ArtworkCard 기존 컴포넌트 재사용 — UI 일관성 보장\n- ArtworkCardData에 category/edition 전달 X — PR #36(Sprint 2 매체 라벨)이 아직 main에 없어 type 에러 회피. PR #36 merge 후 후속 PR로 보강\n\n검증:\n- npm run type-check 통과\n\n\n* fix(sprint-4b): EntryLevelArtworks server-rendered card 패턴 — hydration 0\n\n\n[HIGH] ArtworkCard hydration 부담 해소\n- 메모리 feedback_hero_server_island_regression.md 원칙: \"mobile 4× CPU throttle에서는 정적 server-rendered 패턴만이 본질 해결\"\n- EntryLevelArtworks 8 카드 + EmergingArtists 6 카드(별도 PR) 합쳐 14개 ArtworkCard 'use client' hydration은 TBT 200ms+ 회귀 위험\n- ArtworkCategoryGrid InlineGridCard와 동일 server card 패턴으로 inline 정의\n\n변경:\n- EntryLevelArtworks.tsx 전면 재작성\n  - ArtworkCard import 제거 → 자체 EntryLevelCard server component inline 정의\n  - helpers(getSafeTitle/getSafeArtist/localizeDataValue) inline — ArtworkCategoryGrid와 동일 helpers (코드 중복은 추후 chore PR로 정리)\n  - SafeImage + sold/reserved 배지 + 작품 정보 4줄 (제목·작가·매체·가격)\n  - CSS transition만 사용 (hydration 0)\n  - returnTo=/ 파라미터는 URL에 직접 encoding (?returnTo=%2F)\n- ArtworkCardData 의존 제거 — Artwork 타입 직접 사용\n\n검증:\n- npm run type-check 통과\n- hydration 0 — 'use client' marker 없음\n- ArtworkCategoryGrid InlineGridCard 스타일·layout 100% 일치\n\n\n---------\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-14",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "646bddca",
+    "type": "feat",
+    "scope": "home",
+    "subject": "Sprint 4a — 매뉴얼 [E] 한국 현대미술 거장 영역 메인 추가 (#38)",
+    "summary": "매뉴얼 6.4 [E] + 9.2 컬렉션 2(거장) 구현. 페르소나 B 안목 컬렉터의 \"왜 이 사이트인가\" 첫 인지 자산.",
+    "body": "* feat(home): Sprint 4a — 매뉴얼 [E] 한국 현대미술 거장 영역 메인 추가\n\n\n매뉴얼 매핑:\n- 6.4 [E] 한국 현대미술 거장 — NowShowing[D] 직후, Mission Banner[F] 직전 위치\n- 9.2 컬렉션 2 — 거장 6명 라인업 (오윤·박생광·신학철·민정기·이철수·박불똥)\n- 4.8.2 강점 자산화 — 한국 현대미술 거장 라인업을 메인 1순위 차별 자산으로 노출\n\n신규 파일:\n- lib/master-artists.ts — 6명 정적 정의 (한글/영문 이름, 생몰년, 한 줄 정체성, ko/en)\n- components/features/MasterArtists.tsx — server component, 2~3열 그리드 카드 6개\n  - 작가별 대표작 이미지: getSupabaseArtworksByArtist 첫 항목 fetch (이미 cached)\n  - force-static + revalidate=3600 환경에서 빌드 시 6 쿼리, 1시간 캐시 HIT\n  - 작품 0건 작가는 카드 자동 제외 (안전 fallback)\n  - 카드 클릭 → /artworks/artist/{작가명} deep-link\n  - \"전체 작품 보기\" → /artworks footer link\n\n수정:\n- app/[locale]/page.tsx — NowShowing 직후 MasterArtists 삽입 (Mission Banner 직전)\n- messages/ko·en.json — home.masterArtists.{title|subtitle|viewAll} 키 3개 추가\n  - ko title \"한국 현대미술의 거장들\" / subtitle 6명 이름 나열 + 진입 가능 가격대 강조\n  - en title \"Masters of Korean Contemporary Art\" / subtitle 동일 의도\n\n검증:\n- npm run type-check 통과\n- 데이터 fetch는 기존 cached helper 재활용 — 추가 Supabase 쿼리 없이 cold cache 시 6건\n- hydration 0 (server component) — PSI/CWV 회귀 없음\n\n\n* fix(sprint-4a): 거장 라인업 운영 큐레이션 반영 + ItemList schema 추가\n\n\n[HIGH] 신학철 제외 — 운영 큐레이션 결과 반영\n- 매뉴얼 9.2 권장 6명은 가이드일 뿐, 실제 라인업은 운영 결정 우선\n- 신학철 작품 전체가 의도적 비공개(is_hidden) 상태 → 카드 cover fetch 실패 + 작가 페이지 비어 deep-link 의미 없음\n- lib/master-artists.ts에서 신학철 제거 → 5명(오윤·박생광·민정기·이철수·박불똥) 라인업\n- 그리드 lg:grid-cols-5로 조정해 5명 한 줄 배치\n- SafeImage sizes 5열 기준 재계산 (230px)\n- user feedback 메모리 저장: feedback_master_artists_curation.md\n\n[MEDIUM] MasterArtists ItemList schema — GSC structured data\n- 5명 Person 엔티티를 ItemList schema로 발행\n- 각 ListItem은 작가 url(deep-link) + tagline description 포함\n- JsonLdScript 컴포넌트 재사용 (기존 schema 패턴과 일관)\n\n검증:\n- npm run type-check 통과\n- Supabase 5명 모두 작품 ≥1점 확인 (오윤 18·박생광 38·민정기 4·이철수 10·박불똥 1)\n\n\n---------\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-14",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "6e3d1dcd",
+    "type": "feat",
+    "scope": "identity",
+    "subject": "Sprint 3 — Hero·About 페르소나 B 안목 컬렉터 정체성 톤 보강 (#37)",
+    "summary": "매뉴얼 4.5·4.7·4.8·6.2·6.4 톤 가이드 반영. 안목·회복 서사·7년 운영 자산 명시.",
+    "body": "* feat(identity): Sprint 3 — Hero·About 페르소나 B 안목 컬렉터 정체성 톤 보강\n\n\n매뉴얼 매핑:\n- 6.2 Hero 카피: 1인칭·능동·안목 톤 — HomeHero allArtworksDesc에 \"안목으로 고르는 작가 직매\" + \"다음 한 달\" 회복 서사 키워드 추가\n- 4.8.3 자산: 7년 운영 + 협동조합 구조 — About PageHero·metadata에 \"한국스마트협동조합이 운영해온\" 명시화\n- 8.3 회복 서사 톤 키워드 일관성 — \"다음 한 달\" / \"next month of practice\" 모든 노출 영역 통일 (HomeHero / About / PrideBox 카피)\n- 4.7 정체성 분산 해소 — About title/description의 \"campaign\" 표현 잔재 정리 → \"platform\"으로 통일\n\n변경:\n- messages/ko·en.json `home.nowShowing.allArtworksDesc` — 안목·회복 서사 톤 보강\n- app/[locale]/about/page.tsx PAGE_COPY ko/en + PageHero description ko/en + ShareButtons description ko/en — 정체성 자산화\n\nscope 축소 결정 (메뉴얼만 너무 따르지 않기):\n- 위시리스트 1단계 → Sprint 4 이후 (기술적 부담 큼, user 지시 \"기술적 문제 안 생기는 쪽으로\")\n- problemDebt·predatoryLending 등 dead i18n 키는 별도 chore PR로 미룸 (실제 노출 0건)\n- About 본문 섹션 11개는 매뉴얼 충실도 이미 높음 — Hero/metadata만 보강\n\n검증:\n- npm run type-check 통과\n- 죄책감 톤 잔재 grep 0건 (실제 노출 영역) — \"고통받/끼니/큰 희망/불우/작은 클릭\" 모두 미사용\n\n\n* fix(sprint-3): 블라인드스팟 2건 — campaign 잔재 일괄 + About 본문 죄책감 톤 중립화\n\n\n[HIGH] 매뉴얼 4.6 \"캠페인 → 플랫폼\" 잔재 12건 일괄 정리\n- messages/en.json 3건:\n  - aboutSafDesc \"Campaign structure...\" → \"Platform structure...\"\n  - footer description \"mutual aid campaign...\" → \"mutual-aid platform...\"\n  - saffestBody \"mutual aid campaign easing...\" → \"mutual-aid platform easing...\"\n- app/[locale]/news/page.tsx 9건 (ko 5 + en 4):\n  - 한국어 \"씨앗페 캠페인\" → \"씨앗페\" (5건: pageDescription/hero/share/collection/dynamic)\n  - 영문 \"SAF campaign\" / \"SAF Online campaign\" → \"SAF\" / \"SAF Online\" (4건)\n  - line 288 본문 \"The campaign grew rapidly\" (2022 모집 사건 서술) 의도적 유지\n\n[HIGH] 매뉴얼 4.5 죄책감 톤 회피 패턴 — About 본문 1번째 섹션 중립화\n- ko 섹션 제목 \"우리가 해결하려는 문제\" → \"우리가 풀어가는 구조\"\n- ko \"은행은 문을 닫습니다\" → \"현행 금융 시스템은 고정 소득을 기준으로 설계\"\n- ko \"배제되고, 내몰립니다\" → \"접근하기 어렵고, 의존하게 됩니다\"\n- ko \"개인의 실패\" / \"악순환을 끊기\" → \"개인이 풀 수 있는 문제가 아닙니다\" / \"구조를 함께 바꾸기\"\n- en 섹션 제목 \"The problem we solve\" → \"The structure we work on\"\n- en \"Banks... close the door\" → \"Mainstream banking is built around steady paychecks\"\n- en \"excluded / pushed into\" → \"have limited access / end up relying on\"\n- en \"personal failure / break it\" → \"isn't something individuals can fix alone / reshape it, together\"\n- JSX apostrophe escape (react/no-unescaped-entities) → &rsquo; 사용\n\n매뉴얼 8.5 회복 서사 4원칙 본문 반영:\n- 결말 = 회복 (피해→구조 변경 함께)\n- 주체 = 행위자 (SAF + 연대 작가들)\n- 시간 = 현재진행형 (\"풀어가는·바꾸기 위해\")\n- 위치 = 정체성 영역 (About 1번째 섹션, PageHero 회복 톤 직후)\n\n검증:\n- npm run type-check 통과\n- \"고통받/끼니/큰 희망/불우/작은 클릭\" 죄책감 톤 grep 0건 (Sprint 1 처리)\n- \"campaign\"/\"캠페인\" 자기 지칭 잔재 0건 (과거 사건 서술 제외)\n- ko/en 양쪽 파리티 유지\n\n\n---------\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-14",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "799694e4",
+    "type": "feat",
+    "scope": "authenticity-pride",
+    "subject": "Sprint 2 — 매체별 진품 라벨 + 자긍심 박스 + 결제 신뢰 시그널 (#36)",
+    "summary": "매뉴얼 5.8(매체별 진품 라벨)·8.3(자긍심 박스 5줄 표준)·10.6(결제 페이지 신뢰 시그널 5개) 통합 구현. 페르소나 B 안목 컬렉터 정체성 형성.",
+    "body": "* feat(authenticity-pride): Sprint 2 — 매체별 진품 라벨 + 자긍심 박스 + 결제 신뢰 시그널 5개\n\n\n매뉴얼 매핑 (Plan v3 Sprint 2):\n- 5.8 매체별 진품 라벨 마스터 — Sprint 2 우선 5개 매체 적용 (회화·한국화·드로잉·판화·사후판화 = 307점/77%)\n- 7.5 자긍심 박스 매체별 1줄 변동 — 그룹 A/B/B-사후 3분기\n- 8.3 자긍심 박스 5줄 표준 카피 + 8.5 작품 detail 13섹션 중 [2] 진품성·[13] 자긍심 위치\n- 10.6 결제 페이지 신뢰 시그널 5개 (진품·청약철회·배송·결제보안·작가 직접 출품)\n\n신규 파일:\n- lib/medium-labels.ts — getMediumLabel() / getPrideBoxVariant() ko/en, edition N/M 패턴 추출\n- components/features/PrideBox.tsx — 8.3 5줄 카피, 회복 서사 4원칙 (결말 회복·주체 컬렉터·시간 현재진행·위치 정체성)\n\n수정:\n- ArtworkCard — gallery 좌상단 라벨 배지(sold 시 자동 숨김, sold-date 배지와 비충돌), slider 텍스트 영역 라벨 한 줄\n- 작품 detail page — [2] 우측 column header 직후 \"진품성\" 라벨 박스, [13] article 마지막 PrideBox\n- TrustBadges — 14개 일반 신호 중 5개로 확장 (Shield/RotateCcw/Truck/Lock/User 아이콘), variant 추가 (detail/checkout)\n- /checkout/[artworkId]/CheckoutClient + Overseas — CTA 아래 TrustBadges 노출\n- types/index.ts — ArtworkCardData에 category/edition 필드 추가 (라벨 노출 정보 흐름)\n- messages/ko·en.json — trustBadges에 directFromArtist/returnPolicy/paymentSecurity 키 3개 신설\n\n검증:\n- npm run type-check 통과\n- ESLint(변경 파일) 0 error (기존 jsx-a11y warning 2건은 무관)\n- Sprint 2 미적용 매체(사진·디지털아트·조각·도자공예·아트프린트·혼합매체)는 getMediumLabel이 null 반환 → UI 자동 미노출, Phase 2에서 확장\n\n\n* fix(sprint-2): 블라인드스팟 3건 — Footer 라벨 회귀 + slider truncate + 영문 화폐 톤\n\n\n[HIGH] FooterSlider 매체 라벨 미노출 회귀\n- /app/api/artworks/route.ts map 단계가 category/edition 필드를 버려서\n  Footer 슬라이더 카드에서 매체별 진품 라벨이 표시되지 않음\n- 두 필드를 minimizedArtworks payload에 추가 (BANDWIDTH 영향 미미, 필드당 ~10byte)\n\n[HIGH] ArtworkCard slider variant 한국어 라벨 truncate 의미 손실\n- 160~200px 좁은 카드에서 \"사후 발행 한정판 6/20\" 라벨이 truncate로 잘림\n- truncate → line-clamp-2 + leading-tight + break-keep로 두 줄 허용\n- title attr fallback으로 풀텍스트 hover 보장\n\n[MEDIUM] PrideBox 영문 line3 화폐 톤\n- \"a new ₩3,000,000 path opening\" — ₩ 기호 단독은 영문 화폐 컨벤션과 충돌\n- \"a new ₩3,000,000 path of low-interest support\" — 의미 보강(저금리 상호부조)\n- 한국어 원문 \"새로 열리는 ₩3,000,000의 길\"은 매뉴얼 8.3 원문대로 유지\n\n검증: npm run type-check 통과\n\n\n---------\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-14",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f3a03396",
+    "type": "fix",
+    "scope": "artwork-gallery",
+    "subject": "필터 클릭 시 페이지 상단 스크롤 점프 제거 — sticky FilterBar UX 정상화 (#33)",
+    "summary": "작품 갤러리에서 정렬/판매상태/장르/가격 필터를 누르면 페이지 상단으로 자동 스크롤되어 사용자가 보고 있던 그리드 위치를 잃는 회귀. sticky FilterBar 패턴과 충돌. scrollToTop 호출 4건 제거.",
+    "body": "[증상]\n- 사용자가 작품 그리드를 깊이 스크롤한 상태에서 sticky FilterBar(데스크톱 헤더 아래 고정)의 필터 칩 클릭 → window.scrollTo({ top: 0 }) 호출 → 페이지 최상단으로 점프\n- 사용자가 다시 그리드 위치로 스크롤해 새 결과를 살펴봐야 하는 마찰\n- sticky 필터의 의도(\"그 자리에서 결과 갱신\")와 정반대 동작\n\n[원인]\nArtworkGalleryWithSort에서 4개 필터 핸들러를 useCallback wrapper로 감싸 setter 후 scrollToTop() 호출:\n- handleSortChange, handleStatusChange, handleCategoryChange, handlePriceChange\n- 주석: \"결과가 화면 밖에 있어 혼란스러운 UX를 방지\" — 비-sticky 환경 가정. 현재 데스크톱은 sticky라 무효.\n\n[수정]\n1. scrollToTop useCallback + 4개 wrapper 핸들러 모두 제거\n2. FilterBar/CategoryFilter/PriceRangeFilter의 onSelect prop에 useArtworkFilter setter를 직접 전달\n3. handleArtistClick은 유지 — 작가 페이지로 navigate(다른 URL)라 새 페이지 상단부터 보이는 게 정상\n\n[부수 효과]\n- 코드 47 → 7 라인 감소 (40 라인 제거)\n- useCallback wrapper 사라져 dependency array 관리 부담 0\n\n[검증]\n- npm run type-check 통과\n- ESLint clean (기존 jsx-a11y/prefer-tag-over-role warning 1건 그대로)\n- Playwright localhost:3000/artworks:\n  - scrollY 1500 → \"50만원 이하\" 클릭 → scrollY 1500 (변화 0) ✅\n  - scrollY 2000 → \"판화\" 카테고리 클릭 → scrollY 2000 ✅\n  - URL 파라미터 정상: ?category=판화&price=under500k\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "398fc583",
+    "type": "feat",
+    "scope": "artwork-filter",
+    "subject": "가격대 필터 세분화 — 10만/30만/50만 이하 3개 누적 bucket 추가 (#32)",
+    "summary": "소품·판화 등 저가 작품 진입 사용자를 위해 가격 bucket을 4개 → 7개로 확장. \"10만원 이하\", \"30만원 이하\", \"50만원 이하\" 누적형 bucket을 기존 100만원 이하 앞에 추가.",
+    "body": "[기존 4 bucket]\n- 100만원 이하 (89), 100~300만원 (213), 300~500만원 (59), 500만원 이상 (39)\n\n[추가 3 bucket — 누적형]\n- 10만원 이하 (under100k): 0 ≤ price < 100,000\n- 30만원 이하 (under300k): 0 ≤ price < 300,000 (10만 이하 포함)\n- 50만원 이하 (under500k): 0 ≤ price < 500,000 (30만 이하 포함)\n\n[패턴 혼합]\n- 누적형(under*): \"X원 이하\" UX — e-commerce 표준 (백화점 가격필터 패턴)\n- 구간형(1to3m/3to5m): mutually exclusive 구간 — 중·고가용\n- PriceRangeFilter는 single-radio라 사용자가 한 bucket만 선택 → 자연스러움\n\n[구현 단순함]\n- lib/artwork-price-buckets.ts PRICE_BUCKETS 배열에 3 entry 추가만으로 완결\n- PriceBucketId type union 확장\n- 소비자(PriceRangeFilter, useArtworkFilter)는 PRICE_BUCKETS map 기반이라 자동 동작\n- URL 파라미터(?price=under100k) 자동 지원 (isValidPriceBucketId)\n- count === 0 bucket은 PriceRangeFilter가 자동 hide → 적은 작품 카테고리에서 노이즈 0\n\n[검증]\n- npm run type-check 통과\n- npm run build 통과 (428 HTML 0 i18n leak)\n- Playwright localhost:3000/artworks:\n  - 8개 bucket 렌더 (\"전체 가격대 455\" + 7 bucket)\n  - 누적 카운트 정확: under100k=3, under300k=14, under500k=38, under1m=89\n  - 10만원 이하 클릭 → URL ?price=under100k 적용\n  - 작품 카드 3건만 노출 (counter \"3\"과 일치)\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "eaff678f",
+    "type": "feat",
+    "scope": "artwork-detail",
+    "subject": "다중 이미지 작품 인라인 carousel — 화살표·키보드·스와이프 (#30)",
+    "summary": "이미지 2장 이상 작품에서 lightbox를 열지 않아도 페이지에서 바로 좌우로 넘길 수 있게 carousel 추가. \"소(앞뒤 양면)\", \"아지안타& 정각산(앞뒤 양면)\" 같은 양면 작품 UX 개선.",
+    "body": "[기존]\n- ArtworkImage가 images[0]만 페이지에 노출\n- 다른 이미지는 lightbox(전체화면 모달)를 열어야 carousel로 볼 수 있었음\n- 양면 작품에서 뒷면 확인을 위해 매번 모달 trip 필요\n\n[추가]\n1. 좌우 화살표 — 이미지 ≥2장일 때만 absolute 노출, bg-white/85 backdrop-blur + charcoal-deep 아이콘 (갤러리 톤)\n2. 인덱스 카운터 — 우하단 bg-charcoal-deep/75 pill, \"1 / 2\" 형식, aria-live=\"polite\"\n3. 키보드 ←/→ — main image button focus 시 동작\n4. 모바일 swipe — touchstart/touchend X diff 50px 임계값\n5. Wrap-around — 마지막 → 처음 순환 (양면 작품 사용성)\n6. Lightbox initialIndex={currentIndex} — carousel 위치 그대로 모달 열림\n\n[성능 보존]\n- LCP: currentIndex===0 일 때만 fetchPriority=\"high\" loading=\"eager\" decoding=\"sync\". 다른 인덱스는 lazy/auto/async\n- 인접 이미지 prefetch: useEffect로 (currentIndex+1) 이미지 new Image()로 미리 fetch\n- CLS: aspect-[4/5] 컨테이너 그대로, src 교체만이라 layout shift 0\n- 외부 carousel 라이브러리 없이 직접 구현 (~1KB, embla +20KB 회피)\n\n[a11y]\n- aria-label: \"이전 이미지\" / \"다음 이미지\" (i18n)\n- aria-live=\"polite\" 카운터 — 인덱스 변경 자동 안내\n- 키보드/터치 핸들러를 main button에 두고 외부 div는 단순 wrapper (nested button 회피)\n- Sold/Reserved 배지를 button 형제로 분리 (pointer-events-none)\n- swipe 후 ghost-click 차단: swipedRef 플래그로 openLightbox 무시\n\n[검증]\n- npm run type-check 통과 + ESLint clean\n- npm run build 통과 (i18n placeholders 426 HTML 0 leak)\n- Playwright localhost + production Supabase data \"소(앞뒤 양면)\":\n  - 초기 \"1 / 2\" 카운터·화살표 노출 + img.fetchPriority=\"high\" 확인\n  - next 클릭 → \"2 / 2\", src swap, fetchPriority=\"auto\" loading=\"lazy\" 확인\n  - wrap-around: 2/2 → next → 1/2 OK\n  - ArrowLeft: 1/2 → 2/2 wrap OK\n  - lightbox 오픈 시 carousel 위치 유지(activeIndex=1) OK\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0e9164dd",
+    "type": "fix",
+    "scope": "hero",
+    "subject": "overlay 농도 + /news 큐레이션 — 이미지가 보이지 않던 회귀 차단 (#28)",
+    "summary": "사용자 보고 — \"소개 탭 페이지 hero 이미지 하나도 적용 안 됐다\". 코드와 prod",
+    "body": "HTML 모두 정상 발행 중이었으나(/about·our-reality·our-proof·transparency 다 hero\nURL 들어감), 두 가지 시각적 문제로 사용자에겐 단색으로 보였음.\n\n[문제 1] PageHero dark overlay bg-black/60이 너무 진함\n- hero 이미지 위에 균일 60% 검정 overlay → 이미지가 거의 단색처럼 보임\n- hero 추가 의미가 사라짐\n\nfix: 그라디언트 overlay (상단 black/55 → 중앙 black/25 → 하단 black/55)\n- 상하단은 텍스트(h1/breadcrumb/CTA) 가독성 보장\n- 중앙은 옅어 이미지가 또렷이 보임\n- 흰 텍스트 + drop-shadow-lg와 결합해 가독성 유지\n\n[문제 2] /news만 hero 이미지 NONE\n- prod 검증: /about·/our-reality·/our-proof·/transparency 정상 적용\n- /news는 자동 pickListingHeroImage(thumbnail) 추출 실패 → 외부 기사 thumbnail\n  미저장 다수\n- fix: HERO_CURATION_OVERRIDES에 'news': '/images/hero/4.jpg' 큐레이션 추가\n  (인물화, 시각적 활기 있는 자산)\n\n[검증]\n- /about → hero/8.jpg ✓\n- /our-reality → hero/16.jpg ✓\n- /our-proof → hero/15.jpg ✓\n- /transparency → hero/9.jpg ✓\n- /news → hero/4.jpg (이번 PR로 적용)\n- /archive·/archive/2026·/archive/2023 → 기존 적용 유지\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a93434af",
+    "type": "feat",
+    "scope": "hero",
+    "subject": "Phase 4 — 캠페인 7곳 hero 큐레이션 (public/images/hero 자산 매핑) (#27)",
+    "summary": "옵션 Z Phase 4 — 캠페인 스토리텔링 7개 페이지(/about, /our-reality, /our-proof,",
+    "body": "/transparency, /archive, /archive/2026, /archive/2023)에 hero 배경 이미지 큐레이션.\npublic/images/hero/ 폴더의 18장 작가 작품 + saf2023 실제 전시 사진 활용. 추가 자산\n업로드 없이 기존 큐레이션 자산 재활용.\n\n[자산 매핑 — lib/hero-curation.ts HERO_CURATION_OVERRIDES]\n- about: hero/8.jpg (한국 산수, 차분한 정체성)\n- our-reality: hero/16.jpg (황량한 풍경, 다큐멘터리 톤 — 금융 차별 현실 시각화)\n- our-proof: hero/15.jpg (푸른 점묘, 차분·신뢰·증명)\n- transparency: hero/9.jpg (미니멀 추상, 명료·정제)\n- archive: hero/2.jpg (비/추상, 시간의 흐름)\n- archive/2026: hero/13.jpg (꽃밭, 현재의 활기)\n- archive/2023: saf2023/IMG_0292.webp (2023 실제 갤러리 풍경 + 작품)\n\n[디자인 의도]\n- 작품에서 색이 옴 — CLAUDE.md \"interface chrome is colorless, color comes only\n  from artworks\" 정체성 부합\n- 페이지 메시지에 맞는 톤 큐레이션:\n  - /our-reality 어두운 톤 vs /our-proof 차분한 톤 = 문제↔증명 시각 대비\n  - /archive/2023 실제 전시 사진 = 회고적 무게감\n\n[각 페이지 적용]\n- 영문/한국어 분기 PageHero 양쪽 모두에 customBackgroundImage 추가 (about, our-proof,\n  transparency, archive/2026: 2개씩)\n- getHeroOverride() helper로 일관된 매핑 lookup\n\n[효과]\n- 22개 hero 페이지 중 단색이었던 캠페인 7곳에 시각적 다양성\n- 페이지별 의미에 맞는 톤\n- PageHero 자동 preload + picture/srcSet 표준 자동 적용 (PR #24)\n\n[남은 단색 hero — 의도된 chrome]\n- /privacy, /terms/*, /refund-policy: 법적 페이지, 단색이 자연스러움 (정보 위주)\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e65b32ff",
+    "type": "feat",
+    "scope": "import",
+    "subject": "박생광 드로잉전 36점 등록 + admin_product_name PSK-A-xxx 표식",
+    "summary": "박생광 드로잉전 (2026-05-20~06-08) 시트 export 115점 중 작품명·가격 모두 확정된 36점을 Supabase artworks에 일괄 등록. 중복 재등록 차단용 2-layer 안전장치 정착",
+    "body": "[등록 결과]\n- 36점 INSERT 완료 (Supabase artworks 테이블)\n- 이미지 36장 Storage 업로드 (artworks/c8839e5b-.../{281~316}__original.jpg)\n- 모두 status=available, edition_type=unique, category=드로잉, tax_type=B\n- 가격대: ₩200만 28점 / ₩300만 4점 / ₩100만 2점 / ₩150만 1점 / ₩20만 1점\n\n[2-layer 중복 방지 안전장치]\nLayer 1 (DB 표식):\n  artworks.admin_product_name 컬럼에 PSK-A-xxx 패턴 저장 (PSK=박생광, A-004=원본 시트 작품번호)\n  재등록 전 query: SELECT id FROM artworks WHERE admin_product_name LIKE 'PSK-%'\n  → 36건 존재 시 새 추가 차단\n\nLayer 2 (git 영구 이력):\n  content/imports/park-saenggwang-drawings-2026.json\n  - meta: source/imported_at/artist_id/guard_policy 명시\n  - works[36]: work_no + title_ko + size + year + price + storage_path + artwork_id (Supabase uuid)\n  - 메모리 project_artwork_import_guard.md에서 동일 패턴 보존\n\n[잔여 작품 (시트 데이터 차이 set)]\n- 작품명만 있고 가격 없음 26점: 가격 확인 후 추가 import\n- 가격만 있고 작품명 없음 32점: 작품명 확인 후 추가\n- 둘 다 없음 21점: 보류\n재import 시 동일 PSK-A-xxx 패턴 사용 → admin_product_name UNIQUE 차이만 INSERT\n\n[검증]\n- Production DB: 36 row 등록 확인 (new_psk=36, available=36, drawing=36, unique_images=36)\n- Storage: 36 파일 업로드 확인 (281__original.jpg ~ 316__original.jpg)\n- Layer 1 query로 재실행 차단 확인 (LIKE 'PSK-%' = 36건)",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "2426ef6d",
+    "type": "feat",
+    "scope": "hero",
+    "subject": "Phase 3 — stories/[slug]·news/[id] detail hero DB-driven (#26)",
+    "summary": "옵션 Z Phase 3 — 콘텐츠 detail 2곳에 자체 thumbnail로 hero 배경 적용.",
+    "body": "이미 OG/JSON-LD에 사용 중인 데이터(story.thumbnail || extractFirstImage(body),\narticle.thumbnail) 재활용 — 추가 DB query 0.\n\n[적용]\n- /stories/[slug]: story.thumbnail || extractFirstImage(body)\n  - fallback OG_IMAGE.url은 hero엔 부적합 (사이트 대표 OG라 일관 디자인 깨짐) →\n    undefined로 두면 PageHero가 단색 charcoal-deep로 자동 fallback\n  - schemaImage 변수는 OG/JSON-LD용으로 OG_IMAGE.url fallback 유지 (다른 의도)\n\n- /news/[id]: article.thumbnail\n  - thumbnail 없으면 undefined (외부 기사라 본문 이미지 없음)\n  - PageHero 단색 fallback\n\n[효과]\n- 매거진·언론 detail이 자체 콘텐츠 이미지를 hero에 시각화\n- PageHero 자동 preload + picture/srcSet (mobile/desktop 1x/2x) 표준 적용\n- thumbnail 없는 케이스는 자연스럽게 단색 hero로 fallback\n\n[남은 단색 hero]\n- 캠페인 스토리텔링 (Phase 4 후보): /about, /our-reality, /our-proof, /transparency, /archive/*\n- 큐레이션 이미지 자산 준비 필요 — 별도 자산이 없다면 단색 유지\n- 법적 페이지 (제외): /privacy, /terms/*, /refund-policy — 단색이 자연스러움\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "458d3a2b",
+    "type": "feat",
+    "scope": "hero",
+    "subject": "Phase 2 — listing 5곳 hero 이미지 DB-driven 자동 선정 + override (#25)",
+    "summary": "옵션 Z Phase 2 — /artworks, /artworks/category/*, /stories, /stories/category/*,",
+    "body": "/news 5개 listing 페이지에 hero 배경 이미지 적용. PR #24의 hero-image 표준\n(PageHero 자동 preload + helper 단일 출처) 위에 lib/hero-curation 매핑 헬퍼 추가.\n\n[설계 — 옵션 Z DB-driven + manual override]\n- listing은 이미 가져오는 데이터(작품·매거진·뉴스 목록)의 첫 hero-적합 이미지 자동 사용\n- 추가 DB query 0 — 기존 데이터 재활용\n- lib/hero-curation의 HERO_CURATION_OVERRIDES에 manual mapping 등록 시 우선\n- 운영자가 시즌 큐레이션 작품으로 hero 고정하고 싶을 때 한 곳에서 관리\n\n[적용]\n- /artworks: artworks 첫 active+image 작품\n- /artworks/category/[category]: categoryArtworks 첫 active+image 작품\n- /stories: stories 첫 thumbnail || extractFirstImage(body)\n- /stories/category/[category]: 카테고리 stories 첫 이미지\n- /news: newsArticles 첫 thumbnail\n\n[표준 패턴]\n\\`\\`\\`tsx\n<PageHero\n  customBackgroundImage={\n    getHeroOverride('pageKey') ??\n    pickListingHeroImage(items, (item) => item.image || extractFn(item))\n  }\n  ...\n/>\n\\`\\`\\`\nPageHero가 자동으로 preload + picture/srcSet 발행 (mobile/desktop 1x/2x).\n\n[lib/hero-curation.ts 신규]\n- HERO_CURATION_OVERRIDES: pageKey → URL 매핑 (현재 비어있음, 향후 추가 가능)\n- getHeroOverride(pageKey): 매핑 lookup\n- pickListingHeroImage(items, extract): items에서 첫 이미지 추출 helper\n\n[효과]\n- 22개 페이지 중 단색 hero였던 listing 5곳에 시각적 다양성\n- 작품에서 색이 옴 (CLAUDE.md \"interface chrome is colorless, color comes only\n  from artworks\" 정체성 부합)\n- 추가 DB query 0\n- PSI 영향: LCP 이미지 추가분 +0.3~0.5초 (모바일 cellular), 안전망(mobile 400w\n  slider + fetchPriority high + preload + Supabase preconnect)으로 완화\n\n[다음 Phase]\n- Phase 3: stories/[slug]·news/[id] DB-driven (이미 추출 코드 있음, hero 적용만 추가)\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0c4c52a7",
+    "type": "feat",
+    "scope": "park-saenggwang",
+    "subject": "박생광 인물 사진 + 작가 history 채움",
+    "summary": "박생광 드로잉전 페이지의 portrait placeholder를 실 인물 사진(흑백)으로 교체 + content/artists-data.ts의 비어있던 history 필드를 1904~2023 연대기로 채움",
+    "body": "[Portrait 사진]\n- 흑백 인물 사진 — 드로잉전 페이지 톤(흑백 매체)과 정확히 부합\n- public/images/park-saenggwang.webp (16KB)\n- SafeImage 400×533, priority 적용 (Bio section의 LCP 후보)\n\n[작가 history 보강]\ncontent/artists-data.ts:3257 — 그동안 비어있던 `history` 필드 + 신규 `history_en` 필드 추가:\n- 1904 진주 출생 / 1920 도일 / 1923 교토시립회화전문학교 다케우치 세이호 사사\n- 1945 광복 후 귀국 / 1967 서울 이주 / 1974 일본 재이주\n- 1977 영구 귀국, 진화랑 화풍 전환\n- 1981 백상기념미술관 / 1984 문예진흥원 / 1985 파리 그랑팔레 \"한국의 피카소\" + 7월 별세\n- 2004 탄생 100주년 회고전 (갤러리현대 + 이영미술관)\n- 2023 〈위대한 만남〉 예술의전당 — 스케치 100점 첫 본격 공개\n- 주요 소장처: MMCA / 이영미술관 / 갤러리현대\n\n[효과]\n- 작가 페이지(/artworks/artist/박생광)에서 작가 연혁 표시\n- 박생광 드로잉전 페이지(/special/park-saenggwang) Bio section의 portrait placeholder가 실 사진으로 교체\n- 두 페이지 모두 작가 정체성 시각·텍스트 양면 보강\n\n[검증]\n- npm run type-check 통과\n- npx next build 통과 (.next 캐시 fresh 후) — /ko/special/park-saenggwang + /en SSG ●",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "78e4dafc",
+    "type": "feat",
+    "scope": "special",
+    "subject": "박생광 드로잉전 페이지 신규 — /special/park-saenggwang",
+    "summary": "박생광(1904-1985) 드로잉전(2026-05-20~06-08) 신규 페이지. 드로잉 미술사 narrative + 박생광 생애 + 채색 이전의 호흡 큐레이션 + 작품 갤러리 + 전시 정보",
+    "body": "[Why]\n5/20 개막 박생광 드로잉전이 사이트 메인 NowShowing 카드에 노출되지만 클릭 시 작가 페이지로 임시 진입(/artworks/artist/박생광). 전시 정체성 + 콘텐츠 narrative + 큐레이션 가치를 담는 전용 페이지 필요. 오윤 40주기 특별전 페이지 패턴 참고 + 박생광 드로잉전 톤으로 차별화\n\n[리서치 출처 (3패널)]\n- 드로잉 개념: Britannica \"the most personal of all artistic statements\", 1976 MoMA Drawing Now, 한국화 필묵·사의(寫意) 전통\n- 박생광 생애: 1904 진주 출생, 교토시립회화전문학교 다케우치 세이호 사사, 1977 영구귀국 후 8년 황금기, 1985 파리 그랑팔레 \"한국의 피카소\", 7월 별세\n- 박생광 드로잉 특화: 2023.03 예술의전당 한가람미술관 〈위대한 만남〉전에서 박생광 출품 181점 중 스케치만 100점 — 사실상 첫 본격 공개. SAF는 그 흐름의 후속이라는 큐레이션 가치\n\n[페이지 구조]\n1. Hero (bg-charcoal + sun-strong 액센트 = 오방색 황 한 자 인용)\n2. Quote — \"역사를 떠난 민족은 없다, 전통을 떠난 민족은 없다\"\n3. 드로잉이란 — Britannica·MoMA·필묵 사의 narrative\n4. 박생광 Bio (3열 비대칭 grid: portrait placeholder / Bio / Themes+Timeline 카드)\n5. 이번 전시 — 채색 이전의 호흡 (2023 한가람전 + 매체 25×18cm 종이에 연필)\n6. Gallery (bg-canvas, 드로잉 매체에 적합한 흰 벽 + ParkSaenggwangDrawingGallery)\n7. Visit — 기간/장소/시간 3 카드\n\n[디자인 톤]\nDESIGN.md \"color comes only from artworks\" 원칙 + 박생광 정체성 한 자 인용:\n- Hero charcoal + sun(yellow) 액센트만 — 오방색 중 황\n- 본문 bg-canvas-soft 미니멀\n- 카드 shadow rgba(253,202,64,0.3) (sun tint)\n- Gallery는 dark(charcoal) 대신 light(canvas) — 연필 드로잉이 흰 벽에서 가장 잘 보이는 매체 특성\n- 오윤의 primary 블루 자리에 sun-strong 일관 적용 — 두 특별전 시각 정체성 분리\n\n[변경 파일]\n- lib/hero-routes.ts: HERO_EXACT에 /special/park-saenggwang 추가 (헤더 투명화)\n- lib/now-showing.ts: 박생광 entry href를 /artworks/artist/박생광 → /special/park-saenggwang\n- components/special/ParkSaenggwangDrawingGallery.tsx 신규 — OhYoonMasonryGallery fork. theme=\"light\" + returnTo 분리\n- app/[locale]/special/park-saenggwang/page.tsx 신규 — force-static + revalidate 600\n- messages/{ko,en}.json: breadcrumbs.parkSaenggwang 키 추가\n\n[JSON-LD]\n- BreadcrumbList\n- ExhibitionEvent (Place schema 물리 주소, eventStatus=EventScheduled, attendanceMode=Offline)\n- Person (박생광, 1904-1985, sameAs ko.wikipedia)\n- ItemList (작품)\n- AggregateOffer\n\n[검증]\n- npm run type-check 통과 (SafeImage unused import 제거)\n- npx next build 통과 — /ko/special/park-saenggwang + /en/special/park-saenggwang SSG ●\n- 영역 충돌 없음 (오윤 페이지·다른 페이지에 영향 X)\n\n[메모리 준수]\n- 공개 라우트 loading.tsx skeleton 추가 X\n- 사용자 노출 텍스트 i18n 처리 (inline 분기, 오윤 패턴)\n- color token 사용 (slate-*, blue-* 등 Tailwind 기본 X)\n- next/image 직접 import X\n- verify-first: 빌드로 SSG 라우트 확인",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "77c9a6d4",
+    "type": "fix",
+    "scope": "mobile-menu",
+    "subject": "summary 텍스트만 박스 정중앙 + chevron absolute로 분리 (#23)",
+    "summary": "사용자 보고 — \"음영칸 안에 텍스트가 중간에 와야지 화살표까지 포함해서",
+    "body": "오는게 아니다\". 이전 PR #18·#22의 flex+gap 패턴은 텍스트+chevron이 한 묶음으로\n박스 중앙에 와서 텍스트가 시각적으로 왼쪽으로 치우쳐 보임.\n\n[변경]\n- gap-2 제거, summary는 justify-center로 자식 span만 가운데\n- chevron을 span 내부 absolute로 빼서 left-full+ml-2 위치 (텍스트 오른쪽 8px)\n- 결과: 텍스트가 음영 박스 정중앙 / chevron은 텍스트 너비 계산에 영향 없음\n\n[디자인 의도]\n음영 박스 = navLink padding 영역. 사용자가 \"이 박스 안에서 텍스트가 정중앙\"을\n원함. chevron은 부가 indicator로 텍스트 옆에 배치되지만 텍스트 layout과 독립.\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "434e842e",
+    "type": "fix",
+    "scope": "mobile-menu",
+    "subject": "summary flex 강제 — CSS module display:block override (#22)",
+    "summary": "사용자 보고 — \"전시 작품\" 텍스트와 ChevronDown 화살표가 모바일 메뉴에서",
+    "body": "두 줄로 나뉘는 회귀. PR #18(chevron 텍스트 옆 정렬) 직후 발견.\n\n[원인]\nFullscreenMenu.module.css:161의 .navLink가 `display: block` 명시.\nPR #18에서 summary에 Tailwind `flex` utility 추가했으나 CSS module과\nutility class가 specificity 동일하면 정의 순서로 결정 — CSS module이 후순위\n인데 글로벌 utility CSS는 보통 먼저 로드되어 `block`이 살아남음.\n\n결과: summary가 block container로 작동 → 자식 span + chevron이 inline flow로\n줄바꿈됨 (특히 모바일 좁은 viewport에서 클램프 폰트 크기와 padding이 겹쳐 wrap).\n\n[fix]\n- summary 클래스: `flex` → `!flex` (Tailwind important modifier로 specificity 우위)\n- 의도 주석 명시로 미래 회귀 방지\n\n[Trade-off 검토]\n대안: styles.navLink 자체를 display: flex로 변경\n- 위험: 다른 navLink 사용처(자식 1개 Link)에 영향\n- 정책: summary case만 다른 layout 필요하므로 summary에 한정해 override\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "39b143ca",
+    "type": "fix",
+    "scope": "home",
+    "subject": "박생광 드로잉전 정보 — 공식 포스터 반영 (5/20~6/8 + 장소·시간)",
+    "summary": "PM 잠정 일정에서 공식 포스터 확정값으로 갱신. 날짜·장소·관람시간 NowShowing 카드에 노출",
+    "body": "배경:\n- 이전 entry: 잠정 startDate 2026-05-18, endDate 2026-06-17 (PM 잠정값)\n- 공식 포스터(/Users/hwang-gyeongha/Downloads/박생광전 포스터1 3.jpg) 확정:\n  - 기간: 2026-05-20(수) ~ 2026-06-08(월) — 시작 2일 늦춤, 종료 9일 앞당김\n  - 장소: 서울시 은평구 통일로 870 M타워 6층\n  - 관람: 오전 11시 ~ 오후 8시\n  - 주최: 한국스마트협동조합\n\n변경:\n- lib/now-showing.ts: startDate 2026-05-20, endDate 2026-06-08. 주석 \"PM 확정 (공식 포스터)\"로 갱신. 장소·관람시간 안내 주석 추가\n- status: 'on' → 'coming-soon'. 현재(5/13) 기준 시작일까지 7일 남아 정확. 5/20 도래 시 'on'으로 수동 변경하거나 NowShowing.tsx에서 startDate 기준 자동 derive 도입 (별도 라운드 — 잊어도 큰 회귀 아님)\n- messages/ko.json parkSaenggwangStatus: \"드로잉전 준비 중\" → \"5/20 개막\"\n- messages/ko.json parkSaenggwangDesc: 날짜·장소·시간 압축 추가 (\"5/20(수)~6/8(월) · 은평 M타워 6층 · 오전 11시~오후 8시\")\n- messages/en.json parkSaenggwangStatus: \"Drawings exhibition coming soon\" → \"Opens May 20\"\n- messages/en.json parkSaenggwangDesc: \"May 20 (Wed) – Jun 8 (Mon) · M-Tower 6F, Eunpyeong, Seoul · 11am–8pm\"\n\n운영 시나리오:\n- 2026-05-13 ~ 2026-05-19: NowShowing 그리드에 \"5/20 개막\" 카드 노출 (어두운 톤 coming-soon 배지). hero는 강석태 fallback (박생광 startDate 미래라 활성 풀 제외)\n- 2026-05-20 ~ 2026-06-08: 시작일 도래 — status를 'on'으로 수동 변경 필요. hero는 priority 5로 박생광 점유 (활성 풀 진입)\n- 2026-06-09 이후: endDate 만료로 박생광 자동 숨김, hero는 강석태로 복귀\n\n검증:\n- npm run type-check 통과\n- href '/artworks/artist/박생광' 유지 (드로잉전 페이지 미준비 상태에서 작가 페이지로 임시 진입)",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "56c6b11d",
+    "type": "fix",
+    "scope": "perf/cls",
+    "subject": "작품 detail PurchaseGuide dynamic import 제거 — hydration shift 차단 (#21)",
+    "summary": "CrUX field CLS p75=0.10 (Mobile SLOW) 잔여 회귀 해소 — PurchaseGuide dynamic loading의 h-20 shimmer가 실제 카드 그리드(200px+)로 확장되며 발생하던 layout shift 봉쇄.",
+    "body": "[증상]\nPSI/CrUX 측정 (2026-05-13):\n- Mobile lab CLS=0 / **field p75=0.10 SLOW**\n- Desktop field CLS=0.31 SLOW\n- lab vs field gap = hydration·dynamic load 시점의 런타임 shift\n\n[원인]\ncomponents/features/ArtworkPurchaseCTA.tsx 자체가 'use client'인데 PurchaseGuide도 'use client' — 같은 client 경계 안에서 추가 코드 분할 효과 미미.\nloading placeholder h-20(80px) shimmer가 실제 PurchaseGuide(4개 카드 그리드 + 모달 트리거, 200px+)로 swap되며 viewport 절반 이상 push.\n4개 분기(toss/legacy/no-shop) 모두에서 PurchaseGuide 사용 → 작품 detail 전 페이지 영향.\n\n[수정]\ndynamic() + h-20 shimmer 제거 → 정적 import.\n'use client' 경계 안이라 chunk 분할 의미 없고, hydration 시 placeholder→실제 컴포넌트 swap이 사라져 CLS 0.\n\n(ShareButtonsWrapper는 f6365bb9 부근 main 작업에서 5×44px 개별 placeholder로 이미 더 정교하게 해결되어 별도 변경 없음)\n\n[검증]\n- npm run type-check 통과\n- npm run build 통과 (verify:i18n-placeholders 426 HTML 0 leak)\n- 배포 후 24~48h CrUX p75 재측정 + Supabase web_vitals RUM 즉시 모니터링\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "6cb61075",
+    "type": "fix",
+    "scope": "admin-revenue",
+    "subject": "soldWithoutSoldAtCount 쿼리에 voided_at filter 추가 (#20)",
+    "summary": "data quality 경고 노이즈 차단 — voided된 record는 매출 집계에서 이미 제외되므로",
+    "body": "sold_at NULL이어도 운영자가 조치할 필요 없음. active record(voided_at IS NULL) 중\nsold_at NULL만 진짜 무결성 신호로 사용.\n\n[배경]\n- /admin/revenue의 dataQuality.soldWithoutSoldAtCount는 'sold_at IS NULL' 단순 count\n- voided된 sale도 카운트에 포함되어 미래 환불 누적 시 의미 없는 경고 발생 가능\n- 현재 prod는 sold_at NULL = 0건이라 실제 영향 없지만 잠재 회귀 차단\n\n[효과]\n- 경고가 표시될 때 진짜 무결성 신호 — 운영자가 즉시 조치할 만한 record만 카운트\n- voided record의 sold_at는 데이터 정합성 문제가 아니므로 노이즈 제거\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "079525c3",
+    "type": "feat",
+    "scope": "header",
+    "subject": "홈에서 로고 클릭 시 smooth scroll-to-top (#19)",
+    "summary": "다른 페이지에서 로고 클릭은 next-intl Link가 홈으로 라우팅(자동 top)되지만,",
+    "body": "홈에 있을 때 클릭은 같은 URL이라 Link가 no-op — 사용자가 무반응으로 인식.\nisHome 판정 후 preventDefault + window.scrollTo로 \"맨 위로 이동\" 의도 만족.\n\n[변경]\n- usePathname (next-intl) — locale prefix 제거된 경로 반환\n- isHome = pathname === '/' — 홈 판정\n- onClick handler: 홈일 때만 preventDefault + smooth scroll\n- prefers-reduced-motion: reduce는 브라우저가 자동 instant 처리\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a25a48b5",
+    "type": "fix",
+    "scope": "mobile-menu",
+    "subject": "expandable nav chevron 텍스트 옆 정렬 — 오른쪽 끝 분리 회귀 (#18)",
+    "summary": "모바일 풀스크린 메뉴의 expandable 메뉴(예: \"전시 작품\")에서 텍스트는 가운데,",
+    "body": "ChevronDown 아이콘은 absolute right-0으로 분리 배치되어 부자연스러운 큰 간격 발생.\n또 인라인 SVG 사용 — 과거 정리(01a2d693 \"텍스트 화살표 → 전량 lucide ArrowRight\n아이콘으로 교체\") 정책과 어긋남.\n\n[변경]\n- summary 클래스: `flex items-center justify-center relative w-full` → `flex items-center justify-center gap-2`\n  - relative + absolute 패턴 제거 → flex gap-2로 텍스트 옆 자연스러운 정렬\n- 인라인 SVG → lucide-react ChevronDown\n  - 코드베이스 lucide 통일 정책 일관성\n  - 같은 transition·group-open:rotate-180 동작 유지\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "0359b09b",
+    "type": "fix",
+    "scope": "mobile",
+    "subject": "모바일 헤더 스크롤 회귀 차단 — html overflow-x: clip 제거 (#17)",
+    "summary": "사용자 보고 — 모바일에서 본문 스크롤 시 fixed 헤더가 같이 따라 내려가는",
+    "body": "버그. iOS Safari/Mobile Chrome의 WebKit 알려진 버그 — html element에 overflow-x\n설정 시 자식 position: fixed가 viewport 대신 html 기준 containing block으로 잡혀\n스크롤에 따라 같이 움직임.\n\n[진단]\n- Header (components/common/Header.tsx:44) `fixed top-0 left-0 right-0` 정상 적용\n- 부모 transform/filter/perspective/will-change 없음 (정상 containing block 조건)\n- styles/globals.css:144 html에 `overflow-x: clip` 적용 → WebKit fixed 회귀 트리거\n\n[fix]\nhtml에서 overflow-x: clip 제거. body에는 유지(body는 fixed의 containing block이\n아니라 영향 없음). 가로 overflow 차단 효과는 body에서 그대로 작동.\n\n[유지]\n- scrollbar-gutter: stable (modal scroll-lock 시 CLS 차단)\n- overscroll-behavior-x: none\n- -webkit-overflow-scrolling: touch\n- body { overflow-x: clip }\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f6365bb9",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "fadeInUp keyframe transform 제거 — 8개 사용처 hydration mismatch 봉쇄 (#16)",
+    "summary": "Plan 회의에서 옵션 A 권장. /special/oh-yoon CLS 0.316 fix(PR #15) 메커니즘이",
+    "body": "motion-safe:opacity-0 + motion-safe:animate-fade-in-up 패턴 8곳에 잠재함을 확인.\nkeyframe 한 줄 수정으로 전역 안전망 적용.\n\n[메커니즘]\n- SSR HTML: opacity-0 class만 적용 (transform 없음)\n- CSS animation 시작 시점: keyframe 0% 적용 → transform translateY(20px) 점프 → 0.4s에 0 복귀\n- 큰 element(text-xl/2xl body wrapper, hero excerpt)에서 impact × distance fraction이\n  CLS 임계 초과 가능\n\n[잠재 위험 8곳 — 모두 자동 안전화]\n1. app/[locale]/stories/[slug]/page.tsx:341 (excerpt, above-fold) — 위험 높음\n2. app/[locale]/stories/[slug]/page.tsx:352 (markdown body wrapper) — 위험 매우 높음\n3. app/[locale]/stories/[slug]/page.tsx:356 (footer links)\n4. app/[locale]/stories/[slug]/page.tsx:446 (related card)\n5. app/[locale]/stories/page.tsx:308 (listing card)\n6. app/[locale]/stories/category/[category]/page.tsx:574 (category card)\n7. app/[locale]/artworks/artist/[artist]/page.tsx:623 (related card)\n8. components/features/RelatedArtworkCard.tsx:58 (related card)\n\n[Trade-off]\n- 디자인: 미세한 translateY(20px) 상승감 손실\n- 보존: 0.4s ease-out fade rhythm, opacity transition, entry timing\n- motion-safe: 분기는 그대로 — reduced-motion 사용자에겐 원래도 적용 안 됐음\n\n[옵션 비교 결과 — Plan 회의]\n- 옵션 A (선택): keyframe 한 줄 — 전역 안전, 미래 새 사용처도 자동 보호\n- 옵션 B (각하): 위험 큰 2곳만 — 나머지 6곳 잠재 위험 잔존\n- 옵션 C (각하): translate3d GPU — SSR/hydration mismatch 자체는 동일하게 존재\n\n[관련 페이지]\nGSC 노출 풍부 stories detail 3건이 above-fold motion-safe 패턴 보유:\n- /stories/editions-explained (461 imp)\n- /stories/artwork-tax-guide (358 imp)\n- /stories/art-pricing-factors (298 imp)\nCore Web Vitals \"Poor\" 페널티 위험을 구조적으로 봉쇄.\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "f9b93160",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "/special/oh-yoon Hero entry 애니메이션 제거 — CLS 0.316 회귀 차단 (#15)",
+    "summary": "admin Web Vitals 회귀 패널이 /special/oh-yoon CLS p75 0.316 (POOR 임계 0.250",
+    "body": "초과, 19 샘플 중 31.6% POOR) 보고. Hero badge·h1·p의 animate-stamp + animate-fade-in-up\n+ [animation-fill-mode:both] 조합이 SSR/hydration mismatch로 layout shift 누적이\n원인. transform 효과 손실 대신 CLS 0 보장으로 trade-off.\n\n[진단]\n- SSR HTML: opacity-0 클래스만 적용 (transform 없음)\n- Hydration 후: animation-fill-mode:both로 0% keyframe 즉시 적용\n  → transform: translateY(20px) 적용 → 큰 영역 visual shift (CLS 1)\n  → 200~400ms delay 후 translateY(0) 복귀 (CLS 2)\n- text-7xl/8xl h1 + multi-line으로 element 영역이 큼 → impact fraction × distance\n  fraction 누적이 0.316까지 (다른 페이지는 h1이 작아 임계 안 넘음)\n\n[근거 — animate-fade-in-up 다른 사용처는 회귀 없음]\n- /stories listing·detail·category, /artworks/artist, RelatedArtworkCard 등 6곳에서\n  같은 클래스 사용하나 hero h1이 작거나 below-fold라 CLS 임계 안 넘음\n- oh-yoon만 특수: viewport 위쪽 큰 multi-line h1 = CLS 직격\n\n[변경]\n- Hero badge div: animate-stamp [animation-fill-mode:both] → 제거\n- Hero h1: animate-fade-in-up opacity-0 [fill-mode:both] [delay:200ms] → 제거\n- Hero p: animate-fade-in-up opacity-0 [fill-mode:both] [delay:400ms] → 제거\n- Masonry gallery 카드의 animate-stamp는 below-fold라 유지 (CLS window 밖)\n\n[Trade-off]\n- 디자인: Hero entry stagger 효과 손실 (정적 첫 paint)\n- 측정: CLS p75 0.316 → 0.05 미만 (목표) 회복 예상\n\n[검증]\n- 1주일 후 admin Web Vitals 회귀 패널에서 /special/oh-yoon CLS 임계 이하 확인\n- 효과 없으면 다른 원인(Masonry image lazy load·font swap·CSS columns reflow) 추가 진단\n\nCo-authored-by: Claude Opus 4.7 (1M context) <noreply@anthropic.com>",
+    "date": "2026-05-13",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "bccfdc77",
+    "type": "fix",
+    "scope": "cls+rum",
+    "subject": "/petition/oh-yoon CLS 1.0 회귀 + WebVitalsTracker SPA-aware",
+    "summary": "회귀 monitoring이 잡은 /petition/oh-yoon CLS=1.0 27건 근본 원인 두 곳 fix + page_path attribution 부정확 회피로 측정 정확화",
+    "body": "[Why]\n직전 commit의 monitoring 시스템(admin nav alert dot + WebVitalsPanel 회귀 섹션)이 첫 회귀를 잡아 origin 추적. 3패널 + 2패널 진단 회의로 다음 확정:\n- 진짜 회귀: /petition/oh-yoon CLS=1.0 27건, avg 0.89~0.98\n- /special/oh-yoon CLS 0.32는 SPA artifact (WebVitalsTracker가 onCLS 콜백 시점 window.location.pathname 캡처 → 누적 CLS가 마지막 페이지에 잘못 attribution됨)\n- 진짜 shift target: `section.bg-white|bg-canvas py-20 md:py-24` 안의 두 element\n\n[Phase 1] ShareButtonsWrapper placeholder layout shift 차단\n- components/common/ShareButtonsWrapper.tsx\n- 기존: dynamic({ ssr: false }) + loading: <div w-[220px] h-10> placeholder\n- 실 ShareButtons: 5개 버튼 × min-w/h-[44px] + 4×8px gap = 252×44px\n- hydrate 시 220×40px → 252×44px swap이 text-center border-8 box 안에서 발생 → viewport 절반 push (CLS=1.0의 strong 가설 1, high 자신감)\n- fix: placeholder를 동일 layout(flex gap-2 + 5×min-w/h-[44px] 원형)으로 reserve\n\n[Phase 2] ProgressBar 조건부 보조 지표 reserve\n- app/[locale]/petition/oh-yoon/_components/ProgressBar.tsx\n- 기존: {(regionTopCount > 0 || recent24h > 0) && <p>...</p>} — SSR Supabase fallback 0 시 미렌더\n- useEffect refresh 후 실값 도착 → <p>가 갑자기 추가됨 → Hero section 전체 push (strong 가설 2, medium 자신감)\n- fix: 항상 렌더 + invisible 토글로 height reserve. aria-hidden으로 SR엔 0건 정보 숨김 (PRD §14 OQ-6 의도 유지)\n\n[Phase 3] WebVitalsTracker SPA-aware\n- components/common/WebVitalsTracker.tsx\n- 기존: useEffect deps [] + sendToGA가 window.location.pathname 캡처 → SPA navigation 후 다음 페이지 path에 누적 CLS attribution 잘못됨 (web-vitals v5 공식: \"Do not call onCLS() more than once per page load\" — lifecycle 모델)\n- fix: usePathname() + pathRef 패턴. deps [] 절대 유지 (이중 등록 시 데이터 2~5배 부풀림). 콜백 발화 시점에 pathRef.current 사용\n- stripLocale 적용: /ko/artworks/123과 /en/artworks/123을 동일 path로 정규화 (RPC 그룹핑 정합)\n- attribution data 보존: web-vitals/attribution 직접 사용 유지 (next/web-vitals는 attribution 미공개)\n\n[Phase 4] 검증\n- npm run type-check 통과\n- npx next build 통과 — 모든 라우트 정상 prerender\n- 영역 충돌 없음 (3 파일 독립)\n\n[Phase 5] 후속 관찰 (자동 진행 없음)\n- 며칠 RUM 누적 후 /special/oh-yoon 가짜 signal 소멸 + /petition/oh-yoon CLS p75 회복 + admin nav alert dot clear 확인\n- LCP/FCP/TTFB는 page load 초반 1회라 SPA artifact 영향 거의 없음 → 그대로 사용 가능\n\n[패널 회의 출처]\n- web-vitals GitHub README, web.dev/articles/vitals-spa-faq, Issue #119\n- production 데이터로 동일 shift target이 3 page_path에 attribution됨을 직접 검증",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "ccf64001",
+    "type": "feat",
+    "scope": "monitoring",
+    "subject": "admin nav alert dot + WebVitalsPanel 회귀 강조 섹션",
+    "summary": "Web Vitals 회귀(p75 Google CWV poor 임계 초과 페이지) 자동 인지 — admin nav \"분석\" 그룹 옆 빨간 점 + WebVitalsPanel 최상단 강조 섹션",
+    "body": "[Why]\n- 코드 fix는 이미 완료(CountdownTimer CLS reserve, /archive/2023 LCP sizes/quality, WebVitalsTracker 이중 mount 제거 등)\n- 그러나 RUM 데이터가 누적되어도 admin/analytics 페이지를 능동적으로 안 열어보면 회귀 감지 X\n- 매일 admin 열 때 자동 인지가 핵심. PSI lab 단일 측정은 variance로 신뢰 X — saf2026 자체 RUM이 ground truth\n\n[변경 사항]\n\n1) supabase/migrations/20260513120000_web_vitals_regressions_rpc.sql 신규\n   - get_web_vitals_regressions(since_ts, min_sample_size): 최근 N일 윈도우 metric × page_path별 p75가 Google CWV poor 임계 초과한 페이지 list\n     * LCP > 4000ms / INP > 500ms / CLS > 0.25 / FCP > 3000ms / TTFB > 1800ms\n     * sample 10건 미만 자동 제외 (트래픽 적은 페이지 극단값 false alert 차단)\n   - get_web_vitals_regression_count: nav dot용 카운트만 빠르게\n\n2) app/actions/admin-analytics.ts\n   - AnalyticsData.webVitals.regressions 타입 추가\n   - getAnalyticsData에 get_web_vitals_regressions RPC 호출 + 매핑\n   - getWebVitalsRegressionCount() 별도 export — admin layout 가벼운 호출용 (7일 윈도우, 에러 시 0 graceful fallback)\n\n3) admin nav alert dot\n   - app/(portal)/admin/layout.tsx: getWebVitalsRegressionCount() 호출 + nav에 props\n   - app/(portal)/admin/admin-desktop-nav.tsx: regressionCount prop. '/admin/analytics' href를 포함한 group을 자동 식별해 NavDropdown.alertCount 전달\n   - app/(portal)/admin/_components/NavDropdown.tsx: alertCount prop. label 옆 작은 빨간 점 (드롭다운 닫혀 있어도 보임)\n   - app/(portal)/admin/admin-mobile-nav.tsx: 햄버거 버튼 + drawer 내 '/admin/analytics' link 옆 dot + count badge\n\n4) WebVitalsPanel 회귀 강조 섹션\n   - app/(portal)/admin/analytics/_components/WebVitalsPanel.tsx: hasData 가드 안에서 회귀 섹션을 summary 위에 배치 (가장 눈에 잘 띄게)\n   - 회귀 있으면 danger-a11y/5 배경 + ring 강조. 없으면 success 메시지\n   - column: metric · page_path · sample · p75 · threshold · poor ratio\n\n5) i18n messages (admin)\n   - wvRegressionsTitle/Desc/Empty, wvThresholdColumn, wvPoorRatioColumn 추가 (ko/en)\n\n6) 메모리 보강 (feedback_psi_variance.md)\n   - \"PSI lab variance + RUM 우선 정책\"으로 제목·내용 확장\n   - saf2026 자체 RUM(WebVitalsPanel + nav alert dot)을 ground truth로. PSI는 디버깅 보조용만\n   - 패널 에이전트가 PSI 단일 측정 인용 시 RUM crosscheck 강제\n\n[검증]\n- npm run type-check 통과\n- npx next build 통과\n- migration은 production DB에 별도 적용 필요 (supabase db push). RPC 미존재 시 RPC 호출 graceful fallback (regressionCount=0, alert dot 미표시)이라 안전\n\n[운영 정책]\n- 매일 admin 열 때 \"분석\" 그룹 옆 빨간 점이 회귀 신호. 클릭해서 WebVitalsPanel 최상단 회귀 섹션 확인\n- 회귀 임계 초과 페이지만 표시 (false alert 차단)\n- PSI는 더 이상 단독 판단 도구 아님. RUM 데이터로 회귀 확정",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "e2ed517c",
+    "type": "fix",
+    "scope": "perf",
+    "subject": "작품 detail 페이지 레벨 LCP preload 제거 — Vercel/Next.js 자동 인젝션과 중복",
+    "summary": "production HTML 측정에서 LCP 이미지 preload <link>가 4개 발행되는 회귀 확인.",
+    "body": "페이지 레벨 manual preload(75f45716 추가)와 Vercel Edge/Next.js auto-injection이\n같은 URL을 두 쌍으로 hint — dedupe 동작해 실제 fetch는 1회지만 우선순위 경쟁\n유발 가능. manual preload 제거로 단일 출처화.\n\n[증상]\n/artworks/[id] production HTML head에 <link rel=\"preload\" as=\"image\"> 4개:\n  [pos 440] mobile (내 코드)\n  [pos 707] desktop imageSrcSet (내 코드)\n  [pos 7624] mobile duplicate (Vercel/Next 자동)\n  [pos 7891] desktop href+imageSrcSet (Vercel/Next 자동, 다른 attribute 순서)\n\nvercel:performance-optimizer agent가 측정 후 발견: \"dedupe 작동 중이지만 fast 3G에서\n우선순위 경쟁으로 LCP 후퇴 가능\". 즉 현재 회귀는 아니지만 측정 결과의 신뢰도와\n잠재 위험.\n\n[원인]\nArtworkImage의 <picture> + img fetchPriority=\"high\"가 이미 LCP 신호. Vercel Edge가\n이를 감지하고 preload <link> 자동 인젝션. 페이지 레벨에서 별도로 같은 의도의 preload\n추가하면 중복.\n\n[수정]\napp/[locale]/artworks/[id]/page.tsx — page.tsx return의 manual <link rel=\"preload\">\n2개 블록 제거 + lcpImageMobile/Desktop1x/Desktop2x 변수 + 관련 import 정리.\nArtworkImage의 fetchPriority=\"high\"는 그대로 유지(자동 인젝션 트리거).\n\n[검증]\ntype-check 통과. production 재배포 후 head preload 갯수 4 → 2로 감소 예상,\nfetch 횟수 변화 없음(현재도 dedupe로 1회).",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "16602fb9",
+    "type": "fix",
+    "scope": "audit-p1",
+    "subject": "cache-control 덮어쓰기 차단 + /archive/2023 LCP fix + 영문 news detail noindex",
+    "summary": "4패널 audit P1/P2 통합 fix — Vercel Edge cache 정상화·LCP 12s 회귀 해소·영문 indexing 정합성",
+    "body": "[P1-A] next.config.js cache-control 덮어쓰기 차단\n- 원인 확정: next.config.js:130 headers() negative lookahead가 `/llms.txt` 등을 매칭해 route.ts의 `public, max-age=3600`을 `private, no-cache, max-age=0, must-revalidate`로 강제 덮어쓰기. 결과: x-vercel-cache PRERENDER hit인데도 클라이언트/봇은 매 요청 origin re-validate\n- negative lookahead에 `llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|en/llms\\.txt|en/llms-full\\.txt` 6개 경로 추가\n- 보너스: robots.txt·sitemap.xml도 동시 해결 (검색 크롤러·LLM 봇 모두 CDN edge 1시간 캐시)\n- HTML 공개 페이지 bfcache 정책은 영향 없음 (path-to-regexp 12케이스 정규식 매칭 검증)\n\n[P1-B] /archive/2023 LCP 12s 회귀 fix\n- 진단: `/images/saf2023/saf2023poster.png` 1200×1700 PNG 614KB가 priority LCP element. `sizes` 미지정 → next/image가 최대 variant 요청 → mobile 4× CPU throttle에서 디코딩+다운로드 12s\n- fix: `sizes=\"(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px\"` + `quality={75}` + `fetchPriority=\"high\"` 추가. priority는 유지(LCP element)\n- 예상: WebP/AVIF variant ~150-250KB 다운로드로 LCP p75 12s → 2-3s대 진입. 실측은 RUM 며칠 누적 후\n\n[P1-C] 영문 /news/[id] noindex 정합성\n- robots.ts는 `/en/news/` prefix crawl 차단 + EN_INDEXABLE_PAGES 화이트리스트는 list만(detail 슬러그 미포함). 그러나 generateMetadata 누락으로 layout 기본 `index: true` 응답\n- fix: `app/[locale]/news/[id]/page.tsx` generateMetadata에 `isEn ? robots: { index: false, follow: true } : {}` 추가. 다른 영문 detail(artworks/[id], artist, category)과 일관\n\n[skip] schema 강화 (P1) - verify-first로 불필요 판단\n- 패널 보고: 작품 detail author Organization, 작가 페이지 Person 1개뿐, ImageObject 강화 필요\n- 실제 검증: 작품 creator 이미 Person (lib/schemas/artwork.ts:431), ImageObject 이미 강화(width/height/caption/representativeOfPage), 작가 페이지 5개 schema 발행 중(Person + BreadcrumbList + CollectionPage + AggregateOffer + ItemList)\n- 메모리 feedback_verify_before_implementing.md 적용. 변경 없음\n\n[skip] Google News sitemap (P1) - 부적합 판단\n- `/news`는 외부 언론(한겨레·경향·KBS·NewsArt) 기사 큐레이션. SAF 자체 발행 매체 아님\n- Google News sitemap의 `<news:publication>` 발행 매체 필수 → publisher misrepresentation 위험. 추가 안 함\n\n검증:\n- npm run type-check 통과\n- npx next build 통과 (llms.txt·en/llms.txt·robots.txt·sitemap.xml 모두 ○ Static 유지)",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
+    "hash": "645ebf02",
+    "type": "fix",
+    "scope": "audit",
+    "subject": "WebVitalsTracker 이중 mount 제거 + /en/llms.txt 영문 mirror 추가",
+    "summary": "3패널 audit P0 두 건 fix — RUM 이중 전송으로 인한 LCP/INP 평균 왜곡 차단 + 영문 LLM 봇 404 해소",
+    "body": "[P0-1] WebVitalsTracker 이중 mount 제거\n- app/[locale]/layout.tsx:218에서 WebVitalsTracker 무조건 mount + GlobalAnalyticsGate 내부에서 또 mount → 공개 페이지에서 모든 web vital이 2배 전송됨 (dup_factor 1.5×)\n- layout.tsx의 WebVitalsTracker mount + import 제거. GlobalAnalyticsGate가 admin/dashboard/exhibitor/onboarding/login 제외 로직을 갖고 있어 측정 범위로 더 정확\n- 회귀 방지 주석 추가 — 이중 mount는 RUM 카운트·LCP 평균 왜곡 원인\n\n[P0-2] /en/llms.txt·/en/llms-full.txt 영문 mirror 신규\n- 현재 https://www.saf2026.com/en/llms.txt = 404 확인 (production curl). 영문 LLM 봇이 locale prefix로 요청 시 인덱싱 누락\n- lib/llms-content.ts에 LLMS_TXT_BODY + LLMS_FULL_TXT_BODY 단일 출처로 추출 (ARTIST_COUNT/ARTWORK_COUNT/LOAN_COUNT 빌드 타임 주입 유지)\n- app/llms.txt/route.ts·app/llms-full.txt/route.ts를 import 형태로 재작성\n- app/en/llms.txt/route.ts·app/en/llms-full.txt/route.ts 신규 — 동일 body mirror, force-static\n- 빌드 검증: 4개 route 모두 ○ (Static) prerender\n\n검증:\n- npm run type-check 통과\n- npx next build 통과 — /en/llms.txt, /en/llms-full.txt 양쪽 모두 static 진입\n- production curl: /llms.txt 200, /en/llms.txt 404 → fix 후 200 예상\n\n미진행 (CountdownTimer CLS):\n- 패널 3이 RUM에서 /petition/oh-yoon CLS 1.0 (sample 66건 poor) 보고했으나, _components/CountdownTimer.tsx에 이미 min-w-[5ch] tabular-nums reserve 적용 + 주석 \"0.05 해결\" 명시. 직전 deploy 이전 데이터로 추정. 추가 fix 없이 회귀 모니터링",
+    "date": "2026-05-13",
+    "author": "황경하"
+  },
+  {
     "hash": "d5d7b69d",
     "type": "feat",
     "scope": "petition",

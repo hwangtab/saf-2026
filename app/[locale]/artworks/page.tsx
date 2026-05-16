@@ -205,7 +205,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
       <JsonLdScript data={collectionPageSchema} />
       <JsonLdScript data={itemListSchema} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
-      <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
+      <JsonLdScript data={generateArtworkPurchaseHowTo(locale, { artistCount })} />
       <JsonLdScript data={generateArtworkPurchaseFAQ(locale)} />
       <div className={`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}`}>
         <PageHero

@@ -246,12 +246,14 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           { name: locale === 'en' ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
         ])}
       />
-      <JsonLdScript data={generateExhibitionSchema([], locale)} />
+      <JsonLdScript data={generateExhibitionSchema([], locale, { artistCount })} />
       <JsonLdScript data={generateCampaignSchema(locale)} />
-      <JsonLdScript data={generateArtworkPurchaseHowTo(locale)} />
+      <JsonLdScript data={generateArtworkPurchaseHowTo(locale, { artistCount })} />
       <JsonLdScript data={generateMemberJoinHowTo(locale)} />
-      <JsonLdScript data={generateExhibitionEnjoyHowTo(locale)} />
-      <JsonLdScript data={generateSAFCoreQA(locale)} />
+      <JsonLdScript data={generateExhibitionEnjoyHowTo(locale, { artistCount, artworkCount })} />
+      <JsonLdScript
+        data={generateSAFCoreQA(locale, { artistCount, artworkCount, loanCount: LOAN_COUNT })}
+      />
 
       {/* Share buttons (hidden, for metadata) */}
       <div className="hidden">

@@ -1,12 +1,15 @@
-import { LLMS_FULL_TXT_BODY } from '@/lib/llms-content';
+import { buildLlmsFullTxt } from '@/lib/llms-content';
+import { getLiveStats } from '@/lib/live-stats';
+import { LOAN_COUNT } from '@/lib/site-stats';
 
-export const dynamic = 'force-static';
+export const revalidate = 600;
 
-export function GET(): Response {
-  return new Response(LLMS_FULL_TXT_BODY, {
+export async function GET(): Promise<Response> {
+  const { artistCount, artworkCount } = await getLiveStats();
+  return new Response(buildLlmsFullTxt({ artistCount, artworkCount, loanCount: LOAN_COUNT }), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+      'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=60',
     },
   });
 }

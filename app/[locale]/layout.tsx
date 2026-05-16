@@ -173,9 +173,11 @@ export default async function LocaleLayout({
   );
 
   const localeForSchema = locale === 'en' ? 'en' : 'ko';
+  const { artistCount, artworkCount } = await getLiveStats();
+  const schemaCounts = { artistCount, artworkCount };
   const organizationSchema = generateOrganizationSchema(localeForSchema);
-  const websiteSchema = generateWebsiteSchema(localeForSchema);
-  const localBusinessSchema = generateLocalBusinessSchema(localeForSchema);
+  const websiteSchema = generateWebsiteSchema(localeForSchema, schemaCounts);
+  const localBusinessSchema = generateLocalBusinessSchema(localeForSchema, schemaCounts);
 
   return (
     <html lang={locale} className={pretendard.variable} suppressHydrationWarning>

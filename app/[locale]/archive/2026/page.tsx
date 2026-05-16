@@ -70,6 +70,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
   const archiveUrl = buildLocaleUrl('/archive', locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const exhibitionReviews = await getSupabaseReviews();
+  const { artistCount, artworkCount } = await getLiveStats();
   const canonicalUrl = pageUrl;
   const shareTitle =
     locale === 'en'
@@ -95,8 +96,9 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
         };
 
   // JSON-LD Schema for Event
-  const eventSchema = generateExhibitionSchema(exhibitionReviews, locale);
-  const howToSchema = generateExhibitionEnjoyHowTo(locale);
+  const schemaCounts = { artistCount, artworkCount };
+  const eventSchema = generateExhibitionSchema(exhibitionReviews, locale, schemaCounts);
+  const howToSchema = generateExhibitionEnjoyHowTo(locale, schemaCounts);
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('archive'), url: archiveUrl },

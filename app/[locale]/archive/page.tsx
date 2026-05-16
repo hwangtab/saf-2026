@@ -21,7 +21,7 @@ const PAGE_COPY = {
   ko: {
     title: '아카이브',
     description:
-      '서울 현대미술 전시회 일정과 기록을 한눈에. 씨앗페 온라인 전시회 아카이브에서 2023·2026 전시 일정, 추천 전시 작품, 전시회 포스터를 만나보세요. 120여 명 예술가의 연대 발자취.',
+      '서울 현대미술 전시회 일정과 기록을 한눈에. 씨앗페 온라인 전시회 아카이브에서 2023·2026 전시 일정, 추천 전시 작품, 전시회 포스터를 만나보세요. 역대 씨앗페 전시 기록 — 2023·2026 예술인 연대의 발자취.',
   },
   en: {
     title: 'Archive',
@@ -184,12 +184,12 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
                     {isEnglish ? (
                       <>
                         The beginning of SAF. <br />
-                        The first signal flare lit by more than 120 artists together.
+                        The first signal flare lit by Korean artists together.
                       </>
                     ) : (
                       <>
                         씨앗페의 시작. <br />
-                        120여 명의 예술인이 함께 쏘아올린 첫 번째 신호탄.
+                        예술인들이 함께 쏘아올린 첫 번째 신호탄.
                       </>
                     )}
                   </p>
