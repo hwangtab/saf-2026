@@ -236,6 +236,9 @@
     "stories": "Magazine",
     "ohYoon": "Oh Yoon Special Exhibition",
     "parkSaenggwang": "Park Saeng-gwang Drawings",
+    "minJoungki": "Min Joung-ki Special Exhibition",
+    "leeCheolsoo": "Lee Chul-soo Special Exhibition",
+    "parkBuldong": "Park Bul-ttong Special Exhibition",
     "transparency": "Transparency Reports"
   },
   "seo": {
@@ -442,6 +445,8 @@
     "originalKoreanData": "Original details in Korean",
     "soldBadge": "SOLD",
     "reservedBadge": "Reserved",
+    "pendingValue": "Pending",
+    "inquiryValue": "Inquiry",
     "viewDetailsAria": "View {title} by {artist}"
   },
   "trustBadges": {

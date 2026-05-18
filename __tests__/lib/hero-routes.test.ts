@@ -23,6 +23,10 @@ describe('isHeroRoute', () => {
       '/refund-policy',
       '/petition/oh-yoon',
       '/special/oh-yoon',
+      '/special/park-saenggwang',
+      '/special/min-joungki',
+      '/special/lee-cheolsoo',
+      '/special/park-buldong',
     ])('%s는 hero 경로', (path) => {
       expect(isHeroRoute(path)).toBe(true);
     });

@@ -236,6 +236,9 @@
     "stories": "매거진",
     "ohYoon": "오윤 특별전",
     "parkSaenggwang": "박생광 드로잉전",
+    "minJoungki": "민정기 특별전",
+    "leeCheolsoo": "이철수 특별전",
+    "parkBuldong": "박불똥 특별전",
     "transparency": "운용 보고서"
   },
   "seo": {
@@ -442,6 +445,8 @@
     "originalKoreanData": "상세 정보 원문은 한국어로 제공됩니다",
     "soldBadge": "판매완료",
     "reservedBadge": "예약중",
+    "pendingValue": "확인 중",
+    "inquiryValue": "문의",
     "viewDetailsAria": "{title} — {artist} 자세히 보기"
   },
   "trustBadges": {
