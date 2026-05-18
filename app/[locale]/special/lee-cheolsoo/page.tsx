@@ -293,7 +293,32 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                   <span className="h-px w-8 bg-charcoal/40"></span>
                 </div>
                 <p className="text-xs text-charcoal-muted">
-                  {isEnglish ? 'Source: CBN News interview' : '출처: CBN뉴스 인터뷰'}
+                  {isEnglish ? (
+                    <>
+                      Source:{' '}
+                      <a
+                        href="https://www.cbinews.co.kr/news/articleView.html?idxno=75494"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        충북인뉴스 (CBN News), &ldquo;Lee Chul-soo · 30 Years · Printmaking ·
+                        Life&rdquo;
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      출처:{' '}
+                      <a
+                        href="https://www.cbinews.co.kr/news/articleView.html?idxno=75494"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        충북인뉴스, 「이철수·30년·판화·인생」
+                      </a>
+                    </>
+                  )}
                 </p>
               </footer>
             </blockquote>

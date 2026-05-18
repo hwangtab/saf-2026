@@ -287,9 +287,69 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                 )}
               </p>
               <footer className="mt-6 text-sm text-charcoal-muted">
-                {isEnglish
-                  ? 'Source: Nocutnews · Gyeongin Ilbo · National press, April 2018'
-                  : '출처: 노컷뉴스·경인일보·국민일보 등 국내 언론, 2018년 4월'}
+                {isEnglish ? (
+                  <>
+                    Sources:{' '}
+                    <a
+                      href="https://www.nocutnews.co.kr/news/5101349"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Nocutnews
+                    </a>
+                    {' · '}
+                    <a
+                      href="http://www.kyeongin.com/main/view.php?key=20180605010001536"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Gyeongin Ilbo
+                    </a>
+                    {' · '}
+                    <a
+                      href="https://www.kmib.co.kr/article/view.asp?arcid=0012320714"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Kookmin Ilbo
+                    </a>
+                    {', April 2018'}
+                  </>
+                ) : (
+                  <>
+                    출처:{' '}
+                    <a
+                      href="https://www.nocutnews.co.kr/news/5101349"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      노컷뉴스
+                    </a>
+                    {' · '}
+                    <a
+                      href="http://www.kyeongin.com/main/view.php?key=20180605010001536"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      경인일보
+                    </a>
+                    {' · '}
+                    <a
+                      href="https://www.kmib.co.kr/article/view.asp?arcid=0012320714"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      국민일보
+                    </a>
+                    {', 2018년 4월'}
+                  </>
+                )}
               </footer>
             </div>
           </div>
@@ -492,9 +552,32 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                       2006
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Receives the 18th Lee Jung-seob Art Award.'
-                        : '제18회 이중섭미술상 수상.'}
+                      {isEnglish ? (
+                        <>
+                          Receives the{' '}
+                          <a
+                            href="https://gmoma.ggcf.kr/민정기"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            18th Lee Jung-seob Art Award
+                          </a>
+                          .
+                        </>
+                      ) : (
+                        <>
+                          <a
+                            href="https://gmoma.ggcf.kr/민정기"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            제18회 이중섭미술상
+                          </a>
+                          {' 수상.'}
+                        </>
+                      )}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -542,9 +625,31 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-charcoal rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Permanent collection: National Museum of Modern and Contemporary Art, Korea (MMCA)'
-                        : '국립현대미술관(MMCA) 소장'}
+                      {isEnglish ? (
+                        <>
+                          Permanent collection:{' '}
+                          <a
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            National Museum of Modern and Contemporary Art, Korea (MMCA)
+                          </a>
+                        </>
+                      ) : (
+                        <>
+                          <a
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            국립현대미술관(MMCA)
+                          </a>
+                          {' 소장'}
+                        </>
+                      )}
                     </span>
                   </li>
                 </ul>

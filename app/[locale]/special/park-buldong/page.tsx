@@ -487,9 +487,31 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-charcoal rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Permanent collections: National Museum of Modern and Contemporary Art (MMCA) · Seoul Museum of Art (SeMA) · Gwangju Museum of Art · Jeju 4·3 Memorial Museum'
-                        : '국립현대미술관(MMCA) · 서울시립미술관(SeMA) · 광주시립미술관 · 제주 4·3역사기념관 소장'}
+                      {isEnglish ? (
+                        <>
+                          Group exhibition:{' '}
+                          <a
+                            href="https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=200904050002593"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            《15 Years of Minjung Art: 1980–1994》, MMCA (1994)
+                          </a>
+                        </>
+                      ) : (
+                        <>
+                          단체전:{' '}
+                          <a
+                            href="https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=200904050002593"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            《민중미술 15년: 1980–1994》, 국립현대미술관 (1994)
+                          </a>
+                        </>
+                      )}
                     </span>
                   </li>
                 </ul>
