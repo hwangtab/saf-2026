@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build": "npm run generate-changelog && next build && npm run verify:i18n-placeholders",
+    "build": "npm run generate-changelog && node scripts/sync-site-stats.js && next build && npm run verify:i18n-placeholders",
+    "sync-stats": "node scripts/sync-site-stats.js",
     "verify:i18n-placeholders": "node scripts/verify-i18n-placeholders.mjs",
     "start": "next start",
     "lint": "eslint . && npm run check:server-button-imports",
@@ -19,6 +20,8 @@
     "validate-artworks": "node scripts/validate_artworks.js",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:a11y": "playwright test e2e/a11y",
+    "test:a11y:ui": "playwright test e2e/a11y --ui",
     "email:dev": "email dev --dir emails --port 3030",
     "prepare": "husky install",
     "backup:artwork-images": "node scripts/backup-artwork-images.js",
@@ -82,9 +85,11 @@
     "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@eslint/eslintrc": "^3.3.3",
     "@google-analytics/data": "^5.2.1",
     "@next/bundle-analyzer": "^16.2.4",
+    "@playwright/test": "^1.60.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^16.3.1",
