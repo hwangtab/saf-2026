@@ -73,7 +73,7 @@ export default async function FailPage({ params, searchParams }: Props) {
           )}
           {orderId && (
             <p className="text-xs text-charcoal-soft mb-6">
-              {t('orderIdLabel')}: {orderId}
+              {t('orderNo')}: {orderId}
             </p>
           )}
 

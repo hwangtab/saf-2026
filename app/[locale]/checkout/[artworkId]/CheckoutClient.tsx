@@ -312,7 +312,7 @@ export default function CheckoutClient({
 
         {/* Price breakdown */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('orderSummaryTitle')}</h3>
+          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentAmount')}</h3>
           <table className="w-full text-sm">
             <tbody className="divide-y divide-gray-100">
               <tr>

@@ -32,6 +32,7 @@ type ArtworkItem = {
 
 export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) {
   const t = useTranslations('exhibitor.artworkList');
+  const tCommon = useTranslations('exhibitor.listCommon');
   const toast = useToast();
   const [query, setQuery] = useState('');
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -73,7 +74,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
       toast.success(t('deleteSuccess'));
     } catch (error) {
       console.error('[exhibitor-artwork-list] Artwork deletion failed:', error);
-      toast.error(t('deleteError'));
+      toast.error(tCommon('deleteError'));
     } finally {
       setIsDeleting(null);
     }
@@ -130,7 +131,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                   {t('status')}
                 </th>
                 <th className="relative px-6 py-3">
-                  <span className="sr-only">{t('manage')}</span>
+                  <span className="sr-only">{tCommon('manage')}</span>
                 </th>
               </tr>
             </thead>
@@ -141,7 +142,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                     <AdminEmptyState
                       title={query ? t('noSearchResult') : t('noArtwork')}
                       description={
-                        query ? t('noSearchResultDescription') : t('noArtworkDescription')
+                        query ? tCommon('noSearchResultDescription') : t('noArtworkDescription')
                       }
                     />
                   </td>
@@ -224,7 +225,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                           href={`/exhibitor/artworks/${artwork.id}`}
                           className="rounded-md px-3 py-1.5 text-gray-500 transition-colors hover:bg-primary-surface hover:text-primary-a11y"
                         >
-                          {t('edit')}
+                          {tCommon('edit')}
                         </Link>
                         <button
                           type="button"
@@ -232,7 +233,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
                           disabled={isDeleting === artwork.id}
                           className="rounded-md px-3 py-1.5 text-gray-400 transition-colors hover:bg-danger/10 hover:text-danger-a11y disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {isDeleting === artwork.id ? t('deleting') : t('delete')}
+                          {isDeleting === artwork.id ? t('deleting') : tCommon('delete')}
                         </button>
                       </div>
                     </td>
@@ -258,7 +259,7 @@ export function ExhibitorArtworkList({ artworks }: { artworks: ArtworkItem[] }) 
         isOpen={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDeleteConfirm}
-        title={t('delete')}
+        title={tCommon('delete')}
         description={t('deleteConfirm')}
         variant="danger"
         isLoading={isDeleting !== null}

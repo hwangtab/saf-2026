@@ -58,6 +58,7 @@ export function ExhibitorArtworkForm({
   artistJustCreated = false,
 }: ExhibitorArtworkFormProps) {
   const t = useTranslations('exhibitor.artworkForm');
+  const tCommon = useTranslations('exhibitor.formCommon');
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -98,7 +99,7 @@ export function ExhibitorArtworkForm({
       if (isEditing && artwork.id) {
         const result = await updateExhibitorArtwork(artwork.id, formData);
         if (result.success) {
-          toast.success(t('syncSuccess', { action: t('actionSave') }));
+          toast.success(t('syncSuccess', { action: tCommon('save') }));
         }
         router.push('/exhibitor/artworks');
       } else {
@@ -110,7 +111,7 @@ export function ExhibitorArtworkForm({
       }
     } catch (error) {
       console.error('[exhibitor-artwork-form] Artwork save failed:', error);
-      toast.error(t('saveError'));
+      toast.error(tCommon('saveError'));
     } finally {
       setSaving(false);
     }
@@ -128,7 +129,7 @@ export function ExhibitorArtworkForm({
       router.refresh();
     } catch (error) {
       console.error('[exhibitor-artwork-form] Artwork image save failed:', error);
-      toast.error(t('imageSaveError'));
+      toast.error(tCommon('imageSaveError'));
     } finally {
       setSavingImages(false);
     }
@@ -140,7 +141,9 @@ export function ExhibitorArtworkForm({
         <AdminCard className="p-6">
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             {t('artworkImages')}
-            {savingImages && <span className="ml-2 text-sm text-gray-500">{t('saving')}</span>}
+            {savingImages && (
+              <span className="ml-2 text-sm text-gray-500">{tCommon('saving')}</span>
+            )}
           </h2>
           <ImageUpload
             bucket="artworks"
@@ -344,10 +347,10 @@ export function ExhibitorArtworkForm({
 
         <div className="flex justify-end gap-3">
           <Button type="button" variant="white" onClick={() => router.push('/exhibitor/artworks')}>
-            {t('backToList')}
+            {tCommon('backToList')}
           </Button>
           <Button type="submit" variant="primary" loading={saving}>
-            {isEditing ? t('save') : t('create')}
+            {isEditing ? tCommon('save') : t('actionCreate')}
           </Button>
         </div>
       </form>

@@ -34,6 +34,7 @@ type ArtistFormProps = {
 
 export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
   const t = useTranslations('exhibitor.artistForm');
+  const tCommon = useTranslations('exhibitor.formCommon');
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -68,7 +69,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
       }
     } catch (error) {
       console.error('[exhibitor-artist-form] Artist save failed:', error);
-      setError(t('saveError'));
+      setError(tCommon('saveError'));
       toast.error(t('saveErrorToast'));
     } finally {
       setSaving(false);
@@ -86,7 +87,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
       router.refresh();
     } catch (error) {
       console.error('[exhibitor-artist-form] Profile image save failed:', error);
-      setError(t('imageSaveError'));
+      setError(tCommon('imageSaveError'));
       toast.error(t('imageSaveErrorToast'));
     } finally {
       setSavingImage(false);
@@ -119,7 +120,7 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
         <AdminCard className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             {t('profileImageOptional')}
-            {savingImage && <span className="ml-2 text-sm text-gray-500">{t('saving')}</span>}
+            {savingImage && <span className="ml-2 text-sm text-gray-500">{tCommon('saving')}</span>}
           </h2>
           <ImageUpload
             bucket="profiles"
@@ -271,10 +272,10 @@ export function ArtistForm({ artist = {}, returnTo }: ArtistFormProps) {
 
         <div className="flex justify-end gap-3">
           <Button type="button" variant="white" onClick={() => router.push('/exhibitor/artists')}>
-            {t('backToList')}
+            {tCommon('backToList')}
           </Button>
           <Button type="submit" variant="primary" loading={saving}>
-            {t('save')}
+            {tCommon('save')}
           </Button>
         </div>
       </form>

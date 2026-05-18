@@ -27,6 +27,7 @@ type ArtistItem = {
 
 export function ArtistList({ artists }: { artists: ArtistItem[] }) {
   const t = useTranslations('exhibitor.artistList');
+  const tCommon = useTranslations('exhibitor.listCommon');
   const [, startTransition] = useTransition();
   const [optimisticArtists, removeOptimistic] = useOptimistic(
     artists,
@@ -52,7 +53,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         router.refresh();
       } catch (error) {
         console.error('[exhibitor-artist-list] Artist deletion failed:', error);
-        setError(t('deleteError'));
+        setError(tCommon('deleteError'));
       } finally {
         setProcessingId(null);
       }
@@ -158,7 +159,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   {t('artworkCount')}
                 </th>
                 <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">{t('manage')}</span>
+                  <span className="sr-only">{tCommon('manage')}</span>
                 </th>
               </tr>
             </thead>
@@ -168,7 +169,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                   <td colSpan={4} className="px-6 py-0">
                     <AdminEmptyState
                       title={t('noSearchResult')}
-                      description={t('noSearchResultDescription')}
+                      description={tCommon('noSearchResultDescription')}
                     />
                   </td>
                 </tr>
@@ -222,7 +223,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                           href={`/exhibitor/artists/${artist.id}`}
                           className="text-gray-500 hover:text-primary-a11y px-3 py-1.5 rounded-md hover:bg-primary-surface transition-colors"
                         >
-                          {t('edit')}
+                          {tCommon('edit')}
                         </Link>
                         <button
                           type="button"
@@ -233,7 +234,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
                             name: artist.name_ko || t('unnamed'),
                           })}
                         >
-                          {processingId === artist.id ? '...' : t('delete')}
+                          {processingId === artist.id ? '...' : tCommon('delete')}
                         </button>
                       </div>
                     </td>
@@ -249,7 +250,7 @@ export function ArtistList({ artists }: { artists: ArtistItem[] }) {
         isOpen={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDeleteConfirm}
-        title={t('delete')}
+        title={tCommon('delete')}
         description={t('deleteConfirm')}
         variant="danger"
         isLoading={processingId !== null}

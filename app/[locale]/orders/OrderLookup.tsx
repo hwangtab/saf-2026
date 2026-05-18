@@ -378,6 +378,7 @@ function OrderDetail({
   onDetailUpdate: (updated: Partial<OrderPublicInfo>) => void;
 }) {
   const t = useTranslations('orderLookup');
+  const tCheckout = useTranslations('checkout');
   const locale = useLocale();
   const [order, setOrder] = useState(initialOrder);
   const [editingShipping, setEditingShipping] = useState(false);
@@ -455,28 +456,30 @@ function OrderDetail({
       {/* 수동 계좌이체 입금 안내 */}
       {order.status === 'awaiting_deposit' && !order.virtualAccount && (
         <div className="rounded-xl border border-primary-soft bg-primary-surface p-4 text-sm">
-          <p className="mb-2 font-semibold text-primary-strong">{t('bankTransferTitle')}</p>
+          <p className="mb-2 font-semibold text-primary-strong">{tCheckout('bankTransferTitle')}</p>
           <div className="space-y-1.5">
             <div className="flex justify-between">
               <span className="text-charcoal-muted">{t('bankName')}</span>
-              <span className="font-semibold text-charcoal-deep">{t('bankTransferBank')}</span>
+              <span className="font-semibold text-charcoal-deep">
+                {tCheckout('bankTransferBank')}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-charcoal-muted">{t('accountNumber')}</span>
               <span className="font-mono font-semibold text-charcoal-deep">
-                {t('bankTransferAccount')}
+                {tCheckout('bankTransferAccount')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-charcoal-muted">{t('bankTransferHolder')}</span>
+              <span className="text-charcoal-muted">{tCheckout('bankTransferHolder')}</span>
               <span className="font-semibold text-charcoal-deep">
-                {t('bankTransferHolderName')}
+                {tCheckout('bankTransferHolderName')}
               </span>
             </div>
           </div>
           <div className="mt-2 text-xs text-charcoal-muted space-y-0.5">
-            <p>{t('bankTransferNoticeName')}</p>
-            <p>{t('bankTransferNoticeDeadline', { deadline: bankTransferDeadline })}</p>
+            <p>{tCheckout('bankTransferNoticeName')}</p>
+            <p>{tCheckout('bankTransferNoticeDeadline', { deadline: bankTransferDeadline })}</p>
           </div>
         </div>
       )}
