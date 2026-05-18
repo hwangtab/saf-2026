@@ -1,5 +1,3 @@
-'use client';
-
 import SafeImage from '@/components/common/SafeImage';
 import { BRAND_COLORS } from '@/lib/colors';
 
