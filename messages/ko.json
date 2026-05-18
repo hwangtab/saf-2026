@@ -1117,5 +1117,16 @@
       "formSubmitting": "제출 중…",
       "formFooter": "서명은 30초입니다. 입력하신 정보는 청원 운영에만 사용되며, 청원 종료 후 6개월 내 파기됩니다."
     }
+  },
+  "wishlist": {
+    "save": "위시리스트에 저장",
+    "saved": "위시리스트에 저장됨",
+    "addAria": "{title} 위시리스트에 추가",
+    "removeAria": "위시리스트에서 {title} 제거",
+    "pageTitle": "내 위시리스트",
+    "pageEmpty": "아직 저장된 작품이 없습니다",
+    "pageEmptyDesc": "작품 카드의 하트를 눌러 관심 작품을 저장해 보세요",
+    "browseArtworks": "작품 둘러보기",
+    "headerLabel": "위시리스트"
   }
 }

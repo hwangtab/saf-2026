@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
+import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import { trackEvent } from '@/lib/analytics/track';
 
 interface ArtworkPurchaseStickyMobileProps {
@@ -75,6 +76,13 @@ export default function ArtworkPurchaseStickyMobile({
             <p className="text-lg font-bold text-charcoal truncate">{displayPrice}</p>
           </div>
         )}
+        {/* 위시리스트 하트 — 구매 CTA 왼쪽에 나란히. 아이콘만 표시(공간 절약). */}
+        <WishlistHeartButton
+          artworkId={artworkId}
+          artworkTitle={artworkTitle}
+          variant="overlay"
+          className="static w-10 h-10 shrink-0 rounded-xl bg-gray-100 backdrop-blur-none shadow-none"
+        />
         <LinkButton
           href={href}
           variant="primary"

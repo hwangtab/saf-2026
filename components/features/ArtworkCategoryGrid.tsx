@@ -8,6 +8,7 @@ import { getMaterialLabel } from '@/lib/artwork-material';
 import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import type { Artwork } from '@/types';
 
 /**
@@ -252,6 +253,7 @@ function InlineGridCard({
             {mediumLabelText}
           </div>
         )}
+        <WishlistHeartButton artworkId={artwork.id} artworkTitle={safeTitle} variant="overlay" />
       </div>
 
       <div className={cn('relative p-4', isDark ? 'bg-charcoal' : 'bg-white')}>

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import DesktopNav from './Header/DesktopNav';
 import HeaderLogo from './Header/HeaderLogo';
 import MenuToggleIcon from '@/components/ui/MenuToggleIcon';
+import WishlistNavButton from './Header/WishlistNavButton';
 import { Z_INDEX } from '@/lib/constants';
 import { useHeaderStyle } from '@/lib/hooks/useHeaderStyle';
 import { useLocalizedNavigation } from '@/lib/hooks/useLocalizedNavigation';
@@ -69,6 +70,9 @@ function PublicHeader() {
         />
 
         <div className="lg:hidden flex items-center gap-1">
+          {/* 모바일 위시리스트 버튼 */}
+          <WishlistNavButton textColor={textColor} />
+
           {/* 모바일 검색 버튼 */}
           <button
             type="button"

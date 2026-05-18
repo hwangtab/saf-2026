@@ -5,6 +5,7 @@ import { getMaterialLabel } from '@/lib/artwork-material';
 import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import type { Artwork } from '@/types';
 
 const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.jpg';
@@ -123,6 +124,7 @@ export default function ArtworkGridCard({
             {mediumLabelText}
           </div>
         )}
+        <WishlistHeartButton artworkId={artwork.id} artworkTitle={safeTitle} variant="overlay" />
       </div>
       <div className="relative p-4 bg-white">
         <h3 className="text-base md:text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3rem] md:min-h-[3.5rem] text-charcoal group-hover:text-primary">

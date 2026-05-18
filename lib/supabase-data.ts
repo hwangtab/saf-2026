@@ -1129,3 +1129,42 @@ export const getSupabaseArtistsByOwner = cache(async (ownerId: string): Promise<
 
   return data || [];
 });
+
+/** 위시리스트·배치 조회 — UUID ID 배열을 단일 쿼리로 가져온 뒤 static fallback 병합. */
+export async function getArtworksByIds(ids: string[]): Promise<Artwork[]> {
+  if (ids.length === 0) return [];
+
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const uuidIds = ids.filter((id) => uuidRegex.test(id));
+  const staticIds = ids.filter((id) => !uuidRegex.test(id));
+
+  const staticArtworks = staticIds
+    .map((id) => fallbackArtworks.find((a) => a.id === id))
+    .filter((a): a is Artwork => a != null);
+
+  if (!hasSupabaseConfig || !supabase || uuidIds.length === 0) {
+    return [...staticArtworks];
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists (${ARTIST_SELECT_COLUMNS})
+    `
+    )
+    .in('id', uuidIds)
+    .eq('is_hidden', false)
+    .returns<ArtworkWithArtistRow[]>();
+
+  if (error) {
+    console.error('getArtworksByIds error:', error);
+    return staticArtworks;
+  }
+
+  const supabaseArtworks = (data || []).map((item) =>
+    mapArtworkRow(item, pickArtist(item.artists))
+  );
+  return [...supabaseArtworks, ...staticArtworks];
+}

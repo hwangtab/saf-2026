@@ -12,6 +12,8 @@ import { BRAND_COLORS } from '@/lib/colors';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import ToastProvider from '@/components/providers/ToastProvider';
+import WishlistProvider from '@/components/providers/WishlistProvider';
+import ReturningVisitorGreeting from '@/components/features/ReturningVisitorGreeting';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
 import {
@@ -197,21 +199,24 @@ export default async function LocaleLayout({
       <body className="bg-canvas-soft text-charcoal flex flex-col min-h-screen font-sans antialiased">
         <NextIntlClientProvider locale={locale} messages={publicMessages}>
           <ToastProvider>
-            <a href="#main-content" className="skip-to-main">
-              {locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동'}
-            </a>
-            <Header />
-            <main id="main-content" className="flex-1 min-h-[100svh]">
-              <Suspense fallback={<div className="min-h-[100svh]" aria-hidden="true" />}>
-                {children}
+            <WishlistProvider>
+              <ReturningVisitorGreeting />
+              <a href="#main-content" className="skip-to-main">
+                {locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동'}
+              </a>
+              <Header />
+              <main id="main-content" className="flex-1 min-h-[100svh]">
+                <Suspense fallback={<div className="min-h-[100svh]" aria-hidden="true" />}>
+                  {children}
+                </Suspense>
+              </main>
+              <Suspense>
+                <Footer locale={locale} />
               </Suspense>
-            </main>
-            <Suspense>
-              <Footer locale={locale} />
-            </Suspense>
-            <JsonLdScript data={organizationSchema} />
-            <JsonLdScript data={websiteSchema} />
-            <JsonLdScript data={localBusinessSchema} />
+              <JsonLdScript data={organizationSchema} />
+              <JsonLdScript data={websiteSchema} />
+              <JsonLdScript data={localBusinessSchema} />
+            </WishlistProvider>
           </ToastProvider>
         </NextIntlClientProvider>
         {/* RUM 측정(WebVitalsTracker)·GA·Vercel Analytics는 GlobalAnalyticsGate가 admin/dashboard/exhibitor/

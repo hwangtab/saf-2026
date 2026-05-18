@@ -1117,5 +1117,16 @@
       "formSubmitting": "Submitting…",
       "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close."
     }
+  },
+  "wishlist": {
+    "save": "Save to wishlist",
+    "saved": "Saved to wishlist",
+    "addAria": "Add {title} to wishlist",
+    "removeAria": "Remove {title} from wishlist",
+    "pageTitle": "My Wishlist",
+    "pageEmpty": "No saved works yet",
+    "pageEmptyDesc": "Tap the heart on any artwork card to save it here",
+    "browseArtworks": "Browse artworks",
+    "headerLabel": "Wishlist"
   }
 }

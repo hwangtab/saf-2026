@@ -9,6 +9,7 @@ import IdleMount from '@/components/common/IdleMount';
 
 import type { NavigationItem } from '@/types';
 import NavLink from './NavLink';
+import WishlistNavButton from './WishlistNavButton';
 
 // AuthButtons는 createSupabaseBrowserClient를 정적 import → 다이나믹 청크가 @supabase/ssr
 // 전체 SDK(~186KB raw / ~49KB gzip)를 포함. 모든 공개 페이지 헤더에서 fire되어
@@ -109,6 +110,9 @@ export default function DesktopNav({
           </svg>
           <span>{tSearch('searchButton')}</span>
         </button>
+
+        {/* 위시리스트 */}
+        <WishlistNavButton textColor={textColor} />
 
         {/* Utility Menu (Order Status) — chrome utility, 매 페이지 prefetch 회피 */}
         <Link href="/orders" prefetch={false} className={utilityButtonClassName}>

@@ -40,6 +40,7 @@ import { shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import ArtworkPurchaseStickyMobile from '@/components/features/ArtworkPurchaseStickyMobile';
+import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
@@ -369,6 +370,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 displayPrice={localizedPrice}
                 category={artwork.category ?? undefined}
                 hasSameCategoryWorks={sameCategoryWorks.length > 0}
+              />
+
+              {/* 위시리스트 — 매뉴얼 7.2 [4] · 10.4 1단계. 모든 작품 상태에서 저장 가능. */}
+              <WishlistHeartButton
+                artworkId={artwork.id}
+                artworkTitle={artwork.title}
+                variant="inline"
+                className="w-full justify-center"
               />
 
               <SupportMessage testimonials={flatTestimonials} totalSoldCount={totalSoldCount} />
