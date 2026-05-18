@@ -39,6 +39,8 @@ export default async function EmergingArtists({ locale }: { locale: string }) {
               originalKoreanDataLabel={tCard('originalKoreanData')}
               soldLabel={tCard('soldBadge')}
               reservedLabel={tCard('reservedBadge')}
+              pendingValueLabel={tCard('pendingValue')}
+              inquiryValueLabel={tCard('inquiryValue')}
               sizesOverride="(max-width: 640px) calc(50vw - 1.5rem), (max-width: 1024px) calc(33vw - 1.5rem), 360px"
             />
           ))}

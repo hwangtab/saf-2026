@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { trackEvent } from '@/lib/analytics/track';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
@@ -36,6 +37,7 @@ interface Props {
  * 어떤 개선이 효과 있는지 측정 기반 의사결정을 위한 인프라.
  */
 export default function RelatedArtworkCard({ artwork, isEn, storySlug, position, source }: Props) {
+  const t = useTranslations('artworkCard');
   const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
   const artArtist = isEn && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const imgUrl = resolveArtworkImageUrl(artwork.images[0] ?? '');
@@ -92,7 +94,7 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position,
         </h3>
         <p className="text-xs text-charcoal-muted mt-1">{artArtist}</p>
         <p className="text-xs font-semibold text-primary mt-2">
-          {artwork.sold ? (isEn ? 'Sold' : '판매 완료') : artwork.price}
+          {artwork.sold ? t('soldBadge') : artwork.price}
         </p>
       </div>
     </Link>

@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 import fs from 'fs';
 import path from 'path';
+import { getTranslations } from 'next-intl/server';
 import { getSupabaseArtworkById } from '@/lib/supabase-data';
 import { parseArtworkPrice } from '@/lib/schemas/utils';
 import { getCategoryLabel } from '@/lib/artwork-category';
@@ -30,7 +31,10 @@ function formatPrice(price: string | null | undefined): string | null {
 
 export default async function Image({ params }: Props) {
   const { locale, id } = await params;
-  const artwork = await getSupabaseArtworkById(id);
+  const [artwork, tCard] = await Promise.all([
+    getSupabaseArtworkById(id),
+    getTranslations({ locale, namespace: 'artworkCard' }),
+  ]);
 
   const isEn = locale === 'en';
   const title = (isEn && artwork?.title_en ? artwork.title_en : artwork?.title) ?? 'SAF 2026';
@@ -144,7 +148,7 @@ export default async function Image({ params }: Props) {
                   fontWeight: 700,
                 }}
               >
-                {isEn ? 'SOLD' : '판매완료'}
+                {tCard('soldBadge')}
               </div>
             )}
           </div>

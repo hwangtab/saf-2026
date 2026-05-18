@@ -176,8 +176,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const localizeDataValue = (value: string | null | undefined): string | null => {
     if (!value) return null;
     if (locale !== 'en') return value;
-    if (value === '문의') return 'Inquiry';
-    if (value === '확인 중') return 'Pending';
+    if (value === '문의') return tCard('inquiryValue');
+    if (value === '확인 중') return tCard('pendingValue');
     // edition 표기: "에디션 1/5" → "Edition 1/5"
     if (/^\s*에디션\s*/.test(value)) return value.replace(/^\s*에디션\s*/, 'Edition ');
     if (containsHangul(value)) return t('originalKoreanDetail');
@@ -606,6 +606,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     originalKoreanDataLabel={tCard('originalKoreanData')}
                     soldLabel={tCard('soldBadge')}
                     reservedLabel={tCard('reservedBadge')}
+                    pendingValueLabel={tCard('pendingValue')}
+                    inquiryValueLabel={tCard('inquiryValue')}
                     sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
                   />
                 ))}
@@ -646,6 +648,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     originalKoreanDataLabel={tCard('originalKoreanData')}
                     soldLabel={tCard('soldBadge')}
                     reservedLabel={tCard('reservedBadge')}
+                    pendingValueLabel={tCard('pendingValue')}
+                    inquiryValueLabel={tCard('inquiryValue')}
                     sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
                   />
                 ))}

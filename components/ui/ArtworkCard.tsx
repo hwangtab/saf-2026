@@ -202,13 +202,15 @@ function ArtworkCard({
   const originalKoreanDataLabel = t('originalKoreanData');
   const soldLabel = t('soldBadge');
   const reservedLabel = t('reservedBadge');
+  const pendingValueLabel = t('pendingValue');
+  const inquiryValueLabel = t('inquiryValue');
   const isPending = (value: string | undefined) => value === '확인 중' || value === 'Pending';
   const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
   const localizeDataValue = (value: string | undefined) => {
     if (!value) return value;
     if (locale !== 'en') return value;
-    if (value === '문의') return 'Inquiry';
-    if (value === '확인 중') return 'Pending';
+    if (value === '문의') return inquiryValueLabel;
+    if (value === '확인 중') return pendingValueLabel;
     if (/^\s*에디션\s*/.test(value)) return value.replace(/^\s*에디션\s*/, 'Edition ');
     if (containsHangul(value)) return originalKoreanDataLabel;
     return value;

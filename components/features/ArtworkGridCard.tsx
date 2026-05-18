@@ -15,13 +15,15 @@ interface ArtworkGridCardProps {
   locale: string;
   /** 카드 클릭 시 detail에서 돌아갈 경로. URL-encoded value, 예: '%2F' (홈) */
   returnTo?: string;
-  /** artworkCard namespace의 5개 라벨 — 호출처에서 useTranslations로 한 번만 풀어 prop 전달. */
+  /** artworkCard namespace 라벨 — 호출처에서 useTranslations/getTranslations로 한 번만 풀어 prop 전달. */
   untitledLabel: string;
   unknownArtistLabel: string;
   pendingInfoLabel: string;
   originalKoreanDataLabel: string;
   soldLabel: string;
   reservedLabel: string;
+  pendingValueLabel: string;
+  inquiryValueLabel: string;
   /** 그리드 너비 컨텍스트별 sizes 오버라이드. 미지정 시 일반 3열 gallery 기본값 적용. */
   sizesOverride?: string;
 }
@@ -47,6 +49,8 @@ export default function ArtworkGridCard({
   originalKoreanDataLabel,
   soldLabel,
   reservedLabel,
+  pendingValueLabel,
+  inquiryValueLabel,
   sizesOverride,
 }: ArtworkGridCardProps) {
   const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
@@ -73,9 +77,21 @@ export default function ArtworkGridCard({
     artwork.images?.[0] || ARTWORK_PLACEHOLDER_IMAGE,
     'card'
   );
-  const localizedPrice = localizeDataValue(artwork.price, locale, originalKoreanDataLabel);
+  const localizedPrice = localizeDataValue(
+    artwork.price,
+    locale,
+    originalKoreanDataLabel,
+    pendingValueLabel,
+    inquiryValueLabel
+  );
   const localizedMaterial = getMaterialLabel(artwork.material, locale);
-  const localizedSize = localizeDataValue(artwork.size, locale, originalKoreanDataLabel);
+  const localizedSize = localizeDataValue(
+    artwork.size,
+    locale,
+    originalKoreanDataLabel,
+    pendingValueLabel,
+    inquiryValueLabel
+  );
   const isPending = (value: string | undefined) => value === '확인 중' || value === 'Pending';
   const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
   const showMaterial = Boolean(artwork.material);
@@ -180,12 +196,14 @@ function getSafeArtist(artwork: Artwork, unknownArtistLabel: string, locale: str
 function localizeDataValue(
   value: string | undefined,
   locale: string,
-  originalKoreanDataLabel: string
+  originalKoreanDataLabel: string,
+  pendingValueLabel: string,
+  inquiryValueLabel: string
 ): string | undefined {
   if (!value) return value;
   if (locale !== 'en') return value;
-  if (value === '문의') return 'Inquiry';
-  if (value === '확인 중') return 'Pending';
+  if (value === '문의') return inquiryValueLabel;
+  if (value === '확인 중') return pendingValueLabel;
   if (/^\s*에디션\s*/.test(value)) return value.replace(/^\s*에디션\s*/, 'Edition ');
   if (containsHangul(value)) return originalKoreanDataLabel;
   return value;

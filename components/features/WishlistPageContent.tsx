@@ -16,6 +16,8 @@ interface WishlistPageContentProps {
   originalKoreanDataLabel: string;
   soldLabel: string;
   reservedLabel: string;
+  pendingValueLabel: string;
+  inquiryValueLabel: string;
 }
 
 export default function WishlistPageContent({
@@ -26,6 +28,8 @@ export default function WishlistPageContent({
   originalKoreanDataLabel,
   soldLabel,
   reservedLabel,
+  pendingValueLabel,
+  inquiryValueLabel,
 }: WishlistPageContentProps) {
   const { ids, mounted } = useWishlist();
   const t = useTranslations('wishlist');
@@ -98,6 +102,8 @@ export default function WishlistPageContent({
           originalKoreanDataLabel={originalKoreanDataLabel}
           soldLabel={soldLabel}
           reservedLabel={reservedLabel}
+          pendingValueLabel={pendingValueLabel}
+          inquiryValueLabel={inquiryValueLabel}
           sizesOverride="(max-width: 640px) calc(50vw - 1.5rem), (max-width: 1024px) calc(33vw - 1.5rem), 280px"
         />
       ))}

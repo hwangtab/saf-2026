@@ -87,6 +87,8 @@ export default async function ArtworkCategoryGrid({
                 originalKoreanDataLabel={tCard('originalKoreanData')}
                 soldLabel={tCard('soldBadge')}
                 reservedLabel={tCard('reservedBadge')}
+                pendingValueLabel={tCard('pendingValue')}
+                inquiryValueLabel={tCard('inquiryValue')}
                 viewDetailsAria={tCard('viewDetailsAria', {
                   title: getSafeTitle(artwork, tCard('untitled'), locale),
                   artist: getSafeArtist(artwork, tCard('unknownArtist'), locale),
@@ -138,12 +140,14 @@ function getSafeArtist(artwork: Artwork, unknownArtistLabel: string, locale: str
 function localizeDataValue(
   value: string | undefined,
   locale: string,
-  originalKoreanDataLabel: string
+  originalKoreanDataLabel: string,
+  pendingValueLabel: string,
+  inquiryValueLabel: string
 ): string | undefined {
   if (!value) return value;
   if (locale !== 'en') return value;
-  if (value === '문의') return 'Inquiry';
-  if (value === '확인 중') return 'Pending';
+  if (value === '문의') return inquiryValueLabel;
+  if (value === '확인 중') return pendingValueLabel;
   if (/^\s*에디션\s*/.test(value)) return value.replace(/^\s*에디션\s*/, 'Edition ');
   if (containsHangul(value)) return originalKoreanDataLabel;
   return value;
@@ -158,6 +162,8 @@ function InlineGridCard({
   originalKoreanDataLabel,
   soldLabel,
   reservedLabel,
+  pendingValueLabel,
+  inquiryValueLabel,
   viewDetailsAria,
   locale,
 }: {
@@ -169,6 +175,8 @@ function InlineGridCard({
   originalKoreanDataLabel: string;
   soldLabel: string;
   reservedLabel: string;
+  pendingValueLabel: string;
+  inquiryValueLabel: string;
   viewDetailsAria: string;
   locale: string;
 }) {
@@ -191,9 +199,21 @@ function InlineGridCard({
     'card'
   );
 
-  const localizedPrice = localizeDataValue(artwork.price, locale, originalKoreanDataLabel);
+  const localizedPrice = localizeDataValue(
+    artwork.price,
+    locale,
+    originalKoreanDataLabel,
+    pendingValueLabel,
+    inquiryValueLabel
+  );
   const localizedMaterial = getMaterialLabel(artwork.material, locale);
-  const localizedSize = localizeDataValue(artwork.size, locale, originalKoreanDataLabel);
+  const localizedSize = localizeDataValue(
+    artwork.size,
+    locale,
+    originalKoreanDataLabel,
+    pendingValueLabel,
+    inquiryValueLabel
+  );
   const isPending = (value: string | undefined) => value === '확인 중' || value === 'Pending';
   const isInquiryPrice = (value: string | undefined) => value === '문의' || value === 'Inquiry';
   const showMaterial = Boolean(artwork.material);

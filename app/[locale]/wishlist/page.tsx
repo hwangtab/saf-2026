@@ -39,6 +39,8 @@ export default async function WishlistPage({ params }: { params: Promise<{ local
         originalKoreanDataLabel={tCard('originalKoreanData')}
         soldLabel={tCard('soldBadge')}
         reservedLabel={tCard('reservedBadge')}
+        pendingValueLabel={tCard('pendingValue')}
+        inquiryValueLabel={tCard('inquiryValue')}
       />
     </Section>
   );
