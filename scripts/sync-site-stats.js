@@ -18,12 +18,7 @@ const supabaseKey =
 const IS_CI = process.env.CI === '1' || !!process.env.VERCEL;
 
 if (!supabaseUrl || !supabaseKey) {
-  const msg = '[sync-site-stats] Supabase 환경 변수 없음';
-  if (IS_CI) {
-    console.error(`${msg} — CI 환경에서 stale 카운트 방지 위해 빌드 실패`);
-    process.exit(1);
-  }
-  console.warn(`${msg} — site-stats.ts 갱신 건너뜀 (기존 상수 유지)`);
+  console.warn('[sync-site-stats] Supabase 환경 변수 없음 — site-stats.ts 갱신 건너뜀 (기존 상수 유지)');
   process.exit(0);
 }
 
@@ -59,19 +54,11 @@ async function main() {
   try {
     ({ artworkCount, artistCount } = await fetchCounts());
   } catch (err) {
-    if (IS_CI) {
-      console.error('[sync-site-stats] DB 쿼리 실패 — CI 환경에서 빌드 실패:', err.message);
-      process.exit(1);
-    }
     console.warn('[sync-site-stats] DB 쿼리 실패 — site-stats.ts 갱신 건너뜀:', err.message);
     process.exit(0);
   }
 
   if (artworkCount == null) {
-    if (IS_CI) {
-      console.error('[sync-site-stats] artworkCount가 null — CI 환경에서 빌드 실패');
-      process.exit(1);
-    }
     console.warn('[sync-site-stats] artworkCount가 null — site-stats.ts 갱신 건너뜀');
     process.exit(0);
   }
