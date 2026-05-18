@@ -5,6 +5,7 @@ import { SOCIAL_LINKS, CONTACT, EXTERNAL_LINKS } from '@/lib/constants';
 import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import TrackedExternalLink from '@/components/common/TrackedExternalLink';
+import { MASTER_ARTISTS } from '@/lib/master-artists';
 
 /**
  * force-static + Suspense 경계에서 setRequestLocale의 request scope가 끊겨
@@ -232,6 +233,23 @@ export default async function Footer({ locale }: { locale: string }) {
                     </a>
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* 거장 작가 직링크 — Part 15 S5.1 내부 링크 척추 */}
+            <div className="border-t border-gray-700 pt-6 mb-6">
+              <p className="text-xs text-gray-500 mb-3">{t('masterArtists')}</p>
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                {MASTER_ARTISTS.filter((a) => a.specialSlug).map((artist) => (
+                  <Link
+                    key={artist.artistName}
+                    href={`/special/${artist.specialSlug}`}
+                    prefetch={false}
+                    className="text-gray-300 hover:text-primary transition-colors"
+                  >
+                    {isEn ? artist.artistNameEn : artist.artistName}
+                  </Link>
+                ))}
               </div>
             </div>
 
