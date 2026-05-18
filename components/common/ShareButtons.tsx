@@ -154,7 +154,7 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
         aria-label={t('facebookAria')}
       >
         <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="32" r="32" fill="#1877F2" />
+          <circle cx="32" cy="32" r="32" fill={BRAND_COLORS.external.facebook} />
           <path
             d="M42.525 41.142l1.573-10.257h-9.847V24.09c0-2.806 1.374-5.542 5.783-5.542h4.474V9.638S40.67 9 36.996 9c-7.68 0-12.698 4.655-12.698 13.084v7.8H15.69v10.258h8.608V64h10.595V41.142h8.632z"
             fill="#fff"
@@ -170,7 +170,7 @@ export default function ShareButtons({ url, title, description, imageUrl }: Shar
         aria-label={t('twitterAria')}
       >
         <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="32" r="32" fill="#000" />
+          <circle cx="32" cy="32" r="32" fill={BRAND_COLORS.external.twitterX} />
           <path
             d="M36.652 29.13L47.74 16h-2.628l-9.628 11.396L27.176 16H17l11.627 17.228L17 47.248h2.628l10.164-12.03L38.824 47.248H49L36.652 29.13zm-3.597 4.258l-1.178-1.716L20.41 17.96h4.035l7.563 11.02 1.178 1.716 9.833 14.323h-4.035l-8.03-11.63z"
             fill="#fff"

@@ -69,6 +69,8 @@ export const BRAND_COLORS = {
   success: {
     DEFAULT: '#2E9F7B', // Success Green (3.30:1 - large text only)
     a11y: '#1D7A5F', // Accessible Success (4.85:1 on white - AA compliant)
+    tint: '#EAFAF3', // Success Tint — OG 배경용 (success/10)
+    soft: '#A5DEC7', // Success Soft — OG border용
   },
   warning: '#FDCA40',
   danger: {
@@ -87,6 +89,13 @@ export const BRAND_COLORS = {
     700: '#3D464D', // (9.63:1 - AAA compliant)
     800: '#2C3238',
     900: '#1F2428',
+  },
+  // 서드파티 브랜드 공식 색상. 브랜드 가이드라인 준수 목적으로만 사용.
+  external: {
+    facebook: '#1877F2',
+    twitterX: '#000000',
+    paypalDark: '#003087',
+    paypalLight: '#009CDE',
   },
 } as const;
 

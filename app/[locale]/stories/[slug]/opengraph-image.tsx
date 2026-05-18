@@ -45,9 +45,9 @@ const CATEGORY_COLORS: Record<
     labelEn: 'Buying Guide',
   },
   'art-knowledge': {
-    bg: '#EAFAF3', // success/10 hint (no token match)
+    bg: BRAND_COLORS.success.tint,
     highlight: BRAND_COLORS.success.a11y,
-    border: '#A5DEC7', // success-soft (no token match)
+    border: BRAND_COLORS.success.soft,
     labelKo: '미술 산책',
     labelEn: 'Art Knowledge',
   },

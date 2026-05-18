@@ -1,6 +1,7 @@
 'use client';
 
 import SafeImage from '@/components/common/SafeImage';
+import { BRAND_COLORS } from '@/lib/colors';
 
 /**
  * 결제수단 브랜드 로고 식별자. null이면 텍스트 라벨 사용 (카드/계좌이체 등).
@@ -37,8 +38,8 @@ export function PaymentBrandLogo({ brand }: { brand: BrandKind }) {
         className="font-black italic text-base"
         style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
       >
-        <span className="text-[#003087]">Pay</span>
-        <span className="text-[#009CDE]">Pal</span>
+        <span style={{ color: BRAND_COLORS.external.paypalDark }}>Pay</span>
+        <span style={{ color: BRAND_COLORS.external.paypalLight }}>Pal</span>
       </span>
     );
   }
