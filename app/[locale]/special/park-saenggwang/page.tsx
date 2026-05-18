@@ -176,7 +176,7 @@ export default async function ParkSaenggwangPage({
       name: 'South Korea',
       '@id': 'https://www.wikidata.org/wiki/Q884',
     },
-    sameAs: ['https://ko.wikipedia.org/wiki/박생광'],
+    sameAs: ['https://ko.wikipedia.org/wiki/박생광', 'https://www.wikidata.org/wiki/Q16174513'],
   };
 
   const exhibitionEventSchema = {
