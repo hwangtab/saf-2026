@@ -48,10 +48,11 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
       'Edition numbers explained — fraction format, AP, EA, HC. Why prints and originals differ in price, and what to verify before purchase.',
   },
   'reading-art-sizes-ho-vs-cm': {
-    titleKo: '10호 30호 100호 크기 cm — 호수 ↔ 센티미터 환산표 | 씨앗페 매거진',
-    titleEn: 'Korean Art Canvas Sizes (호) to cm — Conversion Chart | SAF Magazine',
+    // GSC: 187 imp / 0.53% CTR — "10호 사이즈"(63 imp, CTR 0%) 검색어 title에 직접 흡수.
+    titleKo: '10호 사이즈 30호 100호 크기 cm — 호수 환산표 (F호·M호·P호) | 씨앗페',
+    titleEn: 'Korean Art Canvas Sizes (호) to cm — F/M/P Format Chart | SAF Magazine',
     descriptionKo:
-      '10호는 53×45.5cm, 30호는 91×72.7cm. 한국 미술 호수(F·M·P·S 형식별) ↔ 센티미터 환산표와 공간별 권장 작품 크기 가이드.',
+      '10호는 53×45.5cm, 30호는 91×72.7cm. 한국 미술 호수 사이즈(F·M·P·S 형식별) ↔ 센티미터 환산표와 공간별 권장 작품 크기 가이드.',
     descriptionEn:
       'Korean canvas size (호) to centimeter conversion. F/M/P/S format chart, plus space-by-space size recommendations for collectors.',
   },
@@ -78,6 +79,25 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     titleEn: 'Korean Art Tax Guide — Capital Gains, VAT, Artist Deductions | SAF Magazine',
     // description은 story.excerpt fallback 사용 — 본문과 일치 보장 (실제 본문과 어긋난
     // 메타는 GSC quality flag 위험).
+  },
+  'archival-pigment-print-photography': {
+    // GSC: 54 imp / 2 click (CTR 3.70%) — "피그먼트 프린트"(36 imp, CTR 0%) 정의형 검색 흡수.
+    titleKo: '피그먼트 프린트란? 아카이벌 잉크젯 사진의 보존성·에디션 | 씨앗페 매거진',
+    titleEn: 'What Is Archival Pigment Print? Inkjet Photography Explained | SAF Magazine',
+    descriptionKo:
+      '피그먼트 프린트(아카이벌 잉크젯) 인쇄 방식과 보존성, 사진 에디션 넘버링, 컬렉터 체크포인트까지.',
+    descriptionEn:
+      'How archival pigment prints work, their longevity, photo edition numbering, and collector tips.',
+  },
+  'meet-artist-kim-ju-ho': {
+    // GSC: 85 imp / 0 click (CTR 0%) — story.title fallback "김주호: 흙과 불로 빚어내는 형상"이
+    // 검색 의도("김주호 작가") 대비 매력도 낮음. 작가 정체성을 title 앞에 배치.
+    titleKo: '도예 조각가 김주호 인터뷰 — 흙과 불로 빚어내는 형상 | 씨앗페 매거진',
+    titleEn: 'Kim Ju-ho Interview — Forms Shaped by Clay and Fire | SAF Magazine',
+    descriptionKo:
+      '강화도에서 33년째 전업작가로 활동하는 도예 조각가 김주호. 테라코타와 철판으로 보통 사람들의 웃음과 욕망을 빚어내는 그의 이야기.',
+    descriptionEn:
+      "Kim Ju-ho, working full-time in Ganghwa Island for 33 years, shapes everyday people's joy and desire in terracotta and iron plate.",
   },
 };
 

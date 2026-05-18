@@ -34,20 +34,6 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   const materialForLocale = getMaterialLabel(artwork.material, locale);
   const sizeForLocale = getSizeLabel(artwork.size, locale);
 
-  const summary = [
-    isEnglish ? `Artist: ${artistForLocale}` : `작가: ${artwork.artist}`,
-    isEnglish ? `Title: ${titleForLocale}` : `작품명: ${artwork.title}`,
-    artwork.year ? (isEnglish ? `Year: ${artwork.year}` : `제작년도: ${artwork.year}`) : '',
-    materialForLocale
-      ? isEnglish
-        ? `Material: ${materialForLocale}`
-        : `재료: ${materialForLocale}`
-      : '',
-    sizeForLocale ? (isEnglish ? `Size: ${sizeForLocale}` : `크기: ${sizeForLocale}`) : '',
-  ]
-    .filter(Boolean)
-    .join(', ');
-
   const profileSnippet = sanitizeForLocale(
     isEnglish ? artwork.profile_en || artwork.profile : artwork.profile,
     locale,
@@ -59,10 +45,20 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     isEnglish ? 'Original artwork description available in Korean.' : ''
   ).substring(0, 200);
 
-  const seoDescriptionBase =
-    `${summary}. ` +
-    (descSnippet ? `${descSnippet}... ` : '') +
-    (profileSnippet ? `${profileSnippet}...` : '');
+  // 자연어 description — key:value dump 대신 사람이 읽기 좋은 문장으로 SERP CTR 개선.
+  // e.g. KO: "오윤 작가의 '안는다' (목판화, 2024). {descSnippet}... · ₩XXX · 무료 배송."
+  const metaDetails = [materialForLocale, artwork.year, sizeForLocale].filter(Boolean).join(', ');
+  const seoDescriptionBase = isEnglish
+    ? `'${titleForLocale}' by ${artistForLocale}` +
+      (metaDetails ? ` (${metaDetails})` : '') +
+      '.' +
+      (descSnippet ? ` ${descSnippet}...` : '') +
+      (!descSnippet && profileSnippet ? ` ${profileSnippet}...` : '')
+    : `${artwork.artist} 작가의 '${artwork.title}'` +
+      (metaDetails ? ` (${metaDetails})` : '') +
+      '.' +
+      (descSnippet ? ` ${descSnippet}...` : '') +
+      (!descSnippet && profileSnippet ? ` ${profileSnippet}...` : '');
 
   // /en keywords·meta에 KO category(회화·판화 등)가 그대로 들어가던 누락 — locale별 라벨 매핑
   const categoryForLocale = artwork.category ? getCategoryLabel(artwork.category, locale) : null;
