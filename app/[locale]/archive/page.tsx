@@ -143,16 +143,22 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
                   <h3 className="text-2xl font-bold font-display text-charcoal mb-2 group-hover:text-primary transition-colors">
                     {isEnglish ? 'SAF 2026' : '씨앗페 2026'}
                   </h3>
-                  <p className="text-charcoal-muted mb-4">
+                  <p className="text-charcoal-muted mb-4 break-keep">
                     {isEnglish ? (
                       <>
-                        The second festival for artist mutual-aid funding. <br />A scene of
-                        solidarity unfolded at Insa Art Center.
+                        <span className="block">
+                          The second festival for artist mutual-aid funding.
+                        </span>
+                        <span className="mt-1 block">
+                          A scene of solidarity unfolded at Insa Art Center.
+                        </span>
                       </>
                     ) : (
                       <>
-                        예술인 상호부조 기금 마련을 위한 두 번째 축제. <br />
-                        인사아트센터에서 펼쳐진 연대의 현장.
+                        <span className="block">
+                          예술인 상호부조 기금 마련을 위한 두 번째 축제.
+                        </span>
+                        <span className="mt-1 block">인사아트센터에서 펼쳐진 연대의 현장.</span>
                       </>
                     )}
                   </p>
@@ -180,16 +186,18 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
                   <h3 className="text-2xl font-bold font-display text-charcoal mb-2 group-hover:text-primary transition-colors">
                     {isEnglish ? 'SAF 2023' : '씨앗페 2023'}
                   </h3>
-                  <p className="text-charcoal-muted mb-4">
+                  <p className="text-charcoal-muted mb-4 break-keep">
                     {isEnglish ? (
                       <>
-                        The beginning of SAF. <br />
-                        The first signal flare lit by Korean artists together.
+                        <span className="block">The beginning of SAF.</span>
+                        <span className="mt-1 block">
+                          The first signal flare lit by Korean artists together.
+                        </span>
                       </>
                     ) : (
                       <>
-                        씨앗페의 시작. <br />
-                        예술인들이 함께 쏘아올린 첫 번째 신호탄.
+                        <span className="block">씨앗페의 시작.</span>
+                        <span className="mt-1 block">예술인들이 함께 쏘아올린 첫 번째 신호탄.</span>
                       </>
                     )}
                   </p>

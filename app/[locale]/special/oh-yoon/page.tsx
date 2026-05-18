@@ -238,18 +238,22 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               )}
             </h1>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed break-keep border-t-2 border-b-2 border-white/20 py-5 md:py-6">
               {isEnglish ? (
                 <>
-                  A short yet powerful life. The spirit of an era, carved in print.
-                  <br />
-                  Oh Yoon&apos;s work speaks to us once again, today.
+                  <span className="block">
+                    A short yet powerful life. The spirit of an era, carved in print.
+                  </span>
+                  <span className="mt-2 block">
+                    Oh Yoon&apos;s work speaks to us once again, today.
+                  </span>
                 </>
               ) : (
                 <>
-                  짧지만 강렬했던 삶, 판화로 새긴 시대의 정신.
-                  <br />
-                  오윤의 예술혼이 오늘 우리에게 다시 말을 겁니다.
+                  <span className="block">짧지만 강렬했던 삶, 판화로 새긴 시대의 정신.</span>
+                  <span className="mt-2 block">
+                    오윤의 예술혼이 오늘 우리에게 다시 말을 겁니다.
+                  </span>
                 </>
               )}
             </p>
@@ -566,19 +570,25 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                   <h3 className="text-2xl font-bold text-white text-balance mb-4">
                     {isEnglish ? 'Artwork data is being prepared' : '작품 데이터 준비 중입니다'}
                   </h3>
-                  <p className="text-white/60 text-balance mb-8">
+                  <p className="text-white/60 text-balance mb-8 break-keep">
                     {isEnglish ? (
                       <>
-                        We are currently organizing the works for the Oh Yoon special exhibition.
-                        <br />
-                        In the meantime, you are warmly invited to browse the rest of the
-                        collection.
+                        <span className="block">
+                          We are currently organizing the works for the Oh Yoon special exhibition.
+                        </span>
+                        <span className="mt-1 block">
+                          In the meantime, you are warmly invited to browse the rest of the
+                          collection.
+                        </span>
                       </>
                     ) : (
                       <>
-                        현재 오윤 특별전 작품 정보를 정리하고 있습니다.
-                        <br />
-                        전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                        <span className="block">
+                          현재 오윤 특별전 작품 정보를 정리하고 있습니다.
+                        </span>
+                        <span className="mt-1 block">
+                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                        </span>
                       </>
                     )}
                   </p>

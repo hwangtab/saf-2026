@@ -29,9 +29,8 @@ export default function GalleryEmptyState({ onReset }: GalleryEmptyStateProps) {
         </svg>
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">{tSearch('noResultsTitle')}</h3>
-      <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+      <p className="text-gray-500 mb-6 max-w-sm mx-auto break-keep">
         {tSearch('noResultsDesc')}
-        <br />
         <span className="text-sm mt-1 block text-charcoal-soft">
           {locale === 'en'
             ? 'Check for typos or try searching by artist name.'

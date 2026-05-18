@@ -356,21 +356,19 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
               <div className="space-y-4 text-charcoal-muted">
                 <div>
                   <p className="font-semibold text-charcoal">지하철</p>
-                  <p>
-                    {EXHIBITION.ACCESS.SUBWAY.map((s, i) => (
-                      <span key={s.line}>
+                  <p className="break-keep">
+                    {EXHIBITION.ACCESS.SUBWAY.map((s) => (
+                      <span key={s.line} className="block">
                         {s.line} {s.exit}에서 {s.walk}
-                        {i < EXHIBITION.ACCESS.SUBWAY.length - 1 && <br />}
                       </span>
                     ))}
                   </p>
                 </div>
                 <div>
                   <p className="font-semibold text-charcoal">버스</p>
-                  <p>
-                    {EXHIBITION.ACCESS.BUS.stop} 하차
-                    <br />
-                    {EXHIBITION.ACCESS.BUS.lines}
+                  <p className="break-keep">
+                    <span className="block">{EXHIBITION.ACCESS.BUS.stop} 하차</span>
+                    <span className="block">{EXHIBITION.ACCESS.BUS.lines}</span>
                   </p>
                 </div>
               </div>

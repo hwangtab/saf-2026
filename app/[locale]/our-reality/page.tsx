@@ -779,7 +779,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
           <SectionTitle className="mb-6">
             {isEnglish ? 'Now is the time to act' : '이제 행동할 시간입니다'}
           </SectionTitle>
-          <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
+          <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance break-keep">
             {isEnglish ? (
               <>
                 Help save the creative time of Korean artists.

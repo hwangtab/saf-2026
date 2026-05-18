@@ -110,7 +110,7 @@ export default function PageHero({
           {description && (
             <p
               id={descriptionId}
-              className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-lg text-balance"
+              className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-lg text-balance break-keep"
             >
               {description}
             </p>

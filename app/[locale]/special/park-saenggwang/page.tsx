@@ -266,18 +266,32 @@ export default async function ParkSaenggwangPage({
               )}
             </h1>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed border-t-2 border-b-2 border-white/20 py-5 md:py-6">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed break-keep border-t-2 border-b-2 border-white/20 py-5 md:py-6">
               {isEnglish ? (
                 <>
-                  Drawings by the master of obangsaek — the bare structure beneath color.
-                  <br />
-                  May 20 – Jun 8, 2026 · M-Tower 6F, Eunpyeong · 11am–8pm.
+                  <span className="block">
+                    Drawings by the master of obangsaek — the bare structure beneath color.
+                  </span>
+                  <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
+                    <span className="inline-block">May 20 – Jun 8, 2026</span>
+                    <span className="mx-2 text-white/40">·</span>
+                    <span className="inline-block">M-Tower 6F, Eunpyeong</span>
+                    <span className="mx-2 text-white/40">·</span>
+                    <span className="inline-block">11am–8pm</span>
+                  </span>
                 </>
               ) : (
                 <>
-                  오방색의 거장이 색을 입히기 전, 그 골격을 그대로 드러낸 드로잉.
-                  <br />
-                  2026년 5월 20일 ~ 6월 8일 · 서울 은평 M타워 6층 · 오전 11시~오후 8시.
+                  <span className="block">
+                    오방색의 거장이 색을 입히기 전, 그 골격을 그대로 드러낸 드로잉.
+                  </span>
+                  <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
+                    <span className="inline-block">2026년 5월 20일 ~ 6월 8일</span>
+                    <span className="mx-2 text-white/40">·</span>
+                    <span className="inline-block">서울 은평 M타워 6층</span>
+                    <span className="mx-2 text-white/40">·</span>
+                    <span className="inline-block">오전 11시 ~ 오후 8시</span>
+                  </span>
                 </>
               )}
             </p>
@@ -735,20 +749,26 @@ export default async function ParkSaenggwangPage({
                       ? 'Drawing data is being prepared'
                       : '드로잉 작품 데이터 준비 중입니다'}
                   </h3>
-                  <p className="text-charcoal-muted text-balance mb-8">
+                  <p className="text-charcoal-muted text-balance mb-8 break-keep">
                     {isEnglish ? (
                       <>
-                        We are currently organizing works for the Park Saeng-gwang Drawings
-                        exhibition.
-                        <br />
-                        In the meantime, you are warmly invited to browse the rest of the
-                        collection.
+                        <span className="block">
+                          We are currently organizing works for the Park Saeng-gwang Drawings
+                          exhibition.
+                        </span>
+                        <span className="mt-1 block">
+                          In the meantime, you are warmly invited to browse the rest of the
+                          collection.
+                        </span>
                       </>
                     ) : (
                       <>
-                        현재 박생광 드로잉전 작품 정보를 정리하고 있습니다.
-                        <br />
-                        전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                        <span className="block">
+                          현재 박생광 드로잉전 작품 정보를 정리하고 있습니다.
+                        </span>
+                        <span className="mt-1 block">
+                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                        </span>
                       </>
                     )}
                   </p>
@@ -774,16 +794,16 @@ export default async function ParkSaenggwangPage({
               <h3 className="text-sm text-charcoal-muted font-bold tracking-widest uppercase mb-3">
                 {isEnglish ? 'Dates' : '전시 기간'}
               </h3>
-              <p className="text-xl text-charcoal-deep font-bold leading-tight">
+              <p className="text-xl text-charcoal-deep font-bold leading-tight break-keep">
                 {isEnglish ? (
                   <>
-                    May 20 (Wed)
-                    <br />— Jun 8 (Mon), 2026
+                    <span className="block">May 20 (Wed)</span>
+                    <span className="block">— Jun 8 (Mon), 2026</span>
                   </>
                 ) : (
                   <>
-                    2026. 5. 20 (수)
-                    <br />— 6. 8 (월)
+                    <span className="block">2026. 5. 20 (수)</span>
+                    <span className="block">— 6. 8 (월)</span>
                   </>
                 )}
               </p>
