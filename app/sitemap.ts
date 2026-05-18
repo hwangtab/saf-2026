@@ -108,6 +108,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date('2026-05-20'),
     },
     {
+      path: '/special/min-joungki',
+      changeFrequency: 'monthly',
+      priority: 0.85,
+      lastModified: new Date('2026-05-18'),
+    },
+    {
+      path: '/special/lee-cheolsoo',
+      changeFrequency: 'monthly',
+      priority: 0.85,
+      lastModified: new Date('2026-05-18'),
+    },
+    {
+      path: '/special/park-buldong',
+      changeFrequency: 'monthly',
+      priority: 0.85,
+      lastModified: new Date('2026-05-18'),
+    },
+    {
       path: '/petition/oh-yoon',
       changeFrequency: 'monthly',
       priority: 0.8,

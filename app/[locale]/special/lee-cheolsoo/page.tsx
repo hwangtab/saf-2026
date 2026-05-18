@@ -149,6 +149,11 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
     description: isEnglish
       ? 'Lee Chul-soo (b. 1954) is a Korean master printmaker and brushwork artist, known for woodblock prints that pair simple nature imagery with short, zen-like calligraphic phrases.'
       : '이철수(1954-)는 목판화와 서화를 하나로 녹여낸 작가로, 단순한 자연 이미지와 짧은 글귀를 결합한 작품으로 한국인의 일상 속에 가장 깊이 스며든 거장입니다.',
+    birthDate: '1954',
+    birthPlace: {
+      '@type': 'Place',
+      name: isEnglish ? 'Seoul, South Korea' : '서울',
+    },
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -476,9 +481,32 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                       현재
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Continues working in Jecheon. Works exhibited internationally (Germany, France, Ireland and more). Official shop: mokpan.com'
-                        : '제천에서 작업 지속. 독일·프랑스·아일랜드 등 국제 전시 다수. 공식 판매처: mokpan.com'}
+                      {isEnglish ? (
+                        <>
+                          Continues working in Jecheon. Works exhibited internationally (Germany,
+                          France, Ireland and more). Official shop:{' '}
+                          <a
+                            href="https://mokpan.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-strong underline"
+                          >
+                            mokpan.com
+                          </a>
+                        </>
+                      ) : (
+                        <>
+                          제천에서 작업 지속. 독일·프랑스·아일랜드 등 국제 전시 다수. 공식 판매처:{' '}
+                          <a
+                            href="https://mokpan.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-strong underline"
+                          >
+                            mokpan.com
+                          </a>
+                        </>
+                      )}
                     </span>
                   </li>
                 </ol>
@@ -521,9 +549,36 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                       : '✦ 진입 가능한 소장 경로'}
                   </p>
                   <p className="text-sm text-charcoal-muted break-keep">
-                    {isEnglish
-                      ? 'Print postcards (from ₩4,000) and annual print calendars are widely available — making Lee Chul-soo one of the most accessible artists in the collection. Original works also available via mokpan.com.'
-                      : '판화 엽서 (₩4,000~) 및 연간 판화 달력 등 생활 매체로 광범위하게 보급. 씨앗페 컬렉션 중 가장 접근하기 쉬운 작가 중 한 명. 원화 작품은 mokpan.com에서도 구매 가능.'}
+                    {isEnglish ? (
+                      <>
+                        Print postcards and annual print calendars are widely available — making Lee
+                        Chul-soo one of the most accessible artists in the collection. Original
+                        works also available via{' '}
+                        <a
+                          href="https://mokpan.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-strong underline"
+                        >
+                          mokpan.com
+                        </a>
+                        .
+                      </>
+                    ) : (
+                      <>
+                        판화 엽서 및 연간 판화 달력 등 생활 매체로 광범위하게 보급. 씨앗페 컬렉션 중
+                        가장 접근하기 쉬운 작가 중 한 명. 원화 작품은{' '}
+                        <a
+                          href="https://mokpan.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-strong underline"
+                        >
+                          mokpan.com
+                        </a>
+                        에서도 구매 가능.
+                      </>
+                    )}
                   </p>
                 </div>
               </div>

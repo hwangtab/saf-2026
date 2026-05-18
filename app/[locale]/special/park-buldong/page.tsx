@@ -149,6 +149,11 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
     description: isEnglish
       ? 'Park Bul-ttong (b. 1956) is a Korean master of collage and political art, known for works that cut and reassemble mass media images to expose hidden power structures.'
       : '박불똥(1956-)은 대중매체 이미지를 해체·재조합하는 콜라주와 정치 미술로 권력의 이면을 폭로해온 한국 민중미술의 거장입니다.',
+    birthDate: '1956',
+    birthPlace: {
+      '@type': 'Place',
+      name: isEnglish ? 'Hadong, South Gyeongsang, South Korea' : '경남 하동',
+    },
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -253,40 +258,6 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
         </section>
 
         <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
-          {/* Quote Section */}
-          <div className="mb-24 flex justify-center">
-            <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-primary flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
-                &ldquo;
-              </div>
-              <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
-                {isEnglish ? (
-                  <>
-                    The blade that reality needs
-                    <br className="md:hidden" /> must become the brush.
-                  </>
-                ) : (
-                  <>
-                    칼이 필요한 현실과
-                    <br className="md:hidden" /> 칼이 되어야 하는 붓.
-                  </>
-                )}
-              </p>
-              <footer className="mt-8 space-y-1">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="h-px w-8 bg-charcoal/40"></span>
-                  <span className="text-xl text-charcoal font-bold tracking-widest">
-                    {isEnglish ? 'Park Bul-ttong' : '박불똥'}
-                  </span>
-                  <span className="h-px w-8 bg-charcoal/40"></span>
-                </div>
-                <p className="text-xs text-charcoal-muted">
-                  {isEnglish ? 'Source: Monthly Art (월간미술), 1987' : '출처: 월간미술, 1987년'}
-                </p>
-              </footer>
-            </blockquote>
-          </div>
-
           {/* Bio / Narrative Section */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-32 items-start">
             <div className="space-y-8">
@@ -425,9 +396,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                       1956
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Born in Hadong, South Gyeongsang province. Real name: Park Sang-mo (朴相模).'
-                        : '경남 하동 출생. 실명 박상모(朴相模).'}
+                      {isEnglish ? 'Born in Hadong, South Gyeongsang province.' : '경남 하동 출생.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">

@@ -45,7 +45,7 @@ const PAGE_COPY = {
   ko: {
     title: '민정기 특별전: Min Joung-ki Special Exhibition',
     description:
-      '한국 현실주의 풍경화의 거장 민정기(1949–). 「현실과 발언」 창립 동인으로 민중미술 운동의 핵심에 섰던 작가가, 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아온 반세기의 여정을 씨앗페 온라인에서 만나보세요.',
+      '한국 현실주의 풍경화의 거장 민정기(1949–). 「현실과 발언」 결성 동인으로(1979) 민중미술 운동의 핵심에 섰던 작가가, 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아온 반세기의 여정을 씨앗페 온라인에서 만나보세요.',
     ogDescription:
       '한국 현실주의 풍경화의 거장 민정기 특별전. 민중미술 운동의 핵심으로서 한국의 산하와 민중의 삶을 담아온 반세기의 여정.',
     ogAlt: '민정기 특별전 대표 이미지',
@@ -143,8 +143,13 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
     alternateName: isEnglish ? '민정기' : 'Min Joung-ki',
     jobTitle: isEnglish ? 'Artist' : '화가',
     description: isEnglish
-      ? 'Min Joung-ki (b. 1949) is a leading Korean realist painter and co-founder of the Reality and Utterance collective (1979), known for monumental landscape paintings documenting a vanishing rural Korea.'
-      : '민정기(1949-)는 한국 현실주의 회화의 대표 작가로, 1979년 「현실과 발언」을 창립하고 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아왔습니다.',
+      ? 'Min Joung-ki (b. 1949) is a leading Korean realist painter who co-founded the Reality and Utterance collective (formed 1979; inaugural exhibition 1980), known for monumental landscape paintings documenting a vanishing rural Korea.'
+      : '민정기(1949-)는 한국 현실주의 회화의 대표 작가로, 1979년 「현실과 발언」 결성에 참여하고 1980년 창립전을 열며 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아왔습니다.',
+    birthDate: '1949',
+    birthPlace: {
+      '@type': 'Place',
+      name: isEnglish ? 'Seoul (Seodaemun-gu), South Korea' : '서울 서대문구',
+    },
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -331,9 +336,9 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                       민정기(1949-)는 1979년 오윤 등과 함께{' '}
                       <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
                         「현실과 발언」
-                      </strong>
-                      을 창립하며 민중미술 운동의 핵심에 섰습니다. 오윤이 목판 칼을 들었다면,
-                      민정기는 붓을 들어 이 땅 자체를 응시했습니다.
+                      </strong>{' '}
+                      결성에 참여하고 1980년 창립전을 열며 민중미술 운동의 핵심에 섰습니다. 오윤이
+                      목판 칼을 들었다면, 민정기는 붓을 들어 이 땅 자체를 응시했습니다.
                     </p>
                     <p>
                       그의 대표작은 파노라마식 풍경화입니다. 벽 한 면을 채우는 대형 화폭 위에
