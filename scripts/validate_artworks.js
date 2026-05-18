@@ -91,6 +91,21 @@ function validateArtworks() {
 
     const editionResult = rules.edition(artwork.edition, artwork.id);
     if (editionResult) warnings.push(editionResult);
+
+    // 이미지가 Supabase Storage URL인지 확인 — 로컬 경로 혼입 방지
+    if (Array.isArray(artwork.images)) {
+      artwork.images.forEach((imgUrl, idx) => {
+        if (
+          typeof imgUrl === 'string' &&
+          imgUrl &&
+          !imgUrl.startsWith('https://vqejnuntjnxzpgwfndtv.supabase.co/storage/')
+        ) {
+          errors.push(
+            `ID ${artwork.id}: images[${idx}] Supabase URL이 아님 — "${imgUrl.slice(0, 60)}" (로컬 경로 혼입 금지)`
+          );
+        }
+      });
+    }
   });
 
   console.log('\n=== 작품 데이터 검증 결과 ===\n');
