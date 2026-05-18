@@ -26,6 +26,9 @@ export default async function MagazineSection({ locale }: { locale: string }) {
     guide: isEn ? 'Guide' : '컬렉팅 가이드',
     review: isEn ? 'Review' : '미술 산책',
     news: isEn ? 'News' : '뉴스',
+    'artist-story': isEn ? 'Artist Story' : '작가 이야기',
+    'buying-guide': isEn ? 'Buying Guide' : '컬렉팅 가이드',
+    'art-knowledge': isEn ? 'Art Knowledge' : '미술 산책',
     other: isEn ? 'Article' : '아티클',
   };
 

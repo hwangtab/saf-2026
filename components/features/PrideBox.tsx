@@ -22,6 +22,7 @@ interface PrideBoxProps {
   artwork: {
     category?: string | null;
     edition?: string | null;
+    edition_type?: string | null;
   };
   /** 영문 분기. 기본 한국어. */
   locale?: 'ko' | 'en';

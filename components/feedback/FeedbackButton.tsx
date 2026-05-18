@@ -1,19 +1,27 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils/cn';
+import { isArtworkDetail } from '@/lib/hero-routes';
 import FeedbackModal from './FeedbackModal';
 
 export default function FeedbackButton() {
   const t = useTranslations('feedbackWidget');
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const onArtworkDetail = isArtworkDetail(pathname);
 
   return (
     <>
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-[transform,box-shadow,background-color] hover:bg-gray-700 hover:shadow-gallery-hover active:scale-95"
+        className={cn(
+          'fixed right-6 z-40 flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-[transform,box-shadow,background-color] hover:bg-gray-700 hover:shadow-gallery-hover active:scale-95',
+          onArtworkDetail ? 'bottom-24 md:bottom-6' : 'bottom-6'
+        )}
         aria-label={t('buttonLabel')}
       >
         <svg

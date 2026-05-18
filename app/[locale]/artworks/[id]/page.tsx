@@ -688,7 +688,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
           {/* 매뉴얼 8.3 자긍심 박스 — 작품 detail 마지막 [13] 영역.
               회복 서사 4원칙(결말=회복 / 주체=컬렉터 / 시간=현재진행형 / 위치=정체성 마무리). */}
           <PrideBox
-            artwork={{ category: artwork.category, edition: artwork.edition }}
+            artwork={{
+              category: artwork.category,
+              edition: artwork.edition,
+              edition_type: artwork.edition_type,
+            }}
             locale={locale === 'en' ? 'en' : 'ko'}
           />
         </article>
