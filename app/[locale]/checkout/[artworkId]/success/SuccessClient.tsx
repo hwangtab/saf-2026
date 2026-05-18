@@ -111,6 +111,16 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
           setVirtualAccount(data.virtualAccount ?? null);
           setPageState('virtual');
         } else {
+          // Toss가 DONE/WAITING_FOR_DEPOSIT 외 성공 상태를 반환하는 경우에도 purchase 발화
+          const purchaseKey = `purchase_fired_${orderId}`;
+          if (!sessionStorage.getItem(purchaseKey)) {
+            sessionStorage.setItem(purchaseKey, '1');
+            trackEvent('purchase', {
+              transaction_id: orderId,
+              value: Number(amount),
+              currency,
+            });
+          }
           setPageState('success');
         }
       } catch {

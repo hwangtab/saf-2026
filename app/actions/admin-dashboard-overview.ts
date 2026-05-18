@@ -312,7 +312,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .from('orders')
       .select('id', { count: 'exact', head: true })
       .not('escalated_at', 'is', null)
-      .not('status', 'in', '("completed","cancelled","refunded")'),
+      .not('status', 'in', '(completed,cancelled,refunded,refund_requested)'),
   ]);
 
   const currentMonthSalesVoidColumnMissing = isMissingVoidedAtColumnError(
