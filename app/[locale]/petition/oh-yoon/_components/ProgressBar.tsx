@@ -12,7 +12,7 @@ interface ProgressBarProps {
   /** 보조 지표 (PRD §14 OQ-6 권고 — 모멘텀 보호) */
   initialRegionTopCount?: number;
   initialRecent24h?: number;
-  /** 30초 폴링 (PRD §10.8) */
+  /** 5분 폴링 + visibility 가드 (탭 숨김 시 일시 중단) */
   pollIntervalMs?: number;
 }
 
@@ -21,7 +21,7 @@ export default function ProgressBar({
   goal,
   initialRegionTopCount = 0,
   initialRecent24h = 0,
-  pollIntervalMs = 30_000,
+  pollIntervalMs = 300_000,
 }: ProgressBarProps) {
   const t = useTranslations('petition.ohYoon');
   const [total, setTotal] = useState(initialTotal);
@@ -39,6 +39,7 @@ export default function ProgressBar({
     }
 
     let cancelled = false;
+    let intervalId: number | null = null;
 
     async function refresh() {
       try {
@@ -56,11 +57,35 @@ export default function ProgressBar({
       }
     }
 
-    void refresh();
-    const id = window.setInterval(refresh, pollIntervalMs);
+    function startPolling() {
+      void refresh();
+      intervalId = window.setInterval(refresh, pollIntervalMs);
+    }
+
+    function stopPolling() {
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    }
+
+    if (document.visibilityState === 'visible') {
+      startPolling();
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       cancelled = true;
-      window.clearInterval(id);
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [pollIntervalMs]);
 
