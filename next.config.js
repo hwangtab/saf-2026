@@ -135,7 +135,7 @@ const nextConfig = {
       // s-maxage 모두 무효화됨. 4개 경로는 negative lookahead로 명시 제외.
       {
         source:
-          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|api|_next|llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|en/llms\\.txt|en/llms-full\\.txt).*)',
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|api|_next|llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|feed\\.xml|en/llms\\.txt|en/llms-full\\.txt).*)',
         headers: [
           {
             key: 'Cache-Control',

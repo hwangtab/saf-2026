@@ -156,10 +156,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
         <h3 className="mb-4 text-base font-semibold text-charcoal">{t('buyerInfo')}</h3>
         <div className="space-y-4">
           <div>
-            <label className={labelClass}>
+            <label htmlFor="checkout-buyer-name" className={labelClass}>
               {t('buyerName')} <span className="text-danger">*</span>
             </label>
             <input
+              id="checkout-buyer-name"
               type="text"
               name="name"
               autoComplete="name"
@@ -172,10 +173,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             />
           </div>
           <div>
-            <label className={labelClass}>
+            <label htmlFor="checkout-buyer-email" className={labelClass}>
               {t('buyerEmail')} <span className="text-danger">*</span>
             </label>
             <input
+              id="checkout-buyer-email"
               type="email"
               name="email"
               autoComplete="email"
@@ -187,10 +189,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             />
           </div>
           <div>
-            <label className={labelClass}>
+            <label htmlFor="checkout-buyer-phone" className={labelClass}>
               {t('buyerPhone')} <span className="text-danger">*</span>
             </label>
             <input
+              id="checkout-buyer-phone"
               type="tel"
               name="tel"
               autoComplete="tel"
@@ -222,10 +225,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           {!sameAsBuyer && (
             <>
               <div>
-                <label className={labelClass}>
+                <label htmlFor="checkout-shipping-name" className={labelClass}>
                   {t('shippingName')} <span className="text-danger">*</span>
                 </label>
                 <input
+                  id="checkout-shipping-name"
                   type="text"
                   name="shipping-name"
                   autoComplete="shipping name"
@@ -238,10 +242,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                 />
               </div>
               <div>
-                <label className={labelClass}>
+                <label htmlFor="checkout-shipping-phone" className={labelClass}>
                   {t('buyerPhone')} <span className="text-danger">*</span>
                 </label>
                 <input
+                  id="checkout-shipping-phone"
                   type="tel"
                   name="shipping-tel"
                   autoComplete="shipping tel"
@@ -256,13 +261,14 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           )}
 
           <div>
-            <label className={labelClass}>
+            <label htmlFor="checkout-shipping-address" className={labelClass}>
               {t('addressLabel')} <span className="text-danger">*</span>
             </label>
             {isKorean ? (
               // 한국 사용자: Daum 우편번호 API로 주소 선택 (readOnly)
               <div className="flex gap-2">
                 <input
+                  id="checkout-shipping-address"
                   type="text"
                   className={inputClass}
                   value={form.shippingAddress}
@@ -282,6 +288,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             ) : (
               // 영문 사용자: 자유 입력
               <input
+                id="checkout-shipping-address"
                 type="text"
                 name="address"
                 autoComplete="shipping street-address"
@@ -295,8 +302,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           </div>
 
           <div>
-            <label className={labelClass}>{t('shippingPostalCode')}</label>
+            <label htmlFor="checkout-shipping-postal" className={labelClass}>
+              {t('shippingPostalCode')}
+            </label>
             <input
+              id="checkout-shipping-postal"
               type="text"
               name="postal-code"
               autoComplete="postal-code"
@@ -309,10 +319,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           </div>
 
           <div>
-            <label className={labelClass}>
+            <label htmlFor="checkout-shipping-detail" className={labelClass}>
               {t('shippingAddressDetail')} <span className="text-danger">*</span>
             </label>
             <input
+              id="checkout-shipping-detail"
               ref={detailRef}
               type="text"
               name="address-detail"
@@ -328,8 +339,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           </div>
 
           <div>
-            <label className={labelClass}>{t('shippingMemo')}</label>
+            <label htmlFor="checkout-shipping-memo" className={labelClass}>
+              {t('shippingMemo')}
+            </label>
             <input
+              id="checkout-shipping-memo"
               type="text"
               lang={langAttr}
               inputMode="text"

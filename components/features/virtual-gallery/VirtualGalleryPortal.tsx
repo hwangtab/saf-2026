@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, Component } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, useId, Component } from 'react';
 import type { ReactNode, ErrorInfo } from 'react';
 import dynamic from 'next/dynamic';
 import { X } from 'lucide-react';
@@ -78,6 +78,9 @@ export default function VirtualGalleryPortal({
   const [webglSupported] = useState(() => detectWebGL());
   const isMobile = useIsMobile();
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogTitleId = useId();
+
   const isKo = locale !== 'en';
 
   const copy = useMemo(
@@ -113,6 +116,37 @@ export default function VirtualGalleryPortal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  // 모달 마운트 시 첫 번째 포커스 가능 요소에 포커스 + Tab 순환으로 focus trap 구현
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusable = dialog.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length > 0) focusable[0].focus();
+
+    function trapTab(e: KeyboardEvent) {
+      if (e.key !== 'Tab' || focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    dialog.addEventListener('keydown', trapTab);
+    return () => dialog.removeEventListener('keydown', trapTab);
+  }, []);
+
   return (
     <>
       {/* Backdrop */}
@@ -121,13 +155,21 @@ export default function VirtualGalleryPortal({
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 pointer-events-none">
-        <div className="relative w-full max-w-5xl h-[70vh] md:h-[75vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col">
+        <div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={dialogTitleId}
+          className="relative w-full max-w-5xl h-[70vh] md:h-[75vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col"
+        >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-2.5 bg-gray-900/95 border-b border-white/10">
             <div className="flex items-center gap-4 min-w-0">
               {/* Artwork info */}
               <div className="text-sm text-white truncate">
-                <span className="font-medium">{title}</span>
+                <span id={dialogTitleId} className="font-medium">
+                  {title}
+                </span>
                 <span className="text-white/50 ml-2">— {artist}</span>
               </div>
             </div>

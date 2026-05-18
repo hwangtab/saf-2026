@@ -50,6 +50,8 @@ const STATIC_SKIP_PATHS = new Set([
   '/feed.xml',
   '/llms.txt',
   '/llms-full.txt',
+  '/en/llms.txt',
+  '/en/llms-full.txt',
 ]);
 
 export async function proxy(request: NextRequest) {
@@ -110,6 +112,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|images/|fonts/|reports/|\\.well-known/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|feed.xml|llms.txt|llms-full.txt).*)',
+    '/((?!api|_next/static|_next/image|images/|fonts/|reports/|\\.well-known/|favicon.ico|manifest\\.json|manifest\\.webmanifest|robots.txt|sitemap.xml|feed.xml|llms.txt|llms-full.txt|en/llms\\.txt|en/llms-full\\.txt).*)',
   ],
 };

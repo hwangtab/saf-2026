@@ -41,6 +41,7 @@ export async function createNews(formData: FormData) {
   });
 
   revalidatePath('/news');
+  revalidatePath('/en/news');
   revalidatePath('/sitemap.xml');
   revalidateTag('news', 'max');
 }
@@ -81,6 +82,7 @@ export async function updateNews(id: string, formData: FormData) {
   });
 
   revalidatePath('/news');
+  revalidatePath('/en/news');
   revalidatePath('/sitemap.xml');
   revalidateTag('news', 'max');
 }
@@ -101,6 +103,7 @@ export async function deleteNews(id: string) {
   });
 
   revalidatePath('/news');
+  revalidatePath('/en/news');
   revalidatePath('/sitemap.xml');
   revalidateTag('news', 'max');
 }
@@ -239,6 +242,7 @@ export async function createTestimonial(formData: FormData) {
   );
 
   revalidatePath('/our-reality');
+  revalidatePath('/en/our-reality');
   revalidateTag('testimonials', 'max');
 }
 
@@ -280,6 +284,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
   });
 
   revalidatePath('/our-reality');
+  revalidatePath('/en/our-reality');
   revalidateTag('testimonials', 'max');
 }
 
@@ -310,6 +315,7 @@ export async function deleteTestimonial(id: string) {
   );
 
   revalidatePath('/our-reality');
+  revalidatePath('/en/our-reality');
   revalidateTag('testimonials', 'max');
 }
 
@@ -345,6 +351,7 @@ export async function createVideo(formData: FormData) {
 
   revalidatePath('/admin/content/videos');
   revalidatePath('/our-proof');
+  revalidatePath('/en/our-proof');
 }
 
 export async function updateVideo(id: string, formData: FormData) {
@@ -382,6 +389,7 @@ export async function updateVideo(id: string, formData: FormData) {
 
   revalidatePath('/admin/content/videos');
   revalidatePath('/our-proof');
+  revalidatePath('/en/our-proof');
 }
 
 export async function deleteVideo(id: string) {
@@ -401,6 +409,7 @@ export async function deleteVideo(id: string) {
 
   revalidatePath('/admin/content/videos');
   revalidatePath('/our-proof');
+  revalidatePath('/en/our-proof');
 }
 
 // ─── Stories (매거진) ───
@@ -485,6 +494,7 @@ export async function createStory(formData: FormData) {
   });
 
   revalidatePath('/stories');
+  revalidatePath('/en/stories');
   revalidatePath('/sitemap.xml');
   revalidateTag('stories', 'max');
   await revalidateArtworksForStoryTags(supabase, story?.tags);
@@ -541,6 +551,7 @@ export async function updateStory(id: string, formData: FormData) {
   });
 
   revalidatePath('/stories');
+  revalidatePath('/en/stories');
   revalidatePath('/sitemap.xml');
   revalidateTag('stories', 'max');
   // tags가 변경됐을 수도 있어 이전 + 신규 tags 모두 revalidate
@@ -565,6 +576,7 @@ export async function deleteStory(id: string) {
   });
 
   revalidatePath('/stories');
+  revalidatePath('/en/stories');
   revalidatePath('/sitemap.xml');
   revalidateTag('stories', 'max');
   await revalidateArtworksForStoryTags(supabase, story?.tags);
