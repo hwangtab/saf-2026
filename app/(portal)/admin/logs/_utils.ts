@@ -302,6 +302,12 @@ export function formatActionDescription(log: ActivityLogEntry, locale: LocaleCod
     case 'order_refunded':
       text = `주문 환불: ${details?.order_no || log.target_id}`;
       break;
+    case 'order_escalated':
+      text = `주문 에스컬레이션: ${details?.order_no || log.target_id}${details?.reason ? ` — ${details.reason}` : ''}`;
+      break;
+    case 'order_escalation_cleared':
+      text = `에스컬레이션 해제: ${details?.order_no || log.target_id}`;
+      break;
     case 'artworks_exported':
       text = `작품 데이터 다운로드: ${details?.total_count || '-'}건`;
       break;

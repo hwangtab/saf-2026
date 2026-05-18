@@ -6,31 +6,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1';
   };
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       activity_logs: {
@@ -613,38 +588,106 @@ export type Database = {
         };
         Relationships: [];
       };
+      gsc_metrics: {
+        Row: {
+          clicks: number;
+          ctr: number;
+          date: string;
+          fetched_at: string;
+          id: number;
+          impressions: number;
+          page: string | null;
+          position: number;
+          query: string | null;
+        };
+        Insert: {
+          clicks?: number;
+          ctr?: number;
+          date: string;
+          fetched_at?: string;
+          id?: never;
+          impressions?: number;
+          page?: string | null;
+          position?: number;
+          query?: string | null;
+        };
+        Update: {
+          clicks?: number;
+          ctr?: number;
+          date?: string;
+          fetched_at?: string;
+          id?: never;
+          impressions?: number;
+          page?: string | null;
+          position?: number;
+          query?: string | null;
+        };
+        Relationships: [];
+      };
       news: {
         Row: {
           created_at: string | null;
           date: string | null;
           description: string | null;
+          description_en: string | null;
           id: string;
           link: string | null;
           source: string | null;
           thumbnail: string | null;
           title: string;
+          title_en: string | null;
         };
         Insert: {
           created_at?: string | null;
           date?: string | null;
           description?: string | null;
+          description_en?: string | null;
           id: string;
           link?: string | null;
           source?: string | null;
           thumbnail?: string | null;
           title: string;
+          title_en?: string | null;
         };
         Update: {
           created_at?: string | null;
           date?: string | null;
           description?: string | null;
+          description_en?: string | null;
           id?: string;
           link?: string | null;
           source?: string | null;
           thumbnail?: string | null;
           title?: string;
+          title_en?: string | null;
         };
         Relationships: [];
+      };
+      order_admin_notes: {
+        Row: {
+          note: string | null;
+          order_id: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          note?: string | null;
+          order_id: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          note?: string | null;
+          order_id?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_admin_notes_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: true;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       orders: {
         Row: {
@@ -656,7 +699,6 @@ export type Database = {
           cancelled_at: string | null;
           created_at: string;
           escalated_at: string | null;
-          escalation_note: string | null;
           id: string;
           item_amount: number;
           metadata: Json | null;
@@ -687,7 +729,6 @@ export type Database = {
           cancelled_at?: string | null;
           created_at?: string;
           escalated_at?: string | null;
-          escalation_note?: string | null;
           id?: string;
           item_amount: number;
           metadata?: Json | null;
@@ -718,7 +759,6 @@ export type Database = {
           cancelled_at?: string | null;
           created_at?: string;
           escalated_at?: string | null;
-          escalation_note?: string | null;
           id?: string;
           item_amount?: number;
           metadata?: Json | null;
@@ -758,14 +798,17 @@ export type Database = {
           created_at: string;
           device_id: string | null;
           device_type: string | null;
+          event_data: Json | null;
           event_name: string | null;
           event_timestamp: string;
           event_type: string;
           id: number;
           os_name: string | null;
           path: string;
+          query_params: string | null;
           referrer: string | null;
           region: string | null;
+          route: string | null;
           session_id: string | null;
         };
         Insert: {
@@ -775,14 +818,17 @@ export type Database = {
           created_at?: string;
           device_id?: string | null;
           device_type?: string | null;
+          event_data?: Json | null;
           event_name?: string | null;
           event_timestamp: string;
           event_type?: string;
           id?: never;
           os_name?: string | null;
           path: string;
+          query_params?: string | null;
           referrer?: string | null;
           region?: string | null;
+          route?: string | null;
           session_id?: string | null;
         };
         Update: {
@@ -792,14 +838,17 @@ export type Database = {
           created_at?: string;
           device_id?: string | null;
           device_type?: string | null;
+          event_data?: Json | null;
           event_name?: string | null;
           event_timestamp?: string;
           event_type?: string;
           id?: never;
           os_name?: string | null;
           path?: string;
+          query_params?: string | null;
           referrer?: string | null;
           region?: string | null;
+          route?: string | null;
           session_id?: string | null;
         };
         Relationships: [];
@@ -1124,30 +1173,39 @@ export type Database = {
       reviews: {
         Row: {
           author: string;
+          author_en: string | null;
           comment: string;
+          comment_en: string | null;
           created_at: string | null;
           date: string;
           id: string;
           rating: number;
           role: string | null;
+          role_en: string | null;
         };
         Insert: {
           author: string;
+          author_en?: string | null;
           comment: string;
+          comment_en?: string | null;
           created_at?: string | null;
           date: string;
           id?: string;
           rating: number;
           role?: string | null;
+          role_en?: string | null;
         };
         Update: {
           author?: string;
+          author_en?: string | null;
           comment?: string;
+          comment_en?: string | null;
           created_at?: string | null;
           date?: string;
           id?: string;
           rating?: number;
           role?: string | null;
+          role_en?: string | null;
         };
         Relationships: [];
       };
@@ -1214,30 +1272,42 @@ export type Database = {
       testimonials: {
         Row: {
           author: string;
+          author_en: string | null;
           category: string;
+          category_en: string | null;
           context: string | null;
+          context_en: string | null;
           created_at: string | null;
           display_order: number | null;
           id: string;
           quote: string;
+          quote_en: string | null;
         };
         Insert: {
           author: string;
+          author_en?: string | null;
           category: string;
+          category_en?: string | null;
           context?: string | null;
+          context_en?: string | null;
           created_at?: string | null;
           display_order?: number | null;
           id?: string;
           quote: string;
+          quote_en?: string | null;
         };
         Update: {
           author?: string;
+          author_en?: string | null;
           category?: string;
+          category_en?: string | null;
           context?: string | null;
+          context_en?: string | null;
           created_at?: string | null;
           display_order?: number | null;
           id?: string;
           quote?: string;
+          quote_en?: string | null;
         };
         Relationships: [];
       };
@@ -1245,27 +1315,33 @@ export type Database = {
         Row: {
           created_at: string | null;
           description: string | null;
+          description_en: string | null;
           id: string;
           thumbnail: string | null;
           title: string;
+          title_en: string | null;
           transcript: string | null;
           youtube_id: string;
         };
         Insert: {
           created_at?: string | null;
           description?: string | null;
+          description_en?: string | null;
           id: string;
           thumbnail?: string | null;
           title: string;
+          title_en?: string | null;
           transcript?: string | null;
           youtube_id: string;
         };
         Update: {
           created_at?: string | null;
           description?: string | null;
+          description_en?: string | null;
           id?: string;
           thumbnail?: string | null;
           title?: string;
+          title_en?: string | null;
           transcript?: string | null;
           youtube_id?: string;
         };
@@ -1309,6 +1385,134 @@ export type Database = {
       close_petition: { Args: { p_slug: string }; Returns: Json };
       close_petitions_due: { Args: never; Returns: Json };
       execute_sql: { Args: { sql: string }; Returns: undefined };
+      extract_query_param: {
+        Args: { key: string; qs: string };
+        Returns: string;
+      };
+      get_artist_commerce_dashboard: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          artist_id: string;
+          artist_name: string;
+          artwork_count: number;
+          orders_paid: number;
+          total_revenue: number;
+          total_views: number;
+          unique_visitors: number;
+          view_to_paid_rate: number;
+        }[];
+      };
+      get_commerce_funnel_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          artwork_views: number;
+          checkout_views: number;
+          orders_created: number;
+          orders_paid: number;
+          total_revenue: number;
+          unique_artwork_visitors: number;
+          unique_checkout_visitors: number;
+        }[];
+      };
+      get_cross_link_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          artwork_to_story_clicks: number;
+          artwork_to_story_visitors: number;
+          story_to_artwork_clicks: number;
+          story_to_artwork_visitors: number;
+        }[];
+      };
+      get_gsc_daily_trend: {
+        Args: { since_date: string };
+        Returns: {
+          avg_position: number;
+          clicks: number;
+          ctr: number;
+          day: string;
+          impressions: number;
+        }[];
+      };
+      get_gsc_low_ctr_queries: {
+        Args: { lim?: number; min_impressions?: number; since_date: string };
+        Returns: {
+          avg_position: number;
+          clicks: number;
+          ctr: number;
+          impressions: number;
+          query: string;
+        }[];
+      };
+      get_gsc_sync_status: {
+        Args: never;
+        Returns: {
+          last_fetched: string;
+          latest_date: string;
+          oldest_date: string;
+          total_rows: number;
+        }[];
+      };
+      get_gsc_top_pages: {
+        Args: { lim?: number; since_date: string };
+        Returns: {
+          avg_position: number;
+          clicks: number;
+          ctr: number;
+          impressions: number;
+          page: string;
+        }[];
+      };
+      get_gsc_top_queries: {
+        Args: { lim?: number; since_date: string };
+        Returns: {
+          avg_position: number;
+          clicks: number;
+          ctr: number;
+          impressions: number;
+          query: string;
+        }[];
+      };
+      get_locale_switch_pages: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          en_to_ko: number;
+          ko_to_en: number;
+          page_path: string;
+          total: number;
+        }[];
+      };
+      get_locale_switch_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          en_to_ko_switches: number;
+          ko_to_en_switches: number;
+          total_switches: number;
+          unique_switchers: number;
+        }[];
+      };
+      get_member_join_click_daily: {
+        Args: { since_ts: string };
+        Returns: {
+          clicks: number;
+          day: string;
+          unique_clickers: number;
+        }[];
+      };
+      get_member_join_click_position_distribution: {
+        Args: { since_ts: string };
+        Returns: {
+          clicks: number;
+          position_name: string;
+          unique_clickers: number;
+        }[];
+      };
+      get_member_join_click_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          total_clicks: number;
+          unique_clickers: number;
+        }[];
+      };
       get_my_role: { Args: never; Returns: string };
       get_my_status: { Args: never; Returns: string };
       get_petition_region_breakdown: {
@@ -1316,6 +1520,17 @@ export type Database = {
         Returns: {
           count: number;
           region_top: string;
+        }[];
+      };
+      get_purchase_click_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          distinct_artworks: number;
+          external_clicks: number;
+          legacy_clicks: number;
+          toss_clicks: number;
+          total_clicks: number;
+          unique_clickers: number;
         }[];
       };
       get_pv_browser_distribution: {
@@ -1370,11 +1585,29 @@ export type Database = {
           active_visitors: number;
         }[];
       };
+      get_pv_session_depth: {
+        Args: { since_ts: string };
+        Returns: {
+          avg_pages_per_session: number;
+          median_pages_per_session: number;
+          total_pageviews: number;
+          total_sessions: number;
+        }[];
+      };
       get_pv_summary: {
         Args: { since_ts: string };
         Returns: {
           total_views: number;
           unique_visitors: number;
+        }[];
+      };
+      get_pv_top_exit_pages: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          exit_count: number;
+          exit_rate: number;
+          path: string;
+          total_views: number;
         }[];
       };
       get_pv_top_pages: {
@@ -1392,8 +1625,184 @@ export type Database = {
           referrer: string;
         }[];
       };
+      get_pv_utm_distribution: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          utm_campaign: string;
+          utm_medium: string;
+          utm_source: string;
+          views: number;
+          visitors: number;
+        }[];
+      };
+      get_pv_visitor_recurrence: {
+        Args: { since_ts: string };
+        Returns: {
+          new_visitor_pageviews: number;
+          new_visitors: number;
+          returning_visitor_pageviews: number;
+          returning_visitors: number;
+        }[];
+      };
+      get_revenue_daily_trend: {
+        Args: { since_ts: string };
+        Returns: {
+          day: string;
+          orders_paid: number;
+          revenue: number;
+        }[];
+      };
+      get_share_click_channel_distribution: {
+        Args: { since_ts: string };
+        Returns: {
+          channel: string;
+          clicks: number;
+          unique_clickers: number;
+        }[];
+      };
+      get_share_click_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          total_clicks: number;
+          unique_clickers: number;
+        }[];
+      };
+      get_story_attributed_revenue: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          attributed_orders_paid: number;
+          attributed_revenue: number;
+          story_slug: string;
+          total_clicks: number;
+          unique_clickers: number;
+        }[];
+      };
+      get_story_to_artwork_position_distribution: {
+        Args: { since_ts: string };
+        Returns: {
+          card_position: number;
+          clicks: number;
+        }[];
+      };
+      get_story_to_artwork_source_distribution: {
+        Args: { since_ts: string };
+        Returns: {
+          clicks: number;
+          source: string;
+          visitors: number;
+        }[];
+      };
+      get_top_artwork_funnel: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          artwork_id: string;
+          checkout_to_paid_rate: number;
+          checkout_views: number;
+          orders_created: number;
+          orders_paid: number;
+          revenue: number;
+          unique_visitors: number;
+          view_to_checkout_rate: number;
+          views: number;
+        }[];
+      };
+      get_top_artwork_to_story_artworks: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          artist: string;
+          artwork_id: string;
+          clicks: number;
+          visitors: number;
+        }[];
+      };
+      get_top_clicked_artworks_from_stories: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          artist: string;
+          artwork_id: string;
+          clicks: number;
+          visitors: number;
+        }[];
+      };
+      get_top_converting_stories: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          clicks: number;
+          story_slug: string;
+          visitors: number;
+        }[];
+      };
+      get_top_purchase_clicked_artworks: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          artist: string;
+          artwork_id: string;
+          artwork_title: string;
+          clicks: number;
+          external_clicks: number;
+          toss_clicks: number;
+          unique_clickers: number;
+        }[];
+      };
+      get_top_shared_pages: {
+        Args: { lim?: number; since_ts: string };
+        Returns: {
+          clicks: number;
+          page_path: string;
+          unique_clickers: number;
+        }[];
+      };
+      get_web_vitals_daily_p75: {
+        Args: { since_ts: string };
+        Returns: {
+          day: string;
+          good_rate: number;
+          metric_name: string;
+          p75_value: number;
+          sample_size: number;
+        }[];
+      };
+      get_web_vitals_regression_count: {
+        Args: { min_sample_size?: number; since_ts: string };
+        Returns: number;
+      };
+      get_web_vitals_regressions: {
+        Args: { min_sample_size?: number; since_ts: string };
+        Returns: {
+          metric_name: string;
+          p75_value: number;
+          page_path: string;
+          poor_ratio: number;
+          poor_threshold: number;
+          sample_size: number;
+        }[];
+      };
+      get_web_vitals_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          avg_value: number;
+          good_count: number;
+          median_value: number;
+          metric_name: string;
+          needs_improvement_count: number;
+          p75_value: number;
+          poor_count: number;
+          total_events: number;
+        }[];
+      };
+      get_web_vitals_worst_pages: {
+        Args: { lim?: number; since_ts: string; target_metric: string };
+        Returns: {
+          p75_value: number;
+          page_path: string;
+          poor_count: number;
+          sample_size: number;
+        }[];
+      };
       hash_email: { Args: { p_email: string; p_salt: string }; Returns: string };
       hash_ip: { Args: { p_ip: string; p_salt: string }; Returns: string };
+      is_paid_status: { Args: { s: string }; Returns: boolean };
+      is_test_buyer_email: { Args: { email: string }; Returns: boolean };
       log_petition_audit: {
         Args: {
           p_action: string;
@@ -1542,9 +1951,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       artwork_status: ['available', 'sold', 'reserved', 'hidden'],

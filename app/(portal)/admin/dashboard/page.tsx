@@ -158,16 +158,16 @@ export default async function AdminDashboardPage() {
           href="/admin/orders?status=pending_payment"
         />
         <StatCard
-          title="SLA 위반"
+          title={t('slaOverdue')}
           valueText={numberFormatter.format(stats.slaOverdueCount)}
-          subtitle={stats.slaOverdueCount > 0 ? '72시간 초과 미배송' : '위반 없음'}
+          subtitle={stats.slaOverdueCount > 0 ? t('slaOverdueDesc') : t('slaNoViolation')}
           href="/admin/orders?status=sla_overdue"
         />
         {stats.escalatedCount > 0 && (
           <StatCard
-            title="에스컬레이션"
+            title={t('escalation')}
             valueText={numberFormatter.format(stats.escalatedCount)}
-            subtitle="수동 마킹된 주문"
+            subtitle={t('escalationDesc')}
             href="/admin/orders?status=escalated"
           />
         )}

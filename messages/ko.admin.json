@@ -68,7 +68,12 @@
       "orderStatusCompleted": "거래 완료",
       "orderStatusCancelled": "취소됨",
       "orderStatusRefunded": "환불됨",
-      "orderStatusRefundRequested": "환불 요청"
+      "orderStatusRefundRequested": "환불 요청",
+      "slaOverdue": "SLA 위반",
+      "slaOverdueDesc": "72시간 초과 미배송",
+      "slaNoViolation": "위반 없음",
+      "escalation": "에스컬레이션",
+      "escalationDesc": "수동 마킹된 주문"
     },
     "trash": {
       "restoreError": "복원 중 오류가 발생했습니다.",

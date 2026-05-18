@@ -76,7 +76,9 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
     .order('created_at', { ascending: false })
     .limit(2000);
 
-  if (filters.status) {
+  // virtual filter 값('sla_overdue', 'escalated')은 DB 컬럼이 아니므로 제거
+  const VIRTUAL_STATUS_VALUES = new Set(['sla_overdue', 'escalated']);
+  if (filters.status && !VIRTUAL_STATUS_VALUES.has(filters.status)) {
     query = query.eq('status', filters.status);
   }
 
@@ -840,25 +842,43 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
 
 export async function setOrderEscalation(
   orderId: string,
-  note: string | null
+  note: string | null,
+  expectedEscalatedAt: string | null
 ): Promise<{ success: true }> {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
 
   const escalatedAt = note ? new Date().toISOString() : null;
 
-  const { error } = await supabase
-    .from('orders')
-    .update({ escalated_at: escalatedAt, escalation_note: note })
-    .eq('id', orderId);
+  let query = supabase.from('orders').update({ escalated_at: escalatedAt }).eq('id', orderId);
+
+  // 낙관적 잠금: 다른 운영자가 먼저 변경했으면 0행 반환 → 충돌 에러
+  if (expectedEscalatedAt === null) {
+    query = query.is('escalated_at', null);
+  } else {
+    query = query.eq('escalated_at', expectedEscalatedAt);
+  }
+
+  const { data, error } = await query.select('order_no').maybeSingle();
 
   if (error) throw error;
+  if (!data) throw new Error('주문 상태가 변경되었습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+
+  // 에스컬레이션 메모는 admin-only 테이블에 별도 저장 (orders 테이블에서 PII 격리)
+  if (note) {
+    const { error: noteError } = await supabase
+      .from('order_admin_notes')
+      .upsert({ order_id: orderId, note, updated_at: new Date().toISOString() });
+    if (noteError) throw noteError;
+  } else {
+    await supabase.from('order_admin_notes').delete().eq('order_id', orderId);
+  }
 
   await logAdminAction(
     note ? 'order_escalated' : 'order_escalation_cleared',
     'order',
     orderId,
-    { note },
+    { order_no: data.order_no, reason: note ?? undefined },
     admin.id,
     {
       summary: note ? `주문 에스컬레이션 마킹: ${note}` : '주문 에스컬레이션 해제',

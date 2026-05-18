@@ -68,7 +68,12 @@
       "orderStatusCompleted": "Completed",
       "orderStatusCancelled": "Cancelled",
       "orderStatusRefunded": "Refunded",
-      "orderStatusRefundRequested": "Refund Requested"
+      "orderStatusRefundRequested": "Refund Requested",
+      "slaOverdue": "SLA Violation",
+      "slaOverdueDesc": "Over 72h undelivered",
+      "slaNoViolation": "No violations",
+      "escalation": "Escalation",
+      "escalationDesc": "Manually flagged orders"
     },
     "trash": {
       "restoreError": "An error occurred while restoring.",

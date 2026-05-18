@@ -181,13 +181,13 @@ export function OrderList({
                       </AdminBadge>
                       {order.sla_overdue && (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-charcoal-deep">
-                          <Clock className="h-3 w-3" />
+                          <Clock className="h-3 w-3" aria-hidden="true" />
                           SLA 위반
                         </span>
                       )}
                       {order.escalated_at != null && (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-a11y">
-                          <AlertTriangle className="h-3 w-3" />
+                          <AlertTriangle className="h-3 w-3" aria-hidden="true" />
                           에스컬레이션
                         </span>
                       )}

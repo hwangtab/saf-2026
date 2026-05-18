@@ -280,7 +280,6 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
   const [trackingNumber, setTrackingNumber] = useState(order.tracking_number ?? null);
 
   // Escalation state
-  const [escalatedAt, setEscalatedAt] = useState(order.escalated_at);
   const [showEscalationInput, setShowEscalationInput] = useState(false);
   const [escalationNote, setEscalationNote] = useState('');
   const [isEscalating, startEscalationTransition] = useTransition();
@@ -399,8 +398,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
     }
     startEscalationTransition(async () => {
       try {
-        await setOrderEscalation(order.id, escalationNote.trim());
-        setEscalatedAt(new Date().toISOString());
+        await setOrderEscalation(order.id, escalationNote.trim(), order.escalated_at);
         setShowEscalationInput(false);
         setEscalationNote('');
         toast.success('에스컬레이션이 마킹되었습니다.');
@@ -414,8 +412,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
   function handleClearEscalation() {
     startEscalationTransition(async () => {
       try {
-        await setOrderEscalation(order.id, null);
-        setEscalatedAt(null);
+        await setOrderEscalation(order.id, null, order.escalated_at);
         toast.success('에스컬레이션이 해제되었습니다.');
         router.refresh();
       } catch (err) {
@@ -440,13 +437,13 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             </AdminBadge>
             {order.sla_overdue && (
               <span className="inline-flex items-center gap-1 rounded-full bg-charcoal-deep/10 px-2 py-0.5 text-xs font-medium text-charcoal-deep">
-                <Clock className="h-3 w-3" />
+                <Clock className="h-3 w-3" aria-hidden="true" />
                 SLA 위반
               </span>
             )}
-            {escalatedAt && (
+            {order.escalated_at && (
               <span className="inline-flex items-center gap-1 rounded-full bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger-a11y">
-                <AlertTriangle className="h-3 w-3" />
+                <AlertTriangle className="h-3 w-3" aria-hidden="true" />
                 에스컬레이션
               </span>
             )}
@@ -500,7 +497,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               환불 처리
             </button>
           )}
-          {escalatedAt ? (
+          {order.escalated_at ? (
             <button
               onClick={handleClearEscalation}
               disabled={isEscalating}
@@ -512,6 +509,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             <button
               onClick={() => setShowEscalationInput((v) => !v)}
               disabled={isEscalating}
+              aria-expanded={showEscalationInput}
               className="rounded-md border border-charcoal-deep/30 bg-charcoal-deep/5 px-3 py-1.5 text-sm font-medium text-charcoal-deep hover:bg-charcoal-deep/10 disabled:opacity-50"
             >
               에스컬레이션 마킹
@@ -527,11 +525,12 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
       </div>
 
       {/* 에스컬레이션 입력 */}
-      {showEscalationInput && !escalatedAt && (
+      {showEscalationInput && !order.escalated_at && (
         <div className="rounded-lg border border-charcoal-deep/20 bg-charcoal-deep/5 p-4">
-          <p className="mb-2 text-sm font-medium text-charcoal-deep">에스컬레이션 사유</p>
+          <AdminFieldLabel htmlFor="escalation-note-input">에스컬레이션 사유</AdminFieldLabel>
           <div className="flex gap-2">
             <AdminInput
+              id="escalation-note-input"
               value={escalationNote}
               onChange={(e) => setEscalationNote(e.target.value)}
               placeholder="사유를 입력하세요 (예: 3일 경과 미배송 확인 필요)"

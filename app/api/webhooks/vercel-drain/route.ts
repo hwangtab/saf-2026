@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import type { Json } from '@/types/supabase';
 
 export const runtime = 'nodejs';
 
@@ -153,19 +154,19 @@ function isValidVercelDrainEvent(value: unknown): value is VercelDrainEvent {
  * 잘못된 JSON, primitive 값(string·number·boolean), null은 모두 null 반환 — 잘못 들어온
  * 데이터로 row insert 자체가 실패하지 않도록 격리.
  */
-function parseEventData(event: VercelDrainEvent): Record<string, unknown> | null {
+function parseEventData(event: VercelDrainEvent): Json | null {
   const raw = event as unknown as Record<string, unknown>;
   for (const key of ['eventData', 'data'] as const) {
     const value = raw[key];
     if (typeof value === 'string') {
       try {
         const parsed = JSON.parse(value);
-        if (isRecord(parsed)) return parsed;
+        if (isRecord(parsed)) return parsed as Json;
       } catch {
         // not valid JSON for this field, try next candidate
       }
     } else if (isRecord(value)) {
-      return value;
+      return value as Json;
     }
   }
   return null;
