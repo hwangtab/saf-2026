@@ -1,5 +1,115 @@
 [
   {
+    "hash": "b07b334f",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "영문 홈 SAF2026 브랜드 강화 — 브랜드 검색 라우팅 복원",
+    "summary": "\"saf2026\" 브랜드 검색이 /en/terms/artist(50 imp)로 잘못 라우팅되는 문제 수정. 영문 홈 metaTitle에 \"SAF2026\" 키워드 추가 및 keywords 보강.",
+    "body": "- messages/en.json: home.metaTitle \"SAF Online\" → \"SAF2026 (Seed Art Festival)\"\n- app/[locale]/page.tsx: 영문 홈 keywords에 \"SAF2026, saf2026, Seed Art Festival 2026\" 추가\n\nGSC 데이터: saf2026 쿼리 50 imp가 /en/terms/artist로 → 영문 홈 title에 브랜드 키워드 부재가 원인.\n14일 후 gsc_metrics에서 /en 노출 증가 여부 측정 예정.",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "a98027ad",
+    "type": "fix",
+    "scope": "special",
+    "subject": "Phase 3.4 P0 — 거장 페이지 법적·SEO 회귀 수정",
+    "summary": "생존 작가 본명 노출 제거·미검증 인용 제거·외부 URL anchor 처리·sitemap 누락 보완·JSON-LD birthDate 추가",
+    "body": "- park-buldong: 생존 정치 작가 본명 박상모(朴相模) 노출 제거 (timeline 1956 entry)\n- park-buldong: 미검증 인용 섹션 제거 (\"칼이 필요한 현실과 칼이 되어야 하는 붓\", 월간미술 1987 — 호수·URL 확보 불가)\n- park-buldong: JSON-LD Person에 birthDate: '1956', birthPlace 추가\n- lee-cheolsoo: mokpan.com 평문 2곳 → <a target=\"_blank\" rel=\"noopener noreferrer\"> anchor 변환\n- lee-cheolsoo: ₩4,000~ 하드코딩 가격 제거 (stale 위험, Supabase 가격과 분리됨)\n- lee-cheolsoo: JSON-LD Person에 birthDate: '1954', birthPlace 추가\n- min-joungki: JSON-LD description + bio narrative \"1979년 창립\" → \"1979년 결성에 참여, 1980년 창립전\" 분리 (타임라인 검증 결과 정합)\n- min-joungki: PAGE_COPY ko.description \"창립 동인\" → \"결성 동인(1979)\" 표현 통일\n- min-joungki: JSON-LD Person에 birthDate: '1949', birthPlace 추가\n- sitemap.ts: /special/min-joungki·lee-cheolsoo·park-buldong 3 경로 누락 등록 (Google 색인 경로 확보)",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "da322cef",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "2차 SEO 개선 — 작품 description 자연어화 + story override 3건 추가",
+    "summary": "작품 상세 description을 key-value dump에서 자연어 문장으로 전환해 SERP CTR 개선. stories SEO override 3건(호수 사이즈·피그먼트 프린트·김주호) 신규 추가.",
+    "body": "- lib/schemas/artwork.ts: description \"작가: ..., 작품명: ...\" 형식 → \"오윤 작가의 '안는다' (판화, 2024).\" 자연어로 교체 (전체 작품 페이지 적용 — 139 imp / 0% CTR 개선 목표)\n- reading-art-sizes-ho-vs-cm: titleKo에 \"사이즈\" 키워드 추가 (63 imp, CTR 0%)\n- archival-pigment-print-photography: 신규 SEO 매핑 추가 — \"피그먼트 프린트\" 54 imp\n- meet-artist-kim-ju-ho: 작가 정체성 중심 title로 교체 (85 imp, CTR 0%)",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "1c9f4b6e",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "editions 메타 키워드 강화 + 작가 페이지 브랜드 추가 + petition CTA 확장",
+    "summary": "GSC 28일 분석 기반 SEO/UX 개선 3건 일괄 적용",
+    "body": "- stories/editions-explained: titleKo를 \"에디션 뜻 완벽 정리 — 오픈·리미티드·유니크 에디션 차이 (넘버링·한정판 포함)\"로 변경 (416 노출 CTR 0% → 키워드 직접 매칭)\n- 작가 프로필 메타 title에 SAF2026 브랜드 추가 (ko/en)\n- petition/oh-yoon 페이지에 /stories · / 탐색 링크 추가 (캠페인 80% 트래픽 분산 출구)",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "116264f8",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "MAINTENANCE_MODE 해제 — 청원 페이지 재오픈",
+    "summary": "DB 항구 조치 완료 후 오윤 청원 페이지 정상화 (polling 5분+visibility 가드 + trigger 카운터 검증 완료)",
+    "body": null,
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "b382ec4c",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "ProgressBar polling 5분+visibility 가드 + petition_counts trigger 카운터화",
+    "summary": "오윤 청원 페이지 DB 폭주 본질 원인 2건 해소 — 재오픈 전 적용하는 항구 조치",
+    "body": "- ProgressBar default pollIntervalMs 30s → 300s(5분)\n- visibility 가드: 탭 hidden 시 clearInterval, visible 복귀 시 즉시 refresh + 재시작\n- petitions.signature_total / committee_total 컬럼 추가 + backfill(5,650건 검증)\n- petition_signatures AFTER trigger로 O(1) 증분 (INSERT/UPDATE is_masked/DELETE)\n- petition_counts VIEW: total은 petitions 단일 행 lookup, recent_24h/region_top_count만 집계 유지\n- 기존 polling: 30s * N명 = 집계 쿼리 N건 → 5분 * N명 + O(1) total lookup으로 전환",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "d3935d48",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "오윤 청원 페이지 DB 과부하 응급 차단 (MAINTENANCE_MODE)",
+    "summary": "DB connection saturation 응급 대응 — 청원 페이지 접속자 폭주로 petition_counts",
+    "body": "30초 polling이 누적돼 Postgres 응답 불능. MAINTENANCE_MODE=true 플래그로 SSR\nfetchPetitionCount 호출 및 ProgressBar 클라이언트 polling을 완전 비활성화.\n복구 시 MAINTENANCE_MODE=false 한 줄로 즉시 원복.",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "1ce54c9a",
+    "type": "fix",
+    "scope": "build",
+    "subject": "Supabase client에 8초 timeout 주입 — 빌드 hang 차단",
+    "summary": "Vercel SSG prerender 시 Supabase upstream timeout 90초 hang → 8초 fail-fast로 단축",
+    "body": "- lib/supabase.ts: createClient global.fetch에 AbortSignal.timeout(8000) wrapper 주입\n- scripts/sync-site-stats.js: 동일 패턴 — prebuild 90초 hang을 8초 내 fallback으로 전환\n- 3개 SSG fetch(stories/news/artist names)는 기존 graceful fallback 그대로 활용",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "bd458517",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "purchase event false-positive + IS_CI dead variable",
+    "summary": "SuccessClient에서 미확정 Toss status(IN_PROGRESS 등)에 GA4 purchase 이벤트가 오발되던 버그 수정. 가상계좌는 별도 virtual_account_issued 이벤트로 분리. sync-site-stats IS_CI dead variable 제거.",
+    "body": "- SuccessClient: status === 'DONE' 또는 alreadyPaid 일 때만 purchase 발사\n- WAITING_FOR_DEPOSIT: virtual_account_issued 이벤트로 분리 (실 완료는 웹훅)\n- else 브랜치(IN_PROGRESS·PARTIAL_CANCELED 등): purchase 미발사, success UI만 노출\n- sync-site-stats: efa68773 fail-soft 이후 참조 없는 IS_CI 변수 제거",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "9406b8be",
+    "type": "feat",
+    "scope": "gsc",
+    "subject": "GitHub Actions 기반 GSC sync + Site Verification SA 권한 부여 스크립트",
+    "summary": "Vercel 10초 타임아웃 한계로 gsc-sync cron을 GitHub Actions로 이전, SA를 sc-domain:saf2026.com owner로 등록하는 스크립트 추가",
+    "body": "- .github/workflows/gsc-sync.yml: 매일 05:00 KST 자동 실행 (daysBack 파라미터로 백필 지원)\n- vercel.json: /api/internal/gsc-sync cron 제거 (GH Actions 이전)\n- scripts/gsc-grant-sa-access.js: Site Verification API로 SA owner 등록 (token/verify/list)",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "efa68773",
+    "type": "fix",
+    "scope": "build",
+    "subject": "sync-site-stats CI 빌드 실패 → 경고로 강등",
+    "summary": "DB 연결 실패 시 exit(1) 빌드 중단 → exit(0) 경고로 강등",
+    "body": "- Vercel CI에서 Supabase 연결 실패 시 빌드 전체가 중단되는 문제 수정\n- stale count로 빌드되는 것이 빌드 실패보다 허용 가능한 tradeoff",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
     "hash": "fa40fe60",
     "type": "fix",
     "scope": "special",
