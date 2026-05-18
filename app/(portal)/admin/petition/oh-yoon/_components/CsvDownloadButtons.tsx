@@ -18,7 +18,8 @@ export default function CsvDownloadButtons() {
   ];
 
   function downloadCsv(filename: string, csv: string) {
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    // '﻿'을 별도 chunk로 분리 — Blob이 UTF-8 BOM 바이트(EF BB BF)를 확실히 prepend
+    const blob = new Blob(['﻿', csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

@@ -133,8 +133,8 @@ function csvEscape(value: string | number | boolean | null | undefined): string 
 function buildCsv(headers: string[], rows: (string | number | boolean | null)[][]): string {
   const lines = [headers.map(csvEscape).join(',')];
   for (const row of rows) lines.push(row.map(csvEscape).join(','));
-  // Excel 호환을 위해 BOM 포함
-  return '﻿' + lines.join('\r\n');
+  // BOM은 클라이언트가 Blob 첫 chunk로 prepend — RSC 직렬화 경로에서 U+FEFF 손실 방지
+  return lines.join('\r\n');
 }
 
 export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExportResult> {
