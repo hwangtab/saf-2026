@@ -896,7 +896,16 @@
       "errorUpdateInvalidPhone": "Phone must contain 9–15 digits and ≤30 input chars.",
       "errorUpdateInvalidMessage": "Message must be ≤500 characters.",
       "successDeleted": "Signature deleted.",
-      "successUpdated": "Signature updated."
+      "successUpdated": "Signature updated.",
+      "signaturesLoading": "Loading signatures…",
+      "signaturesLoadError": "Failed to load signatures.",
+      "signaturesRetry": "Retry",
+      "messagesLoading": "Loading messages…",
+      "messagesLoadError": "Failed to load messages.",
+      "messagesRetry": "Retry",
+      "committeeLoading": "Loading committee list…",
+      "committeeLoadError": "Failed to load committee list.",
+      "committeeRetry": "Retry"
     }
   }
 }

@@ -63,11 +63,7 @@ export interface AdminAuditRow {
 export interface AdminBootstrap {
   counts: AdminCounts;
   regionBreakdown: AdminRegionRow[];
-  messages: AdminMessageRow[];
+  /** 메시지 있는 행 수 — HEAD query로 경량 확보. 뱃지·부제 표시용 */
   messagesTotal: number;
-  committee: AdminCommitteeRow[];
-  committeeTotal: number;
-  signatures: AdminSignatureRow[];
-  signaturesTotal: number;
   audit: AdminAuditRow[];
 }

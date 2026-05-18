@@ -1,18 +1,19 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
 import { getRegionByKey } from '@/lib/petition/regions';
-import { deleteSignature } from '@/app/actions/petition-admin';
+import { PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
+import { deleteSignature, fetchAdminSignatures } from '@/app/actions/petition-admin';
 import Select from '@/components/ui/Select';
 
 import EditSignatureModal from './EditSignatureModal';
 import type { AdminSignatureRow } from './types';
 
 interface SignaturesTabProps {
-  signatures: AdminSignatureRow[];
+  /** trigger 카운터 기준 총 서명 수 — 뱃지 초기값 및 부제 표시용 */
   signaturesTotal: number;
 }
 
@@ -29,14 +30,36 @@ function findDuplicateNameSet(rows: AdminSignatureRow[]): Set<string> {
   return dupes;
 }
 
-export default function SignaturesTab({ signatures, signaturesTotal }: SignaturesTabProps) {
+export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
   const t = useTranslations('admin.petition');
+  const [signatures, setSignatures] = useState<AdminSignatureRow[]>([]);
+  const [loadState, setLoadState] = useState<'loading' | 'done' | 'error'>('loading');
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
   const [editing, setEditing] = useState<AdminSignatureRow | null>(null);
   const [deleting, setDeleting] = useState<AdminSignatureRow | null>(null);
   const [pending, startTransition] = useTransition();
   const [statusMsg, setStatusMsg] = useState<{ tone: 'ok' | 'err'; text: string } | null>(null);
+
+  const loadData = useCallback(async () => {
+    try {
+      const data = await fetchAdminSignatures(PETITION_OH_YOON_SLUG);
+      setSignatures(data);
+      setLoadState('done');
+    } catch {
+      setLoadState('error');
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: fetch on mount, setState in async callbacks only
+    void loadData();
+  }, [loadData]);
+
+  function handleRetry() {
+    setLoadState('loading');
+    void loadData();
+  }
 
   const duplicateNames = useMemo(() => findDuplicateNameSet(signatures), [signatures]);
 
@@ -70,10 +93,34 @@ export default function SignaturesTab({ signatures, signaturesTotal }: Signature
       setDeleting(null);
       if (result.ok) {
         setStatusMsg({ tone: 'ok', text: result.message ?? t('successDeleted') });
+        handleRetry();
       } else {
         setStatusMsg({ tone: 'err', text: result.message ?? t('errorDeleteFailed') });
       }
     });
+  }
+
+  if (loadState === 'loading') {
+    return (
+      <p className="py-12 text-center text-sm text-charcoal-muted animate-pulse">
+        {t('signaturesLoading')}
+      </p>
+    );
+  }
+
+  if (loadState === 'error') {
+    return (
+      <div className="py-12 text-center space-y-3">
+        <p className="text-sm text-danger-a11y">{t('signaturesLoadError')}</p>
+        <button
+          type="button"
+          onClick={handleRetry}
+          className="rounded-md border border-gray-300 bg-white px-4 py-1.5 text-sm font-semibold text-charcoal-deep hover:bg-gray-50"
+        >
+          {t('signaturesRetry')}
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -124,15 +171,6 @@ export default function SignaturesTab({ signatures, signaturesTotal }: Signature
           )}
         >
           {statusMsg.text}
-        </p>
-      )}
-
-      {signaturesTotal > signatures.length && (
-        <p className="rounded-lg border border-charcoal-deep/20 bg-charcoal-deep/5 px-3 py-2 text-xs text-charcoal-muted">
-          {t('signaturesTruncatedNotice', {
-            shown: signatures.length.toLocaleString('ko-KR'),
-            total: signaturesTotal.toLocaleString('ko-KR'),
-          })}
         </p>
       )}
 
@@ -259,6 +297,7 @@ export default function SignaturesTab({ signatures, signaturesTotal }: Signature
             setEditing(null);
             if (result === 'updated') {
               setStatusMsg({ tone: 'ok', text: t('successUpdated') });
+              handleRetry();
             }
           }}
         />

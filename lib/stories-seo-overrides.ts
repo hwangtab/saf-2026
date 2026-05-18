@@ -99,6 +99,47 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     descriptionEn:
       "Kim Ju-ho, working full-time in Ganghwa Island for 33 years, shapes everyday people's joy and desire in terracotta and iron plate.",
   },
+  'meet-artist-son-eunyeong': {
+    // GSC: 26 imp / 0 click / pos 8.4 — "손은영" 검색어. 본문: 서양화→20년 공백→사진, 집과 정원.
+    titleKo: '사진작가 손은영 인터뷰 — 서양화에서 사진으로, 집과 정원을 기록하다 | 씨앗페 매거진',
+    titleEn:
+      'Son Eunyeong Interview — From Painting to Photography, Documenting Homes and Gardens | SAF Magazine',
+    descriptionKo:
+      '서양화를 공부하고 20년간 붓을 놓은 손은영 작가. 아이들 사진에서 시작한 카메라가 그녀를 사진가의 길로 데려다 놓았다.',
+    descriptionEn:
+      'Son Eunyeong studied painting and set down her brush for 20 years. A camera bought to capture her children led her back to art — this time, through photography.',
+  },
+  'meet-artist-lee-eun-hwa': {
+    // GSC: 21 imp / 0 click / pos 4.3 — "이은화" 검색어. 본문: 런던예대·소더비 석사, 언어와 감정 탐구.
+    titleKo: '화가 이은화 인터뷰 — 런던에서 서울까지, 언어와 감정을 그리다 | 씨앗페 매거진',
+    titleEn:
+      'Lee Eun-hwa Interview — From London to Seoul, Painting Language and Human Emotion | SAF Magazine',
+    descriptionKo:
+      '런던 예술대학교와 소더비 인스티튜트를 거친 전방위 아티스트 이은화. 회화·설치·뉴미디어로 문자와 욕망, 인간의 감정을 탐구해 왔다.',
+    descriptionEn:
+      "Trained at University of the Arts London and Sotheby's Institute, Lee Eun-hwa explores language, desire, and emotion across painting, installation, and new media.",
+  },
+  'meet-artist-yoon-gyeom': {
+    // GSC: 14 imp / 0 click / pos 10.3 — "윤겸" 검색어. 본문: 선의 반복이 숲이 되는 회화, 프레카리아트.
+    titleKo: '화가 윤겸 인터뷰 — 선을 반복해 숲을 짓다, 불안 속 몰입의 회화 | 씨앗페 매거진',
+    titleEn:
+      'Yoon Gyeom Interview — Drawing Lines into Forests: Meditative Repetition in Painting | SAF Magazine',
+    descriptionKo:
+      '반복적으로 선을 그어 숲과 요새를 짓는 화가 윤겸. 불안 속에서 평온을 만드는 그 행위가 그림이 된다.',
+    descriptionEn:
+      'Yoon Gyeom draws line after line until they become forests and fortresses. A painter who builds calm out of anxiety through repetition.',
+  },
+  'meet-artist-park-bul-ttong': {
+    // GSC: 14 imp / 0 click / pos 5.7 — "박불똥" 검색어. 본문: 민중미술, 1985년 경찰 폐쇄 전시, 포토몽타주.
+    titleKo:
+      '민중미술 작가 박불똥 인터뷰 — 1985년 경찰이 닫은 전시, 지금도 저항을 그린다 | 씨앗페 매거진',
+    titleEn:
+      'Park Bul-ttong Interview — Police-Shuttered in 1985, Still Painting Resistance | SAF Magazine',
+    descriptionKo:
+      '1985년 공권력으로 강제 폐쇄된 전시를 기획한 민중미술 작가 박불똥. 포토몽타주와 디지털아트로 시대의 모순을 기록해 온 그의 이야기.',
+    descriptionEn:
+      '1985: police shut down his exhibition. Decades later, Park Bul-ttong still records the contradictions of his era through photomontage and digital art.',
+  },
 };
 
 /** 슬러그로 SEO 오버라이드 조회. 매핑 없으면 undefined. */

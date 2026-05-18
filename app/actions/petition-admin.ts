@@ -7,6 +7,11 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { PETITION_OH_YOON_PATH, PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
 import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
+import type {
+  AdminMessageRow,
+  AdminCommitteeRow,
+  AdminSignatureRow,
+} from '@/app/(portal)/admin/petition/oh-yoon/_components/types';
 
 const ADMIN_PATH = '/admin/petition/oh-yoon';
 
@@ -296,6 +301,55 @@ export async function deleteSignature(signatureId: string): Promise<AdminActionR
   revalidatePath(ADMIN_PATH);
   revalidatePath(PETITION_OH_YOON_PATH);
   return { ok: true, message: t('successDeleted') };
+}
+
+// ─── 탭별 lazy fetch (bootstrap에서 행 데이터 제거 후 탭 마운트 시 호출) ─────
+export async function fetchAdminSignatures(slug: string): Promise<AdminSignatureRow[]> {
+  await requireAdmin();
+  const admin = createSupabaseAdminClient();
+  const { data } = await fetchAllInBatches((from, to) =>
+    admin
+      .from('petition_signatures')
+      .select(
+        'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at'
+      )
+      .eq('petition_slug', slug)
+      .order('created_at', { ascending: false })
+      .range(from, to)
+  );
+  return data as AdminSignatureRow[];
+}
+
+export async function fetchAdminCommittee(slug: string): Promise<AdminCommitteeRow[]> {
+  await requireAdmin();
+  const admin = createSupabaseAdminClient();
+  const { data } = await fetchAllInBatches((from, to) =>
+    admin
+      .from('petition_signatures')
+      .select('id, full_name, email, phone, region_top, region_sub, created_at')
+      .eq('petition_slug', slug)
+      .eq('is_committee', true)
+      .order('full_name', { ascending: true })
+      .range(from, to)
+  );
+  return data as AdminCommitteeRow[];
+}
+
+export async function fetchAdminMessages(slug: string): Promise<AdminMessageRow[]> {
+  await requireAdmin();
+  const admin = createSupabaseAdminClient();
+  const { data } = await fetchAllInBatches((from, to) =>
+    admin
+      .from('petition_signatures')
+      .select(
+        'id, full_name, region_top, region_sub, message, message_public, is_masked, masked_at, created_at'
+      )
+      .eq('petition_slug', slug)
+      .not('message', 'is', null)
+      .order('created_at', { ascending: false })
+      .range(from, to)
+  );
+  return data as AdminMessageRow[];
 }
 
 // ─── 서명 내용 수정 (운영자 정정) ────────────────────────────────

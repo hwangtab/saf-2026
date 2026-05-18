@@ -896,7 +896,16 @@
       "errorUpdateInvalidPhone": "전화번호는 숫자 9~15자리, 입력 30자 이내여야 합니다.",
       "errorUpdateInvalidMessage": "메시지는 500자 이내여야 합니다.",
       "successDeleted": "서명을 삭제했습니다.",
-      "successUpdated": "서명 정보를 수정했습니다."
+      "successUpdated": "서명 정보를 수정했습니다.",
+      "signaturesLoading": "서명자 목록을 불러오는 중…",
+      "signaturesLoadError": "서명자 목록을 불러오지 못했습니다.",
+      "signaturesRetry": "다시 시도",
+      "messagesLoading": "메시지 목록을 불러오는 중…",
+      "messagesLoadError": "메시지 목록을 불러오지 못했습니다.",
+      "messagesRetry": "다시 시도",
+      "committeeLoading": "추진위원 명단을 불러오는 중…",
+      "committeeLoadError": "추진위원 명단을 불러오지 못했습니다.",
+      "committeeRetry": "다시 시도"
     }
   }
 }

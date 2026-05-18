@@ -1,20 +1,44 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import { PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
+import { fetchAdminCommittee } from '@/app/actions/petition-admin';
 import { getRegionByKey } from '@/lib/petition/regions';
 
 import type { AdminCommitteeRow } from './types';
 
 interface CommitteeTabProps {
-  committee: AdminCommitteeRow[];
+  /** trigger 카운터 기준 추진위원 수 — 뱃지 초기값 및 부제 표시용 */
   committeeTotal: number;
 }
 
-export default function CommitteeTab({ committee, committeeTotal }: CommitteeTabProps) {
+export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
   const t = useTranslations('admin.petition');
+  const [committee, setCommittee] = useState<AdminCommitteeRow[]>([]);
+  const [loadState, setLoadState] = useState<'loading' | 'done' | 'error'>('loading');
   const [search, setSearch] = useState('');
+
+  const loadData = useCallback(async () => {
+    try {
+      const data = await fetchAdminCommittee(PETITION_OH_YOON_SLUG);
+      setCommittee(data);
+      setLoadState('done');
+    } catch {
+      setLoadState('error');
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: fetch on mount, setState in async callbacks only
+    void loadData();
+  }, [loadData]);
+
+  function handleRetry() {
+    setLoadState('loading');
+    void loadData();
+  }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -36,6 +60,29 @@ export default function CommitteeTab({ committee, committeeTotal }: CommitteeTab
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     });
+  }
+
+  if (loadState === 'loading') {
+    return (
+      <p className="py-12 text-center text-sm text-charcoal-muted animate-pulse">
+        {t('committeeLoading')}
+      </p>
+    );
+  }
+
+  if (loadState === 'error') {
+    return (
+      <div className="py-12 text-center space-y-3">
+        <p className="text-sm text-danger-a11y">{t('committeeLoadError')}</p>
+        <button
+          type="button"
+          onClick={handleRetry}
+          className="rounded-md border border-gray-300 bg-white px-4 py-1.5 text-sm font-semibold text-charcoal-deep hover:bg-gray-50"
+        >
+          {t('committeeRetry')}
+        </button>
+      </div>
+    );
   }
 
   return (
