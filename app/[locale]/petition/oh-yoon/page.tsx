@@ -36,6 +36,10 @@ import SignForm from './_components/SignForm';
 // + petition_counts view planning(~1초)이 합쳐져 27~60초 streaming hang을 유발했음.
 export const revalidate = 60;
 
+// DB 과부하 응급 차단 플래그 — true 시 fetchPetitionCount/ProgressBar polling 완전 비활성.
+// 복구 시 false로 변경 후 재배포.
+const MAINTENANCE_MODE = true;
+
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
 
 interface PetitionCount {
@@ -128,6 +132,36 @@ export default async function PetitionOhYoonPage({
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'petition.ohYoon' });
+
+  if (MAINTENANCE_MODE) {
+    return (
+      <main
+        className={`min-h-screen flex flex-col items-center justify-center text-center px-4 bg-canvas ${SAWTOOTH_TOP_SAFE_PADDING}`}
+      >
+        <div className="max-w-lg">
+          <h1 className="font-display font-bold text-2xl md:text-3xl text-charcoal-deep mb-4 break-keep">
+            {locale === 'en' ? 'Temporarily Unavailable' : '잠시 접속이 제한됩니다'}
+          </h1>
+          <p className="text-charcoal-muted text-base md:text-lg mb-8 break-keep leading-relaxed">
+            {locale === 'en'
+              ? 'Due to high traffic, the petition page is temporarily unavailable. Your support matters — please try again in a few minutes. Signatures will be accepted once the page is restored.'
+              : '많은 분들이 동시에 방문해 주셔서 페이지를 잠시 점검 중입니다. 점검이 완료된 후 서명이 정상 접수됩니다. 잠시 후 다시 방문해 주세요.'}
+          </p>
+          <p className="text-sm text-charcoal-soft mb-8">
+            {locale === 'en' ? 'Inquiries: contact@kosmart.org' : '문의: contact@kosmart.org'}
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-primary-strong font-semibold hover:underline"
+          >
+            {locale === 'en' ? 'Back to homepage' : '홈으로 돌아가기'}
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const deadline = formatPetitionDeadline(locale);
   const { total, region_top_count, recent_24h, is_active } = await fetchPetitionCount();
 
