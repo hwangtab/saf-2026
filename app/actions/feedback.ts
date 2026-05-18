@@ -5,6 +5,7 @@ import { requireAuth, requireAdminClient } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { getString } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
+import { rateLimit } from '@/lib/rate-limit';
 import {
   sanitizeSingleLineTextForRscPayload,
   sanitizeTextForRscPayload,
@@ -16,6 +17,12 @@ const VALID_STATUSES: FeedbackStatus[] = ['open', 'reviewing', 'resolved', 'clos
 
 export async function submitFeedback(formData: FormData) {
   const user = await requireAuth();
+
+  const limit = await rateLimit(`feedback:${user.id}`, { limit: 3, windowMs: 60_000 });
+  if (!limit.success) {
+    return { error: '요청이 너무 잦습니다. 잠시 후 다시 시도해주세요.' };
+  }
+
   const supabase = await createSupabaseServerClient();
 
   const category = getString(formData, 'category') as FeedbackCategory;

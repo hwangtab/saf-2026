@@ -40,6 +40,7 @@ export function useGlobalSearch(): UseGlobalSearchReturn {
         return res.json() as Promise<SearchResponse>;
       })
       .then((data) => {
+        if (controller.signal.aborted) return;
         setResults(data);
         setIsLoading(false);
       })

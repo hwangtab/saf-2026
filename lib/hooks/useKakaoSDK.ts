@@ -1,5 +1,7 @@
+'use client';
+
 import { useKakaoLoader } from 'react-kakao-maps-sdk';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const RAW_KAKAO_MAP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
 const RAW_KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY?.trim() ?? RAW_KAKAO_MAP_KEY;
@@ -119,44 +121,52 @@ export function useKakaoShareSDK() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
+    isMountedRef.current = true;
     if (initializeKakaoIfNeeded()) {
       setIsLoaded(true);
     }
-    return undefined;
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   const ensureLoaded = async (): Promise<boolean> => {
     if (!hasAppKey) {
       const keyError = new Error('Kakao JavaScript key is missing');
-      setError(keyError);
+      if (isMountedRef.current) setError(keyError);
       return false;
     }
 
     if (initializeKakaoIfNeeded()) {
-      setIsLoaded(true);
-      setError(null);
+      if (isMountedRef.current) {
+        setIsLoaded(true);
+        setError(null);
+      }
       return true;
     }
 
-    setIsLoading(true);
-    setError(null);
+    if (isMountedRef.current) {
+      setIsLoading(true);
+      setError(null);
+    }
 
     try {
       await loadKakaoScript();
       if (!initializeKakaoIfNeeded()) {
         throw new Error('Failed to initialize Kakao Share SDK');
       }
-      setIsLoaded(true);
+      if (isMountedRef.current) setIsLoaded(true);
       return true;
     } catch (loadError) {
       const normalizedError =
         loadError instanceof Error ? loadError : new Error('Failed to load Kakao Share SDK');
-      setError(normalizedError);
+      if (isMountedRef.current) setError(normalizedError);
       return false;
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) setIsLoading(false);
     }
   };
 

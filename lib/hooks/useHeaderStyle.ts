@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useCallback, useMemo, useLayoutEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { isArtworkDetail, isHeroRoute } from '@/lib/hero-routes';

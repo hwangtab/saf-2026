@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, usePathname } from 'next/navigation';
 import { ArtworkListItem, SortOption } from '@/types';

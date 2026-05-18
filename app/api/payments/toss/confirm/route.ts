@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { error: confirmResult.error.message || apiError('payment_confirmation_failed', reqLocale) },
+      { error: apiError('payment_confirmation_failed', reqLocale) },
       { status: 400 }
     );
   }
