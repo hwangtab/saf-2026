@@ -258,22 +258,32 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-primary flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
                 &ldquo;
               </div>
-              <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
+              <p className="text-xl sm:text-2xl md:text-4xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
                 {isEnglish ? (
-                  <>The more I simplify, the more I find.</>
+                  <>
+                    I want to awaken inner stillness and reflection in a way anyone can feel in
+                    everyday life. This is returning art to those who are weary of living — and I
+                    think it is the affection I had long neglected for people.
+                  </>
                 ) : (
                   <>
-                    단순하게 할수록
-                    <br className="md:hidden" /> 더 많은 것이 보인다.
+                    일상 속에서 누구나 느낄 수 있는 방식으로 내적인 고요와 성찰을 일깨우려 합니다.
+                    이것이 삶에 지친 사람들에게 미술을 되돌려주는 것이고, 그동안 제 스스로가
+                    간과했던 사람들에 대한 애정이라 생각됩니다.
                   </>
                 )}
               </p>
-              <footer className="mt-8 flex items-center justify-center gap-2">
-                <span className="h-px w-8 bg-charcoal/40"></span>
-                <span className="text-xl text-charcoal font-bold tracking-widest">
-                  {isEnglish ? 'Lee Chul-soo' : '이철수'}
-                </span>
-                <span className="h-px w-8 bg-charcoal/40"></span>
+              <footer className="mt-8 space-y-1">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="h-px w-8 bg-charcoal/40"></span>
+                  <span className="text-xl text-charcoal font-bold tracking-widest">
+                    {isEnglish ? 'Lee Chul-soo' : '이철수'}
+                  </span>
+                  <span className="h-px w-8 bg-charcoal/40"></span>
+                </div>
+                <p className="text-xs text-charcoal-muted">
+                  {isEnglish ? 'Source: CBN News interview' : '출처: CBN뉴스 인터뷰'}
+                </p>
               </footer>
             </blockquote>
           </div>
@@ -418,17 +428,17 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                       1954
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? 'Born in Gyeonggi province.' : '경기도 출생.'}
+                      {isEnglish ? 'Born in Seoul.' : '서울 출생.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1982
+                      1981
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'First solo woodblock print exhibition, beginning a career defined by accessible, lyrical prints.'
-                        : '첫 목판화 개인전 개최, 서정적·접근 가능한 판화 작업 시작.'}
+                        ? 'First solo woodblock print exhibition at Gwanhun Gallery, Seoul — launching a career defined by accessible, lyrical prints.'
+                        : '첫 목판화 개인전 개최 (관훈미술관, 서울). 서정적·접근 가능한 판화 작업 본격 시작.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -439,6 +449,16 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                       {isEnglish
                         ? 'Participates in the minjung art movement while developing his distinctive text-image fusion style.'
                         : '민중미술 운동 참여, 동시에 글·그림 융합의 독자적 서화 세계 형성.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1987
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Relocates to Jecheon, North Chungcheong — farming and printmaking become inseparable.'
+                        : '충북 제천 귀농. 농사와 판화 작업을 하나의 삶으로 통합.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -457,11 +477,55 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Continues working; works held in national and major private collections.'
-                        : '작업 지속. 국립 및 주요 사립 컬렉션 소장.'}
+                        ? 'Continues working in Jecheon. Works exhibited internationally (Germany, France, Ireland and more). Official shop: mokpan.com'
+                        : '제천에서 작업 지속. 독일·프랑스·아일랜드 등 국제 전시 다수. 공식 판매처: mokpan.com'}
                     </span>
                   </li>
                 </ol>
+              </div>
+              <div className="bg-canvas-strong p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
+                <h3 className="text-xl md:text-2xl text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-bold font-display text-balance">
+                  <span className="w-3 h-3 bg-primary rotate-45" />
+                  {isEnglish ? 'Selected exhibitions & collections' : '주요 전시 및 소장'}
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'First solo exhibition, Gwanhun Gallery, Seoul (1981); second solo, same venue (1985)'
+                        : '첫 개인전 관훈미술관 (1981); 2회전 동일 장소 (1985)'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? '"Not a Trivial Life" solo exhibition (2020); "Was It a Door?" solo exhibition (2021)'
+                        : '〈비루하지 않은 삶을 위하여〉 (2020); 〈문인가 하였더니, 다시 길〉 (2021)'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'International exhibitions in Germany, Switzerland, Ireland, Hungary, Spain, France, Belgium, Italy, Kazakhstan, United States and South Africa (first retrospective)'
+                        : '독일·스위스·아일랜드·헝가리·스페인·프랑스·벨기에·이탈리아·카자흐스탄·미국·남아공(첫 회고전) 등 국제 전시'}
+                    </span>
+                  </li>
+                </ul>
+                <div className="mt-5 border-t border-charcoal/15 pt-4 space-y-2">
+                  <p className="text-sm font-bold text-charcoal break-keep">
+                    {isEnglish
+                      ? '✦ Accessible entry points to the collection'
+                      : '✦ 진입 가능한 소장 경로'}
+                  </p>
+                  <p className="text-sm text-charcoal-muted break-keep">
+                    {isEnglish
+                      ? 'Print postcards (from ₩4,000) and annual print calendars are widely available — making Lee Chul-soo one of the most accessible artists in the collection. Original works also available via mokpan.com.'
+                      : '판화 엽서 (₩4,000~) 및 연간 판화 달력 등 생활 매체로 광범위하게 보급. 씨앗페 컬렉션 중 가장 접근하기 쉬운 작가 중 한 명. 원화 작품은 mokpan.com에서도 구매 가능.'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

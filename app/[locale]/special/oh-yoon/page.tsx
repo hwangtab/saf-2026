@@ -509,6 +509,16 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1996
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'On the 10th anniversary of his death, the family and fellow artists produce a small posthumous edition of prints.'
+                        : '사망 10주기를 맞아 유족과 동료 작가들이 사후판화를 소량 제작.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       2006
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
@@ -557,6 +567,43 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                   ? 'Click a work to view its details'
                   : '작품을 클릭하여 상세 정보를 확인하세요'}
               </span>
+            </div>
+          </div>
+
+          {/* 1996년 사후판화 컨텍스트 인서트 — 30년 만의 첫 공개 + 상호부조 연결 */}
+          <div className="max-w-[1440px] mx-auto px-4 mb-12">
+            <div className="bg-white/5 border border-white/20 p-6 md:p-8 backdrop-blur-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-2 h-2 bg-primary rotate-45" />
+                <span className="text-xs text-white/60 uppercase tracking-widest font-medium">
+                  {isEnglish ? '30 years in the making' : '30년 만의 첫 공개'}
+                </span>
+              </div>
+              <p className="text-base md:text-lg text-white/90 leading-relaxed break-keep font-medium">
+                {isEnglish ? (
+                  <>
+                    On the 10th anniversary of his death in 1996, Oh Yoon&apos;s family and fellow
+                    artists produced a small posthumous edition. Many of those prints, kept out of
+                    public view for three decades, are shown and offered for the first time on his
+                    40th anniversary.{' '}
+                    <strong className="text-white">
+                      Proceeds from these prints flow into the artists&apos; mutual-aid loan fund
+                    </strong>{' '}
+                    — a work left behind by an artist now gone becomes the next month of an artist
+                    living today.
+                  </>
+                ) : (
+                  <>
+                    1996년 사망 10주기에, 유족과 동료 작가들이 사후판화를 소량 제작했습니다. 그
+                    가운데 30년 동안 세상에 거의 나오지 않았던 작품들이 이번 40주기 특별전에서
+                    처음으로 공개·판매됩니다.{' '}
+                    <strong className="text-white">
+                      이 판화의 판매 수익은 예술인 상호부조 대출 기금으로 이어집니다.
+                    </strong>{' '}
+                    떠난 작가가 남긴 한 점이, 오늘을 살아가는 예술인 한 사람의 다음 한 달이 됩니다.
+                  </>
+                )}
+              </p>
             </div>
           </div>
 

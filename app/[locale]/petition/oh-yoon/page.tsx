@@ -30,10 +30,10 @@ import PetitionFAQ from './_components/PetitionFAQ';
 import ProposalModal from './_components/ProposalModal';
 import SignForm from './_components/SignForm';
 
-// 청원 카운터(fetchPetitionCount)가 createSupabaseServerClient의 cookies 컨텍스트에 의존해
-// 정적 prerender 시점엔 빈 응답 → catch fallback으로 total=0이 빌드 산출물에 박힘.
-// revalidate=60도 같은 문제로 갱신값이 항상 0. 정적화 부적합 → 매 요청 SSR 유지.
-export const dynamic = 'force-dynamic';
+// ISR revalidate=60: 60초마다 background 갱신. 카운터 실시간 표시는 ProgressBar의 client
+// polling이 책임 — ISR 시점에 cookies 컨텍스트 없어 fetchPetitionCount가 0을 반환해도
+// ProgressBar mount 직후 refresh()가 실값을 덮어씀. force-dynamic은 cold Vercel Function
+// + petition_counts view planning(~1초)이 합쳐져 27~60초 streaming hang을 유발했음.
 export const revalidate = 60;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;

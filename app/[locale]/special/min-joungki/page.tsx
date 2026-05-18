@@ -248,30 +248,36 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
         </section>
 
         <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
-          {/* Quote Section */}
+          {/* 2018 판문점 하이라이트 */}
           <div className="mb-24 flex justify-center">
-            <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-primary flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
-                &ldquo;
+            <div className="relative p-8 sm:p-10 md:p-14 text-center max-w-4xl border-4 border-primary bg-white shadow-[8px_8px_0px_0px_rgba(33,118,255,0.12)]">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-charcoal flex items-center justify-center rounded-full text-white font-bold text-xs leading-none tracking-tighter">
+                2018
               </div>
-              <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
+              <p className="text-xl sm:text-2xl md:text-4xl text-charcoal leading-relaxed text-balance pt-4 font-display font-bold break-keep">
                 {isEnglish ? (
-                  <>A landscape is not a backdrop — it is the testimony of time we have lived.</>
+                  <>
+                    At the 2018 inter-Korean summit at Panmunjeom, Min Joung-ki&apos;s{' '}
+                    <em className="not-italic text-primary-strong">
+                      &ldquo;Panoramic View of Bugaksan&rdquo;
+                    </em>{' '}
+                    hung at the Peace House — seen by the entire world.
+                  </>
                 ) : (
                   <>
-                    풍경은 배경이 아니다.
-                    <br className="md:hidden" /> 우리가 살아온 시간의 증언이다.
+                    2018년 남북정상회담 판문점 평화의 집.
+                    <br className="md:hidden" /> 민정기의{' '}
+                    <em className="not-italic text-primary-strong">「북한산 전도」</em>가 배경에
+                    걸렸고, 전 세계가 그 그림을 보았습니다.
                   </>
                 )}
               </p>
-              <footer className="mt-8 flex items-center justify-center gap-2">
-                <span className="h-px w-8 bg-charcoal/40"></span>
-                <span className="text-xl text-charcoal font-bold tracking-widest">
-                  {isEnglish ? 'Min Joung-ki' : '민정기'}
-                </span>
-                <span className="h-px w-8 bg-charcoal/40"></span>
+              <footer className="mt-6 text-sm text-charcoal-muted">
+                {isEnglish
+                  ? 'Source: Nocutnews · Gyeongin Ilbo · National press, April 2018'
+                  : '출처: 노컷뉴스·경인일보·국민일보 등 국내 언론, 2018년 4월'}
               </footer>
-            </blockquote>
+            </div>
           </div>
 
           {/* Bio / Narrative Section */}
@@ -414,7 +420,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                       1949
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? 'Born in Seoul.' : '서울 출생.'}
+                      {isEnglish ? 'Born in Seoul (Seodaemun-gu).' : '서울 서대문구 출생.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -423,7 +429,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Graduates from Seoul National University College of Fine Arts.'
+                        ? 'Graduates from Seoul National University College of Fine Arts (Western Painting).'
                         : '서울대학교 미술대학 서양화과 졸업.'}
                     </span>
                   </li>
@@ -433,8 +439,8 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Co-founds Reality and Utterance (현실과 발언) alongside Oh Yoon and others.'
-                        : '오윤 등과 「현실과 발언」 동인 창립.'}
+                        ? 'Co-founds Reality and Utterance (현실과 발언) alongside Oh Yoon and others; inaugural group exhibition held October 1980.'
+                        : '오윤 등과 「현실과 발언」 창립. 창립전은 1980년 10월 미술회관 개최.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -449,15 +455,90 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1984
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Completes graduate studies (Western Painting) at Seoul National University.'
+                        : '서울대학교 대학원 회화과 수료.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1987
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Moves studio to Yangpyeong, Gyeonggi — deepens long-term engagement with natural landscape.'
+                        : '경기도 양평으로 작업실 이전. 자연과의 장기적 밀착 작업 심화.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      2006
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Receives the 18th Lee Jung-seob Art Award.'
+                        : '제18회 이중섭미술상 수상.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
                       현재
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Continues working; works held in the National Museum of Modern and Contemporary Art (MMCA) and major collections.'
-                        : '작업 지속. 국립현대미술관 등 주요 기관 소장.'}
+                        ? 'Continues working in Yangpyeong. Works held in the National Museum of Modern and Contemporary Art (MMCA) and major collections.'
+                        : '양평에서 작업 지속. 국립현대미술관(MMCA) 등 주요 기관 소장.'}
                     </span>
                   </li>
                 </ol>
+              </div>
+              <div className="bg-canvas-strong p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
+                <h3 className="text-xl md:text-2xl text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-bold font-display text-balance">
+                  <span className="w-3 h-3 bg-primary rotate-45" />
+                  {isEnglish ? 'Selected exhibitions & collections' : '주요 전시 및 소장'}
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Solo exhibition, Kumho Museum of Art (2016) — 27 paintings & 55 prints'
+                        : '금호미술관 개인전 (2016) — 회화 27점·판화 55점'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Solo exhibition, Kukje Gallery (2019) — new and retrospective works'
+                        : '국제갤러리 개인전 (2019) — 신작·구작 병합 전시'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Archive exhibition "Landscape I Cannot Let Go," Yangpyeong County Art Museum (2024)'
+                        : '양평군립미술관 아카이브전 《놓치지 못하는 풍경》 (2024)'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-charcoal rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Permanent collection: National Museum of Modern and Contemporary Art, Korea (MMCA)'
+                        : '국립현대미술관(MMCA) 소장'}
+                    </span>
+                  </li>
+                </ul>
+                <p className="mt-5 text-sm text-charcoal-muted border-t border-charcoal/15 pt-4 break-keep">
+                  {isEnglish
+                    ? 'Prints (woodblock, screenprint) offer a more accessible entry point alongside major paintings.'
+                    : '판화(목판화·실크스크린) 작품은 대형 회화와 함께 비교적 접근 가능한 소장 경로입니다.'}
+                </p>
               </div>
             </div>
           </div>

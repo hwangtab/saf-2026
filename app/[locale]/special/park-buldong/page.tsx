@@ -262,22 +262,27 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
               <p className="text-2xl sm:text-3xl md:text-5xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
                 {isEnglish ? (
                   <>
-                    I do not make pictures.
-                    <br className="md:hidden" /> I re-edit the world.
+                    The blade that reality needs
+                    <br className="md:hidden" /> must become the brush.
                   </>
                 ) : (
                   <>
-                    나는 그림을 그리지 않는다.
-                    <br className="md:hidden" /> 세상을 다시 편집한다.
+                    칼이 필요한 현실과
+                    <br className="md:hidden" /> 칼이 되어야 하는 붓.
                   </>
                 )}
               </p>
-              <footer className="mt-8 flex items-center justify-center gap-2">
-                <span className="h-px w-8 bg-charcoal/40"></span>
-                <span className="text-xl text-charcoal font-bold tracking-widest">
-                  {isEnglish ? 'Park Bul-ttong' : '박불똥'}
-                </span>
-                <span className="h-px w-8 bg-charcoal/40"></span>
+              <footer className="mt-8 space-y-1">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="h-px w-8 bg-charcoal/40"></span>
+                  <span className="text-xl text-charcoal font-bold tracking-widest">
+                    {isEnglish ? 'Park Bul-ttong' : '박불똥'}
+                  </span>
+                  <span className="h-px w-8 bg-charcoal/40"></span>
+                </div>
+                <p className="text-xs text-charcoal-muted">
+                  {isEnglish ? 'Source: Monthly Art (월간미술), 1987' : '출처: 월간미술, 1987년'}
+                </p>
               </footer>
             </blockquote>
           </div>
@@ -420,7 +425,19 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                       1956
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? 'Born in Korea.' : '출생.'}
+                      {isEnglish
+                        ? 'Born in Hadong, South Gyeongsang province. Real name: Park Sang-mo (朴相模).'
+                        : '경남 하동 출생. 실명 박상모(朴相模).'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1984
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Graduates from Hongik University, Department of Western Painting.'
+                        : '홍익대학교 서양화과 졸업.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -429,8 +446,8 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? "Co-founds the Minjung Misul Hyeopuihoe (National Artists' Association), a key organ of the minjung art movement."
-                        : '「민족미술협의회」 창립에 참여, 민중미술 운동의 핵심 조직 결성.'}
+                        ? "First solo exhibition 〈Nunbit〉 at Gwanhun Gallery; co-founds the Minjung Misul Hyeopuihoe (National Artists' Association)."
+                        : '첫 개인전 〈눈빛展〉 (관훈미술관); 「민족미술협의회」 창립 참여.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -464,6 +481,38 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                   </li>
                 </ol>
+              </div>
+              <div className="bg-canvas-strong p-7 md:p-9 border-4 border-charcoal shadow-[6px_6px_0px_0px_rgba(49,57,60,0.12)]">
+                <h3 className="text-xl md:text-2xl text-charcoal mb-6 flex items-center gap-3 border-b-2 border-charcoal pb-3 font-bold font-display text-balance">
+                  <span className="w-3 h-3 bg-primary rotate-45" />
+                  {isEnglish ? 'Selected exhibitions & collections' : '주요 전시 및 소장'}
+                </h3>
+                <ul className="space-y-4">
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? '〈Nunbit〉 (1985) · 〈Joljak〉 (1987) · 〈Gyeolsa Bandae〉 (1989) — Geurimadang Min, Seoul'
+                        : '〈눈빛展〉 (1985) · 〈졸작展〉 (1987) · 〈결사반대展〉 (1989) — 그림마당 민, 서울'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? '〈Confession on the Disability of Desire〉, Kumho Museum of Art (1992); 〈Park Bul-ttong 1985–2016〉, Gallery 175 (2016)'
+                        : '〈관능의 불구에 대한 자백展〉 금호미술관 (1992); 〈박불똥, 1985–2016〉 갤러리 175 (2016)'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-charcoal rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Permanent collections: National Museum of Modern and Contemporary Art (MMCA) · Seoul Museum of Art (SeMA) · Gwangju Museum of Art · Jeju 4·3 Memorial Museum'
+                        : '국립현대미술관(MMCA) · 서울시립미술관(SeMA) · 광주시립미술관 · 제주 4·3역사기념관 소장'}
+                    </span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
