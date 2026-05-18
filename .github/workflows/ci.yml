@@ -25,6 +25,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: nextjs-${{ hashFiles('**/package-lock.json') }}-
+
       - name: Type check
         run: npm run type-check
 
@@ -63,6 +70,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: nextjs-${{ hashFiles('**/package-lock.json') }}-
+
       - name: Build
         run: npm run build
         env:
@@ -74,7 +88,7 @@ jobs:
       - name: Start server and run a11y tests
         run: |
           npm run start &
-          until curl -fs http://localhost:3000 > /dev/null; do sleep 2; done
+          timeout 60 bash -c 'until curl -fs http://localhost:3000 > /dev/null; do sleep 2; done'
           npm run test:a11y
         env:
           CI: true
