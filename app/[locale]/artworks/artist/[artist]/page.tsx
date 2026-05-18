@@ -322,6 +322,14 @@ async function renderArtistPage({ params }: Props) {
     locale === 'en' && effectiveHistory && containsHangul(effectiveHistory)
       ? undefined
       : effectiveHistory;
+  // 본문 bio 섹션용 — schema와 동일 로직이나 artistNote fallback 제외 (profile만).
+  const bioProfile: string | undefined =
+    locale === 'en'
+      ? artistProfileEn && !containsHangul(artistProfileEn)
+        ? artistProfileEn
+        : undefined
+      : artistProfile || undefined;
+  const bioHistory: string | undefined = schemaHistory;
   // sameAs 외부 권위 링크 — Knowledge Graph entity 연결 강화 시그널.
   // 출처 3개 합침:
   // 1) artist-articles.ts (사용자가 사전 큐레이션한 매체/MMCA/Wikipedia/달진닷컴 등 386 URL)
@@ -512,6 +520,31 @@ async function renderArtistPage({ params }: Props) {
         <Section variant="white" prevVariant="white" className="pt-8 pb-4 md:pt-10 md:pb-6">
           <div className="container-max">
             <ArtistNoticeBanner type={notice.type} message={notice.message} locale={locale} />
+          </div>
+        </Section>
+      )}
+
+      {/* 작가 소개 본문 — hero는 100자 truncate라 Google이 충분한 텍스트를 읽지 못함.
+          풀 profile + history(약력)를 server-rendered로 노출해 page weight 확보. */}
+      {(bioProfile || bioHistory) && (
+        <Section variant="white" prevVariant="white" className="pt-12 md:pt-16 pb-8">
+          <div className="container-max max-w-3xl">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-charcoal-deep mb-6">
+              {isEnglish ? `About ${formattedName}` : `${formattedName} 작가 소개`}
+            </h2>
+            {bioProfile && (
+              <p className="whitespace-pre-wrap text-charcoal leading-relaxed">{bioProfile}</p>
+            )}
+            {bioHistory && (
+              <details className="mt-8">
+                <summary className="cursor-pointer text-sm font-medium text-primary hover:text-primary-strong">
+                  {isEnglish ? 'View biography & exhibitions' : '약력 및 전시 이력 보기'}
+                </summary>
+                <div className="mt-4 whitespace-pre-wrap text-sm text-charcoal-muted leading-relaxed">
+                  {bioHistory}
+                </div>
+              </details>
+            )}
           </div>
         </Section>
       )}

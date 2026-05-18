@@ -1,50 +1,52 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
 import { getRegionByKey } from '@/lib/petition/regions';
 import { PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
 import { deleteSignature, fetchAdminSignatures } from '@/app/actions/petition-admin';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 import Select from '@/components/ui/Select';
 
 import EditSignatureModal from './EditSignatureModal';
-import type { AdminSignatureRow } from './types';
+import Pagination from './Pagination';
+import type { AdminSignatureRow, SignaturesFilter } from './types';
 
 interface SignaturesTabProps {
-  /** trigger 카운터 기준 총 서명 수 — 뱃지 초기값 및 부제 표시용 */
   signaturesTotal: number;
 }
 
-type Filter = 'all' | 'committee' | 'masked' | 'duplicates';
-
-function findDuplicateNameSet(rows: AdminSignatureRow[]): Set<string> {
-  const counts = new Map<string, number>();
-  for (const r of rows) {
-    const key = r.full_name.trim().toLowerCase();
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  }
-  const dupes = new Set<string>();
-  for (const [key, n] of counts) if (n >= 2) dupes.add(key);
-  return dupes;
-}
+const DEFAULT_PAGE_SIZE = 50;
 
 export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
   const t = useTranslations('admin.petition');
-  const [signatures, setSignatures] = useState<AdminSignatureRow[]>([]);
+  const [rows, setRows] = useState<AdminSignatureRow[]>([]);
+  const [total, setTotal] = useState(signaturesTotal);
   const [loadState, setLoadState] = useState<'loading' | 'done' | 'error'>('loading');
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<SignaturesFilter>('all');
+  const debouncedSearch = useDebounce(search, 300);
+
   const [editing, setEditing] = useState<AdminSignatureRow | null>(null);
   const [deleting, setDeleting] = useState<AdminSignatureRow | null>(null);
   const [pending, startTransition] = useTransition();
   const [statusMsg, setStatusMsg] = useState<{ tone: 'ok' | 'err'; text: string } | null>(null);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (p: number, ps: number, q: string, f: SignaturesFilter) => {
     try {
-      const data = await fetchAdminSignatures(PETITION_OH_YOON_SLUG);
-      setSignatures(data);
+      const result = await fetchAdminSignatures(PETITION_OH_YOON_SLUG, {
+        page: p,
+        pageSize: ps,
+        search: q || undefined,
+        filter: f,
+      });
+      setRows(result.rows);
+      setTotal(result.total);
       setLoadState('done');
     } catch {
       setLoadState('error');
@@ -52,38 +54,30 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: fetch on mount, setState in async callbacks only
-    void loadData();
-  }, [loadData]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: loading indicator while re-fetching on dep change
+    setLoadState('loading');
+    void loadData(page, pageSize, debouncedSearch, filter);
+  }, [page, pageSize, debouncedSearch, filter, loadData]);
+
+  function handleSearchChange(val: string) {
+    setSearch(val);
+    setPage(1);
+  }
+
+  function handleFilterChange(val: SignaturesFilter) {
+    setFilter(val);
+    setPage(1);
+  }
+
+  function handlePageSizeChange(val: number) {
+    setPageSize(val);
+    setPage(1);
+  }
 
   function handleRetry() {
     setLoadState('loading');
-    void loadData();
+    void loadData(page, pageSize, debouncedSearch, filter);
   }
-
-  const duplicateNames = useMemo(() => findDuplicateNameSet(signatures), [signatures]);
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return signatures.filter((s) => {
-      if (filter === 'committee' && !s.is_committee) return false;
-      if (filter === 'masked' && !s.is_masked) return false;
-      if (filter === 'duplicates' && !duplicateNames.has(s.full_name.trim().toLowerCase()))
-        return false;
-      if (!q) return true;
-      const haystack = [
-        s.full_name,
-        s.email,
-        s.phone ?? '',
-        s.region_top,
-        s.region_sub ?? '',
-        s.message ?? '',
-      ]
-        .join(' ')
-        .toLowerCase();
-      return haystack.includes(q);
-    });
-  }, [signatures, search, filter, duplicateNames]);
 
   function handleDelete() {
     if (!deleting) return;
@@ -93,7 +87,7 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
       setDeleting(null);
       if (result.ok) {
         setStatusMsg({ tone: 'ok', text: result.message ?? t('successDeleted') });
-        handleRetry();
+        void loadData(page, pageSize, debouncedSearch, filter);
       } else {
         setStatusMsg({ tone: 'err', text: result.message ?? t('errorDeleteFailed') });
       }
@@ -130,8 +124,8 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
           <h2 className="text-base font-semibold text-charcoal-deep">{t('signaturesHeading')}</h2>
           <p className="text-xs text-charcoal-muted mt-0.5">
             {t('signaturesSubtitle', {
-              showing: filtered.length.toLocaleString('ko-KR'),
-              loaded: signatures.length.toLocaleString('ko-KR'),
+              showing: rows.length.toLocaleString('ko-KR'),
+              loaded: total.toLocaleString('ko-KR'),
               total: signaturesTotal.toLocaleString('ko-KR'),
             })}
           </p>
@@ -139,21 +133,19 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
         <div className="flex flex-wrap items-center gap-2">
           <Select
             value={filter}
-            onChange={(e) => setFilter(e.target.value as Filter)}
+            onChange={(e) => handleFilterChange(e.target.value as SignaturesFilter)}
             wrapperClassName="w-auto"
             className="w-auto py-1.5 text-sm"
           >
             <option value="all">{t('signaturesFilterAll')}</option>
             <option value="committee">{t('signaturesFilterCommittee')}</option>
-            <option value="duplicates">
-              {t('signaturesFilterDuplicates', { count: duplicateNames.size })}
-            </option>
+            <option value="duplicates">{t('signaturesFilterDuplicates', { count: '' })}</option>
             <option value="masked">{t('signaturesFilterMasked')}</option>
           </Select>
           <input
             type="search"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder={t('signaturesSearchPlaceholder')}
             className="w-full sm:w-64 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
@@ -174,7 +166,7 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
         </p>
       )}
 
-      {filtered.length === 0 ? (
+      {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-charcoal-muted">
           {t('signaturesEmpty')}
         </p>
@@ -195,25 +187,26 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
-              {filtered.map((s) => {
+              {rows.map((s) => {
                 const region =
                   (getRegionByKey(s.region_top)?.label ?? s.region_top) +
                   (s.region_sub ? ` · ${s.region_sub}` : '');
-                const isDup = duplicateNames.has(s.full_name.trim().toLowerCase());
                 return (
                   <tr key={s.id} className={clsx(s.is_masked && 'bg-gray-50/60')}>
                     <td className="px-3 py-2 text-charcoal-deep font-medium">
-                      <div className="flex items-center gap-1.5">
-                        <span>{s.full_name}</span>
-                        {isDup && (
+                      {filter === 'duplicates' ? (
+                        <div className="flex items-center gap-1.5">
+                          <span>{s.full_name}</span>
                           <span
                             title={t('signaturesDuplicateBadgeTitle')}
                             className="inline-flex items-center rounded bg-charcoal-deep/5 px-1.5 py-0.5 text-[10px] font-semibold text-charcoal-deep"
                           >
                             {t('signaturesDuplicateBadge')}
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      ) : (
+                        s.full_name
+                      )}
                     </td>
                     <td className="px-3 py-2 text-charcoal-muted">{s.email}</td>
                     <td className="px-3 py-2 text-charcoal-muted tabular-nums">
@@ -290,6 +283,14 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
         </div>
       )}
 
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={setPage}
+        onPageSizeChange={handlePageSizeChange}
+      />
+
       {editing && (
         <EditSignatureModal
           row={editing}
@@ -297,7 +298,7 @@ export default function SignaturesTab({ signaturesTotal }: SignaturesTabProps) {
             setEditing(null);
             if (result === 'updated') {
               setStatusMsg({ tone: 'ok', text: t('successUpdated') });
-              handleRetry();
+              void loadData(page, pageSize, debouncedSearch, filter);
             }
           }}
         />

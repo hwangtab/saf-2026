@@ -1,30 +1,44 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
 import { PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
 import { fetchAdminMessages, setMessageMasked } from '@/app/actions/petition-admin';
 import { getRegionByKey } from '@/lib/petition/regions';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 
-import type { AdminMessageRow } from './types';
+import Pagination from './Pagination';
+import type { AdminMessageRow, MessagesFilter } from './types';
 
-type Filter = 'all' | 'open' | 'public' | 'masked';
+const DEFAULT_PAGE_SIZE = 50;
 
 export default function MessagesTab() {
   const t = useTranslations('admin.petition');
-  const [messages, setMessages] = useState<AdminMessageRow[]>([]);
+  const [rows, setRows] = useState<AdminMessageRow[]>([]);
+  const [total, setTotal] = useState(0);
   const [loadState, setLoadState] = useState<'loading' | 'done' | 'error'>('loading');
-  const [filter, setFilter] = useState<Filter>('open');
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [filter, setFilter] = useState<MessagesFilter>('open');
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
+
   const [pending, startTransition] = useTransition();
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (p: number, ps: number, q: string, f: MessagesFilter) => {
     try {
-      const data = await fetchAdminMessages(PETITION_OH_YOON_SLUG);
-      setMessages(data);
+      const result = await fetchAdminMessages(PETITION_OH_YOON_SLUG, {
+        page: p,
+        pageSize: ps,
+        search: q || undefined,
+        filter: f,
+      });
+      setRows(result.rows);
+      setTotal(result.total);
       setLoadState('done');
     } catch {
       setLoadState('error');
@@ -32,25 +46,30 @@ export default function MessagesTab() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: fetch on mount, setState in async callbacks only
-    void loadData();
-  }, [loadData]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: loading indicator while re-fetching on dep change
+    setLoadState('loading');
+    void loadData(page, pageSize, debouncedSearch, filter);
+  }, [page, pageSize, debouncedSearch, filter, loadData]);
+
+  function handleFilterChange(val: MessagesFilter) {
+    setFilter(val);
+    setPage(1);
+  }
+
+  function handleSearchChange(val: string) {
+    setSearch(val);
+    setPage(1);
+  }
+
+  function handlePageSizeChange(val: number) {
+    setPageSize(val);
+    setPage(1);
+  }
 
   function handleRetry() {
     setLoadState('loading');
-    void loadData();
+    void loadData(page, pageSize, debouncedSearch, filter);
   }
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return messages.filter((m) => {
-      if (filter === 'open' && m.is_masked) return false;
-      if (filter === 'public' && (!m.message_public || m.is_masked)) return false;
-      if (filter === 'masked' && !m.is_masked) return false;
-      if (q && !(m.message ?? '').toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }, [messages, filter, search]);
 
   function toggleMask(id: string, next: boolean) {
     setBusyId(id);
@@ -61,14 +80,10 @@ export default function MessagesTab() {
         alert(r.message ?? t('errorMaskFailed'));
         return;
       }
-      setMessages((rows) =>
-        rows.map((row) =>
+      setRows((prev) =>
+        prev.map((row) =>
           row.id === id
-            ? {
-                ...row,
-                is_masked: next,
-                masked_at: next ? new Date().toISOString() : null,
-              }
+            ? { ...row, is_masked: next, masked_at: next ? new Date().toISOString() : null }
             : row
         )
       );
@@ -104,28 +119,28 @@ export default function MessagesTab() {
         <FilterPill
           label={t('messagesFilterOpen')}
           active={filter === 'open'}
-          onClick={() => setFilter('open')}
+          onClick={() => handleFilterChange('open')}
         />
         <FilterPill
           label={t('messagesFilterPublic')}
           active={filter === 'public'}
-          onClick={() => setFilter('public')}
+          onClick={() => handleFilterChange('public')}
         />
         <FilterPill
           label={t('messagesFilterMasked')}
           active={filter === 'masked'}
-          onClick={() => setFilter('masked')}
+          onClick={() => handleFilterChange('masked')}
         />
         <FilterPill
           label={t('messagesFilterAll')}
           active={filter === 'all'}
-          onClick={() => setFilter('all')}
+          onClick={() => handleFilterChange('all')}
         />
 
         <input
           type="search"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           placeholder={t('messagesSearchPlaceholder')}
           className="ml-auto w-full sm:w-64 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
@@ -133,18 +148,18 @@ export default function MessagesTab() {
 
       <p className="text-xs text-charcoal-muted">
         {t('messagesShownCount', {
-          count: filtered.length.toLocaleString('ko-KR'),
-          total: messages.length.toLocaleString('ko-KR'),
+          count: rows.length.toLocaleString('ko-KR'),
+          total: total.toLocaleString('ko-KR'),
         })}
       </p>
 
-      {filtered.length === 0 ? (
+      {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-charcoal-muted">
           {t('messagesEmpty')}
         </p>
       ) : (
         <ul className="space-y-3">
-          {filtered.map((m) => {
+          {rows.map((m) => {
             const regionLabel = getRegionByKey(m.region_top)?.label ?? m.region_top;
             const subLabel = m.region_sub ? ` · ${m.region_sub}` : '';
             const dateLabel = new Date(m.created_at).toLocaleString('ko-KR');
@@ -203,6 +218,14 @@ export default function MessagesTab() {
           })}
         </ul>
       )}
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={setPage}
+        onPageSizeChange={handlePageSizeChange}
+      />
 
       <p className="text-xs text-charcoal-muted">{t('messagesAuditNote')}</p>
     </div>

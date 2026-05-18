@@ -11,6 +11,9 @@ import type {
   AdminMessageRow,
   AdminCommitteeRow,
   AdminSignatureRow,
+  MessagesFilter,
+  PaginatedResult,
+  SignaturesFilter,
 } from '@/app/(portal)/admin/petition/oh-yoon/_components/types';
 
 const ADMIN_PATH = '/admin/petition/oh-yoon';
@@ -303,53 +306,179 @@ export async function deleteSignature(signatureId: string): Promise<AdminActionR
   return { ok: true, message: t('successDeleted') };
 }
 
-// ─── 탭별 lazy fetch (bootstrap에서 행 데이터 제거 후 탭 마운트 시 호출) ─────
-export async function fetchAdminSignatures(slug: string): Promise<AdminSignatureRow[]> {
-  await requireAdmin();
-  const admin = createSupabaseAdminClient();
-  const { data } = await fetchAllInBatches((from, to) =>
-    admin
-      .from('petition_signatures')
-      .select(
-        'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at'
-      )
-      .eq('petition_slug', slug)
-      .order('created_at', { ascending: false })
-      .range(from, to)
-  );
-  return data as AdminSignatureRow[];
+// ─── 탭별 페이지네이션 fetch ─────────────────────────────────────────────────
+
+export interface SignaturesQuery {
+  page: number;
+  pageSize: number;
+  search?: string;
+  filter?: SignaturesFilter;
 }
 
-export async function fetchAdminCommittee(slug: string): Promise<AdminCommitteeRow[]> {
+export interface MessagesQuery {
+  page: number;
+  pageSize: number;
+  search?: string;
+  filter?: MessagesFilter;
+}
+
+export interface CommitteeQuery {
+  page: number;
+  pageSize: number;
+  search?: string;
+}
+
+function escapeLike(s: string): string {
+  return s.replace(/[%_\\]/g, (c) => `\\${c}`);
+}
+
+export async function fetchAdminSignatures(
+  slug: string,
+  query: SignaturesQuery
+): Promise<PaginatedResult<AdminSignatureRow>> {
+  await requireAdmin();
+
+  const { page, pageSize, search, filter = 'all' } = query;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  // duplicates 필터는 별도 RPC 경로
+  if (filter === 'duplicates') {
+    const admin = createSupabaseAdminClient();
+    // 신규 RPC라 자동생성 타입에 미포함 — any 캐스트로 우회
+    const { data, error } = await (admin as any).rpc('get_petition_duplicate_signatures', {
+      p_slug: slug,
+      p_search: search?.trim() || null,
+      p_limit: pageSize,
+      p_offset: from,
+    });
+    if (error) {
+      console.error('[petition-admin] duplicate rpc error:', error);
+      return { rows: [], total: 0 };
+    }
+    const result = data as { rows: AdminSignatureRow[] | null; total: number }[] | null;
+    const first = result?.[0];
+    return { rows: first?.rows ?? [], total: Number(first?.total ?? 0) };
+  }
+
+  const admin = createSupabaseAdminClient();
+  let q = admin
+    .from('petition_signatures')
+    .select(
+      'id, full_name, email, phone, region_top, region_sub, is_committee, message, message_public, is_masked, created_at',
+      { count: 'exact' }
+    )
+    .eq('petition_slug', slug)
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  if (filter === 'committee') q = q.eq('is_committee', true);
+  if (filter === 'masked') q = q.eq('is_masked', true);
+
+  const term = search?.trim();
+  if (term) {
+    const e = escapeLike(term);
+    q = q.or(
+      `full_name.ilike.%${e}%,email.ilike.%${e}%,phone.ilike.%${e}%,` +
+        `region_top.ilike.%${e}%,region_sub.ilike.%${e}%,message.ilike.%${e}%`
+    );
+  }
+
+  const { data, count, error } = await q;
+  if (error) {
+    console.error('[petition-admin] fetchAdminSignatures error:', error);
+    return { rows: [], total: 0 };
+  }
+  return { rows: (data as AdminSignatureRow[]) ?? [], total: count ?? 0 };
+}
+
+export async function fetchAdminCommittee(
+  slug: string,
+  query: CommitteeQuery
+): Promise<PaginatedResult<AdminCommitteeRow>> {
+  await requireAdmin();
+
+  const { page, pageSize, search } = query;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const admin = createSupabaseAdminClient();
+  let q = admin
+    .from('petition_signatures')
+    .select('id, full_name, email, phone, region_top, region_sub, created_at', { count: 'exact' })
+    .eq('petition_slug', slug)
+    .eq('is_committee', true)
+    .order('full_name', { ascending: true })
+    .range(from, to);
+
+  const term = search?.trim();
+  if (term) {
+    const e = escapeLike(term);
+    q = q.or(`full_name.ilike.%${e}%,email.ilike.%${e}%,phone.ilike.%${e}%`);
+  }
+
+  const { data, count, error } = await q;
+  if (error) {
+    console.error('[petition-admin] fetchAdminCommittee error:', error);
+    return { rows: [], total: 0 };
+  }
+  return { rows: (data as AdminCommitteeRow[]) ?? [], total: count ?? 0 };
+}
+
+export async function fetchAdminMessages(
+  slug: string,
+  query: MessagesQuery
+): Promise<PaginatedResult<AdminMessageRow>> {
+  await requireAdmin();
+
+  const { page, pageSize, search, filter = 'open' } = query;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const admin = createSupabaseAdminClient();
+  let q = admin
+    .from('petition_signatures')
+    .select(
+      'id, full_name, region_top, region_sub, message, message_public, is_masked, masked_at, created_at',
+      { count: 'exact' }
+    )
+    .eq('petition_slug', slug)
+    .not('message', 'is', null)
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  if (filter === 'open') q = q.eq('is_masked', false);
+  if (filter === 'public') q = q.eq('message_public', true).eq('is_masked', false);
+  if (filter === 'masked') q = q.eq('is_masked', true);
+
+  const term = search?.trim();
+  if (term) {
+    const e = escapeLike(term);
+    q = q.ilike('message', `%${e}%`);
+  }
+
+  const { data, count, error } = await q;
+  if (error) {
+    console.error('[petition-admin] fetchAdminMessages error:', error);
+    return { rows: [], total: 0 };
+  }
+  return { rows: (data as AdminMessageRow[]) ?? [], total: count ?? 0 };
+}
+
+/** 추진위원 전체 이름 목록 — CommitteeTab 선언문 copy 전용. 행 수가 수백으로 경량. */
+export async function fetchCommitteeNames(slug: string): Promise<string[]> {
   await requireAdmin();
   const admin = createSupabaseAdminClient();
   const { data } = await fetchAllInBatches((from, to) =>
     admin
       .from('petition_signatures')
-      .select('id, full_name, email, phone, region_top, region_sub, created_at')
+      .select('full_name')
       .eq('petition_slug', slug)
       .eq('is_committee', true)
       .order('full_name', { ascending: true })
       .range(from, to)
   );
-  return data as AdminCommitteeRow[];
-}
-
-export async function fetchAdminMessages(slug: string): Promise<AdminMessageRow[]> {
-  await requireAdmin();
-  const admin = createSupabaseAdminClient();
-  const { data } = await fetchAllInBatches((from, to) =>
-    admin
-      .from('petition_signatures')
-      .select(
-        'id, full_name, region_top, region_sub, message, message_public, is_masked, masked_at, created_at'
-      )
-      .eq('petition_slug', slug)
-      .not('message', 'is', null)
-      .order('created_at', { ascending: false })
-      .range(from, to)
-  );
-  return data as AdminMessageRow[];
+  return ((data as { full_name: string }[] | null) ?? []).map((r) => r.full_name);
 }
 
 // ─── 서명 내용 수정 (운영자 정정) ────────────────────────────────

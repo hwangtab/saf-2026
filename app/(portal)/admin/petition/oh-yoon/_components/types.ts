@@ -1,3 +1,11 @@
+export interface PaginatedResult<T> {
+  rows: T[];
+  total: number;
+}
+
+export type SignaturesFilter = 'all' | 'committee' | 'masked' | 'duplicates';
+export type MessagesFilter = 'all' | 'open' | 'public' | 'masked';
+
 export interface AdminCounts {
   total: number;
   committee_total: number;

@@ -612,6 +612,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   />
                 ))}
               </div>
+              <div className="mt-10 text-center">
+                <Link
+                  href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
+                  className="inline-flex items-center gap-2 rounded-full border border-charcoal-deep bg-white px-6 py-3 text-sm font-medium text-charcoal-deep hover:bg-charcoal-deep hover:text-white transition-colors"
+                >
+                  {t('viewAllByArtist', { artist: displayArtist, count: artistWorks.length })}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
             </div>
           ) : null}
 

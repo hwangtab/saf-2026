@@ -314,6 +314,7 @@
     "originalKoreanHistory": "The artist history is currently available in Korean.",
     "originalKoreanDetail": "Original details are available in Korean.",
     "otherWorks": "Other works by {artist}",
+    "viewAllByArtist": "View all {count} works by {artist}",
     "viewAll": "View All",
     "recentlySold": "Recently Sold",
     "recentlySoldDesc": "{count} artworks sold recently",

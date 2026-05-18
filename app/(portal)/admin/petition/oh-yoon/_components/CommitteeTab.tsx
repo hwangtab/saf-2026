@@ -4,26 +4,44 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
-import { fetchAdminCommittee } from '@/app/actions/petition-admin';
+import { fetchAdminCommittee, fetchCommitteeNames } from '@/app/actions/petition-admin';
 import { getRegionByKey } from '@/lib/petition/regions';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 
+import Pagination from './Pagination';
 import type { AdminCommitteeRow } from './types';
 
 interface CommitteeTabProps {
-  /** trigger 카운터 기준 추진위원 수 — 뱃지 초기값 및 부제 표시용 */
   committeeTotal: number;
 }
 
+const DEFAULT_PAGE_SIZE = 50;
+
 export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
   const t = useTranslations('admin.petition');
-  const [committee, setCommittee] = useState<AdminCommitteeRow[]>([]);
+  const [rows, setRows] = useState<AdminCommitteeRow[]>([]);
+  const [total, setTotal] = useState(committeeTotal);
   const [loadState, setLoadState] = useState<'loading' | 'done' | 'error'>('loading');
-  const [search, setSearch] = useState('');
 
-  const loadData = useCallback(async () => {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
+
+  const [allNames, setAllNames] = useState<string[]>([]);
+  const [copied, setCopied] = useState(false);
+
+  const declarationText = useMemo(() => allNames.join(', '), [allNames]);
+
+  const loadData = useCallback(async (p: number, ps: number, q: string) => {
     try {
-      const data = await fetchAdminCommittee(PETITION_OH_YOON_SLUG);
-      setCommittee(data);
+      const result = await fetchAdminCommittee(PETITION_OH_YOON_SLUG, {
+        page: p,
+        pageSize: ps,
+        search: q || undefined,
+      });
+      setRows(result.rows);
+      setTotal(result.total);
       setLoadState('done');
     } catch {
       setLoadState('error');
@@ -31,29 +49,32 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: fetch on mount, setState in async callbacks only
-    void loadData();
-  }, [loadData]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: loading indicator while re-fetching on dep change
+    setLoadState('loading');
+    void loadData(page, pageSize, debouncedSearch);
+  }, [page, pageSize, debouncedSearch, loadData]);
+
+  // 선언문 복사용 전체 이름 목록 — 1회만 fetch
+  useEffect(() => {
+    void fetchCommitteeNames(PETITION_OH_YOON_SLUG).then((names) => {
+      setAllNames(names);
+    });
+  }, []);
+
+  function handleSearchChange(val: string) {
+    setSearch(val);
+    setPage(1);
+  }
+
+  function handlePageSizeChange(val: number) {
+    setPageSize(val);
+    setPage(1);
+  }
 
   function handleRetry() {
     setLoadState('loading');
-    void loadData();
+    void loadData(page, pageSize, debouncedSearch);
   }
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return committee;
-    return committee.filter(
-      (c) =>
-        c.full_name.toLowerCase().includes(q) ||
-        c.email.toLowerCase().includes(q) ||
-        (c.phone ?? '').toLowerCase().includes(q)
-    );
-  }, [committee, search]);
-
-  const declarationText = useMemo(() => committee.map((c) => c.full_name).join(', '), [committee]);
-
-  const [copied, setCopied] = useState(false);
 
   function copyDeclaration() {
     void navigator.clipboard.writeText(declarationText).then(() => {
@@ -94,7 +115,7 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
         <input
           type="search"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           placeholder={t('committeeSearchPlaceholder')}
           className="w-full sm:w-64 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
@@ -118,7 +139,7 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
         </p>
       </section>
 
-      {filtered.length === 0 ? (
+      {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-charcoal-muted">
           {t('committeeEmpty')}
         </p>
@@ -135,7 +156,7 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
-              {filtered.map((c) => {
+              {rows.map((c) => {
                 const region =
                   (getRegionByKey(c.region_top)?.label ?? c.region_top) +
                   (c.region_sub ? ` · ${c.region_sub}` : '');
@@ -163,6 +184,14 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
           </table>
         </div>
       )}
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={setPage}
+        onPageSizeChange={handlePageSizeChange}
+      />
 
       <p className="text-xs text-charcoal-muted break-keep">{t('committeeFooter')}</p>
     </div>
