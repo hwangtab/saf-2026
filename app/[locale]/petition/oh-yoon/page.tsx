@@ -38,7 +38,7 @@ export const revalidate = 60;
 
 // DB 과부하 응급 차단 플래그 — true 시 fetchPetitionCount/ProgressBar polling 완전 비활성.
 // 복구 시 false로 변경 후 재배포.
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
 
