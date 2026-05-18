@@ -283,6 +283,16 @@ export default async function Footer({ locale }: { locale: string }) {
                 >
                   {t('refundPolicy')}
                 </Link>
+                <span className="text-gray-500" aria-hidden="true">
+                  |
+                </span>
+                <Link
+                  href="/faq"
+                  prefetch={false}
+                  className="hover:text-primary transition-colors link-underline-offset"
+                >
+                  {t('faq')}
+                </Link>
               </div>
               {/* Copyright */}
               <div className="text-center text-sm text-gray-400">
