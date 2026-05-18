@@ -87,7 +87,6 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@eslint/eslintrc": "^3.3.3",
-    "@google-analytics/data": "^5.2.1",
     "@next/bundle-analyzer": "^16.2.4",
     "@playwright/test": "^1.60.0",
     "@testing-library/dom": "^10.4.1",
@@ -109,7 +108,6 @@
     "jest-environment-jsdom": "^30.3.0",
     "jiti": "^2.6.1",
     "lint-staged": "^15.0.0",
-    "pg": "^8.20.0",
     "playwright": "^1.59.1",
     "postcss": "^8.4.31",
     "prettier": "^3.0.0",
