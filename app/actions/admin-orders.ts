@@ -295,13 +295,16 @@ export async function refundOrder(input: RefundInput) {
   // 계좌이체 주문은 Toss API 없이 진행 (실제 환불은 관리자가 외부에서 수동 처리)
 
   // 3. Update orders.status → refunded (idempotency: WHERE status IN ('paid','preparing'))
-  const { error: orderUpdateError } = await supabase
+  const { data: updatedRows, error: orderUpdateError } = await supabase
     .from('orders')
     .update({ status: 'refunded', refunded_at: now })
     .eq('id', orderId)
-    .in('status', ['paid', 'preparing']);
+    .in('status', ['paid', 'preparing'])
+    .select('id');
 
   if (orderUpdateError) throw orderUpdateError;
+  // 0행 = 이미 다른 경로에서 환불 처리됨 (동시 요청 등) — 중복 이메일 방지
+  if (!updatedRows || updatedRows.length === 0) return;
 
   // 4. 관리자 + 구매자 환불 이메일 발송 (fire-and-forget)
   void (async () => {

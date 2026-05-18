@@ -471,7 +471,7 @@ export async function POST(req: NextRequest) {
           .from('orders')
           .update({ status: 'refunded', refunded_at: now })
           .eq('id', paymentRow.order_id)
-          .not('status', 'in', '("refunded","cancelled")');
+          .not('status', 'in', '(refunded,cancelled)');
 
         if (orderCancelError) {
           console.error(
