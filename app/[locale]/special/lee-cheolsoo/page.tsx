@@ -154,6 +154,12 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
       '@type': 'Place',
       name: isEnglish ? 'Seoul, South Korea' : '서울',
     },
+    workLocation: {
+      '@type': 'Place',
+      name: isEnglish ? 'Jecheon, Chungbuk, South Korea' : '충북 제천',
+    },
+    knowsAbout: ['Korean woodblock printmaking', 'Brushwork (서화)'],
+    sameAs: ['https://ko.wikipedia.org/wiki/이철수'],
     nationality: {
       '@type': 'Country',
       name: 'South Korea',

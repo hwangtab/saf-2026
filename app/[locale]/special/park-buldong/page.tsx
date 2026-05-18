@@ -154,6 +154,17 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
       '@type': 'Place',
       name: isEnglish ? 'Hadong, South Gyeongsang, South Korea' : '경남 하동',
     },
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: isEnglish ? 'Hongik University, Dept. of Western Painting' : '홍익대학교 서양화과',
+    },
+    affiliation: {
+      '@type': 'Organization',
+      name: isEnglish
+        ? "Minjung Misul Hyeopuihoe (National Artists' Association)"
+        : '민족미술협의회',
+    },
+    knowsAbout: ['Political collage', 'Korean minjung art'],
     nationality: {
       '@type': 'Country',
       name: 'South Korea',

@@ -25,6 +25,8 @@ export interface MasterArtist {
   /** 한 줄 정체성 (매체·운동·미술사적 위치). 카드 부제로 노출. */
   taglineKo: string;
   taglineEn: string;
+  /** /special/<slug> 페이지가 있으면 카드 클릭 시 작품 목록 대신 특별전 페이지로 이동. */
+  specialSlug?: string;
 }
 
 export const MASTER_ARTISTS: MasterArtist[] = [
@@ -35,6 +37,7 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: '1946–1986',
     taglineKo: '한국 민중미술의 거장',
     taglineEn: 'Master of Korean minjung art',
+    specialSlug: 'oh-yoon',
   },
   {
     artistName: '박생광',
@@ -43,6 +46,7 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: '1904–1985',
     taglineKo: '오방색 한국화의 거장',
     taglineEn: 'Master of obangsaek Korean painting',
+    specialSlug: 'park-saenggwang',
   },
   {
     artistName: '민정기',
@@ -51,6 +55,7 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: 'b. 1949',
     taglineKo: '한국 풍경화의 거장',
     taglineEn: 'Master of Korean landscape painting',
+    specialSlug: 'min-joungki',
   },
   {
     artistName: '이철수',
@@ -59,6 +64,7 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: 'b. 1954',
     taglineKo: '판화·서화 거장',
     taglineEn: 'Master of prints and brushwork',
+    specialSlug: 'lee-cheolsoo',
   },
   {
     artistName: '박불똥',
@@ -67,5 +73,6 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: 'b. 1956',
     taglineKo: '콜라주·정치 미술의 거장',
     taglineEn: 'Master of collage and political art',
+    specialSlug: 'park-buldong',
   },
 ];

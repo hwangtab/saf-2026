@@ -148,12 +148,17 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
     description: isEnglish
       ? "Oh Yoon (1946–1986) was a pivotal figure in Korean people's art (minjung misul), known for bold woodblock prints depicting the lives of workers and farmers."
       : '오윤(1946–1986)은 민중미술의 대표 작가로, 노동자·농민의 삶을 담은 역동적인 판화로 한국 현대미술에 큰 족적을 남겼습니다.',
+    birthDate: '1946',
+    deathDate: '1986',
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
       '@id': 'https://www.wikidata.org/wiki/Q884',
     },
-    sameAs: ['https://www.wikidata.org/wiki/Q18399737'],
+    sameAs: [
+      'https://ko.wikipedia.org/wiki/오윤_(화가)',
+      'https://www.wikidata.org/wiki/Q18399737',
+    ],
   };
 
   const exhibitionEventSchema = {

@@ -52,7 +52,9 @@ export default async function MasterArtists({ locale }: { locale: string }) {
       item: {
         '@type': 'Person',
         name: isEn ? artist.artistNameEn : artist.artistName,
-        url: `${SITE_URL}${isEn ? '/en' : ''}/artworks/artist/${encodeURIComponent(artist.artistName)}`,
+        url: artist.specialSlug
+          ? `${SITE_URL}${isEn ? '/en' : ''}/special/${artist.specialSlug}`
+          : `${SITE_URL}${isEn ? '/en' : ''}/artworks/artist/${encodeURIComponent(artist.artistName)}`,
         description: isEn ? artist.taglineEn : artist.taglineKo,
       },
     })),
@@ -73,7 +75,9 @@ export default async function MasterArtists({ locale }: { locale: string }) {
             const displayYears = isEn ? artist.yearsEn : artist.yearsKo;
             const displayTagline = isEn ? artist.taglineEn : artist.taglineKo;
             const coverSrc = resolveArtworkImageUrlForPreset(cover!.images?.[0] ?? '', 'card');
-            const href = `/artworks/artist/${encodeURIComponent(artist.artistName)}`;
+            const href = artist.specialSlug
+              ? `/special/${artist.specialSlug}`
+              : `/artworks/artist/${encodeURIComponent(artist.artistName)}`;
 
             return (
               <Link

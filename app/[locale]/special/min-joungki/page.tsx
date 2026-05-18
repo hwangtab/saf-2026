@@ -150,6 +150,15 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
       '@type': 'Place',
       name: isEnglish ? 'Seoul (Seodaemun-gu), South Korea' : '서울 서대문구',
     },
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: isEnglish ? 'Seoul National University College of Fine Arts' : '서울대학교 미술대학',
+    },
+    award: isEnglish ? '18th Lee Jung-seob Art Award (2006)' : '제18회 이중섭미술상 (2006)',
+    workLocation: {
+      '@type': 'Place',
+      name: isEnglish ? 'Yangpyeong, Gyeonggi, South Korea' : '경기 양평',
+    },
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
