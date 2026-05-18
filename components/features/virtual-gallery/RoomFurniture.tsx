@@ -1,6 +1,8 @@
 'use client';
 
 import * as THREE from 'three';
+import { BRAND_COLORS } from '@/lib/colors';
+import { SCENE_COLORS } from './sceneColors';
 import type { RoomPreset } from './roomPresets';
 
 interface RoomFurnitureProps {
@@ -93,16 +95,20 @@ function Plant({ position }: { position: [number, number, number] }) {
       <Cylinder
         args={[0.1, 0.12, 0.22, 12]}
         position={[0, 0.11, 0]}
-        color="#6b5344"
+        color={SCENE_COLORS.wood.terracottaPot}
         roughness={0.9}
       />
       <mesh position={[0, 0.35, 0]} castShadow>
         <sphereGeometry args={[0.18, 12, 10]} />
-        <meshStandardMaterial color="#3a6b35" roughness={0.85} metalness={0} />
+        <meshStandardMaterial color={SCENE_COLORS.plant.foliage} roughness={0.85} metalness={0} />
       </mesh>
       <mesh position={[0.06, 0.42, 0.05]} castShadow>
         <sphereGeometry args={[0.12, 10, 8]} />
-        <meshStandardMaterial color="#4a7d43" roughness={0.85} metalness={0} />
+        <meshStandardMaterial
+          color={SCENE_COLORS.plant.foliageHighlight}
+          roughness={0.85}
+          metalness={0}
+        />
       </mesh>
     </group>
   );
@@ -111,7 +117,7 @@ function Plant({ position }: { position: [number, number, number] }) {
 /** Table lamp — cylinder base + truncated cone shade + point light */
 function TableLamp({
   position,
-  shadeColor = '#f5f0e0',
+  shadeColor = SCENE_COLORS.fabric.cream,
 }: {
   position: [number, number, number];
   shadeColor?: string;
@@ -121,14 +127,14 @@ function TableLamp({
       <Cylinder
         args={[0.06, 0.06, 0.02, 16]}
         position={[0, 0.01, 0]}
-        color="#8b7d6b"
+        color={SCENE_COLORS.metal.lampBrass}
         roughness={0.4}
         metalness={0.3}
       />
       <Cylinder
         args={[0.015, 0.015, 0.2, 8]}
         position={[0, 0.11, 0]}
-        color="#8b7d6b"
+        color={SCENE_COLORS.metal.lampBrass}
         roughness={0.4}
         metalness={0.3}
       />
@@ -141,7 +147,13 @@ function TableLamp({
           side={THREE.DoubleSide}
         />
       </mesh>
-      <pointLight position={[0, 0.24, 0]} intensity={1.2} color="#fff3e0" distance={2} decay={2} />
+      <pointLight
+        position={[0, 0.24, 0]}
+        intensity={1.2}
+        color={SCENE_COLORS.light.warmBulb}
+        distance={2}
+        decay={2}
+      />
     </group>
   );
 }
@@ -153,27 +165,33 @@ function FloorLamp({ position }: { position: [number, number, number] }) {
       <Cylinder
         args={[0.12, 0.12, 0.02, 16]}
         position={[0, 0.01, 0]}
-        color="#2a2a2a"
+        color={SCENE_COLORS.metal.matteBlack}
         roughness={0.5}
         metalness={0.2}
       />
       <Cylinder
         args={[0.015, 0.015, 1.3, 8]}
         position={[0, 0.66, 0]}
-        color="#2a2a2a"
+        color={SCENE_COLORS.metal.matteBlack}
         roughness={0.5}
         metalness={0.2}
       />
       <mesh position={[0, 1.4, 0]} castShadow>
         <cylinderGeometry args={[0.08, 0.16, 0.25, 16, 1, true]} />
         <meshStandardMaterial
-          color="#f0ebe0"
+          color={SCENE_COLORS.fabric.linen}
           roughness={0.9}
           metalness={0}
           side={THREE.DoubleSide}
         />
       </mesh>
-      <pointLight position={[0, 1.35, 0]} intensity={2} color="#fff3e0" distance={3} decay={2} />
+      <pointLight
+        position={[0, 1.35, 0]}
+        intensity={2}
+        color={SCENE_COLORS.light.warmBulb}
+        distance={3}
+        decay={2}
+      />
     </group>
   );
 }
@@ -184,7 +202,7 @@ function WallFrame({
   rotation,
   width = 0.4,
   height = 0.3,
-  frameColor = '#3a3028',
+  frameColor = SCENE_COLORS.wood.espresso,
   canvasColor,
 }: {
   position: [number, number, number];
@@ -224,67 +242,123 @@ function LivingRoomFurniture({ preset }: { preset: RoomPreset }) {
       {/* ── Back wall: TV console below artwork ── */}
       <group position={[0, 0, backZ + 0.2]}>
         {/* TV console / media unit */}
-        <Box size={[1.6, 0.45, 0.4]} position={[0, 0.225, 0]} color="#5c4a3a" roughness={0.6} />
+        <Box
+          size={[1.6, 0.45, 0.4]}
+          position={[0, 0.225, 0]}
+          color={SCENE_COLORS.wood.walnutAlt}
+          roughness={0.6}
+        />
         {/* Drawer faces */}
         <Box
           size={[0.45, 0.16, 0.01]}
           position={[-0.4, 0.25, 0.2]}
-          color="#6b5a4a"
+          color={SCENE_COLORS.wood.walnutMid}
           roughness={0.5}
         />
         <Box
           size={[0.45, 0.16, 0.01]}
           position={[0.4, 0.25, 0.2]}
-          color="#6b5a4a"
+          color={SCENE_COLORS.wood.walnutMid}
           roughness={0.5}
         />
         {/* Decorative items on console */}
         <Cylinder
           args={[0.04, 0.05, 0.12, 10]}
           position={[-0.55, 0.51, 0]}
-          color="#c8b8a0"
+          color={SCENE_COLORS.fabric.rugTaupe}
           roughness={0.7}
         />
-        <Box size={[0.2, 0.04, 0.12]} position={[0.55, 0.47, 0]} color="#8b7060" roughness={0.9} />
-        <Box size={[0.18, 0.03, 0.11]} position={[0.55, 0.5, 0]} color="#6a5040" roughness={0.9} />
+        <Box
+          size={[0.2, 0.04, 0.12]}
+          position={[0.55, 0.47, 0]}
+          color={SCENE_COLORS.wood.chestnut}
+          roughness={0.9}
+        />
+        <Box
+          size={[0.18, 0.03, 0.11]}
+          position={[0.55, 0.5, 0]}
+          color={SCENE_COLORS.wood.cocoa}
+          roughness={0.9}
+        />
       </group>
 
       {/* ── Rug — centered between sofa and wall ── */}
-      <Rug width={2.6} depth={1.8} position={[0, 0.003, 0.2]} color="#8b7355" />
+      <Rug
+        width={2.6}
+        depth={1.8}
+        position={[0, 0.003, 0.2]}
+        color={SCENE_COLORS.fabric.rugBrown}
+      />
 
       {/* ── Sofa — facing TV (back rest toward artwork wall) ── */}
       <group position={[0, 0, 1.0]}>
         {/* Seat */}
-        <Box size={[1.8, 0.35, 0.7]} position={[0, 0.25, 0]} color="#6b6054" roughness={0.9} />
+        <Box
+          size={[1.8, 0.35, 0.7]}
+          position={[0, 0.25, 0]}
+          color={SCENE_COLORS.fabric.sofaSeat}
+          roughness={0.9}
+        />
         {/* Back rest — toward artwork wall (negative z) */}
-        <Box size={[1.8, 0.4, 0.15]} position={[0, 0.55, -0.28]} color="#5e5549" roughness={0.9} />
+        <Box
+          size={[1.8, 0.4, 0.15]}
+          position={[0, 0.55, -0.28]}
+          color={SCENE_COLORS.fabric.sofaArm}
+          roughness={0.9}
+        />
         {/* Left arm */}
-        <Box size={[0.15, 0.25, 0.7]} position={[-0.83, 0.42, 0]} color="#5e5549" roughness={0.9} />
+        <Box
+          size={[0.15, 0.25, 0.7]}
+          position={[-0.83, 0.42, 0]}
+          color={SCENE_COLORS.fabric.sofaArm}
+          roughness={0.9}
+        />
         {/* Right arm */}
-        <Box size={[0.15, 0.25, 0.7]} position={[0.83, 0.42, 0]} color="#5e5549" roughness={0.9} />
+        <Box
+          size={[0.15, 0.25, 0.7]}
+          position={[0.83, 0.42, 0]}
+          color={SCENE_COLORS.fabric.sofaArm}
+          roughness={0.9}
+        />
         {/* Legs */}
-        <Box size={[0.06, 0.08, 0.06]} position={[-0.75, 0.04, 0.25]} color="#3a3028" />
-        <Box size={[0.06, 0.08, 0.06]} position={[0.75, 0.04, 0.25]} color="#3a3028" />
-        <Box size={[0.06, 0.08, 0.06]} position={[-0.75, 0.04, -0.25]} color="#3a3028" />
-        <Box size={[0.06, 0.08, 0.06]} position={[0.75, 0.04, -0.25]} color="#3a3028" />
+        <Box
+          size={[0.06, 0.08, 0.06]}
+          position={[-0.75, 0.04, 0.25]}
+          color={SCENE_COLORS.wood.espresso}
+        />
+        <Box
+          size={[0.06, 0.08, 0.06]}
+          position={[0.75, 0.04, 0.25]}
+          color={SCENE_COLORS.wood.espresso}
+        />
+        <Box
+          size={[0.06, 0.08, 0.06]}
+          position={[-0.75, 0.04, -0.25]}
+          color={SCENE_COLORS.wood.espresso}
+        />
+        <Box
+          size={[0.06, 0.08, 0.06]}
+          position={[0.75, 0.04, -0.25]}
+          color={SCENE_COLORS.wood.espresso}
+        />
         {/* Throw cushions — leaning against backrest */}
         <Box
           size={[0.4, 0.14, 0.1]}
           position={[-0.5, 0.52, -0.1]}
-          color="#b8a088"
+          color={SCENE_COLORS.fabric.cushionWarm}
           roughness={0.95}
         />
         <Box
           size={[0.35, 0.12, 0.1]}
           position={[0.55, 0.5, -0.12]}
-          color="#9aaa90"
+          color={SCENE_COLORS.fabric.cushionSage}
           roughness={0.95}
         />
         {/* Throw blanket draped over arm */}
         <Box
           size={[0.18, 0.35, 0.5]}
           position={[0.82, 0.48, -0.05]}
-          color="#c8b8a0"
+          color={SCENE_COLORS.fabric.rugTaupe}
           roughness={0.95}
         />
       </group>
@@ -294,43 +368,68 @@ function LivingRoomFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[0.9, 0.04, 0.5]}
           position={[0, 0.38, 0]}
-          color="#5c4a3a"
+          color={SCENE_COLORS.wood.walnutAlt}
           roughness={0.5}
           metalness={0.02}
         />
-        <Box size={[0.06, 0.36, 0.06]} position={[-0.38, 0.18, -0.18]} color="#4a3a2c" />
-        <Box size={[0.06, 0.36, 0.06]} position={[0.38, 0.18, -0.18]} color="#4a3a2c" />
-        <Box size={[0.06, 0.36, 0.06]} position={[-0.38, 0.18, 0.18]} color="#4a3a2c" />
-        <Box size={[0.06, 0.36, 0.06]} position={[0.38, 0.18, 0.18]} color="#4a3a2c" />
+        <Box
+          size={[0.06, 0.36, 0.06]}
+          position={[-0.38, 0.18, -0.18]}
+          color={SCENE_COLORS.wood.walnutDeep}
+        />
+        <Box
+          size={[0.06, 0.36, 0.06]}
+          position={[0.38, 0.18, -0.18]}
+          color={SCENE_COLORS.wood.walnutDeep}
+        />
+        <Box
+          size={[0.06, 0.36, 0.06]}
+          position={[-0.38, 0.18, 0.18]}
+          color={SCENE_COLORS.wood.walnutDeep}
+        />
+        <Box
+          size={[0.06, 0.36, 0.06]}
+          position={[0.38, 0.18, 0.18]}
+          color={SCENE_COLORS.wood.walnutDeep}
+        />
         {/* Coffee table items */}
         <Box
           size={[0.22, 0.04, 0.16]}
           position={[-0.15, 0.42, 0.05]}
-          color="#c4a882"
+          color={SCENE_COLORS.fabric.cushionTan}
           roughness={0.95}
         />
         <Box
           size={[0.2, 0.03, 0.15]}
           position={[-0.15, 0.455, 0.05]}
-          color="#7a5c4a"
+          color={SCENE_COLORS.wood.sandalwood}
           roughness={0.95}
         />
         {/* Small plant/vase */}
         <Cylinder
           args={[0.035, 0.04, 0.08, 10]}
           position={[0.25, 0.44, -0.08]}
-          color="#e0d4c0"
+          color={SCENE_COLORS.fabric.ceramic}
           roughness={0.7}
         />
         <mesh position={[0.25, 0.52, -0.08]} castShadow>
           <sphereGeometry args={[0.05, 8, 6]} />
-          <meshStandardMaterial color="#4a8044" roughness={0.9} metalness={0} />
+          <meshStandardMaterial
+            color={SCENE_COLORS.plant.plantDining}
+            roughness={0.9}
+            metalness={0}
+          />
         </mesh>
       </group>
 
       {/* ── Side table + lamp — left of sofa ── */}
       <group position={[leftX + 0.45, 0, 0.9]}>
-        <Box size={[0.35, 0.48, 0.35]} position={[0, 0.24, 0]} color="#5c4a3a" roughness={0.6} />
+        <Box
+          size={[0.35, 0.48, 0.35]}
+          position={[0, 0.24, 0]}
+          color={SCENE_COLORS.wood.walnutAlt}
+          roughness={0.6}
+        />
         <TableLamp position={[0, 0.48, 0]} />
       </group>
 
@@ -342,63 +441,73 @@ function LivingRoomFurniture({ preset }: { preset: RoomPreset }) {
 
       {/* ── Bookshelf on right wall ── */}
       <group position={[rightX - 0.16, 0, 0.4]} rotation={[0, -Math.PI / 2, 0]}>
-        <Box size={[0.8, 1.4, 0.28]} position={[0, 0.7, 0]} color="#5c4a3a" roughness={0.6} />
+        <Box
+          size={[0.8, 1.4, 0.28]}
+          position={[0, 0.7, 0]}
+          color={SCENE_COLORS.wood.walnutAlt}
+          roughness={0.6}
+        />
         {[0.3, 0.6, 0.9, 1.2].map((y) => (
           <Box
             key={y}
             size={[0.74, 0.02, 0.24]}
             position={[0, y, 0.01]}
-            color="#6b5a4a"
+            color={SCENE_COLORS.wood.walnutMid}
             roughness={0.6}
           />
         ))}
         <Box
           size={[0.12, 0.2, 0.14]}
           position={[-0.25, 0.4, 0.01]}
-          color="#8b4040"
+          color={SCENE_COLORS.accent.bookBurgundy}
           roughness={0.9}
         />
         <Box
           size={[0.1, 0.18, 0.14]}
           position={[-0.1, 0.39, 0.01]}
-          color="#3a5a7a"
+          color={SCENE_COLORS.accent.bookNavy}
           roughness={0.9}
         />
         <Box
           size={[0.14, 0.22, 0.14]}
           position={[0.08, 0.41, 0.01]}
-          color="#5a7a5a"
+          color={SCENE_COLORS.plant.bookSage}
           roughness={0.9}
         />
         <Box
           size={[0.08, 0.16, 0.14]}
           position={[0.25, 0.38, 0.01]}
-          color="#9a8a5a"
+          color={SCENE_COLORS.wood.bookOlive}
           roughness={0.9}
         />
         <Box
           size={[0.1, 0.18, 0.14]}
           position={[-0.2, 0.69, 0.01]}
-          color="#6a5a8a"
+          color={SCENE_COLORS.accent.bookPurple}
           roughness={0.9}
         />
-        <Box size={[0.14, 0.2, 0.14]} position={[0.0, 0.7, 0.01]} color="#c49a6a" roughness={0.9} />
+        <Box
+          size={[0.14, 0.2, 0.14]}
+          position={[0.0, 0.7, 0.01]}
+          color={SCENE_COLORS.accent.vaseTan}
+          roughness={0.9}
+        />
         <Box
           size={[0.12, 0.17, 0.14]}
           position={[0.2, 0.69, 0.01]}
-          color="#5a6a5a"
+          color={SCENE_COLORS.plant.shelfMuted}
           roughness={0.9}
         />
         <Box
           size={[0.11, 0.19, 0.14]}
           position={[-0.15, 0.99, 0.01]}
-          color="#7a6050"
+          color={SCENE_COLORS.wood.shelfWood}
           roughness={0.9}
         />
         <Box
           size={[0.13, 0.21, 0.14]}
           position={[0.1, 1.0, 0.01]}
-          color="#4a6a7a"
+          color={SCENE_COLORS.accent.decorTeal}
           roughness={0.9}
         />
       </group>
@@ -409,14 +518,14 @@ function LivingRoomFurniture({ preset }: { preset: RoomPreset }) {
         rotation={[0, Math.PI / 2, 0]}
         width={0.35}
         height={0.25}
-        canvasColor="#c8b8a0"
+        canvasColor={SCENE_COLORS.fabric.rugTaupe}
       />
       <WallFrame
         position={[leftX + 0.01, 1.55, 0.5]}
         rotation={[0, Math.PI / 2, 0]}
         width={0.25}
         height={0.35}
-        canvasColor="#a0b0a8"
+        canvasColor={SCENE_COLORS.accent.canvasMuted}
       />
 
       {/* ── Front wall: TV mounted + low cabinet ── */}
@@ -424,55 +533,90 @@ function LivingRoomFurniture({ preset }: { preset: RoomPreset }) {
         {/* TV screen — mounted on front wall */}
         <mesh position={[0, 1.15, 0]}>
           <planeGeometry args={[1.1, 0.65]} />
-          <meshStandardMaterial color="#0a0a0a" roughness={0.3} metalness={0.1} />
+          <meshStandardMaterial
+            color={SCENE_COLORS.metal.tvScreen}
+            roughness={0.3}
+            metalness={0.1}
+          />
         </mesh>
         {/* TV bezel */}
         <Box
           size={[1.14, 0.69, 0.04]}
           position={[0, 1.15, -0.02]}
-          color="#1a1a1a"
+          color={BRAND_COLORS.charcoal.deep}
           roughness={0.4}
           metalness={0.2}
         />
         {/* TV stand / low cabinet */}
-        <Box size={[1.4, 0.35, 0.35]} position={[0, 0.175, 0]} color="#5c4a3a" roughness={0.6} />
+        <Box
+          size={[1.4, 0.35, 0.35]}
+          position={[0, 0.175, 0]}
+          color={SCENE_COLORS.wood.walnutAlt}
+          roughness={0.6}
+        />
         {/* Cabinet door faces */}
         <Box
           size={[0.4, 0.25, 0.01]}
           position={[-0.35, 0.2, 0.175]}
-          color="#6b5a4a"
+          color={SCENE_COLORS.wood.walnutMid}
           roughness={0.5}
         />
         <Box
           size={[0.4, 0.25, 0.01]}
           position={[0.35, 0.2, 0.175]}
-          color="#6b5a4a"
+          color={SCENE_COLORS.wood.walnutMid}
           roughness={0.5}
         />
         {/* Items on TV stand */}
         <Box
           size={[0.08, 0.1, 0.08]}
           position={[-0.5, 0.4, 0.05]}
-          color="#2a2a2a"
+          color={SCENE_COLORS.metal.matteBlack}
           roughness={0.5}
           metalness={0.3}
         />
         <Cylinder
           args={[0.03, 0.04, 0.06, 8]}
           position={[0.5, 0.38, 0.05]}
-          color="#c0a880"
+          color={SCENE_COLORS.accent.artworkCanvas}
           roughness={0.7}
         />
       </group>
 
       {/* ── Accent chair — right side, angled toward center ── */}
       <group position={[rightX - 0.7, 0, 1.5]} rotation={[0, -Math.PI * 0.25, 0]}>
-        <Box size={[0.6, 0.3, 0.6]} position={[0, 0.22, 0]} color="#8a7a68" roughness={0.9} />
-        <Box size={[0.6, 0.35, 0.1]} position={[0, 0.48, -0.25]} color="#7a6a58" roughness={0.9} />
-        <Box size={[0.05, 0.14, 0.05]} position={[-0.25, 0.07, 0.22]} color="#3a3028" />
-        <Box size={[0.05, 0.14, 0.05]} position={[0.25, 0.07, 0.22]} color="#3a3028" />
-        <Box size={[0.05, 0.14, 0.05]} position={[-0.25, 0.07, -0.22]} color="#3a3028" />
-        <Box size={[0.05, 0.14, 0.05]} position={[0.25, 0.07, -0.22]} color="#3a3028" />
+        <Box
+          size={[0.6, 0.3, 0.6]}
+          position={[0, 0.22, 0]}
+          color={SCENE_COLORS.wood.oakLight}
+          roughness={0.9}
+        />
+        <Box
+          size={[0.6, 0.35, 0.1]}
+          position={[0, 0.48, -0.25]}
+          color={SCENE_COLORS.wood.oakWarm}
+          roughness={0.9}
+        />
+        <Box
+          size={[0.05, 0.14, 0.05]}
+          position={[-0.25, 0.07, 0.22]}
+          color={SCENE_COLORS.wood.espresso}
+        />
+        <Box
+          size={[0.05, 0.14, 0.05]}
+          position={[0.25, 0.07, 0.22]}
+          color={SCENE_COLORS.wood.espresso}
+        />
+        <Box
+          size={[0.05, 0.14, 0.05]}
+          position={[-0.25, 0.07, -0.22]}
+          color={SCENE_COLORS.wood.espresso}
+        />
+        <Box
+          size={[0.05, 0.14, 0.05]}
+          position={[0.25, 0.07, -0.22]}
+          color={SCENE_COLORS.wood.espresso}
+        />
       </group>
     </group>
   );
@@ -495,29 +639,44 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
       {/* ── Bed — right-front corner, headboard flush with front wall ── */}
       <group position={[bedCenterX, 0, frontZ - 1.05]}>
         {/* Bed frame base */}
-        <Box size={[1.5, 0.28, 2.0]} position={[0, 0.14, 0]} color="#6b5a48" roughness={0.7} />
+        <Box
+          size={[1.5, 0.28, 2.0]}
+          position={[0, 0.14, 0]}
+          color={SCENE_COLORS.wood.oakDark}
+          roughness={0.7}
+        />
         {/* Mattress */}
-        <Box size={[1.4, 0.16, 1.9]} position={[0, 0.36, 0]} color="#f0ece4" roughness={0.95} />
+        <Box
+          size={[1.4, 0.16, 1.9]}
+          position={[0, 0.36, 0]}
+          color={SCENE_COLORS.fabric.mattress}
+          roughness={0.95}
+        />
         {/* Headboard — flush against front wall */}
-        <Box size={[1.5, 0.9, 0.06]} position={[0, 0.73, 0.97]} color="#5c4a3a" roughness={0.6} />
+        <Box
+          size={[1.5, 0.9, 0.06]}
+          position={[0, 0.73, 0.97]}
+          color={SCENE_COLORS.wood.walnutAlt}
+          roughness={0.6}
+        />
         {/* Pillows against headboard */}
         <Box
           size={[0.45, 0.1, 0.25]}
           position={[-0.3, 0.48, 0.7]}
-          color="#e8e4dc"
+          color={SCENE_COLORS.fabric.pillow}
           roughness={0.95}
         />
         <Box
           size={[0.45, 0.1, 0.25]}
           position={[0.3, 0.48, 0.7]}
-          color="#e8e4dc"
+          color={SCENE_COLORS.fabric.pillow}
           roughness={0.95}
         />
         {/* Duvet — matte fabric, no shine */}
         <Box
           size={[1.35, 0.08, 1.2]}
           position={[0, 0.46, -0.15]}
-          color="#c8bfb0"
+          color={SCENE_COLORS.fabric.duvet}
           roughness={1}
           metalness={0}
         />
@@ -525,13 +684,21 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[1.0, 0.05, 0.35]}
           position={[0, 0.44, -0.75]}
-          color="#a89880"
+          color={SCENE_COLORS.fabric.blanket}
           roughness={1}
           metalness={0}
         />
         {/* Bed legs (only left side visible, right is against wall) */}
-        <Box size={[0.06, 0.06, 0.06]} position={[-0.68, 0.03, -0.9]} color="#5c4a3a" />
-        <Box size={[0.06, 0.06, 0.06]} position={[-0.68, 0.03, 0.9]} color="#5c4a3a" />
+        <Box
+          size={[0.06, 0.06, 0.06]}
+          position={[-0.68, 0.03, -0.9]}
+          color={SCENE_COLORS.wood.walnutAlt}
+        />
+        <Box
+          size={[0.06, 0.06, 0.06]}
+          position={[-0.68, 0.03, 0.9]}
+          color={SCENE_COLORS.wood.walnutAlt}
+        />
       </group>
 
       {/* ── Rug — left/foot side of bed (step-out zone) ── */}
@@ -539,37 +706,73 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
         width={1.1}
         depth={1.6}
         position={[bedCenterX - 1.15, 0.003, frontZ - 1.2]}
-        color="#b0a090"
+        color={SCENE_COLORS.fabric.rugSoft}
       />
 
       {/* ── Nightstand — left of bed only (accessible side) ── */}
       <group position={[bedCenterX - 1.08, 0, frontZ - 0.55]}>
-        <Box size={[0.38, 0.48, 0.35]} position={[0, 0.24, 0]} color="#6b5a48" roughness={0.6} />
-        <Box size={[0.32, 0.12, 0.01]} position={[0, 0.3, 0.175]} color="#7a6a58" roughness={0.5} />
-        <TableLamp position={[0, 0.48, 0]} shadeColor="#ffecd0" />
+        <Box
+          size={[0.38, 0.48, 0.35]}
+          position={[0, 0.24, 0]}
+          color={SCENE_COLORS.wood.oakDark}
+          roughness={0.6}
+        />
+        <Box
+          size={[0.32, 0.12, 0.01]}
+          position={[0, 0.3, 0.175]}
+          color={SCENE_COLORS.wood.oakWarm}
+          roughness={0.5}
+        />
+        <TableLamp position={[0, 0.48, 0]} shadeColor={SCENE_COLORS.light.warmBulbSoft} />
         {/* Mood light — warm glow fills the bedroom */}
-        <pointLight position={[0, 0.7, 0]} intensity={3} color="#ffcc80" distance={5} decay={2} />
+        <pointLight
+          position={[0, 0.7, 0]}
+          intensity={3}
+          color={SCENE_COLORS.light.moodAmber}
+          distance={5}
+          decay={2}
+        />
         {/* Small stack of books */}
         <Box
           size={[0.14, 0.04, 0.1]}
           position={[0.05, 0.5, -0.05]}
-          color="#8b6050"
+          color={SCENE_COLORS.accent.bookBrownRed}
           roughness={0.9}
         />
         <Box
           size={[0.12, 0.03, 0.09]}
           position={[0.05, 0.535, -0.05]}
-          color="#506880"
+          color={SCENE_COLORS.accent.bookBlueGray}
           roughness={0.9}
         />
       </group>
 
       {/* ── Dresser — along left wall ── */}
       <group position={[leftX + 0.3, 0, 0.3]}>
-        <Box size={[0.5, 0.8, 0.9]} position={[0, 0.4, 0]} color="#6b5a48" roughness={0.6} />
-        <Box size={[0.42, 0.18, 0.01]} position={[0, 0.2, 0.45]} color="#7a6a58" roughness={0.5} />
-        <Box size={[0.42, 0.18, 0.01]} position={[0, 0.42, 0.45]} color="#7a6a58" roughness={0.5} />
-        <Box size={[0.42, 0.18, 0.01]} position={[0, 0.64, 0.45]} color="#7a6a58" roughness={0.5} />
+        <Box
+          size={[0.5, 0.8, 0.9]}
+          position={[0, 0.4, 0]}
+          color={SCENE_COLORS.wood.oakDark}
+          roughness={0.6}
+        />
+        <Box
+          size={[0.42, 0.18, 0.01]}
+          position={[0, 0.2, 0.45]}
+          color={SCENE_COLORS.wood.oakWarm}
+          roughness={0.5}
+        />
+        <Box
+          size={[0.42, 0.18, 0.01]}
+          position={[0, 0.42, 0.45]}
+          color={SCENE_COLORS.wood.oakWarm}
+          roughness={0.5}
+        />
+        <Box
+          size={[0.42, 0.18, 0.01]}
+          position={[0, 0.64, 0.45]}
+          color={SCENE_COLORS.wood.oakWarm}
+          roughness={0.5}
+        />
       </group>
 
       {/* ── Small plant on dresser ── */}
@@ -577,12 +780,16 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.05, 0.06, 0.1, 10]}
           position={[0, 0.05, 0]}
-          color="#c8b8a0"
+          color={SCENE_COLORS.fabric.rugTaupe}
           roughness={0.9}
         />
         <mesh position={[0, 0.14, 0]} castShadow>
           <sphereGeometry args={[0.08, 8, 7]} />
-          <meshStandardMaterial color="#4a7a44" roughness={0.9} metalness={0} />
+          <meshStandardMaterial
+            color={SCENE_COLORS.plant.plantSmall}
+            roughness={0.9}
+            metalness={0}
+          />
         </mesh>
       </group>
 
@@ -594,21 +801,37 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[0.5, 0.3, 0.5]}
           position={[0, 0.2, 0]}
-          color="#b0a090"
+          color={SCENE_COLORS.fabric.rugSoft}
           roughness={0.9}
           metalness={0}
         />
         <Box
           size={[0.5, 0.3, 0.08]}
           position={[0, 0.45, -0.21]}
-          color="#a09080"
+          color={SCENE_COLORS.fabric.chairBack}
           roughness={0.9}
           metalness={0}
         />
-        <Box size={[0.04, 0.14, 0.04]} position={[-0.2, 0.07, 0.2]} color="#5c4a3a" />
-        <Box size={[0.04, 0.14, 0.04]} position={[0.2, 0.07, 0.2]} color="#5c4a3a" />
-        <Box size={[0.04, 0.14, 0.04]} position={[-0.2, 0.07, -0.2]} color="#5c4a3a" />
-        <Box size={[0.04, 0.14, 0.04]} position={[0.2, 0.07, -0.2]} color="#5c4a3a" />
+        <Box
+          size={[0.04, 0.14, 0.04]}
+          position={[-0.2, 0.07, 0.2]}
+          color={SCENE_COLORS.wood.walnutAlt}
+        />
+        <Box
+          size={[0.04, 0.14, 0.04]}
+          position={[0.2, 0.07, 0.2]}
+          color={SCENE_COLORS.wood.walnutAlt}
+        />
+        <Box
+          size={[0.04, 0.14, 0.04]}
+          position={[-0.2, 0.07, -0.2]}
+          color={SCENE_COLORS.wood.walnutAlt}
+        />
+        <Box
+          size={[0.04, 0.14, 0.04]}
+          position={[0.2, 0.07, -0.2]}
+          color={SCENE_COLORS.wood.walnutAlt}
+        />
       </group>
 
       {/* ── Floor lamp — beside nightstand ── */}
@@ -620,25 +843,40 @@ function BedroomFurniture({ preset }: { preset: RoomPreset }) {
         rotation={[0, Math.PI / 2, 0]}
         width={0.3}
         height={0.2}
-        canvasColor="#d0c4b0"
+        canvasColor={SCENE_COLORS.fabric.canvasMutedWarm}
       />
       <WallFrame
         position={[leftX + 0.01, 1.45, -0.5]}
         rotation={[0, Math.PI / 2, 0]}
         width={0.2}
         height={0.28}
-        canvasColor="#b8c8b8"
+        canvasColor={SCENE_COLORS.fabric.canvasMutedSage}
       />
 
       {/* ── Window on front wall — centered (away from bed corner) ── */}
       <group position={[-0.8, 1.75, frontZ - 0.01]} rotation={[0, Math.PI, 0]}>
-        <Box size={[0.9, 0.55, 0.04]} position={[0, 0, 0]} color="#e0d8cc" roughness={0.5} />
+        <Box
+          size={[0.9, 0.55, 0.04]}
+          position={[0, 0, 0]}
+          color={SCENE_COLORS.fabric.windowFrame}
+          roughness={0.5}
+        />
         <mesh position={[0, 0, 0.021]}>
           <planeGeometry args={[0.82, 0.47]} />
-          <meshBasicMaterial color="#c8d8e8" />
+          <meshBasicMaterial color={SCENE_COLORS.light.windowSky} />
         </mesh>
-        <Box size={[0.82, 0.025, 0.01]} position={[0, 0, 0.025]} color="#e0d8cc" roughness={0.5} />
-        <Box size={[0.025, 0.47, 0.01]} position={[0, 0, 0.025]} color="#e0d8cc" roughness={0.5} />
+        <Box
+          size={[0.82, 0.025, 0.01]}
+          position={[0, 0, 0.025]}
+          color={SCENE_COLORS.fabric.windowFrame}
+          roughness={0.5}
+        />
+        <Box
+          size={[0.025, 0.47, 0.01]}
+          position={[0, 0, 0.025]}
+          color={SCENE_COLORS.fabric.windowFrame}
+          roughness={0.5}
+        />
       </group>
     </group>
   );
@@ -659,7 +897,7 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[1.2, 0.06, 0.4]}
           position={[0, 0.42, 0]}
-          color="#2a2a2a"
+          color={SCENE_COLORS.metal.matteBlack}
           roughness={0.85}
           metalness={0.05}
         />
@@ -667,7 +905,7 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[1.1, 0.02, 0.35]}
           position={[0, 0.38, 0]}
-          color="#707070"
+          color={SCENE_COLORS.metal.pendantGray}
           roughness={0.3}
           metalness={0.6}
         />
@@ -675,28 +913,28 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[0.03, 0.38, 0.03]}
           position={[-0.5, 0.19, -0.15]}
-          color="#707070"
+          color={SCENE_COLORS.metal.pendantGray}
           roughness={0.3}
           metalness={0.6}
         />
         <Box
           size={[0.03, 0.38, 0.03]}
           position={[-0.5, 0.19, 0.15]}
-          color="#707070"
+          color={SCENE_COLORS.metal.pendantGray}
           roughness={0.3}
           metalness={0.6}
         />
         <Box
           size={[0.03, 0.38, 0.03]}
           position={[0.5, 0.19, -0.15]}
-          color="#707070"
+          color={SCENE_COLORS.metal.pendantGray}
           roughness={0.3}
           metalness={0.6}
         />
         <Box
           size={[0.03, 0.38, 0.03]}
           position={[0.5, 0.19, 0.15]}
-          color="#707070"
+          color={SCENE_COLORS.metal.pendantGray}
           roughness={0.3}
           metalness={0.6}
         />
@@ -704,7 +942,7 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[1.1, 0.02, 0.02]}
           position={[0, 0.12, 0]}
-          color="#707070"
+          color={SCENE_COLORS.metal.pendantGray}
           roughness={0.3}
           metalness={0.6}
         />
@@ -715,18 +953,26 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[0.4, 1.0, 0.4]}
           position={[0, 0.5, 0]}
-          color="#f0ece6"
+          color={SCENE_COLORS.fabric.linenWarm}
           roughness={0.7}
           metalness={0}
         />
         {/* Abstract sculpture on pedestal */}
         <mesh position={[0, 1.15, 0]} castShadow>
           <sphereGeometry args={[0.12, 16, 12]} />
-          <meshStandardMaterial color="#404040" roughness={0.2} metalness={0.8} />
+          <meshStandardMaterial
+            color={SCENE_COLORS.metal.sculptureSphere}
+            roughness={0.2}
+            metalness={0.8}
+          />
         </mesh>
         <mesh position={[0.05, 1.35, 0.02]} castShadow>
           <sphereGeometry args={[0.06, 12, 10]} />
-          <meshStandardMaterial color="#505050" roughness={0.2} metalness={0.8} />
+          <meshStandardMaterial
+            color={SCENE_COLORS.metal.sculptureSmall}
+            roughness={0.2}
+            metalness={0.8}
+          />
         </mesh>
       </group>
 
@@ -735,7 +981,7 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[0.35, 0.9, 0.35]}
           position={[0, 0.45, 0]}
-          color="#f0ece6"
+          color={SCENE_COLORS.fabric.linenWarm}
           roughness={0.7}
           metalness={0}
         />
@@ -743,7 +989,7 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.05, 0.08, 0.25, 16]}
           position={[0, 1.03, 0]}
-          color="#3a3a3a"
+          color={SCENE_COLORS.metal.vaseDark}
           roughness={0.15}
           metalness={0.7}
         />
@@ -755,46 +1001,46 @@ function GalleryFurniture({ preset }: { preset: RoomPreset }) {
         rotation={[0, Math.PI / 2, 0]}
         width={0.5}
         height={0.4}
-        canvasColor="#e8e0d0"
-        frameColor="#1a1a1a"
+        canvasColor={SCENE_COLORS.fabric.canvasMutedTan}
+        frameColor={BRAND_COLORS.charcoal.deep}
       />
       <WallFrame
         position={[leftX + 0.01, 1.55, -1.0]}
         rotation={[0, Math.PI / 2, 0]}
         width={0.35}
         height={0.5}
-        canvasColor="#d0d8d4"
-        frameColor="#1a1a1a"
+        canvasColor={SCENE_COLORS.fabric.canvasMutedGray}
+        frameColor={BRAND_COLORS.charcoal.deep}
       />
       <WallFrame
         position={[rightX - 0.01, 1.6, 0.3]}
         rotation={[0, -Math.PI / 2, 0]}
         width={0.45}
         height={0.35}
-        canvasColor="#d8d0c4"
-        frameColor="#1a1a1a"
+        canvasColor={SCENE_COLORS.fabric.canvasMutedBeige}
+        frameColor={BRAND_COLORS.charcoal.deep}
       />
       <WallFrame
         position={[rightX - 0.01, 1.5, -0.8]}
         rotation={[0, -Math.PI / 2, 0]}
         width={0.3}
         height={0.45}
-        canvasColor="#c8d0c8"
-        frameColor="#1a1a1a"
+        canvasColor={SCENE_COLORS.fabric.canvasMutedGreen}
+        frameColor={BRAND_COLORS.charcoal.deep}
       />
 
       {/* Track lighting rail on ceiling — decorative */}
       <Box
         size={[0.04, 0.03, roomDepth * 0.7]}
         position={[leftX + 1.2, preset.roomHeight - 0.04, 0]}
-        color="#2a2a2a"
+        color={SCENE_COLORS.metal.matteBlack}
         roughness={0.3}
         metalness={0.5}
       />
       <Box
         size={[0.04, 0.03, roomDepth * 0.7]}
         position={[rightX - 1.2, preset.roomHeight - 0.04, 0]}
-        color="#2a2a2a"
+        color={SCENE_COLORS.metal.matteBlack}
         roughness={0.3}
         metalness={0.5}
       />
@@ -816,21 +1062,21 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.35, 0.35, 0.03, 24]}
           position={[0, 0.72, 0]}
-          color="#b8a080"
+          color={SCENE_COLORS.wood.maple}
           roughness={0.5}
           metalness={0.02}
         />
         <Cylinder
           args={[0.03, 0.03, 0.7, 8]}
           position={[0, 0.36, 0]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Cylinder
           args={[0.2, 0.2, 0.02, 16]}
           position={[0, 0.01, 0]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
@@ -838,7 +1084,7 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.035, 0.03, 0.07, 12]}
           position={[0.1, 0.77, 0.05]}
-          color="#f5f0e8"
+          color={SCENE_COLORS.fabric.porcelain}
           roughness={0.4}
           metalness={0.1}
         />
@@ -846,7 +1092,7 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.05, 0.05, 0.01, 12]}
           position={[0.1, 0.735, 0.05]}
-          color="#f5f0e8"
+          color={SCENE_COLORS.fabric.porcelain}
           roughness={0.4}
         />
       </group>
@@ -856,41 +1102,41 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.18, 0.18, 0.04, 16]}
           position={[0, 0.44, 0]}
-          color="#a08868"
+          color={SCENE_COLORS.wood.honeyOak}
           roughness={0.7}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[-0.1, 0.21, -0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[0.1, 0.21, -0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[-0.1, 0.21, 0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[0.1, 0.21, 0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Box
           size={[0.32, 0.35, 0.02]}
           position={[0, 0.62, -0.16]}
-          color="#a08868"
+          color={SCENE_COLORS.wood.honeyOak}
           roughness={0.7}
         />
       </group>
@@ -900,41 +1146,41 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.18, 0.18, 0.04, 16]}
           position={[0, 0.44, 0]}
-          color="#a08868"
+          color={SCENE_COLORS.wood.honeyOak}
           roughness={0.7}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[-0.1, 0.21, -0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[0.1, 0.21, -0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[-0.1, 0.21, 0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Cylinder
           args={[0.012, 0.012, 0.42, 6]}
           position={[0.1, 0.21, 0.1]}
-          color="#5a4a3a"
+          color={SCENE_COLORS.wood.walnut}
           roughness={0.4}
           metalness={0.2}
         />
         <Box
           size={[0.32, 0.35, 0.02]}
           position={[0, 0.62, -0.16]}
-          color="#a08868"
+          color={SCENE_COLORS.wood.honeyOak}
           roughness={0.7}
         />
       </group>
@@ -944,16 +1190,21 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Box
           size={[0.5, 0.06, 1.8]}
           position={[0, 0.9, 0]}
-          color="#9a8068"
+          color={SCENE_COLORS.wood.pecan}
           roughness={0.4}
           metalness={0.02}
         />
-        <Box size={[0.45, 0.88, 1.75]} position={[0, 0.44, 0]} color="#b09878" roughness={0.7} />
+        <Box
+          size={[0.45, 0.88, 1.75]}
+          position={[0, 0.44, 0]}
+          color={SCENE_COLORS.wood.blondeOak}
+          roughness={0.7}
+        />
         {/* Espresso machine */}
         <Box
           size={[0.22, 0.3, 0.25]}
           position={[0, 1.08, -0.5]}
-          color="#c0c0c0"
+          color={SCENE_COLORS.metal.chrome}
           roughness={0.2}
           metalness={0.6}
         />
@@ -961,13 +1212,13 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.04, 0.04, 0.15, 10]}
           position={[0, 1.0, 0.2]}
-          color="#e8dcc8"
+          color={SCENE_COLORS.fabric.jarCream}
           roughness={0.6}
         />
         <Cylinder
           args={[0.05, 0.05, 0.2, 10]}
           position={[0, 1.03, 0.5]}
-          color="#c0a888"
+          color={SCENE_COLORS.accent.shelfJarTan}
           roughness={0.6}
         />
       </group>
@@ -977,20 +1228,26 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.005, 0.005, 0.5, 6]}
           position={[0, -0.25, 0]}
-          color="#555555"
+          color={SCENE_COLORS.metal.pendantCord}
           roughness={0.3}
           metalness={0.4}
         />
         <mesh position={[0, -0.55, 0]} castShadow>
           <cylinderGeometry args={[0.02, 0.15, 0.12, 16, 1, true]} />
           <meshStandardMaterial
-            color="#555555"
+            color={SCENE_COLORS.metal.pendantCord}
             roughness={0.4}
             metalness={0.3}
             side={THREE.DoubleSide}
           />
         </mesh>
-        <pointLight position={[0, -0.58, 0]} intensity={8} color="#fff0cc" distance={5} decay={2} />
+        <pointLight
+          position={[0, -0.58, 0]}
+          intensity={8}
+          color={SCENE_COLORS.light.pendantWarm}
+          distance={5}
+          decay={2}
+        />
       </group>
 
       {/* Second pendant light above counter */}
@@ -998,28 +1255,43 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
         <Cylinder
           args={[0.005, 0.005, 0.4, 6]}
           position={[0, -0.2, 0]}
-          color="#555555"
+          color={SCENE_COLORS.metal.pendantCord}
           roughness={0.3}
           metalness={0.4}
         />
         <mesh position={[0, -0.45, 0]} castShadow>
           <cylinderGeometry args={[0.02, 0.12, 0.1, 16, 1, true]} />
           <meshStandardMaterial
-            color="#555555"
+            color={SCENE_COLORS.metal.pendantCord}
             roughness={0.4}
             metalness={0.3}
             side={THREE.DoubleSide}
           />
         </mesh>
-        <pointLight position={[0, -0.48, 0]} intensity={5} color="#fff0cc" distance={4} decay={2} />
+        <pointLight
+          position={[0, -0.48, 0]}
+          intensity={5}
+          color={SCENE_COLORS.light.pendantWarm}
+          distance={4}
+          decay={2}
+        />
       </group>
 
       {/* Menu board on left wall — chalkboard style */}
       <group position={[leftX + 0.01, 1.5, 0.3]} rotation={[0, Math.PI / 2, 0]}>
-        <Box size={[0.6, 0.45, 0.03]} position={[0, 0, 0]} color="#5a4a3a" roughness={0.8} />
+        <Box
+          size={[0.6, 0.45, 0.03]}
+          position={[0, 0, 0]}
+          color={SCENE_COLORS.wood.walnut}
+          roughness={0.8}
+        />
         <mesh position={[0, 0, 0.016]}>
           <planeGeometry args={[0.54, 0.39]} />
-          <meshStandardMaterial color="#2a3a2a" roughness={0.95} metalness={0} />
+          <meshStandardMaterial
+            color={SCENE_COLORS.plant.chalkboardDark}
+            roughness={0.95}
+            metalness={0}
+          />
         </mesh>
       </group>
 
@@ -1030,34 +1302,55 @@ function CafeFurniture({ preset }: { preset: RoomPreset }) {
       <Box
         size={[0.6, 0.03, 0.15]}
         position={[leftX + 0.08, 1.1, -0.5]}
-        color="#9a8068"
+        color={SCENE_COLORS.wood.pecan}
         roughness={0.6}
       />
       <Cylinder
         args={[0.04, 0.04, 0.12, 10]}
         position={[leftX + 0.08, 1.18, -0.6]}
-        color="#e0cca0"
+        color={SCENE_COLORS.accent.shelfJarCream}
         roughness={0.7}
       />
       <Cylinder
         args={[0.03, 0.03, 0.1, 10]}
         position={[leftX + 0.08, 1.17, -0.4]}
-        color="#c0a070"
+        color={SCENE_COLORS.accent.shelfJarBrown}
         roughness={0.7}
       />
 
       {/* Window frame on left wall — bright daylight feel */}
       <group position={[leftX + 0.01, 1.4, -1.2]} rotation={[0, Math.PI / 2, 0]}>
-        <Box size={[0.7, 0.9, 0.04]} position={[0, 0, 0]} color="#c8b8a0" roughness={0.5} />
+        <Box
+          size={[0.7, 0.9, 0.04]}
+          position={[0, 0, 0]}
+          color={SCENE_COLORS.fabric.rugTaupe}
+          roughness={0.5}
+        />
         <mesh position={[0, 0, 0.021]}>
           <planeGeometry args={[0.62, 0.82]} />
-          <meshBasicMaterial color="#d8e8f0" />
+          <meshBasicMaterial color={SCENE_COLORS.light.windowSkyBright} />
         </mesh>
         {/* Window cross */}
-        <Box size={[0.62, 0.03, 0.01]} position={[0, 0, 0.025]} color="#c8b8a0" roughness={0.5} />
-        <Box size={[0.03, 0.82, 0.01]} position={[0, 0, 0.025]} color="#c8b8a0" roughness={0.5} />
+        <Box
+          size={[0.62, 0.03, 0.01]}
+          position={[0, 0, 0.025]}
+          color={SCENE_COLORS.fabric.rugTaupe}
+          roughness={0.5}
+        />
+        <Box
+          size={[0.03, 0.82, 0.01]}
+          position={[0, 0, 0.025]}
+          color={SCENE_COLORS.fabric.rugTaupe}
+          roughness={0.5}
+        />
         {/* Daylight from window */}
-        <pointLight position={[0, 0, 0.3]} intensity={4} color="#fff8e8" distance={4} decay={2} />
+        <pointLight
+          position={[0, 0, 0.3]}
+          intensity={4}
+          color={SCENE_COLORS.light.artworkAccent}
+          distance={4}
+          decay={2}
+        />
       </group>
     </group>
   );

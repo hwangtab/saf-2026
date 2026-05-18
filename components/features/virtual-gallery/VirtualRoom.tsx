@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import RoomGeometry from './RoomGeometry';
 import RoomFurniture from './RoomFurniture';
 import ArtworkPlane from './ArtworkPlane';
+import { SCENE_COLORS } from './sceneColors';
 import type { RoomPreset } from './roomPresets';
 import type { ArtworkDimensions } from '@/lib/utils/parseArtworkSize';
 
@@ -145,7 +146,7 @@ function LoadingPlaceholder() {
   return (
     <mesh position={[0, 1.5, -2]}>
       <planeGeometry args={[0.5, 0.5]} />
-      <meshBasicMaterial color="#333333" />
+      <meshBasicMaterial color={SCENE_COLORS.metal.doorDark} />
     </mesh>
   );
 }

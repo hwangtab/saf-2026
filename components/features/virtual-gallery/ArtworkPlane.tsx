@@ -3,6 +3,7 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { SCENE_COLORS } from './sceneColors';
 import type { ArtworkDimensions } from '@/lib/utils/parseArtworkSize';
 
 interface ArtworkPlaneProps {
@@ -108,7 +109,7 @@ export default function ArtworkPlane({ imageUrl, dimensions, wallY }: ArtworkPla
         angle={0.6}
         penumbra={0.9}
         intensity={8}
-        color="#fff6e8"
+        color={SCENE_COLORS.light.artworkSpot}
         distance={3}
         decay={2}
         castShadow
@@ -120,19 +121,27 @@ export default function ArtworkPlane({ imageUrl, dimensions, wallY }: ArtworkPla
       {/* Frame */}
       <mesh position={[0, 0, -FRAME_DEPTH / 2]} castShadow receiveShadow>
         <boxGeometry args={[outerWidth, outerHeight, FRAME_DEPTH]} />
-        <meshStandardMaterial color="#2a2018" roughness={0.35} metalness={0.05} />
+        <meshStandardMaterial
+          color={SCENE_COLORS.wood.frameDark}
+          roughness={0.35}
+          metalness={0.05}
+        />
       </mesh>
 
       {/* Inner lip */}
       <mesh position={[0, 0, 0.001]}>
         <planeGeometry args={[mountWidth + INNER_LIP * 2, mountHeight + INNER_LIP * 2]} />
-        <meshStandardMaterial color="#8b7d5e" roughness={0.3} metalness={0.3} />
+        <meshStandardMaterial
+          color={SCENE_COLORS.wood.frameBrass}
+          roughness={0.3}
+          metalness={0.3}
+        />
       </mesh>
 
       {/* Mount */}
       <mesh position={[0, 0, 0.002]}>
         <planeGeometry args={[mountWidth, mountHeight]} />
-        <meshStandardMaterial color="#f5f3ee" roughness={0.95} metalness={0} />
+        <meshStandardMaterial color={SCENE_COLORS.fabric.artMat} roughness={0.95} metalness={0} />
       </mesh>
 
       {/* Artwork */}
@@ -141,7 +150,11 @@ export default function ArtworkPlane({ imageUrl, dimensions, wallY }: ArtworkPla
         {loaded ? (
           <meshBasicMaterial map={loaded.texture} toneMapped={false} />
         ) : (
-          <meshStandardMaterial color="#e0d8cc" roughness={0.8} metalness={0} />
+          <meshStandardMaterial
+            color={SCENE_COLORS.fabric.windowFrame}
+            roughness={0.8}
+            metalness={0}
+          />
         )}
       </mesh>
 

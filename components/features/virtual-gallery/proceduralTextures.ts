@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { BRAND_COLORS } from '@/lib/colors';
+import { SCENE_COLORS } from './sceneColors';
 
 /* ─────────────────────────────────────────────────────────────────────
  *  Procedural texture utilities – Canvas2D → THREE.Texture
@@ -31,8 +32,8 @@ function toTexture(canvas: HTMLCanvasElement, repeatX = 2, repeatY = 2): THREE.C
 /* ── Wood grain ──────────────────────────────────────────────────────── */
 
 export function createWoodTexture(
-  baseColor = '#9a7a5a',
-  grainColor = '#7a5a3a',
+  baseColor: string = SCENE_COLORS.wood.oakBrown,
+  grainColor: string = SCENE_COLORS.wood.oakMid,
   repeatX = 2,
   repeatY = 4
 ): THREE.CanvasTexture {
@@ -72,7 +73,7 @@ export function createWoodTexture(
 /* ── Fabric / linen ──────────────────────────────────────────────────── */
 
 export function createFabricTexture(
-  baseColor = '#c8bfb0',
+  baseColor: string = SCENE_COLORS.fabric.duvet,
   repeatX = 4,
   repeatY = 4
 ): THREE.CanvasTexture {
@@ -104,7 +105,7 @@ export function createFabricTexture(
 /* ── Wall / plaster ──────────────────────────────────────────────────── */
 
 export function createPlasterTexture(
-  baseColor = '#e8e0d4',
+  baseColor: string,
   repeatX = 3,
   repeatY = 3
 ): THREE.CanvasTexture {
@@ -128,7 +129,7 @@ export function createPlasterTexture(
 /* ── Floor wood (wider planks) ───────────────────────────────────────── */
 
 export function createFloorTexture(
-  baseColor = '#b8956a',
+  baseColor: string,
   repeatX = 3,
   repeatY = 6
 ): THREE.CanvasTexture {
