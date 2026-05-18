@@ -627,7 +627,29 @@ export default async function PetitionOhYoonPage({
             </div>
           </article>
 
-          <p className="mt-10 md:mt-12 text-sm text-charcoal-muted text-center break-keep italic">
+          {/* 추가 탐색 링크 — 캠페인 방문자를 스토리/홈으로 연결하여 캠페인 종료 후 트래픽 유지 */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/stories"
+              className="inline-flex items-center justify-center rounded-lg border border-charcoal/20 hover:border-primary hover:text-primary-strong text-charcoal-deep px-5 py-3 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <span className="inline-flex items-center gap-2">
+                {t('exploreStoriesLabel')}
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </span>
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center rounded-lg border border-charcoal/20 hover:border-primary hover:text-primary-strong text-charcoal-deep px-5 py-3 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <span className="inline-flex items-center gap-2">
+                {t('backToHomeLabel')}
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </span>
+            </Link>
+          </div>
+
+          <p className="mt-8 md:mt-10 text-sm text-charcoal-muted text-center break-keep italic">
             {t('tributeClosingNote')}
           </p>
         </div>

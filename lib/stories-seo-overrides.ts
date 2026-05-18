@@ -22,14 +22,14 @@ export interface StorySeoOverride {
 
 export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
   'editions-explained': {
-    // GSC: 11일 364 imp / 2 click (CTR 0.55%, pos ~8) — 정의형 검색 특성상 "바로 답해주는"
-    // description이 CTR을 끌어올림. 제목을 더 간결하게, 설명은 핵심 답변을 첫 문장에 배치.
-    titleKo: '에디션 뜻 완전 정리 — 미술 작품 5/10, AP, EA, 원화·한정판 차이',
-    titleEn: 'Art Edition Explained — What 5/10, AP, EA Mean & Original vs Limited Prints',
+    // GSC: 28일 502 imp / 2 click (CTR 0.4%, pos ~7.9) — "에디션 뜻"(416 imp, CTR 0%) 키워드 직접 포함.
+    // "넘버링 뜻"(78 imp), "한정판 뜻"(36 imp)도 description에 흡수.
+    titleKo: '에디션 뜻 완벽 정리 — 오픈·리미티드·유니크 에디션 차이 (넘버링·한정판 포함)',
+    titleEn: 'Art Edition Explained — Open, Limited & Unique Editions, Numbering & AP/EA Meaning',
     descriptionKo:
-      '에디션은 작품의 발행 수량. 5/10이면 10점 한정 중 5번째. AP·EA·HC 약어 뜻, 원화와 판화의 가격 차이까지 씨앗페 작품 실사례로 5분에 이해합니다.',
+      '에디션 뜻이 궁금하다면 — 오픈·리미티드·유니크 에디션 차이, 넘버링(5/10) 읽는 법, 한정판 의미, AP·EA·HC 약어까지 작가가 직접 설명합니다.',
     descriptionEn:
-      '5/10 = the 5th print out of 10 made. What AP, EA, HC mean, why limited prints differ in price from originals — explained with real SAF artwork examples.',
+      'What do open, limited, and unique editions mean? How to read edition numbers (5/10), what AP, EA, HC stand for — explained with real SAF artwork examples.',
   },
   'world-of-printmaking': {
     titleKo: '판화 뜻과 종류 — 원본이 여러 장이라고? 판화의 세계 | 씨앗페 매거진',
