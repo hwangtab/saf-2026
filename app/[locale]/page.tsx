@@ -13,6 +13,7 @@ import MasterArtists from '@/components/features/MasterArtists';
 import EntryLevelArtworks from '@/components/features/EntryLevelArtworks';
 import EmergingArtists from '@/components/features/EmergingArtists';
 import JoinCommunityCTA from '@/components/features/JoinCommunityCTA';
+import MagazineSection from '@/components/features/MagazineSection';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
@@ -189,6 +190,9 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       {/* 신진 작가 발견 — 매뉴얼 6.4 [G] + 9.2 컬렉션 3.
           페르소나 B "내가 먼저 발견" 자긍심 자극. 거장 6명 제외 + 작가별 1점 dedupe + sold/reserved 제외. */}
       <EmergingArtists locale={locale} />
+
+      {/* 매거진 [K] — 매뉴얼 6.4 [K]. 최신 기사 3건. 깊이감 + 재방문 의지 형성. */}
+      <MagazineSection locale={locale} />
 
       {/* 회원 가입 CTA [L] — 매뉴얼 6.4 [L].
           Impact Stats 제거 후 메인에서 회원 가입 동선이 Footer만 남았던 회귀 보강.

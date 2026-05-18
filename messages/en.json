@@ -212,6 +212,11 @@
       "parkSaenggwangTitle": "Park Saeng-gwang Drawings",
       "parkSaenggwangDesc": "First breaths the master of five colors held in pencil. May 20 (Wed) – Jun 8 (Mon) · M-Tower 6F, Eunpyeong, Seoul · 11am–8pm. The artist's works are available now.",
       "parkSaenggwangCta": "Park Saeng-gwang artist page"
+    },
+    "magazine": {
+      "title": "SAF Magazine",
+      "subtitle": "Artist interviews, collecting guides, and walks through Korean contemporary art",
+      "viewAll": "Browse all articles"
     }
   },
   "breadcrumbs": {
@@ -232,16 +237,6 @@
     "ohYoon": "Oh Yoon Special Exhibition",
     "parkSaenggwang": "Park Saeng-gwang Drawings",
     "transparency": "Transparency Reports"
-  },
-  "statistics": {
-    "exclusionRate": "Primary Banking Access Gap",
-    "repaymentRate": "Mutual Aid Loan Repayment Rate",
-    "supportedArtists": "Supported Artists",
-    "fundRaised": "Fund Raised",
-    "loanCapacity": "Available Loan Amount",
-    "unitPercent": "%",
-    "unitPeople": "",
-    "unitKrw": "KRW"
   },
   "seo": {
     "siteTitle": "SAF Online Gallery",
@@ -290,6 +285,7 @@
     "shareTitle": "{title} - {artist} | SAF Online Artworks",
     "shareDescription": "View \"{title}\" by {artist} and support Korean artists.",
     "buyOnline": "Buy Online",
+    "stickyBuy": "Collect This Work",
     "orContactDirectly": "or contact directly",
     "wantToBuy": "Want to purchase this artwork?",
     "stepInquiry": "Inquire",
@@ -366,11 +362,6 @@
     "sectionTitle": "Related materials",
     "originalKoreanTitle": "Original Korean article",
     "originalKoreanDescription": "This article text is currently available in Korean. Open the source to read the original version."
-  },
-  "language": {
-    "ko": "한국어",
-    "en": "English",
-    "switchTo": "Switch to Korean"
   },
   "feedbackWidget": {
     "buttonLabel": "Send feedback",

@@ -39,6 +39,7 @@ import ArtworkGridCard from '@/components/features/ArtworkGridCard';
 import { shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
+import ArtworkPurchaseStickyMobile from '@/components/features/ArtworkPurchaseStickyMobile';
 import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
@@ -220,8 +221,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const displayArtist = locale === 'en' && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const hasActionablePrice = parsedPrice !== Infinity;
 
-  // 매뉴얼 5.8 매체별 진품 라벨 — Sprint 2 5 매체(회화·한국화·드로잉·판화·사후판화)만 처리.
-  const mediumLabel = getMediumLabel({ category: artwork.category, edition: artwork.edition });
+  // 매뉴얼 5.8 매체별 진품 라벨 — 11개 매체 전체 처리.
+  const mediumLabel = getMediumLabel({
+    category: artwork.category,
+    edition: artwork.edition,
+    edition_type: artwork.edition_type,
+  });
   const mediumLabelText = mediumLabel ? (locale === 'en' ? mediumLabel.en : mediumLabel.ko) : null;
 
   // Generate JSON-LD schemas — breadcrumb에 카테고리 계층 포함
@@ -638,6 +643,18 @@ export default async function ArtworkDetailPage({ params }: Props) {
               </div>
             </div>
           )}
+
+          {/* 모바일 하단 sticky CTA — 매뉴얼 7.2 [4] · 11. md 이상에서는 사이드바 CTA 노출. */}
+          <ArtworkPurchaseStickyMobile
+            artworkId={artwork.id}
+            artworkTitle={artwork.title}
+            artist={artwork.artist}
+            shopUrl={artwork.shopUrl}
+            sold={artwork.sold}
+            reserved={artwork.reserved}
+            hasActionablePrice={hasActionablePrice}
+            displayPrice={localizedPrice}
+          />
 
           {/* Recently Sold Section */}
           <RecentlySoldSection

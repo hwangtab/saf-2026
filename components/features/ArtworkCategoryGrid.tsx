@@ -198,7 +198,11 @@ function InlineGridCard({
   const showMaterial = Boolean(artwork.material);
   const showSize = Boolean(artwork.size);
   // 매뉴얼 5.8 매체별 진품 라벨 — ArtworkCard·ArtworkGridCard와 동일 좌상단 위치.
-  const mediumLabel = getMediumLabel({ category: artwork.category, edition: artwork.edition });
+  const mediumLabel = getMediumLabel({
+    category: artwork.category,
+    edition: artwork.edition,
+    edition_type: artwork.edition_type,
+  });
   const showMediumLabel = mediumLabel && !artwork.sold;
   const mediumLabelText = locale === 'en' ? mediumLabel?.en : mediumLabel?.ko;
 

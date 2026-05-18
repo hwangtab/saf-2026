@@ -212,6 +212,11 @@
       "parkSaenggwangTitle": "박생광 드로잉전",
       "parkSaenggwangDesc": "오방색의 거장이 연필로 잡아둔 첫 호흡들. 5/20(수)~6/8(월) · 은평 M타워 6층 · 오전 11시~오후 8시. 작가의 작품은 지금 만나보실 수 있습니다.",
       "parkSaenggwangCta": "박생광 작가 페이지"
+    },
+    "magazine": {
+      "title": "씨앗페 매거진",
+      "subtitle": "작가 인터뷰, 컬렉팅 가이드, 한국 현대미술 산책",
+      "viewAll": "전체 매거진 보기"
     }
   },
   "breadcrumbs": {
@@ -232,16 +237,6 @@
     "ohYoon": "오윤 특별전",
     "parkSaenggwang": "박생광 드로잉전",
     "transparency": "운용 보고서"
-  },
-  "statistics": {
-    "exclusionRate": "제1금융권 접근 격차",
-    "repaymentRate": "상호부조 대출 상환율",
-    "supportedArtists": "지원 예술인 수",
-    "fundRaised": "조성 기금",
-    "loanCapacity": "대출 가능 금액",
-    "unitPercent": "%",
-    "unitPeople": "명",
-    "unitKrw": "원"
   },
   "seo": {
     "siteTitle": "씨앗페 온라인 갤러리",
@@ -290,6 +285,7 @@
     "shareTitle": "{title} · {artist} 원본 작품",
     "shareDescription": "{artist}의 원본 작품 \"{title}\". 구매 수익은 예술인 상호부조 기금이 됩니다. 무료 배송·7일 반품.",
     "buyOnline": "온라인 구매",
+    "stickyBuy": "이 작품 소장하기",
     "orContactDirectly": "또는 직접 문의",
     "wantToBuy": "작품 구매를 원하시나요?",
     "stepInquiry": "구매 문의",
@@ -366,11 +362,6 @@
     "sectionTitle": "작가 관련 자료",
     "originalKoreanTitle": "원문 기사 (한국어)",
     "originalKoreanDescription": "이 기사 내용은 한국어 원문으로 제공됩니다. 원문 링크에서 확인해 주세요."
-  },
-  "language": {
-    "ko": "한국어",
-    "en": "English",
-    "switchTo": "영어로 전환"
   },
   "feedbackWidget": {
     "buttonLabel": "의견 보내기",

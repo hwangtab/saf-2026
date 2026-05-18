@@ -52,7 +52,11 @@ export default function ArtworkGridCard({
   const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
   // 매뉴얼 5.8 매체별 진품 라벨 — ArtworkCard와 동일 위치(좌상단). sold/reserved 시 우상단 배지와
   // 겹치지 않게 좌상단. sold일 때는 라벨 자동 숨김 (배지는 그대로).
-  const mediumLabel = getMediumLabel({ category: artwork.category, edition: artwork.edition });
+  const mediumLabel = getMediumLabel({
+    category: artwork.category,
+    edition: artwork.edition,
+    edition_type: artwork.edition_type,
+  });
   const showMediumLabel = mediumLabel && !artwork.sold;
   const mediumLabelText = locale === 'en' ? mediumLabel?.en : mediumLabel?.ko;
   const rawMaterial = artwork.material;
