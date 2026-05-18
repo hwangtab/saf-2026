@@ -15,14 +15,15 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-const IS_CI = process.env.CI === '1' || !!process.env.VERCEL;
-
 if (!supabaseUrl || !supabaseKey) {
   console.warn('[sync-site-stats] Supabase 환경 변수 없음 — site-stats.ts 갱신 건너뜀 (기존 상수 유지)');
   process.exit(0);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseFetch = (url, opts) =>
+  fetch(url, { ...opts, signal: opts?.signal ?? AbortSignal.timeout(8000) });
+
+const supabase = createClient(supabaseUrl, supabaseKey, { global: { fetch: supabaseFetch } });
 
 const STATS_PATH = path.join(__dirname, '..', 'lib', 'site-stats.ts');
 

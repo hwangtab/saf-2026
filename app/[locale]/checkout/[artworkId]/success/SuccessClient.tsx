@@ -108,19 +108,21 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
           }
           setPageState('success');
         } else if (data.status === 'WAITING_FOR_DEPOSIT') {
-          setVirtualAccount(data.virtualAccount ?? null);
-          setPageState('virtual');
-        } else {
-          // Toss가 DONE/WAITING_FOR_DEPOSIT 외 성공 상태를 반환하는 경우에도 purchase 발화
-          const purchaseKey = `purchase_fired_${orderId}`;
-          if (!sessionStorage.getItem(purchaseKey)) {
-            sessionStorage.setItem(purchaseKey, '1');
-            trackEvent('purchase', {
+          // 가상계좌 발급 이벤트 — 실제 결제 완료(purchase)는 입금 확인 웹훅에서 처리
+          const vaKey = `va_issued_${orderId}`;
+          if (!sessionStorage.getItem(vaKey)) {
+            sessionStorage.setItem(vaKey, '1');
+            trackEvent('virtual_account_issued', {
               transaction_id: orderId,
               value: Number(amount),
               currency,
             });
           }
+          setVirtualAccount(data.virtualAccount ?? null);
+          setPageState('virtual');
+        } else {
+          // IN_PROGRESS·PARTIAL_CANCELED 등 미확정 상태 — purchase 미발사
+          // (실제 완료는 Toss 웹훅이 DONE 상태로 처리)
           setPageState('success');
         }
       } catch {
