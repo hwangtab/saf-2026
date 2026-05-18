@@ -30,10 +30,9 @@ import PetitionFAQ from './_components/PetitionFAQ';
 import ProposalModal from './_components/ProposalModal';
 import SignForm from './_components/SignForm';
 
-// ISR revalidate=60: 60초마다 background 갱신. 카운터 실시간 표시는 ProgressBar의 client
-// polling이 책임 — ISR 시점에 cookies 컨텍스트 없어 fetchPetitionCount가 0을 반환해도
-// ProgressBar mount 직후 refresh()가 실값을 덮어씀. force-dynamic은 cold Vercel Function
-// + petition_counts view planning(~1초)이 합쳐져 27~60초 streaming hang을 유발했음.
+// ISR revalidate=60: 60초마다 background 갱신.
+// 카운터는 /api/petition/[slug]/counts edge-cached API route를 ProgressBar가 polling (N→1 결합).
+// is_active만 SSR에서 petitions 단일 row lookup — view 풀스캔 없음.
 export const revalidate = 60;
 
 // DB 과부하 응급 차단 플래그 — true 시 fetchPetitionCount/ProgressBar polling 완전 비활성.
@@ -42,29 +41,17 @@ const MAINTENANCE_MODE = false;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
 
-interface PetitionCount {
-  total: number;
-  region_top_count: number;
-  recent_24h: number;
-  is_active: boolean;
-}
-
-async function fetchPetitionCount(): Promise<PetitionCount> {
+async function fetchPetitionActive(): Promise<boolean> {
   try {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase
-      .from('petition_counts')
-      .select('total, region_top_count, recent_24h, is_active')
-      .eq('petition_slug', PETITION_OH_YOON_SLUG)
+      .from('petitions')
+      .select('is_active')
+      .eq('slug', PETITION_OH_YOON_SLUG)
       .maybeSingle();
-    return {
-      total: data?.total ?? 0,
-      region_top_count: data?.region_top_count ?? 0,
-      recent_24h: data?.recent_24h ?? 0,
-      is_active: data?.is_active ?? true,
-    };
+    return data?.is_active ?? true;
   } catch {
-    return { total: 0, region_top_count: 0, recent_24h: 0, is_active: true };
+    return true;
   }
 }
 
@@ -163,7 +150,7 @@ export default async function PetitionOhYoonPage({
   }
 
   const deadline = formatPetitionDeadline(locale);
-  const { total, region_top_count, recent_24h, is_active } = await fetchPetitionCount();
+  const is_active = await fetchPetitionActive();
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: 'SAF2026', url: SITE_URL },
@@ -216,12 +203,7 @@ export default async function PetitionOhYoonPage({
             {t('heroDeadlineLine', { deadlineFull: deadline.full })}
           </p>
           <div className="mb-8">
-            <ProgressBar
-              initialTotal={total}
-              goal={PETITION_OH_YOON_GOAL}
-              initialRegionTopCount={region_top_count}
-              initialRecent24h={recent_24h}
-            />
+            <ProgressBar goal={PETITION_OH_YOON_GOAL} />
           </div>
           <a
             href="#sign-form"
