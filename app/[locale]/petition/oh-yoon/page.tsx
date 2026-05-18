@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
@@ -504,10 +504,7 @@ export default async function PetitionOhYoonPage({
             <p className="text-base text-charcoal leading-relaxed break-keep mb-4">
               {t('saffestBody')}
             </p>
-            <Link
-              href={`/${locale}`}
-              className="text-primary font-semibold hover:underline text-sm"
-            >
+            <Link href="/" className="text-primary font-semibold hover:underline text-sm">
               <span className="inline-flex items-center gap-1">
                 {t('saffestCta')}
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -574,7 +571,7 @@ export default async function PetitionOhYoonPage({
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 mt-auto pt-2">
                   <Link
-                    href={`/${locale}/special/oh-yoon`}
+                    href="/special/oh-yoon"
                     className="inline-flex items-center justify-center rounded-lg bg-charcoal-deep hover:bg-charcoal text-white px-5 py-3 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     <span className="inline-flex items-center gap-2">
@@ -583,7 +580,7 @@ export default async function PetitionOhYoonPage({
                     </span>
                   </Link>
                   <Link
-                    href={`/${locale}/artworks/artist/${encodeURIComponent('오윤')}`}
+                    href={`/artworks/artist/${encodeURIComponent('오윤')}`}
                     className="inline-flex items-center justify-center rounded-lg border border-charcoal/20 bg-white hover:border-primary hover:text-primary-strong text-charcoal-deep px-5 py-3 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     <span className="inline-flex items-center gap-2">
