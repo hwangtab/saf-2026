@@ -1,5 +1,75 @@
 [
   {
+    "hash": "fa40fe60",
+    "type": "fix",
+    "scope": "special",
+    "subject": "거장 특별전 페이지 후속 업데이트 — 민정기 판문점·오윤 청원 섹션",
+    "summary": "Phase 3에서 추가된 거장 특별전 페이지 4종 후속 개선 + 오윤 청원 페이지 마이너 업데이트",
+    "body": "- 민정기(min-joungki): \"Quote Section\" → \"2018 판문점 하이라이트\" 리프레이밍, 블록쿼트→div, 버튼 연도 뱃지 적용\n- 이철수(lee-cheolsoo): 레이아웃 후속 조정\n- 오윤(oh-yoon): 특별전 페이지 마이너 픽스\n- 박불똥(park-buldong): 레이아웃 후속 조정\n- petition/oh-yoon: 청원 페이지 마이너 업데이트",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "b55c24cc",
+    "type": "fix",
+    "scope": "seo·scripts",
+    "subject": "SEO 타이틀 GSC CTR 최적화 + site-stats 동적 갱신 전환 + validate URL 검증",
+    "summary": "에디션 매거진 SEO 타이틀을 GSC CTR 데이터 기반으로 개선, site-stats를 정적 import에서 prebuild 동적 갱신으로 전환, validate_artworks에 Supabase Storage URL 검증 추가",
+    "body": "- lib/stories-seo-overrides.ts: 에디션 뜻 슬러그 타이틀 간결화 + description 첫 문장 답변 배치 (GSC pos ~8 → CTR 개선)\n- lib/site-stats.ts: artworks import 제거 → sync-site-stats.js가 빌드 전 자동 갱신 (DB 실시간 반영)\n- scripts/validate_artworks.js: images[] 항목이 Supabase Storage URL인지 검증 — 로컬 경로 혼입 방지",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "0507b54f",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "purchase 이벤트 이중 발화 방지 + admin-dashboard 쿼리 수정",
+    "summary": "Toss 결제 성공 페이지에서 purchase GA4 이벤트가 중복 발화되는 버그 수정, admin 대시보드 overview 쿼리에서 refund_requested 상태 제외 누락 수정",
+    "body": "- SuccessClient: sessionStorage 기반 purchase_fired_<orderId> 가드 추가 — 새로고침·뒤로가기로 이벤트 재발화 방지\n- admin-dashboard-overview: .not('status', 'in', '(completed,cancelled,refunded)') → refund_requested 추가",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "c0d3ce7b",
+    "type": "feat",
+    "scope": "analytics",
+    "subject": "GA4·GSC 분석 인프라 — 클라이언트·스크립트·workflow 추가",
+    "summary": "GA4 Data API + Google Search Console API 기반 분석 인프라 구축 — admin 패널 WebVitals·주간 리포트·Search Console 데이터를 코드로 자동화",
+    "body": "- lib/ga4-client.ts: GA4 Data API 래퍼 (SA/OAuth/access_token 우선순위 인증)\n- lib/gsc-client.ts: GSC API 래퍼 (검색 성능 쿼리)\n- scripts/ga4-property-diag.js: GA4 속성 진단\n- scripts/ga4-quick-check.js: GA4 빠른 확인\n- scripts/ga4-web-vitals.js: Core Web Vitals GA4 조회\n- scripts/ga4-grant-sa-access.js: SA → GA4 뷰어 권한 자동 부여\n- scripts/gsc-grant-sa-access.js: SA → GSC 권한 자동 부여\n- scripts/lib/ga4-auth.js: GA4 인증 공통 모듈\n- .github/workflows/ga4-weekly-report.yml: 주간 GA4 리포트 GitHub Issue 자동 생성\n- .github/workflows/ga4-health-check.yml / gsc-health-check.yml: API 헬스체크\n- .env.local.example: GA4_SERVICE_ACCOUNT_KEY·GSC 인증 가이드 추가",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "670ac098",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "artworkCard pending·inquiry sentinel 한→영 정규화 (PR-1)",
+    "summary": "'확인 중'·'문의' sentinel을 영문 locale에서 그대로 노출하던 회귀 수정 — localizeDataValue가 next-intl artworkCard.pendingValue/inquiryValue 토큰으로 변환하도록 교체",
+    "body": "- messages/ko.json + en.json에 pendingValue(\"확인 중\"/\"Pending\")·inquiryValue(\"문의\"/\"Inquiry\") 추가 (Phase 2 commit에 포함)\n- ArtworkCard (client): useTranslations('artworkCard')에서 두 키 소비\n- ArtworkGridCard·ArtworkCategoryGrid·WishlistPageContent: props interface에 두 라벨 추가, 부모에서 tCard('pendingValue') 전달\n- EmergingArtists·EntryLevelArtworks: ArtworkGridCard 호출부에 두 props 추가\n- wishlist/page.tsx: WishlistPageContent 호출부에 두 props 추가\n- artworks/[id]/page.tsx: server component localizeDataValue → tCard('pendingValue')/'inquiryValue'\n- artworks/[id]/opengraph-image.tsx: {isEn ? 'SOLD' : '판매완료'} → tCard('soldBadge') (getTranslations 병렬 fetch)\n- RelatedArtworkCard: {isEn ? 'Sold' : '판매 완료'} → t('soldBadge')",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "6ab02380",
+    "type": "feat",
+    "scope": "ci",
+    "subject": "e2e a11y 인프라 추가 — playwright + @axe-core/playwright (PR-C/D)",
+    "summary": "CI에 e2e-a11y job 신설 + package.json에 playwright 의존성·스크립트 추가 — axe-core 기반 WCAG 2.0/2.1 AA 자동 접근성 검증을 배포 파이프라인에 통합",
+    "body": "- ci.yml: e2e-a11y job (ci job 완료 후 실행 → build → next start → playwright test)\n  - npx wait-on 대신 curl until 루프로 wait (registry 의존 제거)\n  - playwright-report artifact 7일 보존\n- package.json: @axe-core/playwright^4.11.3, @playwright/test^1.60.0 devDeps 추가\n  - npm scripts: test:a11y, test:a11y:ui\n  - prebuild: sync-site-stats → next build 순서 확정",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "22e17fe0",
+    "type": "feat",
+    "scope": "colors",
+    "subject": "BRAND_COLORS 서드파티·success 토큰 신설 + 참조 컴포넌트 적용 (PR-B)",
+    "summary": "서드파티 브랜드 공식 색상(facebook·twitterX·paypalDark/Light)을 BRAND_COLORS.external 슬롯으로 관리, success.tint/soft OG 이미지용 토큰 추가 — hex 리터럴 인라인 박힘 0건 달성",
+    "body": "- lib/colors.ts: external(facebook·twitterX·paypal) + success.tint/soft 토큰 추가\n- stories/opengraph-image: bg/border 인라인 hex → BRAND_COLORS.success.tint/soft 참조\n- PaymentBrandLogo: PayPal 색상 인라인 hex → BRAND_COLORS.external.paypalDark/Light\n- ShareButtons: Facebook·X 아이콘 색상 → BRAND_COLORS.external.facebook/twitterX",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
     "hash": "918c2850",
     "type": "feat",
     "scope": "manual-impl",
