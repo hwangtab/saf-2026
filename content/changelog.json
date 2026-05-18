@@ -1,5 +1,215 @@
 [
   {
+    "hash": "918c2850",
+    "type": "feat",
+    "scope": "manual-impl",
+    "subject": "Phase 3 — 거장 특별 페이지 3인 (민정기·이철수·박불똥)",
+    "summary": "민정기·이철수·박불똥 특별 전시 페이지 신규 생성 + 공유 갤러리 컴포넌트 추출 + hero-routes 등록",
+    "body": "- app/[locale]/special/min-joungki/page.tsx — 한국 현실주의 풍경화 거장 민정기 특별전\n- app/[locale]/special/lee-cheolsoo/page.tsx — 판화·서화 거장 이철수 특별전\n- app/[locale]/special/park-buldong/page.tsx — 콜라주·정치 미술 거장 박불똥 특별전\n- components/special/MasterArtistGallery.tsx — OhYoonMasonryGallery 일반화 (returnTo prop)\n- lib/hero-routes.ts — 3개 경로 HERO_EXACT 추가 (헤더 투명화)\n- messages/ko|en.json — breadcrumbs minJoungki·leeCheolsoo·parkBuldong 키 추가\n- __tests__/lib/hero-routes.test.ts — 3개 경로 케이스 추가\n\n각 페이지 구조: force-static + revalidate 600, generateMetadata (작품 OG 이미지),\nExhibitionEvent + Person + ItemList JSON-LD, 히어로·인용·바이오·테마·연표·갤러리 섹션.\n작품 0건일 경우 empty state + 전체 작품 링크 CTA.\n매뉴얼 9.5 거장 6명 중 신학철 의도적 hidden 제외, 오윤·박생광 기존 완료 → 3인 추가로 5인 완성.",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "a8c9ed07",
+    "type": "feat",
+    "scope": "manual-impl",
+    "subject": "Phase 2 — 위시리스트 1단계 + 재방문자 인지 (매뉴얼 7.2·10.4·6.7)",
+    "summary": "localStorage 기반 위시리스트 인프라 구축 및 작품 하트 저장 기능, 위시리스트 페이지, 헤더 배지, 재방문자 환영 메시지 구현",
+    "body": "- lib/storage.ts: SSR 가드 + error fallback safe localStorage wrapper\n- lib/wishlist.ts: addToWishlist / removeFromWishlist / toggleWishlist / isInWishlist (saf:wishlist 키)\n- lib/visit-state.ts: saf:lastVisit 기반 재방문 판정 (1일 threshold)\n- components/providers/WishlistProvider.tsx: 전역 Context — ids/count/toggle/has/mounted\n- components/features/WishlistHeartButton.tsx: overlay(카드)/inline(CTA) 2 variant, i18n 적용\n- ArtworkGridCard + ArtworkCategoryGrid: 이미지 하단 right overlay 하트 버튼 추가\n- ArtworkPurchaseStickyMobile: 구매 CTA 옆 하트 버튼 통합\n- artworks/[id]/page.tsx: CTA 아래 inline variant 위시리스트 버튼\n- components/features/WishlistPageContent.tsx: localStorage ID → /api/artworks/batch fetch → 그리드\n- app/[locale]/wishlist/page.tsx: 위시리스트 전용 페이지 (force-dynamic, robots noindex)\n- app/api/artworks/batch/route.ts: UUID+static 혼합 배치 조회 엔드포인트 (최대 50건)\n- Header + DesktopNav: 하트 아이콘 + count 배지 (모바일·데스크탑)\n- components/features/ReturningVisitorGreeting.tsx: 재방문 + 비어있지 않은 위시리스트 → 토스트\n- messages/ko.json + en.json: wishlist 네임스페이스 i18n 키 추가",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "425de4ff",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "petition CSV 한글 깨짐 — BOM을 클라이언트 Blob chunk로 이동",
+    "summary": "Server Action 반환값의 U+FEFF가 RSC 직렬화 중 소실될 수 있어,",
+    "body": "buildCsv에서 BOM을 제거하고 클라이언트 downloadCsv에서 Blob 첫 chunk로 prepend.\n\n- petition-admin.ts: buildCsv() BOM 제거 (RSC 경로 밖으로)\n- CsvDownloadButtons.tsx: new Blob(['﻿', csv], ...) chunk 분리",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "4efc6be7",
+    "type": "feat",
+    "scope": "manual-impl",
+    "subject": "Phase 1 — 매체 라벨 확장 + 메인 매거진 섹션 + 모바일 sticky CTA",
+    "summary": "매뉴얼 구현도 향상 Phase 1 — 저비용 즉시 가치 3건 적용 (SEO/PSI 영향 없음)",
+    "body": "1. 매체별 진품 라벨 11종 전체 확장 (매뉴얼 5.8·7.5)\n   - lib/medium-labels.ts: 사진·디지털아트·조각·도자공예·아트프린트 5개 추가\n   - ArtworkForLabel 인터페이스에 edition_type 추가 (조각/도자 unique vs 한정 주조 분기)\n   - getPrideBoxVariant 동일 분기 5개 추가 (7.5 마스터 표)\n   - 호출처 3곳 (artworks/[id]/page, ArtworkGridCard, ArtworkCategoryGrid) edition_type 전달\n\n2. 메인 페이지 [K] 매거진 섹션 신규 (매뉴얼 6.4 [K])\n   - components/features/MagazineSection.tsx: RSC, getSupabaseStoriesLight 최신 3건\n   - EmergingArtists와 JoinCommunityCTA 사이 삽입\n   - i18n: home.magazine.{title, subtitle, viewAll} (ko/en)\n\n3. 모바일 작품 상세 sticky CTA 신규 (매뉴얼 7.2 [4] · 11)\n   - components/features/ArtworkPurchaseStickyMobile.tsx: md:hidden fixed bottom-0\n   - safe-area-inset-bottom, z-30, toss/external 분기 동일\n   - i18n: artworkDetail.stickyBuy \"이 작품 소장하기\" (ko/en)\n   - sold/reserved/no-price 시 미렌더 (ArtworkPurchaseCTA와 동일 분기)\n\n✓ type-check 통과, build 811 페이지 성공, i18n placeholder 0 오류",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "fe618023",
+    "type": "fix",
+    "scope": "audit",
+    "subject": "7차 버그 audit 5건 수정 — EN 캐시·feed.xml·a11y·middleware",
+    "summary": "admin 콘텐츠 변경 시 /en/* 캐시 미갱신 수정, feed.xml Cache-Control 보호, 결제 폼 a11y, 가상갤러리 dialog 시맨틱, proxy matcher 정합",
+    "body": "- admin-content.ts: news/stories/testimonials/videos 변이 시 /en/* revalidatePath 추가 (FA 1시간 stale 방지)\n- next.config.js: Cache-Control negative lookahead에 feed.xml 추가 — RSS private,no-cache 오버라이드 차단\n- BuyerInfoForm: 9개 input pair에 htmlFor/id 추가 (WCAG 1.3.1/4.1.2 — VoiceOver accessible name)\n- VirtualGalleryPortal: role=dialog/aria-modal/aria-labelledby + focus trap useEffect 추가 (WCAG 2.4.3/4.1.2)\n- proxy.ts: /en/llms.txt·/en/llms-full.txt를 STATIC_SKIP_PATHS + matcher 양쪽에 추가 — middleware skip",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "97068e4c",
+    "type": "fix",
+    "scope": "audit",
+    "subject": "6차 버그 audit 6건 수정 — rate-limit·search race·unmount guard·정보 노출·timezone·client directive",
+    "summary": "submitFeedback rate-limit 추가, 검색 stale race 가드, 카카오 SDK unmount setState 방지, Toss confirm 에러 일반화, format-date timezone, hooks use client 선언",
+    "body": "- BUG A: feedback.ts submitFeedback에 rateLimit('feedback:userId', {limit:3, windowMs:60_000}) 추가\n- BUG B: useGlobalSearch.ts stale response race — controller.signal.aborted 가드 추가\n- BUG C: useKakaoSDK.ts useKakaoShareSDK — isMountedRef + cleanup으로 unmount 후 setState 방지\n- BUG D: toss/confirm/route.ts — 익명 노출 error.message → apiError() 일반 메시지로 통일\n- BUG E: lib/utils/format-date.ts formatCurrentDate — timeZone:'Asia/Seoul' 추가 (TrustBadges hydration 불일치 완전 해결)\n- BUG F: lib/hooks/useArtworkFilter·useHeaderStyle·useKakaoSDK·useDebounce — 'use client' 선언 추가 (RSC import 빌드 회귀 방지)",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "dde51ed3",
+    "type": "fix",
+    "scope": "audit",
+    "subject": "5차 버그 audit 5건 수정 — image priority·timezone·timingSafeEqual·actorRole",
+    "summary": "news/archive priority 오탑재 제거, admin 시각 KST 고정, vercel-drain GET timing-safe 통일, 일반 회원 로그 역할 표기 추가",
+    "body": "- BUG A: news/page.tsx 첫 카드 priority={index===0} 제거 — PageHero 아래 below-fold 카드에 priority 오탑재\n- BUG B: archive/2026·2023 포스터 priority/fetchPriority 제거 — PageHero 이후 below-fold 대형 이미지(1200×1700)\n- BUG C: vercel-drain GET 핸들러 !==  → Buffer+crypto.timingSafeEqual — POST와 보안 일관성 통일\n- BUG D: admin order-detail·logs formatDate에 timeZone:'Asia/Seoul' 추가 — Vercel UTC 환경에서 9시간 오차 방지\n- BUG E: getActorRoleLabel switch에 'user' 케이스 추가 + i18n actorRoleUser 키 (ko:회원/en:Member)\n- ActivityLogEntry.actor_role 타입에 'user' 추가 — DB 실제 저장값과 타입 정합",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "b5d33cd7",
+    "type": "fix",
+    "scope": "multi",
+    "subject": "2차 블라인드스팟 6건 수정 — 보안·동시성·성능",
+    "summary": "Toss webhook 위조방지·success 페이지 피싱방지·revertActivityLog TOCTOU·updateArtworkImages 낙관적 잠금·작가/카테고리별 over-fetch 최적화·stories LCP 추가",
+    "body": "- SEC: Toss webhook ABORTED/EXPIRED 분기에서 Toss API 재검증 추가 (헤더 없이 위조된 orderId로 pending_payment 강제 취소 가능 → fetchPayment로 차단)\n- SEC: BANK_TRANSFER success 페이지 DB 검증 추가 (임의 orderId로 IBK 계좌 안내 화면 위조 피싱 차단 — awaiting_deposit 존재 확인 후 렌더)\n- RACE: revertActivityLog TOCTOU 수정 — mutate-then-lock → lock-then-mutate (두 admin 동시 복구 클릭 시 double-apply 방지)\n- RACE: updateArtworkImages 낙관적 잠금 추가 + storage cleanup을 success 분기에서만 실행 (동시 편집 시 storage orphan 비가역 삭제 방지)\n- PERF: special(oh-yoon·park-saenggwang) + stories/[slug] getSupabaseArtworks() 전체 over-fetch → getSupabaseArtworksByArtist/getSupabaseArtworkById 교체\n- PERF: artworks/category getSupabaseArtworks() over-fetch → getSupabaseArtworksByCategory(category) 신규 함수로 교체 (supabase-data.ts에 추가)\n- LCP: stories featured hero SafeImage에 priority+sizes 추가 (above-fold 21:9 이미지 lazy-load 회귀 수정)",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "6fe225c1",
+    "type": "fix",
+    "scope": "routing",
+    "subject": "petition Link locale prefix + sitemap park-saenggwang 추가",
+    "summary": "next/link 직접 사용으로 인한 영문 모드 locale 미적용 결함 수정 및 sitemap 누락 보완",
+    "body": "- petition/oh-yoon: next/link → @/i18n/navigation Link 교체\n  href에서 수동 /${locale} prefix 제거 (3곳) — 영문 모드(/en/)에서\n  한국어 페이지로 잘못 라우팅되던 문제 수정\n- sitemap.ts: /special/park-saenggwang 항목 추가 (priority 0.85, monthly)\n  — Google 크롤러 발견 지연 및 SEO 노출 저하 방지",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "a00cf2a5",
+    "type": "fix",
+    "scope": "typography",
+    "subject": "한국어 hero/subtitle 줄바꿈 불균형 일괄 수정",
+    "summary": "break-keep 누락·강제 br·메타 몰아넣기로 인한 mobile 줄바꿈 깨짐을 사이트 전반 수정",
+    "body": "- 박생광 hero subtitle: 메타(날짜·장소·시간)를 inline-block segment로 분리,\n  가운뎃점 경계에서만 자연 줄바꿈. break-keep 추가\n- 오윤 hero subtitle: break-keep 추가, br → span.block 교체\n- PageHero 공용 컴포넌트 description p에 break-keep 추가\n  (about·artworks·stories·archive·news 등 20여 페이지 동시 해결)\n- archive 2026/2023 카드 description: break-keep + br → span.block\n- archive/2026 교통 메타(지하철·버스): br → span.block + break-keep\n- our-reality CTA p에 break-keep 추가\n- 박생광·오윤 empty-state, 전시 날짜 카드: break-keep + br → span.block\n- GalleryEmptyState: break-keep + 중복 br 제거",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "55bd64d6",
+    "type": "fix",
+    "scope": "payment",
+    "subject": "Toss 웹훅 PostgREST NOT IN 구문 수정 + refundOrder row-count guard",
+    "summary": "PAYMENT_STATUS_CHANGED 웹훅의 상태 보호 guard PostgREST 구문 오류 수정 및 동시 환불 시 중복 이메일 방지",
+    "body": "- webhooks/toss: .not('status','in','(\"refunded\",\"cancelled\")')의 이중따옴표는\n  PostgREST에서 컬럼 식별자로 해석되어 guard가 무력화될 수 있음.\n  코드베이스 전체 패턴(admin-dashboard-overview.ts:315)에 맞게 따옴표 제거.\n- admin-orders: refundOrder()가 .in('status',['paid','preparing']) 조건으로\n  0행 업데이트 시에도 이메일을 발송하는 문제. .select('id') 추가 후\n  updatedRows.length === 0이면 early return해 중복 이메일 방지.",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "a704058e",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "3차 버그 audit 8건 수정 — PII 격리·낙관적 잠금·i18n·a11y",
+    "summary": "escalation_note PII 노출 차단, setOrderEscalation 낙관적 잠금,",
+    "body": "SLA DB 인덱스, audit log 누락 케이스, dashboard i18n, a11y 개선\n\n- BUG 4: orders.escalation_note → order_admin_notes 별도 테이블 분리 (admin RLS only)\n  구매자 RLS \"Buyers can view own orders\"에서 운영 메모 완전 차단\n- BUG 3: orders.paid_at, escalated_at partial index 추가 (SLA 쿼리 full scan 방지)\n- BUG 1+11: setOrderEscalation 낙관적 잠금 (.eq/.is escalated_at guard) + audit metadata에 order_no 포함\n- BUG 10: audit log formatActionDescription에 order_escalated/order_escalation_cleared case 추가\n- BUG 5: admin dashboard SLA·에스컬레이션 StatCard 하드코딩 Korean → t() 5개 i18n 키로 교체\n- BUG 6: order-detail 에스컬레이션 사유 라벨 <p> → AdminFieldLabel + htmlFor 연결\n- BUG 7/8: escalation 토글 버튼 aria-expanded, Clock/AlertTriangle 아이콘 aria-hidden 추가\n- supabase.ts 타입 재생성 (order_admin_notes 반영), vercel-drain parseEventData Json 타입 정합",
+    "date": "2026-05-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "c7138c44",
+    "type": "fix",
+    "scope": "multi",
+    "subject": "잔여 블라인드스팟 3건 수정",
+    "summary": "begin_checkout 중복 발화 방지 / 작가 이메일 실패 시 audit 허위 성공 차단 / PostgREST 기본 상한 돌파 방지",
+    "body": "- CheckoutClient.tsx: checkoutBegunRef로 begin_checkout 세션당 1회 보장 — 카드 취소 후 재시도 시 복수 이벤트 발화 방지\n- lib/notify.ts: resendFetch → Promise<boolean> 반환; sendArtistApprovalEmail 실패 시 throw — 관리자 액션에서 Resend API 실패가 성공 audit log로 기록되던 문제 차단\n- admin-orders.ts: getOrders에 .limit(2000) 명시 — PostgREST 기본 상한(1000행) 초과 시 sla_overdue 행 유실 방지",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "eb30d29f",
+    "type": "fix",
+    "scope": "multi",
+    "subject": "블라인드스팟 5건 수정",
+    "summary": "PostgREST not-in 문자열 교정 / GA4 이벤트 phantom hit 제거 / purchase 중복 방지 / dashboard revalidate 보완 / 이메일 발송 중 버튼 경합 차단",
+    "body": "- admin-dashboard-overview.ts: .not('status','in','(\"completed\",\"cancelled\",\"refunded\")') — 프로젝트 내 기존 패턴(toss webhook)과 동일한 문자열 형식으로 교정\n- CheckoutClient.tsx: TRANSFER add_payment_info 이벤트를 createBankTransferOrder 성공 후로 이동 — 실패 경로에서 phantom hit 제거\n- SuccessClient.tsx: sessionStorage 키로 purchase 이벤트 중복 발화 방지 — confirmedRef는 새로고침 시 초기화되어 alreadyPaid 경로에서 재발화\n- admin-artists.ts: setArtistProfileStatus에 revalidatePath('/dashboard','layout') 추가 — 상태 변경 후 작가 대시보드 캐시 즉시 무효화\n- artist-edit-form.tsx: 상태 변경 버튼 disabled 조건에 isSendingEmail 추가 — 이메일 발송 중 상태 변경 경합 방지",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "3eca68b1",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "SLA 에스컬레이션 버그 3건 수정",
+    "summary": "가상 필터 DB 전달 차단 / PostgREST not-in 배열 교정 / refresh 누락 보완",
+    "body": "- orders/page.tsx: sla_overdue·escalated 가상 필터 값 차단 — DB에 없는 status 값이 eq() 조건으로 내려가면 0건 반환\n- admin-dashboard-overview.ts: .not('status','in', 배열) — 문자열 '(...)' 전달 시 PostgREST 쿼리 오작동\n- order-detail.tsx: handleEscalate·handleClearEscalation 후 router.refresh() 추가 — 마킹 후 서버 상태 갱신 없으면 SLA 뱃지 stale",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "927a1799",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "주문 SLA 에스컬레이션 추적 (Tier A3)",
+    "summary": "orders 테이블에 escalated_at/escalation_note 컬럼 추가 — 72시간 초과 미배송 주문의 SLA 위반 자동 감지 + 관리자 수동 에스컬레이션 마킹 기능 구현",
+    "body": "- DB migration: orders.escalated_at TIMESTAMPTZ, escalation_note TEXT 추가\n- getOrders(): escalated_at 조회 + sla_overdue(paid_at 기준 72h) 서버 측 계산\n- setOrderEscalation(): 에스컬레이션 on/off 서버 액션 + logAdminAction 로깅\n- order-list.tsx: SLA 위반(⏰) · 에스컬레이션(🚨) 인디케이터, 전용 필터 옵션 추가\n- order-detail.tsx: 헤더 뱃지 + 에스컬레이션 마킹/해제 버튼 UI\n- dashboard: slaOverdueCount · escalatedCount 통계 카드 추가\n- types/supabase.ts: orders Row/Insert/Update 타입 동기화",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "b6607ed0",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "작가 status toggle UI + 승인 이메일 발송 기능 추가",
+    "summary": "admin 작가 상세 페이지에서 계정 상태(활성/승인대기/정지) 변경 및 승인 이메일 직접 발송 가능.",
+    "body": "- admin-artists.ts: setArtistProfileStatus — profiles.status 직접 변경 + 활동 로그\n- admin-artists.ts: sendArtistApprovalNotification — contact_email로 대시보드 안내 이메일 발송\n- notify.ts: sendArtistApprovalEmail — Resend 기반 HTML 이메일 (RESEND_API_KEY 없으면 no-op)\n- artist-edit-form.tsx: StatusBadge + ArtistStatusControls 인라인 컴포넌트 추가\n- getArtistById 쿼리에 profiles.status 필드 추가",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "7bb90700",
+    "type": "feat",
+    "scope": "analytics",
+    "subject": "view_item GA4 이벤트 추가 — 작품 상세 페이지 진입 추적",
+    "summary": "ArtworkPurchaseCTA(클라이언트 컴포넌트) 마운트 시 view_item 1회 발화. begin_checkout까지 퍼널 drop-off 분석 가능해짐.",
+    "body": "- useEffect deps [] — 페이지 재마운트 시에만 발화, 중복 발화 없음\n- artwork_id / artwork_title / artist 전달 (가격은 이 컴포넌트에 numeric prop 없어 제외)\n- 기존 trackEvent 인프라 재사용, 추가 JS 없음",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "bef9f31b",
+    "type": "feat",
+    "scope": "analytics",
+    "subject": "GA4 결제 conversion 이벤트 추가 — begin_checkout / add_payment_info / purchase / refund",
+    "summary": "결제 퍼널 4개 GA4 이벤트 누락 보완. 기존 trackEvent 인프라 재사용, 추가 SDK 없음.",
+    "body": "- CheckoutClient: begin_checkout (유효성 통과 직후) + add_payment_info (Toss requestPayment / TRANSFER 직전)\n- SuccessClient: purchase (Toss confirm DONE 응답 직후, confirmedRef 이중 발화 방지)\n- order-detail: refund (refundOrder 성공 직후)\n- trackEvent: GA4 + Vercel Analytics 동시 전송, PSI 영향 0",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "850a41f1",
+    "type": "fix",
+    "scope": "transparency",
+    "subject": "영문 StatCard \"354\" 하드코딩 → LOAN_COUNT 변수화",
+    "summary": "한국어 섹션(L467)은 LOAN_COUNT 참조하는데 영어 섹션(L286)만 \"354\" 리터럴로 남아있던 불일치 수정",
+    "body": null,
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
+    "hash": "da58d509",
+    "type": "feat",
+    "scope": "consistency",
+    "subject": "정합성 갭 전수 fix — Schemas / llms / i18n / archive / video (#50)",
+    "summary": "JSON-LD 스키마·llms.txt·영문 copy·archive 페이지·video config 전체를 실시간 카운트(111명/400점)로 정합",
+    "body": "- Tier 2: lib/schemas 4개 파일(event/organization/howto/qa-page) counts 파라미터 추가 → 6개 호출처에 getLiveStats() 전달\n- Tier 1: lib/llms-content.ts 모듈 상수 → buildLlmsTxt/buildLlmsFullTxt 함수형 변환, 4개 route force-static → ISR(revalidate=600)\n- Tier 3: messages/en.json 11개 키 영어 copy에 {artistCount}/{artworkCount}/{loanCount} 동적 변수 적용\n- Tier 5: archive/page.tsx \"120여 명\" 하드코딩 제거, archive/2023 \"120+\" → \"50+\", video-config \"112가지/276점\" → \"111명/400점\"",
+    "date": "2026-05-16",
+    "author": "황경하"
+  },
+  {
     "hash": "089e2c80",
     "type": "feat",
     "scope": "live-stats",

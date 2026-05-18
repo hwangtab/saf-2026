@@ -12,7 +12,7 @@ interface PageHeroProps {
   title: string;
   description?: string;
   children?: ReactNode;
-  /** Custom background image path (e.g., "/images/artworks/1.jpg") */
+  /** Custom background image URL (Supabase Storage URL or /images/* public path) */
   customBackgroundImage?: string;
   className?: string;
   /** Color class for the sawtooth divider (default: "text-white") */
