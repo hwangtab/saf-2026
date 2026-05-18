@@ -358,7 +358,17 @@ export async function POST(req: NextRequest) {
 
       // paymentKey 기반 payments 행이 없으면 confirm 전 종결.
       // orders.order_no(=Toss orderId)로 pending_payment 주문 cancelled 처리.
+      // SEC: 헤더 없이 들어온 웹훅은 위조 가능성 있으므로, Toss API 재검증 후에만 취소.
+      // paymentKey가 Toss에 실재하지 않거나 status가 일치하지 않으면 무시.
       if (!paymentExists) {
+        const tossPayAborted = await fetchPayment(paymentKey, provider);
+        if (!tossPayAborted || !ABORTED_STATUSES.has(tossPayAborted.status)) {
+          console.error(
+            `[toss-webhook] ABORTED webhook rejected — paymentKey not in Toss API or status mismatch (API: ${tossPayAborted?.status ?? 'null'}): ${paymentKey}`
+          );
+          return NextResponse.json({ received: true, status: 'ignored' }, { status: 200 });
+        }
+
         const { data: cancelled } = await supabase
           .from('orders')
           .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })

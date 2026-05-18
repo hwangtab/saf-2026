@@ -12,7 +12,7 @@ import {
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
-import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { getSupabaseArtworksByArtist } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
@@ -96,7 +96,7 @@ export async function generateMetadata({
   const pageUrl = buildLocaleUrl('/special/park-saenggwang', locale);
 
   // OG 이미지 — 박생광 실 작품(드로잉) 이미지 우선, 없으면 사이트 기본 OG.
-  const allArtworks = await getSupabaseArtworks();
+  const allArtworks = await getSupabaseArtworksByArtist('박생광');
   const artwork = allArtworks.find((a) => isParkSaenggwangArtist(a.artist) && a.images[0]);
   const ogImageUrl = artwork?.images[0]
     ? resolveSeoArtworkImageUrl(artwork.images[0])
@@ -145,7 +145,7 @@ export default async function ParkSaenggwangPage({
   const pageUrl = buildLocaleUrl('/special/park-saenggwang', locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
-  const allArtworks = await getSupabaseArtworks();
+  const allArtworks = await getSupabaseArtworksByArtist('박생광');
   const fullArtworks = allArtworks.filter((artwork: Artwork) =>
     isParkSaenggwangArtist(artwork.artist)
   );

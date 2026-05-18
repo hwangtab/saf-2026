@@ -254,6 +254,8 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                           src={featuredImg}
                           alt={featuredTitle}
                           fill
+                          priority
+                          sizes="100vw"
                           className="object-cover motion-safe:animate-hero-breathing transform-gpu will-change-transform transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (

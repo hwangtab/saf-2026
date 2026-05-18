@@ -29,7 +29,7 @@ import {
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
-import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { getSupabaseArtworksByCategory } from '@/lib/supabase-data';
 import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { getCategorySeoContent } from '@/lib/category-seo-content';
@@ -68,8 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Not Found' };
   }
 
-  const allArtworks = await getSupabaseArtworks();
-  const categoryArtworks = allArtworks.filter((a) => a.category === category);
+  const categoryArtworks = await getSupabaseArtworksByCategory(category);
   const count = categoryArtworks.length;
   const availableCount = categoryArtworks.filter((a) => !a.sold).length;
 
@@ -208,8 +207,10 @@ async function renderCategoryPage({ params }: Props) {
     return <CategoryNotFoundView />;
   }
 
-  const [allArtworks, { artistCount }] = await Promise.all([getSupabaseArtworks(), getLiveStats()]);
-  const categoryArtworks = allArtworks.filter((a) => a.category === category);
+  const [categoryArtworks, { artistCount }] = await Promise.all([
+    getSupabaseArtworksByCategory(category),
+    getLiveStats(),
+  ]);
 
   if (categoryArtworks.length === 0) {
     return <CategoryNotFoundView />;
@@ -287,15 +288,13 @@ async function renderCategoryPage({ params }: Props) {
     },
   };
 
-  // 관련 카테고리 (현재 카테고리 제외, 작품 수 기준 정렬)
-  const categoryCounts = SUPPORTED_CATEGORIES.map((cat) => ({
+  // 관련 카테고리 (현재 카테고리 제외, 정적 순서로 표시)
+  const categoryCounts = SUPPORTED_CATEGORIES.filter((cat) => cat !== category).map((cat) => ({
     category: cat,
     displayName: getCategoryDisplayName(cat, locale),
-    count: allArtworks.filter((a) => a.category === cat).length,
+    count: 0,
     path: `/artworks/category/${encodeURIComponent(cat)}`,
-  }))
-    .filter((c) => c.category !== category && c.count > 0)
-    .sort((a, b) => b.count - a.count);
+  }));
 
   // SEO 랜딩 콘텐츠 — 카테고리별 introductory 본문 + FAQ (long-tail 검색어 흡수)
   const seoContent = getCategorySeoContent(category);
@@ -490,7 +489,7 @@ async function renderCategoryPage({ params }: Props) {
                     className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
                   >
                     {cat.displayName}
-                    <span className="ml-1 opacity-60">{cat.count}</span>
+                    {cat.count > 0 && <span className="ml-1 opacity-60">{cat.count}</span>}
                   </Link>
                 ))}
                 <Link

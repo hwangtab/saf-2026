@@ -12,7 +12,7 @@ import {
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
-import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { getSupabaseArtworksByArtist } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
@@ -74,7 +74,7 @@ export async function generateMetadata({
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
 
   // 오윤 실제 작품 이미지로 OG 이미지 설정 — 소셜 공유 CTR 향상
-  const allArtworks = await getSupabaseArtworks();
+  const allArtworks = await getSupabaseArtworksByArtist('오윤');
   const ohYoonArtwork = allArtworks.find((a) => isOhYoonArtist(a.artist) && a.images[0]);
   const ogImageUrl = ohYoonArtwork?.images[0]
     ? resolveSeoArtworkImageUrl(ohYoonArtwork.images[0])
@@ -125,7 +125,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
   const isEnglish = locale === 'en';
   const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
-  const allArtworks = await getSupabaseArtworks();
+  const allArtworks = await getSupabaseArtworksByArtist('오윤');
   const ohYoonFullArtworks = allArtworks.filter((artwork: Artwork) =>
     isOhYoonArtist(artwork.artist)
   );

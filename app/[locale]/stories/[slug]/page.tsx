@@ -5,8 +5,9 @@ import {
   getSupabaseStories,
   getSupabaseStoriesLight,
   getSupabaseStoryBySlug,
-  getSupabaseArtworks,
+  getSupabaseArtworkById,
   getSupabaseArtworksByArtist,
+  getSupabaseHomepageArtworks,
 } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
@@ -215,12 +216,11 @@ export default async function StoryDetailPage({ params }: Props) {
 
   const referencedArtworkIds = extractArtworkIdsFromBody(story.body);
   if (referencedArtworkIds.length > 0) {
-    const allArtworks = await getSupabaseArtworks();
-    const byId = new Map(allArtworks.map((a) => [a.id, a]));
+    // 전체 365개 over-fetch 대신 참조 ID 각각 per-item 쿼리 (unstable_cache wrapping으로 ISR rebuild 시 캐시 효율 유지)
+    const artworkResults = await Promise.all(referencedArtworkIds.map(getSupabaseArtworkById));
     // tier 1: 본문에 작가가 직접 인용한 작품은 추천 가치 높음 — 6개까지 노출
     // (이전 3개 제한은 작가의도 누락. tier 2/3 fallback은 3개 유지 — thin link 회피).
-    relatedArtworks = referencedArtworkIds
-      .map((id) => byId.get(id))
+    relatedArtworks = artworkResults
       .filter((a): a is Artwork => Boolean(a))
       .sort(sortAvailableFirst)
       .slice(0, 6);
@@ -235,8 +235,7 @@ export default async function StoryDetailPage({ params }: Props) {
   }
 
   if (relatedArtworks.length === 0) {
-    const allArtworks = await getSupabaseArtworks();
-    relatedArtworks = allArtworks.filter((a) => !a.sold).slice(0, 3);
+    relatedArtworks = (await getSupabaseHomepageArtworks(3)).filter((a) => !a.sold).slice(0, 3);
     artworksSource = 'recent-fallback';
   }
 

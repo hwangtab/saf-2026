@@ -365,16 +365,25 @@ export async function updateArtworkImages(id: string, images: string[]) {
     .eq('id', id)
     .single();
 
-  const { error } = await supabase
+  // 낙관적 잠금: beforeArtwork.updated_at 기준으로 UPDATE 조건 추가 — 두 관리자가
+  // 동시에 이미지를 편집할 때 한쪽의 업로드 URL이 사라지고 storage path가 삭제되는
+  // 비가역적 orphan 사고를 방지.
+  const { data: updatedRows, error } = await supabase
     .from('artworks')
     .update({
       images,
       updated_at: new Date().toISOString(),
     })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('updated_at', beforeArtwork?.updated_at ?? '')
+    .select('id');
 
   if (error) throw error;
+  if (!updatedRows || updatedRows.length === 0) {
+    throw new Error('다른 관리자가 먼저 수정했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+  }
 
+  // storage cleanup은 UPDATE 성공 분기에서만 실행 (race 패배 시 orphan 삭제 방지)
   const previousImages = Array.isArray(beforeArtwork?.images)
     ? beforeArtwork.images.filter(
         (image): image is string => typeof image === 'string' && image.length > 0

@@ -373,6 +373,46 @@ export const getSupabaseArtworksByArtist = cache(
   async (artistName: string): Promise<Artwork[]> => getSupabaseArtworksByArtistCached(artistName)
 );
 
+// --- All artworks for a single category (for category listing pages) ---
+
+/**
+ * 카테고리 페이지 전용 단일 카테고리 쿼리 — sold 포함, limit 없음.
+ * getSupabaseArtworks() 전체 365행 over-fetch 없이 해당 카테고리만 fetch.
+ */
+const getSupabaseArtworksByCategoryUncached = async (category: string): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks.filter((a) => a.category === category);
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(`${ARTWORK_SELECT_COLUMNS}, artists (${ARTIST_SELECT_COLUMNS})`)
+    .eq('is_hidden', false)
+    .eq('category', category)
+    .order('created_at', { ascending: false })
+    .returns<ArtworkWithArtistRow[]>();
+
+  if (error) {
+    console.error(`Error fetching artworks for category ${category}:`, error);
+    return fallbackArtworks.filter((a) => a.category === category);
+  }
+
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
+};
+
+const getSupabaseArtworksByCategoryCached = unstable_cache(
+  async (category: string) => getSupabaseArtworksByCategoryUncached(category),
+  ['supabase-artworks-by-category-v1'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getSupabaseArtworksByCategory = cache(
+  async (category: string): Promise<Artwork[]> => getSupabaseArtworksByCategoryCached(category)
+);
+
 // --- Related artworks by category (for artwork detail page) ---
 
 /**

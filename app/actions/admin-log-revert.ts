@@ -510,6 +510,26 @@ export async function revertActivityLog(
       }
     }
 
+    // TOCTOU 방지: destructive 작업 실행 전 reverted_at을 먼저 점유(lock-then-mutate).
+    // 두 admin이 동시에 "복구" 클릭 시 한쪽만 점유 성공 → 나머지는 여기서 early return.
+    // 마커를 마지막에 설정하던 기존 패턴(mutate-then-lock)은 이중 실행 위험이 있었음.
+    const lockNow = new Date().toISOString();
+    const { data: lockRows, error: lockError } = await supabase
+      .from('activity_logs')
+      .update({
+        reverted_by: admin.id,
+        reverted_at: lockNow,
+        revert_reason: reason,
+      })
+      .eq('id', log.id)
+      .is('reverted_at', null)
+      .select('id');
+
+    if (lockError) throw lockError;
+    if (!lockRows || lockRows.length !== 1) {
+      throw new Error('이미 다른 관리자가 복구를 진행 중입니다. 페이지를 새로고침해주세요.');
+    }
+
     // For creation actions, we use after_snapshot to identify what to delete
     const isCreationAction =
       ARTWORK_CREATION_ACTIONS.has(log.action) ||
@@ -1114,23 +1134,6 @@ export async function revertActivityLog(
 
     if (log.target_type === 'artist_application') {
       revalidatePath('/admin/users');
-    }
-
-    const now = new Date().toISOString();
-    const { data: markedRows, error: markError } = await supabase
-      .from('activity_logs')
-      .update({
-        reverted_by: admin.id,
-        reverted_at: now,
-        revert_reason: reason,
-      })
-      .eq('id', log.id)
-      .is('reverted_at', null)
-      .select('id');
-
-    if (markError) throw markError;
-    if (!markedRows || markedRows.length !== 1) {
-      throw new Error('복구 상태 기록에 실패했습니다. 다시 시도해주세요.');
     }
 
     const revertLogId = await writeActivityLog({

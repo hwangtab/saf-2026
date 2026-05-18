@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import SuccessClient from './SuccessClient';
 
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,16 @@ export default async function SuccessPage({ params, searchParams }: Props) {
   const isBankTransfer = method === 'BANK_TRANSFER';
   if (isBankTransfer) {
     if (!orderId || !amount) notFound();
+    // SEC: 임의 orderId로 SAF 브랜드 계좌 안내 화면을 위조하는 피싱 방지.
+    // 실제 DB에 awaiting_deposit 상태로 존재하는 주문인지 확인 후 렌더.
+    const supabase = createSupabaseAdminClient();
+    const { data: bankOrder } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('order_no', orderId)
+      .eq('status', 'awaiting_deposit')
+      .maybeSingle();
+    if (!bankOrder) notFound();
   } else {
     if (!paymentKey || !orderId || !amount) notFound();
   }
