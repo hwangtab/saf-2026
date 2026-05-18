@@ -1,103 +1,19 @@
 #!/usr/bin/env node
 /**
- * GA4 빠른 점검 — web_vitals 이벤트 발생 자체 확인.
- * Custom dimension 미등록 상태에서도 동작.
+ * GA4 빠른 점검 — 최근 7일 트래픽·이벤트·페이지 현황.
  *
- * 인증 우선순위:
- *  1. GA4_OAUTH_CLIENT_ID + SECRET + REFRESH_TOKEN — 정식 자동화 (CI/로컬 영구 사용)
- *     refresh token으로 access token 자동 갱신 (1시간 만료 시 자동 재발급)
- *  2. GA4_ACCESS_TOKEN env — 로컬 즉석 점검용 fallback (1시간 만료, 수동 갱신)
+ * 인증: scripts/lib/ga4-auth.js (SA > OAuth > dev token 우선순위)
+ *
+ * 사용:
+ *   node scripts/ga4-quick-check.js
  */
 
-const path = require('path');
-const fs = require('fs');
+'use strict';
 
-const envPath = path.join(__dirname, '..', '.env.local');
-if (fs.existsSync(envPath)) {
-  fs.readFileSync(envPath, 'utf8')
-    .split('\n')
-    .forEach((line) => {
-      const m = line.match(/^([^#=]+)=(.*)$/);
-      if (m && !process.env[m[1].trim()]) {
-        process.env[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
-      }
-    });
-}
-
-const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
+const { PROPERTY_ID, runReport } = require('./lib/ga4-auth');
 
 if (!PROPERTY_ID) {
   console.error('❌ GA4_PROPERTY_ID 미설정');
-  process.exit(1);
-}
-
-const API_URL = `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`;
-
-let runReport;
-
-if (
-  process.env.GA4_OAUTH_CLIENT_ID &&
-  process.env.GA4_OAUTH_CLIENT_SECRET &&
-  process.env.GA4_OAUTH_REFRESH_TOKEN
-) {
-  let cachedAccessToken = null;
-  let tokenExpiresAt = 0;
-
-  const refreshAccessToken = async () => {
-    const params = new URLSearchParams({
-      client_id: process.env.GA4_OAUTH_CLIENT_ID,
-      client_secret: process.env.GA4_OAUTH_CLIENT_SECRET,
-      refresh_token: process.env.GA4_OAUTH_REFRESH_TOKEN,
-      grant_type: 'refresh_token',
-    });
-    const res = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString(),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(`Token refresh ${res.status}: ${JSON.stringify(data)}`);
-    }
-    cachedAccessToken = data.access_token;
-    // expires_in는 초 단위. 60초 안전 마진.
-    tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
-  };
-
-  runReport = async (body) => {
-    if (!cachedAccessToken || Date.now() >= tokenExpiresAt) {
-      await refreshAccessToken();
-    }
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${cachedAccessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(`API ${res.status}: ${JSON.stringify(data)}`);
-    return data;
-  };
-} else if (process.env.GA4_ACCESS_TOKEN) {
-  runReport = async (body) => {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.GA4_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(`API ${res.status}: ${JSON.stringify(data)}`);
-    return data;
-  };
-} else {
-  console.error(
-    '❌ 인증 정보 없음: GA4_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN 3종 또는 GA4_ACCESS_TOKEN 필요'
-  );
   process.exit(1);
 }
 
@@ -138,7 +54,7 @@ async function main() {
   }
   console.log();
 
-  // 3. web_vitals 발생 일자별 (배포 직후부터 추세)
+  // 3. web_vitals 발생 일자별 추세 (14일)
   const byDate = await runReport({
     dateRanges: [{ startDate: '14daysAgo', endDate: 'today' }],
     dimensions: [{ name: 'date' }],
@@ -158,11 +74,11 @@ async function main() {
       console.log(`  ${fmt}  ${c}`);
     });
   } else {
-    console.log('  (web_vitals 이벤트 발생 없음 — 배포 후 사용자 트래픽 미도달)');
+    console.log('  (web_vitals 이벤트 발생 없음)');
   }
   console.log();
 
-  // 4. Top pages (트래픽 분포)
+  // 4. Top pages
   const topPages = await runReport({
     dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
     dimensions: [{ name: 'pagePath' }],

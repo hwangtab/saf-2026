@@ -5,74 +5,21 @@
  * 2) Data Streams 목록 + measurement ID 일치 여부
  * 3) Realtime API로 현재 active user
  * 4) 최근 30일 totalUsers (어디까지 이벤트가 들어왔는지 일자별)
+ *
+ * 인증: scripts/lib/ga4-auth.js (SA > OAuth > dev token 우선순위)
  */
 
-const path = require('path');
-const fs = require('fs');
+'use strict';
 
-const envPath = path.join(__dirname, '..', '.env.local');
-if (fs.existsSync(envPath)) {
-  fs.readFileSync(envPath, 'utf8')
-    .split('\n')
-    .forEach((line) => {
-      const m = line.match(/^([^#=]+)=(.*)$/);
-      if (m && !process.env[m[1].trim()]) {
-        process.env[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
-      }
-    });
-}
+const { PROPERTY_ID, apiCall } = require('./lib/ga4-auth');
 
-const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
 const EXPECTED_MEASUREMENT_ID = 'G-8K0TPPEL9W';
-
-let cachedToken = null;
-let tokenExpiresAt = 0;
-
-async function getToken() {
-  if (cachedToken && Date.now() < tokenExpiresAt) return cachedToken;
-  const params = new URLSearchParams({
-    client_id: process.env.GA4_OAUTH_CLIENT_ID,
-    client_secret: process.env.GA4_OAUTH_CLIENT_SECRET,
-    refresh_token: process.env.GA4_OAUTH_REFRESH_TOKEN,
-    grant_type: 'refresh_token',
-  });
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString(),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(`token refresh ${res.status}: ${JSON.stringify(data)}`);
-  cachedToken = data.access_token;
-  tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
-  return cachedToken;
-}
-
-async function api(url, body) {
-  const token = await getToken();
-  const res = await fetch(url, {
-    method: body ? 'POST' : 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      ...(body ? { 'Content-Type': 'application/json' } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const text = await res.text();
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch {
-    data = { rawTextPreview: text.slice(0, 200) };
-  }
-  return { ok: res.ok, status: res.status, data };
-}
 
 (async () => {
   console.log(`\n=== GA4 Property ${PROPERTY_ID} 진단 ===\n`);
 
   // 1) Property 메타데이터
-  const meta = await api(
+  const meta = await apiCall(
     `https://analyticsadmin.googleapis.com/v1beta/properties/${PROPERTY_ID}`
   );
   console.log('[1] Property 메타데이터');
@@ -88,7 +35,7 @@ async function api(url, body) {
   }
 
   // 2) Data Streams
-  const streams = await api(
+  const streams = await apiCall(
     `https://analyticsadmin.googleapis.com/v1beta/properties/${PROPERTY_ID}/dataStreams`
   );
   console.log('\n[2] Data Streams');
@@ -97,7 +44,8 @@ async function api(url, body) {
       console.log(`  - ${s.displayName} (${s.type})`);
       if (s.webStreamData) {
         const id = s.webStreamData.measurementId;
-        const match = id === EXPECTED_MEASUREMENT_ID ? '✓ 일치' : `❌ 불일치 (예상 ${EXPECTED_MEASUREMENT_ID})`;
+        const match =
+          id === EXPECTED_MEASUREMENT_ID ? '✓ 일치' : `❌ 불일치 (예상 ${EXPECTED_MEASUREMENT_ID})`;
         console.log(`    measurementId: ${id} ${match}`);
         console.log(`    defaultUri: ${s.webStreamData.defaultUri}`);
       }
@@ -106,8 +54,11 @@ async function api(url, body) {
     console.log(`  ❌ ${streams.status}: ${JSON.stringify(streams.data)}`);
   }
 
+  const firstStreamId =
+    (streams.data.dataStreams ?? [])[0]?.name?.split('/').pop() ?? '';
+
   // 3) Realtime API — 현재 활성 사용자
-  const realtime = await api(
+  const realtime = await apiCall(
     `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runRealtimeReport`,
     { metrics: [{ name: 'activeUsers' }] }
   );
@@ -120,11 +71,8 @@ async function api(url, body) {
     console.log(`  ❌ ${realtime.status}: ${JSON.stringify(realtime.data)}`);
   }
 
-  // 3-A) Data Filters (Internal/Developer traffic 차단 여부)
-  const filters = await api(
-    `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataStreams`
-  );
-  const filtersV1 = await api(
+  // 3-A) Data Retention
+  const filtersV1 = await apiCall(
     `https://analyticsadmin.googleapis.com/v1beta/properties/${PROPERTY_ID}/dataRetentionSettings`
   );
   console.log('\n[3-A] Data Retention');
@@ -135,9 +83,9 @@ async function api(url, body) {
     console.log(`  ❌ ${filtersV1.status}: ${JSON.stringify(filtersV1.data).slice(0, 200)}`);
   }
 
-  // 3-B) v1alpha Data Filters
-  const dataFilters = await api(
-    `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataStreams/${(streams.data.dataStreams ?? [])[0]?.name?.split('/').pop() ?? ''}/measurementProtocolSecrets`
+  // 3-B) Measurement Protocol Secrets
+  const dataFilters = await apiCall(
+    `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataStreams/${firstStreamId}/measurementProtocolSecrets`
   );
   console.log('\n[3-B] Measurement Protocol Secrets (확인용)');
   if (dataFilters.ok) {
@@ -146,9 +94,9 @@ async function api(url, body) {
     console.log(`  ${dataFilters.status} (필수 아님)`);
   }
 
-  // 3-C) v1alpha 전용: dataRedactionSettings, accessBindings
-  const enhanced = await api(
-    `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataStreams/${(streams.data.dataStreams ?? [])[0]?.name?.split('/').pop() ?? ''}/enhancedMeasurementSettings`
+  // 3-C) Enhanced Measurement
+  const enhanced = await apiCall(
+    `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataStreams/${firstStreamId}/enhancedMeasurementSettings`
   );
   console.log('\n[3-C] Enhanced Measurement');
   if (enhanced.ok) {
@@ -161,9 +109,9 @@ async function api(url, body) {
     console.log(`  ❌ ${enhanced.status}: ${JSON.stringify(enhanced.data).slice(0, 300)}`);
   }
 
-  // 3-D) Internal/Developer Traffic 필터 (가장 의심)
-  const propFilters = await api(
-    `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataStreams/${(streams.data.dataStreams ?? [])[0]?.name?.split('/').pop() ?? ''}/eventCreateRules`
+  // 3-D) Event Create Rules
+  const propFilters = await apiCall(
+    `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataStreams/${firstStreamId}/eventCreateRules`
   );
   console.log('\n[3-D] Event Create Rules');
   if (propFilters.ok) {
@@ -172,8 +120,8 @@ async function api(url, body) {
     console.log(`  ${propFilters.status}`);
   }
 
-  // 3-E) Property-level Data Filters (Internal/Developer Traffic exclusion)
-  const dfilters = await api(
+  // 3-E) Property-level Data Filters
+  const dfilters = await apiCall(
     `https://analyticsadmin.googleapis.com/v1alpha/properties/${PROPERTY_ID}/dataFilters`
   );
   console.log('\n[3-E] ⚠️  Property Data Filters (Internal/Developer Traffic 등)');
@@ -186,9 +134,7 @@ async function api(url, body) {
         console.log(`  - ${f.displayName ?? f.name}`);
         console.log(`    filterType: ${f.filterType}`);
         console.log(`    state: ${f.state}`);
-        if (f.stringFilter) {
-          console.log(`    stringFilter: ${JSON.stringify(f.stringFilter)}`);
-        }
+        if (f.stringFilter) console.log(`    stringFilter: ${JSON.stringify(f.stringFilter)}`);
         if (f.parameterName) console.log(`    parameter: ${f.parameterName}`);
       }
     }
@@ -197,7 +143,7 @@ async function api(url, body) {
   }
 
   // 4) 최근 30일 일자별 totalUsers
-  const daily = await api(
+  const daily = await apiCall(
     `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`,
     {
       dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],

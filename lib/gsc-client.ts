@@ -1,16 +1,19 @@
 /**
  * Google Search Console API client.
  *
- * 인증 방식: OAuth 2.0 refresh token (hwangtab@gmail.com 계정).
- * service account가 아닌 이유는 GA4 워크플로와 동일 — Google Properties Access UI에서
- * service account 등록이 거부됨. 같은 패턴 재활용.
+ * 인증 우선순위:
+ *  1. GSC_SERVICE_ACCOUNT_KEY (JSON string) — googleapis JWT, 만료·취소 불가능
+ *     GA4_SERVICE_ACCOUNT_KEY와 동일한 SA JSON 재사용 가능 (스코프만 webmasters.readonly)
+ *     GSC Search Console → Settings → Users and permissions에 SA 이메일을 "Restricted user"로 추가 필요
+ *  2. GSC_OAUTH_CLIENT_ID + CLIENT_SECRET + REFRESH_TOKEN — OAuth fallback
+ *     (OAuth consent screen을 "In Production"으로 publish하면 7일 만료 정책 비적용)
  *
- * 환경변수 (Vercel·local 모두 등록):
- * - GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET, GSC_OAUTH_REFRESH_TOKEN
+ * 환경변수:
+ * - GSC_SERVICE_ACCOUNT_KEY: SA JSON 1줄 문자열 (권장)
+ * - GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET, GSC_OAUTH_REFRESH_TOKEN: fallback
  * - GSC_SITE_URL: GSC에 등록된 정확한 site identifier
  *   · Domain property(권장): 'sc-domain:saf2026.com' — www·non-www·http·https 모두 포함
- *   · URL prefix property: 'https://www.saf2026.com/' — 등록한 URL과 trailing slash 정확히 일치 필요
- *   사용자 OAuth 권한이 GSC에 등록된 정확한 식별자에 매핑되어야 작동 (잘못된 값은 403 forbidden).
+ *   · URL prefix property: 'https://www.saf2026.com/' — trailing slash 정확히 일치 필요
  *   현재 운영: 'sc-domain:saf2026.com' (Domain property — hwangtab@gmail.com siteOwner 권한)
  *
  * 사용: 매일 한 번 cron에서 fetchGscDataForDate(date)을 호출해 Supabase에 캐시.
@@ -19,6 +22,11 @@
 
 import { google } from 'googleapis';
 import type { webmasters_v3 } from 'googleapis';
+
+const SA_KEY_JSON = process.env.GSC_SERVICE_ACCOUNT_KEY;
+const CLIENT_ID = process.env.GSC_OAUTH_CLIENT_ID;
+const CLIENT_SECRET = process.env.GSC_OAUTH_CLIENT_SECRET;
+const REFRESH_TOKEN = process.env.GSC_OAUTH_REFRESH_TOKEN;
 
 interface GscRow {
   query?: string | null;
@@ -42,21 +50,42 @@ function requireEnv(key: string): string {
 }
 
 let cachedClient: webmasters_v3.Webmasters | null = null;
+let saJwtClient: InstanceType<typeof google.auth.JWT> | null = null;
 
-/**
- * OAuth refresh token 기반 webmasters client 빌드.
- * googleapis 라이브러리가 access token 자동 갱신 — refresh token만 유효하면 영구 동작.
- */
+function getSaJwtClient(): InstanceType<typeof google.auth.JWT> | null {
+  if (saJwtClient) return saJwtClient;
+  if (!SA_KEY_JSON) return null;
+  try {
+    const key = JSON.parse(SA_KEY_JSON) as { client_email: string; private_key: string };
+    saJwtClient = new google.auth.JWT({
+      email: key.client_email,
+      key: key.private_key,
+      scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
+    });
+    return saJwtClient;
+  } catch {
+    return null;
+  }
+}
+
 function getWebmastersClient(): webmasters_v3.Webmasters {
   if (cachedClient) return cachedClient;
 
-  const clientId = requireEnv('GSC_OAUTH_CLIENT_ID');
-  const clientSecret = requireEnv('GSC_OAUTH_CLIENT_SECRET');
-  const refreshToken = requireEnv('GSC_OAUTH_REFRESH_TOKEN');
+  // Priority 1: Service Account JWT
+  const sa = getSaJwtClient();
+  if (sa) {
+    cachedClient = google.webmasters({ version: 'v3', auth: sa });
+    return cachedClient;
+  }
 
-  const oauth2 = new google.auth.OAuth2(clientId, clientSecret);
-  oauth2.setCredentials({ refresh_token: refreshToken });
-
+  // Priority 2: OAuth refresh token
+  if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
+    throw new Error(
+      'GSC 인증 미설정. GSC_SERVICE_ACCOUNT_KEY 또는 GSC_OAUTH_* 환경변수가 필요합니다.'
+    );
+  }
+  const oauth2 = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET);
+  oauth2.setCredentials({ refresh_token: REFRESH_TOKEN });
   cachedClient = google.webmasters({ version: 'v3', auth: oauth2 });
   return cachedClient;
 }

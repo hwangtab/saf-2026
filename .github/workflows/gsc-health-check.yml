@@ -1,0 +1,119 @@
+name: GSC Health Check (Daily)
+
+on:
+  schedule:
+    # 매일 09:05 Asia/Seoul = 00:05 UTC (GA4 check와 5분 차이)
+    - cron: '5 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: GSC ping (최소 쿼리 — 최근 1일)
+        id: ping
+        env:
+          GSC_SITE_URL: ${{ secrets.GSC_SITE_URL }}
+          GSC_SERVICE_ACCOUNT_KEY: ${{ secrets.GSC_SERVICE_ACCOUNT_KEY }}
+          GSC_OAUTH_CLIENT_ID: ${{ secrets.GSC_OAUTH_CLIENT_ID }}
+          GSC_OAUTH_CLIENT_SECRET: ${{ secrets.GSC_OAUTH_CLIENT_SECRET }}
+          GSC_OAUTH_REFRESH_TOKEN: ${{ secrets.GSC_OAUTH_REFRESH_TOKEN }}
+        run: |
+          node -e "
+            const { google } = require('googleapis');
+
+            const SA_KEY_JSON = process.env.GSC_SERVICE_ACCOUNT_KEY;
+            const siteUrl = process.env.GSC_SITE_URL;
+            if (!siteUrl) { console.error('GSC_SITE_URL not set'); process.exit(1); }
+
+            let auth;
+            if (SA_KEY_JSON) {
+              const key = JSON.parse(SA_KEY_JSON);
+              auth = new google.auth.JWT({
+                email: key.client_email,
+                key: key.private_key,
+                scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
+              });
+            } else {
+              const { GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET, GSC_OAUTH_REFRESH_TOKEN } = process.env;
+              if (!GSC_OAUTH_CLIENT_ID || !GSC_OAUTH_CLIENT_SECRET || !GSC_OAUTH_REFRESH_TOKEN) {
+                console.error('GSC 인증 미설정: GSC_SERVICE_ACCOUNT_KEY 또는 GSC_OAUTH_* 필요');
+                process.exit(1);
+              }
+              const oauth2 = new google.auth.OAuth2(GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET);
+              oauth2.setCredentials({ refresh_token: GSC_OAUTH_REFRESH_TOKEN });
+              auth = oauth2;
+            }
+
+            const wm = google.webmasters({ version: 'v3', auth });
+            const threeDaysAgo = new Date();
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+            const dateStr = threeDaysAgo.toISOString().slice(0, 10);
+
+            wm.searchanalytics.query({
+              siteUrl,
+              requestBody: { startDate: dateStr, endDate: dateStr, dimensions: ['date'], rowLimit: 1 },
+            }).then(r => {
+              const clicks = r.data.rows?.[0]?.clicks ?? 0;
+              console.log('GSC OK — date:', dateStr, '/ clicks:', clicks);
+            }).catch(e => { console.error(e.message); process.exit(1); });
+          "
+
+      - name: Issue 생성 (실패 시에만)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['gsc-auth-failure'],
+            });
+            if (existing.data.length > 0) {
+              console.log('GSC auth failure issue already open:', existing.data[0].number);
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'GSC 인증 실패 — ' + today,
+              labels: ['gsc-auth-failure'],
+              body: [
+                '## GSC daily health check 실패',
+                '',
+                '**날짜**: ' + today,
+                '**워크플로**: [실행 로그](' + runUrl + ')',
+                '',
+                '### 원인 후보',
+                '1. **Service Account** — Search Console → Settings → Users and permissions에서 SA 권한 취소됐는지 확인',
+                '2. **OAuth refresh token** — 만료 또는 취소 (GSC_OAUTH_REFRESH_TOKEN)',
+                '3. **GSC_SITE_URL** — site identifier 형식 확인 (sc-domain:saf2026.com)',
+                '',
+                '### 즉시 조치',
+                '```',
+                '# Search Console → Settings → Users and permissions',
+                '# → saf2026-ga-reader@saf2026.iam.gserviceaccount.com 을 Restricted user로 추가',
+                '```',
+                '',
+                '### 영구 해결 확인',
+                '- Search Console → Settings → Users and permissions: SA 이메일 Restricted user 등록 여부',
+                '- Vercel/GitHub Secrets: GSC_SERVICE_ACCOUNT_KEY 값 유효성',
+              ].join('\n'),
+            });
