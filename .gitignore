@@ -67,3 +67,4 @@ scripts/.magazine-sql/
 # scripts/lighthouse-coverage.ts JSON 덤프 — 일회성 측정 산출물
 /tmp/
 tmp/
+content/articles/
