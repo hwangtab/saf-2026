@@ -161,6 +161,7 @@
       "targetTypeVideo": "Video",
       "actorRoleAdmin": "Admin",
       "actorRoleArtist": "Artist",
+      "actorRoleUser": "Member",
       "actorRoleExhibitor": "Exhibitor",
       "actorRoleSystem": "System",
       "fieldTitle": "Title",

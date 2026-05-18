@@ -477,7 +477,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
       <Section variant="primary-surface" prevVariant="canvas" className="pb-24 md:pb-32">
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {newsArticles.map((article, index) => {
+            {newsArticles.map((article) => {
               const localizedTitle = localizeArticleTitle(
                 article.title,
                 article.source,
@@ -506,7 +506,6 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
                           src={article.thumbnail}
                           alt={localizedTitle}
                           fill
-                          priority={index === 0}
                           className="object-cover transition-transform duration-300"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />

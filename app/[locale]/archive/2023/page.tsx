@@ -193,8 +193,6 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
               className="w-full rounded-2xl shadow-xl"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
               quality={75}
-              priority
-              fetchPriority="high"
             />
           </div>
 

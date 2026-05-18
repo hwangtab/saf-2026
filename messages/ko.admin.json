@@ -161,6 +161,7 @@
       "targetTypeVideo": "영상",
       "actorRoleAdmin": "관리자",
       "actorRoleArtist": "아티스트",
+      "actorRoleUser": "회원",
       "actorRoleExhibitor": "출품자",
       "actorRoleSystem": "시스템",
       "fieldTitle": "제목",

@@ -351,6 +351,8 @@ export function getActorRoleLabel(role: ActivityLogEntry['actor_role'], t: Trans
       return t('actorRoleAdmin');
     case 'artist':
       return t('actorRoleArtist');
+    case 'user':
+      return t('actorRoleUser');
     case 'exhibitor':
       return t('actorRoleExhibitor');
     case 'system':
@@ -379,6 +381,7 @@ export function formatDate(dateString: string | null | undefined, locale: Locale
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'Asia/Seoul',
   });
 }
 

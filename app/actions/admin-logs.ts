@@ -6,7 +6,7 @@ import { sanitizeIlikeQuery } from '@/lib/utils/query';
 export type ActivityLogEntry = {
   id: string;
   actor_id: string;
-  actor_role: 'admin' | 'artist' | 'system' | 'exhibitor';
+  actor_role: 'admin' | 'artist' | 'user' | 'system' | 'exhibitor';
   actor_name: string | null;
   actor_email: string | null;
   action: string;

@@ -172,7 +172,6 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
                 width={1200}
                 height={1700}
                 className="w-full rounded-2xl shadow-xl"
-                priority
               />
             </div>
 

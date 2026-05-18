@@ -197,7 +197,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing verification token' }, { status: 400 });
   }
 
-  if (requestVerifyToken !== expectedVerifyToken) {
+  const requestBuf = Buffer.from(requestVerifyToken);
+  const expectedBuf = Buffer.from(expectedVerifyToken);
+  if (
+    requestBuf.length !== expectedBuf.length ||
+    !crypto.timingSafeEqual(requestBuf, expectedBuf)
+  ) {
     console.warn('[vercel-drain] Verification token mismatch');
     return NextResponse.json({ error: 'Invalid verification token' }, { status: 401 });
   }
