@@ -187,6 +187,15 @@ types/
 
 **i18n 필수 규칙**: 사용자 노출 텍스트는 전부 next-intl 메시지로. 배지·상태·버튼 라벨에 `"예약중"`, `"SOLD"`, `"판매완료"` 같은 리터럴 직접 박으면 영어 locale에서도 그대로 노출됨. `messages/ko.json`·`messages/en.json`에 키 추가 후 `useTranslations` / `getTranslations`로 소비.
 
+**i18n 적용 범위**:
+
+- ✅ 공개 라우트 (`app/[locale]/**`) — next-intl 메시지 필수. 한국어 리터럴 직접 사용 금지
+- ✅ 사용자 노출 toast/error — i18n 메시지 사용 (공개·인증 포털 공통)
+- ⛔ **admin 포털 (`app/(portal)/admin/**`, `app/actions/admin-\*.ts`)** — **영구 한국어 유지\*\* (i18n 비-스코프)
+  - 운영진 전용 화면, 영문화 ROI 없음
+  - 신규 admin 코드는 한국어 리터럴 그대로 작성. next-intl 메시지 키 추가 불필요
+- 🟧 exhibitor 포털 — 정책 미결정 (현재 부분 누락 상태, 별도 cycle 예정)
+
 **Responsive Design**: Mobile-first with breakpoints at `sm` (640px), `md` (768px), `lg` (1024px - mobile/desktop nav switch), `xl` (1280px).
 
 **Image Components**: 모든 이미지는 **`SafeImage`로 통일** (`import SafeImage from '@/components/common/SafeImage'`). Vercel Image Optimization 기반 next/image wrapper로 다음을 추가 제공:
