@@ -164,6 +164,21 @@
     "missionStep2": "기금 조성",
     "missionStep3": "예술인 저금리 대출",
     "missionLearnMore": "어떻게 가능한가요?",
+    "mechanism": {
+      "title": "작품 한 점이 만드는 일",
+      "step1": { "label": "작품 구매", "note": "거래액 100%" },
+      "step2": { "label": "기금 형성", "note": "거래액 10%" },
+      "step3": { "label": "금융 협약", "note": "10배 레버리지" },
+      "step4": { "label": "예술인 대출", "note": "한도 100%" },
+      "counter": {
+        "loansLabel": "누적 대출",
+        "loansValue": "{loanCount}건",
+        "repaymentLabel": "상환율",
+        "repaymentValue": "95%"
+      },
+      "message": "당신의 한 점이, 다음 한 점이 됩니다.",
+      "cta": "메커니즘 자세히 보기"
+    },
     "sectionPainting": "회화",
     "sectionPrint": "판화",
     "sectionPhotoMedia": "사진·미디어",
@@ -337,7 +352,18 @@
     "magazineLabel": "매거진",
     "statusAvailable": "판매중",
     "statusReserved": "예약중",
-    "statusSold": "판매완료"
+    "statusSold": "판매완료",
+    "trustSection": {
+      "eyebrow": "구매 안전"
+    },
+    "posthumous": {
+      "lifeYearsLabel": "작가",
+      "foundationLabel": "발행 주체",
+      "certificateLabel": "인증서",
+      "certificateNote": "재단 인증서 함께 발급",
+      "explanation": "사후 발행은 작가 유족·재단의 공식 인증으로 발행된 한정판입니다.",
+      "foundationFallback": "유족·재단 인증"
+    }
   },
   "artistPage": {
     "notFound": "작가를 찾을 수 없습니다",

@@ -40,6 +40,8 @@ import { shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import ArtworkPurchaseStickyMobile from '@/components/features/ArtworkPurchaseStickyMobile';
+import TrustBadges from '@/components/features/TrustBadges';
+import PosthumousPrintDetails from '@/components/features/PosthumousPrintDetails';
 import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
@@ -453,6 +455,16 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </div>
               )}
 
+              {/* 매뉴얼 5.6 사후판화 디테일 박스 — 5요소 풀이 (작가 생몰년·발행주체·인증서·에디션·설명) */}
+              {artwork.category === '사후판화' && (
+                <PosthumousPrintDetails
+                  artistName={artwork.artist}
+                  edition={artwork.edition}
+                  editionLimit={artwork.edition_limit}
+                  locale={locale}
+                />
+              )}
+
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
                   {/* 분류 */}
@@ -632,6 +644,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
               </div>
             </div>
           ) : null}
+
+          {/* 매뉴얼 7.2 [10] 신뢰 시그널 독립 영역 — sold/reserved/inquiry 분기 무관 항상 노출.
+              전체 폭 카드 박스 (우측 column 종료 후, sameCategoryWorks 직전). */}
+          <div className="mt-16 rounded-2xl bg-canvas-soft border border-gray-100 py-8 px-6">
+            <p className="text-xs uppercase tracking-widest text-charcoal-muted mb-5">
+              {t('trustSection.eyebrow')}
+            </p>
+            <TrustBadges variant="detail" />
+          </div>
 
           {/* Same Category Works Section */}
           {sameCategoryWorks.length > 0 && artwork.category && (

@@ -419,15 +419,15 @@ export default function CheckoutClient({
           </div>
         )}
 
+        {/* 매뉴얼 10.6 결제 페이지 신뢰 시그널 — 결제 결심 직전 노출이 본질. 버튼 위 카드 박스. */}
+        <div className="bg-canvas-soft rounded-2xl border border-gray-100 p-4 mb-6">
+          <TrustBadges variant="checkout" />
+        </div>
+
         {/* CTA */}
         <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
           {submitting ? t('processingShort') : t('payNow')}
         </Button>
-
-        {/* 매뉴얼 10.6 결제 페이지 신뢰 시그널 — 진품·청약철회·배송·결제보안·작가 직접 출품 5개. */}
-        <div className="mt-6">
-          <TrustBadges variant="checkout" />
-        </div>
       </div>
     </div>
   );

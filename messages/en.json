@@ -164,6 +164,21 @@
     "missionStep2": "Fund Grows",
     "missionStep3": "Low-Rate Artist Loans",
     "missionLearnMore": "How does this work?",
+    "mechanism": {
+      "title": "What one work sets in motion",
+      "step1": { "label": "Buy Artwork", "note": "100% of price" },
+      "step2": { "label": "Fund Forms", "note": "10% of price" },
+      "step3": { "label": "Finance Partner", "note": "10× leverage" },
+      "step4": { "label": "Artist Loan", "note": "100% credit line" },
+      "counter": {
+        "loansLabel": "Loans made",
+        "loansValue": "{loanCount}",
+        "repaymentLabel": "Repayment rate",
+        "repaymentValue": "95%"
+      },
+      "message": "Your one work enables the next one.",
+      "cta": "How the mechanism works"
+    },
     "sectionPainting": "Painting",
     "sectionPrint": "Print",
     "sectionPhotoMedia": "Photo & Media",
@@ -337,7 +352,18 @@
     "magazineLabel": "Magazine",
     "statusAvailable": "Available",
     "statusReserved": "Reserved",
-    "statusSold": "Sold"
+    "statusSold": "Sold",
+    "trustSection": {
+      "eyebrow": "Purchase Safety"
+    },
+    "posthumous": {
+      "lifeYearsLabel": "Artist",
+      "foundationLabel": "Issuing authority",
+      "certificateLabel": "Certificate",
+      "certificateNote": "Foundation certificate included",
+      "explanation": "Posthumous editions are official limited prints authorized by the artist's estate and foundation.",
+      "foundationFallback": "Estate & foundation authorized"
+    }
   },
   "artistPage": {
     "notFound": "Artist not found",

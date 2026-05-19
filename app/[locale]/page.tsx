@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import nextDynamic from 'next/dynamic';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
-import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
-import { ArrowRight, ChevronDown, ChevronRight, Coins, Handshake, Palette } from 'lucide-react';
+import MechanismSection from '@/components/features/MechanismSection';
 import HomeHero from '@/components/features/HomeHero';
 import AboutIdentity from '@/components/features/AboutIdentity';
 import NowShowing from '@/components/features/NowShowing';
@@ -133,49 +132,8 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           시한성 NowShowing[D] 직후 영구 거장 라인업 [E]. 페르소나 B "왜 이 사이트인가" 첫 인지 자산. */}
       <MasterArtists locale={locale} />
 
-      {/* Mission Banner */}
-      <Section variant="canvas" padding="sm">
-        <div className="container-max text-center py-4 md:py-6">
-          <p className="text-charcoal text-xl md:text-2xl font-semibold break-keep mb-6">
-            {t('missionBanner')}
-          </p>
-          {/* 3-step flow */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-0 mb-6">
-            {/* Step 1 */}
-            <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
-              <Palette aria-hidden="true" className="h-5 w-5 text-charcoal" />
-              <span className="text-sm font-semibold text-charcoal">{t('missionStep1')}</span>
-            </div>
-            <ChevronRight
-              aria-hidden="true"
-              className="hidden sm:block mx-2 h-5 w-5 text-charcoal-soft"
-            />
-            <ChevronDown aria-hidden="true" className="sm:hidden h-5 w-5 text-charcoal-soft" />
-            {/* Step 2 */}
-            <div className="flex items-center gap-2 bg-white rounded-xl px-5 py-3 shadow-sm">
-              <Coins aria-hidden="true" className="h-5 w-5 text-charcoal" />
-              <span className="text-sm font-semibold text-charcoal">{t('missionStep2')}</span>
-            </div>
-            <ChevronRight
-              aria-hidden="true"
-              className="hidden sm:block mx-2 h-5 w-5 text-charcoal-soft"
-            />
-            <ChevronDown aria-hidden="true" className="sm:hidden h-5 w-5 text-charcoal-soft" />
-            {/* Step 3 */}
-            <div className="flex items-center gap-2 bg-primary-surface rounded-xl px-5 py-3 shadow-sm border border-primary/20">
-              <Handshake aria-hidden="true" className="h-5 w-5 text-primary-a11y" />
-              <span className="text-sm font-semibold text-primary-a11y">{t('missionStep3')}</span>
-            </div>
-          </div>
-          <Link
-            href="/our-reality"
-            className="inline-flex items-center gap-1 text-sm text-charcoal-muted hover:text-primary transition-colors border-b border-charcoal-muted/30 hover:border-primary pb-0.5"
-          >
-            {t('missionLearnMore')}
-            <ArrowRight aria-hidden="true" className="h-4 w-4" />
-          </Link>
-        </div>
-      </Section>
+      {/* 매뉴얼 6.4 [F] + 8.4 사회금융 메커니즘 — 4단계 도식 + 라이브 카운터 + /our-proof 링크 */}
+      <MechanismSection locale={locale} />
 
       {/* 30만원 이하 첫 그림 — 매뉴얼 6.4 [H] + 9.2 컬렉션 4.
           페르소나 A·1단 첫 구매자 진입 동선. 가격 ₩100,000~₩300,000 + 작가 단위 dedupe + sold/reserved 제외. */}
