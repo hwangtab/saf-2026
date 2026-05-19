@@ -39,7 +39,7 @@ describe('useHeaderStyle', () => {
   it('keeps header transparent at top on hero route', () => {
     const { result } = renderHook(() => useHeaderStyle());
 
-    expect(result.current.headerStyle).toBe('bg-transparent');
+    expect(result.current.headerStyle).toBe('bg-transparent border-b border-transparent');
     expect(result.current.isDarkText).toBe(false);
   });
 
@@ -47,7 +47,7 @@ describe('useHeaderStyle', () => {
     mockPathname = '/index';
     const { result } = renderHook(() => useHeaderStyle());
 
-    expect(result.current.headerStyle).toBe('bg-transparent');
+    expect(result.current.headerStyle).toBe('bg-transparent border-b border-transparent');
     expect(result.current.isDarkText).toBe(false);
   });
 
@@ -74,7 +74,7 @@ describe('useHeaderStyle', () => {
       window.dispatchEvent(new Event('scroll'));
     });
 
-    expect(result.current.headerStyle).toBe('bg-transparent');
+    expect(result.current.headerStyle).toBe('bg-transparent border-b border-transparent');
     expect(result.current.isDarkText).toBe(false);
   });
 

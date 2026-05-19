@@ -5,6 +5,8 @@ import { usePathname } from '@/i18n/navigation';
 import { isArtworkDetail, isHeroRoute } from '@/lib/hero-routes';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
+// border-b border-transparent: solid 모드와 동일한 박스 크기 유지 → transparent↔solid 전환 시 1px CLS 제거
+const HEADER_TRANSPARENT_STYLE = 'bg-transparent border-b border-transparent';
 const HERO_SCROLL_TOP_THRESHOLD = 8;
 
 type HeaderMode = 'transparent' | 'solid' | 'overlay';
@@ -97,7 +99,7 @@ export function useHeaderStyle() {
     return heroAtTop ? 'transparent' : 'solid';
   }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout]);
 
-  const headerStyle = headerMode === 'transparent' ? 'bg-transparent' : HEADER_SOLID_STYLE;
+  const headerStyle = headerMode === 'transparent' ? HEADER_TRANSPARENT_STYLE : HEADER_SOLID_STYLE;
 
   const isDarkText = headerMode !== 'transparent';
   const textColor = isDarkText ? 'text-charcoal' : 'text-white';

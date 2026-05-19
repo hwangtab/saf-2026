@@ -14,6 +14,27 @@
      라우트(app/(portal)/layout.tsx)에서만 로드되어 공개 페이지 CSS chunk에서 제외 */
 }
 
+/*
+ * Pretendard Fallback — 한국어 글자 metric 보정용 fallback font-face.
+ * display:swap 시 시스템 한글 폰트가 이 metric으로 렌더되어 Pretendard 도착 후
+ * reflow(ascent/descent/size 차이)를 최소화 → CLS 개선.
+ *
+ * ascent-override/descent-override: Pretendard Std Variable sTypoAscender=800/sTypoDescender=-200 추정값.
+ * 정확한 측정: fontforge 또는 브라우저 FontFace API로 확인 후 미세 조정 가능.
+ * RUM 데이터(admin/analytics → CLS worst targets)에서 개선 여부 1주 모니터링.
+ */
+@font-face {
+  font-family: 'Pretendard Fallback';
+  src:
+    local('Apple SD Gothic Neo'), local('Malgun Gothic'), local('Noto Sans CJK KR'), local('Arial');
+  font-weight: 100 900;
+  font-style: normal;
+  ascent-override: 80%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+  size-adjust: 100%;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
