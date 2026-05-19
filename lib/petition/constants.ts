@@ -13,7 +13,7 @@
 export const PETITION_OH_YOON_SLUG = 'oh-yoon' as const;
 
 export const PETITION_OH_YOON_DEADLINE_ISO =
-  process.env.NEXT_PUBLIC_PETITION_DEADLINE ?? '2026-05-20T23:59:59+09:00';
+  process.env.NEXT_PUBLIC_PETITION_DEADLINE ?? '2026-05-25T23:59:59+09:00';
 
 export const PETITION_OH_YOON_GOAL = Number(process.env.NEXT_PUBLIC_PETITION_GOAL ?? '10000');
 

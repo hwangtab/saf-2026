@@ -20,7 +20,7 @@ export interface ArtistSeoOverride {
 
 export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
   오윤: {
-    // 1974년 구의동 벽화 멸실 위기 → /petition/oh-yoon 청원 진행 중 (2026-05-20 마감).
+    // 1974년 구의동 벽화 멸실 위기 → /petition/oh-yoon 청원 진행 중 (2026-05-25 마감).
     // generic title이 단순 "오윤의 작품 N점" 형태라 청원·벽화 검색 의도 매칭 약함.
     titleKo: '오윤 — 한국 민중미술 거장, 구의동 벽화 청원 진행 중 | 씨앗페',
     titleEn: 'Oh Yoon — Korean Minjung Art Master, Mural Petition Active | SAF Online',
