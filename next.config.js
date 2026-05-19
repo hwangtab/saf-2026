@@ -237,7 +237,9 @@ const nextConfig = {
               "worker-src 'self' blob:",
               "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.kakao.com http://*.kakao.com https://*.tosspayments.com https://*.toss.im https://toss.im https://t1.daumcdn.net https://postcode.map.daum.net",
               "base-uri 'self'",
-              "form-action 'self'",
+              // Kakao Share SDK v2의 sendDefault()는 hidden form을 sharer.kakao.com/picker/link로
+              // POST submit하는 방식으로 picker를 띄움. 이 도메인 없으면 CSP 차단 → 빈창 회귀.
+              "form-action 'self' https://sharer.kakao.com",
             ].join('; '),
           },
         ],
