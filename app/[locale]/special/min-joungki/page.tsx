@@ -556,7 +556,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                         <>
                           Receives the{' '}
                           <a
-                            href="https://gmoma.ggcf.kr/민정기"
+                            href="https://www.ilyosisa.co.kr/news/articleView.html?idxno=113689"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="underline"
@@ -568,7 +568,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                       ) : (
                         <>
                           <a
-                            href="https://gmoma.ggcf.kr/민정기"
+                            href="https://www.ilyosisa.co.kr/news/articleView.html?idxno=113689"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="underline"
@@ -585,9 +585,33 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                       현재
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Continues working in Yangpyeong. Works held in the National Museum of Modern and Contemporary Art (MMCA) and major collections.'
-                        : '양평에서 작업 지속. 국립현대미술관(MMCA) 등 주요 기관 소장.'}
+                      {isEnglish ? (
+                        <>
+                          Continues working in Yangpyeong. Works held in the{' '}
+                          <a
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            National Museum of Modern and Contemporary Art (MMCA)
+                          </a>{' '}
+                          and major collections.
+                        </>
+                      ) : (
+                        <>
+                          양평에서 작업 지속.{' '}
+                          <a
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            국립현대미술관(MMCA)
+                          </a>{' '}
+                          등 주요 기관 소장.
+                        </>
+                      )}
                     </span>
                   </li>
                 </ol>

@@ -446,8 +446,8 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Continues exhibiting nationally and internationally; work acquired by major collections.'
-                        : '국내외 지속 전시, 주요 기관 소장.'}
+                        ? 'Continues exhibiting nationally and internationally; participated in major group exhibitions.'
+                        : '국내외 지속 전시, 국내 주요 그룹전 참여 다수.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
