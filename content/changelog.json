@@ -1,5 +1,15 @@
 [
   {
+    "hash": "ops-petition-overseas-consent-0519",
+    "type": "content",
+    "scope": "petition",
+    "subject": "국외 이전 동의 카피 톤 완화 — 안심선언 우선 + 서울 이전 예정 명시",
+    "summary": "서명 이탈 유발 원인인 '글로벌 클라우드 인프라' 문구 제거, 안심선언 첫 문장 배치, 서울 이전 일정 부기",
+    "body": "배경:\n- '본 사이트는 글로벌 클라우드 인프라로 운영되어…' 첫 문장이 위협감 유발\n- '인도 뭄바이' 단어가 한국 사용자에게 거리감\n- PIPA 6종 필수 정보 모두 유지하면서 순서·표현만 개선\n\n변경:\n- 첫 문장: '서명 정보는 외부에 판매되거나 제3자에게 제공되지 않으며, 청원 운영에만 사용됩니다.' (안심선언 선행)\n- 인도 뭄바이 → '현재 인도 뭄바이, 2026년 하반기 서울 리전 이전 예정' (진정성 신호)\n- messages/ko.json, en.json formOverseasBlurb 키만 수정 — 구조 변경 없음\n\n후속 권고:\n- <details> 접힘 UI 도입 (다음 cycle)\n- Supabase 서울 이전 완료(7~8월 예정) 시 '현재 인도 뭄바이' 문구 삭제",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
     "hash": "ops-petition-recipient-0519",
     "type": "content",
     "scope": "petition",
