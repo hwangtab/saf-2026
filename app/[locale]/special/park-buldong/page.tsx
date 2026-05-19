@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import MasterArtistGallery from '@/components/special/MasterArtistGallery';
+import MasterArtistMediumSections from '@/components/special/MasterArtistMediumSections';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import PaperGrain from '@/components/common/PaperGrain';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
@@ -587,7 +587,11 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
 
           <div className="max-w-[1440px] mx-auto px-4">
             {ARTWORKS.length > 0 ? (
-              <MasterArtistGallery artworks={ARTWORKS} returnTo="/special/park-buldong" />
+              <MasterArtistMediumSections
+                artworks={ARTWORKS}
+                isEnglish={isEnglish}
+                returnTo="/special/park-buldong"
+              />
             ) : (
               <section className="py-24 text-center">
                 <div className="inline-block rounded-xl border border-white/10 bg-white/5 p-12 backdrop-blur-sm">

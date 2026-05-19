@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import SafeImage from '@/components/common/SafeImage';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import OhYoonMasonryGallery from '@/components/special/OhYoonMasonryGallery';
+import MasterArtistMediumSections from '@/components/special/MasterArtistMediumSections';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import PaperGrain from '@/components/common/PaperGrain';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
@@ -615,7 +615,11 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
           {/* Gallery Grid */}
           <div className="max-w-[1440px] mx-auto px-4">
             {OH_YOON_ARTWORKS.length > 0 ? (
-              <OhYoonMasonryGallery artworks={OH_YOON_ARTWORKS} />
+              <MasterArtistMediumSections
+                artworks={OH_YOON_ARTWORKS}
+                isEnglish={isEnglish}
+                returnTo="/special/oh-yoon"
+              />
             ) : (
               <section className="py-24 text-center">
                 <div className="inline-block rounded-xl border border-white/10 bg-white/5 p-12 backdrop-blur-sm">

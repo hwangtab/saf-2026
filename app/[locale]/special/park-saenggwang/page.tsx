@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import SafeImage from '@/components/common/SafeImage';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import ParkSaenggwangDrawingGallery from '@/components/special/ParkSaenggwangDrawingGallery';
+import MasterArtistMediumSections from '@/components/special/MasterArtistMediumSections';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import PaperGrain from '@/components/common/PaperGrain';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
@@ -740,7 +740,11 @@ export default async function ParkSaenggwangPage({
 
           <div className="max-w-[1440px] mx-auto px-4">
             {drawings.length > 0 ? (
-              <ParkSaenggwangDrawingGallery artworks={drawings} />
+              <MasterArtistMediumSections
+                artworks={drawings}
+                isEnglish={isEnglish}
+                returnTo="/special/park-saenggwang"
+              />
             ) : (
               <section className="py-24 text-center">
                 <div className="inline-block rounded-xl border border-charcoal/10 bg-white p-12">
