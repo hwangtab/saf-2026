@@ -7,6 +7,7 @@ import { shouldShowFooterSlider } from '@/lib/path-rules';
 // Keep no-SSR slider isolated to avoid Server Component build errors.
 const FooterSlider = dynamic(() => import('@/components/common/FooterSlider'), {
   ssr: false,
+  loading: () => <div className="h-[460px]" aria-hidden />,
 });
 
 export default function FooterSliderWrapper() {

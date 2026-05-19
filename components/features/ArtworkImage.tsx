@@ -179,6 +179,8 @@ export default function ArtworkImage({
               <img
                 src={mobileSrc}
                 alt={alt}
+                width={1600}
+                height={2000}
                 loading={isLcpImage ? 'eager' : 'lazy'}
                 fetchPriority={isLcpImage ? 'high' : 'auto'}
                 decoding={isLcpImage ? 'sync' : 'async'}
