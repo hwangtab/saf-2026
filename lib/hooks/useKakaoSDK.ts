@@ -4,12 +4,14 @@ import { useKakaoLoader } from 'react-kakao-maps-sdk';
 import { useEffect, useState, useRef } from 'react';
 
 const RAW_KAKAO_MAP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim() ?? '';
-const RAW_KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY?.trim() ?? RAW_KAKAO_MAP_KEY;
+const RAW_KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY?.trim() ?? '';
 const FALLBACK_KEY = 'invalid-kakao-key';
 
-const appKey = RAW_KAKAO_MAP_KEY || RAW_KAKAO_JS_KEY || FALLBACK_KEY;
+// Map과 Share는 동일한 Kakao JavaScript Key를 사용해야 함.
+// 두 env var는 보통 같은 값이지만, 명시적으로 분리해 fallback 혼선을 방지.
+const appKey = RAW_KAKAO_MAP_KEY || FALLBACK_KEY;
 const jsKey = RAW_KAKAO_JS_KEY || RAW_KAKAO_MAP_KEY || FALLBACK_KEY;
-const hasAppKey = appKey !== FALLBACK_KEY;
+const hasAppKey = jsKey !== FALLBACK_KEY;
 const KAKAO_SDK_SCRIPT_ID = 'kakao-share-sdk-script';
 
 let kakaoScriptPromise: Promise<void> | null = null;

@@ -44,6 +44,7 @@ import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
+import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -298,6 +299,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // URL을 두 번 hint하는 형태(production HTML pos 440/707 + pos 7624/7891)가 되어 우선순위
   // 경쟁만 발생 — 측정 결과 dedupe로 1회 fetch지만 hint 자체가 잉여. 페이지 레벨 추가 제거.
 
+  const rawShareImage = artwork.images?.[0] ? resolveArtworkImageUrl(artwork.images[0]) : null;
+  const shareImageUrl = rawShareImage
+    ? rawShareImage.startsWith('http')
+      ? rawShareImage
+      : `${SITE_URL}${rawShareImage}`
+    : undefined;
+
   return (
     <>
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
@@ -413,6 +421,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     title: displayTitle,
                     artist: displayArtist,
                   })}
+                  imageUrl={shareImageUrl}
                 />
               </div>
             </div>
