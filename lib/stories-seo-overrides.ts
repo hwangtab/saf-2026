@@ -129,6 +129,17 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     descriptionEn:
       'Yoon Gyeom draws line after line until they become forests and fortresses. A painter who builds calm out of anxiety through repetition.',
   },
+  'meet-artist-jeong-geumhui': {
+    // GSC: 12 imp / 0 click / pos 4.4 — "정금희" 검색어. pos 4.4면 title CTR 영향 직접.
+    // 본문: 홍익대 사진학 박사, 부산 기반, 화락이토·동해선—역사 시리즈.
+    titleKo: '사진가 정금희 인터뷰 — 화락이토·동해선, 부산의 풍경을 기록하다 | 씨앗페 매거진',
+    titleEn:
+      'Jeong Geumhui Interview — Flowers to Earth, Documenting Busan Railways | SAF Magazine',
+    descriptionKo:
+      '홍익대 사진학 박사이자 부산 기반의 사진가. 정금희는 동해선의 옛 역사부터 꽃과 흙의 순환까지, 일체유심조의 시선으로 부산·울산·경남의 풍경을 담아왔다.',
+    descriptionEn:
+      "Busan-based PhD photographer. From the stations of the East Sea Line to the cycle of flowers and earth, Jeong Geumhui captures southern Korea's landscapes.",
+  },
   'meet-artist-park-bul-ttong': {
     // GSC: 14 imp / 0 click / pos 5.7 — "박불똥" 검색어. 본문: 민중미술, 1985년 경찰 폐쇄 전시, 포토몽타주.
     titleKo:

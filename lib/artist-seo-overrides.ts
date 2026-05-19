@@ -110,6 +110,22 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
     titleEn:
       'Lee Hongwon — 40 Years Painting Korean Spirit: Moon Jars and Forest Songs | SAF Online',
   },
+
+  // ─── GSC 2026-04-19~05-16: T2-6 추가 발견 ────────────────────────────────
+  // T2-5 미커버 작가 2건.
+
+  김준권: {
+    // GSC: 34 imp / 0 click / pos 8.4 — 목판화가. 2018년 남북정상회담 평화의집 배경 작품
+    // 〈산운〉으로 널리 알려짐. 40년 수묵·채묵 목판화, 국립현대미술관 소장.
+    titleKo: '김준권 — 남북정상회담 배경 〈산운〉, 40년 수묵 목판화 | 씨앗페',
+    titleEn: 'Kim Jungwon — Korean Woodblock Master, 2018 North-South Summit Artwork | SAF Online',
+  },
+  정금희: {
+    // GSC: 21 imp / 0 click / pos 3.5 — 부산 기반 사진가, 홍익대 사진학 박사.
+    // 〈화락이토〉(花落以土)·〈동해선—역사〉 시리즈로 부산·경남 풍경 기록.
+    titleKo: '정금희 — 화락이토·동해선, 홍익대 사진학 박사 사진가 | 씨앗페',
+    titleEn: 'Jeong Geumhui — PhD Photographer, Busan Landscapes and East Sea Line | SAF Online',
+  },
 };
 
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
