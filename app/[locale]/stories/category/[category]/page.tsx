@@ -621,12 +621,10 @@ export default async function StoryCategoryPage({ params }: Props) {
                       )}
                       <div className="flex items-center gap-2 text-xs text-charcoal-muted/60">
                         <span>{story.published_at}</span>
-                        {story.author && (
-                          <>
-                            <span>·</span>
-                            <span>{localizeStoryAuthor(story.author, locale)}</span>
-                          </>
-                        )}
+                        <>
+                          <span>·</span>
+                          <span>{localizeStoryAuthor(story.author, locale)}</span>
+                        </>
                       </div>
                     </div>
                   </Link>

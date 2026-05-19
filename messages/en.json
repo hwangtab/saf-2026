@@ -1117,6 +1117,13 @@
     "pageEmpty": "No saved works yet",
     "pageEmptyDesc": "Tap the heart on any artwork card to save it here",
     "browseArtworks": "Browse artworks",
-    "headerLabel": "Wishlist"
+    "headerLabel": "Wishlist",
+    "returningGreeting": "Welcome back — {count, plural, =1 {1 work} other {# works}} waiting in your wishlist",
+    "fetchError": "Could not load your saved works",
+    "retryLoad": "Try again"
+  },
+  "storiesArchive": {
+    "heroSubtitle": "{count, plural, =1 {1 article} other {# articles}}",
+    "emptyState": "No articles this month."
   }
 }

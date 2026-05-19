@@ -159,6 +159,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
       '@type': 'Place',
       name: isEnglish ? 'Yangpyeong, Gyeonggi, South Korea' : '경기 양평',
     },
+    sameAs: ['https://ko.wikipedia.org/wiki/민정기_(화가)'],
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -587,7 +588,8 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish ? (
                         <>
-                          Continues working in Yangpyeong. Works held in the{' '}
+                          Continues working in Yangpyeong. Work reportedly held in major
+                          institutional collections including the{' '}
                           <a
                             href="https://www.mmca.go.kr/collections/collectionsList.do"
                             target="_blank"
@@ -595,8 +597,8 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                             className="underline"
                           >
                             National Museum of Modern and Contemporary Art (MMCA)
-                          </a>{' '}
-                          and major collections.
+                          </a>
+                          .
                         </>
                       ) : (
                         <>
@@ -609,7 +611,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                           >
                             국립현대미술관(MMCA)
                           </a>{' '}
-                          등 주요 기관 소장.
+                          등 주요 기관에 소장된 것으로 알려져 있다.
                         </>
                       )}
                     </span>

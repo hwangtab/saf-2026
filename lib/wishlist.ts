@@ -3,7 +3,8 @@ import { storageGet, storageSet } from './storage';
 const WISHLIST_KEY = 'saf:wishlist';
 
 export function getWishlist(): string[] {
-  return storageGet<string[]>(WISHLIST_KEY) ?? [];
+  const parsed = storageGet<unknown>(WISHLIST_KEY);
+  return Array.isArray(parsed) ? (parsed as string[]) : [];
 }
 
 export function isInWishlist(artworkId: string): boolean {

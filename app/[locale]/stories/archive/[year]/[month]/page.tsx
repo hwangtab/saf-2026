@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getSupabaseStoriesLight } from '@/lib/supabase-data';
 import type { StoryLight } from '@/lib/supabase-data';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -135,7 +135,10 @@ export default async function StoryArchiveMonthPage({ params }: Props) {
     notFound();
   }
 
-  const allStories = await getSupabaseStoriesLight();
+  const [allStories, tArchive] = await Promise.all([
+    getSupabaseStoriesLight(),
+    getTranslations({ locale, namespace: 'storiesArchive' }),
+  ]);
 
   const monthStr = `${yearNum}-${String(monthNum).padStart(2, '0')}`;
   const filtered = allStories
@@ -155,9 +158,7 @@ export default async function StoryArchiveMonthPage({ params }: Props) {
     year: 'numeric',
     month: 'long',
   });
-  const heroSubtitle = isEn
-    ? `${filtered.length} ${filtered.length === 1 ? 'article' : 'articles'}`
-    : `${filtered.length}편의 글`;
+  const heroSubtitle = tArchive('heroSubtitle', { count: filtered.length });
 
   // Adjacent month navigation
   const availableMonths = getAvailableMonths(allStories);
@@ -220,9 +221,7 @@ export default async function StoryArchiveMonthPage({ params }: Props) {
       <Section variant="white" className="py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-5">
           {filtered.length === 0 ? (
-            <p className="text-charcoal-muted text-center py-20">
-              {isEn ? 'No articles this month.' : '이 달에는 발행된 글이 없습니다.'}
-            </p>
+            <p className="text-charcoal-muted text-center py-20">{tArchive('emptyState')}</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((story, i) => {

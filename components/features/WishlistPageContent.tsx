@@ -35,13 +35,16 @@ export default function WishlistPageContent({
   const t = useTranslations('wishlist');
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
 
   const fetchArtworks = useCallback(async (wishlistIds: string[]) => {
     if (wishlistIds.length === 0) {
       setArtworks([]);
+      setFetchError(false);
       return;
     }
     setLoading(true);
+    setFetchError(false);
     try {
       const res = await fetch(`/api/artworks/batch?ids=${wishlistIds.join(',')}`);
       if (!res.ok) throw new Error('fetch failed');
@@ -52,6 +55,7 @@ export default function WishlistPageContent({
         .filter((a): a is Artwork => a != null);
       setArtworks(ordered);
     } catch {
+      setFetchError(true);
       setArtworks([]);
     } finally {
       setLoading(false);
@@ -73,7 +77,21 @@ export default function WishlistPageContent({
     );
   }
 
-  if (ids.length === 0 || artworks.length === 0) {
+  if (ids.length > 0 && fetchError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <p className="text-lg font-semibold text-charcoal mb-4">{t('fetchError')}</p>
+        <button
+          onClick={() => fetchArtworks(ids)}
+          className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-primary text-white hover:bg-primary-strong transition-colors"
+        >
+          {t('retryLoad')}
+        </button>
+      </div>
+    );
+  }
+
+  if (ids.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <Heart className="w-12 h-12 text-gray-300 mb-4" aria-hidden="true" />

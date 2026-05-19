@@ -99,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       path: '/special/oh-yoon',
       changeFrequency: 'monthly',
       priority: 0.85,
-      lastModified: new Date('2026-01-01'),
+      lastModified: new Date('2026-05-19'),
     },
     {
       path: '/special/park-saenggwang',
@@ -429,7 +429,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: latestPublished ?? now,
         changeFrequency: 'monthly' as const,
         priority: 0.6,
-        alternates: koAlternates(baseUrl, path),
+        alternates: bilingualAlternates(baseUrl, path),
       };
     });
 

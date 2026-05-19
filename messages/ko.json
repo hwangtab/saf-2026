@@ -1117,6 +1117,13 @@
     "pageEmpty": "아직 저장된 작품이 없습니다",
     "pageEmptyDesc": "작품 카드의 하트를 눌러 관심 작품을 저장해 보세요",
     "browseArtworks": "작품 둘러보기",
-    "headerLabel": "위시리스트"
+    "headerLabel": "위시리스트",
+    "returningGreeting": "위시리스트의 {count}점이 기다리고 있습니다",
+    "fetchError": "작품을 불러오지 못했습니다",
+    "retryLoad": "다시 시도"
+  },
+  "storiesArchive": {
+    "heroSubtitle": "{count}편의 글",
+    "emptyState": "이 달에는 발행된 글이 없습니다."
   }
 }

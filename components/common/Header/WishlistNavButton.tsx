@@ -25,9 +25,13 @@ export default function WishlistNavButton({ textColor }: { textColor: string }) 
       )}
     >
       <Heart className="w-5 h-5 lg:w-4 lg:h-4" aria-hidden="true" />
-      {mounted && count > 0 && (
+      {mounted && (
         <span
-          className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold leading-none"
+          className={cn(
+            'absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold leading-none',
+            'transition-[opacity,transform] duration-200 motion-reduce:transition-none',
+            count > 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-0 pointer-events-none'
+          )}
           aria-hidden="true"
         >
           {count > 99 ? '99+' : count}

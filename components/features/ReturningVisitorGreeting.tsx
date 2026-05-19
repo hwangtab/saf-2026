@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useToast } from '@/lib/hooks/useToast';
 import { useWishlist } from '@/components/providers/WishlistProvider';
 import { recordAndGetVisit } from '@/lib/visit-state';
@@ -14,7 +14,7 @@ import { recordAndGetVisit } from '@/lib/visit-state';
 export default function ReturningVisitorGreeting() {
   const { ids, mounted } = useWishlist();
   const toast = useToast();
-  const locale = useLocale();
+  const t = useTranslations('wishlist');
   const fired = useRef(false);
 
   useEffect(() => {
@@ -24,15 +24,9 @@ export default function ReturningVisitorGreeting() {
     const { isReturning } = recordAndGetVisit();
     if (!isReturning || ids.length === 0) return;
 
-    const count = ids.length;
-    const message =
-      locale === 'en'
-        ? `Welcome back — ${count} work${count > 1 ? 's' : ''} waiting in your wishlist`
-        : `위시리스트의 ${count}점이 기다리고 있습니다`;
-
     // 3.5초 후 자동 닫힘
-    toast.info(message, { duration: 3500 });
-  }, [mounted, ids.length, locale, toast]);
+    toast.info(t('returningGreeting', { count: ids.length }), { duration: 3500 });
+  }, [mounted, ids.length, t, toast]);
 
   return null;
 }
