@@ -1,11 +1,81 @@
 [
   {
-    "hash": "ops-petition-deadline-0525",
-    "type": "ops",
+    "hash": "ops-petition-recipient-0519",
+    "type": "content",
     "scope": "petition",
-    "subject": "오윤 청원 마감일 연장: 2026-05-20 → 2026-05-25",
-    "summary": "마감 하루 전 5일 연장. DB deadline_at + constants.ts default 동시 갱신",
-    "body": "변경:\n- lib/petition/constants.ts: default ISO 2026-05-20T23:59:59+09:00 → 2026-05-25T23:59:59+09:00\n- Supabase petitions.deadline_at: 2026-05-20 14:59:59+00 → 2026-05-25 14:59:59+00 (MCP execute_sql)\n- lib/artist-seo-overrides.ts: 주석 마감일 동기화\n\n자동 갱신 범위 (코드 수정 불필요):\n- CountdownTimer, OG 이미지, i18n {deadlineShort}/{deadlineFull}, 메일 템플릿, ShareTemplates\n\n회귀 방지:\n- DB UPDATE 먼저 적용 → code commit/push 순서 준수\n- 5/10→5/20 연장 시 DB 누락으로 PETITION_CLOSED 회귀 재발 방지",
+    "subject": "오윤 청원 수신자 추가: 차기 서울시장 + 문화체육관광부 장관 동등 병렬",
+    "summary": "기존 '차기 서울시장' 단일 수신자에 '문화체육관광부 장관' 동등 병렬 추가. i18n 17개 키 × 2 locale + OG + 메일 갱신",
+    "body": "변경 규칙:\n- '차기 서울시장께' → '차기 서울시장과 문화체육관광부 장관께'\n- '차기 서울시장께서' → '차기 서울시장과 문화체육관광부 장관께서'\n- '차기 서울시장 후보 측' → '차기 서울시장 및 문화체육관광부 장관 측'\n\n명분 분담:\n- 시장: 행정 책임 (해체·이관·시민 자산화) — 기존 유지\n- 장관: 1974년 작 한국 근현대 미술사 자산 → 문화재 보호 정책 책임 (FAQ A1 신설)\n\n변경 파일:\n- messages/ko.json: 17개 키 갱신\n- messages/en.json: 17개 키 갱신 (정식 표기 'Minister of Culture, Sports and Tourism' / 축약 'Culture Minister')\n- app/[locale]/petition/oh-yoon/opengraph-image.tsx: subtitle 하드코딩 갱신\n- lib/petition/mail.ts: 서명 확인 메일 본문 갱신\n\nDB 변경 없음 (수신자 메타데이터 없음)",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
+    "hash": "280aae40",
+    "type": "perf",
+    "scope": "admin",
+    "subject": "대시보드 overview analytics/feedback promise 조기 킥오프",
+    "summary": "analytics+feedback fetch를 main batch 전에 미리 시작해 대시보드 로드 ~130ms 단축",
+    "body": "admin-dashboard-overview: analyticsFeedbackPromise를 main batch와 병렬 시작 후 완료 후 await\nadmin-orders: payment+artwork_sales 직렬 fetch를 Promise.all 병렬로 전환\nsite-stats: 날짜 자동 갱신 (2026-05-19)",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
+    "hash": "60a88cf8",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "ExhibitionMapWrapper dynamic loading placeholder 추가",
+    "summary": "KakaoMap chunk 로드 전 0px → 400px 점프 차단 (archive/2026 페이지)",
+    "body": "dynamic import에 loading placeholder 미지정 상태였음. KakaoMap 자체는 mount 후\nh-[400px] 보장하지만 chunk fetch 중에는 0px → mount 시 400px 점프 발생.\nloading: () => <div h-[400px] bg-canvas />  추가로 차단.",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
+    "hash": "40484b7d",
+    "type": "fix",
+    "scope": "cls",
+    "subject": "선제 CLS 회귀 3건 수정",
+    "summary": "헤더 border 1px 점프, 한국어 폰트 reflow, DynamicCounter 폭 변동 차단",
+    "body": "- useHeaderStyle: transparent 모드에 border-b border-transparent 추가 — solid 전환 시 1px 박스 변동 제거\n- globals.css: Pretendard Fallback @font-face 추가 (ascent 80%, descent 20%) — swap 시 한국어 metric reflow 최소화\n- tailwind.config.ts: sans/display/section fallback chain에 Pretendard Fallback 삽입\n- DynamicCounter: tabular-nums + min-width(ch) — 카운트업 0→N 시 폭 변동 차단",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
+    "hash": "ec92f5e8",
+    "type": "feat",
+    "scope": "admin/analytics",
+    "subject": "CLS worst targets RUM 진단 인프라 신설",
+    "summary": "CLS 원인을 RUM 데이터로 식별하는 진단 인프라 추가 (Supabase RPC + admin 대시보드 테이블)",
+    "body": "- supabase: get_web_vitals_worst_cls_targets RPC 신설 — page_path × shift_target 조합 p75/poor_rate 집계\n- admin-analytics: clsWorstTargets RPC 호출 + ClsTarget 타입 추가 (lcpWorstPages 병렬 batch)\n- WebVitalsPanel: CLS 시프트 원인 분석 테이블 추가 (페이지 / 시프트 대상 / p75 / poor 비율)",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
+    "hash": "e0557481",
+    "type": "fix",
+    "scope": "special-pages",
+    "subject": "Phase 3.4 P2 — 거장 페이지 표현 수위 조정",
+    "summary": "박불똥·이철수 특별 페이지 timeline 영문 표현을 한국어 원문과 일치하도록 완화",
+    "body": "- park-buldong: 1985 timeline EN \"co-founds\" → \"participates in founding\" (KO \"창립 참여\"와 정합)\n- lee-cheolsoo: 1980s timeline EN \"Participates in the minjung art movement\" → \"Work rooted in minjung art sensibilities while charting an independent path\"; KO \"민중미술 운동 참여\" → \"민중미술적 감성을 바탕으로, 독자적인 서화 세계를 열어감\" — bio 내러티브(\"직접적인 정치 대신 개인적·철학적 방향으로\")와 톤 일치",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
+    "hash": "258f9779",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "작가 페이지 SEO title 오버라이드 14건 추가 (T2-5)",
+    "summary": "GSC 28일 0-click 작가 페이지(~342 imp) 대상, 작가별 정체성 키워드를",
+    "body": "SERP title 앞에 배치해 CTR 1~3% 진입 목표\n\n- 조문호(46 imp/pos 6.9): 청량리·쪽방촌 다큐 사진가 컨텍스트 추가\n- 박불똥(38/7.1): 민중미술·포토몽타주·1985년 공권력 폐쇄 전시\n- 윤겸(35/5.1): 반복과 평온의 유화, 요새와 숲 시리즈\n- 고자영(29/6.7): 서울대 박사, 정원·식물로 자아 탐구\n- 신연진(26/4.6): 홍익대 회화, 일상·감정의 콜라주\n- 박성완(25/3.7): 광주 공동체 기억, 힘 있는 붓\n- 민정기(24/9.6): 현실과 발언 창립, 이발소그림→산수·화훼\n- 김수오(24/9.2): 제주 바다·강정마을 기록 의사 사진가\n- 이은화(20/7.4): 런던예대·소더비 석사, 회화·설치·뉴미디어\n- 양순열(18/6.0): 모성과 존재의 회화·조각\n- 천지수(16/6.0): 이태리 미술대전 대상, 암석벽화 복원\n- 이문형(14/4.3): 전통 민화를 현대 회화로\n- 박재동(14/7.6): 한겨레 만평 8년, 시사만화의 대부\n- 이홍원(13/2.8): 40년 화업, 달항아리·숲속의 노래\n\n신연진 EN 중복(/en/artworks/artist/신연진 20 imp): sitemap 미포함 +\nkoOnly canonical + robots:noindex 이미 올바르게 설정됨 — 대기 필요.\n\n14일 후 GSC 측정 예정(2026-06-02).",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
+    "hash": "7998f186",
+    "type": "feat",
+    "scope": "special-pages",
+    "subject": "Part 15 S5.6 — 거장 5인 특별 페이지 매체별 섹션 추가",
+    "summary": "MasterArtistMediumSections 공유 컴포넌트 신규 생성 + 거장 5인 특별 페이지 갤러리를 매체별 섹션으로 교체",
+    "body": "- components/special/MasterArtistMediumSections.tsx 신규: ArtworkListItem[]를 category 기준으로 그룹화, 매뉴얼 5.8 11개 매체 순서로 섹션 헤더 + MasterArtistGallery 렌더\n- oh-yoon: OhYoonMasonryGallery → MasterArtistMediumSections 교체 (단일 사후판화 섹션 헤더 추가)\n- park-saenggwang: ParkSaenggwangDrawingGallery → MasterArtistMediumSections 교체\n- min-joungki / lee-cheolsoo / park-buldong: MasterArtistGallery → MasterArtistMediumSections 교체\n- 다중 매체 보유 작가는 카테고리별 h2 섹션으로 분리 노출 → long-tail 검색어 색인\n- 단일 매체 보유 작가는 헤더만 추가, 갤러리 UX 동일 유지\n- 빌드 444 HTML files, 0 placeholder 오류",
     "date": "2026-05-19",
     "author": "황경하"
   },

@@ -37,8 +37,8 @@ export default async function Image({ params }: Props) {
     ? '멸실 위기의 오윤 벽화,\n우리가 구하자. 우리의 품으로.'
     : "Save Oh Yoon's mural\nfrom demolition. Bring it home.";
   const subtitle = isKo
-    ? '차기 서울시장께 드리는 시민 청원'
-    : "A citizens' petition to Seoul's next mayor";
+    ? '차기 서울시장과 문체부 장관께 드리는 시민 청원'
+    : "A citizens' petition to Seoul's next mayor and Culture Minister";
   // PETITION_DEADLINE_ISO 단일 출처에서 YYYY-MM-DD 추출 — 마감일 변경 시 자동 갱신.
   // hardcoded 날짜는 5/10 → 5/20 변경 시 누락 회귀 원인이라 helper화.
   const isoDate = PETITION_OH_YOON_DEADLINE_ISO.slice(0, 10); // '2026-05-20'
