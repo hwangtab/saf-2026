@@ -426,7 +426,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? "First solo exhibition 〈Nunbit〉 at Gwanhun Gallery; co-founds the Minjung Misul Hyeopuihoe (National Artists' Association)."
+                        ? "First solo exhibition 〈Nunbit〉 at Gwanhun Gallery; participates in founding the Minjung Misul Hyeopuihoe (National Artists' Association)."
                         : '첫 개인전 〈눈빛展〉 (관훈미술관); 「민족미술협의회」 창립 참여.'}
                     </span>
                   </li>

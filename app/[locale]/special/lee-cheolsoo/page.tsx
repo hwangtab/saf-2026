@@ -483,8 +483,8 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Participates in the minjung art movement while developing his distinctive text-image fusion style.'
-                        : '민중미술 운동 참여, 동시에 글·그림 융합의 독자적 서화 세계 형성.'}
+                        ? 'Work rooted in minjung art sensibilities while charting an independent path in text-image fusion (서화).'
+                        : '민중미술적 감성을 바탕으로, 독자적인 서화(書畵) 세계를 열어감.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
