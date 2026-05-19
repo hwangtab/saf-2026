@@ -1,5 +1,15 @@
 [
   {
+    "hash": "cta-fix-our-reality",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "오윤 청원 하단 CTA 도착지 교정 — /stories → /our-reality",
+    "summary": "오윤 청원 하단 CTA 도착지 교정 — '예술인 금융 차별 이야기 읽기' 버튼이 매거진 메인(/stories) 대신 /our-reality로 이동",
+    "body": "- app/[locale]/petition/oh-yoon/page.tsx: exploreStoriesLabel CTA href /stories → /our-reality\n  매거진 메인에 금융 차별 카테고리/태그 없어 라벨↔내용 미스매치였음\n  /our-reality(예술인 금융 소외의 구조적 원인 — 84.9% 배제율 등)로 의미 일치",
+    "date": "2026-05-19",
+    "author": "황경하"
+  },
+  {
     "hash": "ops-petition-overseas-consent-0519",
     "type": "content",
     "scope": "petition",
