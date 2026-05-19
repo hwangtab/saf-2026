@@ -243,6 +243,13 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
   const SLA_HOURS = 72;
   const slaThreshold = new Date(Date.now() - SLA_HOURS * 3600 * 1000).toISOString();
 
+  // analytics + feedback은 main batch 결과와 무관하게 시작할 수 있으므로 먼저 킥오프.
+  // main batch가 끝난 뒤 await하면 두 왕복이 겹쳐 ~130ms 절약.
+  const analyticsFeedbackPromise = Promise.allSettled([
+    fetchAnalyticsSummary(supabase),
+    fetchFeedbackSummary(supabase),
+  ]);
+
   const [
     totalArtistsResult,
     linkedArtistsResult,
@@ -404,11 +411,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     0
   );
 
-  // Analytics + Feedback: graceful degradation (don't break dashboard if these fail)
-  const [analyticsSettled, feedbackSettled] = await Promise.allSettled([
-    fetchAnalyticsSummary(supabase),
-    fetchFeedbackSummary(supabase),
-  ]);
+  // main batch 완료 후 이미 실행 중인 analytics+feedback을 await
+  const [analyticsSettled, feedbackSettled] = await analyticsFeedbackPromise;
 
   const siteAnalytics = analyticsSettled.status === 'fulfilled' ? analyticsSettled.value : null;
   const feedback = feedbackSettled.status === 'fulfilled' ? feedbackSettled.value : null;

@@ -147,22 +147,22 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
 
   if (error || !order) return null;
 
-  // Fetch payment record
-  const { data: payment } = await supabase
-    .from('payments')
-    .select('payment_key, status, method, approved_at, confirm_response')
-    .eq('order_id', orderId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  // Fetch artwork_sales record
-  const { data: sale } = await supabase
-    .from('artwork_sales')
-    .select('id, voided_at')
-    .eq('order_id', orderId)
-    .limit(1)
-    .maybeSingle();
+  // payment + sale은 order에 의존하지 않으므로 병렬 fetch
+  const [{ data: payment }, { data: sale }] = await Promise.all([
+    supabase
+      .from('payments')
+      .select('payment_key, status, method, approved_at, confirm_response')
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from('artwork_sales')
+      .select('id, voided_at')
+      .eq('order_id', orderId)
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   const artwork = Array.isArray(order.artworks) ? order.artworks[0] : order.artworks;
   const images = Array.isArray(artwork?.images) ? artwork.images : [];
