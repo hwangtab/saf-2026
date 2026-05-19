@@ -3,6 +3,7 @@
 import { trackEvent } from '@/lib/analytics/track';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
+import { localizeStoryAuthor } from '@/lib/story-author';
 import type { Story } from '@/types';
 
 interface Props {
@@ -78,7 +79,10 @@ export default function RelatedMagazineCard({
             {storyExcerpt}
           </p>
         )}
-        <span className="text-[10px] text-charcoal-muted/60 mt-2 block">{story.published_at}</span>
+        <span className="text-[10px] text-charcoal-muted/60 mt-2 block">
+          {story.published_at ? `${story.published_at} · ` : ''}
+          {localizeStoryAuthor(null, isEn ? 'en' : 'ko')}
+        </span>
       </div>
     </Link>
   );

@@ -283,12 +283,8 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                       )}
                       <div className="flex items-center gap-3 text-sm text-white/60">
                         <span>{featured.published_at}</span>
-                        {featured.author && (
-                          <>
-                            <span>·</span>
-                            <span>{localizeStoryAuthor(featured.author, locale)}</span>
-                          </>
-                        )}
+                        <span>·</span>
+                        <span>{localizeStoryAuthor(featured.author, locale)}</span>
                       </div>
                     </div>
                   </div>
@@ -354,12 +350,8 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                           )}
                           <div className="flex items-center gap-2 text-xs text-charcoal-muted/60">
                             <span>{story.published_at}</span>
-                            {story.author && (
-                              <>
-                                <span>·</span>
-                                <span>{localizeStoryAuthor(story.author, locale)}</span>
-                              </>
-                            )}
+                            <span>·</span>
+                            <span>{localizeStoryAuthor(story.author, locale)}</span>
                           </div>
                         </div>
                       </Link>

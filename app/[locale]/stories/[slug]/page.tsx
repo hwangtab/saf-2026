@@ -369,16 +369,14 @@ export default async function StoryDetailPage({ params }: Props) {
           {/* Author & Share */}
           <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              {story.author && (
-                <div>
-                  <p className="text-sm font-semibold text-charcoal">
-                    {localizeStoryAuthor(story.author, locale)}
-                  </p>
-                  <p className="text-xs text-charcoal-muted">
-                    {isEn ? `Published ${formattedDate}` : `발행 ${formattedDate}`}
-                  </p>
-                </div>
-              )}
+              <div>
+                <p className="text-sm font-semibold text-charcoal">
+                  {localizeStoryAuthor(story.author, locale)}
+                </p>
+                <p className="text-xs text-charcoal-muted">
+                  {isEn ? `Published ${formattedDate}` : `발행 ${formattedDate}`}
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-sm text-charcoal-muted">{isEn ? 'Share' : '공유하기'}</span>
@@ -475,16 +473,20 @@ export default async function StoryDetailPage({ params }: Props) {
                       </h3>
                       <span className="text-xs text-charcoal-muted/60 mt-2 block">
                         {(() => {
-                          if (!related.published_at) return '';
-                          if (!isEn) return related.published_at;
-                          const d = new Date(related.published_at);
-                          return Number.isNaN(d.getTime())
+                          if (!related.published_at) return localizeStoryAuthor(null, locale);
+                          const dateStr = !isEn
                             ? related.published_at
-                            : d.toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              });
+                            : (() => {
+                                const d = new Date(related.published_at);
+                                return Number.isNaN(d.getTime())
+                                  ? related.published_at
+                                  : d.toLocaleDateString('en-US', {
+                                      year: 'numeric',
+                                      month: 'long',
+                                      day: 'numeric',
+                                    });
+                              })();
+                          return `${dateStr} · ${localizeStoryAuthor(null, locale)}`;
                         })()}
                       </span>
                     </div>

@@ -4,6 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { getSupabaseStoriesLight } from '@/lib/supabase-data';
+import { localizeStoryAuthor } from '@/lib/story-author';
 import { ArrowRight } from 'lucide-react';
 
 /**
@@ -81,9 +82,10 @@ export default async function MagazineSection({ locale }: { locale: string }) {
                       {excerpt}
                     </p>
                   )}
-                  {dateStr && (
-                    <span className="text-[10px] text-charcoal-muted/60 mt-3 block">{dateStr}</span>
-                  )}
+                  <span className="text-[10px] text-charcoal-muted/60 mt-3 block">
+                    {dateStr ? `${dateStr} · ` : ''}
+                    {localizeStoryAuthor(null, locale as 'ko' | 'en')}
+                  </span>
                 </div>
               </Link>
             );
