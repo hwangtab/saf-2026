@@ -401,6 +401,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
+  // Magazine monthly archive pages (/stories/archive/[year]/[month])
+  const archiveMonthSet = new Set<string>();
+  allStories.forEach((s) => {
+    if (!s.published_at) return;
+    const d = new Date(s.published_at);
+    if (Number.isNaN(d.getTime())) return;
+    archiveMonthSet.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+  });
+  const archiveMonthPages: MetadataRoute.Sitemap = Array.from(archiveMonthSet)
+    .sort()
+    .map((ym) => {
+      const [year, month] = ym.split('-');
+      const path = `/stories/archive/${year}/${month}`;
+      const monthStories = allStories.filter((s) => {
+        if (!s.published_at) return false;
+        const d = new Date(s.published_at);
+        const storyYm = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        return storyYm === ym;
+      });
+      const latestPublished = monthStories.reduce<Date | null>((max, s) => {
+        const d = new Date(s.updated_at ?? s.published_at);
+        return max === null || d > max ? d : max;
+      }, null);
+      return {
+        url: koUrl(baseUrl, path),
+        lastModified: latestPublished ?? now,
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+        alternates: koAlternates(baseUrl, path),
+      };
+    });
+
   const videoWatchPages: MetadataRoute.Sitemap = archiveVideos.map((video) => {
     const path = `/archive/2023/videos/${video.youtubeId}`;
     const thumbnailUrl = `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`;
@@ -426,6 +458,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...newsPages,
     ...storyPages,
     ...storyEnPages,
+    ...archiveMonthPages,
     ...videoWatchPages,
   ];
 }
