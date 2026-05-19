@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { track } from '@vercel/analytics';
 import {
@@ -143,26 +143,81 @@ function sendToGA(metric: Metric, pagePath: string) {
   }
 }
 
+// CLS는 SPA 환경에서 onCLS(cb)의 단일 누적 방식 대신 per-path 격리 전송.
+// sendClsForPath: 특정 path에서 발생한 CLS 값을 GA4 + Vercel track으로 직접 전송.
+function sendClsForPath(path: string, value: number, debugTarget?: string) {
+  const rating: Metric['rating'] =
+    value <= 0.1 ? 'good' : value <= 0.25 ? 'needs-improvement' : 'poor';
+  const eventValue = Math.round(value * 1000);
+
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    try {
+      window.gtag('event', 'web_vitals', {
+        event_category: 'Web Vitals',
+        value: eventValue,
+        metric_name: 'CLS',
+        metric_value: value,
+        metric_rating: rating,
+        metric_delta: value,
+        page_path: path,
+        debug_target: debugTarget,
+        non_interaction: true,
+      });
+    } catch (err) {
+      console.error('[web-vitals] CLS flush GA4 failed:', err);
+    }
+  }
+
+  try {
+    track('web_vitals', {
+      metric_name: 'CLS',
+      metric_value: value,
+      metric_rating: rating,
+      page_path: path,
+      debug_target: debugTarget ?? null,
+    });
+  } catch (err) {
+    console.error('[web-vitals] CLS flush Vercel track failed:', err);
+  }
+}
+
 export default function WebVitalsTracker() {
   const pathname = usePathname();
-  // SPA-aware page_path 캡처용 ref. web-vitals v5는 콜백을 페이지 lifetime당 1회만 등록 권장
-  // ("Do not call onCLS() more than once per page load") — useEffect deps는 절대 []. pathname
-  // 변경 시 ref만 갱신하면 콜백이 호출되는 시점(visibilitychange/pagehide)에 최신 path 캡처.
-  // window.location.pathname을 콜백 시점에 캡처하면 SPA navigation 후 다음 페이지 path가
-  // 잡혀 누적 CLS가 잘못된 페이지에 attribution됨 (관측된 /special/oh-yoon false signal 원인).
-  // stripLocale로 locale prefix 정규화 — `/ko/artworks/123`과 `/en/artworks/123`을 동일 path로.
+  // pathRef: onCLS reportAllChanges 콜백에서 발생 시점의 path를 참조 (closure 대신 ref).
   const pathRef = useRef(stripLocale(pathname));
-  useEffect(() => {
-    pathRef.current = stripLocale(pathname);
+  // prevPathRef: SPA navigation 감지 및 직전 path flush용.
+  const prevPathRef = useRef(stripLocale(pathname));
+
+  // CLS per-path 누적용 ref 3개.
+  // lastClsValueRef: 마지막으로 수신한 metric.value (web-vitals 전역 누적 max).
+  // clsBaselineRef: 현재 path가 시작된 시점의 lastClsValue (이 값이 현재 path의 "0 기준선").
+  // lastClsTargetRef: 현재 path에서 마지막으로 수신한 largestShiftTarget (shift attribution).
+  const lastClsValueRef = useRef(0);
+  const clsBaselineRef = useRef(0);
+  const lastClsTargetRef = useRef<string | undefined>(undefined);
+
+  // useLayoutEffect: paint 전에 동기적으로 실행 → 새 페이지의 초기 layout-shift가
+  // 이전 path 누적값에 합산되는 타이밍 경합을 최소화.
+  // SPA navigation 시 직전 path의 CLS를 flush하고 새 path 기준선을 리셋.
+  useLayoutEffect(() => {
+    const next = stripLocale(pathname);
+    const prev = prevPathRef.current;
+
+    if (next !== prev) {
+      const prevPathCls = lastClsValueRef.current - clsBaselineRef.current;
+      if (prevPathCls > 0) {
+        sendClsForPath(prev, prevPathCls, lastClsTargetRef.current);
+      }
+      clsBaselineRef.current = lastClsValueRef.current;
+      lastClsTargetRef.current = undefined;
+      prevPathRef.current = next;
+    }
+
+    pathRef.current = next;
   }, [pathname]);
 
   useEffect(() => {
     // 진단: 컴포넌트가 production에서 실제 mount되는지 검증용 ping.
-    // GA4에 web_vitals_mount 이벤트가 들어오면 mount 성공이고, web-vitals
-    // 콜백만 fire 안 하는 상황(저트래픽 + 짧은 세션). 이 이벤트도 0건이면
-    // import 또는 mount 자체가 깨진 것.
-    // stub 등록은 GoogleAnalytics 단일 출처에 위임 — mount ping이 GoogleAnalytics보다
-    // 먼저 발화하면 GA4 송신만 손실(자체 page_views 적재는 살아있음).
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       try {
         window.gtag('event', 'web_vitals_mount', {
@@ -173,17 +228,44 @@ export default function WebVitalsTracker() {
       }
     }
 
-    // 각 metric은 페이지당 1회 자동 측정 후 콜백.
-    // INP는 사용자 인터랙션 발생 시 누적 → 페이지 떠날 때 최종값 보고.
-    // 콜백 내부에서 pathRef.current를 사용해 보고 시점의 최신 path로 attribution.
-    // deps `[]` 절대 유지 — pathname을 deps에 넣으면 SPA navigation마다 콜백 재등록되어
-    // web-vitals 이중 등록이 발생, 데이터가 2~5배 부풀려짐 (라이브러리 명시적 금지).
+    // LCP/FCP/INP/TTFB: 기존 방식 유지 (path별 단일 보고, SPA 문제 없음).
+    // deps `[]` 절대 유지 — pathname deps 추가 시 SPA마다 재등록 → 2~5배 부풀림.
     const send = (metric: Metric) => sendToGA(metric, pathRef.current);
     onLCP(send);
-    onCLS(send);
-    onINP(send);
     onFCP(send);
+    onINP(send);
     onTTFB(send);
+
+    // CLS: reportAllChanges: true로 매 shift entry마다 콜백 fire.
+    // metric.delta 대신 metric.value - baseline 패턴으로 per-path CLS 산출.
+    // 이유: metric.delta는 전역 session-window max 기준 변화량이므로 SPA nav 이후에도
+    // 이전 path의 누적이 delta에 반영되어 단순 합산이 불가.
+    // metric.value (전역 최댓값) - clsBaselineRef (현재 path 시작 시점의 전역값) =
+    // 현재 path에서 발생한 CLS 기여분 (page별 독립 측정과 동일).
+    onCLS(
+      (metric) => {
+        lastClsValueRef.current = metric.value;
+        const target = truncate(
+          (metric as CLSMetricWithAttribution).attribution?.largestShiftTarget
+        );
+        if (target) lastClsTargetRef.current = target;
+      },
+      { reportAllChanges: true }
+    );
+
+    // 페이지를 떠날 때 현재 path의 CLS를 최종 flush.
+    // web-vitals 자체 visibilitychange 핸들러도 있지만 그 핸들러는 전역 누적값을 보고 —
+    // 우리는 per-path 값만 flush하므로 별도 리스너 등록.
+    const handleHidden = () => {
+      if (document.visibilityState === 'hidden') {
+        const currentPathCls = lastClsValueRef.current - clsBaselineRef.current;
+        if (currentPathCls > 0) {
+          sendClsForPath(pathRef.current, currentPathCls, lastClsTargetRef.current);
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleHidden);
+    return () => document.removeEventListener('visibilitychange', handleHidden);
   }, []);
 
   return null;
