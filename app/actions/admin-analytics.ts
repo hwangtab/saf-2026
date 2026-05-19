@@ -255,6 +255,14 @@ export type AnalyticsData = {
       poorThreshold: number;
       poorRatio: number;
     }>;
+    /** CLS worst targets — page_path × largestShiftTarget element selector 조합별 p75. */
+    clsWorstTargets: Array<{
+      pagePath: string;
+      shiftTarget: string;
+      samples: number;
+      p75Value: number;
+      poorRate: number;
+    }>;
   };
   /**
    * GA4 페이지 보고서 — page_title·activeUsers·engagementTime 등 자체 page_views에 없는
@@ -507,6 +515,13 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     poor_threshold: number;
     poor_ratio: number;
   };
+  type ClsTargetRow = {
+    page_path: string;
+    shift_target: string;
+    samples: number;
+    p75: number;
+    poor_rate: number;
+  };
   type MemberJoinSummaryRow = {
     total_clicks: number;
     unique_clickers: number;
@@ -599,6 +614,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     webVitalsDailyRes,
     webVitalsLcpWorstRes,
     webVitalsRegressionsRes,
+    webVitalsClsWorstRes,
     memberJoinSummaryRes,
     memberJoinPositionRes,
     memberJoinDailyRes,
@@ -677,6 +693,11 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       since_ts: sinceTs,
       min_sample_size: 10,
     }),
+    untypedRpc<ClsTargetRow[]>('get_web_vitals_worst_cls_targets', {
+      days_back: 7,
+      min_samples: 3,
+      lim: 20,
+    }),
     untypedRpc<MemberJoinSummaryRow[]>('get_member_join_click_summary', {
       since_ts: sinceTs,
     }),
@@ -741,6 +762,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     ['get_web_vitals_daily_p75', webVitalsDailyRes],
     ['get_web_vitals_worst_pages', webVitalsLcpWorstRes],
     ['get_web_vitals_regressions', webVitalsRegressionsRes],
+    ['get_web_vitals_worst_cls_targets', webVitalsClsWorstRes],
     ['get_purchase_click_summary', purchaseSummaryRes],
     ['get_top_purchase_clicked_artworks', purchaseArtworksRes],
     ['get_locale_switch_summary', localeSwitchSummaryRes],
@@ -1292,6 +1314,15 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
           sampleSize: Number(row.sample_size),
           p75Value: Number(row.p75_value ?? 0),
           poorCount: Number(row.poor_count),
+        }))
+      : [],
+    clsWorstTargets: Array.isArray(webVitalsClsWorstRes.data)
+      ? webVitalsClsWorstRes.data.map((row) => ({
+          pagePath: row.page_path,
+          shiftTarget: row.shift_target,
+          samples: Number(row.samples),
+          p75Value: Number(row.p75 ?? 0),
+          poorRate: Number(row.poor_rate ?? 0),
         }))
       : [],
     regressions: Array.isArray(webVitalsRegressionsRes.data)

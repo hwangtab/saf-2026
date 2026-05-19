@@ -294,6 +294,58 @@ export default async function WebVitalsPanel({ data }: Props) {
               </div>
             </AdminCard>
           )}
+
+          {/* CLS shift 원인 분석 — largestShiftTarget selector 기반 */}
+          {data.clsWorstTargets.length > 0 && (
+            <AdminCard className="flex flex-col">
+              <AdminCardHeader className="rounded-t-2xl">
+                <h3 className="text-base font-semibold text-gray-900">CLS 시프트 원인 분석</h3>
+                <p className="mt-1 text-xs text-gray-500">
+                  최근 7일 실측 기준 — 페이지 × 시프트 대상 element(largestShiftTarget) 조합별 CLS
+                  p75. (none)은 대상 element가 attribution에 잡히지 않은 경우.
+                </p>
+              </AdminCardHeader>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 text-sm">
+                  <thead className="bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500">
+                    <tr>
+                      <th className="px-4 py-2 text-left">페이지</th>
+                      <th className="px-4 py-2 text-left">시프트 대상</th>
+                      <th className="px-4 py-2 text-right">샘플</th>
+                      <th className="px-4 py-2 text-right">CLS p75</th>
+                      <th className="px-4 py-2 text-right">poor 비율</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 bg-white">
+                    {data.clsWorstTargets.map((row) => (
+                      <tr key={`${row.pagePath}-${row.shiftTarget}`}>
+                        <td className="px-4 py-2 font-mono text-xs text-gray-700">
+                          {row.pagePath}
+                        </td>
+                        <td
+                          className="px-4 py-2 font-mono text-xs text-gray-600 max-w-[280px] truncate"
+                          title={row.shiftTarget}
+                        >
+                          {row.shiftTarget}
+                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums text-gray-600">
+                          {numberFormatter.format(row.samples)}
+                        </td>
+                        <td
+                          className={`px-4 py-2 text-right tabular-nums font-semibold ${getRatingColor('CLS', row.p75Value)}`}
+                        >
+                          {formatMetric('CLS', row.p75Value)}
+                        </td>
+                        <td className="px-4 py-2 text-right tabular-nums text-danger-a11y">
+                          {percentFormatter.format(row.poorRate)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </AdminCard>
+          )}
         </>
       )}
     </section>
