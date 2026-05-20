@@ -237,7 +237,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                   잘라내고 붙이며
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-primary">세상을 읽는다</span>
+                    <span className="relative z-10 text-primary-soft">세상을 읽는다</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
                 </>
@@ -535,8 +535,8 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
               <p className="text-base sm:text-lg text-white/70 font-medium">
                 {isEnglish ? (
                   <>
-                    <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>{' '}
-                    works are featured here.
+                    <span className="text-white font-bold text-xl">{artworkCountLabel}</span> works
+                    are featured here.
                   </>
                 ) : (
                   <>

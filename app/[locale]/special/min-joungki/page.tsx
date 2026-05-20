@@ -232,7 +232,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                   한국의 산하를
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-primary">기억으로 새긴</span>
+                    <span className="relative z-10 text-primary-soft">기억으로 새긴</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
                   <br />
@@ -704,8 +704,8 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
               <p className="text-base sm:text-lg text-white/70 font-medium">
                 {isEnglish ? (
                   <>
-                    <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>{' '}
-                    works are featured here.
+                    <span className="text-white font-bold text-xl">{artworkCountLabel}</span> works
+                    are featured here.
                   </>
                 ) : (
                   <>

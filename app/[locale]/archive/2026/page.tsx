@@ -152,7 +152,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
 
         <Section variant="red">
           <div className="container-max text-center">
-            <p className="text-lg font-bold text-primary inline-flex items-center gap-2 justify-center">
+            <p className="text-lg font-bold text-primary-strong inline-flex items-center gap-2 justify-center">
               <Ban aria-hidden="true" className="h-5 w-5" />
               This offline exhibition ended on January 26, 2026.
             </p>
@@ -421,7 +421,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
               <h3 className="text-card-title mb-4">📅 주요 일정</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 font-bold text-primary">1월 14일</div>
+                  <div className="flex-shrink-0 w-24 font-bold text-primary-strong">1월 14일</div>
                   <div className="flex-1">
                     <p className="font-semibold">개막식 & 오프닝 퍼포먼스</p>
                     <p className="text-charcoal-muted text-sm">
@@ -430,7 +430,9 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 font-bold text-primary">1월 15-26일</div>
+                  <div className="flex-shrink-0 w-24 font-bold text-primary-strong">
+                    1월 15-26일
+                  </div>
                   <div className="flex-1">
                     <p className="font-semibold">상설 전시</p>
                     <p className="text-charcoal-muted text-sm">매일 11:00-19:00 전시 운영</p>

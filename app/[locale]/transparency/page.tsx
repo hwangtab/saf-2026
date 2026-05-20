@@ -195,7 +195,7 @@ export default async function TransparencyPage({
                   <div className="grid grid-cols-3 gap-2 mb-6">
                     {report.stats.map((stat) => (
                       <div key={stat.label.en} className="text-center">
-                        <p className="text-sm font-bold text-primary whitespace-nowrap">
+                        <p className="text-sm font-bold text-primary-strong whitespace-nowrap">
                           {stat.value.en}
                         </p>
                         <p className="text-xs text-charcoal-muted leading-tight">{stat.label.en}</p>
@@ -241,7 +241,7 @@ export default async function TransparencyPage({
                 <tbody>
                   {YEARLY_GROWTH.map((row, i) => (
                     <tr key={row.year} className={i < YEARLY_GROWTH.length - 1 ? 'border-b' : ''}>
-                      <td className="px-6 py-4 font-bold text-primary">{row.year}</td>
+                      <td className="px-6 py-4 font-bold text-primary-strong">{row.year}</td>
                       <td className="px-6 py-4 text-center">{row.loans.en}</td>
                       <td className="px-6 py-4 text-center">{row.amount.en}</td>
                       <td className="px-6 py-4 text-center">{row.repaymentRate.en}</td>
@@ -295,7 +295,10 @@ export default async function TransparencyPage({
             <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
               <p className="text-lg text-charcoal mb-2">
                 Reports are published{' '}
-                <span className="text-primary font-semibold">annually and independently</span>.
+                <span className="text-primary-strong font-semibold">
+                  annually and independently
+                </span>
+                .
               </p>
               <p className="text-base text-charcoal-muted">
                 Korea Smart Cooperative discloses all operational data — loans issued, repayments,
@@ -391,7 +394,7 @@ export default async function TransparencyPage({
                   href={`/reports/${encodeURIComponent(report.pdfFilename)}`}
                   variant="white"
                   size="sm"
-                  className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-white hover:border-primary"
+                  className="w-full border-2 border-primary text-primary-strong hover:bg-primary-strong hover:text-white hover:border-primary-strong"
                 >
                   PDF 다운로드
                 </LinkButton>
@@ -475,7 +478,8 @@ export default async function TransparencyPage({
           </div>
           <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
             <p className="text-lg text-charcoal mb-2">
-              보고서는 매년 <span className="text-primary font-semibold">독립적으로 작성·발행</span>
+              보고서는 매년{' '}
+              <span className="text-primary-strong font-semibold">독립적으로 작성·발행</span>
               됩니다.
             </p>
             <p className="text-base text-charcoal-muted">

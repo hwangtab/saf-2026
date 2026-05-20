@@ -310,7 +310,9 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
                     <h3 className="font-sans font-semibold text-xl mb-2">
                       {localizedArtworkTitle}
                     </h3>
-                    <p className="text-primary font-semibold mb-3">{localizedArtworkArtist}</p>
+                    <p className="text-primary-strong font-semibold mb-3">
+                      {localizedArtworkArtist}
+                    </p>
                     <p className="text-charcoal-muted text-sm mb-4 flex-grow">
                       {isEnglish ? 'Artwork presented during SAF 2023.' : artwork.description}
                     </p>
@@ -396,14 +398,14 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
 
                     <Link
                       href={watchPath}
-                      className="inline-flex items-center text-sm font-medium text-primary hover:text-primary/80"
+                      className="inline-flex items-center text-sm font-medium text-primary-strong hover:text-primary-strong/80"
                     >
                       {isEnglish ? 'Watch on dedicated page' : '전용 시청 페이지로 이동'}
                     </Link>
 
                     {video.transcript && !isEnglish && (
                       <div className="mt-4 p-4 bg-primary-surface rounded-lg border-l-4 border-primary/30">
-                        <h4 className="flex items-center gap-2 text-xs font-bold text-primary mb-2 uppercase tracking-wider">
+                        <h4 className="flex items-center gap-2 text-xs font-bold text-primary-strong mb-2 uppercase tracking-wider">
                           <Film aria-hidden="true" className="h-3.5 w-3.5" />
                           영상 기록 요약
                         </h4>

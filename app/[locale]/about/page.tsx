@@ -373,7 +373,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     Jan 14–26, Insa Art Center, Seoul. {artistCount} artists, {artworkCount} works.
                     The largest SAF exhibition to date.
                   </p>
-                  <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                  <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-white group-hover:underline">
                     View archive
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
@@ -394,7 +394,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                     The first exhibition in Insadong. 50+ artists, 7 days of solidarity — raising
                     KRW 34M for the mutual-aid fund.
                   </p>
-                  <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                  <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary-strong group-hover:underline">
                     View archive
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
@@ -736,7 +736,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   2026년 1월 14~26일, 인사아트센터. {artistCount}명 작가, {artworkCount}점 작품.
                   역대 최대 규모의 씨앗페 전시.
                 </p>
-                <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-white group-hover:underline">
                   전시 기록 보기
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </span>
@@ -757,7 +757,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   인사동에서 열린 첫 번째 전시. 50여 명의 예술인, 7일간의 연대로 3,400만 원의
                   상호부조 기금을 조성했습니다.
                 </p>
-                <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary group-hover:underline">
+                <span className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-primary-strong group-hover:underline">
                   전시 기록 보기
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </span>

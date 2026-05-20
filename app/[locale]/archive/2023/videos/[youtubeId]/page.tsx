@@ -193,7 +193,7 @@ export default async function Archive2023VideoWatchPage({
             <p className="text-charcoal-muted leading-relaxed">{localizedDescription}</p>
             {video.transcript && !isEnglish && (
               <div className="mt-4 border-l-4 border-primary/30 bg-white p-4">
-                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-primary-strong">
                   🎞️ 영상 기록 요약
                 </h3>
                 <p className="text-sm leading-relaxed text-charcoal">{video.transcript}</p>
@@ -209,7 +209,7 @@ export default async function Archive2023VideoWatchPage({
             ? `Video publisher: ${CONTACT.ORGANIZATION_NAME_EN}`
             : `영상 제공: ${CONTACT.ORGANIZATION_NAME}`}
           <span className="mx-2">·</span>
-          <a href={SITE_URL} className="text-primary hover:text-primary/80">
+          <a href={SITE_URL} className="text-primary-strong hover:text-primary-strong/80">
             {isEnglish ? 'Back to SAF Home' : '씨앗페 홈으로 이동'}
           </a>
         </div>
