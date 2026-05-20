@@ -222,7 +222,8 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           <div className="container-max">
             <div id="proof-stats-summary" className="max-w-3xl mx-auto text-center mb-12">
               <SectionTitle className="mb-8">
-                A <span className="text-primary font-bold">95%</span> repayment rate tells the story
+                A <span className="text-primary-strong font-bold">95%</span> repayment rate tells
+                the story
               </SectionTitle>
               <p className="text-xl text-charcoal">
                 Out of {LOAN_COUNT} loans totaling nearly KRW 700 million, 95% were repaid on time.
@@ -244,7 +245,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
             <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
               <p className="text-lg text-charcoal mb-2">
                 The data is clear.{' '}
-                <span className="text-primary font-semibold">Artists are bankable.</span>
+                <span className="text-primary-strong font-semibold">Artists are bankable.</span>
               </p>
               <p className="text-base text-charcoal-muted mb-4">
                 The real risk is a system that excludes artists from fair finance and pushes them
@@ -397,14 +398,14 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                   <tr className="border-b">
                     <td className="px-6 py-4 font-semibold">Screening basis</td>
                     <td className="px-6 py-4 text-center">Regular income, credit score</td>
-                    <td className="px-6 py-4 text-center text-primary font-semibold">
+                    <td className="px-6 py-4 text-center text-primary-strong font-semibold">
                       Artist identity
                     </td>
                   </tr>
                   <tr className="border-b">
                     <td className="px-6 py-4 font-semibold">Interest rate</td>
                     <td className="px-6 py-4 text-center text-danger">15-30%</td>
-                    <td className="px-6 py-4 text-center text-primary font-semibold">
+                    <td className="px-6 py-4 text-center text-primary-strong font-semibold">
                       Fixed 5% APR
                     </td>
                   </tr>
@@ -416,14 +417,16 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                   <tr className="border-b">
                     <td className="px-6 py-4 font-semibold">Advisory support</td>
                     <td className="px-6 py-4 text-center">Minimal</td>
-                    <td className="px-6 py-4 text-center text-primary font-semibold">
+                    <td className="px-6 py-4 text-center text-primary-strong font-semibold">
                       Tailored consultation
                     </td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 font-semibold">Core philosophy</td>
                     <td className="px-6 py-4 text-center">Profit-first</td>
-                    <td className="px-6 py-4 text-center text-primary font-semibold">Mutual aid</td>
+                    <td className="px-6 py-4 text-center text-primary-strong font-semibold">
+                      Mutual aid
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -467,7 +470,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                     }`}
                   >
                     <span
-                      className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary'}`}
+                      className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary-strong'}`}
                     >
                       {s.note}
                     </span>
@@ -549,7 +552,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
         <div className="container-max">
           <div id="proof-stats-summary" className="max-w-3xl mx-auto text-center mb-12">
             <SectionTitle className="mb-8">
-              <span className="text-primary font-bold">95%</span>의 상환율이 증명합니다
+              <span className="text-primary-strong font-bold">95%</span>의 상환율이 증명합니다
             </SectionTitle>
             <p className="text-xl text-charcoal">
               신용점수에 상관없이 빌려준 {LOAN_COUNT}건, 약 7억 원 가운데 95%가 제때 돌아왔고 빚을
@@ -566,7 +569,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           <div className="mt-12 bg-white p-8 rounded-2xl max-w-3xl mx-auto border-l-4 border-primary">
             <p className="text-lg text-charcoal mb-2">
               이 데이터는 명백한 사실을 증명합니다.{' '}
-              <span className="text-primary font-semibold">
+              <span className="text-primary-strong font-semibold">
                 예술인은 빚을 떼먹는 사람이 아닙니다.
               </span>
             </p>
@@ -725,12 +728,16 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">심사 기준</td>
                   <td className="px-6 py-4 text-center">정기 소득, 신용등급</td>
-                  <td className="px-6 py-4 text-center text-primary font-semibold">예술인임</td>
+                  <td className="px-6 py-4 text-center text-primary-strong font-semibold">
+                    예술인임
+                  </td>
                 </tr>
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">금리</td>
                   <td className="px-6 py-4 text-center text-danger">15~30%</td>
-                  <td className="px-6 py-4 text-center text-primary font-semibold">연 5% 고정</td>
+                  <td className="px-6 py-4 text-center text-primary-strong font-semibold">
+                    연 5% 고정
+                  </td>
                 </tr>
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">대출 한도</td>
@@ -740,12 +747,16 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">상담 지원</td>
                   <td className="px-6 py-4 text-center">최소한</td>
-                  <td className="px-6 py-4 text-center text-primary font-semibold">맞춤형 상담</td>
+                  <td className="px-6 py-4 text-center text-primary-strong font-semibold">
+                    맞춤형 상담
+                  </td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4 font-semibold">철학</td>
                   <td className="px-6 py-4 text-center">영리 추구</td>
-                  <td className="px-6 py-4 text-center text-primary font-semibold">상호부조</td>
+                  <td className="px-6 py-4 text-center text-primary-strong font-semibold">
+                    상호부조
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -788,7 +799,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                   }`}
                 >
                   <span
-                    className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary'}`}
+                    className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary-strong'}`}
                   >
                     {s.note}
                   </span>

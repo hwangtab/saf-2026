@@ -569,7 +569,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Artist Profile */}
               {localizedProfile && (
                 <div className="bg-white border-l-4 border-primary/20 pl-6 pr-6 py-5 rounded-r-xl">
-                  <h2 className="text-sm font-bold text-primary/60 uppercase tracking-wider mb-4">
+                  <h2 className="text-sm font-bold text-primary-strong uppercase tracking-wider mb-4">
                     {t('artistProfile')}
                   </h2>
                   <p

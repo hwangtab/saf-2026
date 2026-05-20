@@ -540,7 +540,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                   </>
                 ) : (
                   <>
-                    총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
+                    총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
                     점의 작품을 만나보실 수 있습니다.
                   </>
                 )}

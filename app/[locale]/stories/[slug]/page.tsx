@@ -359,7 +359,7 @@ export default async function StoryDetailPage({ params }: Props) {
             <MarkdownRenderer content={bodyWithCrossLinks} />
           </div>
 
-          <div className="mt-10 text-lg font-semibold tracking-tight text-primary motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.25s]">
+          <div className="mt-10 text-lg font-semibold tracking-tight text-primary-strong motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.25s]">
             {footerLinks.map((link, index) => (
               <span key={link.href}>
                 {index > 0 ? ' · ' : ''}
@@ -467,7 +467,7 @@ export default async function StoryDetailPage({ params }: Props) {
                       ) : null;
                     })()}
                     <div className="p-5">
-                      <span className="text-xs font-semibold tracking-wider uppercase text-primary">
+                      <span className="text-xs font-semibold tracking-wider uppercase text-primary-strong">
                         {isEn
                           ? CATEGORY_LABELS_EN[related.category]
                           : CATEGORY_LABELS_KO[related.category]}

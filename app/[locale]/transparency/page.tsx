@@ -380,7 +380,7 @@ export default async function TransparencyPage({
                 <div className="grid grid-cols-3 gap-2 mb-6">
                   {report.stats.map((stat) => (
                     <div key={stat.label.ko} className="text-center">
-                      <p className="text-sm font-bold text-primary whitespace-nowrap">
+                      <p className="text-sm font-bold text-primary-strong whitespace-nowrap">
                         {stat.value.ko}
                       </p>
                       <p className="text-xs text-charcoal-muted leading-tight">{stat.label.ko}</p>
@@ -425,7 +425,7 @@ export default async function TransparencyPage({
               <tbody>
                 {YEARLY_GROWTH.map((row, i) => (
                   <tr key={row.year} className={i < YEARLY_GROWTH.length - 1 ? 'border-b' : ''}>
-                    <td className="px-6 py-4 font-bold text-primary">{row.year}</td>
+                    <td className="px-6 py-4 font-bold text-primary-strong">{row.year}</td>
                     <td className="px-6 py-4 text-center">{row.loans.ko}</td>
                     <td className="px-6 py-4 text-center">{row.amount.ko}</td>
                     <td className="px-6 py-4 text-center">{row.repaymentRate.ko}</td>

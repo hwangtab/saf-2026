@@ -243,7 +243,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
                         <HighlightedText text={itemQuote} />
                       </p>
                       <div>
-                        <p className="font-semibold text-primary">{itemAuthor}</p>
+                        <p className="font-semibold text-primary-strong">{itemAuthor}</p>
                         {itemContext && (
                           <p className="text-sm text-charcoal-muted">{itemContext}</p>
                         )}

@@ -709,7 +709,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                   </>
                 ) : (
                   <>
-                    총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
+                    총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
                     점의 작품을 만나보실 수 있습니다.
                   </>
                 )}

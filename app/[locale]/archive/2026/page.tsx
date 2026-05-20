@@ -243,7 +243,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
 
       <Section variant="red">
         <div className="container-max text-center">
-          <p className="text-lg font-bold text-primary inline-flex items-center gap-2 justify-center">
+          <p className="text-lg font-bold text-primary-strong inline-flex items-center gap-2 justify-center">
             <Ban aria-hidden="true" className="h-5 w-5" />본 오프라인 전시는 2026년 1월 26일에
             종료되었습니다.
           </p>

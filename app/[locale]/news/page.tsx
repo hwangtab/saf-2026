@@ -462,7 +462,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
                 key={item.id}
                 className="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
               >
-                <figcaption className="text-xs font-semibold tracking-widest uppercase text-primary">
+                <figcaption className="text-xs font-semibold tracking-widest uppercase text-primary-strong">
                   {item.label} · {item.source} {copy.coverageSuffix}
                 </figcaption>
                 <blockquote className="mt-4 border-l-4 border-primary/30 pl-4 text-base md:text-lg text-gray-900 leading-relaxed">
@@ -527,7 +527,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
                       <p className="text-sm text-charcoal-muted leading-relaxed">
                         {localizedDescription}
                       </p>
-                      <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                      <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-primary-strong">
                         {copy.readMore}
                         <svg
                           className="w-4 h-4"
