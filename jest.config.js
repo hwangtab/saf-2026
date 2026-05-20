@@ -17,6 +17,7 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/.worktrees/',
     '<rootDir>/.claude/worktrees/',
+    '<rootDir>/e2e/', // Playwright 전용 — jest가 *.spec.ts 오매칭 방지
   ],
   // jest 30 haste map이 worktree 안 package.json을 보고 module 이름 collision
   // 워닝을 띄움. testPathIgnorePatterns로는 module 스캔까지 막지 못해 별도 추가.
