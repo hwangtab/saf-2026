@@ -495,12 +495,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       <span className="text-gray-600 font-medium text-sm">{t('size')}</span>
                       <span className="text-charcoal">
                         {localizedSize}{' '}
-                        <Link
-                          href={guideStoryHref(SIZE_GUIDE_SLUG, locale === 'en')}
-                          className="text-xs text-primary hover:underline"
-                        >
-                          {locale === 'en' ? 'How big is this? →' : '이 크기 읽는 법 →'}
-                        </Link>
+                        {artwork.size !== '확인 중' && (
+                          <Link
+                            href={guideStoryHref(SIZE_GUIDE_SLUG, locale === 'en')}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            {t('sizeGuideLink')}
+                          </Link>
+                        )}
                       </span>
                     </>
                   )}
@@ -523,7 +525,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                           href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
                           className="text-xs text-primary hover:underline"
                         >
-                          {locale === 'en' ? "What's an edition? →" : '에디션이란? →'}
+                          {t('editionGuideLink')}
                         </Link>
                       </span>
                     </>
