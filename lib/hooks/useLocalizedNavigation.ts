@@ -28,21 +28,6 @@ export function useLocalizedNavigation(): NavigationItem[] {
           description: t('parkSaenggwangNavDesc'),
         },
         {
-          name: t('minJoungki'),
-          href: '/special/min-joungki',
-          description: t('minJoungkiNavDesc'),
-        },
-        {
-          name: t('leeCheolsoo'),
-          href: '/special/lee-cheolsoo',
-          description: t('leeCheolsooNavDesc'),
-        },
-        {
-          name: t('parkBuldong'),
-          href: '/special/park-buldong',
-          description: t('parkBuldongNavDesc'),
-        },
-        {
           name: t('ohYoonPetition'),
           href: '/petition/oh-yoon',
           description: t('ohYoonPetitionDesc'),

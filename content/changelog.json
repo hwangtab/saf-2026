@@ -1,5 +1,35 @@
 [
   {
+    "hash": "00000000",
+    "type": "content",
+    "scope": "special",
+    "subject": "민정기·이철수·박불똥 — '특별전' 표현을 작가 페이지 톤으로 강등, 헤더·푸터 거장 직링크에서 제외",
+    "summary": "민정기·이철수·박불똥 — '특별전' 표현을 작가 페이지 톤으로 강등, 헤더·푸터 거장 직링크에서 제외(페이지·sitemap 유지, 보강 후 재승격 예정)",
+    "body": "hero 배지·브라우저 탭 제목·JSON-LD·OG 태그·갤러리 h2·상호부조 블럽에서\n'특별전 / Special Exhibition' 레이블을 '이름·생몰년' 배지 + 중립 표현으로 교체.\n헤더 드롭다운에서 3개 항목 제거, 푸터 거장 직링크에서 3명 제외(footerHidden 플래그).\n홈 거장 스포트라이트 카드·sitemap·페이지 콘텐츠 불변. 오윤·박생광 특별전 유지.\n\n- lib/hooks/useLocalizedNavigation.ts: minJoungki·leeCheolsoo·parkBuldong 3개 항목 삭제\n- lib/master-artists.ts: footerHidden?: boolean 인터페이스 추가 + 3개 엔트리에 footerHidden: true\n- components/common/Footer.tsx: filter (a) => a.specialSlug && !a.footerHidden\n- app/[locale]/special/{min-joungki,lee-cheolsoo,park-buldong}/page.tsx: PAGE_COPY·배지·갤러리·블럽 relabel",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "042508c4",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "T2-11 가이드 링크 라벨 artworkDetail 네임스페이스 정합 — Phase 12",
+    "summary": "T2-11에서 추가된 사이즈·에디션 가이드 링크 라벨을 inline ternary에서",
+    "body": "next-intl artworkDetail 네임스페이스(t('sizeGuideLink')·t('editionGuideLink'))로 이전.\n인접한 t('size')·t('edition')과 컨벤션 일치. size '확인 중' 시 링크 미노출 가드 추가.\n\n- messages/ko.json·en.json: sizeGuideLink·editionGuideLink 키 추가 (parity)\n- app/[locale]/artworks/[id]/page.tsx: L502·L526 하드코딩 → t(...)\n  size 링크에 artwork.size !== '확인 중' 가드 (측정값 없을 때 가이드 링크 비노출)",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "3d226e45",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-11 정보형 가이드 0클릭 — artwork→가이드 링크 + snippet 캡처",
+    "summary": "에디션 뜻(427 imp·pos 9.2·0클릭) 등 정보형 가이드 클러스터 ~760 imp가",
+    "body": "page-1 하단에 정체. title/meta는 T2-8에서 완벽 최적화됨, 병목은 position.\nartwork detail spec table(size·edition)에 가이드 스토리 문맥 헬퍼 링크 추가\n→ 미개척 고권위 internal link source로 editions-explained·reading-art-sizes 견인.\nDB: reading-art-sizes-ho-vs-cm에 ## 자주 묻는 질문 신규(10호/30호 Q/A 3개,\nFAQPage schema 자동 발행됨), editions-explained에 정의 lead 1단락 prepend.\n\n- lib/artwork-glossary-links.ts 신규: SIZE_GUIDE_SLUG / EDITION_GUIDE_SLUG 상수 + guideStoryHref(locale-aware)\n- [id]/page.tsx: size 행 뒤 '이 크기 읽는 법 →' 링크, edition 행 뒤 '에디션이란? →' 링크 (페이지당 2개, EN/KO locale 인지)\n- __tests__/lib/artwork-glossary-links.test.ts: 8 tests all pass",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
     "hash": "18a83964",
     "type": "fix",
     "scope": "checkout",

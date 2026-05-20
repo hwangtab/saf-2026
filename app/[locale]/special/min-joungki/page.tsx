@@ -43,23 +43,23 @@ const isMinJoungkiArtist = (artist: string): boolean => {
 
 const PAGE_COPY = {
   ko: {
-    title: '민정기 특별전: Min Joung-ki Special Exhibition',
+    title: '민정기 — 한국 현실주의 풍경화의 거장',
     description:
       '한국 현실주의 풍경화의 거장 민정기(1949–). 「현실과 발언」 결성 동인으로(1979) 민중미술 운동의 핵심에 섰던 작가가, 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아온 반세기의 여정을 씨앗페 온라인에서 만나보세요.',
     ogDescription:
-      '한국 현실주의 풍경화의 거장 민정기 특별전. 민중미술 운동의 핵심으로서 한국의 산하와 민중의 삶을 담아온 반세기의 여정.',
-    ogAlt: '민정기 특별전 대표 이미지',
-    twitterTitle: '민정기 특별전',
+      '한국 현실주의 풍경화의 거장 민정기. 민중미술 운동의 핵심으로서 한국의 산하와 민중의 삶을 담아온 반세기의 여정.',
+    ogAlt: '민정기 대표 작품',
+    twitterTitle: '민정기',
     twitterDescription: '한국 현실주의 풍경화의 거장 — 사라져가는 산하를 화폭에 새긴 민정기',
   },
   en: {
-    title: 'Min Joung-ki Special Exhibition',
+    title: 'Min Joung-ki — Korean Realist Landscape Painter',
     description:
-      'A special online exhibition featuring Min Joung-ki (b. 1949), a pivotal figure in Korean minjung art and master of realist landscape painting. Co-founder of the Reality and Utterance collective, Min has spent five decades recording a vanishing agrarian Korea on monumental canvases. View and collect selected works at SAF Online.',
+      'Selected works by Min Joung-ki (b. 1949), a pivotal figure in Korean minjung art and master of realist landscape painting. Co-founder of the Reality and Utterance collective, Min has spent five decades recording a vanishing agrarian Korea on monumental canvases. View and collect selected works at SAF Online.',
     ogDescription:
-      'Min Joung-ki Special Exhibition — master of Korean realist landscape painting and co-founder of Reality and Utterance. Five decades of monumental canvases at SAF Online.',
-    ogAlt: 'Min Joung-ki Special Exhibition key visual',
-    twitterTitle: 'Min Joung-ki Special Exhibition',
+      'Min Joung-ki — master of Korean realist landscape painting and co-founder of Reality and Utterance. Five decades of monumental canvases at SAF Online.',
+    ogAlt: 'Min Joung-ki — featured work',
+    twitterTitle: 'Min Joung-ki',
     twitterDescription:
       'Korean realist landscape master — five decades of recording a vanishing Korea',
   },
@@ -85,8 +85,8 @@ export async function generateMetadata({
     : OG_IMAGE.url;
   const ogImageAlt = artwork
     ? locale === 'en'
-      ? `${artwork.title_en || artwork.title} — Min Joung-ki Special Exhibition`
-      : `${artwork.title} — 민정기 특별전`
+      ? `${artwork.title_en || artwork.title} — Min Joung-ki`
+      : `${artwork.title} — 민정기`
     : copy.ogAlt;
 
   return {
@@ -95,7 +95,7 @@ export async function generateMetadata({
     keywords:
       locale === 'en'
         ? 'Min Joung-ki artist, Korean landscape painting, minjung misul, Reality and Utterance, Korean realism'
-        : '민정기 화가, 한국 풍경화, 민중미술, 현실과 발언, 한국 현실주의 회화, 온라인 특별전',
+        : '민정기 화가, 한국 풍경화, 민중미술, 현실과 발언, 한국 현실주의 회화, 씨앗페 온라인',
     alternates: createLocaleAlternates('/special/min-joungki', locale),
     openGraph: {
       type: 'website',
@@ -170,10 +170,10 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
   const exhibitionEventSchema = {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: isEnglish ? 'Min Joung-ki Special Exhibition' : '민정기 특별전',
+    name: isEnglish ? 'Min Joung-ki — SAF Online' : '민정기 — 씨앗페 온라인',
     description: isEnglish
-      ? 'A special online exhibition featuring selected works by Min Joung-ki from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 민정기 작품들을 선보이는 온라인 특별전입니다.',
+      ? 'Selected works by Min Joung-ki from the SAF Online collection.'
+      : '씨앗페 온라인에 소장된 민정기 작품들을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventMovedOnline',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -213,7 +213,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <div className="inline-block relative mb-8">
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
-                {isEnglish ? 'Min Joung-ki Special Exhibition' : '민정기 특별전'}
+                {isEnglish ? 'Min Joung-ki · b. 1949' : '민정기 · 1949–'}
               </span>
               <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
@@ -694,7 +694,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
           <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
             <div className="relative">
               <h2 className="text-4xl md:text-5xl mb-4 text-white font-black font-display text-balance">
-                {isEnglish ? 'Exhibition Works' : '전시 작품'}
+                {isEnglish ? 'Selected Works' : '주요 작품'}
               </h2>
               <div className="absolute -left-4 -top-6 text-[80px] text-white/5 -z-10 font-display font-black select-none">
                 ARCHIVE
@@ -703,12 +703,12 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                 {isEnglish ? (
                   <>
                     <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>{' '}
-                    works are currently on view.
+                    works are featured here.
                   </>
                 ) : (
                   <>
                     총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품이 전시되어 있습니다.
+                    점의 작품을 만나보실 수 있습니다.
                   </>
                 )}
               </p>
@@ -734,15 +734,15 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
               <p className="text-base md:text-lg text-white/90 leading-relaxed break-keep font-medium">
                 {isEnglish ? (
                   <>
-                    Min Joung-ki joined this exhibition in solidarity with fellow artists. Every
-                    work sold flows directly into the{' '}
+                    Min Joung-ki joined this campaign in solidarity with fellow artists. Every work
+                    sold flows directly into the{' '}
                     <strong className="text-white">artists&apos; mutual-aid loan fund</strong> — a
                     purchase becomes the next month&apos;s lifeline for an artist navigating
                     financial exclusion today.
                   </>
                 ) : (
                   <>
-                    민정기 작가는 동료 예술인을 위한 연대의 뜻으로 이 전시에 참여했습니다. 작품 판매
+                    민정기 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
                     수익은 전액 <strong className="text-white">예술인 상호부조 대출 기금</strong>
                     으로 이어집니다. 작품 한 점의 구매가, 오늘 금융 차별을 겪는 예술인 한 사람의
                     다음 한 달이 됩니다.

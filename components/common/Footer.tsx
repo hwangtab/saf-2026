@@ -240,7 +240,7 @@ export default async function Footer({ locale }: { locale: string }) {
             <div className="border-t border-gray-700 pt-6 mb-6">
               <p className="text-xs text-gray-500 mb-3">{t('masterArtists')}</p>
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                {MASTER_ARTISTS.filter((a) => a.specialSlug).map((artist) => (
+                {MASTER_ARTISTS.filter((a) => a.specialSlug && !a.footerHidden).map((artist) => (
                   <Link
                     key={artist.artistName}
                     href={`/special/${artist.specialSlug}`}

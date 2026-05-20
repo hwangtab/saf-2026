@@ -46,23 +46,23 @@ const isParkBuldongArtist = (artist: string): boolean => {
 
 const PAGE_COPY = {
   ko: {
-    title: '박불똥 특별전: Park Bul-ttong Special Exhibition',
+    title: '박불똥 — 콜라주·정치 미술의 거장',
     description:
       '콜라주·정치 미술의 거장 박불똥(1956–). 신문·잡지를 잘라 붙여 권력의 언어를 해체하고 재조립하는 작가. 한국 민중미술 운동의 날카로운 목소리, 박불똥의 작품을 씨앗페 온라인에서 감상하고 소장하세요.',
     ogDescription:
-      '콜라주·정치 미술의 거장 박불똥 특별전. 대중매체 이미지를 해체·재조합하여 권력의 이면을 폭로하는 한국 민중미술의 날카로운 목소리.',
-    ogAlt: '박불똥 특별전 대표 이미지',
-    twitterTitle: '박불똥 특별전',
+      '콜라주·정치 미술의 거장 박불똥. 대중매체 이미지를 해체·재조합하여 권력의 이면을 폭로하는 한국 민중미술의 날카로운 목소리.',
+    ogAlt: '박불똥 대표 작품',
+    twitterTitle: '박불똥',
     twitterDescription: '잘라내고 붙이며 세상을 읽는다 — 콜라주·정치 미술의 거장 박불똥',
   },
   en: {
-    title: 'Park Bul-ttong Special Exhibition',
+    title: 'Park Bul-ttong — Master of Collage and Political Art',
     description:
-      'A special online exhibition featuring Park Bul-ttong (b. 1956), master of collage and political art. Cutting and reassembling images from newspapers and magazines, he exposes the hidden structures of power. A sharp voice of the Korean minjung art movement. View and collect selected works at SAF Online.',
+      'Selected works by Park Bul-ttong (b. 1956), master of collage and political art. Cutting and reassembling images from newspapers and magazines, he exposes the hidden structures of power. A sharp voice of the Korean minjung art movement. View and collect selected works at SAF Online.',
     ogDescription:
-      'Park Bul-ttong Special Exhibition — master of collage and political art. Cutting and reassembling mass media images to expose the hidden structures of power.',
-    ogAlt: 'Park Bul-ttong Special Exhibition key visual',
-    twitterTitle: 'Park Bul-ttong Special Exhibition',
+      'Park Bul-ttong — master of collage and political art. Cutting and reassembling mass media images to expose the hidden structures of power.',
+    ogAlt: 'Park Bul-ttong — featured work',
+    twitterTitle: 'Park Bul-ttong',
     twitterDescription: 'Cut, paste, read the world — master of Korean political collage art',
   },
 } as const;
@@ -87,8 +87,8 @@ export async function generateMetadata({
     : OG_IMAGE.url;
   const ogImageAlt = artwork
     ? locale === 'en'
-      ? `${artwork.title_en || artwork.title} — Park Bul-ttong Special Exhibition`
-      : `${artwork.title} — 박불똥 특별전`
+      ? `${artwork.title_en || artwork.title} — Park Bul-ttong`
+      : `${artwork.title} — 박불똥`
     : copy.ogAlt;
 
   return {
@@ -97,7 +97,7 @@ export async function generateMetadata({
     keywords:
       locale === 'en'
         ? 'Park Bul-ttong artist, Korean political art, Korean collage art, minjung misul, political collage'
-        : '박불똥 화가, 한국 정치 미술, 콜라주 아트, 민중미술, 정치 콜라주, 온라인 특별전',
+        : '박불똥 화가, 한국 정치 미술, 콜라주 아트, 민중미술, 정치 콜라주, 씨앗페 온라인',
     alternates: createLocaleAlternates('/special/park-buldong', locale),
     openGraph: {
       type: 'website',
@@ -175,10 +175,10 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
   const exhibitionEventSchema = {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: isEnglish ? 'Park Bul-ttong Special Exhibition' : '박불똥 특별전',
+    name: isEnglish ? 'Park Bul-ttong — SAF Online' : '박불똥 — 씨앗페 온라인',
     description: isEnglish
-      ? 'A special online exhibition featuring selected works by Park Bul-ttong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 박불똥 작품들을 선보이는 온라인 특별전입니다.',
+      ? 'Selected works by Park Bul-ttong from the SAF Online collection.'
+      : '씨앗페 온라인에 소장된 박불똥 작품들을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventMovedOnline',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -218,7 +218,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <div className="inline-block relative mb-8">
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
-                {isEnglish ? 'Park Bul-ttong Special Exhibition' : '박불똥 특별전'}
+                {isEnglish ? 'Park Bul-ttong · b. 1956' : '박불똥 · 1956–'}
               </span>
               <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
@@ -525,7 +525,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
           <div className="max-w-[1440px] mx-auto px-4 mb-16 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/20 pb-8">
             <div className="relative">
               <h2 className="text-4xl md:text-5xl mb-4 text-white font-black font-display text-balance">
-                {isEnglish ? 'Exhibition Works' : '전시 작품'}
+                {isEnglish ? 'Selected Works' : '주요 작품'}
               </h2>
               <div className="absolute -left-4 -top-6 text-[80px] text-white/5 -z-10 font-display font-black select-none">
                 ARCHIVE
@@ -534,12 +534,12 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                 {isEnglish ? (
                   <>
                     <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>{' '}
-                    works are currently on view.
+                    works are featured here.
                   </>
                 ) : (
                   <>
                     총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품이 전시되어 있습니다.
+                    점의 작품을 만나보실 수 있습니다.
                   </>
                 )}
               </p>
@@ -567,7 +567,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
               <p className="text-base md:text-lg text-white/90 leading-relaxed break-keep font-medium">
                 {isEnglish ? (
                   <>
-                    Park Bul-ttong joined this exhibition in solidarity with fellow artists. Every
+                    Park Bul-ttong joined this campaign in solidarity with fellow artists. Every
                     work sold flows directly into the{' '}
                     <strong className="text-white">artists&apos; mutual-aid loan fund</strong> — a
                     purchase becomes the next month&apos;s lifeline for an artist navigating
@@ -575,7 +575,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                   </>
                 ) : (
                   <>
-                    박불똥 작가는 동료 예술인을 위한 연대의 뜻으로 이 전시에 참여했습니다. 작품 판매
+                    박불똥 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
                     수익은 전액 <strong className="text-white">예술인 상호부조 대출 기금</strong>
                     으로 이어집니다. 작품 한 점의 구매가, 오늘 금융 차별을 겪는 예술인 한 사람의
                     다음 한 달이 됩니다.

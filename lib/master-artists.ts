@@ -27,6 +27,8 @@ export interface MasterArtist {
   taglineEn: string;
   /** /special/<slug> 페이지가 있으면 카드 클릭 시 작품 목록 대신 특별전 페이지로 이동. */
   specialSlug?: string;
+  /** 푸터 거장 직링크에서 임시 제외 — 페이지는 작가 페이지 톤으로 유지, 보강 후 특별전 재승격. */
+  footerHidden?: boolean;
 }
 
 export const MASTER_ARTISTS: MasterArtist[] = [
@@ -56,6 +58,7 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     taglineKo: '한국 풍경화의 거장',
     taglineEn: 'Master of Korean landscape painting',
     specialSlug: 'min-joungki',
+    footerHidden: true,
   },
   {
     artistName: '이철수',
@@ -65,6 +68,7 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     taglineKo: '판화·서화 거장',
     taglineEn: 'Master of prints and brushwork',
     specialSlug: 'lee-cheolsoo',
+    footerHidden: true,
   },
   {
     artistName: '박불똥',
@@ -74,5 +78,6 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     taglineKo: '콜라주·정치 미술의 거장',
     taglineEn: 'Master of collage and political art',
     specialSlug: 'park-buldong',
+    footerHidden: true,
   },
 ];
