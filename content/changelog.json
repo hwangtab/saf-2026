@@ -1,11 +1,11 @@
 [
   {
-    "hash": "narrative-park-saenggwang-quality",
-    "type": "content",
-    "scope": "special/park-saenggwang",
-    "subject": "박생광 전시 페이지 글 품질·내러티브 강화",
-    "summary": "Section 3 도입부에 '폐허→인도' arc 예고 단락 추가, 5개 서사 블록 간 연결 흐름 정비, 인도 이후 전체를 종합하는 마무리 coda 신설, Section 2 '그 아래에 놓였던 드로잉' → '생애를 가로지른 연필화' 톤 정합성 수정",
-    "body": "- Section 3 intro: 2번째 단락 뒤에 여정 arc 예고('1950년 폐허의 진주 → 1979년 인도') 추가 (KO/EN)\n- Block 2(30년 혐의): 폐허 블록과의 연결 문장 삽입('폐허를 그리던 그 세월에도, 또 하나의 무게가…')\n- Block 3(되살아나는 풍경): 개방 문장 '혐의를 감내하는 긴 시간 동안에도' + 마지막에 '그 시선은 더 먼 곳을 향하기 시작했다' 전방 momentum 추가\n- 마무리 coda(신설): border-l-[6px] border-sun-strong 스타일 단락으로 1950→1979 생애 종합·색과 연필의 관계 착지\n- Section 2 last para: '그 아래에 놓였던 드로잉들' → '생애를 가로지른 연필화들' / 'drawings beneath them' → 'pencil drawings that ran alongside a lifetime'",
+    "hash": "18a83964",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "sessionStorage Safari 시크릿 회귀 차단 — Phase 10",
+    "summary": "SuccessClient confirm() try 블록 내 raw sessionStorage.getItem/setItem 2곳을",
+    "body": "sessionGet/sessionSet 래퍼로 교체해 Safari 시크릿 QuotaExceededError → 에러 화면 전환 회귀 방지.\n\n- lib/storage.ts: sessionGet/sessionSet 추가 (storageGet/storageSet localStorage 패턴 미러)\n- SuccessClient.tsx: purchaseKey·vaKey 가드 두 곳 모두 래퍼 경유로 전환\n- GA는 transaction_id로 자체 dedup하므로 silent fail이 안전한 동작",
     "date": "2026-05-20",
     "author": "황경하"
   },
