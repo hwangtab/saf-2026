@@ -35,6 +35,7 @@ import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { getArtistSeoOverride } from '@/lib/artist-seo-overrides';
+import { getPrimaryStorySlug, pinPrimaryStory } from '@/lib/artist-story-map';
 import { containsHangul } from '@/lib/search-utils';
 import { ArrowRight, Globe, Instagram } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
@@ -362,18 +363,23 @@ async function renderArtistPage({ params }: Props) {
   const thisArtistArtworkIds = new Set(
     allArtworks.filter((a) => a.artist === artistName).map((a) => a.id)
   );
-  const relatedStories = allStories
-    .filter((s) => {
-      const taggedMatch = s.tags?.some((tag) => tag === artistName || tag === displayArtistName);
-      if (taggedMatch) return true;
-      // 본문에 이 작가의 작품 id가 하나라도 인용되면 매칭. body·body_en 양쪽 모두 검사.
-      const referencedIds = [
-        ...extractArtworkIdsFromBody(s.body),
-        ...extractArtworkIdsFromBody(s.body_en),
-      ];
-      return referencedIds.some((id) => thisArtistArtworkIds.has(id));
-    })
-    .slice(0, 3);
+  const matchedStories = allStories.filter((s) => {
+    const taggedMatch = s.tags?.some((tag) => tag === artistName || tag === displayArtistName);
+    if (taggedMatch) return true;
+    // 본문에 이 작가의 작품 id가 하나라도 인용되면 매칭. body·body_en 양쪽 모두 검사.
+    const referencedIds = [
+      ...extractArtworkIdsFromBody(s.body),
+      ...extractArtworkIdsFromBody(s.body_en),
+    ];
+    return referencedIds.some((id) => thisArtistArtworkIds.has(id));
+  });
+  // 정전 스토리를 맨 앞에 고정 후 slice — recency 순이 정전 스토리를 밀어내는 cannibalization 방지.
+  const relatedStories = pinPrimaryStory(artistName, matchedStories).slice(0, 3);
+  // bio 섹션 문맥 링크용 — gallery page bio block(outbound 링크 0)에 정전 스토리 above-the-fold 링크 추가.
+  const primaryStorySlug = getPrimaryStorySlug(artistName);
+  const primaryStory = primaryStorySlug
+    ? (allStories.find((s) => s.slug === primaryStorySlug) ?? null)
+    : null;
 
   // 작가 외부 권위 자료 (한겨레·MMCA·달진닷컴·Wikipedia·namu.wiki 등 큐레이션 386 URL).
   // 작품 detail에서만 visible이었던 RelatedArticles를 작가 페이지에도 노출 — entity 신뢰도 +
@@ -534,6 +540,18 @@ async function renderArtistPage({ params }: Props) {
             </h2>
             {bioProfile && (
               <p className="whitespace-pre-wrap text-charcoal leading-relaxed">{bioProfile}</p>
+            )}
+            {primaryStory && (
+              <p className="mt-6">
+                <Link
+                  href={`/stories/${primaryStory.slug}`}
+                  className="text-sm font-medium text-primary hover:text-primary-strong transition-colors"
+                >
+                  {isEnglish
+                    ? `Read ${formattedName}'s full story →`
+                    : `${formattedName} 작가의 이야기 더 읽기 →`}
+                </Link>
+              </p>
             )}
             {bioHistory && (
               <details className="mt-8">
