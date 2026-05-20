@@ -9,7 +9,7 @@ import { formatUsd } from '@/lib/utils/currency';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { trackEvent } from '@/lib/analytics/track';
 import { incrementPurchaseCount } from '@/lib/purchase-state';
-import { storageGet, storageSet } from '@/lib/storage';
+import { storageGet, storageSet, sessionGet, sessionSet } from '@/lib/storage';
 
 interface Props {
   paymentKey: string;
@@ -98,10 +98,11 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
         }
 
         if (data.alreadyPaid || data.status === 'DONE') {
-          // sessionStorage: 새로고침 중복 trackEvent 방지 (GA는 transaction_id로도 dedup)
+          // sessionGet/sessionSet: Safari 시크릿 모드 QuotaExceededError → 에러 화면 회귀 방지.
+          // GA는 transaction_id로 자체 dedup하므로 silent fail이 안전.
           const purchaseKey = `purchase_fired_${orderId}`;
-          if (!sessionStorage.getItem(purchaseKey)) {
-            sessionStorage.setItem(purchaseKey, '1');
+          if (!sessionGet<boolean>(purchaseKey)) {
+            sessionSet(purchaseKey, true);
             trackEvent('purchase', {
               transaction_id: orderId,
               value: Number(amount),
@@ -122,8 +123,8 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
         } else if (data.status === 'WAITING_FOR_DEPOSIT') {
           // 가상계좌 발급 이벤트 — 실제 결제 완료(purchase)는 입금 확인 웹훅에서 처리
           const vaKey = `va_issued_${orderId}`;
-          if (!sessionStorage.getItem(vaKey)) {
-            sessionStorage.setItem(vaKey, '1');
+          if (!sessionGet<boolean>(vaKey)) {
+            sessionSet(vaKey, true);
             trackEvent('virtual_account_issued', {
               transaction_id: orderId,
               value: Number(amount),

@@ -32,3 +32,23 @@ export function storageRemove(key: string): void {
     // ignore
   }
 }
+
+export function sessionGet<T>(key: string): T | null {
+  if (!isClient()) return null;
+  try {
+    const raw = window.sessionStorage.getItem(key);
+    if (raw === null) return null;
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+export function sessionSet<T>(key: string, value: T): void {
+  if (!isClient()) return;
+  try {
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // private browsing / quota — silently fail (GA dedupes by transaction_id)
+  }
+}
