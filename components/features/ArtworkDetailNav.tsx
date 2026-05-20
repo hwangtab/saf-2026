@@ -39,17 +39,17 @@ export default function ArtworkDetailNav({ artist, title }: ArtworkDetailNavProp
         <BackToListButton fallbackHref={listHref} />
 
         <div className="flex items-center text-xs text-charcoal-soft gap-2 whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
-          <Link href="/" className="hover:text-primary transition-colors">
+          <Link href="/" className="hover:text-primary-strong transition-colors">
             {tBreadcrumbs('home')}
           </Link>
           <span>/</span>
-          <Link href={listHref} className="hover:text-primary transition-colors">
+          <Link href={listHref} className="hover:text-primary-strong transition-colors">
             {listLabel}
           </Link>
           <span>/</span>
           <Link
             href={`/artworks/artist/${encodeURIComponent(artist)}`}
-            className="hover:text-primary transition-colors"
+            className="hover:text-primary-strong transition-colors"
           >
             {artist}
           </Link>

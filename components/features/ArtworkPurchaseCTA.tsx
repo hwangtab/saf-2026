@@ -112,7 +112,7 @@ export default function ArtworkPurchaseCTA({
         <div className="text-center">
           <CheckCircle className="w-10 h-10 text-success mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal mb-1">{t('soldNotice')}</p>
-          <p className="text-sm text-gray-500 mb-4">{t('soldExploreOther')}</p>
+          <p className="text-sm text-charcoal-soft mb-4">{t('soldExploreOther')}</p>
           <LinkButton href={fallbackHref} variant="outline" className="w-full">
             <span className="inline-flex items-center gap-1">
               {hasOtherWorks
@@ -134,7 +134,7 @@ export default function ArtworkPurchaseCTA({
       <div className="rounded-2xl border border-primary/15 bg-gradient-to-b from-primary-surface to-white p-6 shadow-sm space-y-4">
         <div className="text-center">
           <p className="text-base font-bold text-charcoal mb-1">{t('inquiryTitle')}</p>
-          <p className="text-sm text-gray-500">{t('inquiryDescription')}</p>
+          <p className="text-sm text-charcoal-soft">{t('inquiryDescription')}</p>
         </div>
         <ContactButtons />
       </div>
@@ -236,7 +236,9 @@ export default function ArtworkPurchaseCTA({
               {t('noShopSuffix')}
               <br />
               {t.rich('noShopGuide', {
-                highlight: (chunks) => <span className="text-primary font-medium">{chunks}</span>,
+                highlight: (chunks) => (
+                  <span className="text-primary-strong font-medium">{chunks}</span>
+                ),
               })}
             </p>
           </div>

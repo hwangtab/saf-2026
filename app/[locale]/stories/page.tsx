@@ -337,7 +337,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                           })()}
                         </div>
                         <div className="p-5">
-                          <span className="inline-block text-xs font-semibold tracking-wider uppercase text-primary mb-3">
+                          <span className="inline-block text-xs font-semibold tracking-wider uppercase text-primary-strong mb-3">
                             {categoryLabel}
                           </span>
                           <h3 className="text-card-title text-charcoal line-clamp-2 mb-2 group-hover:text-primary transition-colors duration-300">

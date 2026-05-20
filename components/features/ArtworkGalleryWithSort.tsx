@@ -129,8 +129,8 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
         {/* Results Message */}
         {searchQuery && (
           <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
-            <p className="text-gray-500">
-              <span className="font-semibold text-primary">&apos;{searchQuery}&apos;</span>{' '}
+            <p className="text-charcoal-soft">
+              <span className="font-semibold text-primary-strong">&apos;{searchQuery}&apos;</span>{' '}
               {locale === 'en'
                 ? `${filteredArtworks.length} ${tSearch('resultPrefix')}`
                 : `${tSearch('resultPrefix')} ${filteredArtworks.length}${tSearch('resultSuffix')}`}

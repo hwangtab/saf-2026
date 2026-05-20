@@ -33,7 +33,9 @@ export default function ArtistResultItem({ artist, onSelect }: ArtistResultItemP
           </div>
         ) : (
           <div className="w-full h-full bg-primary/20 flex items-center justify-center">
-            <span className="text-primary text-sm font-semibold">{artist.name.charAt(0)}</span>
+            <span className="text-primary-strong text-sm font-semibold">
+              {artist.name.charAt(0)}
+            </span>
           </div>
         )}
       </div>

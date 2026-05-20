@@ -68,10 +68,10 @@ export default function RelatedMagazineCard({
         </div>
       )}
       <div className="p-4">
-        <span className="text-[10px] font-semibold tracking-wider uppercase text-primary">
+        <span className="text-[10px] font-semibold tracking-wider uppercase text-primary-strong">
           {isEn ? 'Magazine' : '매거진'}
         </span>
-        <h3 className="text-sm font-bold mt-1.5 line-clamp-2 group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-sm font-bold mt-1.5 line-clamp-2 group-hover:text-primary-strong transition-colors duration-300">
           {storyTitle}
         </h3>
         {storyExcerpt && (

@@ -27,15 +27,19 @@ export default function NavLink({
       ? [
           'w-full text-sm py-2 px-3 rounded-md hover:bg-gray-50 items-start text-left',
           isActive
-            ? 'text-primary font-semibold bg-gray-50'
-            : 'text-charcoal-muted hover:text-primary',
+            ? 'text-primary-strong font-semibold bg-gray-50'
+            : 'text-charcoal-muted hover:text-primary-strong',
         ]
       : [
           'h-full text-xs xl:text-sm font-medium items-center whitespace-nowrap',
           'after:absolute after:bottom-3 after:left-0 after:right-0 after:h-0.5 after:transition-colors',
           isActive
-            ? ['text-primary font-semibold', 'after:bg-primary']
-            : [textColor, 'hover:text-primary', 'after:bg-transparent hover:after:bg-primary/40'],
+            ? ['text-primary-strong font-semibold', 'after:bg-primary']
+            : [
+                textColor,
+                'hover:text-primary-strong',
+                'after:bg-transparent hover:after:bg-primary/40',
+              ],
         ],
     textColor.includes('flex flex-col') ? textColor : '' // Allow passing custom classes via textColor prop safely
   );

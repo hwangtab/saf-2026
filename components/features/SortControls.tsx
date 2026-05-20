@@ -159,7 +159,7 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
                 focusedIndex === index ? 'bg-gray-100 outline-none' : 'hover:bg-gray-50'
               } ${
                 value === option.value
-                  ? 'bg-primary-surface text-primary font-medium'
+                  ? 'bg-primary-surface text-primary-strong font-medium'
                   : 'text-charcoal'
               }`}
               role="option"

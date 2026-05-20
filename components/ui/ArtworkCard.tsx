@@ -264,10 +264,10 @@ function ArtworkCard({
             )}
           </div>
           <div className="mt-3 px-1">
-            <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary transition-colors">
+            <p className="text-sm font-medium text-charcoal truncate group-hover:text-primary-strong transition-colors">
               {getSafeTitle(artwork, untitledLabel, locale)}
             </p>
-            <p className="text-xs text-gray-500 truncate">
+            <p className="text-xs text-charcoal-soft truncate">
               {getSafeArtist(artwork, unknownArtistLabel, locale)}
             </p>
             {showMediumLabel && (
@@ -357,7 +357,7 @@ function ArtworkCard({
             'text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3.5rem]',
             theme === 'dark'
               ? 'text-white group-hover:text-primary-soft'
-              : 'text-charcoal group-hover:text-primary'
+              : 'text-charcoal group-hover:text-primary-strong'
           )}
         >
           {safeTitle}
@@ -376,7 +376,7 @@ function ArtworkCard({
             href={artistHref}
             className={cn(
               'relative z-20 inline-flex items-center min-h-6 py-0.5 hover:underline transition-colors',
-              theme === 'dark' ? 'hover:text-white' : 'hover:text-primary'
+              theme === 'dark' ? 'hover:text-white' : 'hover:text-primary-strong'
             )}
           >
             {safeArtist}

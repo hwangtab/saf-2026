@@ -56,7 +56,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/our-reality"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('ourReality')}
                     </Link>
@@ -65,7 +65,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/our-proof"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('ourProof')}
                     </Link>
@@ -74,7 +74,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/transparency"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('transparency')}
                     </Link>
@@ -83,7 +83,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/news"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('news')}
                     </Link>
@@ -92,7 +92,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/stories"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('magazine')}
                     </Link>
@@ -101,7 +101,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/archive"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('archive')}
                     </Link>
@@ -118,7 +118,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/artworks"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('buyArt')}
                     </Link>
@@ -127,7 +127,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/artworks/artist"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('artistsIndex')}
                     </Link>
@@ -135,7 +135,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <li>
                     <TrackedExternalLink
                       href={EXTERNAL_LINKS.JOIN_MEMBER}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                       eventName="member_join_click"
                       eventParams={{ position: 'footer' }}
                     >
@@ -147,7 +147,7 @@ export default async function Footer({ locale }: { locale: string }) {
                       href={EXTERNAL_LINKS.ONLINE_GALLERY}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {t('onlineGallery')}
                     </a>
@@ -157,7 +157,7 @@ export default async function Footer({ locale }: { locale: string }) {
                       href={EXTERNAL_LINKS.LOAN_INFO}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {t('loanInfo')}
                     </a>
@@ -167,7 +167,7 @@ export default async function Footer({ locale }: { locale: string }) {
                       href={EXTERNAL_LINKS.KOSMART_HOME}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {t('coopHome')}
                     </a>
@@ -176,7 +176,7 @@ export default async function Footer({ locale }: { locale: string }) {
                     <Link
                       href="/orders"
                       prefetch={false}
-                      className="text-gray-300 hover:text-primary transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
                       {tNav('orderStatus')}
                     </Link>
@@ -224,11 +224,11 @@ export default async function Footer({ locale }: { locale: string }) {
                 </div>
 
                 <h3 className="font-sans font-bold text-lg mb-4">{t('contact')}</h3>
-                <div className="text-sm text-gray-400 space-y-1">
+                <div className="text-sm text-gray-300 space-y-1">
                   <p>
                     <a
                       href={`tel:${CONTACT.PHONE.replace(/-/g, '')}`}
-                      className="hover:text-primary transition-colors link-underline-offset"
+                      className="hover:text-white transition-colors link-underline-offset"
                     >
                       {CONTACT.PHONE}
                     </a>
@@ -236,7 +236,7 @@ export default async function Footer({ locale }: { locale: string }) {
                   <p>
                     <a
                       href={`mailto:${CONTACT.EMAIL}`}
-                      className="hover:text-primary transition-colors link-underline-offset"
+                      className="hover:text-white transition-colors link-underline-offset"
                     >
                       {CONTACT.EMAIL}
                     </a>
@@ -247,14 +247,14 @@ export default async function Footer({ locale }: { locale: string }) {
 
             {/* 거장 작가 직링크 — Part 15 S5.1 내부 링크 척추 */}
             <div className="border-t border-gray-700 pt-6 mb-6">
-              <p className="text-xs text-gray-500 mb-3">{t('masterArtists')}</p>
+              <p className="text-xs text-gray-400 mb-3">{t('masterArtists')}</p>
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
                 {MASTER_ARTISTS.filter((a) => a.specialSlug && !a.footerHidden).map((artist) => (
                   <Link
                     key={artist.artistName}
                     href={`/special/${artist.specialSlug}`}
                     prefetch={false}
-                    className="text-gray-300 hover:text-primary transition-colors"
+                    className="text-gray-300 hover:text-white transition-colors"
                   >
                     {isEn ? artist.artistNameEn : artist.artistName}
                   </Link>
@@ -286,7 +286,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 <Link
                   href="/privacy"
                   prefetch={false}
-                  className="hover:text-primary transition-colors link-underline-offset"
+                  className="hover:text-white transition-colors link-underline-offset"
                 >
                   {t('privacyPolicy')}
                 </Link>
@@ -296,7 +296,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 <Link
                   href="/terms"
                   prefetch={false}
-                  className="hover:text-primary transition-colors link-underline-offset"
+                  className="hover:text-white transition-colors link-underline-offset"
                 >
                   {t('termsOfService')}
                 </Link>
@@ -306,7 +306,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 <Link
                   href="/refund-policy"
                   prefetch={false}
-                  className="hover:text-primary transition-colors link-underline-offset"
+                  className="hover:text-white transition-colors link-underline-offset"
                 >
                   {t('refundPolicy')}
                 </Link>
@@ -316,7 +316,7 @@ export default async function Footer({ locale }: { locale: string }) {
                 <Link
                   href="/faq"
                   prefetch={false}
-                  className="hover:text-primary transition-colors link-underline-offset"
+                  className="hover:text-white transition-colors link-underline-offset"
                 >
                   {t('faq')}
                 </Link>

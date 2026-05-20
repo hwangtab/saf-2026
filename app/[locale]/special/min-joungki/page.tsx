@@ -715,7 +715,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
-              <span className="text-xs text-white/40 uppercase tracking-widest">Min Joung-ki</span>
+              <span className="text-xs text-white/70 uppercase tracking-widest">Min Joung-ki</span>
               <span className="text-sm text-white/60">
                 {isEnglish
                   ? 'Click a work to view its details'

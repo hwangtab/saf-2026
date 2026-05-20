@@ -50,9 +50,9 @@ const PAGE_COPY = {
   ko: {
     title: '박생광 드로잉전: Park Saeng-gwang Drawings',
     description:
-      '오방색의 거장 박생광(1904–1985)의 연필화. 1950년 전쟁이 그 이전의 모든 작품을 소실시켰고, 이 연필화들이 현존하는 박생광의 가장 이른 그림들이다. 2023년 예술의전당 한가람미술관에서 100점이 처음 공개된 이래 첫 전문 전시. 2026년 5월 20일부터 6월 8일까지 갤러리 PEG(서울 은평구 M타워 6층).',
+      '오방색의 거장 박생광(1904–1985)의 연필화. 1950년 전쟁이 그 이전의 모든 작품을 소실시켰고, 이 연필화들이 현존하는 박생광의 가장 이른 그림들이다. 2023년 예술의전당 한가람미술관에서 100점이 처음 공개된 이래 첫 전문 전시. 2026년 5월 20일부터 6월 8일까지 갤러리 PEG(서울특별시 은평구 통일로 870 M타워 6층).',
     ogDescription:
-      '전쟁이 모든 것을 태운 자리에서 연필로 다시 그린 박생광 — 현존 최초의 작품을 만나는 연필화 특별전. 5/20~6/8 갤러리 PEG · 서울 은평 M타워 6층.',
+      '전쟁이 모든 것을 태운 자리에서 연필로 다시 그린 박생광 — 현존 최초의 작품을 만나는 연필화 특별전. 5/20~6/8 갤러리 PEG · 서울특별시 은평구 통일로 870 M타워 6층.',
     ogAlt: '박생광 드로잉전 대표 이미지',
     twitterTitle: '박생광 드로잉전',
     twitterDescription: '전쟁이 모든 것을 태웠다. 연필이 남긴 것이 현존하는 가장 이른 박생광이다.',
@@ -277,9 +277,13 @@ export default async function ParkSaenggwangPage({
                   </span>
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
                     <span className="inline-block">May 20 – Jun 8, 2026</span>
-                    <span className="mx-2 text-white/40">·</span>
+                    <span className="mx-2 text-white/40" aria-hidden="true">
+                      ·
+                    </span>
                     <span className="inline-block">Gallery PEG · M-Tower 6F, Eunpyeong</span>
-                    <span className="mx-2 text-white/40">·</span>
+                    <span className="mx-2 text-white/40" aria-hidden="true">
+                      ·
+                    </span>
                     <span className="inline-block">11am–8pm</span>
                   </span>
                 </>
@@ -291,9 +295,15 @@ export default async function ParkSaenggwangPage({
                   </span>
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
                     <span className="inline-block">2026년 5월 20일 ~ 6월 8일</span>
-                    <span className="mx-2 text-white/40">·</span>
-                    <span className="inline-block">갤러리 PEG · 서울 은평 M타워 6층</span>
-                    <span className="mx-2 text-white/40">·</span>
+                    <span className="mx-2 text-white/40" aria-hidden="true">
+                      ·
+                    </span>
+                    <span className="inline-block">
+                      갤러리 PEG · 서울특별시 은평구 통일로 870 M타워 6층
+                    </span>
+                    <span className="mx-2 text-white/40" aria-hidden="true">
+                      ·
+                    </span>
                     <span className="inline-block">오전 11시 ~ 오후 8시</span>
                   </span>
                 </>

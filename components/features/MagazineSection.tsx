@@ -73,8 +73,8 @@ export default async function MagazineSection({ locale }: { locale: string }) {
                   </div>
                 )}
                 <div className="p-5">
-                  <span className="text-eyebrow text-primary">{catLabel}</span>
-                  <h3 className="text-sm font-bold mt-1.5 line-clamp-2 text-charcoal-deep group-hover:text-primary transition-colors duration-300 break-keep">
+                  <span className="text-eyebrow text-primary-strong">{catLabel}</span>
+                  <h3 className="text-sm font-bold mt-1.5 line-clamp-2 text-charcoal-deep group-hover:text-primary-strong transition-colors duration-300 break-keep">
                     {title}
                   </h3>
                   {excerpt && (

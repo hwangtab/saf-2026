@@ -89,11 +89,11 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position,
         )}
       </div>
       <div className="p-4">
-        <h3 className="text-sm font-bold text-charcoal line-clamp-2 group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-sm font-bold text-charcoal line-clamp-2 group-hover:text-primary-strong transition-colors duration-300">
           {artTitle}
         </h3>
         <p className="text-xs text-charcoal-muted mt-1">{artArtist}</p>
-        <p className="text-xs font-semibold text-primary mt-2">
+        <p className="text-xs font-semibold text-primary-strong mt-2">
           {artwork.sold ? t('soldBadge') : artwork.price}
         </p>
       </div>

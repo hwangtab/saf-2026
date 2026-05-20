@@ -564,7 +564,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
-              <span className="text-xs text-white/40 uppercase tracking-widest">
+              <span className="text-xs text-white/70 uppercase tracking-widest">
                 Oh Yoon 40th Anniversary
               </span>
               <span className="text-sm text-white/60">

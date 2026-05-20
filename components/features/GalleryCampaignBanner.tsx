@@ -29,7 +29,7 @@ export default function GalleryCampaignBanner({ className }: GalleryCampaignBann
       <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-charcoal-muted">
         <Link
           href="/our-reality"
-          className="underline underline-offset-4 hover:text-primary transition-colors"
+          className="underline underline-offset-4 hover:text-primary-strong transition-colors"
         >
           {t('linkWhyMatters')}
         </Link>
@@ -38,7 +38,7 @@ export default function GalleryCampaignBanner({ className }: GalleryCampaignBann
         </span>
         <Link
           href="/our-proof"
-          className="underline underline-offset-4 hover:text-primary transition-colors"
+          className="underline underline-offset-4 hover:text-primary-strong transition-colors"
         >
           {t('linkHowHelps')}
         </Link>

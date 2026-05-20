@@ -643,7 +643,7 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
-              <span className="text-xs text-white/40 uppercase tracking-widest">Lee Chul-soo</span>
+              <span className="text-xs text-white/70 uppercase tracking-widest">Lee Chul-soo</span>
               <span className="text-sm text-white/60">
                 {isEnglish
                   ? 'Click a work to view its details'

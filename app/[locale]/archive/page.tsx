@@ -162,7 +162,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
                       </>
                     )}
                   </p>
-                  <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-bold text-primary border border-primary/20">
+                  <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-bold text-primary-strong border border-primary/20">
                     {isEnglish ? 'View archive' : '기록 보기'} &rarr;
                   </span>
                 </div>
@@ -201,7 +201,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
                       </>
                     )}
                   </p>
-                  <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-bold text-primary border border-primary/20">
+                  <span className="inline-block px-4 py-2 bg-white rounded-full text-sm font-bold text-primary-strong border border-primary/20">
                     {isEnglish ? 'View archive' : '기록 보기'} &rarr;
                   </span>
                 </div>

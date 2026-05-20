@@ -82,7 +82,7 @@ function PublicHeader() {
               'transition-transform active:scale-90',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
               textColor,
-              'hover:text-primary'
+              'hover:text-primary-strong'
             )}
             aria-label={t('searchButton')}
           >
@@ -112,7 +112,7 @@ function PublicHeader() {
               'transition-transform active:scale-90',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
               textColor,
-              'hover:text-primary'
+              'hover:text-primary-strong'
             )}
             aria-label={t('toggleMenu')}
             aria-expanded={isMenuOpen}

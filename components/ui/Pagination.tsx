@@ -87,7 +87,7 @@ export function Pagination({
 
   return (
     <div className="flex flex-col items-center gap-3 py-4 sm:flex-row sm:justify-between">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-charcoal-soft">
         {copy.total} {totalItems.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR')}{' '}
         {resolvedItemName}
       </p>
@@ -104,7 +104,7 @@ export function Pagination({
         ) : (
           <button
             disabled
-            className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400"
+            className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-charcoal-soft"
           >
             {copy.previous}
           </button>
@@ -117,7 +117,7 @@ export function Pagination({
               return (
                 <span
                   key={`ellipsis-${index}`}
-                  className="flex h-8 w-8 items-center justify-center text-sm text-gray-400"
+                  className="flex h-8 w-8 items-center justify-center text-sm text-charcoal-soft"
                 >
                   {'\u2026'}
                 </span>
@@ -155,7 +155,7 @@ export function Pagination({
         ) : (
           <button
             disabled
-            className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-gray-400"
+            className="flex h-8 cursor-not-allowed items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm font-medium text-charcoal-soft"
           >
             {copy.next}
           </button>

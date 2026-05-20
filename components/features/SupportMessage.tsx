@@ -142,7 +142,7 @@ export default function SupportMessage({
         {/* 영역 3: 사회적 증거 */}
         <div className="w-full flex flex-col items-center gap-2 pt-4 border-t border-primary/10">
           {totalSoldCount && totalSoldCount > 0 ? (
-            <p className="text-sm text-primary font-medium break-keep text-center">
+            <p className="text-sm text-primary-strong font-medium break-keep text-center">
               {t('soldCount', { count: totalSoldCount })}
             </p>
           ) : null}

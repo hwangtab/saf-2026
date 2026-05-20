@@ -31,12 +31,12 @@ export default async function MechanismSection({ locale }: Props) {
             <div key={step.label} className="flex md:flex-row flex-col items-center gap-2 md:gap-2">
               <div
                 className={`flex flex-col items-center rounded-2xl px-6 py-4 shadow-sm w-44 md:w-auto ${
-                  i === 3 ? 'bg-primary text-white' : 'bg-white border border-gray-100'
+                  i === 3 ? 'bg-primary-strong text-white' : 'bg-white border border-gray-100'
                 }`}
               >
                 <span
                   className={`text-xs font-semibold tracking-wider uppercase mb-1 ${
-                    i === 3 ? 'text-white/70' : 'text-primary'
+                    i === 3 ? 'text-white/80' : 'text-primary-strong'
                   }`}
                 >
                   {step.note}

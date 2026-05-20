@@ -282,7 +282,7 @@ function InlineGridCard({
             'text-base md:text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3rem] md:min-h-[3.5rem]',
             isDark
               ? 'text-white group-hover:text-primary-soft'
-              : 'text-charcoal group-hover:text-primary'
+              : 'text-charcoal group-hover:text-primary-strong'
           )}
         >
           {safeTitle}
@@ -328,7 +328,7 @@ function InlineGridCard({
                 : artwork.reserved
                   ? isDark
                     ? 'text-white/70'
-                    : 'text-gray-500'
+                    : 'text-charcoal-soft'
                   : isDark
                     ? 'text-primary-soft'
                     : 'text-primary-strong'

@@ -16,7 +16,7 @@ const toneClasses: Record<BadgeTone, string> = {
   success: 'bg-success/10 text-success-a11y',
   warning: 'bg-charcoal-deep/5 text-charcoal-deep',
   danger: 'bg-danger/10 text-danger-a11y',
-  'outline-primary': 'border border-primary text-primary bg-transparent',
+  'outline-primary': 'border border-primary text-primary-strong bg-transparent',
 };
 
 const sizeClasses: Record<BadgeSize, string> = {

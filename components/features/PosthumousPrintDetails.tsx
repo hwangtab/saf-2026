@@ -42,7 +42,7 @@ export default async function PosthumousPrintDetails({
 
   return (
     <div className="rounded-2xl border border-primary/20 bg-primary-surface px-6 py-5">
-      <p className="text-xs uppercase tracking-widest text-primary mb-4">
+      <p className="text-xs uppercase tracking-widest text-primary-strong mb-4">
         {isEn ? 'Posthumous Edition' : '사후판화 안내'}
       </p>
       <dl className="space-y-2">

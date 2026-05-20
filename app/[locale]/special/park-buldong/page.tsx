@@ -546,7 +546,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
-              <span className="text-xs text-white/40 uppercase tracking-widest">
+              <span className="text-xs text-white/70 uppercase tracking-widest">
                 Park Bul-ttong
               </span>
               <span className="text-sm text-white/60">

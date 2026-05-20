@@ -143,7 +143,7 @@ export default function ArtworkGridCard({
         <WishlistHeartButton artworkId={artwork.id} artworkTitle={safeTitle} variant="overlay" />
       </div>
       <div className="relative p-4 bg-white">
-        <h3 className="text-base md:text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3rem] md:min-h-[3.5rem] text-charcoal group-hover:text-primary">
+        <h3 className="text-base md:text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3rem] md:min-h-[3.5rem] text-charcoal group-hover:text-primary-strong">
           {safeTitle}
         </h3>
         <p className="text-sm mt-1 truncate text-charcoal-muted">{safeArtist}</p>
@@ -169,7 +169,7 @@ export default function ArtworkGridCard({
               artwork.sold
                 ? 'text-gray-600 line-through'
                 : artwork.reserved
-                  ? 'text-gray-500'
+                  ? 'text-charcoal-soft'
                   : 'text-primary-strong'
             )}
           >

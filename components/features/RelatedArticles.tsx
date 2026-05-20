@@ -59,7 +59,7 @@ export default async function RelatedArticles({
 
   return (
     <section className="rounded-xl border border-primary/10 p-6">
-      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+      <h3 className="text-sm font-bold text-charcoal-soft uppercase tracking-wider mb-4">
         {t('sectionTitle')}
       </h3>
 
@@ -79,11 +79,11 @@ export default async function RelatedArticles({
             >
               {/* Source Badge */}
               <div className="flex items-center justify-between mb-3">
-                <span className="inline-block px-2.5 py-1 text-xs font-bold text-primary bg-primary-surface rounded">
+                <span className="inline-block px-2.5 py-1 text-xs font-bold text-primary-strong bg-primary-surface rounded">
                   {localizedSource}
                 </span>
                 <svg
-                  className="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors"
+                  className="w-4 h-4 text-charcoal-soft group-hover:text-primary-strong transition-colors"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -98,7 +98,7 @@ export default async function RelatedArticles({
               </div>
 
               {/* Title */}
-              <h3 className="font-bold text-charcoal mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+              <h3 className="font-bold text-charcoal mb-2 line-clamp-2 group-hover:text-primary-strong transition-colors">
                 {localizedTitle}
               </h3>
 

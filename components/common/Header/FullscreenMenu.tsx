@@ -127,7 +127,7 @@ export default function FullscreenMenu({
           <button
             type="button"
             onClick={onSearchClick}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-charcoal-muted hover:text-primary transition-colors rounded-lg hover:bg-gray-50 mr-auto"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-charcoal-muted hover:text-primary-strong transition-colors rounded-lg hover:bg-gray-50 mr-auto"
             aria-label={tSearch('dialogLabel')}
           >
             <svg
@@ -201,7 +201,7 @@ export default function FullscreenMenu({
                           <Link
                             href={subItem.href}
                             prefetch={false}
-                            className="block py-1 text-lg text-charcoal-muted hover:text-primary"
+                            className="block py-1 text-lg text-charcoal-muted hover:text-primary-strong"
                             onClick={onClose}
                           >
                             {subItem.name}
@@ -256,7 +256,7 @@ export default function FullscreenMenu({
             <Link
               href="/privacy"
               prefetch={false}
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary-strong transition-colors"
               onClick={onClose}
             >
               {tFooter('privacyPolicy')}
@@ -267,7 +267,7 @@ export default function FullscreenMenu({
             <Link
               href="/terms"
               prefetch={false}
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary-strong transition-colors"
               onClick={onClose}
             >
               {tFooter('termsOfService')}
@@ -279,7 +279,7 @@ export default function FullscreenMenu({
               href={EXTERNAL_LINKS.JOIN_MEMBER}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary-strong transition-colors"
               onClick={() => {
                 trackEvent('member_join_click', {
                   position: 'fullscreen-menu',
