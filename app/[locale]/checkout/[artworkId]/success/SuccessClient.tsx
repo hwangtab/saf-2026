@@ -9,6 +9,7 @@ import { formatUsd } from '@/lib/utils/currency';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { trackEvent } from '@/lib/analytics/track';
 import { incrementPurchaseCount } from '@/lib/purchase-state';
+import { storageGet, storageSet } from '@/lib/storage';
 
 interface Props {
   paymentKey: string;
@@ -108,11 +109,13 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
             });
           }
           // localStorage 멱등 가드 — 다른 탭·시크릿 reopen 시 sessionStorage 우회로 중복 카운트 방지
+          // storageGet/storageSet 사용: Safari 시크릿 모드에서 raw localStorage.setItem이
+          // QuotaExceededError를 던져 결제 성공자에게 에러 화면을 노출하는 회귀 방지.
           // H2: 가상계좌·무통장 입금 완료는 server webhook(localStorage 접근 불가)에서 처리 —
           // 해당 구매자의 누적 카운트는 이 경로에서 갱신 불가. 구조적 한계.
           const countKey = `saf:purchaseCounted:${orderId}`;
-          if (!localStorage.getItem(countKey)) {
-            localStorage.setItem(countKey, '1');
+          if (!storageGet<boolean>(countKey)) {
+            storageSet(countKey, true);
             incrementPurchaseCount();
           }
           setPageState('success');

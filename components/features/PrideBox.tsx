@@ -20,9 +20,10 @@ import { getPurchaseCount, getPurchaseStage } from '@/lib/purchase-state';
  * 매뉴얼 7.6 누적 구매 단계별 변동:
  * - 1단 (첫 구매, count=0): 기본 5줄 카피 그대로
  * - 2단 (2~3번째, count=1-2): 헤드 "당신의 N번째 한 점 — 그리고 두 개의 시작"
- * - 3단 (4번째+, count=3+): 헤드 "N번째 작품을 알아본 컬렉터에게" + 컬렉터 인정 라인
+ * - 3단 (4~9번째, count=3-8): 헤드 "N번째 작품을 알아본 컬렉터에게" + 컬렉터 인정 라인
+ * - 4단 (10번째+, count=9+): 헤드 "한국 현대미술의 길을 함께 걷고 있는 분께" + 헌신 컬렉터 라인
  *
- * SSR에서는 count=0(1단)으로 렌더. 마운트 후 localStorage를 읽어 단계 갱신.
+ * SSR에서는 count=0(1단)으로 렌더. 마운트 후 localStorage를 읽어 단계 갱신(2·3·4단).
  */
 
 interface PrideBoxProps {
@@ -106,7 +107,9 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
     : `${loanCountFormatted}명이 이 회복의 길을 걸었고, 95%가 다음 사람을 위해 돌아왔습니다.`;
 
   // 3단·4단 마무리 — 매뉴얼 7.6
-  // M2: 3단 매뉴얼 원문 "354명 중 N번째 컬렉터입니다"는 전체 대출 건수(LOAN_COUNT)와
+  // 3단 head는 n(이번이 N번째), closing은 purchaseCount(기존 보유 수) — 의도된 이중 인정.
+  // "9번째를 고를 때 이미 8점 보유"처럼 자연스럽게 공존.
+  // 3단 매뉴얼 원문 "354명 중 N번째 컬렉터입니다"는 전체 대출 건수(LOAN_COUNT)와
   // 개인 누적 구매 N이 다른 차원이라 의미 오류 — 컬렉터 인정 톤으로 대체.
   // 4단은 매뉴얼 verbatim: "${N}번째 작품으로 작가의 길에 추가됩니다".
   const collectorLine =
@@ -125,7 +128,7 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
       aria-labelledby="pride-box-heading"
       className="mt-16 mb-12 mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-canvas-soft px-6 py-10 md:px-10 md:py-12 shadow-sm"
     >
-      {/* suppressHydrationWarning: SSR(1단)과 마운트 후(2·3단) 텍스트 차이 무시 */}
+      {/* suppressHydrationWarning: SSR(1단)과 마운트 후(2·3·4단) 텍스트 차이 무시 */}
       <h2
         id="pride-box-heading"
         suppressHydrationWarning
