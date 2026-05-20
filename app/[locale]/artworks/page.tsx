@@ -285,7 +285,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
                     {cat.title}
                   </h3>
                   <p className="text-charcoal text-base leading-relaxed">{cat.description}</p>
-                  <span className="inline-flex items-center gap-1 mt-4 text-sm text-primary font-medium">
+                  <span className="inline-flex items-center gap-1 mt-4 text-sm text-primary-strong font-medium">
                     {t('categoryViewAll', { category: getCategoryLabel(cat.key, locale) })}
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>

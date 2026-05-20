@@ -376,7 +376,7 @@ function ArtworkCard({
             href={artistHref}
             className={cn(
               'relative z-20 inline-flex items-center min-h-6 py-0.5 hover:underline transition-colors',
-              theme === 'dark' ? 'hover:text-white' : 'hover:text-primary-strong'
+              theme === 'dark' ? 'text-white hover:text-white' : 'hover:text-primary-strong'
             )}
           >
             {safeArtist}

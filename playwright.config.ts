@@ -6,7 +6,7 @@ export default defineConfig({
   retries: 1,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
     trace: 'on-first-retry',
   },
   projects: [
@@ -21,7 +21,7 @@ export default defineConfig({
     ? undefined
     : {
         command: 'npm run build && npm run start',
-        url: 'http://localhost:3000',
+        url: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
       },

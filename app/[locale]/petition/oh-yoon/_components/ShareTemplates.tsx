@@ -99,7 +99,7 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
                 <button
                   type="button"
                   onClick={tpl.share}
-                  className="rounded-md bg-primary px-2.5 py-0.5 text-[11px] font-semibold text-white hover:bg-primary-strong"
+                  className="rounded-md bg-primary-strong px-2.5 py-0.5 text-[11px] font-semibold text-white hover:bg-primary-strong"
                 >
                   <span className="inline-flex items-center gap-1">
                     {t('shareTemplateOpen')}

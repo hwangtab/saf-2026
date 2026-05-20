@@ -68,7 +68,7 @@ const MasterArtistMediumSections = memo(function MasterArtistMediumSections({
           <h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase">
             {displayLabel}
           </h2>
-          <span className="text-sm text-white/40 font-mono tabular-nums">{artworks.length}</span>
+          <span className="text-sm text-white/70 font-mono tabular-nums">{artworks.length}</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
         <MasterArtistGallery artworks={artworks} returnTo={returnTo} />
@@ -98,7 +98,7 @@ const MasterArtistMediumSections = memo(function MasterArtistMediumSections({
                 <h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase">
                   {displayLabel}
                 </h2>
-                <span className="text-sm text-white/40 font-mono tabular-nums">
+                <span className="text-sm text-white/70 font-mono tabular-nums">
                   {categoryArtworks.length}
                 </span>
                 <div className="flex-1 h-px bg-white/10" />

@@ -348,7 +348,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
                               {excerpt}
                             </p>
                           )}
-                          <div className="flex items-center gap-2 text-xs text-charcoal-muted/60">
+                          <div className="flex items-center gap-2 text-xs text-charcoal-soft">
                             <span>{story.published_at}</span>
                             <span>·</span>
                             <span>{localizeStoryAuthor(story.author, locale)}</span>

@@ -41,7 +41,9 @@ export default function PriceRangeFilter({
           }`}
         >
           {tFilters('priceAll')}
-          <span className="ml-1 opacity-60">{totalCount}</span>
+          <span className={`ml-1 ${selected === null ? 'text-white/80' : 'text-charcoal-soft'}`}>
+            {totalCount}
+          </span>
         </button>
 
         {PRICE_BUCKETS.map((bucket) => {
@@ -62,7 +64,9 @@ export default function PriceRangeFilter({
               }`}
             >
               {getPriceBucketLabel(bucket, locale)}
-              <span className="ml-1 opacity-60">{count}</span>
+              <span className={`ml-1 ${isActive ? 'text-white/80' : 'text-charcoal-soft'}`}>
+                {count}
+              </span>
             </button>
           );
         })}

@@ -1,5 +1,45 @@
 [
   {
+    "hash": "3d7bc88d",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "T2-16 박생광 llms.txt Site Structure 행 추가 (오윤 대칭)",
+    "summary": "llms-content.ts Site Structure 표에 박생광 특별전 행 추가 — T2-15 Fix C로 Google 색인 표면에서 만든 오윤↔박생광 대칭을 LLM 크롤러 표면에서도 완결",
+    "body": "- lib/llms-content.ts L220 직후 Park Saeng-gwang 행 1줄 추가\n- 오윤 행과 동일 포맷 미러링 (name · path · EN one-liner)\n- 4개 llms.txt 라우트 자동 소비 (단일 출처 buildLlmsTxt)\n- UI·Google 색인 신호 변경 0 / tsc clean / 599/599",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "4dfa042a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-17 petition/oh-yoon 구조화 데이터 강화 — Person·AboutPage·VisualArtwork JSON-LD",
+    "summary": "캠페인 플래그십 페이지(양국어 색인, priority 0.8)에 BreadcrumbList 단독이던",
+    "body": "구조화 데이터를 4종으로 확장. 오윤 Person 엔티티에 공유 @id를 부여해\n/special/oh-yoon와 entity 그래프 단절 봉합.\n\n- petition/oh-yoon: OH_YOON_PERSON_ID(공유 @id), Person(오윤 EN/KO, wikidata/wiki sameAs),\n  AboutPage(PAGE_URL#webpage, about→오윤), VisualArtwork(1974 구의동 양면 부조, creator→오윤) 추가\n- special/oh-yoon: ohYoonPerson에 동일 @id 한 줄 추가 — Google entity 노드 병합\n- 콘텐츠·레이아웃·robots·hreflang 무변경, JSON-LD only",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "99fea2e0",
+    "type": "fix",
+    "scope": "special",
+    "subject": "박생광 전시 장소 주소 전체 표기 + UI 호버 컬러 정리",
+    "summary": "갤러리 PEG 주소를 \"서울 은평 M타워 6층\" 축약형에서 \"서울특별시 은평구 통일로 870 M타워 6층\" 전체 주소로 통일 (Hero·메타·OG·ko.json 4곳), Footer·Header·컴포넌트 hover 색상 일관성 수정",
+    "body": "- park-saenggwang page.tsx Hero 가시 주소, 메타 description, OG description 전체 주소로 변경\n- messages/ko.json parkSaenggwangDesc 주소 전체 표기\n- Footer·Header 등 hover:text-primary → hover:text-white 컬러 정리",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "9fa35769",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-16 작가 인덱스 허브 — /artworks/artist 113 작가 크롤 가능 grid",
+    "summary": "작가 전체를 크롤 가능한 <a> 링크로 묶은 인덱스 허브 신규 생성. 장기 꼬리 작가 페이지 내부 링크 equity 분산 + \"씨앗페 작가\" navigational 쿼리 랜딩 자산 확보.",
+    "body": "- app/[locale]/artworks/artist/page.tsx 신규 — force-static, 가나다 정렬 작가 카드 grid\n- MasterArtists 카드 패턴 재사용, 대표작 cover 이미지, 작품 수 배지\n- CollectionPage + BreadcrumbList + ItemList(Person) JSON-LD 3종\n- EN koOnly + noindex (T2-14/T2-15 정합 — EN orphan→noindex 재생산 방지)\n- Footer \"작가별 보기\" 진입 링크 + /artworks 페이지 CTA 버튼 진입 링크\n- sitemap.ts staticPaths에 /artworks/artist 추가 (priority 0.7, weekly)",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
     "hash": "d34bc05e",
     "type": "fix",
     "scope": "seo",

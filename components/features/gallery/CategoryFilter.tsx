@@ -37,7 +37,9 @@ export default function CategoryFilter({
           }`}
         >
           {tFilters('categoryAll')}
-          <span className="ml-1 opacity-60">{totalCount}</span>
+          <span className={`ml-1 ${selected === null ? 'text-white/80' : 'text-charcoal-soft'}`}>
+            {totalCount}
+          </span>
         </button>
 
         {/* Category buttons */}
@@ -55,7 +57,11 @@ export default function CategoryFilter({
             }`}
           >
             {getCategoryLabel(cat.value, locale)}
-            <span className="ml-1 opacity-60">{cat.count}</span>
+            <span
+              className={`ml-1 ${selected === cat.value ? 'text-white/80' : 'text-charcoal-soft'}`}
+            >
+              {cat.count}
+            </span>
           </button>
         ))}
       </div>

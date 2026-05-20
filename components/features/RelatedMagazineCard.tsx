@@ -79,7 +79,7 @@ export default function RelatedMagazineCard({
             {storyExcerpt}
           </p>
         )}
-        <span className="text-[10px] text-charcoal-muted/60 mt-2 block">
+        <span className="text-[10px] text-charcoal-soft mt-2 block">
           {story.published_at ? `${story.published_at} · ` : ''}
           {localizeStoryAuthor(null, isEn ? 'en' : 'ko')}
         </span>

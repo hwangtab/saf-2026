@@ -66,8 +66,11 @@ export default async function NotFound() {
         </div>
 
         <div className="pt-8 border-t border-gray-200/60">
-          <p className="text-sm text-gray-500 mb-2">{copy.helpText}</p>
-          <a href={`mailto:${CONTACT.EMAIL}`} className="text-primary font-medium hover:underline">
+          <p className="text-sm text-charcoal-soft mb-2">{copy.helpText}</p>
+          <a
+            href={`mailto:${CONTACT.EMAIL}`}
+            className="text-primary-strong font-medium hover:underline"
+          >
             {CONTACT.EMAIL}
           </a>
         </div>

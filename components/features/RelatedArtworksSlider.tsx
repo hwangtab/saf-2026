@@ -155,7 +155,7 @@ export default function RelatedArtworksSlider({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-charcoal">{copy.title}</h2>
-            <p className="text-gray-500 mt-1">{copy.description}</p>
+            <p className="text-charcoal-soft mt-1">{copy.description}</p>
           </div>
           <div className="self-start sm:self-auto">
             <button

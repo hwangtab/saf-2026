@@ -82,7 +82,7 @@ export default async function MagazineSection({ locale }: { locale: string }) {
                       {excerpt}
                     </p>
                   )}
-                  <span className="text-[10px] text-charcoal-muted/60 mt-3 block">
+                  <span className="text-[10px] text-charcoal-soft mt-3 block">
                     {dateStr ? `${dateStr} · ` : ''}
                     {localizeStoryAuthor(null, locale as 'ko' | 'en')}
                   </span>
