@@ -159,6 +159,37 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
     titleKo: '강석태 — 어린왕자를 20년간 그려온 화가, 별소년의 회화 | 씨앗페',
     titleEn: 'Kang Seoktae — Painter of The Little Prince, 20 Years of Star Boy | SAF Online',
   },
+
+  // ─── GSC 2026-04-19~05-17: T2-13 미커버 작가 페이지 ───────────────────────
+  // 합계 ~118 imp / 0 click. 작가 페이지를 랭크시키나 artist override 없음(generic title).
+  // 김주호는 story override(meet-artist-kim-ju-ho) 별도 보유 → 제외.
+
+  박소형: {
+    // GSC: 48 imp / 0 click / pos 3.2 — page-1 최상단인데 CTR 0%. title 매력도 결정적.
+    // BU 조형예술 석사·SVA 학사, 보스턴·뉴욕·서울. 조각·설치·비디오·AI 미디어·생태예술.
+    titleKo: '박소형 — 보스턴·뉴욕·서울의 조형예술가, AI·생태예술 조각·설치 | 씨앗페',
+    titleEn:
+      'Park Sohyeong — Sculptor & Installation Artist (Boston·NY·Seoul), AI & Eco Art | SAF Online',
+  },
+  이철수: {
+    // GSC: 26 imp / 0 click / pos 9.3 — "판화가 이철수"·"이철수 판화". 1954년생 독학,
+    // 1980년대 민중판화 대표 → 선(禪)·영성, 충북 제천 농사+판화 30년+. 한국 목판화 거장.
+    titleKo: '이철수 — 민중판화에서 선(禪)의 판화로, 한국 목판화 거장 | 씨앗페',
+    titleEn:
+      'Lee Cheol-soo — From Minjung Prints to Zen Woodcuts, Korean Printmaking Master | SAF Online',
+  },
+  이호철: {
+    // GSC: 35 imp / 0 click / pos 14.3 — page-2라 CTR ceiling 낮으나 노출 큼. 1958년 서울,
+    // 홍익대, 1978 중앙미술대전 장려상. 서랍 속에 다른 세계가 펼쳐지는 초현실적 일상 회화.
+    titleKo: '이호철 — 서랍 속에 펼쳐진 또 다른 세계, 일상의 초현실 회화 | 씨앗페',
+    titleEn: 'Lee Ho-chul — Surreal Everyday Painting, Worlds Inside Open Drawers | SAF Online',
+  },
+  정채희: {
+    // GSC: 9 imp / 0 click / pos 5.1 — 서울대 회화과·북경 중앙미술학원 벽화 석사,
+    // 옻칠(칠화·칠벽화) 작가, 21회 개인전. 위치 양호라 title 개선 효과 직접.
+    titleKo: '정채희 — 옻칠로 그리는 칠화·칠벽화, 서울대·북경 중앙미술학원 | 씨앗페',
+    titleEn: 'Jeong Chaehui — Lacquer Painting and Murals, SNU & Beijing CAFA | SAF Online',
+  },
 };
 
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
