@@ -411,7 +411,7 @@ function ArtworkCard({
               'text-sm font-semibold mt-1',
               artwork.sold
                 ? theme === 'dark'
-                  ? 'text-white/50 line-through'
+                  ? 'text-white/70 line-through'
                   : 'text-gray-600 line-through'
                 : artwork.reserved
                   ? theme === 'dark'
