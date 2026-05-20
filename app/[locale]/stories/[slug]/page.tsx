@@ -92,11 +92,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const bodyForImage = isEn && story.body_en ? story.body_en : story.body;
   const heroImage = story.thumbnail || extractFirstImage(bodyForImage) || OG_IMAGE.url;
   const isCustomImage = heroImage !== OG_IMAGE.url;
+  const isEnIndexable = Boolean(story.body_en) && EN_INDEXABLE_STORY_SLUGS.has(story.slug);
 
   return {
     title,
     description,
-    alternates: createLocaleAlternates(path, locale, !story.body_en),
+    alternates: createLocaleAlternates(path, locale, !isEnIndexable),
     openGraph: {
       title,
       description,
@@ -128,15 +129,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ],
     },
-    // 영어 번역 본문(body_en)이 없는 스토리는 한국어가 그대로 노출 — thin content 색인 제외.
-    // body_en이 있고 EN_INDEXABLE_STORY_SLUGS 화이트리스트에 들어간 글은 indexable로 풀어
-    // 해외 컬렉터 long-tail entry로 활용 (layout robots: false 덮어쓰기).
-    ...(isEn && !story.body_en ? { robots: { index: false, follow: true } } : {}),
     ...(() => {
-      const enRobots = resolveEnRobots(
-        locale,
-        Boolean(story.body_en) && EN_INDEXABLE_STORY_SLUGS.has(story.slug)
-      );
+      const enRobots = resolveEnRobots(locale, isEnIndexable);
       return enRobots ? { robots: enRobots } : {};
     })(),
   };
