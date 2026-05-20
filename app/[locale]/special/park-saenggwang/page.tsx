@@ -478,8 +478,8 @@ export default async function ParkSaenggwangPage({
                       The final eight years were a transformation. In 1985, at the Grand Palais in
                       Paris, critics greeted him as &ldquo;the Korean Picasso.&rdquo; That same year
                       he died. The hundred or so works he left behind — the late paintings and the
-                      drawings beneath them — are now read as the moment when Korean colored ink
-                      painting found a new ground.
+                      pencil drawings that ran alongside a lifetime — are now read as the moment
+                      when Korean colored ink painting found a new ground.
                     </p>
                   </>
                 ) : (
@@ -503,8 +503,8 @@ export default async function ParkSaenggwangPage({
                     <p>
                       마지막 8년은 그의 진정한 황금기였다. 1985년 파리 그랑팔레 〈르 살롱전〉
                       특별전에서 비평가들은 그를 &ldquo;한국의 피카소&rdquo;로 환영했다. 같은 해
-                      그는 세상을 떠났다. 그가 남긴 백여 점의 만년 채색화, 그리고 그 아래에 놓였던
-                      드로잉들은 이제 한국 채색화가 새로운 지반을 얻은 순간으로 다시 읽힌다.
+                      그는 세상을 떠났다. 그가 남긴 백여 점의 만년 채색화, 그리고 생애를 가로지른
+                      연필화들은 이제 한국 채색화가 새로운 지반을 얻은 순간으로 다시 읽힌다.
                     </p>
                   </>
                 )}
@@ -676,6 +676,12 @@ export default async function ParkSaenggwangPage({
                       continues that effort — pencil on paper, most around 25 × 18 cm, presented as
                       the independent works they are.
                     </p>
+                    <p>
+                      These pencil lines trace a journey that begins in the ruins of Jinju in 1950 —
+                      through thirty years of suspicion, a landscape slowly returning to itself, and
+                      a season of renewed purpose in Japan — arriving at last at the sacred sites of
+                      India in 1979. One medium, across a lifetime.
+                    </p>
                   </>
                 ) : (
                   <>
@@ -692,6 +698,11 @@ export default async function ParkSaenggwangPage({
                       박생광의 연필화 <strong>100점</strong>이 처음 한자리에 공개됐다. 이번 전시는
                       그 흐름 위에서, 종이에 연필 25×18cm 안팎의 작품들을 자율적 완성작으로 다시
                       모은다.
+                    </p>
+                    <p>
+                      그 연필 선들의 여정은 1950년 폐허가 된 진주에서 시작한다. 30년의 혐의를
+                      감내하며 다시 살아난 풍경들을 그리고, 한 번 더 일본을 찾아 작업에 매진하다가,
+                      마침내 1979년 불교 발상지 인도에 닿는다. 연필 하나로 관통한 생애의 궤적이다.
                     </p>
                   </>
                 )}
@@ -745,20 +756,23 @@ export default async function ParkSaenggwangPage({
                   <p className="text-xl leading-[1.8] text-charcoal font-medium">
                     {isEnglish ? (
                       <>
-                        Park Saeng-gwang&apos;s father was a Donghak believer — a member of the
-                        guard for Jeon Bong-jun, the peasant leader, who survived when others did
-                        not. Yet it was his son who crossed to Japan to study art. Unlike most
-                        students of his generation, Park stayed long — moving from Kyoto to Tokyo,
-                        building a house with a patron&apos;s support, and eventually his staunchly
-                        anti-Japanese father came to spend his final years and die in Japan too. For
-                        thirty years after liberation, Park bore the suspicion of a so-called
-                        Japanese-color aesthetic. But nowhere in the pencil works of those decades
-                        is any such trace to be found.
+                        Throughout those years in the ruins — and carrying a weight that had begun
+                        long before — Park Saeng-gwang faced another burden. His father was a
+                        Donghak believer — a member of the guard for Jeon Bong-jun, the peasant
+                        leader, who survived when others did not. And it was this man&apos;s son who
+                        crossed to Japan to study art. Unlike most students of his generation, Park
+                        stayed long — moving from Kyoto to Tokyo, building a house with a
+                        patron&apos;s support, and eventually his staunchly anti-Japanese father
+                        came to spend his final years and die in Japan too. For thirty years after
+                        liberation, Park bore the suspicion of a so-called Japanese-color aesthetic.
+                        But nowhere in the pencil works of those decades is any such trace to be
+                        found.
                       </>
                     ) : (
                       <>
-                        박생광의 아버지는 동학교도였다. 농민군의 우두머리 전봉준의 호위 부대에
-                        속했다가 마지막에 살아남은 사람이다. 그 아들이 적국 일본으로 건너가 미술을
+                        폐허를 그리던 그 세월에도, 또 하나의 무게가 그를 눌렀다. 그 연원은 아버지로
+                        거슬러 올라간다 — 동학교도이자, 농민군의 우두머리 전봉준의 호위 부대에
+                        속했다가 마지막에 살아남은 사람. 그 아들이 적국 일본으로 건너가 미술을
                         공부했다. 더구나 대부분의 유학생과 달리 교토에서 도쿄로 옮기며 오래 머물렀다
                         — 후원으로 집을 짓고, 심지어 극렬 반일인사였던 아버지까지 만년을 일본에서
                         보내다 눈을 감았다. 광복 후 30년 동안 박생광은 이른바 &lsquo;일본색&rsquo;
@@ -778,22 +792,24 @@ export default async function ParkSaenggwangPage({
                   <p className="text-xl leading-[1.8] text-charcoal font-medium">
                     {isEnglish ? (
                       <>
-                        Through those difficult decades Park&apos;s pencil kept moving, and his gaze
-                        widened beyond Jinju. Among the surviving works are pencil drawings of
-                        Baengnoktam, the crater lake of Hallasan on Jeju Island — a few of them were
-                        later reworked as colored paintings. There are also drawings of Haeundae in
-                        Busan. Many landscapes carry neither a place name nor a date, which is
-                        itself a kind of testimony: these were not made as documents but as acts of
-                        looking, recorded in the ordinary flow of a life being lived.
+                        Through those decades of suspicion, Park&apos;s pencil never stopped — and
+                        his gaze widened beyond Jinju. Among the surviving works are pencil drawings
+                        of Baengnoktam, the crater lake of Hallasan on Jeju Island — a few of them
+                        were later reworked as colored paintings. There are also drawings of
+                        Haeundae in Busan. Many landscapes carry neither a place name nor a date,
+                        which is itself a kind of testimony: these were not made as documents but as
+                        acts of looking, recorded in the ordinary flow of a life being lived. And
+                        that eye, in time, was finding its way toward somewhere farther still.
                       </>
                     ) : (
                       <>
-                        힘든 시절을 버티며 박생광은 진주를 넘어 더 넓은 곳으로 시선을 열었다. 제주
-                        한라산 백록담을 담은 연필화들이 있다 — 이 중 몇 점은 훗날 채색화로
-                        이어지기도 했다. 부산 해운대의 풍경을 그린 것도 남아 있다. 상당히 많은
-                        연필화들은 장소와 그린 때를 알 수 없어 아쉬움을 남기지만, 그 불확실성 자체가
-                        이 시기 그림들의 성격을 말해준다 — 기록이 아닌 눈의 운동, 그가 살아낸
-                        자리에서 자연스럽게 그려낸 풍경들.
+                        혐의를 감내하는 긴 시간 동안에도, 박생광의 연필은 멈추지 않았다. 진주를
+                        넘어, 더 넓은 곳으로 시선이 열려갔다. 제주 한라산 백록담을 담은 연필화들이
+                        있다 — 이 중 몇 점은 훗날 채색화로 이어지기도 했다. 부산 해운대의 풍경을
+                        그린 것도 남아 있다. 상당히 많은 연필화들은 장소와 그린 때를 알 수 없어
+                        아쉬움을 남기지만, 그 불확실성 자체가 이 시기 그림들의 성격을 말해준다 —
+                        기록이 아닌 눈의 운동, 그가 살아낸 자리에서 자연스럽게 그려낸 풍경들. 그리고
+                        그 시선은, 이내 더 먼 곳을 향하기 시작했다.
                       </>
                     )}
                   </p>
@@ -868,6 +884,27 @@ export default async function ParkSaenggwangPage({
                     )}
                   </p>
                 </div>
+              </div>
+              {/* 종합 마무리 — 연필화 coda */}
+              <div className="border-l-[6px] border-sun-strong pl-8 py-3 mt-4">
+                <p className="text-xl leading-[1.8] text-charcoal font-medium">
+                  {isEnglish ? (
+                    <>
+                      From the rubble of Jinju in 1950 to the sacred sites of India in 1979, the
+                      pencil was the one unbroken thread. If the late colored paintings announced
+                      him to the world, these pencil drawings were there before those colors, and
+                      still there after — the artist&apos;s most continuous voice. This exhibition
+                      is that voice, heard on its own terms.
+                    </>
+                  ) : (
+                    <>
+                      1950년 폐허의 진주에서 1979년 인도의 성지까지, 연필은 그를 관통한 단 하나의
+                      끊어지지 않은 선이었다. 만년 채색화가 그를 세계에 알렸다면, 연필화는 그 색이
+                      오기 전에도, 그 색이 완성된 뒤에도 끝까지 그와 함께한 언어였다. 이번 전시는 그
+                      언어를, 그 자체로 듣는 자리다.
+                    </>
+                  )}
+                </p>
               </div>
             </div>
           </div>

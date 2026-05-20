@@ -1,5 +1,35 @@
 [
   {
+    "hash": "narrative-park-saenggwang-quality",
+    "type": "content",
+    "scope": "special/park-saenggwang",
+    "subject": "박생광 전시 페이지 글 품질·내러티브 강화",
+    "summary": "Section 3 도입부에 '폐허→인도' arc 예고 단락 추가, 5개 서사 블록 간 연결 흐름 정비, 인도 이후 전체를 종합하는 마무리 coda 신설, Section 2 '그 아래에 놓였던 드로잉' → '생애를 가로지른 연필화' 톤 정합성 수정",
+    "body": "- Section 3 intro: 2번째 단락 뒤에 여정 arc 예고('1950년 폐허의 진주 → 1979년 인도') 추가 (KO/EN)\n- Block 2(30년 혐의): 폐허 블록과의 연결 문장 삽입('폐허를 그리던 그 세월에도, 또 하나의 무게가…')\n- Block 3(되살아나는 풍경): 개방 문장 '혐의를 감내하는 긴 시간 동안에도' + 마지막에 '그 시선은 더 먼 곳을 향하기 시작했다' 전방 momentum 추가\n- 마무리 coda(신설): border-l-[6px] border-sun-strong 스타일 단락으로 1950→1979 생애 종합·색과 연필의 관계 착지\n- Section 2 last para: '그 아래에 놓였던 드로잉들' → '생애를 가로지른 연필화들' / 'drawings beneath them' → 'pencil drawings that ran alongside a lifetime'",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "00421cfe",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "오윤 청원 추진위원 탭에 해제 버튼 추가",
+    "summary": "추진위원 명단에서 직접 해제할 수 있도록 CommitteeTab에 해제 버튼·확인 다이얼로그 추가",
+    "body": "- CommitteeTab: 읽기 전용이던 탭에 행별 \"추진위원 해제\" 버튼 추가\n- 해제 시 updateSignature(id, { isCommittee: false }) 호출 (서버 액션·DB 변경 없음)\n- 성공 시 목록 재조회·선언문 명단 갱신·카운트 즉시 반영\n- 확인 다이얼로그: \"서명은 유지, 발족 선언문에서만 제외\" 안내\n- 감사 로그(update_signature)에 자동 기록\n- ko.admin.json / en.admin.json에 committeeColActions 등 10개 키 추가",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "61aa0d6d",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-10 작가 cannibalization — 정전 스토리에 내부 링크 집중",
+    "summary": "작가 이름 navigational 쿼리(김주호·오윤 등)에서 4~12개 saf2026",
+    "body": "페이지가 경쟁하는 cannibalization을 해소. gallery 페이지 bio 섹션에\n정전 스토리 문맥 링크 추가(above-the-fold, name-rich anchor)하고,\n매거진 카드 pin으로 recency 순 slice가 정전 스토리를 밀어내지 못하도록.\n\n- lib/artist-story-map.ts: GSC imp≥10 작가 6명 정전 slug 명시 맵 +\n  getPrimaryStorySlug·pinPrimaryStory 헬퍼 (기존 override-map 패턴)\n- [artist]/page.tsx: matchedStories→pinPrimaryStory→.slice(0,3) +\n  bio 섹션 primaryStory 문맥 링크 (미등재 작가는 기존 동작 그대로)\n- __tests__/lib/artist-story-map.test.ts: 12 tests (pin·회귀 0·edge case)\n\n14일 후 GSC 재측정 2026-06-03: 김주호·오윤 정전 스토리 pos(현 8~9)·imp",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
     "hash": "a0e2c83a",
     "type": "fix",
     "scope": "phase-9",
