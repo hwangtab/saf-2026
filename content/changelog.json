@@ -1,11 +1,41 @@
 [
   {
-    "hash": "nav-master-artists",
+    "hash": "content-park-saenggwang-pencil",
+    "type": "content",
+    "scope": "special/park-saenggwang",
+    "subject": "박생광 전시 페이지 — 연필화 톤 재구성 + 큐레이터 원문 5개 서사 보충",
+    "summary": "박생광 전시 페이지 본문을 전문 큐레이터 원문으로 보충 — '채색 이전 습작' 톤을 걷어내고 연필화를 폐허 위 현존 최초의 자율적 작품으로 재서술. 전쟁 전소·일본색 혐의·되살아나는 풍경·다시 일본·인도여행 5개 서사 추가",
+    "body": "- Hero h1/subtitle: '채색 이전/색을 입히기 전 골격' 표현 → '전쟁이 모든 것을 태웠다. 연필은 남았다.' 로 재서술\n- PAGE_COPY description/ogDescription/twitterDescription + JSON-LD description: '채색 이전' 표현 제거, 현존 최초의 그림 톤으로 교체\n- Section 3 heading: '채색 이전의 호흡' → '연필이 남긴 가장 이른 그림'\n- Section 3 본문 확장: intro + 5개 테마 서브블록 신설\n  · 파괴된 터전에서 — 진주 폭격·촉석루 부재·현존 최초의 작품\n  · 30년의 혐의, 그러나 연필화에는 — 동학·전봉준 호위 아버지·일본색 혐의 변호\n  · 되살아나는 풍경 — 제주 한라산 백록담·부산 해운대\n  · 다시 일본에서 — 딸 도쿄대 약학 국비·의욕 회복\n  · 인도, 근원을 찾아 — 1979 75세·불교 발상지·신들린 듯 발디딘 곳",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "5e292378",
+    "type": "fix",
+    "scope": "pride-box",
+    "subject": "매뉴얼 7.6 4단(10번째+) 구현 + 중복 increment 멱등 가드 (Phase 8)",
+    "summary": "누적 구매 4단계 완전 구현 (매뉴얼 7.6 verbatim 정합) + 탭/시크릿 중복 카운트 방지",
+    "body": "- H1: getPurchaseStage 1|2|3|4 확장 — 3단 경계 count<=8(4~9번째), 4단 count>=9(10번째+)\n- H1: PrideBox stage 4 분기 추가 — 헤드 \"한국 현대미술의 길을 함께 걷고 있는 분께\" /\n  마무리 \"N번째 작품으로 작가의 길에 추가됩니다\" (매뉴얼 verbatim)\n- M1: incrementPurchaseCount dedup 가드를 sessionStorage → localStorage로 승급 —\n  다른 탭·시크릿에서 success URL 재방문 시 중복 카운트 방지\n- H2: 가상계좌·무통장 경로는 server webhook에서 완료 처리라 localStorage 접근 불가 —\n  구조적 한계를 코드 주석으로 명시\n- M2: PrideBox 3단 마무리 카피 매뉴얼 불일치(354명 중 N번째) 의도적 대체 이유 주석 보강",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "5884a8a3",
     "type": "feat",
     "scope": "nav",
     "subject": "헤더 '전시 작품' 메뉴에 거장 5인 특별전 전부 노출",
     "summary": "헤더 '전시 작품' 메뉴에 거장 5인 특별전 전부 노출 — 오윤만 있던 메뉴에 박생광·민정기·이철수·박불똥 4명 추가",
-    "body": "- lib/hooks/useLocalizedNavigation.ts: '전시 작품' items에 박생광/민정기/이철수/박불똥 특별전 4개 항목 추가\n  오윤 특별전 다음, 오윤 청원 앞 순서 (lib/master-artists.ts 순서와 일치)\n- messages/ko.json, en.json: nav 네임스페이스에 8개 키 신규 추가\n  (parkSaenggwang/NavDesc, minJoungki/NavDesc, leeCheolsoo/NavDesc, parkBuldong/NavDesc)\n\n배경: 홈 MasterArtists 섹션·sitemap에는 5인 모두 등록되어 있었으나 헤더 메뉴 배열에는 오윤만 하드코딩되어 있었음",
+    "body": "- useLocalizedNavigation.ts: '전시 작품' items에 4개 항목 추가\n  (오윤 특별전 다음, 오윤 청원 앞 / master-artists.ts 순서와 일치)\n- messages/ko.json, en.json: nav 네임스페이스에 8개 키 신규 추가",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "7a8d56d3",
+    "type": "feat",
+    "scope": "pride-box",
+    "subject": "매뉴얼 7.6 누적 구매 단계별 자긍심 박스 변동 (Phase 4)",
+    "summary": "localStorage 구매 횟수 기반 1·2·3단 컬렉터 인지 시그널 추가",
+    "body": "- lib/purchase-state.ts: getPurchaseCount / incrementPurchaseCount /\n  getPurchaseStage 유틸리티 신설 (saf:purchaseCount key)\n- SuccessClient: DONE 결제 확정 시 incrementPurchaseCount 호출\n  (sessionStorage 중복 발화 가드 내부 — 새로고침 이중 증가 방지)\n- PrideBox: 'use client' 전환 + stage 분기 카피\n  · 1단(count=0): 기존 기본 카피 그대로\n  · 2단(count=1-2): \"당신의 N번째 한 점 — 그리고 두 개의 시작\"\n  · 3단(count=3+): \"N번째 작품을 알아본 컬렉터에게\" + 소장 수 인정 라인\n  useSyncExternalStore(storage) — SSR=0, 마운트 후 localStorage 읽음\n  setState-in-effect ESLint rule 위반 없음. h2 suppressHydrationWarning.",
     "date": "2026-05-20",
     "author": "황경하"
   },

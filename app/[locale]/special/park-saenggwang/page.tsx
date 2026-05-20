@@ -50,22 +50,23 @@ const PAGE_COPY = {
   ko: {
     title: '박생광 드로잉전: Park Saeng-gwang Drawings',
     description:
-      '오방색의 거장 박생광(1904–1985)이 채색 이전에 연필로 잡아둔 첫 호흡. 2023년 예술의전당 한가람미술관에서 100점이 처음 본격 공개된, 거장의 드물게 알려진 영역. 2026년 5월 20일부터 6월 8일까지 갤러리 PEG(서울 은평구 M타워 6층)에서 만나보세요.',
+      '오방색의 거장 박생광(1904–1985)의 연필화. 1950년 전쟁이 그 이전의 모든 작품을 소실시켰고, 이 연필화들이 현존하는 박생광의 가장 이른 그림들이다. 2023년 예술의전당 한가람미술관에서 100점이 처음 공개된 이래 첫 전문 전시. 2026년 5월 20일부터 6월 8일까지 갤러리 PEG(서울 은평구 M타워 6층).',
     ogDescription:
-      '오방색의 거장 박생광이 연필로 잡아둔 첫 호흡 — 채색 이전의 골격을 보는 드로잉 특별전. 5/20~6/8 갤러리 PEG · 서울 은평 M타워 6층.',
+      '전쟁이 모든 것을 태운 자리에서 연필로 다시 그린 박생광 — 현존 최초의 작품을 만나는 연필화 특별전. 5/20~6/8 갤러리 PEG · 서울 은평 M타워 6층.',
     ogAlt: '박생광 드로잉전 대표 이미지',
     twitterTitle: '박생광 드로잉전',
-    twitterDescription: '오방색의 거장이 연필로 잡아둔 첫 호흡 — 채색 이전의 박생광',
+    twitterDescription: '전쟁이 모든 것을 태웠다. 연필이 남긴 것이 현존하는 가장 이른 박생광이다.',
   },
   en: {
     title: 'Park Saeng-gwang Drawings',
     description:
-      'Drawings by Park Saeng-gwang (1904–1985), master of obangsaek (the five cardinal colors of Korean tradition) — first breaths the artist held in pencil before color. Following the 2023 Seoul Arts Center exhibition that first publicly showcased 100 of these works, this special show invites collectors and viewers to a rarely seen side of the master. May 20–June 8, 2026 at Gallery PEG (M-Tower 6F, Eunpyeong, Seoul).',
+      'Pencil works by Park Saeng-gwang (1904–1985), master of obangsaek. The 1950 war destroyed his entire prior body of work; these pencil drawings are the earliest surviving traces of his hand. Following the 2023 Seoul Arts Center retrospective that first assembled 100 of these works publicly, this special exhibition presents them to collectors and viewers. May 20–June 8, 2026 at Gallery PEG (M-Tower 6F, Eunpyeong, Seoul).',
     ogDescription:
-      'First breaths the master of five colors held in pencil — a rare drawings exhibition by Park Saeng-gwang. May 20–Jun 8 at Gallery PEG, Eunpyeong, Seoul.',
+      'War erased everything that came before — these pencil works are the earliest Park Saeng-gwang that survives. Drawings exhibition, May 20–Jun 8, Gallery PEG, Eunpyeong, Seoul.',
     ogAlt: 'Park Saeng-gwang Drawings exhibition key visual',
     twitterTitle: 'Park Saeng-gwang Drawings',
-    twitterDescription: 'First breaths the master of five colors held in pencil',
+    twitterDescription:
+      'War erased everything before. These pencil works are the earliest Park Saeng-gwang that survives.',
   },
 } as const;
 
@@ -184,8 +185,8 @@ export default async function ParkSaenggwangPage({
     '@type': 'ExhibitionEvent',
     name: isEnglish ? 'Park Saeng-gwang Drawings' : '박생광 드로잉전',
     description: isEnglish
-      ? 'A rare drawings exhibition by Korean master Park Saeng-gwang (1904–1985). Pencil works showing the bare structure beneath obangsaek color — first breaths the master held before painting.'
-      : '한국 채색화의 거장 박생광(1904–1985)이 채색 이전에 연필로 잡아둔 첫 호흡 — 오방색이 입혀지기 전 골격을 드러내는 드물게 알려진 드로잉 특별전.',
+      ? 'A pencil works exhibition by Korean master Park Saeng-gwang (1904–1985). The 1950 war destroyed everything before; these pencil drawings are the earliest surviving works he left.'
+      : '오방색의 거장 박생광(1904–1985)의 연필화 특별전. 1950년 전쟁이 그 이전의 모든 작품을 소실시켰고, 이 연필화들이 현존하는 박생광의 가장 이른 그림들이다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
@@ -244,24 +245,25 @@ export default async function ParkSaenggwangPage({
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black">
               {isEnglish ? (
                 <>
-                  Before the Color,
+                  War Erased Everything Before.
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-sun-strong">First Breaths</span>
+                    <span className="relative z-10 text-sun-strong">Pencil Survived.</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
                   <br />
-                  in Pencil
+                  The First Works He Left.
                 </>
               ) : (
                 <>
-                  채색 이전,
+                  전쟁이 모든 것을 태웠다.
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-sun-strong">연필로 잡아둔</span>
+                    <span className="relative z-10 text-sun-strong">연필은 남았다.</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
-                  <br />첫 호흡
+                  <br />
+                  그가 남긴 최초의 그림.
                 </>
               )}
             </h1>
@@ -270,7 +272,8 @@ export default async function ParkSaenggwangPage({
               {isEnglish ? (
                 <>
                   <span className="block">
-                    Drawings by the master of obangsaek — the bare structure beneath color.
+                    The pencil works of Park Saeng-gwang — the earliest that survive. War destroyed
+                    everything before; these drawings are where his extant oeuvre begins.
                   </span>
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
                     <span className="inline-block">May 20 – Jun 8, 2026</span>
@@ -283,7 +286,8 @@ export default async function ParkSaenggwangPage({
               ) : (
                 <>
                   <span className="block">
-                    오방색의 거장이 색을 입히기 전, 그 골격을 그대로 드러낸 드로잉.
+                    오방색의 거장이 연필로 남긴 가장 이른 작품들. 전쟁이 그 이전의 모든 것을 태웠고,
+                    이 연필화들이 실물로 현존하는 최초의 박생광이다.
                   </span>
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
                     <span className="inline-block">2026년 5월 20일 ~ 6월 8일</span>
@@ -634,69 +638,237 @@ export default async function ParkSaenggwangPage({
             </div>
           </div>
 
-          {/* Section 3 — 이번 전시: 채색 이전의 호흡. */}
+          {/* Section 3 — 이번 전시: 연필이 남긴 가장 이른 그림. */}
           <div className="mb-24 max-w-4xl mx-auto">
             <h2 className="text-4xl border-l-[12px] border-sun-strong pl-6 py-2 leading-tight font-bold font-display text-balance mb-10">
               {isEnglish ? (
                 <>
                   This exhibition —
                   <br />
-                  <span className="text-charcoal-deep">the breath beneath color</span>
+                  <span className="text-charcoal-deep">the earliest works, in pencil</span>
                 </>
               ) : (
                 <>
                   이번 전시 —
                   <br />
-                  <span className="text-charcoal-deep">채색 이전의 호흡</span>
+                  <span className="text-charcoal-deep">연필이 남긴 가장 이른 그림</span>
                 </>
               )}
             </h2>
-            <div className="text-xl leading-[1.8] text-charcoal space-y-6 font-medium">
-              {isEnglish ? (
-                <>
-                  <p>
-                    For most of the past century the name <em>Park Saeng-gwang</em> has been
-                    inseparable from color. The dense reds and ultramarines of his late paintings
-                    crowd the imagination of any viewer who has met them. Yet the drawings — the
-                    bare structure beneath that color — have remained, until recently, an almost
-                    private body of work.
+            <div className="space-y-12">
+              {/* Intro */}
+              <div className="text-xl leading-[1.8] text-charcoal space-y-6 font-medium">
+                {isEnglish ? (
+                  <>
+                    <p>
+                      Park Saeng-gwang&apos;s name has long been inseparable from color. The deep
+                      reds and ultramarines of his late paintings crowd the memory of anyone who has
+                      met them. But the pencil works tell a different story. The 1950 war destroyed
+                      everything that came before — every canvas he had brought from Japan, every
+                      drawing he had stored. From the ruins Park began again: pencil on paper, the
+                      devastated landscape around him as his subject. Those pencil drawings are the
+                      earliest surviving works he left.
+                    </p>
+                    <p>
+                      In March 2023 the Seoul Arts Center Hangaram Museum gathered{' '}
+                      <strong>100</strong> of these pencil works publicly for the first time, in{' '}
+                      <em>The Great Encounter: Park Saeng-gwang and Park Rae-hyun</em>. This showing
+                      continues that effort — pencil on paper, most around 25 × 18 cm, presented as
+                      the independent works they are.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      박생광이라는 이름 앞에는 오랫동안 색이 따라붙었다. 만년 채색화의 깊은 적색과
+                      군청이 그를 본 모든 이의 기억을 채운다. 그러나 연필화들은 다른 차원의 이야기를
+                      담는다. 1950년 전쟁은 그가 일본에서 제작·보관하던 작품까지 포함해 그 이전의
+                      모든 것을 태워버렸다. 잿더미 위에서 박생광은 다시 시작했다 — 종이에 연필로,
+                      폐허가 된 주위를 그리는 것으로. 그 연필화들이 실물로 남아 있는 박생광의 가장
+                      이른 그림들이다.
+                    </p>
+                    <p>
+                      2023년 3월 예술의전당 한가람미술관 〈위대한 만남 — 박생광·박래현〉에서
+                      박생광의 연필화 <strong>100점</strong>이 처음 한자리에 공개됐다. 이번 전시는
+                      그 흐름 위에서, 종이에 연필 25×18cm 안팎의 작품들을 자율적 완성작으로 다시
+                      모은다.
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {/* 큐레이터 원문 5개 서사 */}
+              <div className="space-y-10">
+                {/* 1. 파괴된 터전에서 */}
+                <div>
+                  <h3 className="text-xl font-bold font-display text-charcoal-deep mb-4 flex items-center gap-3 border-b border-charcoal/20 pb-3">
+                    <span className="w-2 h-2 bg-sun-strong rotate-45 shrink-0" />
+                    {isEnglish
+                      ? 'From the ruins — drawing Jinju in rubble'
+                      : '파괴된 터전에서 — 폐허의 진주를 그리다'}
+                  </h3>
+                  <p className="text-xl leading-[1.8] text-charcoal font-medium">
+                    {isEnglish ? (
+                      <>
+                        When the war reached Jinju in 1950, Park Saeng-gwang lost everything — his
+                        home, his paintings, the canvases he had carried back from Japan. He had
+                        already lived through the Tokyo firebombing. He started over. Drawing pencil
+                        lines across paper, he took the ruined landscape of Jinju as his subject. In
+                        one sketch looking across the Namgang River toward Jinju Fortress, the
+                        famous Chokseongnu pavilion is absent — it had been bombed to rubble. The
+                        Chokseongnu standing there today is a later reconstruction. These drawings
+                        are witnesses to that destruction, and they are the earliest surviving works
+                        Park Saeng-gwang left behind.
+                      </>
+                    ) : (
+                      <>
+                        1950년 전쟁이 터지자 박생광이 살던 집은 물론, 일본에서 힘들게 가져와
+                        보관하던 작품들까지 모두 잿더미가 됐다. 도쿄 폭격을 이미 겪은 그는 모든 것을
+                        다시 시작하는 마음으로 폐허가 된 진주의 풍경을 그리기 시작했다. 남강
+                        건너에서 진주성 쪽을 바라보며 그린 연필화에는 그 유명한 촉석루가 없다.
+                        폭격으로 무너졌기 때문이다. 지금의 촉석루는 그 후에 복원한 것이다. 이
+                        연필화들은 그 파괴의 증언인 동시에, 박생광이 실물로 남긴 가장 이른
+                        작품들이다.
+                      </>
+                    )}
                   </p>
-                  <p>
-                    In March 2023, the Seoul Arts Center Hangaram Museum opened{' '}
-                    <em>The Great Encounter: Park Saeng-gwang and Park Rae-hyun</em>. Among Park
-                    Saeng-gwang&apos;s 181 contributions, <strong>100 were drawings</strong> — the
-                    first time so many had been gathered for public view. Critics took the occasion
-                    to register what had been suspected: a master of Korean colored ink painting was
-                    also a draftsman of rare patience and economy.
+                </div>
+
+                {/* 2. 30년의 혐의 */}
+                <div>
+                  <h3 className="text-xl font-bold font-display text-charcoal-deep mb-4 flex items-center gap-3 border-b border-charcoal/20 pb-3">
+                    <span className="w-2 h-2 bg-sun-strong rotate-45 shrink-0" />
+                    {isEnglish
+                      ? 'Thirty years of suspicion — but not in pencil'
+                      : '30년의 혐의, 그러나 연필화에는'}
+                  </h3>
+                  <p className="text-xl leading-[1.8] text-charcoal font-medium">
+                    {isEnglish ? (
+                      <>
+                        Park Saeng-gwang&apos;s father was a Donghak believer — a member of the
+                        guard for Jeon Bong-jun, the peasant leader, who survived when others did
+                        not. Yet it was his son who crossed to Japan to study art. Unlike most
+                        students of his generation, Park stayed long — moving from Kyoto to Tokyo,
+                        building a house with a patron&apos;s support, and eventually his staunchly
+                        anti-Japanese father came to spend his final years and die in Japan too. For
+                        thirty years after liberation, Park bore the suspicion of a so-called
+                        Japanese-color aesthetic. But nowhere in the pencil works of those decades
+                        is any such trace to be found.
+                      </>
+                    ) : (
+                      <>
+                        박생광의 아버지는 동학교도였다. 농민군의 우두머리 전봉준의 호위 부대에
+                        속했다가 마지막에 살아남은 사람이다. 그 아들이 적국 일본으로 건너가 미술을
+                        공부했다. 더구나 대부분의 유학생과 달리 교토에서 도쿄로 옮기며 오래 머물렀다
+                        — 후원으로 집을 짓고, 심지어 극렬 반일인사였던 아버지까지 만년을 일본에서
+                        보내다 눈을 감았다. 광복 후 30년 동안 박생광은 이른바 &lsquo;일본색&rsquo;
+                        혐의의 아픔을 감내해야 했다. 그러나 그 시간 동안의 연필화 어디에도 그런
+                        흔적은 없다.
+                      </>
+                    )}
                   </p>
-                  <p>
-                    The works here are pencil on paper, small in scale — most around 25 × 18 cm —
-                    and direct in their address. They were the steps a master took to find the
-                    figure before he found the color. To see them is to stand next to him at the
-                    moment of first seeing.
+                </div>
+
+                {/* 3. 되살아나는 풍경 */}
+                <div>
+                  <h3 className="text-xl font-bold font-display text-charcoal-deep mb-4 flex items-center gap-3 border-b border-charcoal/20 pb-3">
+                    <span className="w-2 h-2 bg-sun-strong rotate-45 shrink-0" />
+                    {isEnglish ? 'Landscape returning' : '되살아나는 풍경'}
+                  </h3>
+                  <p className="text-xl leading-[1.8] text-charcoal font-medium">
+                    {isEnglish ? (
+                      <>
+                        Through those difficult decades Park&apos;s pencil kept moving, and his gaze
+                        widened beyond Jinju. Among the surviving works are pencil drawings of
+                        Baengnoktam, the crater lake of Hallasan on Jeju Island — a few of them were
+                        later reworked as colored paintings. There are also drawings of Haeundae in
+                        Busan. Many landscapes carry neither a place name nor a date, which is
+                        itself a kind of testimony: these were not made as documents but as acts of
+                        looking, recorded in the ordinary flow of a life being lived.
+                      </>
+                    ) : (
+                      <>
+                        힘든 시절을 버티며 박생광은 진주를 넘어 더 넓은 곳으로 시선을 열었다. 제주
+                        한라산 백록담을 담은 연필화들이 있다 — 이 중 몇 점은 훗날 채색화로
+                        이어지기도 했다. 부산 해운대의 풍경을 그린 것도 남아 있다. 상당히 많은
+                        연필화들은 장소와 그린 때를 알 수 없어 아쉬움을 남기지만, 그 불확실성 자체가
+                        이 시기 그림들의 성격을 말해준다 — 기록이 아닌 눈의 운동, 그가 살아낸
+                        자리에서 자연스럽게 그려낸 풍경들.
+                      </>
+                    )}
                   </p>
-                </>
-              ) : (
-                <>
-                  <p>
-                    지난 한 세기 동안 박생광이라는 이름은 색에서 분리되지 않았다. 만년 채색화의 깊은
-                    적색과 군청이 그의 화면을 만난 모든 사람의 기억을 채운다. 그러나 그 색 아래
-                    놓였던 골격 — 드로잉들은, 최근까지도 거의 사적인 작업으로 남아 있었다.
+                </div>
+
+                {/* 4. 다시 일본에서 */}
+                <div>
+                  <h3 className="text-xl font-bold font-display text-charcoal-deep mb-4 flex items-center gap-3 border-b border-charcoal/20 pb-3">
+                    <span className="w-2 h-2 bg-sun-strong rotate-45 shrink-0" />
+                    {isEnglish ? 'Japan, once more' : '다시 일본에서'}
+                  </h3>
+                  <p className="text-xl leading-[1.8] text-charcoal font-medium">
+                    {isEnglish ? (
+                      <>
+                        The Japanese painters Park had known in his youth were flourishing, their
+                        careers rebuilt on postwar prosperity. Some of them remembered their old
+                        colleague and called him back. Around the same time his youngest daughter
+                        was awarded a national scholarship to study pharmacology at the University
+                        of Tokyo. He decided to go — to support her studies, and to work. Looking
+                        back on those years, he recalled them as a return to his younger self:{' '}
+                        <em>
+                          &ldquo;years in which, for the first time in decades, I threw myself into
+                          work with the eagerness of youth.&rdquo;
+                        </em>
+                      </>
+                    ) : (
+                      <>
+                        일본에서 젊은 시절을 보내며 사귀었던 동료 화가들은 전후 복구된 경제를
+                        바탕으로 활발히 활동하고 있었다. 그 중 몇몇이 오랜 벗 박생광을 기억하고
+                        불렀다. 마침 막내 딸이 도쿄대학교 약학과 국비장학생으로 초청을 받아 일본에
+                        살게 됐다. 딸의 유학 생활을 돕는 동시에 자신도 제작에 몰두하기로 결심했다.
+                        그 시절을 뒤돌아보며 박생광은 회상했다 —{' '}
+                        <em>
+                          &ldquo;수십 년 만에 다시 의욕에 가득 찼던 젊은 시절로 돌아가 작품 활동에
+                          매진한 수년이었다.&rdquo;
+                        </em>
+                      </>
+                    )}
                   </p>
-                  <p>
-                    2023년 3월 예술의전당 한가람미술관이 연 〈위대한 만남 — 박생광·박래현〉전이 그
-                    영역을 처음 열어보였다. 박생광이 출품한 181점 중 <strong>스케치만 100점</strong>
-                    . 한 자리에 이렇게 모인 적이 없던 분량이었다. 평론가들은 이 자리를 빌려 짐작해온
-                    사실을 기록했다 — 채색화의 거장은 동시에 드문 인내와 절제의 드로잉 작가였다는
-                    것을.
+                </div>
+
+                {/* 5. 인도 */}
+                <div>
+                  <h3 className="text-xl font-bold font-display text-charcoal-deep mb-4 flex items-center gap-3 border-b border-charcoal/20 pb-3">
+                    <span className="w-2 h-2 bg-sun-strong rotate-45 shrink-0" />
+                    {isEnglish ? 'India — toward the source' : '인도 — 근원을 찾아'}
+                  </h3>
+                  <p className="text-xl leading-[1.8] text-charcoal font-medium">
+                    {isEnglish ? (
+                      <>
+                        In 1979, at seventy-five, Park Saeng-gwang astonished the Korean art world
+                        with a dramatic transformation and received extraordinary acclaim. Standing
+                        at the height of his recognition, he accepted a patron&apos;s help and set
+                        out for India. The arc was long: a Japanese teacher had noticed his drawing
+                        gift in a small Jinju school and urged him toward Kyoto; in Japan he had
+                        sought traces of Chinese and Korean art in what he called the &ldquo;museum
+                        of Asian civilization&rdquo;; with a patron&apos;s support he had traveled
+                        to China. Now, at last, he reached the other axis of Asian civilization —
+                        the birthplace of Buddhism. In India he drew as if possessed, making pencil
+                        works everywhere his feet touched ground.
+                      </>
+                    ) : (
+                      <>
+                        1979년, 75세의 박생광은 노익장을 과시하듯 놀라운 변화를 보이며 화단의 주목을
+                        받았다. 이 성취 위에서 그는 한 후원자의 도움으로 인도를 향했다. 여정은
+                        길었다 — 진주의 작은 학교에서 그림 솜씨를 알아본 일본인 교사의 권유로 교토
+                        유학이 시작됐고, 일본에서는 &lsquo;아시아문명의 박물관&rsquo;이라고 한
+                        곳에서 중국과 한국 미술의 흔적을 찾았으며, 후원자의 도움으로 중국 여행도 할
+                        수 있었다. 그리고 마침내 아시아문명의 또 다른 축, 불교의 발상지 인도로 발을
+                        내딛었다. 인도에서 그는 발디디는 곳마다 신들린 듯 연필화를 그렸다.
+                      </>
+                    )}
                   </p>
-                  <p>
-                    이번 전시에 걸리는 작품은 종이에 연필. 25×18cm 안팎의 소품이며 화면은
-                    직설적이다. 거장이 색을 찾기 전에 형(形)을 찾았던 단계 — 그가 처음 본 순간 옆에
-                    함께 서는 경험. 그것이 박생광 드로잉을 만나는 방식이다.
-                  </p>
-                </>
-              )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
