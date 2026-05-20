@@ -40,6 +40,8 @@ export const revalidate = 60;
 const MAINTENANCE_MODE = false;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
+const OH_YOON_PERSON_ID = `${SITE_URL}/special/oh-yoon#person-oh-yoon`;
+const MURAL_IMAGE_URL = `${SITE_URL}/images/petition-oh-yoon/mural-1.png`;
 
 async function fetchPetitionActive(): Promise<boolean> {
   try {
@@ -157,11 +159,71 @@ export default async function PetitionOhYoonPage({
     { name: t('breadcrumb'), url: PAGE_URL },
   ]);
 
+  const isEnglish = locale === 'en';
+
+  const ohYoonPerson = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': OH_YOON_PERSON_ID,
+    name: isEnglish ? 'Oh Yoon' : '오윤',
+    alternateName: isEnglish ? '오윤' : 'Oh Yoon',
+    jobTitle: isEnglish ? 'Artist' : '화가',
+    description: isEnglish
+      ? "Oh Yoon (1946–1986) was a pivotal figure in Korean people's art (minjung misul), known for bold woodblock prints depicting the lives of workers and farmers."
+      : '오윤(1946–1986)은 민중미술의 대표 작가로, 노동자·농민의 삶을 담은 역동적인 판화로 한국 현대미술에 큰 족적을 남겼습니다.',
+    birthDate: '1946',
+    deathDate: '1986',
+    nationality: {
+      '@type': 'Country',
+      name: 'South Korea',
+      '@id': 'https://www.wikidata.org/wiki/Q884',
+    },
+    sameAs: [
+      'https://ko.wikipedia.org/wiki/오윤_(화가)',
+      'https://www.wikidata.org/wiki/Q18399737',
+      `${SITE_URL}/special/oh-yoon`,
+    ],
+  };
+
+  const aboutPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${PAGE_URL}#webpage`,
+    name: t('metaTitle'),
+    description: t('metaDescription', {
+      deadlineFull: deadline.full,
+      deadlineShort: deadline.short,
+    }),
+    url: PAGE_URL,
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    about: { '@id': OH_YOON_PERSON_ID },
+    primaryImageOfPage: { '@type': 'ImageObject', url: MURAL_IMAGE_URL },
+  };
+
+  const muralArtworkSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'VisualArtwork',
+    name: isEnglish
+      ? 'Oh Yoon, 1974 — terracotta two-sided mural'
+      : '오윤, 1974, 테라코타 양면 부조',
+    creator: { '@id': OH_YOON_PERSON_ID },
+    dateCreated: '1974',
+    artMedium: isEnglish ? 'Terracotta' : '테라코타',
+    artform: isEnglish ? 'Mural relief' : '부조',
+    image: MURAL_IMAGE_URL,
+    contentLocation: {
+      '@type': 'Place',
+      name: isEnglish ? 'Former Sangup Bank Guui-dong branch, Seoul' : '옛 상업은행 구의동지점',
+    },
+    subjectOf: { '@id': `${PAGE_URL}#webpage` },
+  };
+
   const statementText = `${t('statementLine1')} ${t('statementLine2')} ${t('statementLine3')}`;
 
   return (
     <main className="bg-canvas text-pretty">
-      <JsonLdScript data={breadcrumbSchema} />
+      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, ohYoonPerson, muralArtworkSchema]} />
       <PaperGrain />
 
       {/* 1부 HERO — 제목·부제·D-N·진행률·CTA가 모바일 한 화면에 (PRD §6.1 FR-LP-01) */}
@@ -207,7 +269,7 @@ export default async function PetitionOhYoonPage({
           </div>
           <a
             href="#sign-form"
-            className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary-strong hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <span className="inline-flex items-center gap-2">
               {t('heroCta')}
@@ -394,7 +456,7 @@ export default async function PetitionOhYoonPage({
               </p>
               <a
                 href="#sign-form-anchor"
-                className="mt-auto pt-4 text-primary font-semibold hover:underline text-sm"
+                className="mt-auto pt-4 text-primary-strong font-semibold hover:underline text-sm"
               >
                 ↓ {t('participationCard1Cta')}
               </a>
@@ -408,7 +470,7 @@ export default async function PetitionOhYoonPage({
               </p>
               <a
                 href="#sign-form-anchor"
-                className="mt-auto pt-4 text-primary font-semibold hover:underline text-sm"
+                className="mt-auto pt-4 text-primary-strong font-semibold hover:underline text-sm"
               >
                 {t('participationCard2Cta')}
               </a>
@@ -422,7 +484,7 @@ export default async function PetitionOhYoonPage({
               </p>
               <a
                 href="#share-templates"
-                className="mt-auto pt-4 text-primary font-semibold hover:underline text-sm"
+                className="mt-auto pt-4 text-primary-strong font-semibold hover:underline text-sm"
               >
                 ↓ {t('participationCard3Cta')}
               </a>
@@ -520,7 +582,7 @@ export default async function PetitionOhYoonPage({
             <p className="text-base text-charcoal leading-relaxed break-keep mb-4">
               {t('saffestBody')}
             </p>
-            <Link href="/" className="text-primary font-semibold hover:underline text-sm">
+            <Link href="/" className="text-primary-strong font-semibold hover:underline text-sm">
               <span className="inline-flex items-center gap-1">
                 {t('saffestCta')}
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -537,7 +599,7 @@ export default async function PetitionOhYoonPage({
         aria-labelledby="petition-tribute-title"
       >
         <div className="container-max max-w-3xl mx-auto px-4">
-          <p className="text-eyebrow text-primary text-center mb-3">{t('tributeEyebrow')}</p>
+          <p className="text-eyebrow text-primary-strong text-center mb-3">{t('tributeEyebrow')}</p>
           <SectionTitle
             as="h2"
             id="petition-tribute-title"
@@ -572,7 +634,7 @@ export default async function PetitionOhYoonPage({
               </div>
               <div className="flex flex-col gap-4 p-6 md:p-8">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-primary-strong mb-2">
                     {t('exhibitionCardEyebrow')}
                   </p>
                   <h3 className="font-display font-bold text-2xl md:text-3xl text-charcoal-deep leading-tight break-keep">
@@ -664,7 +726,7 @@ export default async function PetitionOhYoonPage({
           {is_active && (
             <a
               href="#sign-form-anchor"
-              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg text-lg font-bold bg-primary-strong hover:bg-primary-strong text-white transition-shadow hover:shadow-gallery-artwork focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <span className="inline-flex items-center gap-2">
                 {t('closingCta')}

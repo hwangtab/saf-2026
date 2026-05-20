@@ -142,6 +142,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
 
   const ohYoonPerson = {
     '@type': 'Person',
+    '@id': `${SITE_URL}/special/oh-yoon#person-oh-yoon`,
     name: isEnglish ? 'Oh Yoon' : '오윤',
     alternateName: isEnglish ? '오윤' : 'Oh Yoon',
     jobTitle: isEnglish ? 'Artist' : '화가',
@@ -546,18 +547,21 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               <h2 className="text-4xl md:text-5xl mb-4 text-white font-black font-display text-balance">
                 {isEnglish ? 'Exhibition Works' : '전시 작품'}
               </h2>
-              <div className="absolute -left-4 -top-6 text-[80px] text-white/5 -z-10 font-display font-black select-none">
+              <div
+                className="absolute -left-4 -top-6 text-[80px] text-white/5 -z-10 font-display font-black select-none"
+                aria-hidden="true"
+              >
                 ARCHIVE
               </div>
               <p className="text-base sm:text-lg text-white/70 font-medium">
                 {isEnglish ? (
                   <>
-                    <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>{' '}
-                    prints are currently on view.
+                    <span className="text-white font-bold text-xl">{artworkCountLabel}</span> prints
+                    are currently on view.
                   </>
                 ) : (
                   <>
-                    총 <span className="text-primary font-bold text-xl">{artworkCountLabel}</span>
+                    총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
                     점의 판화가 전시되어 있습니다.
                   </>
                 )}
