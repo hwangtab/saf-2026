@@ -126,6 +126,39 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
     titleKo: '정금희 — 화락이토·동해선, 홍익대 사진학 박사 사진가 | 씨앗페',
     titleEn: 'Jeong Geumhui — PhD Photographer, Busan Landscapes and East Sea Line | SAF Online',
   },
+
+  // ─── GSC 2026-04-22~05-20: T2-8 잔여 0-click 작가 ───────────────────────
+  // 합계 ~99 imp / 0 click. T2-5/T2-6 미커버 + story override만 있고 artist override 없음.
+
+  손은영: {
+    // GSC: 46 imp / 0 click / pos 4.4 — story override(meet-artist-son-eunyeong) 있으나
+    // artist 페이지(/artworks/artist/손은영)에는 generic title. 작가 정체성 강조.
+    titleKo: '손은영 — 서양화에서 사진으로, 집과 정원을 기록하는 사진작가 | 씨앗페',
+    titleEn: 'Son Eunyeong — From Painting to Photography, Homes and Gardens | SAF Online',
+  },
+  주재환: {
+    // GSC: 20 imp / 0 click / pos 11.0 — 1940년생, 한국 민중미술 원로. 학고재·트렁크갤러리.
+    // 이매망량·현기증 시리즈, 홍대 미대 중퇴 후 20년 생계 전전, 독학 화가.
+    titleKo: '주재환 — 1940년생 한국 민중미술 원로, 이매망량·현기증의 작가 | 씨앗페',
+    titleEn: 'Ju Jaehwan — Veteran Korean Minjung Artist (Born 1940) | SAF Online',
+  },
+  최혜수: {
+    // GSC: 12 imp / 0 click / pos 1.7 — pos 1.7면 노출 보장 자리인데 CTR 0%. title 매력도 결정적.
+    // 벨기에 브뤼셀 왕립 미술대 조각 석사, 안젤리미술관상, 포르쉐 코리아 드리머스 온.
+    titleKo: '최혜수 — 벨기에 왕립 미술대 조각 석사, 존재와 일상의 시각 예술 | 씨앗페',
+    titleEn: 'Choe Hyesu — Royal Academy of Brussels MFA, Sculpting Existence | SAF Online',
+  },
+  박은선: {
+    // GSC: 11 imp / 0 click / pos 9.6 — 동국대 서양화·로마국립아카데미, 18회 개인전 200+ 단체전.
+    // 가나아뜰리에·창동스튜디오·국제 레지던시.
+    titleKo: '박은선 — 동국대·로마국립아카데미 출신, 18회 개인전의 서양화가 | 씨앗페',
+    titleEn: 'Park Eunseon — Dongguk University & Rome Academy, 18 Solo Exhibitions | SAF Online',
+  },
+  강석태: {
+    // GSC: 10 imp / 0 click / pos 9.8 — 어린왕자를 2002년부터 20년+ 주제로, 별소년·마음의 별 시리즈.
+    titleKo: '강석태 — 어린왕자를 20년간 그려온 화가, 별소년의 회화 | 씨앗페',
+    titleEn: 'Kang Seoktae — Painter of The Little Prince, 20 Years of Star Boy | SAF Online',
+  },
 };
 
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */

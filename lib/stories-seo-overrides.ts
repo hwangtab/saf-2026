@@ -60,7 +60,7 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     titleKo: '유화·아크릴·판화 차이 — 재료로 작품 고르는 법 가이드 | 씨앗페 매거진',
     titleEn: 'Oil vs Acrylic vs Print — Choosing Art by Medium | SAF Magazine',
     descriptionKo:
-      '유화·아크릴·수채·판화·드로잉의 특성과 차이. 가격대·관리법·공간별 추천까지, 재료를 알면 작품 고르는 눈이 달라집니다.',
+      '유화·아크릴·수채·판화·드로잉의 특성과 차이 — 페인팅과 드로잉은 어떻게 다른가, 재료별 가격대·관리법·공간별 추천 가이드.',
     descriptionEn:
       'Oil, acrylic, watercolor, print, drawing — characteristics, price ranges, and how to choose by medium for your space.',
   },
