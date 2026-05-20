@@ -1,5 +1,9 @@
+'use client';
+
+import { useSyncExternalStore } from 'react';
 import { getPrideBoxVariant } from '@/lib/medium-labels';
 import { LOAN_COUNT } from '@/lib/site-stats';
+import { getPurchaseCount, getPurchaseStage } from '@/lib/purchase-state';
 
 /**
  * 자긍심 박스 — 매뉴얼 8.3 표준 5줄 카피 + 7.5 매체별 1줄 변동.
@@ -13,8 +17,12 @@ import { LOAN_COUNT } from '@/lib/site-stats';
  *
  * 죄책감 0%, 자긍심 100%.
  *
- * Sprint 2에서는 1단 첫 구매자 카피만 적용. 매뉴얼 7.6 누적 단계별 변동(2·3·4단)은
- * 위시리스트 2단계 도입 후 Phase 2에 추가.
+ * 매뉴얼 7.6 누적 구매 단계별 변동:
+ * - 1단 (첫 구매, count=0): 기본 5줄 카피 그대로
+ * - 2단 (2~3번째, count=1-2): 헤드 "당신의 N번째 한 점 — 그리고 두 개의 시작"
+ * - 3단 (4번째+, count=3+): 헤드 "N번째 작품을 알아본 컬렉터에게" + 컬렉터 인정 라인
+ *
+ * SSR에서는 count=0(1단)으로 렌더. 마운트 후 localStorage를 읽어 단계 갱신.
  */
 
 interface PrideBoxProps {
@@ -28,12 +36,55 @@ interface PrideBoxProps {
   locale?: 'ko' | 'en';
 }
 
+function enOrdinal(n: number): string {
+  const rem = n % 100;
+  if (rem >= 11 && rem <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1:
+      return `${n}st`;
+    case 2:
+      return `${n}nd`;
+    case 3:
+      return `${n}rd`;
+    default:
+      return `${n}th`;
+  }
+}
+
+// useSyncExternalStore: SSR은 getServerSnapshot(=0)으로 렌더, 마운트 후 getSnapshot()으로
+// localStorage 값 읽어 재렌더. setState-in-effect ESLint rule 위반 없음.
+function subscribeStorage(callback: () => void) {
+  window.addEventListener('storage', callback);
+  return () => window.removeEventListener('storage', callback);
+}
+
 export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
+  const purchaseCount = useSyncExternalStore(
+    subscribeStorage,
+    getPurchaseCount,
+    () => 0 // server snapshot
+  );
+
   const variant = getPrideBoxVariant(artwork);
   const isEn = locale === 'en';
   const loanCountFormatted = LOAN_COUNT.toLocaleString(isEn ? 'en-US' : 'ko-KR');
 
-  const head = isEn ? 'Two beginnings made by one piece' : '이 한 점이 만드는 두 개의 시작';
+  const stage = getPurchaseStage(purchaseCount);
+  const n = purchaseCount + 1; // 이번 구매가 N번째
+
+  let head: string;
+  if (stage === 1) {
+    head = isEn ? 'Two beginnings made by one piece' : '이 한 점이 만드는 두 개의 시작';
+  } else if (stage === 2) {
+    head = isEn
+      ? `Your ${enOrdinal(n)} work — and two new beginnings`
+      : `당신의 ${n}번째 한 점 — 그리고 두 개의 시작`;
+  } else {
+    head = isEn
+      ? `To the collector choosing their ${enOrdinal(n)}`
+      : `${n}번째 작품을 알아본 컬렉터에게`;
+  }
+
   const line1Label = isEn ? 'For you' : '당신에게는';
   const line1Value = isEn ? variant.en : variant.ko;
   const line2Label = isEn ? 'For the artist' : '작가에게는';
@@ -49,13 +100,23 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
     ? `${loanCountFormatted} artists have walked this path of recovery; 95% returned to open it for the next.`
     : `${loanCountFormatted}명이 이 회복의 길을 걸었고, 95%가 다음 사람을 위해 돌아왔습니다.`;
 
+  // 3단 컬렉터 인정 라인 — 매뉴얼 7.6 마무리 추가
+  const collectorLine =
+    stage === 3
+      ? isEn
+        ? `With ${purchaseCount} works in your collection, you're exactly the collector this platform is here for.`
+        : `${purchaseCount}점을 소장한 당신은, 이 플랫폼이 함께하고 싶은 컬렉터입니다.`
+      : null;
+
   return (
     <section
       aria-labelledby="pride-box-heading"
       className="mt-16 mb-12 mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-canvas-soft px-6 py-10 md:px-10 md:py-12 shadow-sm"
     >
+      {/* suppressHydrationWarning: SSR(1단)과 마운트 후(2·3단) 텍스트 차이 무시 */}
       <h2
         id="pride-box-heading"
+        suppressHydrationWarning
         className="text-2xl md:text-3xl font-bold text-charcoal-deep text-center mb-8 text-balance"
       >
         {head}
@@ -77,6 +138,9 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
       <p className="mt-8 pt-6 border-t border-gray-200 text-sm md:text-base text-charcoal-muted text-center text-balance">
         {footer}
       </p>
+      {collectorLine && (
+        <p className="mt-3 text-sm text-charcoal-muted text-center text-balance">{collectorLine}</p>
+      )}
     </section>
   );
 }

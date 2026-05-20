@@ -8,6 +8,7 @@ import { formatPriceForDisplay } from '@/lib/utils';
 import { formatUsd } from '@/lib/utils/currency';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { trackEvent } from '@/lib/analytics/track';
+import { incrementPurchaseCount } from '@/lib/purchase-state';
 
 interface Props {
   paymentKey: string;
@@ -105,6 +106,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
               value: Number(amount),
               currency,
             });
+            incrementPurchaseCount();
           }
           setPageState('success');
         } else if (data.status === 'WAITING_FOR_DEPOSIT') {
