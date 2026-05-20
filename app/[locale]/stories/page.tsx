@@ -15,6 +15,7 @@ import { localizeStoryAuthor } from '@/lib/story-author';
 import { Link } from '@/i18n/navigation';
 import StoriesCategoryFilter from '@/components/stories/StoriesCategoryFilter';
 import type { StoryCategory } from '@/types';
+import { ArrowRight } from 'lucide-react';
 
 export const dynamic = 'force-static';
 export const revalidate = 300;
@@ -208,6 +209,23 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
           <Suspense fallback={<div className="h-[42px]" aria-hidden="true" />}>
             <StoriesCategoryFilter locale={locale} />
           </Suspense>
+          {/* Pillar guide entry card — /stories/guide로 link equity 유입 */}
+          <Link
+            href="/stories/guide"
+            className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-primary/20 bg-primary/5 px-5 py-4 transition-colors hover:border-primary/40 hover:bg-primary/10"
+          >
+            <div>
+              <p className="text-sm font-semibold text-charcoal">
+                {isEnglish ? 'Collecting Guide' : '작품 읽는 법 가이드'}
+              </p>
+              <p className="text-xs text-charcoal-muted mt-0.5">
+                {isEnglish
+                  ? 'Edition, Ho size, printmaking — terminology all in one place'
+                  : '에디션·호수·넘버링·판화 용어를 한번에 정리합니다'}
+              </p>
+            </div>
+            <ArrowRight className="w-4 h-4 flex-shrink-0 text-primary" aria-hidden="true" />
+          </Link>
         </div>
       </Section>
 

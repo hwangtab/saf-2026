@@ -31,7 +31,7 @@ import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 import { extractFaqFromBody, generateFaqPageSchema } from '@/lib/markdown-faq';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { generateInlineCrossLinks, insertCrossLinksBeforeFinalCta } from '@/lib/inline-cross-links';
-import { selectRelatedStories } from '@/lib/story-clusters';
+import { selectRelatedStories, STORY_CLUSTERS } from '@/lib/story-clusters';
 
 export const dynamic = 'force-static';
 export const revalidate = 1800;
@@ -232,6 +232,10 @@ export default async function StoryDetailPage({ params }: Props) {
     artworksSource = 'recent-fallback';
   }
 
+  const isClusterSpoke = Object.values(STORY_CLUSTERS).some((slugs) =>
+    (slugs as readonly string[]).includes(story.slug)
+  );
+
   const footerLinks = [
     {
       href: primaryArtistTag
@@ -249,6 +253,14 @@ export default async function StoryDetailPage({ params }: Props) {
       href: `/stories/category/${story.category}`,
       label: isEn ? 'Related Magazine' : '관련 매거진',
     },
+    ...(isClusterSpoke
+      ? [
+          {
+            href: '/stories/guide',
+            label: isEn ? 'Collecting Guide' : '컬렉팅 가이드',
+          },
+        ]
+      : []),
   ];
 
   // 매거진 본문에 직접 인용된 작품(artworksSource='inline') = 큐레이터가 의도적으로 추천한 5점.

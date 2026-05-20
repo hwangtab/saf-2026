@@ -179,6 +179,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.65,
       lastModified: now,
     },
+    {
+      path: '/stories/guide',
+      changeFrequency: 'monthly',
+      priority: 0.7,
+      lastModified: now,
+    },
   ];
 
   // 법적 페이지 (한국어 전용 — 영어는 "한국어 원문 참조" 안내만 있어 thin content)
