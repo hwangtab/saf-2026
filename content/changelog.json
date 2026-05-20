@@ -1,5 +1,15 @@
 [
   {
+    "hash": "venue-gallery-peg",
+    "type": "content",
+    "scope": "special",
+    "subject": "박생광 드로잉전 venue 표기 — 갤러리 PEG 정식 갤러리명 반영",
+    "summary": "박생광 드로잉전 venue 표기 정정 — 상세주소 'M타워 6층'에서 정식 갤러리명 '갤러리 PEG' 명시로 전환",
+    "body": "- app/[locale]/special/park-saenggwang/page.tsx: VENUE_NAME_* 상수 'M타워 6층'→'갤러리 PEG' / 'Gallery PEG'\n  JSON-LD ExhibitionEvent.location.name 자동 갱신, PostalAddress streetAddress(통일로 870 M타워 6층) 유지\n- page.tsx description/ogDescription: '갤러리 PEG(서울 은평구 M타워 6층)' 병기 형태로 갱신\n- Hero KO/EN: '갤러리 PEG · 서울 은평 M타워 6층' / 'Gallery PEG · M-Tower 6F, Eunpyeong'\n- messages/ko.json, en.json parkSaenggwangDesc 갱신\n- lib/now-showing.ts 운영 주석 동기화",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
     "hash": "cde9cd2e",
     "type": "fix",
     "scope": "cls",

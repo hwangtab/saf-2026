@@ -75,7 +75,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
     imageUrl:
       'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
     // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-08(월) 폐막.
-    // 장소: 서울시 은평구 통일로 870 M타워 6층. 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)
+    // 장소: 갤러리 PEG (서울시 은평구 통일로 870 M타워 6층). 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)
     startDate: '2026-05-20',
     endDate: '2026-06-08',
     // status 미지정 — getCardStatus()가 startDate 기준 자동 derive.

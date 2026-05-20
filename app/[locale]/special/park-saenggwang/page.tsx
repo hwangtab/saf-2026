@@ -50,9 +50,9 @@ const PAGE_COPY = {
   ko: {
     title: '박생광 드로잉전: Park Saeng-gwang Drawings',
     description:
-      '오방색의 거장 박생광(1904–1985)이 채색 이전에 연필로 잡아둔 첫 호흡. 2023년 예술의전당 한가람미술관에서 100점이 처음 본격 공개된, 거장의 드물게 알려진 영역. 2026년 5월 20일부터 6월 8일까지 서울 은평구 M타워 6층에서 만나보세요.',
+      '오방색의 거장 박생광(1904–1985)이 채색 이전에 연필로 잡아둔 첫 호흡. 2023년 예술의전당 한가람미술관에서 100점이 처음 본격 공개된, 거장의 드물게 알려진 영역. 2026년 5월 20일부터 6월 8일까지 갤러리 PEG(서울 은평구 M타워 6층)에서 만나보세요.',
     ogDescription:
-      '오방색의 거장 박생광이 연필로 잡아둔 첫 호흡 — 채색 이전의 골격을 보는 드로잉 특별전. 5/20~6/8 서울 은평 M타워.',
+      '오방색의 거장 박생광이 연필로 잡아둔 첫 호흡 — 채색 이전의 골격을 보는 드로잉 특별전. 5/20~6/8 갤러리 PEG · 서울 은평 M타워 6층.',
     ogAlt: '박생광 드로잉전 대표 이미지',
     twitterTitle: '박생광 드로잉전',
     twitterDescription: '오방색의 거장이 연필로 잡아둔 첫 호흡 — 채색 이전의 박생광',
@@ -60,9 +60,9 @@ const PAGE_COPY = {
   en: {
     title: 'Park Saeng-gwang Drawings',
     description:
-      'Drawings by Park Saeng-gwang (1904–1985), master of obangsaek (the five cardinal colors of Korean tradition) — first breaths the artist held in pencil before color. Following the 2023 Seoul Arts Center exhibition that first publicly showcased 100 of these works, this special show invites collectors and viewers to a rarely seen side of the master. May 20–June 8, 2026, M-Tower 6F, Eunpyeong, Seoul.',
+      'Drawings by Park Saeng-gwang (1904–1985), master of obangsaek (the five cardinal colors of Korean tradition) — first breaths the artist held in pencil before color. Following the 2023 Seoul Arts Center exhibition that first publicly showcased 100 of these works, this special show invites collectors and viewers to a rarely seen side of the master. May 20–June 8, 2026 at Gallery PEG (M-Tower 6F, Eunpyeong, Seoul).',
     ogDescription:
-      'First breaths the master of five colors held in pencil — a rare drawings exhibition by Park Saeng-gwang. May 20–Jun 8 at M-Tower, Eunpyeong, Seoul.',
+      'First breaths the master of five colors held in pencil — a rare drawings exhibition by Park Saeng-gwang. May 20–Jun 8 at Gallery PEG, Eunpyeong, Seoul.',
     ogAlt: 'Park Saeng-gwang Drawings exhibition key visual',
     twitterTitle: 'Park Saeng-gwang Drawings',
     twitterDescription: 'First breaths the master of five colors held in pencil',
@@ -71,8 +71,8 @@ const PAGE_COPY = {
 
 const EXHIBITION_START = '2026-05-20';
 const EXHIBITION_END = '2026-06-08';
-const VENUE_NAME_KO = 'M타워 6층';
-const VENUE_NAME_EN = 'M-Tower 6F';
+const VENUE_NAME_KO = '갤러리 PEG';
+const VENUE_NAME_EN = 'Gallery PEG';
 const VENUE_ADDRESS_KO = '서울특별시 은평구 통일로 870 M타워 6층';
 const VENUE_ADDRESS_EN = 'M-Tower 6F, 870 Tongil-ro, Eunpyeong-gu, Seoul, Korea';
 const VENUE_STREET = '통일로 870 M타워 6층';
@@ -275,7 +275,7 @@ export default async function ParkSaenggwangPage({
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
                     <span className="inline-block">May 20 – Jun 8, 2026</span>
                     <span className="mx-2 text-white/40">·</span>
-                    <span className="inline-block">M-Tower 6F, Eunpyeong</span>
+                    <span className="inline-block">Gallery PEG · M-Tower 6F, Eunpyeong</span>
                     <span className="mx-2 text-white/40">·</span>
                     <span className="inline-block">11am–8pm</span>
                   </span>
@@ -288,7 +288,7 @@ export default async function ParkSaenggwangPage({
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
                     <span className="inline-block">2026년 5월 20일 ~ 6월 8일</span>
                     <span className="mx-2 text-white/40">·</span>
-                    <span className="inline-block">서울 은평 M타워 6층</span>
+                    <span className="inline-block">갤러리 PEG · 서울 은평 M타워 6층</span>
                     <span className="mx-2 text-white/40">·</span>
                     <span className="inline-block">오전 11시 ~ 오후 8시</span>
                   </span>
