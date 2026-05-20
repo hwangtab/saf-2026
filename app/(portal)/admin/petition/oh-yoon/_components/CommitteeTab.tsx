@@ -1,10 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import clsx from 'clsx';
 
 import { PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
-import { fetchAdminCommittee, fetchCommitteeNames } from '@/app/actions/petition-admin';
+import {
+  fetchAdminCommittee,
+  fetchCommitteeNames,
+  updateSignature,
+} from '@/app/actions/petition-admin';
 import { getRegionByKey } from '@/lib/petition/regions';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 
@@ -30,6 +35,11 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
 
   const [allNames, setAllNames] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
+
+  const [removing, setRemoving] = useState<AdminCommitteeRow | null>(null);
+  const [pending, startTransition] = useTransition();
+  const [statusMsg, setStatusMsg] = useState<{ tone: 'ok' | 'err'; text: string } | null>(null);
+  const [liveTotal, setLiveTotal] = useState(committeeTotal);
 
   const declarationText = useMemo(() => allNames.join(', '), [allNames]);
 
@@ -83,6 +93,22 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
     });
   }
 
+  function handleRemove() {
+    if (!removing) return;
+    startTransition(async () => {
+      const result = await updateSignature(removing.id, { isCommittee: false });
+      setRemoving(null);
+      if (result.ok) {
+        setStatusMsg({ tone: 'ok', text: t('committeeRemoveSuccess') });
+        setLiveTotal((n) => Math.max(0, n - 1));
+        void loadData(page, pageSize, debouncedSearch);
+        void fetchCommitteeNames(PETITION_OH_YOON_SLUG).then(setAllNames);
+      } else {
+        setStatusMsg({ tone: 'err', text: result.message ?? t('committeeRemoveError') });
+      }
+    });
+  }
+
   if (loadState === 'loading') {
     return (
       <p className="py-12 text-center text-sm text-charcoal-muted animate-pulse">
@@ -110,7 +136,7 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
     <div className="space-y-5">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-charcoal-muted">
-          {t('committeeCountLine', { count: committeeTotal.toLocaleString('ko-KR') })}
+          {t('committeeCountLine', { count: liveTotal.toLocaleString('ko-KR') })}
         </p>
         <input
           type="search"
@@ -139,6 +165,20 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
         </p>
       </section>
 
+      {statusMsg && (
+        <p
+          role="status"
+          className={clsx(
+            'rounded-lg px-3 py-2 text-sm',
+            statusMsg.tone === 'ok'
+              ? 'bg-success-surface text-success-strong border border-success/30'
+              : 'bg-danger-surface text-danger-a11y border border-danger/30'
+          )}
+        >
+          {statusMsg.text}
+        </p>
+      )}
+
       {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-6 py-12 text-center text-sm text-charcoal-muted">
           {t('committeeEmpty')}
@@ -153,6 +193,7 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
                 <th className="px-3 py-2.5 font-semibold">{t('committeeColPhone')}</th>
                 <th className="px-3 py-2.5 font-semibold">{t('committeeColRegion')}</th>
                 <th className="px-3 py-2.5 font-semibold">{t('committeeColSignedAt')}</th>
+                <th className="px-3 py-2.5 font-semibold text-right">{t('committeeColActions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
@@ -177,6 +218,16 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
                     <td className="px-3 py-2 text-charcoal-muted tabular-nums">
                       {new Date(c.created_at).toLocaleDateString('ko-KR')}
                     </td>
+                    <td className="px-3 py-2 text-right">
+                      <button
+                        type="button"
+                        onClick={() => setRemoving(c)}
+                        disabled={pending}
+                        className="rounded-md border border-danger/30 bg-white px-2.5 py-1 text-xs font-semibold text-danger-a11y hover:bg-danger-surface disabled:opacity-50"
+                      >
+                        {t('committeeRemoveAction')}
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
@@ -194,6 +245,53 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
       />
 
       <p className="text-xs text-charcoal-muted break-keep">{t('committeeFooter')}</p>
+
+      {removing && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="committee-remove-confirm-title"
+          className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        >
+          <div
+            className="absolute inset-0"
+            onClick={() => !pending && setRemoving(null)}
+            aria-hidden="true"
+          />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <h3
+              id="committee-remove-confirm-title"
+              className="text-lg font-bold text-charcoal-deep mb-2"
+            >
+              {t('committeeRemoveConfirmTitle')}
+            </h3>
+            <p className="text-sm text-charcoal mb-1 break-keep">
+              {t('committeeRemoveConfirmBody', { name: removing.full_name })}
+            </p>
+            <p className="text-xs text-charcoal-muted mb-5 break-keep">
+              {t('committeeRemoveConfirmNote')}
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setRemoving(null)}
+                disabled={pending}
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-charcoal-deep hover:bg-gray-50 disabled:opacity-50"
+              >
+                {t('committeeRemoveCancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleRemove}
+                disabled={pending}
+                className="rounded-md bg-danger px-4 py-2 text-sm font-semibold text-white hover:bg-danger-strong disabled:opacity-50"
+              >
+                {pending ? t('committeeRemoving') : t('committeeRemoveConfirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
