@@ -183,6 +183,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
     (s) => !tagMatchedIds.has(s.id) && extractArtworkIdsFromBody(s.body).includes(artwork.id)
   );
   const relatedMagazineStories = [...tagMatchedStories, ...bodyMentionedStories].slice(0, 3);
+  const liveStorySlugs = new Set(allStories.map((s) => s.slug));
   const localizeDataValue = (value: string | null | undefined): string | null => {
     if (!value) return null;
     if (locale !== 'en') return value;
@@ -494,7 +495,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       <span className="text-gray-600 font-medium text-sm">{t('material')}</span>
                       <span className="text-charcoal">
                         {localizedMaterial}{' '}
-                        {materialGuide && (
+                        {materialGuide && liveStorySlugs.has(materialGuide) && (
                           <Link
                             href={guideStoryHref(materialGuide, locale === 'en')}
                             className="text-xs text-primary hover:underline"
@@ -516,7 +517,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       <span className="text-gray-600 font-medium text-sm">{t('size')}</span>
                       <span className="text-charcoal">
                         {localizedSize}{' '}
-                        {artwork.size !== '확인 중' && (
+                        {artwork.size !== '확인 중' && liveStorySlugs.has(SIZE_GUIDE_SLUG) && (
                           <Link
                             href={guideStoryHref(SIZE_GUIDE_SLUG, locale === 'en')}
                             className="text-xs text-primary hover:underline"
@@ -542,14 +543,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       <span className="text-gray-600 font-medium text-sm">{t('edition')}</span>
                       <span className="text-charcoal">
                         {localizedEdition}{' '}
-                        {artwork.edition !== '확인 중' && (
-                          <Link
-                            href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
-                            className="text-xs text-primary hover:underline"
-                          >
-                            {t('editionGuideLink')}
-                          </Link>
-                        )}
+                        {artwork.edition !== '확인 중' &&
+                          liveStorySlugs.has(EDITION_GUIDE_SLUG) && (
+                            <Link
+                              href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
+                              className="text-xs text-primary hover:underline"
+                            >
+                              {t('editionGuideLink')}
+                            </Link>
+                          )}
                       </span>
                     </>
                   )}
