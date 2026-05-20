@@ -656,7 +656,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
           {/* Same Category Works Section */}
           {sameCategoryWorks.length > 0 && artwork.category && (
-            <div className="mt-24 pt-24 border-t border-gray-100">
+            <div className="mt-16 pt-16 border-t border-gray-100">
               <div className="flex items-center justify-between mb-10">
                 <h2 className="text-2xl font-bold text-charcoal">
                   {t('sameCategoryWorks', {
@@ -725,6 +725,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
             }}
             locale={locale === 'en' ? 'en' : 'ko'}
           />
+
+          {/* ArtworkPurchaseStickyMobile (md:hidden fixed bottom-0) 높이 보상 — 모바일에서
+              PrideBox 하단이 sticky CTA(~72px)에 가려지는 회귀 방지. */}
+          <div className="h-24 md:hidden" aria-hidden="true" />
         </article>
       </Section>
     </>

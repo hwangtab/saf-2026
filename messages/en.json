@@ -159,11 +159,6 @@
     "alwaysAvailable": "Available now · {date}",
     "heroGalleryTitle": "Buy Contemporary Korean Art",
     "heroGallerySubtitle": "Original works from {artistCount} artists at accessible prices",
-    "missionBanner": "Each purchase becomes another artist's low-interest loan.",
-    "missionStep1": "Buy Artwork",
-    "missionStep2": "Fund Grows",
-    "missionStep3": "Low-Rate Artist Loans",
-    "missionLearnMore": "How does this work?",
     "mechanism": {
       "title": "What one work sets in motion",
       "step1": { "label": "Buy Artwork", "note": "100% of price" },
@@ -171,13 +166,13 @@
       "step3": { "label": "Finance Partner", "note": "10× leverage" },
       "step4": { "label": "Artist Loan", "note": "100% credit line" },
       "counter": {
-        "loansLabel": "Loans made",
+        "loansLabel": "Loans",
         "loansValue": "{loanCount}",
-        "repaymentLabel": "Repayment rate",
+        "repaymentLabel": "Repaid",
         "repaymentValue": "95%"
       },
-      "message": "Your one work enables the next one.",
-      "cta": "How the mechanism works"
+      "message": "Your one work becomes another artist's next one.",
+      "cta": "Learn more"
     },
     "sectionPainting": "Painting",
     "sectionPrint": "Print",
@@ -361,7 +356,8 @@
       "foundationLabel": "Issuing authority",
       "certificateLabel": "Certificate",
       "certificateNote": "Foundation certificate included",
-      "explanation": "Posthumous editions are official limited prints authorized by the artist's estate and foundation.",
+      "originalWorkLabel": "Original source",
+      "explanation": "Posthumous editions are official limited prints authorized by the artist's estate and foundation — bringing a master's works within reach at an accessible price.",
       "foundationFallback": "Estate & foundation authorized"
     }
   },

@@ -448,7 +448,50 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           </div>
         </Section>
 
-        <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
+        {/* 매뉴얼 6.4 [F] / 8.4 — 메인 메커니즘 CTA("더 알아보기") 랜딩 섹션.
+            /our-proof의 "왜 상호부조 금융이 작동할까?" 4단계와 다른 차원(매입→레버리지→대출 흐름)을 별도 요약. */}
+        <Section variant="canvas" prevVariant="white">
+          <div className="container-max max-w-4xl">
+            <SectionTitle className="mb-8">How your purchase becomes an artist loan</SectionTitle>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-3 mb-6">
+              {[
+                { step: '1', label: 'Buy Artwork', note: '100% of price' },
+                { step: '2', label: 'Fund Forms', note: '10% of price' },
+                { step: '3', label: 'Finance Partner', note: '10× leverage' },
+                { step: '4', label: 'Artist Loan', note: '100% credit line', highlight: true },
+              ].map((s, i, arr) => (
+                <div key={s.step} className="flex md:flex-row flex-col items-center gap-2">
+                  <div
+                    className={`flex flex-col items-center rounded-2xl px-6 py-4 shadow-sm w-44 md:w-auto ${
+                      s.highlight ? 'bg-primary text-white' : 'bg-white border border-gray-100'
+                    }`}
+                  >
+                    <span
+                      className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary'}`}
+                    >
+                      {s.note}
+                    </span>
+                    <span
+                      className={`text-sm font-bold ${s.highlight ? 'text-white' : 'text-charcoal-deep'}`}
+                    >
+                      {s.label}
+                    </span>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <span aria-hidden="true" className="hidden md:block text-charcoal-soft text-lg">
+                      ›
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-sm text-charcoal-muted">
+              {LOAN_COUNT} loans funded this way · 95% repayment rate
+            </p>
+          </div>
+        </Section>
+
+        <Section variant="primary-soft" prevVariant="canvas" className="pb-24 md:pb-32">
           <div className="container-max text-center">
             <SectionTitle className="mb-8">You can join this trust network</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
@@ -727,8 +770,50 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
         </div>
       </Section>
 
+      {/* 매뉴얼 6.4 [F] / 8.4 — 메인 메커니즘 "더 알아보기" 랜딩 — 구매→기금→레버리지→대출 흐름 요약 */}
+      <Section variant="canvas" prevVariant="white">
+        <div className="container-max max-w-4xl">
+          <SectionTitle className="mb-8">작품 구매가 예술인 대출이 되는 4단계</SectionTitle>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-3 mb-6">
+            {[
+              { step: '1', label: '작품 구매', note: '거래액 100%' },
+              { step: '2', label: '기금 형성', note: '거래액 10%' },
+              { step: '3', label: '금융 협약', note: '10배 레버리지' },
+              { step: '4', label: '예술인 대출', note: '한도 100%', highlight: true },
+            ].map((s, i, arr) => (
+              <div key={s.step} className="flex md:flex-row flex-col items-center gap-2">
+                <div
+                  className={`flex flex-col items-center rounded-2xl px-6 py-4 shadow-sm w-44 md:w-auto ${
+                    s.highlight ? 'bg-primary text-white' : 'bg-white border border-gray-100'
+                  }`}
+                >
+                  <span
+                    className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary'}`}
+                  >
+                    {s.note}
+                  </span>
+                  <span
+                    className={`text-sm font-bold ${s.highlight ? 'text-white' : 'text-charcoal-deep'}`}
+                  >
+                    {s.label}
+                  </span>
+                </div>
+                {i < arr.length - 1 && (
+                  <span aria-hidden="true" className="hidden md:block text-charcoal-soft text-lg">
+                    ›
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-sm text-charcoal-muted">
+            이 메커니즘으로 누적 {LOAN_COUNT}건 대출 · 95% 상환 달성
+          </p>
+        </div>
+      </Section>
+
       {/* Call to Action */}
-      <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
+      <Section variant="primary-soft" prevVariant="canvas" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-8">당신도 이 신뢰의 체계에 참여할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">

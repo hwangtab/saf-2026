@@ -420,7 +420,7 @@ export default function CheckoutClient({
         )}
 
         {/* 매뉴얼 10.6 결제 페이지 신뢰 시그널 — 결제 결심 직전 노출이 본질. 버튼 위 카드 박스. */}
-        <div className="bg-canvas-soft rounded-2xl border border-gray-100 p-4 mb-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
           <TrustBadges variant="checkout" />
         </div>
 

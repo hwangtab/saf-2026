@@ -21,6 +21,8 @@ export default async function PosthumousPrintDetails({
   const isEn = locale === 'en';
   const foundation = isEn ? info.foundationEn : info.foundationKo;
 
+  const originalWork = isEn ? info.originalWorkEn : info.originalWorkKo;
+
   const rows: { label: string; value: string }[] = [
     { label: t('lifeYearsLabel'), value: `${artistName} (${info.lifeYears})` },
     { label: t('foundationLabel'), value: foundation },
@@ -32,6 +34,10 @@ export default async function PosthumousPrintDetails({
       label: isEn ? 'Edition' : '에디션',
       value: isEn ? `${edition} of ${editionLimit}` : `${editionLimit}점 한정 중 ${edition}번째`,
     });
+  }
+
+  if (originalWork) {
+    rows.push({ label: t('originalWorkLabel'), value: originalWork });
   }
 
   return (

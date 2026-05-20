@@ -1,5 +1,5 @@
 import { SITE_URL, CONTACT, MERCHANT_POLICIES } from '@/lib/constants';
-import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
+import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { containsHangul } from '@/lib/search-utils';
 import { generateFAQSchema } from './content';
 
@@ -453,6 +453,66 @@ export function generateMemberJoinHowTo(locale: 'ko' | 'en' = 'ko') {
           {
             name: '제출 및 승인 대기',
             text: `${CONTACT.ORGANIZATION_NAME}에서 영업일 기준 수일 내에 확인 이메일을 보내드립니다.`,
+          },
+        ],
+  });
+}
+
+/**
+ * 매뉴얼 6.4 [F] / 8.4 사회금융 메커니즘 4단계 HowTo 마크업.
+ * 작품 구매 → 10% 기금 → 10배 레버리지 → 예술인 대출 흐름을
+ * HowToStep 배열로 구조화 → Google·AI 엔진 스니펫 흡수.
+ */
+export function generateMechanismHowTo(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+
+  return generateHowToSchema({
+    name: isEnglish
+      ? 'How artwork purchases fund artist mutual-aid loans'
+      : '작품 구매가 예술인 상호부조 대출이 되는 과정',
+    description: isEnglish
+      ? `SAF Online has facilitated ${LOAN_COUNT} artist loans with a 95% repayment rate through a four-step social finance mechanism.`
+      : `씨앗페 온라인은 4단계 사회금융 메커니즘으로 예술인 ${LOAN_COUNT}건 대출·95% 상환을 달성했습니다.`,
+    url: isEnglish ? `${SITE_URL}/en/our-proof` : `${SITE_URL}/our-proof`,
+    steps: isEnglish
+      ? [
+          {
+            name: 'Buy Artwork (100% of price)',
+            text: 'Purchase an original artwork at SAF Online. The full transaction amount forms the basis of the mutual-aid fund.',
+            url: `${SITE_URL}/en/artworks`,
+          },
+          {
+            name: 'Fund Forms (10% of price)',
+            text: '10% of each transaction is contributed to the artist mutual-aid fund managed by Korea Smart Cooperative.',
+          },
+          {
+            name: 'Finance Partner (10× leverage)',
+            text: 'Through financial institution partnerships, the fund is leveraged 10× to expand the credit line available to artists.',
+          },
+          {
+            name: 'Artist Loan (100% credit line)',
+            text: 'Artists in financial need receive low-interest loans funded by the leveraged pool — repayment rate 95%.',
+            url: `${SITE_URL}/en/our-proof`,
+          },
+        ]
+      : [
+          {
+            name: '작품 구매 — 거래액 100%',
+            text: '씨앗페 온라인에서 원본 작품을 구매합니다. 거래액 전액이 상호부조 기금의 기반이 됩니다.',
+            url: `${SITE_URL}/artworks`,
+          },
+          {
+            name: '기금 형성 — 거래액 10%',
+            text: '거래액의 10%가 한국스마트협동조합이 운영하는 예술인 상호부조 기금에 적립됩니다.',
+          },
+          {
+            name: '금융 협약 — 10배 레버리지',
+            text: '금융기관과의 협약을 통해 기금이 10배로 증폭되어 예술인에게 제공 가능한 대출 한도를 확장합니다.',
+          },
+          {
+            name: '예술인 대출 — 한도 100% 형성',
+            text: `금융 어려움을 겪는 예술인이 레버리지된 기금에서 저금리 대출을 받습니다. 누적 ${LOAN_COUNT}건 · 상환율 95%.`,
+            url: `${SITE_URL}/our-proof`,
           },
         ],
   });

@@ -38,9 +38,16 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
   ];
 
   return (
-    // 모바일 narrow(320~375px)에서 5개 뱃지(영문 라벨 최장 28자)가 wrap 깨지지 않게
-    // gap·padding·text 크기를 모바일에서 축소. md(768px+)부터 기존 detail 크기 유지.
-    <div className={cn('flex flex-wrap justify-center gap-1.5 md:gap-2', className)}>
+    // detail: 모바일 2열 grid (매뉴얼 L1235 "2열 그리드"), md+ flex-wrap 가로 배치.
+    // checkout: flex-wrap 유지 (좁은 결제 박스 컨텍스트).
+    <div
+      className={cn(
+        variant === 'detail'
+          ? 'grid grid-cols-2 justify-items-center gap-1.5 md:flex md:flex-wrap md:justify-center md:gap-2'
+          : 'flex flex-wrap justify-center gap-1.5 md:gap-2',
+        className
+      )}
+    >
       {variant === 'detail' && (
         // formattedDate는 client `new Date()`라 SSR 시점·hydration 시점 자정/timezone 차이로
         // text content가 미세하게 어긋나 React error #418 발생 가능. 이 영역에선 prop

@@ -1,12 +1,12 @@
 [
   {
-    "hash": "venue-gallery-peg",
-    "type": "content",
-    "scope": "special",
-    "subject": "박생광 드로잉전 venue 표기 — 갤러리 PEG 정식 갤러리명 반영",
-    "summary": "박생광 드로잉전 venue 표기 정정 — 상세주소 'M타워 6층'에서 정식 갤러리명 '갤러리 PEG' 명시로 전환",
-    "body": "- app/[locale]/special/park-saenggwang/page.tsx: VENUE_NAME_* 상수 'M타워 6층'→'갤러리 PEG' / 'Gallery PEG'\n  JSON-LD ExhibitionEvent.location.name 자동 갱신, PostalAddress streetAddress(통일로 870 M타워 6층) 유지\n- page.tsx description/ogDescription: '갤러리 PEG(서울 은평구 M타워 6층)' 병기 형태로 갱신\n- Hero KO/EN: '갤러리 PEG · 서울 은평 M타워 6층' / 'Gallery PEG · M-Tower 6F, Eunpyeong'\n- messages/ko.json, en.json parkSaenggwangDesc 갱신\n- lib/now-showing.ts 운영 주석 동기화",
-    "date": "2026-05-20",
+    "hash": "f55e2bc6",
+    "type": "feat",
+    "scope": "home/artwork",
+    "subject": "MechanismSection 4단계 도식 + 사후판화 디테일 박스 + TrustBadges 정위치",
+    "summary": "홈 미션배너를 MechanismSection(4단계 흐름도+라이브카운터)으로 교체, 사후판화 작품 상세에 PosthumousPrintDetails 박스 신설, TrustBadges를 결제 버튼 위로 이동",
+    "body": "- page.tsx: 인라인 3단계 배너 → MechanismSection 컴포넌트 교체 (매뉴얼 6.4 [F])\n- MechanismSection: 4단계 도식(구매→기금→협약→대출) + 누적 대출·상환율 카운터 + /our-proof CTA\n- artworks/[id]/page.tsx: category=사후판화 시 PosthumousPrintDetails 렌더 (매뉴얼 5.6)\n- artworks/[id]/page.tsx: TrustBadges 독립 영역 추가 (sameCategoryWorks 직전, 매뉴얼 7.2)\n- PosthumousPrintDetails: 생몰년·발행주체·인증서·에디션 5요소 박스\n- lib/posthumous-artist-info: 오윤·박생광 메타데이터 맵 (확장 가능 구조)\n- CheckoutClient: TrustBadges를 결제 버튼 아래→위로 이동 (결심 직전 노출, 매뉴얼 10.6)\n- messages ko/en: mechanism, posthumous, trustSection i18n 키 추가",
+    "date": "2026-05-19",
     "author": "황경하"
   },
   {

@@ -27,6 +27,7 @@ import {
   generateArtworkPurchaseHowTo,
   generateMemberJoinHowTo,
   generateExhibitionEnjoyHowTo,
+  generateMechanismHowTo,
 } from '@/lib/schemas/howto';
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { getSupabaseArtworksByCategories, getSupabaseFAQs } from '@/lib/supabase-data';
@@ -213,6 +214,7 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       <JsonLdScript data={generateArtworkPurchaseHowTo(locale, { artistCount })} />
       <JsonLdScript data={generateMemberJoinHowTo(locale)} />
       <JsonLdScript data={generateExhibitionEnjoyHowTo(locale, { artistCount, artworkCount })} />
+      <JsonLdScript data={generateMechanismHowTo(locale)} />
       <JsonLdScript
         data={generateSAFCoreQA(locale, { artistCount, artworkCount, loanCount: LOAN_COUNT })}
       />
