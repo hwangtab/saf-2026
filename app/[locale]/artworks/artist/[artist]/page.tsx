@@ -589,7 +589,7 @@ async function renderArtistPage({ params }: Props) {
         return (
           <Section variant="white" prevVariant="primary-surface" className="pb-8">
             <div className="container-max">
-              <p className="text-sm font-medium text-gray-500 mb-3">
+              <p className="text-sm font-medium text-charcoal-soft mb-3">
                 {isEnglish ? 'Browse by category' : '카테고리별 작품 보기'}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -599,7 +599,7 @@ async function renderArtistPage({ params }: Props) {
                     href={path}
                     className={`px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                       isPrimary
-                        ? 'border-primary bg-primary-surface text-primary hover:bg-primary-surface'
+                        ? 'border-primary bg-primary-surface text-primary-strong hover:bg-primary-surface'
                         : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-100'
                     }`}
                   >

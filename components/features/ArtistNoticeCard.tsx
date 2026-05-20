@@ -12,7 +12,7 @@ type Props = {
 const TYPE_STYLES: Record<NoticeType, { border: string; accent: string; Icon: typeof Info }> = {
   info: {
     border: 'border-primary',
-    accent: 'text-primary',
+    accent: 'text-primary-strong',
     Icon: Info,
   },
   warning: {

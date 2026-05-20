@@ -275,7 +275,7 @@ export default function CheckoutClient({
       <div className="max-w-2xl mx-auto px-4 pt-24 pb-24">
         <Link
           href={`/artworks/${artworkId}`}
-          className="mb-6 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-charcoal"
+          className="mb-6 inline-flex items-center gap-1 text-sm text-charcoal-soft hover:text-charcoal"
         >
           <span aria-hidden="true">←</span>
           {t('backToArtwork')}
@@ -298,7 +298,7 @@ export default function CheckoutClient({
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500">{artist}</p>
+              <p className="text-xs text-charcoal-soft">{artist}</p>
               <p className="mt-0.5 font-semibold text-charcoal truncate">{artworkTitle}</p>
               <p className="mt-1 text-lg font-bold text-primary-a11y">{displayPrice}</p>
             </div>
@@ -395,7 +395,7 @@ export default function CheckoutClient({
                         <span
                           className={clsx(
                             'text-sm font-medium',
-                            selected ? 'text-primary' : 'text-charcoal'
+                            selected ? 'text-primary-strong' : 'text-charcoal'
                           )}
                         >
                           {t(labelKey)}

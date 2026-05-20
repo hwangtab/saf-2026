@@ -19,7 +19,7 @@ export default function ExpandableHistory({ history, className }: ExpandableHist
 
   return (
     <div className={cn('bg-gray-50 p-6 rounded-xl', className)}>
-      <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+      <h3 className="text-sm font-bold text-charcoal-soft uppercase tracking-wider mb-4">
         {t('title')}
       </h3>
       <div className="relative">

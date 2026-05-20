@@ -22,7 +22,7 @@ export default async function RecentlySoldSection({
       <div className="mb-10">
         <h2 className="text-2xl font-bold text-charcoal">{t('recentlySold')}</h2>
         {totalCount > 0 && (
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-charcoal-soft mt-1">
             {t('recentlySoldDesc', { count: totalCount })}
           </p>
         )}

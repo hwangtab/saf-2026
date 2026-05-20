@@ -132,7 +132,7 @@ export default function DesktopNav({
           />
         </IdleMount>
 
-        <LanguageSwitcher className={textColor} compact />
+        <LanguageSwitcher className={textColor} compact inverse={isInverse} />
       </div>
     </>
   );

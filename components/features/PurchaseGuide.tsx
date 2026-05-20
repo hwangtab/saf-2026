@@ -56,7 +56,7 @@ export default function PurchaseGuide({ className }: PurchaseGuideProps) {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-gray-900">{tCards(`${key}Label`)}</p>
-                <p className="text-xs text-gray-500">{tCards(`${key}Text`)}</p>
+                <p className="text-xs text-charcoal-soft">{tCards(`${key}Text`)}</p>
               </div>
             </div>
           ))}

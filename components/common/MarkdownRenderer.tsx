@@ -55,7 +55,7 @@ function ImageFigure({ src, alt }: { src: string; alt?: string }) {
         decoding="async"
       />
       {alt && (
-        <figcaption className="mt-3 text-center text-sm text-gray-500 leading-relaxed">
+        <figcaption className="mt-3 text-center text-sm text-charcoal-soft leading-relaxed">
           {alt}
         </figcaption>
       )}

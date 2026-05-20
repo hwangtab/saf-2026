@@ -416,7 +416,7 @@ function ArtworkCard({
                 : artwork.reserved
                   ? theme === 'dark'
                     ? 'text-white/70'
-                    : 'text-gray-500'
+                    : 'text-charcoal-soft'
                   : theme === 'dark'
                     ? 'text-primary-soft'
                     : // light theme: primary-strong(6.98:1, AAA) — text-sm는 4.5:1 필요한데

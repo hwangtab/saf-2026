@@ -8,9 +8,10 @@ import { trackEvent } from '@/lib/analytics/track';
 interface LanguageSwitcherProps {
   className?: string;
   compact?: boolean;
+  inverse?: boolean;
 }
 
-export default function LanguageSwitcher({ className, compact }: LanguageSwitcherProps) {
+export default function LanguageSwitcher({ className, compact, inverse }: LanguageSwitcherProps) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -37,7 +38,9 @@ export default function LanguageSwitcher({ className, compact }: LanguageSwitche
         onClick={() => switchLocale('ko')}
         className={clsx(
           btnBase,
-          locale === 'ko' ? 'font-bold text-primary' : 'text-current opacity-60 hover:opacity-100'
+          locale === 'ko'
+            ? `font-bold ${inverse ? 'text-primary-soft' : 'text-primary-strong'}`
+            : 'text-current opacity-60 hover:opacity-100'
         )}
         aria-label={locale === 'en' ? 'Switch to Korean' : '한국어로 전환'}
         aria-current={locale === 'ko' ? 'true' : undefined}
@@ -52,7 +55,9 @@ export default function LanguageSwitcher({ className, compact }: LanguageSwitche
         onClick={() => switchLocale('en')}
         className={clsx(
           btnBase,
-          locale === 'en' ? 'font-bold text-primary' : 'text-current opacity-60 hover:opacity-100'
+          locale === 'en'
+            ? `font-bold ${inverse ? 'text-primary-soft' : 'text-primary-strong'}`
+            : 'text-current opacity-60 hover:opacity-100'
         )}
         aria-label="Switch to English"
         aria-current={locale === 'en' ? 'true' : undefined}

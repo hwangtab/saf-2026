@@ -234,7 +234,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                   40년 만에 돌아온
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-primary">민중의 칼날</span>
+                    <span className="relative z-10 text-primary-soft">민중의 칼날</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
                   , 다시

@@ -667,7 +667,7 @@ export default async function StoryCategoryPage({ params }: Props) {
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-5">
           <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-charcoal-soft">
               {locale === 'en' ? 'More in Magazine' : '매거진 더 보기'}
             </p>
             <Link

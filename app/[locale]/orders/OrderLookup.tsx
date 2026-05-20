@@ -130,7 +130,7 @@ function OrderStatusStepper({ status }: { status: string }) {
                     isDone
                       ? 'border-primary-strong bg-primary-strong text-white'
                       : isCurrent
-                        ? 'border-primary bg-white text-primary'
+                        ? 'border-primary bg-white text-primary-strong'
                         : 'border-gray-200 bg-white text-gray-300'
                   )}
                 >
@@ -152,7 +152,11 @@ function OrderStatusStepper({ status }: { status: string }) {
               <p
                 className={clsx(
                   'mt-1.5 text-center text-xs leading-tight',
-                  isCurrent ? 'font-bold text-primary' : isDone ? 'text-gray-500' : 'text-gray-300'
+                  isCurrent
+                    ? 'font-bold text-primary-strong'
+                    : isDone
+                      ? 'text-charcoal-soft'
+                      : 'text-gray-300'
                 )}
               >
                 {t(step.labelKey as Parameters<typeof t>[0])}
@@ -221,11 +225,13 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
     <div className="space-y-2.5 rounded-xl border border-gray-200 bg-gray-50 p-4">
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">{t('recipient')}</label>
+          <label className="mb-1 block text-xs font-medium text-charcoal-soft">
+            {t('recipient')}
+          </label>
           <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">
+          <label className="mb-1 block text-xs font-medium text-charcoal-soft">
             {t('shippingPhone')}
           </label>
           <input
@@ -237,7 +243,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">{t('address')}</label>
+        <label className="mb-1 block text-xs font-medium text-charcoal-soft">{t('address')}</label>
         <input
           className={inputClass}
           value={address}
@@ -253,7 +259,9 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">{t('shippingMemo')}</label>
+        <label className="mb-1 block text-xs font-medium text-charcoal-soft">
+          {t('shippingMemo')}
+        </label>
         <input
           className={inputClass}
           placeholder={t('shippingMemoPlaceholder')}
@@ -327,7 +335,7 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
         <h2 id="cancel-modal-title" className="mb-1 text-base font-bold text-charcoal">
           {t('cancelOrderConfirm')}
         </h2>
-        <p className="mb-4 text-sm text-gray-500">{t('cancelOrderDescription')}</p>
+        <p className="mb-4 text-sm text-charcoal-soft">{t('cancelOrderDescription')}</p>
 
         <label className="mb-1.5 block text-sm font-medium text-charcoal">
           {t('cancelReasonLabel')}
@@ -487,16 +495,16 @@ function OrderDetail({
       {/* 주문 정보 */}
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
-          <span className="text-gray-500">{t('orderNo')}</span>
+          <span className="text-charcoal-soft">{t('orderNo')}</span>
           <span className="font-mono text-charcoal">{order.orderNo}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">{t('orderDate')}</span>
+          <span className="text-charcoal-soft">{t('orderDate')}</span>
           <span className="text-charcoal">{formatKstDate(order.createdAt)}</span>
         </div>
         {order.paymentMethod && (
           <div className="flex justify-between">
-            <span className="text-gray-500">{t('paymentMethod')}</span>
+            <span className="text-charcoal-soft">{t('paymentMethod')}</span>
             <span className="text-charcoal">
               {PAYMENT_METHOD_I18N_KEYS[order.paymentMethod]
                 ? t(PAYMENT_METHOD_I18N_KEYS[order.paymentMethod] as Parameters<typeof t>[0])
@@ -506,7 +514,7 @@ function OrderDetail({
         )}
         {order.paidAt && (
           <div className="flex justify-between">
-            <span className="text-gray-500">{t('paymentDate')}</span>
+            <span className="text-charcoal-soft">{t('paymentDate')}</span>
             <span className="text-charcoal">{formatKstDate(order.paidAt)}</span>
           </div>
         )}
@@ -537,17 +545,17 @@ function OrderDetail({
         ) : (
           <div className="space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-gray-500">{t('recipient')}</span>
+              <span className="text-charcoal-soft">{t('recipient')}</span>
               <span className="text-charcoal">{order.shippingName}</span>
             </div>
             {order.shippingPhone && (
               <div className="flex justify-between">
-                <span className="text-gray-500">{t('shippingPhone')}</span>
+                <span className="text-charcoal-soft">{t('shippingPhone')}</span>
                 <span className="text-charcoal">{order.shippingPhone}</span>
               </div>
             )}
             <div className="flex justify-between gap-4">
-              <span className="shrink-0 text-gray-500">{t('address')}</span>
+              <span className="shrink-0 text-charcoal-soft">{t('address')}</span>
               <span className="text-right text-charcoal">
                 {order.shippingAddress}
                 {order.shippingAddressDetail && ` ${order.shippingAddressDetail}`}
@@ -555,7 +563,7 @@ function OrderDetail({
             </div>
             {order.shippingMemo && (
               <div className="flex justify-between gap-4">
-                <span className="shrink-0 text-gray-500">{t('shippingMemo')}</span>
+                <span className="shrink-0 text-charcoal-soft">{t('shippingMemo')}</span>
                 <span className="text-right text-charcoal">{order.shippingMemo}</span>
               </div>
             )}
@@ -568,13 +576,13 @@ function OrderDetail({
             {order.trackingNumber ? (
               <>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">{t('shippingCarrier')}</span>
+                  <span className="text-charcoal-soft">{t('shippingCarrier')}</span>
                   <span className="text-charcoal">
                     {order.shippingCarrier ? getCarrierLabel(order.shippingCarrier) : '—'}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">{t('trackingNumber')}</span>
+                  <span className="text-charcoal-soft">{t('trackingNumber')}</span>
                   <span className="font-mono text-charcoal">{order.trackingNumber}</span>
                 </div>
                 {order.shippingCarrier &&
@@ -583,7 +591,7 @@ function OrderDetail({
                       href={getTrackingUrl(order.shippingCarrier, order.trackingNumber)!}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary-surface py-2.5 text-sm font-semibold text-primary hover:bg-primary-surface transition-colors"
+                      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary-surface py-2.5 text-sm font-semibold text-primary-strong hover:bg-primary-surface transition-colors"
                     >
                       {t('trackDelivery')}
                     </a>
@@ -599,11 +607,11 @@ function OrderDetail({
       {/* 금액 내역 */}
       <div className="space-y-2 border-t border-gray-100 pt-3 text-sm">
         <div className="flex justify-between">
-          <span className="text-gray-500">{t('artworkAmount')}</span>
+          <span className="text-charcoal-soft">{t('artworkAmount')}</span>
           <span className="text-charcoal">{formatPriceForDisplay(order.itemAmount)}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">{t('shippingFee')}</span>
+          <span className="text-charcoal-soft">{t('shippingFee')}</span>
           <span className="text-charcoal">
             {order.shippingAmount === 0
               ? t('freeShipping')
@@ -709,7 +717,7 @@ function OrderCard({
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
             <StatusBadge status={cardStatus} />
-            <span className="text-xs text-gray-500">{loading ? '...' : open ? '▲' : '▼'}</span>
+            <span className="text-xs text-charcoal-soft">{loading ? '...' : open ? '▲' : '▼'}</span>
           </div>
         </div>
       </button>
@@ -785,7 +793,7 @@ export default function OrderLookup() {
       {orders ? (
         <>
           <div className="mb-6 flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-charcoal-soft">
               {t('orderCount', { name: name.trim(), count: orders.length })}
             </p>
             <button
@@ -815,7 +823,7 @@ export default function OrderLookup() {
         </>
       ) : (
         <>
-          <p className="mb-8 text-sm text-gray-500">{t('pageDescription')}</p>
+          <p className="mb-8 text-sm text-charcoal-soft">{t('pageDescription')}</p>
           <form
             onSubmit={handleSubmit}
             className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-4"

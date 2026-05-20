@@ -270,7 +270,7 @@ export default async function StoriesGuidePage({
                           {excerpt}
                         </p>
                       )}
-                      <span className="inline-flex items-center gap-1 mt-3 text-xs font-semibold text-primary group-hover:gap-2 transition-all">
+                      <span className="inline-flex items-center gap-1 mt-3 text-xs font-semibold text-primary-strong group-hover:gap-2 transition-all">
                         {copy.readMore}
                         <ArrowRight className="w-3 h-3" aria-hidden="true" />
                       </span>

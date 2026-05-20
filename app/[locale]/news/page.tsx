@@ -517,7 +517,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
                       )}
                     </div>
                     <div className="flex-1 p-6 flex flex-col gap-4">
-                      <div className="flex items-center justify-between text-xs uppercase tracking-wide text-gray-500">
+                      <div className="flex items-center justify-between text-xs uppercase tracking-wide text-charcoal-soft">
                         <span>{localizeSourceName(article.source, locale)}</span>
                         <span>{formatDate(article.date, locale)}</span>
                       </div>

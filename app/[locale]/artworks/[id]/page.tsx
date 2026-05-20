@@ -406,7 +406,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 {locale === 'en' ? (
                   <>
                     Sales proceeds go to the{' '}
-                    <Link href="/our-proof" className="text-primary hover:underline">
+                    <Link href="/our-proof" className="text-primary-strong hover:underline">
                       artist mutual-aid fund
                     </Link>
                     .
@@ -414,7 +414,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 ) : (
                   <>
                     판매 수익이{' '}
-                    <Link href="/our-proof" className="text-primary hover:underline">
+                    <Link href="/our-proof" className="text-primary-strong hover:underline">
                       예술인 상호부조 기금
                     </Link>
                     이 되어 동료 작가의 저금리 대출로 이어집니다.
@@ -424,7 +424,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Share Section */}
               <div className="flex items-center justify-center gap-2 py-4 border-y border-gray-100">
-                <span className="text-sm text-gray-500 mr-2">{t('share')}</span>
+                <span className="text-sm text-charcoal-soft mr-2">{t('share')}</span>
                 <ShareButtonsWrapper
                   url={`${SITE_URL}/artworks/${artwork.id}`}
                   title={t('shareTitle', { title: displayTitle, artist: displayArtist })}
@@ -482,7 +482,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       <span className="text-gray-600 font-medium text-sm">{t('category')}</span>
                       <Link
                         href={`/artworks/category/${encodeURIComponent(artwork.category)}`}
-                        className="text-primary hover:underline"
+                        className="text-primary-strong hover:underline"
                       >
                         {getCategoryLabel(artwork.category, locale)}
                       </Link>
@@ -498,7 +498,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                         {materialGuide && liveStorySlugs.has(materialGuide) && (
                           <Link
                             href={guideStoryHref(materialGuide, locale === 'en')}
-                            className="text-xs text-primary hover:underline"
+                            className="text-xs text-primary-strong hover:underline"
                           >
                             {t(
                               materialGuide === PIGMENT_PRINT_GUIDE_SLUG
@@ -520,7 +520,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                         {artwork.size !== '확인 중' && liveStorySlugs.has(SIZE_GUIDE_SLUG) && (
                           <Link
                             href={guideStoryHref(SIZE_GUIDE_SLUG, locale === 'en')}
-                            className="text-xs text-primary hover:underline"
+                            className="text-xs text-primary-strong hover:underline"
                           >
                             {t('sizeGuideLink')}
                           </Link>
@@ -547,7 +547,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                           liveStorySlugs.has(EDITION_GUIDE_SLUG) && (
                             <Link
                               href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
-                              className="text-xs text-primary hover:underline"
+                              className="text-xs text-primary-strong hover:underline"
                             >
                               {t('editionGuideLink')}
                             </Link>
@@ -565,7 +565,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   )}
                 </div>
                 <div className="mt-4 pt-3 border-t border-gray-100">
-                  <Link href="/stories/guide" className="text-xs text-primary hover:underline">
+                  <Link
+                    href="/stories/guide"
+                    className="text-xs text-primary-strong hover:underline"
+                  >
                     {t('fullGuideLink')}
                   </Link>
                 </div>
@@ -589,7 +592,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Artist Note */}
               {localizedDescription && (
                 <div className="bg-primary-surface p-6 rounded-xl">
-                  <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+                  <h2 className="text-sm font-bold text-charcoal-muted uppercase tracking-wider mb-4">
                     {t('artistNote')}
                   </h2>
                   <p
@@ -604,7 +607,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Artwork Overview — description이 비어있을 때 메타데이터로 합성한 작품 개요 */}
               {!localizedDescription && artworkOverview && (
                 <div className="bg-primary-surface p-6 rounded-xl">
-                  <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+                  <h2 className="text-sm font-bold text-charcoal-muted uppercase tracking-wider mb-4">
                     {t('artworkOverview')}
                   </h2>
                   <p id="artwork-overview" className="text-charcoal leading-relaxed text-sm">
@@ -627,7 +630,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {/* Related Magazine Stories (Supabase) — 카드형 */}
               {relatedMagazineStories.length > 0 && (
                 <div className="space-y-4">
-                  <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+                  <h2 className="text-sm font-bold text-charcoal-soft uppercase tracking-wider">
                     {locale === 'en' ? 'Magazine' : '관련 매거진'}
                   </h2>
                   <div className="space-y-4">
@@ -656,7 +659,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </h2>
                 <Link
                   href={`/artworks/artist/${encodeURIComponent(artwork.artist)}`}
-                  className="text-primary font-medium hover:underline text-sm"
+                  className="text-primary-strong font-medium hover:underline text-sm"
                 >
                   <span className="inline-flex items-center gap-1">
                     {t('viewAll')}
@@ -714,7 +717,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 </h2>
                 <Link
                   href={`/artworks/category/${encodeURIComponent(artwork.category)}`}
-                  className="text-primary font-medium hover:underline text-sm"
+                  className="text-primary-strong font-medium hover:underline text-sm"
                 >
                   <span className="inline-flex items-center gap-1">
                     {t('viewAllCategory', {

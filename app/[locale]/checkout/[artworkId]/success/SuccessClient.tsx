@@ -152,7 +152,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 pt-24">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-primary" />
-        <p className="text-sm text-gray-500">{t('confirmingPayment')}</p>
+        <p className="text-sm text-charcoal-soft">{t('confirmingPayment')}</p>
       </div>
     );
   }
@@ -186,29 +186,29 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
             <h1 className="text-2xl font-bold text-charcoal mb-2">{t('bankTransferTitle')}</h1>
-            <p className="text-sm text-gray-500 mb-8">{t('bankTransferGuide')}</p>
+            <p className="text-sm text-charcoal-soft mb-8">{t('bankTransferGuide')}</p>
 
             <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-6">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('depositBankName')}</span>
+                <span className="text-charcoal-soft">{t('depositBankName')}</span>
                 <span className="font-semibold text-charcoal">{t('bankTransferBank')}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('depositAccountNumber')}</span>
+                <span className="text-charcoal-soft">{t('depositAccountNumber')}</span>
                 <span className="font-semibold text-charcoal font-mono">
                   {t('bankTransferAccount')}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('bankTransferHolder')}</span>
+                <span className="text-charcoal-soft">{t('bankTransferHolder')}</span>
                 <span className="font-semibold text-charcoal">{t('bankTransferHolderName')}</span>
               </div>
               <div className="flex justify-between text-sm border-t border-gray-200 pt-3">
-                <span className="text-gray-500">{t('orderNo')}</span>
+                <span className="text-charcoal-soft">{t('orderNo')}</span>
                 <span className="font-mono font-semibold text-charcoal">{orderId}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('depositAmount')}</span>
+                <span className="text-charcoal-soft">{t('depositAmount')}</span>
                 <span className="font-bold text-primary-a11y">
                   {formatAmount(Number(amount), currency)}
                 </span>
@@ -243,25 +243,25 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
           <div className="rounded-2xl border border-gray-200 bg-white p-10 shadow-sm text-center">
             <p className="text-4xl mb-4">🏦</p>
             <h1 className="text-2xl font-bold text-charcoal mb-2">{t('waitingDeposit')}</h1>
-            <p className="text-sm text-gray-500 mb-8">{t('depositInstructions')}</p>
+            <p className="text-sm text-charcoal-soft mb-8">{t('depositInstructions')}</p>
 
             <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-8">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('depositBankName')}</span>
+                <span className="text-charcoal-soft">{t('depositBankName')}</span>
                 <span className="font-semibold text-charcoal">{virtualAccount.bankName}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('depositAccountNumber')}</span>
+                <span className="text-charcoal-soft">{t('depositAccountNumber')}</span>
                 <span className="font-semibold text-charcoal font-mono">
                   {virtualAccount.accountNumber}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('depositDeadline')}</span>
+                <span className="text-charcoal-soft">{t('depositDeadline')}</span>
                 <span className="font-semibold text-charcoal">{virtualAccount.dueDate}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('depositAmount')}</span>
+                <span className="text-charcoal-soft">{t('depositAmount')}</span>
                 <span className="font-bold text-primary-a11y">
                   {formatAmount(Number(amount), currency)}
                 </span>
@@ -296,17 +296,17 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
           <h1 className="text-2xl font-bold text-charcoal mb-2 break-keep text-balance">
             {t('paymentSuccess')}
           </h1>
-          <p className="text-sm text-gray-500 mb-8 break-keep text-balance">
+          <p className="text-sm text-charcoal-soft mb-8 break-keep text-balance">
             {t('successThankYou')}
           </p>
 
           <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-6">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">{t('orderNo')}</span>
+              <span className="text-charcoal-soft">{t('orderNo')}</span>
               <span className="font-mono font-semibold text-charcoal">{orderId}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">{t('paymentAmount')}</span>
+              <span className="text-charcoal-soft">{t('paymentAmount')}</span>
               <span className="font-bold text-primary-a11y">
                 {formatAmount(Number(amount), currency)}
               </span>
