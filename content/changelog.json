@@ -1,11 +1,11 @@
 [
   {
-    "hash": "content-park-saenggwang-pencil",
-    "type": "content",
-    "scope": "special/park-saenggwang",
-    "subject": "박생광 전시 페이지 — 연필화 톤 재구성 + 큐레이터 원문 5개 서사 보충",
-    "summary": "박생광 전시 페이지 본문을 전문 큐레이터 원문으로 보충 — '채색 이전 습작' 톤을 걷어내고 연필화를 폐허 위 현존 최초의 자율적 작품으로 재서술. 전쟁 전소·일본색 혐의·되살아나는 풍경·다시 일본·인도여행 5개 서사 추가",
-    "body": "- Hero h1/subtitle: '채색 이전/색을 입히기 전 골격' 표현 → '전쟁이 모든 것을 태웠다. 연필은 남았다.' 로 재서술\n- PAGE_COPY description/ogDescription/twitterDescription + JSON-LD description: '채색 이전' 표현 제거, 현존 최초의 그림 톤으로 교체\n- Section 3 heading: '채색 이전의 호흡' → '연필이 남긴 가장 이른 그림'\n- Section 3 본문 확장: intro + 5개 테마 서브블록 신설\n  · 파괴된 터전에서 — 진주 폭격·촉석루 부재·현존 최초의 작품\n  · 30년의 혐의, 그러나 연필화에는 — 동학·전봉준 호위 아버지·일본색 혐의 변호\n  · 되살아나는 풍경 — 제주 한라산 백록담·부산 해운대\n  · 다시 일본에서 — 딸 도쿄대 약학 국비·의욕 회복\n  · 인도, 근원을 찾아 — 1979 75세·불교 발상지·신들린 듯 발디딘 곳",
+    "hash": "a0e2c83a",
+    "type": "fix",
+    "scope": "phase-9",
+    "subject": "SuccessClient localStorage 회귀 + PrideBox 4단 주석 보강",
+    "summary": "Safari 시크릿 모드에서 결제 성공자가 에러 화면을 보는 회귀 수정, PrideBox 4단 docblock 갱신",
+    "body": "- [H1] SuccessClient: raw localStorage.getItem/setItem → storageGet/storageSet 래퍼로 교체.\n  QuotaExceededError가 try 블록 catch를 트리거해 성공 화면 대신 에러 화면 노출하는 회귀 방지.\n  (비활성 환경에서 storageSet은 무음 실패 → incrementPurchaseCount도 무음 실패 → 성공 화면 정상 노출)\n- [M1] PrideBox docblock: 4단(10번째+) 내용 추가, 3단 경계 \"4번째+\" → \"4~9번째\" 정정.\n  suppressHydrationWarning 주석도 \"2·3단\" → \"2·3·4단\" 갱신\n- [M2] PrideBox collectorLine: 3단 head(n=이번 N번째) vs closing(purchaseCount=기존 보유)\n  이중 인정 의도를 명시하는 주석 추가",
     "date": "2026-05-20",
     "author": "황경하"
   },
