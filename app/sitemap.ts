@@ -435,7 +435,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: latestPublished ?? now,
         changeFrequency: 'monthly' as const,
         priority: 0.6,
-        alternates: bilingualAlternates(baseUrl, path),
+        alternates: koAlternates(baseUrl, path),
       };
     });
 

@@ -91,7 +91,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: createLocaleAlternates(path, locale),
+    alternates: createLocaleAlternates(path, locale, true),
+    ...(isEn ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title,
       description,

@@ -34,6 +34,7 @@ export const EN_INDEXABLE_PAGES: ReadonlySet<string> = new Set([
   '/transparency',
   '/petition/oh-yoon',
   '/special/oh-yoon',
+  '/special/park-saenggwang',
   '/archive',
   '/archive/2023',
   '/archive/2026',
