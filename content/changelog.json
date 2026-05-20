@@ -1,5 +1,35 @@
 [
   {
+    "hash": "nav-master-artists",
+    "type": "feat",
+    "scope": "nav",
+    "subject": "헤더 '전시 작품' 메뉴에 거장 5인 특별전 전부 노출",
+    "summary": "헤더 '전시 작품' 메뉴에 거장 5인 특별전 전부 노출 — 오윤만 있던 메뉴에 박생광·민정기·이철수·박불똥 4명 추가",
+    "body": "- lib/hooks/useLocalizedNavigation.ts: '전시 작품' items에 박생광/민정기/이철수/박불똥 특별전 4개 항목 추가\n  오윤 특별전 다음, 오윤 청원 앞 순서 (lib/master-artists.ts 순서와 일치)\n- messages/ko.json, en.json: nav 네임스페이스에 8개 키 신규 추가\n  (parkSaenggwang/NavDesc, minJoungki/NavDesc, leeCheolsoo/NavDesc, parkBuldong/NavDesc)\n\n배경: 홈 MasterArtists 섹션·sitemap에는 5인 모두 등록되어 있었으나 헤더 메뉴 배열에는 오윤만 하드코딩되어 있었음",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "0c091d2e",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "T2-8 작가 SEO override 5건 + medium story description 보강",
+    "summary": "GSC 28일 0-click 잔여 작가 5명(손은영·주재환·최혜수·박은선·강석태, 99 imp) artist override 추가, choosing-by-medium description에 \"painting drawing 차이\" 흡수",
+    "body": "- lib/artist-seo-overrides.ts: T2-8 블록 — 손은영(46imp/pos4.4)·주재환(20imp)·최혜수(12imp/pos1.7)·박은선(11imp)·강석태(10imp) 각 작가 정체성 SERP 직격 title\n- lib/stories-seo-overrides.ts: choosing-by-medium descriptionKo에 \"페인팅과 드로잉은 어떻게 다른가\" 명시 (10imp/pos9.6 흡수)\n- T2-5(258f9779) 16건, T2-6(8646e29e) 2건에 이은 동일 패턴 — override wiring 변경 없음",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "46f1d24f",
+    "type": "fix",
+    "scope": "phase7",
+    "subject": "Phase 6 회귀 audit 14건 일괄 정정",
+    "summary": "i18n stale 키 cleanup·사후판화 5요소·EN키·모바일 spacer·메커니즘 HowTo·/our-proof 섹션·TrustBadges grid 등 회귀 갭 일괄 수정",
+    "body": "- messages ko/en: missionBanner·missionStep1-3·missionLearnMore stale 키 제거 (H1)\n- artworks/[id]/page.tsx: sticky CTA 하단 spacer h-24 md:hidden (H2) + sameCategoryWorks mt-24→mt-16 cadence (M1)\n- lib/posthumous-artist-info.ts: EN 키('O Yun', 'Park Saenggwang') fragile guard (H3) + originalWorkKo/En 5번째 요소 (H5) + 운영 주석 (M2)\n- PosthumousPrintDetails.tsx: originalWork row 조건부 추가 (H5)\n- messages ko/en: originalWorkLabel 신설 (H5) + CTA '더 알아보기'/'Learn more' (H6) + message '다음 작가의 한 점' (M4) + 카운터 라벨 축소 (M5) + explanation 진입가 톤 보강 (L4)\n- lib/schemas/howto.ts: generateMechanismHowTo 4단계 HowTo 신설 (M3)\n- app/[locale]/page.tsx: generateMechanismHowTo JsonLdScript 등록 (M3)\n- CheckoutClient.tsx: TrustBadges 카드 박스 bg-canvas-soft → bg-white 시각 깊이 (L1)\n- our-proof/page.tsx: 구매→기금→협약→대출 4단계 메커니즘 풀이 섹션 EN/KO 각각 CTA 직전 추가 (L2)\n- TrustBadges.tsx: detail variant 모바일 2열 grid grid-cols-2 md:flex (L3)",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
     "hash": "f55e2bc6",
     "type": "feat",
     "scope": "home/artwork",
