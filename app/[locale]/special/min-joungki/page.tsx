@@ -161,7 +161,6 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
       '@type': 'Place',
       name: isEnglish ? 'Yangpyeong, Gyeonggi, South Korea' : '경기 양평',
     },
-    sameAs: ['https://ko.wikipedia.org/wiki/민정기_(화가)'],
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
