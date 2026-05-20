@@ -164,6 +164,7 @@ export default async function ParkSaenggwangPage({
 
   const parkSaenggwangPerson = {
     '@type': 'Person',
+    '@id': `${SITE_URL}/special/park-saenggwang#person-park-saenggwang`,
     name: isEnglish ? 'Park Saeng-gwang' : '박생광',
     alternateName: isEnglish ? '박생광 (朴生光)' : 'Park Saeng-gwang (朴生光)',
     birthDate: '1904',

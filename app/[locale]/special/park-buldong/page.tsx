@@ -144,6 +144,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
 
   const artistPerson = {
     '@type': 'Person',
+    '@id': `${SITE_URL}/special/park-buldong#person-park-buldong`,
     name: isEnglish ? 'Park Bul-ttong' : '박불똥',
     alternateName: isEnglish ? '박불똥' : 'Park Bul-ttong',
     jobTitle: isEnglish ? 'Artist' : '화가·콜라주 작가',

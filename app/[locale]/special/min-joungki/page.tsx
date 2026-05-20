@@ -140,6 +140,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
 
   const artistPerson = {
     '@type': 'Person',
+    '@id': `${SITE_URL}/special/min-joungki#person-min-joungki`,
     name: isEnglish ? 'Min Joung-ki' : '민정기',
     alternateName: isEnglish ? '민정기' : 'Min Joung-ki',
     jobTitle: isEnglish ? 'Artist' : '화가',

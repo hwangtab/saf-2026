@@ -144,6 +144,7 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
 
   const artistPerson = {
     '@type': 'Person',
+    '@id': `${SITE_URL}/special/lee-cheolsoo#person-lee-cheolsoo`,
     name: isEnglish ? 'Lee Chul-soo' : '이철수',
     alternateName: isEnglish ? '이철수' : 'Lee Chul-soo',
     jobTitle: isEnglish ? 'Artist' : '판화가·서화가',
