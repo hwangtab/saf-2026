@@ -124,6 +124,15 @@ export default async function Footer({ locale }: { locale: string }) {
                     </Link>
                   </li>
                   <li>
+                    <Link
+                      href="/artworks/artist"
+                      prefetch={false}
+                      className="text-gray-300 hover:text-primary transition-colors"
+                    >
+                      {tNav('artistsIndex')}
+                    </Link>
+                  </li>
+                  <li>
                     <TrackedExternalLink
                       href={EXTERNAL_LINKS.JOIN_MEMBER}
                       className="text-gray-300 hover:text-primary transition-colors"

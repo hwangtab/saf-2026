@@ -48,7 +48,8 @@
     "buyingGuideDesc": "작품 구매가 처음인 분을 위한 안내",
     "artKnowledge": "미술 산책",
     "artKnowledgeDesc": "가볍게 즐기는 미술 이야기",
-    "searchButton": "검색"
+    "searchButton": "검색",
+    "artistsIndex": "작가별 보기"
   },
   "footer": {
     "links": "링크",
@@ -250,6 +251,7 @@
     "archive2023": "2023 아카이브",
     "archive2026": "2026 아카이브",
     "artworks": "출품작",
+    "artists": "작가",
     "archive": "아카이브",
     "news": "언론 보도",
     "stories": "매거진",
@@ -1159,5 +1161,15 @@
   "storiesArchive": {
     "heroSubtitle": "{count}편의 글",
     "emptyState": "이 달에는 발행된 글이 없습니다."
+  },
+  "artistsIndexPage": {
+    "title": "참여 작가",
+    "seoTitle": "씨앗페 참여 작가 {artistCount}명 — 한국 현대미술 작가 갤러리 목록",
+    "description": "씨앗페 2026에 참여한 한국 현대미술 작가 {artistCount}명의 갤러리 목록입니다. 작가별 대표작과 출품 작품 수를 확인하고 개인 갤러리로 이동하세요.",
+    "heroDescription": "씨앗페에 참여한 {artistCount}명 작가의 갤러리를 한눈에 탐색하세요.",
+    "intro": "아래에서 씨앗페 2026 참여 작가를 가나다 순으로 찾아볼 수 있습니다. 작가 카드를 클릭하면 해당 작가의 모든 출품작을 확인할 수 있습니다.",
+    "artworkCount": "{count}점",
+    "viewArtist": "{name} 작품 보기",
+    "browseByArtist": "작가별로 둘러보기"
   }
 }

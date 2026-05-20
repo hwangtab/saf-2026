@@ -48,7 +48,8 @@
     "buyingGuideDesc": "A guide for first-time art buyers",
     "artKnowledge": "Art Walk",
     "artKnowledgeDesc": "Enjoy art through bite-sized stories",
-    "searchButton": "Search"
+    "searchButton": "Search",
+    "artistsIndex": "Browse by Artist"
   },
   "footer": {
     "links": "Links",
@@ -250,6 +251,7 @@
     "archive2023": "2023 Archive",
     "archive2026": "2026 Archive",
     "artworks": "Artworks",
+    "artists": "Artists",
     "archive": "Archive",
     "news": "Press",
     "stories": "Magazine",
@@ -1159,5 +1161,15 @@
   "storiesArchive": {
     "heroSubtitle": "{count, plural, =1 {1 article} other {# articles}}",
     "emptyState": "No articles this month."
+  },
+  "artistsIndexPage": {
+    "title": "Artists",
+    "seoTitle": "SAF Artists — {artistCount} Korean Contemporary Art Galleries",
+    "description": "Browse all {artistCount} Korean artists participating in SAF 2026. Explore each artist's gallery and representative works.",
+    "heroDescription": "Explore galleries from all {artistCount} artists participating in SAF.",
+    "intro": "Browse all SAF 2026 participating artists listed in Korean alphabetical order. Click an artist card to view their full gallery.",
+    "artworkCount": "{count, plural, =1 {1 work} other {# works}}",
+    "viewArtist": "View {name}'s works",
+    "browseByArtist": "Browse by Artist"
   }
 }

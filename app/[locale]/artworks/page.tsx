@@ -94,6 +94,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'artworksPage' });
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
+  const tNav = await getTranslations({ locale, namespace: 'nav' });
   const artworks = await getSupabaseArtworks();
   const listArtworks: ArtworkListItem[] = artworks.map(
     ({
@@ -291,6 +292,22 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
                 </Link>
               ))}
             </div>
+          </div>
+        </Section>
+
+        {/* 작가별 둘러보기 진입 링크 — 작가 인덱스 허브로 내부 링크 에쿼티 전달 */}
+        <Section variant="white" padding="none" className="pb-6">
+          <div className="container-max text-center">
+            <Link
+              href="/artworks/artist"
+              className="group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm md:text-base font-semibold border border-charcoal/20 text-charcoal bg-white hover:bg-canvas hover:-translate-y-0.5 hover:shadow-md transition-[transform,box-shadow,background-color] duration-300"
+            >
+              {tNav('artistsIndex')}
+              <ArrowRight
+                className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Link>
           </div>
         </Section>
 

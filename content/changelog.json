@@ -1,11 +1,81 @@
 [
   {
-    "hash": "00000000",
-    "type": "content",
-    "scope": "special",
-    "subject": "민정기·이철수·박불똥 — '특별전' 표현을 작가 페이지 톤으로 강등, 헤더·푸터 거장 직링크에서 제외",
-    "summary": "민정기·이철수·박불똥 — '특별전' 표현을 작가 페이지 톤으로 강등, 헤더·푸터 거장 직링크에서 제외(페이지·sitemap 유지, 보강 후 재승격 예정)",
-    "body": "hero 배지·브라우저 탭 제목·JSON-LD·OG 태그·갤러리 h2·상호부조 블럽에서\n'특별전 / Special Exhibition' 레이블을 '이름·생몰년' 배지 + 중립 표현으로 교체.\n헤더 드롭다운에서 3개 항목 제거, 푸터 거장 직링크에서 3명 제외(footerHidden 플래그).\n홈 거장 스포트라이트 카드·sitemap·페이지 콘텐츠 불변. 오윤·박생광 특별전 유지.\n\n- lib/hooks/useLocalizedNavigation.ts: minJoungki·leeCheolsoo·parkBuldong 3개 항목 삭제\n- lib/master-artists.ts: footerHidden?: boolean 인터페이스 추가 + 3개 엔트리에 footerHidden: true\n- components/common/Footer.tsx: filter (a) => a.specialSlug && !a.footerHidden\n- app/[locale]/special/{min-joungki,lee-cheolsoo,park-buldong}/page.tsx: PAGE_COPY·배지·갤러리·블럽 relabel",
+    "hash": "d34bc05e",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "T2-15 hreflang/noindex 잔여 누수 정리 + 박생광 EN 색인 복원",
+    "summary": "T2-14 sweep 완결 — category/archive-month 누수 2건 수정, 박생광 EN 오윤 대칭 복원",
+    "body": "- app/[locale]/stories/category/[category]/page.tsx: createLocaleAlternates koOnly=true\n  (EN noindex인데 en-US hreflang 발행하던 불일치 해소. sitemap은 기존 koAlternates 유지)\n- app/[locale]/stories/archive/[year]/[month]/page.tsx: koOnly=true + EN noindex robots 추가\n  (thin 자동생성 날짜 버킷 → category 정책 parity. EN indexable 상태 수정)\n- app/sitemap.ts: archive month alternates bilingualAlternates → koAlternates\n  (EN noindex 정책과 sitemap 신호 일치)\n- lib/en-indexable.ts: EN_INDEXABLE_PAGES에 '/special/park-saenggwang' 추가\n  (sitemap 화이트리스트 구동 — bilingualAlternates + EN 별도 entry 자동 발행)\n- app/[locale]/special/park-saenggwang/page.tsx: T2-14의 koOnly+noindex 되돌리기\n  (full EN body + 진행 중 전시 유지 거장 → 오윤과 대칭, EN 색인 복원)\n\nT2-14 감사: tsc clean, 599/599 테스트 그린, T2-14 자체 버그 0.\nmin-joungki·lee-cheolsoo·park-buldong EN noindex 유지 (footerHidden 강등 작가).",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "e4dca07a",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "T2-14 크롤/색인 신호 정합성 — sitemap·EN noindex·작품 hreflang 수정 7건",
+    "summary": "A) refund-policy sitemap 누락 수정, B) EN noindex 누수 5건(faq·special×4) 수정, C) 작품 348개 hreflang koOnly 통합",
+    "body": "- app/sitemap.ts: legalPaths에 /refund-policy 추가 (priority 0.4, yearly)\n- app/[locale]/faq/page.tsx: EN locale에서 KO canonical + noindex (EN_INDEXABLE 미등재)\n- app/[locale]/special/{lee-cheolsoo,min-joungki,park-buldong,park-saenggwang}: createLocaleAlternates koOnly=true + EN noindex\n- lib/schemas/artwork.ts: createLocaleAlternates koOnly=true override (KO 작품 페이지에서 noindex EN URL hreflang 제거)",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "b03ba4d2",
+    "type": "fix",
+    "scope": "ci",
+    "subject": "jest에서 Playwright e2e 스펙 제외 — 매 push CI 실패 메일 차단",
+    "summary": "jest testPathIgnorePatterns에 e2e/ 추가 — Playwright .spec.ts 5건 오매칭으로 매 push CI 실패하던 문제 해결 (58 suites, 599 tests 전부 그린). GSC_SITE_URL GitHub secret 등록으로 Daily Health Check 실패도 동시 해소.",
+    "body": null,
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "2641d20e",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-13 미커버 작가 페이지 SEO title override 4건 (박소형·이철수·이호철·정채희)",
+    "summary": "GSC 0-click 작가 페이지 전수 분류 후 artist override 없는 4개 추가 — 박소형(48 imp/pos 3.2, 최대 미커버)·이철수(26/9.3)·이호철(35/14.3)·정채희(9/5.1)",
+    "body": "- 박소형 (48 imp, pos 3.2): page-1 최상단인데 CTR 0% — BU 조형예술 석사·SVA 학사, 보스턴·뉴욕·서울, AI·생태예술 조각·설치 정체성 직격\n- 이철수 (26 imp, pos 9.3): \"판화가 이철수\"·\"이철수 판화\" — 민중판화→선(禪)의 판화, 한국 목판화 거장\n- 이호철 (35 imp, pos 14.3): 서랍 속 초현실 일상 회화, 홍익대·1978 중앙미술대전 장려상\n- 정채희 (9 imp, pos 5.1): 옻칠 칠화·칠벽화, 서울대·북경 중앙미술학원 벽화 석사\n- 김주호는 story override(meet-artist-kim-ju-ho) 이미 보유 → 제외\n- 유일 변경 파일: lib/artist-seo-overrides.ts. 소비 지점 wiring 변경 없음, 회귀 0\n- type-check·build 통과\n- 14일 후 GSC 재측정 예정 (2026-06-03)",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "271b8130",
+    "type": "fix",
+    "scope": "artwork-detail",
+    "subject": "가이드 링크 라이브-스토리 가드 + 피그먼트 스토리 즉시 공개 — Phase 14",
+    "summary": "silent 404 수정 — 피그먼트 가이드 스토리 발행일 당김, 모든 가이드 링크에 라이브 slug 가드 추가",
+    "body": "- archival-pigment-print-photography 스토리 published_at 2026-10-22→2026-05-20\n  (Supabase production UPDATE 적용) — 약 35점 피그먼트 작품의 silent 404 즉시 해소\n- liveStorySlugs = new Set(allStories.map(s => s.slug)) 정의 (allStories는 이미 fetch,\n  getSupabaseStories()의 .lte(published_at, now) 필터로 미래·미공개 자동 제외)\n- material/size/edition 세 가이드 <Link> 조건에 liveStorySlugs.has(slug) 가드 추가\n  (추가 쿼리 0, 향후 가이드 스토리 미공개·예약·삭제 시 해당 링크 자동 미렌더 — 재발 방지)",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "26c71c87",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-12 매체/판화 용어 0클릭 — material→가이드 링크 + snippet 캡처",
+    "summary": "artwork detail material 행에 판화/피그먼트 가이드 조건부 링크 추가 + 스토리 FAQ 직답 Q 보강",
+    "body": "- lib/artwork-glossary-links.ts: PRINTMAKING/PIGMENT_PRINT_GUIDE_SLUG + materialGuideSlug() 추가\n  (판화·목판·석판·에칭 → prints-vs-originals; pigment+print·잉크젯 → archival-pigment-print;\n   Pigment on watercolor texture 등 print 없는 회화 안료는 올바르게 null 반환)\n- messages/ko.json·en.json: printGuideLink·pigmentGuideLink i18n 키 추가\n- __tests__: materialGuideSlug 케이스 27→27 전체 통과 (false-positive guard 포함)\n- DB(Supabase): prints-vs-originals FAQ 앞 \"판화 뜻\"·\"넘버링 뜻\" 직답 Q 2개 추가\n  + archival-pigment-print FAQ 앞 \"피그먼트 프린트 뜻\" 직답 Q 1개 추가 → FAQPage schema 자동 재발행\n- GSC cluster: 넘버링 뜻 81 imp·피그먼트 프린트 36 imp·판화 뜻 23 imp 대상\n  14일 checkpoint: 2026-06-03",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "45dd4ca4",
+    "type": "fix",
+    "scope": "artwork-detail",
+    "subject": "에디션·재질 가이드 링크 placeholder 가드 — Phase 13",
+    "summary": "에디션·재질 spec table 가이드 링크에 '확인 중' sentinel 가드 추가 및 재질 가이드 링크 연결",
+    "body": "- edition 가이드 링크: artwork.edition !== '확인 중' 가드 추가 (사이즈 가드 대칭화)\n  localizeDataValue('확인 중') → tCard('pendingValue') 로 truthy 반환되어\n  localizedEdition 단독 가드로는 placeholder 옆 링크 노출이 막히지 않는 버그\n- material 행: materialGuideSlug(artwork.material) 결과에 따라 판화/피그먼트 가이드 링크 조건부 노출\n  (회화류·null → 링크 미렌더; 판화류 → printGuideLink; 피그먼트 → pigmentGuideLink)\n- i18n 키는 Phase 12에서 이미 추가된 artworkDetail 네임스페이스 사용",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "b807cf9c",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "web_vitals RPC CLS artifact 필터 — no-session 정수 1.0 제외",
+    "summary": "mobile CLS 집계를 오염시키던 봇/크롤러 artifact(metric_value=1, session_id NULL) 를 web_vitals 집계 RPC 5개에서 일괄 제외",
+    "body": "- fingerprint: metric_value 정확한 정수 1 + session_id IS NULL\n  진짜 web-vitals 값은 0.87296... 등 긴 소수; 정수 1.0은 실측에서 나오지 않음\n  per-path fix 전후로 귀속 경로만 변경 → 페이지 결함 아님, 측정 결함\n- 대상 RPC: get_web_vitals_summary, get_web_vitals_daily_p75,\n  get_web_vitals_worst_pages, get_web_vitals_regressions(+count),\n  get_web_vitals_worst_cls_targets — 모두 WHERE에 동일 predicate 추가\n- 적용 결과: CLS p75 0.53 → 0.0001, CLS 회귀 페이지 false-positive 소거\n  genuine float (session 있음) mobile CLS p75 = 0.000 (양호) 확인\n- GSC mobile CLS poor (309 URL) = CrUX 28일 trailing lag.\n  genuine RUM 이미 양호 → 28일 roll-off로 회복 예상",
     "date": "2026-05-20",
     "author": "황경하"
   },

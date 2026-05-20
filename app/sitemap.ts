@@ -156,6 +156,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
     },
     {
+      path: '/artworks/artist',
+      changeFrequency: 'weekly',
+      priority: 0.7,
+      lastModified: now,
+    },
+    {
       path: '/archive',
       changeFrequency: 'monthly',
       priority: 0.85,
