@@ -47,7 +47,13 @@ import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
-import { guideStoryHref, SIZE_GUIDE_SLUG, EDITION_GUIDE_SLUG } from '@/lib/artwork-glossary-links';
+import {
+  guideStoryHref,
+  SIZE_GUIDE_SLUG,
+  EDITION_GUIDE_SLUG,
+  materialGuideSlug,
+  PIGMENT_PRINT_GUIDE_SLUG,
+} from '@/lib/artwork-glossary-links';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -222,6 +228,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const localizedMaterial = getMaterialLabel(artwork.material, locale);
   const localizedSize = localizeDataValue(artwork.size);
   const localizedEdition = localizeDataValue(artwork.edition);
+  const materialGuide = materialGuideSlug(artwork.material);
   const displayTitle = locale === 'en' && artwork.title_en ? artwork.title_en : artwork.title;
   const displayArtist = locale === 'en' && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const hasActionablePrice = parsedPrice !== Infinity;
@@ -485,7 +492,21 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   {localizedMaterial && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('material')}</span>
-                      <span className="text-charcoal">{localizedMaterial}</span>
+                      <span className="text-charcoal">
+                        {localizedMaterial}{' '}
+                        {materialGuide && (
+                          <Link
+                            href={guideStoryHref(materialGuide, locale === 'en')}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            {t(
+                              materialGuide === PIGMENT_PRINT_GUIDE_SLUG
+                                ? 'pigmentGuideLink'
+                                : 'printGuideLink'
+                            )}
+                          </Link>
+                        )}
+                      </span>
                     </>
                   )}
 
@@ -521,12 +542,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
                       <span className="text-gray-600 font-medium text-sm">{t('edition')}</span>
                       <span className="text-charcoal">
                         {localizedEdition}{' '}
-                        <Link
-                          href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
-                          className="text-xs text-primary hover:underline"
-                        >
-                          {t('editionGuideLink')}
-                        </Link>
+                        {artwork.edition !== '확인 중' && (
+                          <Link
+                            href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            {t('editionGuideLink')}
+                          </Link>
+                        )}
                       </span>
                     </>
                   )}
