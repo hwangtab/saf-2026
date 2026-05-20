@@ -9,10 +9,10 @@ import StatCard from '@/components/ui/StatCard';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
-import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { createBreadcrumbSchema, generateExhibitionSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveEnRobots, EN_INDEXABLE_PAGES } from '@/lib/en-indexable';
-import { SITE_URL, EXTERNAL_LINKS } from '@/lib/constants';
+import { SITE_URL, EXTERNAL_LINKS, OG_IMAGE } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { getLiveStats } from '@/lib/live-stats';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
@@ -93,22 +93,60 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  const isEnglish = locale === 'en';
+
   const aboutPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
+    '@id': `${pageUrl}#webpage`,
     name: pageCopy.title,
     description: pageCopy.description,
     url: pageUrl,
-    mainEntity: {
-      '@type': 'Organization',
-      name: locale === 'en' ? 'Korea Smart Cooperative' : '한국스마트협동조합',
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    isPartOf: { '@id': `${SITE_URL}#website` },
+    about: { '@id': `${SITE_URL}#organization` },
+    primaryImageOfPage: { '@type': 'ImageObject', url: OG_IMAGE.url },
+  };
+
+  const saf2026Schema = generateExhibitionSchema([], isEnglish ? 'en' : 'ko', { artistCount });
+
+  const saf2023Schema = {
+    '@context': 'https://schema.org',
+    '@type': 'ExhibitionEvent',
+    '@id': `${SITE_URL}#exhibition-2023`,
+    name: isEnglish ? 'SAF 2023 (Seed Art Festival 2023)' : '씨앗페 2023',
+    description: isEnglish
+      ? 'The first Seed Art Festival exhibition, held in Insadong, Seoul. 50+ artists across visual art, music, and dance raised a KRW 34 million mutual-aid fund for Korean artists.'
+      : '인사동에서 열린 씨앗페 첫 번째 전시. 50여 명의 화가·뮤지션·무용가가 참여해 예술인 상호부조 기금 3,400만 원을 조성했습니다.',
+    startDate: '2023-03-21',
+    endDate: '2023-03-31',
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: isEnglish ? 'Indiepress Gallery' : '인디프레스 갤러리',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: isEnglish ? '31 Hyoja-ro, Jongno-gu' : '서울시 종로구 효자로 31',
+        addressLocality: isEnglish ? 'Seoul' : '서울시',
+        addressCountry: 'KR',
+      },
     },
+    organizer: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
+      url: SITE_URL,
+    },
+    isAccessibleForFree: true,
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    url: buildLocaleUrl('/archive/2023', locale),
   };
 
   if (locale === 'en') {
     return (
       <>
-        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
+        <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, saf2026Schema, saf2023Schema]} />
         <PageHero
           title="About SAF"
           description={`A platform where each artwork becomes a fellow artist's next month of practice. ${artistCount} solidarity artists, ${LOAN_COUNT} low-interest loans, 95% repayment — operated by Korea Smart Cooperative.`}
@@ -488,7 +526,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   // ── Korean version ──────────────────────────────────────────────
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema]} />
+      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, saf2026Schema, saf2023Schema]} />
       <PageHero
         title="씨앗페 소개"
         description={`작품 한 점이 동료 작가의 다음 한 달이 되는 플랫폼. ${artistCount}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 한국스마트협동조합이 운영해온 예술인 상호부조의 구조를 소개합니다.`}
