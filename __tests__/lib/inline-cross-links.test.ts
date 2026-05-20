@@ -32,8 +32,6 @@ describe('generateInlineCrossLinks', () => {
         currentSlug: 's1',
         sameCategoryStories: [],
         isEnglish: false,
-        categoryLabelKo: '카테고리',
-        categoryLabelEn: 'Category',
       })
     ).toBe('');
   });
@@ -44,8 +42,6 @@ describe('generateInlineCrossLinks', () => {
         currentSlug: 's1',
         sameCategoryStories: [story({ slug: 's1' })],
         isEnglish: false,
-        categoryLabelKo: '카테고리',
-        categoryLabelEn: 'Category',
       })
     ).toBe('');
   });
@@ -59,10 +55,8 @@ describe('generateInlineCrossLinks', () => {
         story({ slug: 's3', title: '세 번째 글', excerpt: '세 번째 요약' }),
       ],
       isEnglish: false,
-      categoryLabelKo: '컬렉팅 시작하기',
-      categoryLabelEn: 'Buying Guide',
     });
-    expect(result).toContain('## 컬렉팅 시작하기 다음 글');
+    expect(result).toContain('## 함께 읽으면 좋은 글');
     expect(result).toContain('[두 번째 글](/stories/s2) — 두 번째 요약');
     expect(result).toContain('[세 번째 글](/stories/s3) — 세 번째 요약');
     expect(result).not.toContain('현재 글');
@@ -75,10 +69,8 @@ describe('generateInlineCrossLinks', () => {
         story({ slug: 's2', title: 'Korean', title_en: 'English Title', excerpt_en: 'English ex' }),
       ],
       isEnglish: true,
-      categoryLabelKo: '컬렉팅 시작하기',
-      categoryLabelEn: 'Buying Guide',
     });
-    expect(result).toContain('## More in Buying Guide');
+    expect(result).toContain('## Related reading');
     expect(result).toContain('[English Title](/en/stories/s2) — English ex');
   });
 });

@@ -31,6 +31,7 @@ import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 import { extractFaqFromBody, generateFaqPageSchema } from '@/lib/markdown-faq';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { generateInlineCrossLinks, insertCrossLinksBeforeFinalCta } from '@/lib/inline-cross-links';
+import { selectRelatedStories } from '@/lib/story-clusters';
 
 export const dynamic = 'force-static';
 export const revalidate = 1800;
@@ -197,11 +198,9 @@ export default async function StoryDetailPage({ params }: Props) {
     locale,
   });
 
-  // Related stories (same category, exclude current)
+  // Related stories — cluster-aware: cluster siblings first, category fallback
   const allStories = await getSupabaseStories();
-  const relatedStories = allStories
-    .filter((s) => s.category === story.category && s.slug !== story.slug)
-    .slice(0, 3);
+  const relatedStories = selectRelatedStories(story.slug, story.category, allStories, 3);
 
   // Related artworks
   // 우선순위: 본문에 직접 인용된 작품 → 작가 태그(artist-story) → 최신 판매중 작품 fallback
@@ -271,15 +270,14 @@ export default async function StoryDetailPage({ params }: Props) {
         })
       : null;
 
-  // 본문 끝에 같은 카테고리 다른 글 추천 inline markdown 자동 추가.
+  // 본문 끝에 관련 글 추천 inline markdown 자동 추가.
   // UI "관련 글" 카드 섹션이 이미 있지만, 본문 inline 텍스트 link는 Google·AI에 더 강한 신호.
-  const sameCategoryStories = allStories.filter((s) => s.category === story.category);
+  // cluster-aware: 같은 토픽 클러스터 형제 우선, 나머지 슬롯은 category fallback.
+  const inlineCandidates = selectRelatedStories(story.slug, story.category, allStories, 3);
   const inlineCrossLinksMarkdown = generateInlineCrossLinks({
     currentSlug: story.slug,
-    sameCategoryStories,
+    sameCategoryStories: inlineCandidates,
     isEnglish: isEn,
-    categoryLabelKo: CATEGORY_LABELS_KO[story.category],
-    categoryLabelEn: CATEGORY_LABELS_EN[story.category],
   });
   // 단순 append가 아니라 본문 마지막 CTA link/horizontal rule 직전에 삽입 →
   // "본문 → 다른 글 추천 → 마무리 CTA" 흐름을 자연스럽게 유지.

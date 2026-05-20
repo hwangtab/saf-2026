@@ -79,10 +79,15 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
     head = isEn
       ? `Your ${enOrdinal(n)} work — and two new beginnings`
       : `당신의 ${n}번째 한 점 — 그리고 두 개의 시작`;
-  } else {
+  } else if (stage === 3) {
     head = isEn
       ? `To the collector choosing their ${enOrdinal(n)}`
       : `${n}번째 작품을 알아본 컬렉터에게`;
+  } else {
+    // 매뉴얼 7.6 4단: "한국 현대미술의 길을 함께 걷고 있는 분께"
+    head = isEn
+      ? 'To those walking the path of Korean contemporary art'
+      : '한국 현대미술의 길을 함께 걷고 있는 분께';
   }
 
   const line1Label = isEn ? 'For you' : '당신에게는';
@@ -100,13 +105,20 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
     ? `${loanCountFormatted} artists have walked this path of recovery; 95% returned to open it for the next.`
     : `${loanCountFormatted}명이 이 회복의 길을 걸었고, 95%가 다음 사람을 위해 돌아왔습니다.`;
 
-  // 3단 컬렉터 인정 라인 — 매뉴얼 7.6 마무리 추가
+  // 3단·4단 마무리 — 매뉴얼 7.6
+  // M2: 3단 매뉴얼 원문 "354명 중 N번째 컬렉터입니다"는 전체 대출 건수(LOAN_COUNT)와
+  // 개인 누적 구매 N이 다른 차원이라 의미 오류 — 컬렉터 인정 톤으로 대체.
+  // 4단은 매뉴얼 verbatim: "${N}번째 작품으로 작가의 길에 추가됩니다".
   const collectorLine =
     stage === 3
       ? isEn
         ? `With ${purchaseCount} works in your collection, you're exactly the collector this platform is here for.`
         : `${purchaseCount}점을 소장한 당신은, 이 플랫폼이 함께하고 싶은 컬렉터입니다.`
-      : null;
+      : stage === 4
+        ? isEn
+          ? `Your ${enOrdinal(n)} work — each one has opened another step on an artist's path.`
+          : `${n}번째 작품으로 작가의 길에 추가됩니다.`
+        : null;
 
   return (
     <section

@@ -97,7 +97,7 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
         }
 
         if (data.alreadyPaid || data.status === 'DONE') {
-          // sessionStorage로 새로고침 중복 발화 방지 — confirmedRef는 렌더 수명에만 유효
+          // sessionStorage: 새로고침 중복 trackEvent 방지 (GA는 transaction_id로도 dedup)
           const purchaseKey = `purchase_fired_${orderId}`;
           if (!sessionStorage.getItem(purchaseKey)) {
             sessionStorage.setItem(purchaseKey, '1');
@@ -106,6 +106,13 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
               value: Number(amount),
               currency,
             });
+          }
+          // localStorage 멱등 가드 — 다른 탭·시크릿 reopen 시 sessionStorage 우회로 중복 카운트 방지
+          // H2: 가상계좌·무통장 입금 완료는 server webhook(localStorage 접근 불가)에서 처리 —
+          // 해당 구매자의 누적 카운트는 이 경로에서 갱신 불가. 구조적 한계.
+          const countKey = `saf:purchaseCounted:${orderId}`;
+          if (!localStorage.getItem(countKey)) {
+            localStorage.setItem(countKey, '1');
             incrementPurchaseCount();
           }
           setPageState('success');

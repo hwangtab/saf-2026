@@ -17,14 +17,10 @@ import type { Story } from '@/types';
 interface CrossLinkOptions {
   /** 추천에서 제외할 현재 글 slug */
   currentSlug: string;
-  /** 같은 카테고리 글 풀 */
+  /** 추천 후보 글 풀 (이미 cluster-aware 정렬된 상태) */
   sameCategoryStories: readonly Story[];
   /** 영문 여부 */
   isEnglish: boolean;
-  /** 같은 카테고리 한글 라벨 (예: '컬렉팅 시작하기') */
-  categoryLabelKo: string;
-  /** 같은 카테고리 영문 라벨 */
-  categoryLabelEn: string;
   /** 최대 추천 글 수 (기본 3) */
   limit?: number;
 }
@@ -34,24 +30,17 @@ interface CrossLinkOptions {
  * 매칭 글이 없으면 빈 문자열 반환.
  */
 export function generateInlineCrossLinks(opts: CrossLinkOptions): string {
-  const {
-    currentSlug,
-    sameCategoryStories,
-    isEnglish,
-    categoryLabelKo,
-    categoryLabelEn,
-    limit = 3,
-  } = opts;
+  const { currentSlug, sameCategoryStories, isEnglish, limit = 3 } = opts;
 
   const candidates = sameCategoryStories.filter((s) => s.slug !== currentSlug).slice(0, limit);
 
   if (candidates.length === 0) return '';
 
-  const heading = isEnglish ? `## More in ${categoryLabelEn}` : `## ${categoryLabelKo} 다음 글`;
+  const heading = isEnglish ? `## Related reading` : `## 함께 읽으면 좋은 글`;
 
   const intro = isEnglish
-    ? `If this piece helped, the SAF Magazine has more in the same series:`
-    : `이 글이 도움이 되셨다면, 같은 시리즈의 다음 글들도 함께 읽어보세요:`;
+    ? `If this piece helped, you may also enjoy these related articles:`
+    : `이 글이 도움이 되셨다면, 함께 읽으면 좋은 글들을 소개합니다:`;
 
   const linkPathPrefix = isEnglish ? '/en/stories/' : '/stories/';
 
