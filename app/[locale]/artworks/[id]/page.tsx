@@ -47,6 +47,7 @@ import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
+import { guideStoryHref, SIZE_GUIDE_SLUG, EDITION_GUIDE_SLUG } from '@/lib/artwork-glossary-links';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -492,7 +493,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   {localizedSize && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('size')}</span>
-                      <span className="text-charcoal">{localizedSize}</span>
+                      <span className="text-charcoal">
+                        {localizedSize}{' '}
+                        <Link
+                          href={guideStoryHref(SIZE_GUIDE_SLUG, locale === 'en')}
+                          className="text-xs text-primary hover:underline"
+                        >
+                          {locale === 'en' ? 'How big is this? →' : '이 크기 읽는 법 →'}
+                        </Link>
+                      </span>
                     </>
                   )}
 
@@ -508,7 +517,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   {localizedEdition && (
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('edition')}</span>
-                      <span className="text-charcoal">{localizedEdition}</span>
+                      <span className="text-charcoal">
+                        {localizedEdition}{' '}
+                        <Link
+                          href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
+                          className="text-xs text-primary hover:underline"
+                        >
+                          {locale === 'en' ? "What's an edition? →" : '에디션이란? →'}
+                        </Link>
+                      </span>
                     </>
                   )}
 
