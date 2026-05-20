@@ -564,6 +564,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     </>
                   )}
                 </div>
+                <div className="mt-4 pt-3 border-t border-gray-100">
+                  <Link href="/stories/guide" className="text-xs text-primary hover:underline">
+                    {t('fullGuideLink')}
+                  </Link>
+                </div>
               </div>
 
               {/* Artist Profile */}
