@@ -115,7 +115,8 @@ export async function generateMetadata({
       locale === 'en'
         ? 'Park Saeng-gwang, Korean drawings, pencil drawings, master painter, obangsaek, Korean art exhibition'
         : '박생광, 박생광 드로잉, 한국화 거장, 오방색, 채색화, 박생광 드로잉전, 박생광 특별전, 한국 현대미술',
-    alternates: createLocaleAlternates('/special/park-saenggwang', locale),
+    alternates: createLocaleAlternates('/special/park-saenggwang', locale, true),
+    ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       url: pageUrl,

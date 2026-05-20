@@ -98,7 +98,8 @@ export async function generateMetadata({
       locale === 'en'
         ? 'Lee Chul-soo artist, Korean woodblock prints, Korean calligraphy art, prints and brushwork, minjung art'
         : '이철수 화가, 한국 목판화, 이철수 판화, 서화, 민중미술, 씨앗페 온라인',
-    alternates: createLocaleAlternates('/special/lee-cheolsoo', locale),
+    alternates: createLocaleAlternates('/special/lee-cheolsoo', locale, true),
+    ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       url: pageUrl,

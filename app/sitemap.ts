@@ -206,6 +206,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.35,
       lastModified: new Date('2026-01-01'),
     },
+    {
+      path: '/refund-policy',
+      changeFrequency: 'yearly',
+      priority: 0.4,
+      lastModified: new Date('2026-01-01'),
+    },
   ];
 
   // 한국어 단일 발행 + EN_INDEXABLE_PAGES 화이트리스트는 ko/en 양방향 alternates

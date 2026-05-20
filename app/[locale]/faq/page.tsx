@@ -41,6 +41,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const copy = PAGE_COPY[locale];
   const pageUrl = locale === 'en' ? `${SITE_URL}/en/faq` : `${SITE_URL}/faq`;
 
+  // EN_INDEXABLE 미등재 — KO canonical 통합 + noindex
+  if (locale === 'en') {
+    const koCanonical = `${SITE_URL}/faq`;
+    return {
+      title: copy.title,
+      description: copy.description,
+      alternates: {
+        canonical: koCanonical,
+        languages: { 'ko-KR': koCanonical, 'x-default': koCanonical },
+      },
+      openGraph: { title: copy.title, description: copy.description, url: pageUrl },
+      robots: { index: false, follow: true },
+    };
+  }
+
   return {
     title: copy.title,
     description: copy.description,
@@ -48,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: pageUrl,
       languages: {
         'ko-KR': `${SITE_URL}/faq`,
-        'en-US': `${SITE_URL}/en/faq`,
+        'x-default': `${SITE_URL}/faq`,
       },
     },
     openGraph: {

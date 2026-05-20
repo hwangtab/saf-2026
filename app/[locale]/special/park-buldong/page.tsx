@@ -98,7 +98,8 @@ export async function generateMetadata({
       locale === 'en'
         ? 'Park Bul-ttong artist, Korean political art, Korean collage art, minjung misul, political collage'
         : '박불똥 화가, 한국 정치 미술, 콜라주 아트, 민중미술, 정치 콜라주, 씨앗페 온라인',
-    alternates: createLocaleAlternates('/special/park-buldong', locale),
+    alternates: createLocaleAlternates('/special/park-buldong', locale, true),
+    ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       url: pageUrl,

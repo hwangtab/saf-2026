@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { SITE_URL, CAMPAIGN, MERCHANT_POLICIES, CONTACT } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
+import { createLocaleAlternates } from '@/lib/locale-alternates';
 import { formatArtistName } from '@/lib/utils';
 import { getArtformForSchema, classifyArtworkMedium } from '@/lib/art-taxonomy';
 import { getCategoryLabel } from '@/lib/artwork-category';
@@ -125,6 +126,9 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
   return {
     ...baseMetadata,
+    // koOnly=true: KO canonical 통합 — EN 작품 페이지(noindex+크롤차단)가 en-US hreflang으로
+    // 잘못 발행되는 문제 수정. KO 페이지에서 무효 hreflang 클러스터 제거.
+    alternates: createLocaleAlternates(`/artworks/${artwork.id}`, locale, true),
     keywords: keywordBase.filter((k): k is string => Boolean(k)),
     // 영문 작품 detail은 noindex — 348개 × en/ko = thin/duplicate content risk.
     // 작품 description_en이 충실치 않은 경우 Google "Crawled, not indexed" 판정 자주 발생.

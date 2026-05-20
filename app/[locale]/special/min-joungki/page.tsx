@@ -96,7 +96,8 @@ export async function generateMetadata({
       locale === 'en'
         ? 'Min Joung-ki artist, Korean landscape painting, minjung misul, Reality and Utterance, Korean realism'
         : '민정기 화가, 한국 풍경화, 민중미술, 현실과 발언, 한국 현실주의 회화, 씨앗페 온라인',
-    alternates: createLocaleAlternates('/special/min-joungki', locale),
+    alternates: createLocaleAlternates('/special/min-joungki', locale, true),
+    ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       url: pageUrl,
