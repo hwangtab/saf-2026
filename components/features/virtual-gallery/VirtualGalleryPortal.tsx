@@ -222,7 +222,7 @@ export default function VirtualGalleryPortal({
 
           {/* Bottom hint */}
           {webglSupported && (
-            <div className="px-4 py-2 bg-gray-900/95 border-t border-white/10 text-white/40 text-xs text-center">
+            <div className="px-4 py-2 bg-gray-900/95 border-t border-white/10 text-white/60 text-xs text-center">
               {isMobile ? copy.controlHintMobile : copy.controlHint}
             </div>
           )}
