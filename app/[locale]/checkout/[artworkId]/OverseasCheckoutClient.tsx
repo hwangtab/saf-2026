@@ -17,7 +17,7 @@ import {
   createBankTransferOrder,
 } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
-import type { BuyerInfo } from './BuyerInfoForm';
+import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
 
@@ -133,16 +133,13 @@ export default function OverseasCheckoutClient({
   const [paymentChoice, setPaymentChoice] = useState<EnPaymentChoice>('PAYPAL');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const buyerInfoRef = useRef<BuyerInfo | null>(null);
+  const buyerInfoRef = useRef<BuyerInfoHandle | null>(null);
 
   async function handlePayment() {
     setError(null);
 
-    const buyerInfo = buyerInfoRef.current;
-    if (!buyerInfo) {
-      setError(t('errorBuyerInfoRequired'));
-      return;
-    }
+    const handle = buyerInfoRef.current;
+    if (!handle || !handle.validate()) return; // 폼이 인라인 에러+첫 필드 focus 처리
 
     const {
       buyerName,
@@ -154,20 +151,7 @@ export default function OverseasCheckoutClient({
       shippingAddressDetail,
       shippingPostalCode,
       shippingMemo,
-    } = buyerInfo;
-
-    if (!buyerName || !buyerEmail || !buyerPhone) {
-      setError(t('errorBuyerFieldsRequired'));
-      return;
-    }
-    if (!shippingAddress || !shippingPostalCode || !shippingAddressDetail) {
-      setError(t('errorShippingAddressRequired'));
-      return;
-    }
-    if (!shippingName || !shippingPhone) {
-      setError(t('errorRecipientRequired'));
-      return;
-    }
+    } = handle.getValues();
 
     setSubmitting(true);
     let createdOrderNo: string | null = null;
@@ -283,8 +267,8 @@ export default function OverseasCheckoutClient({
       await new Promise(() => {});
     } catch (err: unknown) {
       if (createdOrderNo) {
-        cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '').catch(
-          (cancelErr) => console.error('[checkout] cancelPendingOrder failed:', cancelErr)
+        cancelPendingOrder(createdOrderNo, buyerEmail).catch((cancelErr) =>
+          console.error('[checkout] cancelPendingOrder failed:', cancelErr)
         );
       }
       const errorObj = err as { code?: string; message?: string };

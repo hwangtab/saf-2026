@@ -11,7 +11,7 @@ import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
 import { createOrder, cancelPendingOrder, createBankTransferOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
-import type { BuyerInfo } from './BuyerInfoForm';
+import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
 import { trackEvent } from '@/lib/analytics/track';
@@ -112,7 +112,7 @@ export default function CheckoutClient({
   const [paymentChoice, setPaymentChoice] = useState<PaymentChoice>('CARD');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const buyerInfoRef = useRef<BuyerInfo | null>(null);
+  const buyerInfoRef = useRef<BuyerInfoHandle | null>(null);
 
   useEffect(() => {
     trackEvent('begin_checkout', {
@@ -129,11 +129,8 @@ export default function CheckoutClient({
   async function handlePayment() {
     setError(null);
 
-    const buyerInfo = buyerInfoRef.current;
-    if (!buyerInfo) {
-      setError(t('errorBuyerInfoRequired'));
-      return;
-    }
+    const handle = buyerInfoRef.current;
+    if (!handle || !handle.validate()) return; // 폼이 인라인 에러+첫 필드 focus 처리
 
     const {
       buyerName,
@@ -145,20 +142,7 @@ export default function CheckoutClient({
       shippingAddressDetail,
       shippingPostalCode,
       shippingMemo,
-    } = buyerInfo;
-
-    if (!buyerName || !buyerEmail || !buyerPhone) {
-      setError(t('errorBuyerFieldsRequired'));
-      return;
-    }
-    if (!shippingAddress || !shippingPostalCode || !shippingAddressDetail) {
-      setError(t('errorShippingAddressRequired'));
-      return;
-    }
-    if (!shippingName || !shippingPhone) {
-      setError(t('errorRecipientRequired'));
-      return;
-    }
+    } = handle.getValues();
 
     setSubmitting(true);
     let createdOrderNo: string | null = null;
@@ -256,8 +240,8 @@ export default function CheckoutClient({
       await new Promise(() => {});
     } catch (err: unknown) {
       if (createdOrderNo) {
-        cancelPendingOrder(createdOrderNo, buyerInfoRef.current?.buyerEmail ?? '').catch(
-          (cancelErr) => console.error('[checkout] cancelPendingOrder failed:', cancelErr)
+        cancelPendingOrder(createdOrderNo, buyerEmail).catch((cancelErr) =>
+          console.error('[checkout] cancelPendingOrder failed:', cancelErr)
         );
       }
       // SDK v2 에러는 { code, message } 형태. USER_CANCEL은 사용자가 결제창 닫은 경우라 에러 표시 생략.
@@ -413,7 +397,10 @@ export default function CheckoutClient({
 
         {/* Error */}
         {error && (
-          <div className="mb-4 rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y">
+          <div
+            role="alert"
+            className="mb-4 rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y"
+          >
             {error}
           </div>
         )}

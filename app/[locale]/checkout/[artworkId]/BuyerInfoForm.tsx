@@ -16,6 +16,12 @@ export interface BuyerInfo {
   shippingMemo: string;
 }
 
+export interface BuyerInfoHandle {
+  getValues: () => BuyerInfo;
+  /** 필수 필드 검증 + 첫 오류 필드 스크롤·포커스. 통과하면 true 반환. */
+  validate: () => boolean;
+}
+
 interface FormState {
   buyerName: string;
   buyerEmail: string;
@@ -27,6 +33,8 @@ interface FormState {
   shippingPostalCode: string;
   shippingMemo: string;
 }
+
+type FormErrors = Partial<Record<keyof FormState, string>>;
 
 declare global {
   interface Window {
@@ -49,11 +57,39 @@ declare global {
 
 // iOS Safari auto-zoom 회피를 위해 input은 text-base(16px) — text-sm(14px)이면
 // focus 시 viewport가 자동 줌됨. 라벨은 14px 유지(zoom 트리거 아님).
-const inputClass =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-base placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary';
+const inputBase =
+  'w-full rounded-lg border px-3 py-2 text-base placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary transition-colors';
 const labelClass = 'block text-sm font-medium text-charcoal mb-1';
 
-const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// 필드 key → DOM id 매핑 (기존 id 재사용)
+const FIELD_ID: Record<keyof FormState, string> = {
+  buyerName: 'checkout-buyer-name',
+  buyerEmail: 'checkout-buyer-email',
+  buyerPhone: 'checkout-buyer-phone',
+  shippingName: 'checkout-shipping-name',
+  shippingPhone: 'checkout-shipping-phone',
+  shippingAddress: 'checkout-shipping-address',
+  shippingPostalCode: 'checkout-shipping-postal',
+  shippingAddressDetail: 'checkout-shipping-detail',
+  shippingMemo: 'checkout-shipping-memo',
+};
+
+function fieldInputClass(error: string | undefined) {
+  return `${inputBase} ${error ? 'border-danger focus-visible:ring-danger focus-visible:border-danger' : 'border-gray-300'}`;
+}
+
+function FieldError({ msg, id }: { msg: string | undefined; id: string }) {
+  if (!msg) return null;
+  return (
+    <p id={id} className="mt-1 text-sm text-danger-a11y" role="alert">
+      {msg}
+    </p>
+  );
+}
+
+const BuyerInfoForm = forwardRef<BuyerInfoHandle, object>((_props, ref) => {
   const t = useTranslations('checkout');
   const locale = useLocale();
   const langAttr = locale === 'ko' ? 'ko' : 'en';
@@ -74,12 +110,49 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
   });
   const [sameAsBuyer, setSameAsBuyer] = useState(true);
   const [addressLayerOpen, setAddressLayerOpen] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
   const addressLayerRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
-    ...form,
-    shippingName: sameAsBuyer ? form.buyerName : form.shippingName,
-    shippingPhone: sameAsBuyer ? form.buyerPhone : form.shippingPhone,
+    getValues: () => ({
+      ...form,
+      shippingName: sameAsBuyer ? form.buyerName : form.shippingName,
+      shippingPhone: sameAsBuyer ? form.buyerPhone : form.shippingPhone,
+    }),
+    validate: () => {
+      const next: FormErrors = {};
+
+      if (!form.buyerName.trim()) next.buyerName = t('errorFieldName');
+      if (!form.buyerEmail.trim()) {
+        next.buyerEmail = t('errorFieldEmail');
+      } else if (!EMAIL_RE.test(form.buyerEmail.trim())) {
+        next.buyerEmail = t('errorFieldEmailInvalid');
+      }
+      if (!form.buyerPhone.trim()) next.buyerPhone = t('errorFieldPhone');
+
+      if (!sameAsBuyer) {
+        if (!form.shippingName.trim()) next.shippingName = t('errorFieldName');
+        if (!form.shippingPhone.trim()) next.shippingPhone = t('errorFieldPhone');
+      }
+
+      if (!form.shippingAddress.trim()) next.shippingAddress = t('errorFieldAddress');
+      if (!form.shippingPostalCode.trim()) next.shippingPostalCode = t('errorFieldPostal');
+      if (!form.shippingAddressDetail.trim())
+        next.shippingAddressDetail = t('errorFieldAddressDetail');
+
+      setErrors(next);
+
+      const firstErrorKey = (Object.keys(next) as (keyof FormState)[]).find((k) => next[k]);
+      if (firstErrorKey) {
+        const el = document.getElementById(FIELD_ID[firstErrorKey]);
+        if (el) {
+          el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          el.focus({ preventScroll: true });
+        }
+        return false;
+      }
+      return true;
+    },
   }));
 
   // Daum Postcode 스크립트 mount 시 미리 로드.
@@ -109,6 +182,11 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
           shippingAddress: selectedAddress,
           shippingPostalCode: data.zonecode,
         }));
+        setErrors((prev) => ({
+          ...prev,
+          shippingAddress: undefined,
+          shippingPostalCode: undefined,
+        }));
         setAddressLayerOpen(false);
         setTimeout(() => detailRef.current?.focus(), 200);
       },
@@ -120,11 +198,8 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
   function handleChange(key: keyof FormState) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm((prev) => ({ ...prev, [key]: e.target.value }));
+      if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
     };
-  }
-
-  function handleAddressSearch() {
-    setAddressLayerOpen(true);
   }
 
   return (
@@ -133,7 +208,6 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
       {addressLayerOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4"
-          role="dialog"
           aria-modal="true"
           aria-label={t('shippingAddress')}
         >
@@ -165,12 +239,14 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               name="name"
               autoComplete="name"
               lang={langAttr}
-              className={inputClass}
+              className={fieldInputClass(errors.buyerName)}
               value={form.buyerName}
               onChange={handleChange('buyerName')}
-              required
+              aria-invalid={!!errors.buyerName}
+              aria-describedby={errors.buyerName ? 'err-checkout-buyer-name' : undefined}
               placeholder={t('placeholderName')}
             />
+            <FieldError msg={errors.buyerName} id="err-checkout-buyer-name" />
           </div>
           <div>
             <label htmlFor="checkout-buyer-email" className={labelClass}>
@@ -181,12 +257,14 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               type="email"
               name="email"
               autoComplete="email"
-              className={inputClass}
+              className={fieldInputClass(errors.buyerEmail)}
               value={form.buyerEmail}
               onChange={handleChange('buyerEmail')}
-              required
+              aria-invalid={!!errors.buyerEmail}
+              aria-describedby={errors.buyerEmail ? 'err-checkout-buyer-email' : undefined}
               placeholder="example@email.com"
             />
+            <FieldError msg={errors.buyerEmail} id="err-checkout-buyer-email" />
           </div>
           <div>
             <label htmlFor="checkout-buyer-phone" className={labelClass}>
@@ -197,12 +275,14 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               type="tel"
               name="tel"
               autoComplete="tel"
-              className={inputClass}
+              className={fieldInputClass(errors.buyerPhone)}
               value={form.buyerPhone}
               onChange={handleChange('buyerPhone')}
-              required
+              aria-invalid={!!errors.buyerPhone}
+              aria-describedby={errors.buyerPhone ? 'err-checkout-buyer-phone' : undefined}
               placeholder={t('placeholderPhone')}
             />
+            <FieldError msg={errors.buyerPhone} id="err-checkout-buyer-phone" />
           </div>
         </div>
       </div>
@@ -234,12 +314,14 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                   name="shipping-name"
                   autoComplete="shipping name"
                   lang={langAttr}
-                  className={inputClass}
+                  className={fieldInputClass(errors.shippingName)}
                   value={form.shippingName}
                   onChange={handleChange('shippingName')}
-                  required
+                  aria-invalid={!!errors.shippingName}
+                  aria-describedby={errors.shippingName ? 'err-checkout-shipping-name' : undefined}
                   placeholder={t('placeholderName')}
                 />
+                <FieldError msg={errors.shippingName} id="err-checkout-shipping-name" />
               </div>
               <div>
                 <label htmlFor="checkout-shipping-phone" className={labelClass}>
@@ -250,12 +332,16 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
                   type="tel"
                   name="shipping-tel"
                   autoComplete="shipping tel"
-                  className={inputClass}
+                  className={fieldInputClass(errors.shippingPhone)}
                   value={form.shippingPhone}
                   onChange={handleChange('shippingPhone')}
-                  required
+                  aria-invalid={!!errors.shippingPhone}
+                  aria-describedby={
+                    errors.shippingPhone ? 'err-checkout-shipping-phone' : undefined
+                  }
                   placeholder={t('placeholderPhone')}
                 />
+                <FieldError msg={errors.shippingPhone} id="err-checkout-shipping-phone" />
               </div>
             </>
           )}
@@ -266,56 +352,74 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
             </label>
             {isKorean ? (
               // 한국 사용자: Daum 우편번호 API로 주소 선택 (readOnly)
-              <div className="flex gap-2">
+              <>
+                <div className="flex gap-2">
+                  <input
+                    id="checkout-shipping-address"
+                    type="text"
+                    className={fieldInputClass(errors.shippingAddress)}
+                    value={form.shippingAddress}
+                    readOnly
+                    placeholder={t('placeholderAddress')}
+                    aria-invalid={!!errors.shippingAddress}
+                    aria-describedby={
+                      errors.shippingAddress ? 'err-checkout-shipping-address' : undefined
+                    }
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => setAddressLayerOpen(true)}
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                  >
+                    {t('searchAddress')}
+                  </Button>
+                </div>
+                <FieldError msg={errors.shippingAddress} id="err-checkout-shipping-address" />
+              </>
+            ) : (
+              // 영문 사용자: 자유 입력
+              <>
                 <input
                   id="checkout-shipping-address"
                   type="text"
-                  className={inputClass}
+                  name="address"
+                  autoComplete="shipping street-address"
+                  className={fieldInputClass(errors.shippingAddress)}
                   value={form.shippingAddress}
-                  readOnly
-                  placeholder={t('placeholderAddress')}
+                  onChange={handleChange('shippingAddress')}
+                  aria-invalid={!!errors.shippingAddress}
+                  aria-describedby={
+                    errors.shippingAddress ? 'err-checkout-shipping-address' : undefined
+                  }
+                  placeholder="123 Main St, City, State"
                 />
-                <Button
-                  type="button"
-                  onClick={handleAddressSearch}
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0"
-                >
-                  {t('searchAddress')}
-                </Button>
-              </div>
-            ) : (
-              // 영문 사용자: 자유 입력
-              <input
-                id="checkout-shipping-address"
-                type="text"
-                name="address"
-                autoComplete="shipping street-address"
-                className={inputClass}
-                value={form.shippingAddress}
-                onChange={handleChange('shippingAddress')}
-                required
-                placeholder="123 Main St, City, State"
-              />
+                <FieldError msg={errors.shippingAddress} id="err-checkout-shipping-address" />
+              </>
             )}
           </div>
 
           <div>
             <label htmlFor="checkout-shipping-postal" className={labelClass}>
-              {t('shippingPostalCode')}
+              {t('shippingPostalCode')} <span className="text-danger">*</span>
             </label>
             <input
               id="checkout-shipping-postal"
               type="text"
               name="postal-code"
               autoComplete="postal-code"
-              className={inputClass}
+              className={fieldInputClass(errors.shippingPostalCode)}
               value={form.shippingPostalCode}
               readOnly={isKorean}
               onChange={isKorean ? undefined : handleChange('shippingPostalCode')}
+              aria-invalid={!!errors.shippingPostalCode}
+              aria-describedby={
+                errors.shippingPostalCode ? 'err-checkout-shipping-postal' : undefined
+              }
               placeholder={isKorean ? t('shippingPostalCode') : '12345 / SW1A 1AA'}
             />
+            <FieldError msg={errors.shippingPostalCode} id="err-checkout-shipping-postal" />
           </div>
 
           <div>
@@ -330,12 +434,17 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               autoComplete="address-line2"
               lang={langAttr}
               inputMode="text"
-              className={inputClass}
+              className={fieldInputClass(errors.shippingAddressDetail)}
               value={form.shippingAddressDetail}
               onChange={handleChange('shippingAddressDetail')}
               onFocus={(e) => e.currentTarget.setAttribute('lang', langAttr)}
+              aria-invalid={!!errors.shippingAddressDetail}
+              aria-describedby={
+                errors.shippingAddressDetail ? 'err-checkout-shipping-detail' : undefined
+              }
               placeholder={t('placeholderAddressDetail')}
             />
+            <FieldError msg={errors.shippingAddressDetail} id="err-checkout-shipping-detail" />
           </div>
 
           <div>
@@ -347,7 +456,7 @@ const BuyerInfoForm = forwardRef<BuyerInfo | null, object>((_props, ref) => {
               type="text"
               lang={langAttr}
               inputMode="text"
-              className={inputClass}
+              className={fieldInputClass(errors.shippingMemo)}
               value={form.shippingMemo}
               onChange={handleChange('shippingMemo')}
               onFocus={(e) => e.currentTarget.setAttribute('lang', langAttr)}
