@@ -70,11 +70,11 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
           <h3 className="text-sm font-semibold text-gray-900">
             {titleMapForEnglish[document.title] || 'Legal Document'}
           </h3>
-          <p className="text-gray-500">
+          <p className="text-charcoal-soft">
             {copy.effectiveDate}: {effectiveDateDisplay}
           </p>
           {document.version && (
-            <p className="text-gray-500">
+            <p className="text-charcoal-soft">
               {copy.version}: {document.version}
             </p>
           )}
@@ -97,11 +97,11 @@ export function LegalDocumentContent({ document }: LegalDocumentContentProps) {
     <article className="space-y-4 text-xs leading-6 text-charcoal">
       <header className="space-y-1 border-b border-gray-200 pb-3">
         <h3 className="text-sm font-semibold text-gray-900">{document.title}</h3>
-        <p className="text-gray-500">
+        <p className="text-charcoal-soft">
           {copy.effectiveDate}: {effectiveDateDisplay}
         </p>
         {document.version && (
-          <p className="text-gray-500">
+          <p className="text-charcoal-soft">
             {copy.version}: {document.version}
           </p>
         )}

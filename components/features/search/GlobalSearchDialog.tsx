@@ -159,7 +159,7 @@ export default function GlobalSearchDialog({
             <button
               type="button"
               onClick={() => onQueryChange('')}
-              className="flex-shrink-0 p-1 text-gray-400 hover:text-charcoal transition-colors rounded"
+              className="flex-shrink-0 p-1 text-charcoal-soft hover:text-charcoal transition-colors rounded"
               aria-label={t('clear')}
             >
               <svg
@@ -179,7 +179,7 @@ export default function GlobalSearchDialog({
               </svg>
             </button>
           ) : (
-            <span className="hidden sm:block flex-shrink-0 text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded font-mono">
+            <span className="hidden sm:block flex-shrink-0 text-xs text-charcoal-muted bg-gray-100 px-1.5 py-0.5 rounded font-mono">
               ESC
             </span>
           )}

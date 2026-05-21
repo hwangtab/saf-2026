@@ -36,7 +36,7 @@ export default function FAQList({ items }: FAQListProps) {
               <span className="font-medium text-lg text-charcoal">{item.question}</span>
               <span
                 className={cn(
-                  'text-gray-400 transition-transform duration-300 transform',
+                  'text-charcoal-soft transition-transform duration-300 transform',
                   isOpen && 'rotate-180'
                 )}
               >

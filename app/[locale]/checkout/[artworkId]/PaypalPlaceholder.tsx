@@ -26,7 +26,7 @@ export default async function PaypalPlaceholder({ artworkId, artworkTitle, local
           <p className="text-sm text-gray-600 mb-2">
             <span className="font-semibold text-charcoal">{artworkTitle}</span>
           </p>
-          <p className="text-sm text-gray-500 mb-8">{t('description')}</p>
+          <p className="text-sm text-charcoal-soft mb-8">{t('description')}</p>
 
           <div className="flex flex-col gap-3">
             <LinkButton
@@ -40,7 +40,7 @@ export default async function PaypalPlaceholder({ artworkId, artworkTitle, local
             </LinkButton>
             <Link
               href={`/artworks/${artworkId}`}
-              className="text-sm text-gray-500 underline hover:text-charcoal"
+              className="text-sm text-charcoal-soft underline hover:text-charcoal"
             >
               {t('backCta')}
             </Link>

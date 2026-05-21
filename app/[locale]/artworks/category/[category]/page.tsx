@@ -494,7 +494,7 @@ async function renderCategoryPage({ params }: Props) {
                 ))}
                 <Link
                   href="/stories"
-                  className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-primary/20 bg-primary-surface text-primary hover:bg-primary-surface transition-colors"
+                  className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-primary/20 bg-primary-surface text-primary-strong hover:bg-primary-surface transition-colors"
                 >
                   {isEnglish ? 'Magazine' : '매거진'}
                 </Link>

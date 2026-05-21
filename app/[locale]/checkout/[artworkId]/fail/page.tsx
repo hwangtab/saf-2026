@@ -88,7 +88,7 @@ export default async function FailPage({ params, searchParams }: Props) {
             </LinkButton>
             <Link
               href={`/artworks/${artworkId}`}
-              className="text-sm text-gray-500 underline hover:text-charcoal"
+              className="text-sm text-charcoal-soft underline hover:text-charcoal"
             >
               {t('backToArtworkPage')}
             </Link>
