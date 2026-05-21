@@ -1,5 +1,145 @@
 [
   {
+    "hash": "148b6b59",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "블라인드 스팟 2라운드 WCAG AA 색대비 10개 위반 수정",
+    "summary": "검색 다이얼로그·카테고리 필터·에러뷰·FAQ·약관·결제 실패·로그아웃 버튼 색대비 수정",
+    "body": "- artworks/category page: 매거진 필터 링크 text-primary on bg-primary-surface → text-primary-strong (3.94:1→6.98:1)\n- GlobalSearchDialog: X버튼 text-gray-400 → text-charcoal-soft (2.86→4.84:1, SC 1.4.11); ESC 힌트 text-gray-400 → text-charcoal-muted (2.7→6.60:1)\n- ErrorView: 보조 버튼 text-primary → text-primary-strong (4.12→6.98:1)\n- GalleryEmptyState: 설명 text-gray-500 → text-charcoal-soft (4.37→4.84:1)\n- FAQList: chevron text-gray-400 → text-charcoal-soft (2.86→4.84:1, SC 1.4.11)\n- LegalDocumentContent: 메타 text-gray-500 4곳 → text-charcoal-soft\n- PaypalPlaceholder + checkout/fail/page: text-gray-500 → text-charcoal-soft\n- SignOutButton: text-gray-500 → text-charcoal-soft",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "df7fa68e",
+    "type": "feat",
+    "scope": "artwork-detail",
+    "subject": "작가 인용 [7] 섹션 신설 — quote/quote_en 필드 + admin 입력 + 상세페이지 인용 블록 (매뉴얼 Part 7 + 12.4)",
+    "summary": "작품 상세 페이지에 매뉴얼 [7] '작가의 1~2줄 한 마디' 인용 섹션 추가. quote/quote_en Supabase 컬럼 마이그레이션, admin 편집 textarea, 상세페이지 기울임꼴 인용 블록([6] 작가 소개 직후) 구현.",
+    "body": "- supabase/migrations: artworks.quote/quote_en text 컬럼 추가\n- types: BaseArtwork + supabase.ts Row/Insert/Update 3블록 반영\n- lib/supabase-data: ARTWORK_SELECT_COLUMNS + ArtworkRow + mapArtworkRow\n- admin/artwork-edit-form: quote/quote_en textarea 입력 추가 (한국어 전용)\n- app/actions/admin-artworks: updateArtworkDetails + createAdminArtwork quote 추출·저장\n- page.tsx: localizedQuote 변수 (EN quote_en 없으면 숨김) + blockquote 섹션\n- messages: artworkDetail.artistQuote ko/en 키 추가",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "d77f2ac3",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "블라인드 스팟 WCAG AA 색대비 전수 수정",
+    "summary": "axe 미테스트 공개 페이지·공유 컴포넌트의 WCAG AA 색대비 위반 18개 파일 전수 수정",
+    "body": "- LanguageSwitcher: inverse prop 추가 — 다크 hero에서 text-primary-soft, 라이트에서 text-primary-strong\n- DesktopNav: inverse={isInverse} 전달\n- special/oh-yoon: 다크 챕터 h1 span text-primary → text-primary-soft (#D2E1FF 8.19:1)\n- ArtworkCard: reserved light theme text-gray-500 → text-charcoal-soft\n- ArtistNoticeCard: info accent text-primary → text-primary-strong\n- artworks/[id]/page.tsx: 링크·가이드·섹션헤더 text-primary → text-primary-strong, text-gray-500 → charcoal-soft/muted (bg-primary-surface 위는 charcoal-muted 6.60:1)\n- PurchaseGuide·RecentlySoldSection·ExpandableHistory·MarkdownRenderer: text-gray-500 → text-charcoal-soft\n- stories/guide: \"더 읽기\" text-primary → text-primary-strong\n- news/page: 기사 메타 text-gray-500 → text-charcoal-soft\n- OrderLookup: 스테퍼 현재/완료 토큰, 배송조회 링크, 라벨 전수 교체\n- CheckoutClient·OverseasCheckoutClient: 선택 상태 text-primary → text-primary-strong, text-gray-500 → text-charcoal-soft\n- SuccessClient: text-gray-500 → text-charcoal-soft\n- artworks/artist·stories/category: text-gray-500 + active filter text-primary 수정",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "96ff5acf",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "T2-20 거장 Person sameAs 정합성 — 이철수 wikidata 추가·민정기 404 제거",
+    "summary": "이철수 Person 노드에 wikidata Q16183948 추가, 민정기 Person 노드의 존재하지 않는 위키백과 링크(404) 제거",
+    "body": "- lee-cheolsoo: sameAs에 wikidata Q16183948 추가 (ko.wikipedia 이철수 pageid 635962와 쌍 완성 — oh-yoon·park-saenggwang과 동일한 [wikipedia, wikidata] 패턴)\n- min-joungki: ko.wikipedia/민정기_(화가) 링크 제거 (Wikipedia API 검증: missing. ko/en wikipedia·wikidata 전 변형 missing 확인, 유효 대체 URL 없음)\n- park-buldong·park-saenggwang 무변경",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "abd2d153",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-21 작품 detail → 컬렉팅 가이드 pillar inbound 링크",
+    "summary": "작품 detail spec table 하단에 /stories/guide pillar 링크 추가",
+    "body": "— 사이트 최대 indexable 페이지 클래스(artwork detail, priority 0.8/weekly)에서\n  신설 pillar로 link equity를 직접 유입해 T2-20 pillar를 증폭.\n\n- app/[locale]/artworks/[id]/page.tsx: spec table grid 직하에 pillar 링크 1개\n  (/stories/guide, 모든 작품 노출, i18n Link auto-prefix로 EN → /en/stories/guide)\n- messages/ko.json + en.json: artworkDetail.fullGuideLink 키 추가",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "bf797708",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "e2e 미커버 페이지 잔여 WCAG AA 위반 수정",
+    "summary": "text-primary(4.12:1 미충족) → text-primary-strong(6.98:1), KO 누락분 포함 전 페이지 완료",
+    "body": "- our-proof: EN·KO 양쪽 95% 스팟, 상환율 증명 span, 비교표 셀, flow 카드 조건부 클래스\n- transparency: KO stats 셀·비교표 연도·인라인 강조\n- special: lee-cheolsoo·park-buldong·min-joungki KO 섹션 총 카운트 span\n- archive/2026: KO 알림 배너 text-primary\n- stories: [slug] 관련 아티클·figcaption, archive 월별 figcaption\n- news: figcaption·기사 인라인 강조\n- our-reality: 인용 저자명\n- artworks/[id]: text-primary/60(~2.25:1) → text-primary-strong",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "c6f49f1e",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "미커버 공개 페이지 WCAG AA 대비 위반 전체 수정",
+    "summary": "e2e 스펙 미커버 페이지(special 3종·about·transparency·archive 3종)의 text-primary 소형 텍스트 → text-primary-strong, 다크 배경 text-primary → text-white/text-primary-soft 일괄 수정",
+    "body": "- special/lee-cheolsoo, park-buldong, min-joungki: Hero 강조 text-primary → text-primary-soft(8:1 on charcoal), Gallery 작품 수 카운트 text-primary → text-white (bg-charcoal 2.81:1 실패 수정)\n- about/page.tsx: bg-charcoal CTA → text-white, bg-canvas CTA → text-primary-strong\n- transparency/page.tsx: 통계수치·연도셀·본문강조 text-primary → text-primary-strong; KO 다운로드 버튼 hover:bg-primary → hover:bg-primary-strong\n- archive/2023: 작가명·링크·영상헤더 text-primary → text-primary-strong\n- archive/2026: 종료 알림·날짜 text-primary → text-primary-strong\n- archive/2023/videos: 헤더·링크 text-primary → text-primary-strong",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "4a64fda6",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-20 컬렉팅 가이드 pillar 페이지 신설 — 정의형 cluster link equity 집중",
+    "summary": "/stories/guide pillar 페이지를 신설해 에디션·호수·판화·피그먼트 11개 spoke 글을",
+    "body": "한곳에서 묶고 내부 link equity를 집중, pos 6~10 정체 cluster 전체 순위 견인 시도.\n\n- app/[locale]/stories/guide/page.tsx 신설 (force-static, revalidate=1800)\n  · STORY_CLUSTERS 2개 그룹(editions-prints 7편, sizes-and-mediums 4편) 렌더\n  · answer-first intro 산문(에디션/호수/넘버링 직접 정의) — featured snippet 후보\n  · KO 색인 전용: koOnly hreflang, /en/stories/guide robots noindex\n  · CollectionPage + BreadcrumbList JSON-LD\n- app/sitemap.ts: /stories/guide 엔트리 추가 (priority 0.7, koAlternates)\n- app/[locale]/stories/page.tsx: guide 진입 카드 추가 (→ pillar inbound equity)\n- app/[locale]/stories/[slug]/page.tsx: cluster spoke에 pillar 역링크 추가\n  (footerLinks에 \"컬렉팅 가이드\" 3번째 항목 → spoke↔pillar 양방향 equity 순환)\n\n검증: tsc clean · 599/599 · 빌드 OK\nKO robots=index, canonical=ko, en-US hreflang 없음 ✓\nEN robots=noindex, canonical=ko ✓\nsitemap koAlternates (en-US 없음) ✓\neditions-explained 상세 pillar 역링크 렌더 ✓",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "c9f845ce",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-19 거장 special 페이지 Person 노드 canonical @id 부여",
+    "summary": "박생광·이철수·민정기·박불똥 special 페이지의 Person JSON-LD 노드에",
+    "body": "canonical self-referential @id(${SITE_URL}/special/{slug}#person-{slug})를\n추가해 oh-yoon(T2-17)과 동일한 entity 식별 패턴으로 통일.\n\n- parkSaenggwangPerson / artistPerson × 3 각 1줄 추가\n- locale-independent @id: EN/KO 렌더 동일 문자열 → canonical 단일 노드\n- SITE_URL 이미 import 중 → 추가 import 없음\n- UI·레이아웃·메타데이터 무변경",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "3b71e0f4",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "T2-18 /about 구조화 데이터 entity 봉합 — Organization @id 참조 + ExhibitionEvent 2026·2023",
+    "summary": "/about AboutPage의 익명 Organization stub을 canonical #organization @id 참조로 교체하고,",
+    "body": "전시 이력 섹션에 대응하는 ExhibitionEvent(#exhibition·#exhibition-2023) 2종을 추가해\n      entity 그래프를 layout.tsx 발행 canonical 노드들과 봉합.\n\n- aboutPageSchema: @id(pageUrl#webpage)·isPartOf(#website)·about(#organization)·primaryImageOfPage 추가\n  → 익명 mainEntity Organization stub 제거, canonical #organization 단일 참조\n- saf2026Schema: generateExhibitionSchema([], locale, {artistCount}) 재사용 → #exhibition 재발행\n- saf2023Schema: 신규 #exhibition-2023 ExhibitionEvent 인라인 — startDate 2023-03-21 endDate 2023-03-31\n  (archive/2023 본문 확인 사실 기반), 인디프레스 갤러리(인사동), organizer→#organization @id 참조\n- JsonLdScript: EN(L149)·KO(L529) 양 브랜치 4종 배열로 전환\n- import: generateExhibitionSchema(seo-utils), OG_IMAGE(constants) 추가",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "31ec3edf",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "ArtworkCategoryGrid dark sold 가격 text-white/50→/70 수정",
+    "summary": "홈페이지 ArtworkCategoryGrid dark 테마 취소선 가격도 text-white/50(4.25:1) → text-white/70(6.3:1)으로 수정 — ArtworkCard와 동일한 패턴이 별도 컴포넌트에도 존재했음",
+    "body": null,
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "69f82a97",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "T2-17 스토리 hreflang↔robots 술어 불일치 정리 + llms.txt 잔여 2행",
+    "summary": "stories/[slug] generateMetadata의 alternates koOnly 술어를 robots 술어와 일원화해 ~167편 비화이트리스트 body_en 스토리의 en-US→noindex hreflang 누수 차단; llms.txt Site Structure에 /about·/petition 행 추가로 EN_INDEXABLE_PAGES 대칭 완결",
+    "body": "Fix A — 스토리 hreflang↔robots 술어 일원화 (~167건 활성 누수)\n- isEnIndexable = body_en && whitelist (단일 술어) → alternates·robots 동일 출처\n- createLocaleAlternates koOnly = !isEnIndexable: 비화이트리스트 body_en → koOnly=true (en-US 제거)\n- 죽은 코드 (isEn && !body_en robots 분기) 제거 — resolveEnRobots가 이미 커버\n- sitemap L385 enIndexable 분기와 이제 정확히 일치 (페이지↔sitemap 불일치 해소)\n\nFix B — llms.txt Site Structure 잔여 2행\n- /about, /petition/oh-yoon 행 추가 → EN_INDEXABLE_PAGES ↔ llms.txt 표 완전 대칭\n\n검증: EN 비화이트리스트 noindex·koOnly 확인, EN 화이트리스트 index·en-US 유지 확인\ntsc clean / 599/599 / build clean",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "4778a2b2",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "dark 카드 sold 가격 text-white/50→/70, 전 스펙 waitForTimeout 800ms 추가",
+    "summary": "ArtworkCard dark 테마 취소선 가격(text-white/50, 4.25:1) → text-white/70(6.3:1) 수정; 모든 axe 스펙에 animate-stamp 애니메이션 완료 대기 800ms 추가로 CI 환경 오탐 방지",
+    "body": "- ArtworkCard.tsx: sold dark 취소선 가격 text-white/50→text-white/70 (4.25→6.3:1)\n- homepage/artworks/archive/stories.spec.ts: waitForTimeout(800) 추가",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
+    "hash": "10914f84",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "WCAG AA 색상 대비 위반 전체 수정 — e2e-a11y 잡 그린",
+    "summary": "text-primary(4.12:1)→text-primary-strong(6.98:1), text-gray-500/muted/60→text-charcoal-soft(4.86:1), bg-primary 버튼→bg-primary-strong, 다크 챕터 text-white/40~50→/70, viewport maximumScale 제거 10개 a11y 스펙 전부 로컬 통과",
+    "body": "- layout.tsx: viewport maximumScale:1 제거 (WCAG 1.4.4 사용자 확대 허용)\n- petition/oh-yoon: text-primary→text-primary-strong, bg-primary CTA→bg-primary-strong\n- artworks/page.tsx: category CTA span text-primary→text-primary-strong\n- stories/page.tsx: date/author text-charcoal-muted/60→text-charcoal-soft\n- MagazineSection, RelatedMagazineCard, RelatedArtworksSlider: text-charcoal-muted/60→text-charcoal-soft\n- CategoryFilter, PriceRangeFilter: 선택됐을 때 text-white/80, 비선택 text-charcoal-soft\n- MasterArtistMediumSections: text-white/40→text-white/70 (다크 섹션 헤더)\n- ArtworkCard: dark 테마 링크에 text-white 명시 (UA stylesheet 오버라이드)\n- not-found.tsx: text-gray-500→text-charcoal-soft, text-primary→text-primary-strong\n- e2e/a11y/campaign-pages.spec.ts: 라우트 /petition→/petition/oh-yoon 수정, waitForTimeout 800ms 추가(animate-stamp 오탐 방지)\n- playwright.config.ts: PLAYWRIGHT_BASE_URL env 지원",
+    "date": "2026-05-20",
+    "author": "황경하"
+  },
+  {
     "hash": "3d7bc88d",
     "type": "fix",
     "scope": "seo",
