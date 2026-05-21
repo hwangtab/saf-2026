@@ -491,11 +491,11 @@
     "viewDetailsAria": "View {title} by {artist}"
   },
   "trustBadges": {
-    "authenticity": "100% authenticity guaranteed",
-    "safeDelivery": "Secure packaging & delivery",
+    "authenticity": "Authentic artwork",
+    "safeDelivery": "Secure delivery",
     "curatorVerified": "Verified by professional curators",
-    "directFromArtist": "Direct from the artist",
-    "returnPolicy": "7-day return policy",
+    "directFromArtist": "Artist direct",
+    "returnPolicy": "7-day returns",
     "paymentSecurity": "Secure payment",
     "alwaysOpen": "Available · {date}"
   },
