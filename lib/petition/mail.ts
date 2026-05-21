@@ -10,6 +10,7 @@
  */
 
 import { BRAND_COLORS } from '@/lib/colors';
+import { CONTACT } from '@/lib/constants';
 import { formatPetitionDeadline } from './format';
 
 interface SendReceiptParams {
@@ -25,7 +26,7 @@ interface SendResult {
   error?: string;
 }
 
-const DEFAULT_FROM = '청원 운영팀 <petition@kosmart.org>';
+const DEFAULT_FROM = '씨앗페 <noreply@saf2026.com>';
 
 export async function sendPetitionReceipt({
   to,
@@ -50,7 +51,7 @@ export async function sendPetitionReceipt({
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ from, to: [to], subject, html }),
+      body: JSON.stringify({ from, to: [to], reply_to: CONTACT.EMAIL, subject, html }),
     });
 
     if (!res.ok) {
