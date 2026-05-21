@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { NOTICE_TYPES, type NoticeType } from '@/lib/artist-notice';
+import { CAREER_TIERS } from '@/types';
 import type { Tables } from '@/types/supabase';
 import {
   hasComposedTrailingConsonantQuery,
@@ -163,6 +164,10 @@ export async function updateArtist(id: string, formData: FormData) {
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
+  const careerTierRaw = getString(formData, 'career_tier').trim();
+  const career_tier = (CAREER_TIERS as readonly string[]).includes(careerTierRaw)
+    ? careerTierRaw
+    : null;
   const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
   const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
   const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
@@ -177,7 +182,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const { data: oldArtist } = await supabase
     .from('artists')
     .select(
-      'id, name_ko, name_en, bio, bio_en, history, history_en, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
+      'id, name_ko, name_en, career_tier, bio, bio_en, history, history_en, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
     )
     .eq('id', id)
     .single();
@@ -187,6 +192,7 @@ export async function updateArtist(id: string, formData: FormData) {
     .update({
       name_ko,
       name_en,
+      career_tier,
       bio,
       bio_en,
       history,
@@ -205,7 +211,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const { data: newArtist } = await supabase
     .from('artists')
     .select(
-      'id, name_ko, name_en, bio, bio_en, history, history_en, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
+      'id, name_ko, name_en, career_tier, bio, bio_en, history, history_en, profile_image, contact_phone, contact_email, instagram, homepage, updated_at'
     )
     .eq('id', id)
     .single();
@@ -326,6 +332,10 @@ export async function createAdminArtist(formData: FormData) {
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
   if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
+  const careerTierRawCreate = getString(formData, 'career_tier').trim();
+  const career_tier = (CAREER_TIERS as readonly string[]).includes(careerTierRawCreate)
+    ? careerTierRawCreate
+    : null;
   const bio = validateTextLength(getString(formData, 'bio'), 5000, '소개');
   const bio_en = validateTextLength(getString(formData, 'bio_en'), 5000, '영문 소개') || null;
   const history = validateTextLength(getString(formData, 'history'), 10000, '이력');
@@ -341,6 +351,7 @@ export async function createAdminArtist(formData: FormData) {
     .insert({
       name_ko,
       name_en,
+      career_tier,
       bio,
       bio_en,
       history,

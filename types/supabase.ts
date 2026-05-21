@@ -198,6 +198,7 @@ export type Database = {
         Row: {
           bio: string | null;
           bio_en: string | null;
+          career_tier: string | null;
           contact_email: string | null;
           contact_phone: string | null;
           created_at: string | null;
@@ -223,6 +224,7 @@ export type Database = {
         Insert: {
           bio?: string | null;
           bio_en?: string | null;
+          career_tier?: string | null;
           contact_email?: string | null;
           contact_phone?: string | null;
           created_at?: string | null;
@@ -248,6 +250,7 @@ export type Database = {
         Update: {
           bio?: string | null;
           bio_en?: string | null;
+          career_tier?: string | null;
           contact_email?: string | null;
           contact_phone?: string | null;
           created_at?: string | null;

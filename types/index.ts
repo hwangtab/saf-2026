@@ -44,6 +44,9 @@ export const ARTWORK_CATEGORIES = [
   '디지털아트',
 ] as const;
 
+export const CAREER_TIERS = ['신진', '중견', '거장'] as const;
+export type CareerTier = (typeof CAREER_TIERS)[number];
+
 export const ARTWORK_TONES = [
   '차분한',
   '따뜻한',
@@ -76,6 +79,7 @@ export interface BaseArtwork {
   tax_type?: TaxType;
   category?: string;
   tone?: string[];
+  artistTier?: string;
   price: string;
   images: string[];
   shopUrl?: string;

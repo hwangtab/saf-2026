@@ -61,6 +61,7 @@ type ArtistRow = {
   profile?: string | null;
   history: string | null;
   history_en: string | null;
+  career_tier: string | null;
 };
 
 type TestimonialRow = {
@@ -107,7 +108,7 @@ type FAQRow = {
 
 const ARTWORK_SELECT_COLUMNS =
   'id, artist_id, title, title_en, description, description_en, size, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
-const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
+const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en, career_tier';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
 // `.from('artworks').select('..., artists(...)')` 결과 row. supabase는 1:1 FK 조인을
@@ -150,6 +151,7 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   sold_at: item.sold_at || undefined,
   category: item.category || undefined,
   tone: Array.isArray(item.tone) && item.tone.length ? item.tone : undefined,
+  artistTier: artist?.career_tier || undefined,
   quote: sanitizeNullableTextForRscPayload(item.quote) || undefined,
   quote_en: sanitizeNullableTextForRscPayload(item.quote_en) || undefined,
   profile: sanitizeTextForRscPayload(artist?.bio || ''),

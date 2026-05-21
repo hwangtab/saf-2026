@@ -6,25 +6,20 @@ import type { Artwork } from '@/types';
 /**
  * 매뉴얼 9.2 컬렉션 3 — 신진 작가 발견.
  *
- * 페르소나 B의 "내가 먼저 발견했다" 자긍심 자극. 매스미디어 노출 적은 신진·중견 작가
- * 작품을 작가별 1점씩 dedupe하여 다양성 확보. 분기 갱신 권장(매뉴얼 9.4) — 지금은
- * shuffle로 매 revalidate 주기마다 다른 조합 노출.
+ * 페르소나 B의 "내가 먼저 발견했다" 자긍심 자극. career_tier='신진'인 작가의 작품만
+ * 긍정 큐레이션으로 노출. 거장·중견·미지정 작가는 자동 배제. 작가별 1점 dedupe로
+ * 다양성 확보. 분기 갱신 권장(매뉴얼 9.4) — 신진 지정은 admin /admin/artists/{id}/edit에서.
  *
- * 정의: MASTER_ARTIST_NAMES(거장 6명) 제외. Sprint 4a PR(#38)에서 lib/master-artists.ts가
- * main에 들어오면 그쪽을 import해서 중복 정의 제거. 지금은 conflict 회피 목적의 local 정의.
+ * 거장 명단은 artists.career_tier='거장' DB 컬럼이 단일 출처 (Phase 25, 매뉴얼 9.2).
+ * 코드에 이름 하드코딩 없음.
  */
-
-// 매뉴얼 4.8.2 + 9.2 컬렉션 2 — 거장 라인업과 정확히 일치해야 의미 분리됨.
-// Sprint 4a PR #38 merge 후 `import { MASTER_ARTISTS } from '@/lib/master-artists'`로 통합 예정.
-const MASTER_ARTIST_NAMES = new Set(['오윤', '박생광', '신학철', '민정기', '이철수', '박불똥']);
 
 const getEmergingArtworksUncached = async (limit: number): Promise<Artwork[]> => {
   const all = await getSupabaseArtworks();
 
   const candidates = all.filter((artwork) => {
     if (artwork.sold || artwork.reserved) return false;
-    if (MASTER_ARTIST_NAMES.has(artwork.artist)) return false;
-    return true;
+    return artwork.artistTier === '신진'; // 긍정 큐레이션 — 거장/중견/null 자동 배제
   });
 
   // 작가 단위 dedupe — 매뉴얼 9.2 "작가별 1~2점만, 다양성".

@@ -20,11 +20,13 @@ import { useToast } from '@/lib/hooks/useToast';
 import { cn } from '@/lib/utils/cn';
 import { ArtistNoticeFieldset } from './_NoticeFieldset';
 import { NOTICE_TYPES, type NoticeType } from '@/lib/artist-notice';
+import { CAREER_TIERS } from '@/types';
 
 type Artist = {
   id: string;
   name_ko: string | null;
   name_en: string | null;
+  career_tier: string | null;
   bio: string | null;
   bio_en: string | null;
   history: string | null;
@@ -662,6 +664,25 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               defaultValue={artist.name_en || ''}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
             />
+          </div>
+
+          <div>
+            <label htmlFor="career_tier" className="block text-sm font-medium text-gray-700 mb-2">
+              경력 단계
+            </label>
+            <select
+              id="career_tier"
+              name="career_tier"
+              defaultValue={artist.career_tier || ''}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+            >
+              <option value="">미지정</option>
+              {CAREER_TIERS.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
