@@ -81,7 +81,7 @@ export default function CheckoutTrustNotice() {
 
       {/* ④ 캠페인 의미 */}
       <div className="rounded-2xl bg-sun-soft px-6 py-5 text-center">
-        <p className="text-xs font-semibold uppercase tracking-wide text-sun-strong">
+        <p className="text-xs font-semibold uppercase tracking-wide text-charcoal-muted">
           {t('purchaseMeaningLabel')}
         </p>
         <p className="mt-2 text-sm font-semibold leading-relaxed text-charcoal">
