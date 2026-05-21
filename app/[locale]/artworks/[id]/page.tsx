@@ -159,17 +159,29 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   const otherWorks = artistWorks.filter((a) => a.id !== artwork.id).slice(0, 3);
 
-  // 같은 카테고리의 다른 작품 (같은 작가·현재 작품 제외, 판매중만, 최대 3점)
-  // 20개 후보 풀에서 셔플 후 3점 추출 — revalidate=600 주기마다 다른 조합 노출
-  const sameCategoryWorks = shuffleArray(
-    categoryWorks.filter((a) => a.id !== artwork.id && a.artist !== artwork.artist)
-  ).slice(0, 3);
-
-  // Extract numeric price using utility
+  // Extract numeric price — moved up to reuse in sameCategoryWorks ranking below
   const parsedPrice = parsePrice(artwork.price);
   const isInquiry = parsedPrice === Infinity;
   // '0' 대신 '' 전달 — 스키마 함수 내부에서 isInquiry 분기로 처리, price:0 노출 방지
   const numericPrice = isInquiry ? '' : String(parsedPrice);
+
+  // 같은 카테고리의 다른 작품 (같은 작가·현재 작품 제외, 최대 6점).
+  // 매뉴얼 7.4: 가격대 근접 순으로 랭킹해 "비슷한 작품" 적합도를 높임.
+  // 현재 작품이 문의가(Infinity)면 비교 기준이 없어 셔플로 폴백.
+  // 사전 shuffleArray로 동가격 후보의 tie-break를 무작위화 → revalidate 주기마다 약간의 로테이션 유지.
+  const categoryCandidates = categoryWorks.filter(
+    (a) => a.id !== artwork.id && a.artist !== artwork.artist
+  );
+  const sameCategoryWorks = (
+    parsedPrice === Infinity
+      ? shuffleArray(categoryCandidates)
+      : shuffleArray(categoryCandidates).sort((a, b) => {
+          const da = Math.abs(parsePrice(a.price) - parsedPrice);
+          const db = Math.abs(parsePrice(b.price) - parsedPrice);
+          if (da === Infinity && db === Infinity) return 0; // 둘 다 문의가 → shuffle 순서 유지
+          return da - db; // 가격 근접 우선, 문의가(Infinity)는 자동 후순위
+        })
+  ).slice(0, 6);
 
   // Get related articles for this artist (static content)
   const relatedArticles = getArticlesByArtist(artwork.artist);
@@ -466,6 +478,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <p className="text-xl md:text-2xl font-bold text-charcoal-deep break-keep">
                     {mediumLabelText}
                   </p>
+                  {liveStorySlugs.has(EDITION_GUIDE_SLUG) && (
+                    <Link
+                      href={guideStoryHref(EDITION_GUIDE_SLUG, locale === 'en')}
+                      className="mt-2 inline-block text-xs text-primary-strong hover:underline"
+                    >
+                      {t('editionMeaningLink')}
+                    </Link>
+                  )}
                 </div>
               )}
 
