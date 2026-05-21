@@ -860,6 +860,7 @@
     "supportBody": "Have a question about your order, payment, or delivery? Reach out anytime—we're happy to help.",
     "supportContact": "Customer support {phone} · {email}",
     "purchaseMeaning": "Your purchase supports a mutual-aid fund for fellow artists facing financial discrimination.",
+    "purchaseMeaningLabel": "The change you make",
     "agreeNotice": "By clicking Pay, you agree to our <terms>Terms of Service</terms>, <privacy>Privacy Policy</privacy>, and <refund>Refund Policy</refund>.",
     "sellerInfoLabel": "Seller Information",
     "sellerInfo": "{org} · Rep. {rep} · Biz. Reg. {bizNo} · Mail-order {mailOrder} · Support {phone}",

@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { PackageCheck, Lock, BadgeCheck, RotateCcw, Headphones, Sprout } from 'lucide-react';
+import { PackageCheck, Lock, BadgeCheck, RotateCcw, Headphones } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { CONTACT } from '@/lib/constants';
 
@@ -80,10 +80,12 @@ export default function CheckoutTrustNotice() {
       </div>
 
       {/* ④ 캠페인 의미 */}
-      <div className="rounded-2xl bg-sun-soft px-5 py-4">
-        <p className="flex items-start gap-2 text-sm font-semibold leading-relaxed text-charcoal">
-          <Sprout className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <span>{t('purchaseMeaning')}</span>
+      <div className="rounded-2xl bg-sun-soft px-6 py-5 text-center">
+        <p className="text-xs font-semibold uppercase tracking-wide text-sun-strong">
+          {t('purchaseMeaningLabel')}
+        </p>
+        <p className="mt-2 text-sm font-semibold leading-relaxed text-charcoal">
+          {t('purchaseMeaning')}
         </p>
       </div>
 
