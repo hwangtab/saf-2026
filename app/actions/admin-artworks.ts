@@ -211,6 +211,11 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const tax_type = getString(formData, 'tax_type') || 'B';
   const category = getString(formData, 'category') || null;
   const artist_id = getString(formData, 'artist_id');
+  const tone = formData
+    .getAll('tone')
+    .map(String)
+    .map((s) => s.trim())
+    .filter(Boolean);
   const quote = getString(formData, 'quote') || null;
   const quote_en = getString(formData, 'quote_en') || null;
 
@@ -238,6 +243,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       price,
       tax_type,
       category,
+      tone: tone.length ? tone : null,
       quote,
       quote_en,
       artist_id: artist_id || undefined,
@@ -250,7 +256,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const { data: newArtwork } = await supabase
     .from('artworks')
     .select(
-      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, tax_type, status, sold_at, images, is_hidden, shop_url, updated_at'
+      'id, title, admin_product_name, artist_id, description, size, material, year, edition, edition_type, edition_limit, price, tax_type, status, sold_at, images, tone, is_hidden, shop_url, updated_at'
     )
     .eq('id', id)
     .single();
@@ -314,6 +320,11 @@ export async function createAdminArtwork(formData: FormData) {
   const tax_type = getString(formData, 'tax_type') || 'B';
   const category = getString(formData, 'category') || null;
   const artist_id = getString(formData, 'artist_id');
+  const tone = formData
+    .getAll('tone')
+    .map(String)
+    .map((s) => s.trim())
+    .filter(Boolean);
   const quote = getString(formData, 'quote') || null;
   const quote_en = getString(formData, 'quote_en') || null;
 
@@ -335,6 +346,7 @@ export async function createAdminArtwork(formData: FormData) {
       price,
       tax_type,
       category,
+      tone: tone.length ? tone : null,
       quote,
       quote_en,
       shop_url: null,

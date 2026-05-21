@@ -47,6 +47,7 @@ type ArtworkRow = {
   status: string | null;
   sold_at: string | null;
   category: string | null;
+  tone: string[] | null;
   quote: string | null;
   quote_en: string | null;
 };
@@ -105,7 +106,7 @@ type FAQRow = {
 };
 
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, title_en, description, description_en, size, material, year, edition, price, images, shop_url, status, sold_at, category, quote, quote_en';
+  'id, artist_id, title, title_en, description, description_en, size, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
@@ -148,6 +149,7 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   reserved: item.status === 'reserved',
   sold_at: item.sold_at || undefined,
   category: item.category || undefined,
+  tone: Array.isArray(item.tone) && item.tone.length ? item.tone : undefined,
   quote: sanitizeNullableTextForRscPayload(item.quote) || undefined,
   quote_en: sanitizeNullableTextForRscPayload(item.quote_en) || undefined,
   profile: sanitizeTextForRscPayload(artist?.bio || ''),
@@ -451,7 +453,7 @@ const getArtworksByCategoryLightUncached = async (
 
 const getArtworksByCategoryLightCached = unstable_cache(
   async (category: string, limit: number) => getArtworksByCategoryLightUncached(category, limit),
-  ['supabase-artworks-by-category-light-v1'],
+  ['supabase-artworks-by-category-light-v2'],
   {
     revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
     tags: ['artworks'],

@@ -384,6 +384,7 @@ export type Database = {
           edition_type: Database['public']['Enums']['edition_type'] | null;
           id: string;
           images: string[] | null;
+          tone: string[] | null;
           is_hidden: boolean | null;
           material: string | null;
           price: string | null;
@@ -411,6 +412,7 @@ export type Database = {
           edition_type?: Database['public']['Enums']['edition_type'] | null;
           id?: string;
           images?: string[] | null;
+          tone?: string[] | null;
           is_hidden?: boolean | null;
           material?: string | null;
           price?: string | null;
@@ -438,6 +440,7 @@ export type Database = {
           edition_type?: Database['public']['Enums']['edition_type'] | null;
           id?: string;
           images?: string[] | null;
+          tone?: string[] | null;
           is_hidden?: boolean | null;
           material?: string | null;
           price?: string | null;

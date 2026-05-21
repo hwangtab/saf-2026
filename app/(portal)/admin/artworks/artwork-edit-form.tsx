@@ -14,7 +14,7 @@ import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesSearchText } from '@/lib/search-utils';
 import { cn } from '@/lib/utils/cn';
-import { ARTWORK_CATEGORIES, EditionType, TaxType } from '@/types';
+import { ARTWORK_CATEGORIES, ARTWORK_TONES, EditionType, TaxType } from '@/types';
 
 type Artist = {
   id: string;
@@ -37,6 +37,7 @@ type Artwork = {
   edition_limit: number | null;
   tax_type: TaxType | null;
   category: string | null;
+  tone: string[] | null;
   price: string | null;
   artist_id: string | null;
   images: string[] | null;
@@ -61,6 +62,8 @@ export function ArtworkEditForm({
   const [saving, setSaving] = useState(false);
   const [savingImages, setSavingImages] = useState(false);
   const [images, setImages] = useState<string[]>(artwork.images || []);
+  const [tones, setTones] = useState<string[]>(artwork.tone || []);
+  const [toneCustomInput, setToneCustomInput] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const isEditing = !!artwork.id;
@@ -538,6 +541,89 @@ export function ArtworkEditForm({
             placeholder="English quote"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
           />
+        </div>
+
+        <div>
+          <p className="block text-sm font-medium text-gray-700 mb-2">
+            톤/무드{' '}
+            <span className="text-xs text-gray-400 font-normal">
+              (비슷한 작품 랭킹용 — 복수 선택 가능)
+            </span>
+          </p>
+          {/* 직렬화: hidden input 복수 개 → formData.getAll('tone') */}
+          {tones.map((t) => (
+            <input key={t} type="hidden" name="tone" value={t} />
+          ))}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {ARTWORK_TONES.map((tone) => {
+              const active = tones.includes(tone);
+              return (
+                <button
+                  key={tone}
+                  type="button"
+                  onClick={() =>
+                    setTones((prev) => (active ? prev.filter((t) => t !== tone) : [...prev, tone]))
+                  }
+                  className={cn(
+                    'rounded-full px-3 py-1 text-sm border transition-colors',
+                    active
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-primary/60'
+                  )}
+                >
+                  {tone}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={toneCustomInput}
+              onChange={(e) => setToneCustomInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const val = toneCustomInput.trim();
+                  if (val && !tones.includes(val)) setTones((prev) => [...prev, val]);
+                  setToneCustomInput('');
+                }
+              }}
+              placeholder="직접 입력 후 추가 버튼"
+              className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const val = toneCustomInput.trim();
+                if (val && !tones.includes(val)) setTones((prev) => [...prev, val]);
+                setToneCustomInput('');
+              }}
+              className="rounded-md px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 border border-gray-300"
+            >
+              추가
+            </button>
+          </div>
+          {tones.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {tones.map((t) => (
+                <span
+                  key={t}
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs"
+                >
+                  {t}
+                  <button
+                    type="button"
+                    onClick={() => setTones((prev) => prev.filter((x) => x !== t))}
+                    className="hover:text-primary-strong"
+                    aria-label={`${t} 삭제`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-3">

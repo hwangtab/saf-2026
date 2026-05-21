@@ -44,6 +44,19 @@ export const ARTWORK_CATEGORIES = [
   '디지털아트',
 ] as const;
 
+export const ARTWORK_TONES = [
+  '차분한',
+  '따뜻한',
+  '강렬한',
+  '서정적',
+  '명상적',
+  '역동적',
+  '절제된',
+  '몽환적',
+  '향토적',
+  '사색적',
+] as const;
+
 // Base artwork data structure (from DB/Files)
 export interface BaseArtwork {
   id: string;
@@ -62,6 +75,7 @@ export interface BaseArtwork {
   edition_limit?: number | null;
   tax_type?: TaxType;
   category?: string;
+  tone?: string[];
   price: string;
   images: string[];
   shopUrl?: string;
