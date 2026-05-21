@@ -80,10 +80,10 @@ export default function CheckoutTrustNotice() {
       </div>
 
       {/* ④ 캠페인 의미 */}
-      <div className="rounded-2xl bg-sun-soft px-5 py-4 text-center">
-        <Sprout className="mx-auto mb-2 h-5 w-5 text-charcoal" aria-hidden="true" />
-        <p className="text-sm font-semibold leading-relaxed text-charcoal">
-          {t('purchaseMeaning')}
+      <div className="rounded-2xl bg-sun-soft px-5 py-4">
+        <p className="flex items-start gap-2 text-sm font-semibold leading-relaxed text-charcoal">
+          <Sprout className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <span>{t('purchaseMeaning')}</span>
         </p>
       </div>
 
