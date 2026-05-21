@@ -1,5 +1,65 @@
 [
   {
+    "hash": "22278650",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "청원 확인 메일 발신 도메인 kosmart.org → saf2026.com",
+    "summary": "청원 서명 확인 메일 발신 주소를 noreply@saf2026.com으로 통일하고 답장 시 contact@kosmart.org로 안내",
+    "body": "- DEFAULT_FROM을 '씨앗페 <noreply@saf2026.com>'으로 변경 (Resend 계정 교체로 saf2026.com 도메인 인증)\n- reply_to: CONTACT.EMAIL 추가 — 수신자 답장이 contact@kosmart.org로 가도록 (답장 유실 방지)\n- .env.local.example PETITION_MAIL_FROM 주석 새 기본값으로 동기화",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "9046eca4",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "begin_checkout을 체크아웃 mount 시점으로 교정 — GA4 퍼널 정합",
+    "summary": "begin_checkout이 결제 제출 시점에 발화되던 구조적 측정 버그 수정.",
+    "body": "체크아웃 mount useEffect로 이동해 GA4 퍼널이 server-side checkout_views와\n정합되도록 교정. checkoutBegunRef 가드 및 submit-time 발화 블록 제거.",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "43388420",
+    "type": "feat",
+    "scope": "artist",
+    "subject": "작가 경력 단계 메타데이터 + 신진 작가 발견 큐레이션 (매뉴얼 9.2)",
+    "summary": "artists 테이블에 career_tier(신진/중견/거장) 컬럼 신설, 거장 6명 DB 지정, 홈 \"신진 작가 발견\" 섹션을 랜덤 노출에서 career_tier='신진' 긍정 큐레이션으로 교체",
+    "body": "- artists.career_tier text 컬럼 마이그레이션 + 거장 6명(오윤·박생광·신학철·민정기·이철수·박불똥) backfill\n- emerging-artists.ts: MASTER_ARTIST_NAMES 하드코딩 제거 → artistTier='신진' 긍정 필터로 교체\n- supabase-data.ts: ARTIST_SELECT_COLUMNS에 career_tier 추가, mapArtworkRow에 artistTier hydrate\n- types: CAREER_TIERS 프리셋 tuple + CareerTier + BaseArtwork.artistTier 추가\n- admin 작가 편집 폼에 \"경력 단계\" select(신진/중견/거장/미지정) 추가\n- admin-artists.ts updateArtist + createAdminArtist에 career_tier 추출·저장",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "5e337c18",
+    "type": "feat",
+    "scope": "artwork",
+    "subject": "작품 톤/무드 메타데이터 + 비슷한 작품 톤-우선 랭킹",
+    "summary": "매뉴얼 7.4 \"비슷한 톤\" 기준 완성. artworks에 tone text[] 컬럼 신설, admin 멀티-태그 입력(프리셋+커스텀), 비슷한 작품 랭킹을 톤 겹침 우선 → 가격 보조로 정교화.",
+    "body": "- Supabase: tone text[] 컬럼 + COMMENT (마이그레이션 적용 완료)\n- types/index.ts: ARTWORK_TONES 프리셋 10개 + BaseArtwork.tone?: string[]\n- types/supabase.ts: artworks Row/Insert/Update에 tone: string[] | null\n- lib/supabase-data.ts: ARTWORK_SELECT_COLUMNS + ArtworkRow + mapArtworkRow + 캐시 키 v2\n- artwork-edit-form.tsx: 프리셋 chip 토글 + 커스텀 추가 + 선택 태그 표시 (hidden inputs 직렬화)\n- admin-artworks.ts: formData.getAll('tone') 추출 → update/insert 양쪽\n- page.tsx: toneOverlap comparator (톤 겹침 desc → 가격 근접 asc) — 톤 미입력 시 Phase 23 가격-only 폴백",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "6b74ccd3",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "T2-21 editions-explained 내부 링크 footprint 확대 — Authenticity 박스 에디션 가이드 링크",
+    "summary": "editions-explained inbound 링크 38→403으로 확대 (Authenticity 박스에 \"에디션 뜻 알아보기\" 추가). 비슷한 작품 가격 근접 정렬·6점 확장도 포함.",
+    "body": "- artworks/[id] Authenticity 박스에 editions-explained 링크 추가 (403/404 페이지 커버)\n  - 앵커: \"에디션 뜻 알아보기 →\" (타깃 쿼리 exact phrase 포함)\n  - gate: liveStorySlugs.has(EDITION_GUIDE_SLUG) — 동적 존재 확인\n  - size 가이드 선례(385링크 → pos 5.3) 동일 패턴 적용\n- messages/ko.json, en.json: artworkDetail.editionMeaningLink 키 추가\n- artworks/[id]: sameCategoryWorks 가격 근접 정렬(매뉴얼 7.4), 3→6점 확장\n\n진단 근거 (Supabase 실측):\n  editions-explained: 4,742자 / H2 10 / FAQ ✓ → inbound 38건 → pos 9.0\n  reading-art-sizes: 3,867자 / H2 8 / FAQ ✓ → inbound 385건 → pos 5.3\n  콘텐츠 뎁스 문제 아님 — 내부 링크 10배 격차가 유일 병목\n\nGSC 체크포인트: 2026-06-02~03 (T2-5~T2-21 누적)",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "b95d4d68",
+    "type": "feat",
+    "scope": "artwork-detail",
+    "subject": "비슷한 작품 [12] 가격대 근접 랭킹 + 최대 6점 확대",
+    "summary": "매뉴얼 7.4 \"비슷한 가격대\" 기준 반영. 순수 셔플 3점 → 가격 근접 정렬 후 6점으로 개선. 문의가 작품은 셔플 폴백. DB·렌더·i18n 무변경.",
+    "body": "- parsedPrice 계산을 sameCategoryWorks 위로 이동(재사용)\n- 현재 작품 가격과의 거리(|parsePrice(a.price) - parsedPrice|) 오름차순 정렬\n- 사전 shuffleArray로 동가격 후보 tie-break 무작위화(revalidate 주기 로테이션 유지)\n- 현재 작품이 문의가(Infinity)면 셔플 폴백\n- 문의가 후보는 정렬 산식에서 자동 후순위(Infinity - parsedPrice = Infinity)\n- slice(3 → 6): 데스크톱 3열 × 2행, 후보 부족 시 그만큼만 노출",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
     "hash": "148b6b59",
     "type": "fix",
     "scope": "a11y",
