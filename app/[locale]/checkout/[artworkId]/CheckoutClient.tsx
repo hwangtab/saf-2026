@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
@@ -113,7 +113,18 @@ export default function CheckoutClient({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfo | null>(null);
-  const checkoutBegunRef = useRef(false);
+
+  useEffect(() => {
+    trackEvent('begin_checkout', {
+      value: totalAmount,
+      currency: 'KRW',
+      artwork_id: artworkId,
+      artwork_title: artworkTitle,
+      artist,
+    });
+    // 마운트 1회 — artworkId 변경은 페이지 재마운트
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handlePayment() {
     setError(null);
@@ -151,18 +162,6 @@ export default function CheckoutClient({
 
     setSubmitting(true);
     let createdOrderNo: string | null = null;
-
-    if (!checkoutBegunRef.current) {
-      checkoutBegunRef.current = true;
-      trackEvent('begin_checkout', {
-        value: totalAmount,
-        currency: 'KRW',
-        artwork_id: artworkId,
-        artwork_title: artworkTitle,
-        artist,
-        payment_method: paymentChoice,
-      });
-    }
 
     try {
       // 계좌이체(TRANSFER): Toss 거치지 않고 무통장 입금 흐름.
