@@ -225,6 +225,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
     artwork.history_en,
     t('originalKoreanHistory')
   );
+  const localizedQuote =
+    locale === 'en'
+      ? artwork.quote_en?.trim() ||
+        (artwork.quote && !containsHangul(artwork.quote) ? artwork.quote : null)
+      : artwork.quote || null;
   const localizedPrice = localizeDataValue(artwork.price);
   const localizedMaterial = getMaterialLabel(artwork.material, locale);
   const localizedSize = localizeDataValue(artwork.size);
@@ -587,6 +592,18 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     {localizedProfile}
                   </p>
                 </div>
+              )}
+
+              {/* Artist Quote [7] */}
+              {localizedQuote && (
+                <figure className="bg-white border-l-4 border-primary/30 pl-6 pr-6 py-5 rounded-r-xl">
+                  <blockquote className="text-charcoal italic leading-relaxed text-base whitespace-pre-line before:content-['\201C'] after:content-['\201D']">
+                    {localizedQuote}
+                  </blockquote>
+                  <figcaption className="mt-3 text-xs text-charcoal-soft uppercase tracking-wider not-italic">
+                    {t('artistQuote')} — {displayArtist}
+                  </figcaption>
+                </figure>
               )}
 
               {/* Artist Note */}

@@ -27,6 +27,8 @@ type Artwork = {
   title_en: string | null;
   admin_product_name: string | null;
   description: string | null;
+  quote: string | null;
+  quote_en: string | null;
   size: string | null;
   material: string | null;
   year: string | null;
@@ -506,6 +508,34 @@ export function ArtworkEditForm({
             name="description"
             defaultValue={artwork.description || ''}
             rows={4}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="quote" className="block text-sm font-medium text-gray-700 mb-2">
+            작가 인용
+          </label>
+          <textarea
+            id="quote"
+            name="quote"
+            defaultValue={artwork.quote || ''}
+            rows={2}
+            placeholder="작가의 1~2줄 한 마디 (본인 표현 그대로)"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="quote_en" className="block text-sm font-medium text-gray-700 mb-2">
+            작가 인용 (영문)
+          </label>
+          <textarea
+            id="quote_en"
+            name="quote_en"
+            defaultValue={artwork.quote_en || ''}
+            rows={2}
+            placeholder="English quote"
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
           />
         </div>

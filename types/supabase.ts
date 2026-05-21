@@ -394,6 +394,8 @@ export type Database = {
           tax_type: string;
           title: string;
           title_en: string | null;
+          quote: string | null;
+          quote_en: string | null;
           updated_at: string | null;
           year: string | null;
         };
@@ -419,6 +421,8 @@ export type Database = {
           tax_type?: string;
           title: string;
           title_en?: string | null;
+          quote?: string | null;
+          quote_en?: string | null;
           updated_at?: string | null;
           year?: string | null;
         };
@@ -444,6 +448,8 @@ export type Database = {
           tax_type?: string;
           title?: string;
           title_en?: string | null;
+          quote?: string | null;
+          quote_en?: string | null;
           updated_at?: string | null;
           year?: string | null;
         };

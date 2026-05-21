@@ -47,6 +47,8 @@ type ArtworkRow = {
   status: string | null;
   sold_at: string | null;
   category: string | null;
+  quote: string | null;
+  quote_en: string | null;
 };
 
 type ArtistRow = {
@@ -103,7 +105,7 @@ type FAQRow = {
 };
 
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, title_en, description, description_en, size, material, year, edition, price, images, shop_url, status, sold_at, category';
+  'id, artist_id, title, title_en, description, description_en, size, material, year, edition, price, images, shop_url, status, sold_at, category, quote, quote_en';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
@@ -146,6 +148,8 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   reserved: item.status === 'reserved',
   sold_at: item.sold_at || undefined,
   category: item.category || undefined,
+  quote: sanitizeNullableTextForRscPayload(item.quote) || undefined,
+  quote_en: sanitizeNullableTextForRscPayload(item.quote_en) || undefined,
   profile: sanitizeTextForRscPayload(artist?.bio || ''),
   profile_en: sanitizeNullableTextForRscPayload(artist?.bio_en) || undefined,
   history: sanitizeTextForRscPayload(artist?.history || ''),
