@@ -20,6 +20,7 @@ import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
+import CheckoutTrustNotice from '@/components/features/CheckoutTrustNotice';
 
 /**
  * 영문(en) 체크아웃 옵션. 결제수단별 buyer 자격이 다르므로 caption으로 명시:
@@ -434,7 +435,10 @@ export default function OverseasCheckoutClient({
 
         {/* Error */}
         {error && (
-          <div className="mb-4 rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y">
+          <div
+            role="alert"
+            className="mb-4 rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger-a11y"
+          >
             {error}
           </div>
         )}
@@ -448,6 +452,8 @@ export default function OverseasCheckoutClient({
         <div className="mt-6">
           <TrustBadges variant="checkout" />
         </div>
+
+        <CheckoutTrustNotice />
       </div>
     </div>
   );

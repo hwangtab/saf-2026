@@ -14,6 +14,7 @@ import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
+import CheckoutTrustNotice from '@/components/features/CheckoutTrustNotice';
 import { trackEvent } from '@/lib/analytics/track';
 
 /**
@@ -414,6 +415,8 @@ export default function CheckoutClient({
         <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
           {submitting ? t('processingShort') : t('payNow')}
         </Button>
+
+        <CheckoutTrustNotice />
       </div>
     </div>
   );
