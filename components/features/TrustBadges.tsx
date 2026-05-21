@@ -44,7 +44,7 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
       className={cn(
         variant === 'detail'
           ? 'grid grid-cols-2 justify-items-center gap-1.5 md:flex md:flex-wrap md:justify-center md:gap-2'
-          : 'flex flex-nowrap justify-center gap-1.5 overflow-x-auto md:gap-2',
+          : 'flex flex-nowrap justify-center gap-1.5 overflow-x-auto',
         className
       )}
     >
@@ -63,9 +63,19 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
       {badges.map(({ icon: Icon, label }) => (
         <span
           key={label}
-          className="inline-flex shrink-0 items-center justify-center gap-1 px-2.5 py-1 md:px-3 md:py-1.5 bg-gray-50 border border-gray-100 rounded-full text-[11px] md:text-xs font-medium text-gray-700"
+          className={cn(
+            'inline-flex shrink-0 items-center justify-center gap-1 bg-gray-50 border border-gray-100 rounded-full font-medium text-gray-700',
+            variant === 'checkout'
+              ? 'px-2.5 py-1 text-[11px]'
+              : 'px-2.5 py-1 md:px-3 md:py-1.5 text-[11px] md:text-xs'
+          )}
         >
-          <Icon className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 text-primary" />
+          <Icon
+            className={cn(
+              'shrink-0 text-primary',
+              variant === 'checkout' ? 'w-3 h-3' : 'w-3 h-3 md:w-3.5 md:h-3.5'
+            )}
+          />
           {label}
         </span>
       ))}
