@@ -94,6 +94,13 @@ export default async function ArtworkCategoryGrid({
                   artist: getSafeArtist(artwork, tCard('unknownArtist'), locale),
                 })}
                 locale={locale}
+                wishlistSlot={(title) => (
+                  <WishlistHeartButton
+                    artworkId={artwork.id}
+                    artworkTitle={title}
+                    variant="overlay"
+                  />
+                )}
               />
             </div>
           ))}
@@ -166,6 +173,7 @@ function InlineGridCard({
   inquiryValueLabel,
   viewDetailsAria,
   locale,
+  wishlistSlot,
 }: {
   artwork: Artwork;
   theme: 'dark' | 'light';
@@ -179,6 +187,7 @@ function InlineGridCard({
   inquiryValueLabel: string;
   viewDetailsAria: string;
   locale: string;
+  wishlistSlot?: (artworkTitle: string) => React.ReactNode;
 }) {
   const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
   const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
@@ -273,7 +282,7 @@ function InlineGridCard({
             {mediumLabelText}
           </div>
         )}
-        <WishlistHeartButton artworkId={artwork.id} artworkTitle={safeTitle} variant="overlay" />
+        {wishlistSlot?.(safeTitle) ?? null}
       </div>
 
       <div className={cn('relative p-4', isDark ? 'bg-charcoal' : 'bg-white')}>

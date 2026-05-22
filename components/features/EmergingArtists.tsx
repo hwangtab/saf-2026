@@ -3,6 +3,7 @@ import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import ArtworkGridCard from '@/components/features/ArtworkGridCard';
+import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import { getEmergingArtworks } from '@/lib/emerging-artists';
 import { ArrowRight } from 'lucide-react';
 
@@ -42,6 +43,13 @@ export default async function EmergingArtists({ locale }: { locale: string }) {
               pendingValueLabel={tCard('pendingValue')}
               inquiryValueLabel={tCard('inquiryValue')}
               sizesOverride="(max-width: 640px) calc(50vw - 1.5rem), (max-width: 1024px) calc(33vw - 1.5rem), 360px"
+              wishlistSlot={(title) => (
+                <WishlistHeartButton
+                  artworkId={artwork.id}
+                  artworkTitle={title}
+                  variant="overlay"
+                />
+              )}
             />
           ))}
         </div>

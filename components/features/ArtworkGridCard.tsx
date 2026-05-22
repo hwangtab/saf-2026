@@ -5,7 +5,6 @@ import { getMaterialLabel } from '@/lib/artwork-material';
 import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
-import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import type { Artwork } from '@/types';
 
 const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.jpg';
@@ -26,10 +25,12 @@ interface ArtworkGridCardProps {
   inquiryValueLabel: string;
   /** 그리드 너비 컨텍스트별 sizes 오버라이드. 미지정 시 일반 3열 gallery 기본값 적용. */
   sizesOverride?: string;
+  /** 이미지 영역 하단 오버레이 위시리스트 버튼 슬롯. card 내부에서 해결된 safeTitle을 받아 호출처 중복 계산 없음. */
+  wishlistSlot?: (artworkTitle: string) => React.ReactNode;
 }
 
 /**
- * 작품 카드 server component — hydration 0.
+ * 작품 카드 server component — 카드 구조 hydration 0.
  *
  * `'use client'` ArtworkCard(useState/useEffect로 image decode·shimmer)가
  * `feedback_hero_server_island_regression.md` 원칙(mobile 4× CPU throttle 정적 server card 본질 해결)을
@@ -38,6 +39,9 @@ interface ArtworkGridCardProps {
  *
  * Sprint 4b/4c에서 각 컴포넌트 안에 inline 복제됐던 패턴을 Sprint 6에서 단일 컴포넌트로 추출.
  * 호출처는 i18n 라벨을 prop으로 주입(useTranslations 한 번만) — `'use client'` 회피.
+ *
+ * `wishlistSlot` — 선택적 client island. 이미지 하단 오버레이 위치. 호출처가 render prop으로 주입.
+ * 미전달 시 하트 버튼 없음. 카드 모듈 자체는 어떤 client import도 포함하지 않음.
  */
 export default function ArtworkGridCard({
   artwork,
@@ -52,6 +56,7 @@ export default function ArtworkGridCard({
   pendingValueLabel,
   inquiryValueLabel,
   sizesOverride,
+  wishlistSlot,
 }: ArtworkGridCardProps) {
   const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
   const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
@@ -140,7 +145,7 @@ export default function ArtworkGridCard({
             {mediumLabelText}
           </div>
         )}
-        <WishlistHeartButton artworkId={artwork.id} artworkTitle={safeTitle} variant="overlay" />
+        {wishlistSlot?.(safeTitle) ?? null}
       </div>
       <div className="relative p-4 bg-white">
         <h3 className="text-base md:text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3rem] md:min-h-[3.5rem] text-charcoal group-hover:text-primary-strong">

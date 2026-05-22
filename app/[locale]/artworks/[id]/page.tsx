@@ -723,6 +723,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     pendingValueLabel={tCard('pendingValue')}
                     inquiryValueLabel={tCard('inquiryValue')}
                     sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
+                    wishlistSlot={(title) => (
+                      <WishlistHeartButton
+                        artworkId={other.id}
+                        artworkTitle={title}
+                        variant="overlay"
+                      />
+                    )}
                   />
                 ))}
               </div>
@@ -783,6 +790,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     pendingValueLabel={tCard('pendingValue')}
                     inquiryValueLabel={tCard('inquiryValue')}
                     sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
+                    wishlistSlot={(title) => (
+                      <WishlistHeartButton
+                        artworkId={other.id}
+                        artworkTitle={title}
+                        variant="overlay"
+                      />
+                    )}
                   />
                 ))}
               </div>
