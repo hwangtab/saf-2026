@@ -1,5 +1,105 @@
 [
   {
+    "hash": "fb4a6b9d",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "VirtualGalleryPortal 조작 힌트 text-white/40 → /60",
+    "summary": "가상 갤러리 하단 조작 힌트 텍스트 대비비 3.77:1 → 6.75:1로 개선",
+    "body": "- bg-gray-900/95(≈#111827) 위 text-white/40(3.77:1) → text-white/60(6.75:1) — WCAG AA 4.5:1 충족",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "36b58229",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "캠페인 의미 카드 문구·색상 수정",
+    "summary": "\"동료 예술인\" → \"예술인\" (구매자가 예술인임을 암시하던 표현 제거),",
+    "body": "eyebrow 라벨 색상을 sun-strong → charcoal-muted로 교체 (sun-soft 배경 위\n노란 글씨 가독성 불량 해소).",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "b2f965c3",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "캠페인 의미 카드 재설계 — 아이콘 제거·중앙 정렬·라벨",
+    "summary": "Sprout 아이콘 제거 후 좌측 쏠림 해소. 씨앗 아이콘 없애고 sun-soft 카드를",
+    "body": "중앙 정렬로 전환. 상단에 작은 eyebrow 라벨(함께 만드는 변화 / The change you make)\n추가해 위아래 균형을 타이포 위계로 구성.\n\n- CheckoutTrustNotice: Sprout import 제거, 카드 text-center + 라벨+본문 2단\n- ko.json / en.json: purchaseMeaningLabel 키 추가",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "5c819a63",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "TrustBadges EN 스크롤바 제거 — checkout 뱃지 md: 업스케일 제거 + 라벨 추가 단축",
+    "summary": "데스크톱에서 checkout 뱃지가 md:text-xs·md:px-3으로 커져 overflow 발생, checkout variant를 text-[11px]·px-2.5 고정으로 변경",
+    "body": "- checkout variant 뱃지: md: 업스케일 제거(text-[11px] px-2.5 py-1 고정)\n- container: md:gap-2 제거(gap-1.5 고정)\n- EN 라벨 추가 단축: \"Authentic artwork\"→\"Authentic\", \"7-day returns\"→\"7-day return\", \"Secure delivery\"→\"Safe delivery\"\n- detail variant 뱃지: 기존 md: 반응형 유지",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "df7832b1",
+    "type": "fix",
+    "scope": "i18n",
+    "subject": "EN trustBadges 라벨 단축 — 한 줄 overflow 제거",
+    "summary": "영문 뱃지 라벨 길이 단축으로 한 줄 배치 시 스크롤바 제거",
+    "body": "- \"100% authenticity guaranteed\" → \"Authentic artwork\"\n- \"7-day return policy\" → \"7-day returns\"\n- \"Secure packaging & delivery\" → \"Secure delivery\"\n- \"Direct from the artist\" → \"Artist direct\"",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "828ab5b9",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "TrustBadges 한 줄 고정 + 결제 보안 라벨 단축",
+    "summary": "checkout 뱃지를 flex-nowrap 단일 행으로 변경하고 \"결제 보안 · 통신판매업 등록\" → \"결제 보안\"으로 단축",
+    "body": "- checkout variant: grid 2열 → flex flex-nowrap + overflow-x-auto (무조건 한 줄)\n- shrink-0으로 각 뱃지 압축 방지\n- paymentSecurity 라벨 KO/EN 단축 (통신판매업은 판매자 정보 섹션에서 명시)\n- col-span-2 orphan 로직 제거 (더 이상 grid 아님)",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "6e4eeb55",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "결제 신뢰 안내 패널 강화 — 진행 단계·안심 포인트·고객지원·캠페인 의미",
+    "summary": "결제 버튼 아래 2줄 고지를 4단계 진행안내·안심3포인트·고객지원·캠페인 의미를 담은 친절한 안내 패널로 격상",
+    "body": "- ① 결제 후 4단계 진행 안내 (번호 원): 주문확인 이메일·작품 검수포장·영업일1~3일 발송·송장 추적\n- ② 안심 포인트 3개: 안전결제(카드정보 미저장)·진품 보증서 동봉·7일 청약철회\n- ③ 고객지원: 따뜻한 안내 문구 + 전화/이메일 연락처\n- ④ 캠페인 의미: 구매가 상호부조 기금으로 이어짐 (브랜드 프레이밍 준수)\n- 기존 동의 고지·판매자 정보 영역 유지\n- EN: 국제 구매자 고려, 국내 일수 수치 제외 번역",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "6338eccf",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "결제 신뢰 안내 강화 — 동의 고지·판매자 정보·안전결제·결제 후 절차",
+    "summary": "결제 버튼 아래에 동의 고지(약관/개인정보/환불 링크)·판매자 정보(통신판매업 신고번호)·안전결제·결제 후 절차 4가지 신뢰 안내 블록 추가",
+    "body": "- 신규 CheckoutTrustNotice 공유 컴포넌트 — KO/EN 양쪽 결제 페이지에 공통 적용\n- 안전결제(Lock) + 결제 후 절차(Mail) 안심 2줄\n- 묵시적 동의 고지: 이용약관·개인정보·환불 정책 링크(새 탭, 폼 상태 보존)\n- CONTACT 재사용, locale별 KO/EN 판매자 정보(통신판매업 신고번호 등)\n- EN 에러 div role=\"alert\" 추가(KO와 a11y 일관)\n- orphan agreementTitle 키 제거(KO/EN 클린업)",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "f73cbae9",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "TrustBadges 5개 뱃지 2열 grid로 균형 배치 — 고아 뱃지 제거",
+    "summary": "checkout 신뢰 시그널 뱃지 5개가 4+1로 줄바꿈돼 깨져 보이던 레이아웃을 2열 grid(2/2/1)로 수정",
+    "body": "- checkout variant: flex-wrap → grid-cols-2 justify-items-center (데스크톱 포함)\n- 마지막(5번째) 뱃지에 col-span-2 적용 → 2+2+1 중앙 배치, 고아 뱃지 제거\n- detail variant 무변경 (6항목이라 기존 그대로 균형)",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
+    "hash": "b607a8f0",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "체크아웃 폼 인라인 검증 + 첫 오류 필드 스크롤·포커스",
+    "summary": "결제 버튼 클릭 시 어느 필드가 문제인지 모르는 UX 마찰 제거.",
+    "body": "BuyerInfoForm에 필드별 인라인 에러(red border + aria-invalid + 메시지) 추가,\n첫 오류 필드 자동 스크롤·포커스. KO/EN 체크아웃 공통 적용.\n이메일 형식 검증 추가. checkout→order 82% 이탈 구간의 최유력 원인.",
+    "date": "2026-05-21",
+    "author": "황경하"
+  },
+  {
     "hash": "22278650",
     "type": "fix",
     "scope": "petition",

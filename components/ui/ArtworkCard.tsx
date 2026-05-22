@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useRef, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
@@ -161,39 +161,7 @@ function ArtworkCard({
   const isAboveFold =
     variant === 'gallery' && typeof priorityIndex === 'number' && priorityIndex < 3;
 
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  // Above-fold images use decoding="sync" via priority — start visible immediately.
-  // Below-fold images start hidden and are revealed after img.decode() completes.
   const [imageReady, setImageReady] = useState(isAboveFold);
-  useEffect(() => {
-    const container = imageContainerRef.current;
-    if (!container) return;
-
-    const img = container.querySelector('img');
-    if (!img) return;
-
-    const reveal = () => {
-      const shimmer = container.querySelector('.shimmer-loading') as HTMLElement | null;
-      if (shimmer) shimmer.style.display = 'none';
-      setImageReady(true);
-    };
-
-    const afterLoad = () => {
-      if (typeof img.decode === 'function') {
-        img.decode().then(reveal, reveal);
-      } else {
-        reveal();
-      }
-    };
-
-    if (img.complete && img.naturalWidth > 0) {
-      afterLoad();
-      return;
-    }
-
-    img.addEventListener('load', afterLoad, { once: true });
-    return () => img.removeEventListener('load', afterLoad);
-  }, []);
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
 
   const untitledLabel = t('untitled');
@@ -308,13 +276,12 @@ function ArtworkCard({
       />
 
       <div
-        ref={imageContainerRef}
         className={cn(
           'relative w-full overflow-hidden aspect-[4/5]',
           theme === 'dark' ? 'bg-charcoal' : 'bg-canvas-soft'
         )}
       >
-        <div className="absolute inset-0 shimmer-loading" />
+        {!imageReady && <div className="absolute inset-0 shimmer-loading" />}
         <div className="absolute inset-3 md:inset-4">
           <SafeImage
             src={getImageSrc(artwork, variant, isAboveFold)}
@@ -322,10 +289,12 @@ function ArtworkCard({
             loading={isAboveFold ? 'eager' : 'lazy'}
             priority={isAboveFold}
             fill
-            // quality=70 (default 75 대비 ~10% 작음, 작품 썸네일 화질에 거의 영향 없음).
-            // PSI "이미지 압축률" 항목 (Hero 외 일반 카드).
             quality={70}
-            className={cn('object-contain', imageReady ? 'opacity-100' : 'opacity-0')}
+            onLoad={() => setImageReady(true)}
+            className={cn(
+              'object-contain transition-opacity duration-300',
+              imageReady ? 'opacity-100' : 'opacity-0'
+            )}
             sizes={imageSizes}
           />
         </div>
