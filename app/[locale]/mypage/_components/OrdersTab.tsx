@@ -1,5 +1,6 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 type Order = {
@@ -18,16 +19,26 @@ interface OrdersTabProps {
   viewDetailLabel: string;
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  paid: '결제완료',
-  pending: '결제대기',
-  cancelled: '취소됨',
-  refunded: '환불됨',
-  shipped: '배송중',
-  delivered: '배송완료',
-};
-
 export default function OrdersTab({ orders, emptyMessage, viewDetailLabel }: OrdersTabProps) {
+  const t = useTranslations('mypage');
+  const locale = useLocale();
+
+  const statusLabels: Record<string, string> = {
+    paid: t('orders.status.paid'),
+    pending: t('orders.status.pending'),
+    cancelled: t('orders.status.cancelled'),
+    refunded: t('orders.status.refunded'),
+    shipped: t('orders.status.shipped'),
+    delivered: t('orders.status.delivered'),
+  };
+
+  const formatAmount = (amount: number) =>
+    new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR', {
+      style: 'currency',
+      currency: 'KRW',
+      maximumFractionDigits: 0,
+    }).format(amount);
+
   if (orders.length === 0) {
     return (
       <div className="text-center py-16 text-charcoal-muted">
@@ -44,13 +55,15 @@ export default function OrdersTab({ orders, emptyMessage, viewDetailLabel }: Ord
           className="bg-white rounded-xl border border-gray-200 px-5 py-4 flex items-center justify-between gap-4"
         >
           <div className="min-w-0">
-            <p className="text-sm font-medium text-charcoal truncate">주문 {order.order_no}</p>
+            <p className="text-sm font-medium text-charcoal truncate">
+              {t('orders.orderNo', { no: order.order_no })}
+            </p>
             <p className="text-xs text-charcoal-muted mt-0.5">
               {new Date(order.created_at).toLocaleDateString()} ·{' '}
-              {STATUS_LABEL[order.status] ?? order.status}
+              {statusLabels[order.status] ?? order.status}
             </p>
             <p className="text-sm font-semibold text-charcoal-deep mt-1">
-              {order.total_amount.toLocaleString()}원
+              {formatAmount(order.total_amount)}
             </p>
           </div>
           <Link

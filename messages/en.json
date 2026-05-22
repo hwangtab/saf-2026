@@ -1204,7 +1204,16 @@
     },
     "orders": {
       "empty": "No orders yet.",
-      "viewDetail": "View details"
+      "viewDetail": "View details",
+      "orderNo": "Order #{no}",
+      "status": {
+        "paid": "Paid",
+        "pending": "Pending",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded",
+        "shipped": "Shipped",
+        "delivered": "Delivered"
+      }
     },
     "wishlist": {
       "empty": "No saved artworks yet.",

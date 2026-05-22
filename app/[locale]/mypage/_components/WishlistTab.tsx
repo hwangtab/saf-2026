@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { getWishlist, removeFromWishlist as removeLocal } from '@/lib/wishlist';
 import { bulkAddToWishlist } from '@/app/actions/mypage';
+import SafeImage from '@/components/common/SafeImage';
 import type { Artwork } from '@/types';
 
 interface WishlistTabProps {
@@ -31,15 +32,19 @@ export default function WishlistTab({
     const newIds = localIds.filter((id) => !initialWishlistIds.includes(id));
 
     if (newIds.length > 0) {
-      bulkAddToWishlist(newIds).then(() => {
-        newIds.forEach((id) => removeLocal(id));
-        setIds((prev) => {
-          const merged = [...new Set([...newIds, ...prev])];
-          return merged;
-        });
+      bulkAddToWishlist(newIds).then((result) => {
+        if (!result.error) {
+          newIds.forEach((id) => removeLocal(id));
+          setIds((prev) => {
+            const merged = [...new Set([...newIds, ...prev])];
+            return merged;
+          });
+        }
+        setMerged(true);
       });
+    } else {
+      setMerged(true);
     }
-    setMerged(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -99,11 +104,11 @@ export default function WishlistTab({
         <Link key={artwork.id} href={`/artworks/${artwork.id}`} className="group block">
           <div className="rounded-xl overflow-hidden bg-gray-100 aspect-[4/5] relative">
             {artwork.images[0] && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <SafeImage
                 src={`/images/artworks/${artwork.images[0]}`}
                 alt={artwork.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             )}
           </div>

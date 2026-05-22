@@ -36,20 +36,31 @@ export default function WishlistProvider({ children }: { children: React.ReactNo
   useEffect(() => {
     setState({ ids: getWishlist(), mounted: true });
 
-    // 로그인 여부 체크 — dynamic import로 초기 번들에 Supabase SDK 미포함
+    // onAuthStateChange: 마운트 즉시 현재 세션 emit → race condition 해소.
+    // 로그인/로그아웃 이벤트도 실시간 반영. dynamic import로 초기 번들에 SDK 미포함.
+    let unsubscribe: (() => void) | null = null;
     let cancelled = false;
-    import('@/lib/auth/client').then(({ createSupabaseBrowserClient }) => {
-      if (cancelled) return;
-      const supabase = createSupabaseBrowserClient();
-      supabase.auth.getUser().then(({ data }) => {
-        if (!cancelled) {
-          userIdRef.current = data.user?.id ?? null;
-        }
+
+    import('@/lib/auth/client')
+      .then(({ createSupabaseBrowserClient }) => {
+        if (cancelled) return;
+        const supabase = createSupabaseBrowserClient();
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (!cancelled) {
+            userIdRef.current = session?.user?.id ?? null;
+          }
+        });
+        unsubscribe = () => subscription.unsubscribe();
+      })
+      .catch(() => {
+        // 청크 로드 실패 — localStorage-only 모드로 graceful degradation
       });
-    });
 
     return () => {
       cancelled = true;
+      unsubscribe?.();
     };
   }, []);
 
@@ -57,15 +68,16 @@ export default function WishlistProvider({ children }: { children: React.ReactNo
     const { ids: next, added } = toggleUtil(artworkId);
     setState((prev) => ({ ...prev, ids: next }));
 
-    // 로그인 상태이면 DB도 동기화 (fire-and-forget)
+    // 로그인 상태이면 DB도 동기화 (optimistic — localStorage가 source of truth)
     if (userIdRef.current) {
-      import('@/app/actions/mypage').then(({ addToWishlist, removeFromWishlist }) => {
-        if (added) {
-          addToWishlist(artworkId);
-        } else {
-          removeFromWishlist(artworkId);
-        }
-      });
+      import('@/app/actions/mypage')
+        .then(({ addToWishlist, removeFromWishlist }) => {
+          const action = added ? addToWishlist(artworkId) : removeFromWishlist(artworkId);
+          action.catch(() => {
+            // DB 동기화 실패 — 다음 마이페이지 진입 시 bulkAdd가 보정
+          });
+        })
+        .catch(() => {});
     }
   }, []);
 

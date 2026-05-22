@@ -1204,7 +1204,16 @@
     },
     "orders": {
       "empty": "주문 내역이 없습니다.",
-      "viewDetail": "상세 보기"
+      "viewDetail": "상세 보기",
+      "orderNo": "주문 {no}",
+      "status": {
+        "paid": "결제완료",
+        "pending": "결제대기",
+        "cancelled": "취소됨",
+        "refunded": "환불됨",
+        "shipped": "배송중",
+        "delivered": "배송완료"
+      }
     },
     "wishlist": {
       "empty": "찜한 작품이 없습니다.",

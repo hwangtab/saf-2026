@@ -13,7 +13,7 @@ import {
   needsTosConsent,
   resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
@@ -57,6 +57,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectAfterLogin = searchParams.get('redirectTo');
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const requestOAuthState = async () => {
@@ -262,7 +264,8 @@ export default function LoginPage() {
                   })
                 : defaultPath;
           } else {
-            nextPath = '/mypage';
+            // collector — redirectTo 파라미터 우선, 외부 URL 차단
+            nextPath = redirectAfterLogin?.startsWith('/') ? redirectAfterLogin : '/mypage';
           }
         }
       }
