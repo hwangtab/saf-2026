@@ -68,8 +68,24 @@ export default function WishlistPageContent({
     fetchArtworks(ids);
   }, [ids, mounted, fetchArtworks]);
 
+  // empty state: mount 전후 동일 렌더 → 레이아웃 시프트 없음
+  if (ids.length === 0 && !loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 text-center">
+        <Heart className="w-12 h-12 text-gray-300 mb-4" aria-hidden="true" />
+        <p className="text-lg font-semibold text-charcoal mb-2">{t('pageEmpty')}</p>
+        <p className="text-sm text-charcoal-muted mb-8 max-w-xs">{t('pageEmptyDesc')}</p>
+        <Link
+          href="/artworks"
+          className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-primary text-white hover:bg-primary-strong transition-colors"
+        >
+          {t('browseArtworks')}
+        </Link>
+      </div>
+    );
+  }
+
   if (!mounted || loading) {
-    if (ids.length === 0) return null;
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {Array.from({ length: ids.length }).map((_, i) => (
@@ -89,22 +105,6 @@ export default function WishlistPageContent({
         >
           {t('retryLoad')}
         </button>
-      </div>
-    );
-  }
-
-  if (ids.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-8 text-center">
-        <Heart className="w-12 h-12 text-gray-300 mb-4" aria-hidden="true" />
-        <p className="text-lg font-semibold text-charcoal mb-2">{t('pageEmpty')}</p>
-        <p className="text-sm text-charcoal-muted mb-8 max-w-xs">{t('pageEmptyDesc')}</p>
-        <Link
-          href="/artworks"
-          className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-primary text-white hover:bg-primary-strong transition-colors"
-        >
-          {t('browseArtworks')}
-        </Link>
       </div>
     );
   }
