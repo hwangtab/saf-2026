@@ -111,9 +111,6 @@ export default function DesktopNav({
           <span>{tSearch('searchButton')}</span>
         </button>
 
-        {/* 위시리스트 */}
-        <WishlistNavButton textColor={textColor} className={utilityButtonClassName} />
-
         {/* Utility Menu (Order Status) — chrome utility, 매 페이지 prefetch 회피 */}
         <Link href="/orders" prefetch={false} className={utilityButtonClassName}>
           {t('orderStatus')}
@@ -131,6 +128,9 @@ export default function DesktopNav({
             )}
           />
         </IdleMount>
+
+        {/* 위시리스트 — 로그인 버튼 옆에 배치 */}
+        <WishlistNavButton textColor={textColor} />
 
         <LanguageSwitcher className={textColor} compact inverse={isInverse} />
       </div>
