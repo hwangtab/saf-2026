@@ -736,7 +736,15 @@ function OrderCard({
 
 // ─── Main Form ────────────────────────────────────────────────────────────────
 
-export default function OrderLookup() {
+interface OrderLookupProps {
+  initialOrderDetail?: OrderPublicInfo | null;
+  initialBuyerEmail?: string | null;
+}
+
+export default function OrderLookup({
+  initialOrderDetail = null,
+  initialBuyerEmail = null,
+}: OrderLookupProps) {
   const t = useTranslations('orderLookup');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -745,6 +753,29 @@ export default function OrderLookup() {
   const [error, setError] = useState<string | null>(null);
   const [orders, setOrders] = useState<PublicOrderListItem[] | null>(null);
   const [firstDetail, setFirstDetail] = useState<OrderPublicInfo | null>(null);
+
+  // 마이페이지 "주문 상세 보기" 링크 흐름 — 로그인 사용자 + 서버에서 조회 완료된 경우
+  // 폼 없이 바로 주문 상세 표시 (buyerEmail은 편집·취소 버튼 작동에 필요)
+  if (initialOrderDetail) {
+    const item: PublicOrderListItem = {
+      orderNo: initialOrderDetail.orderNo,
+      status: initialOrderDetail.status,
+      artworkTitle: initialOrderDetail.artworkTitle,
+      artworkImage: initialOrderDetail.artworkImage,
+      totalAmount: initialOrderDetail.totalAmount,
+      createdAt: initialOrderDetail.createdAt,
+    };
+    return (
+      <div>
+        <h1 className="mb-6 text-2xl font-bold text-charcoal">{t('pageTitle')}</h1>
+        <OrderCard
+          item={item}
+          buyerEmail={initialBuyerEmail ?? ''}
+          initialDetail={initialOrderDetail}
+        />
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

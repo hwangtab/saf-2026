@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { getWishlist, removeFromWishlist as removeLocal } from '@/lib/wishlist';
-import { bulkAddToWishlist } from '@/app/actions/mypage';
+import { bulkAddToWishlist, removeFromWishlist } from '@/app/actions/mypage';
 import SafeImage from '@/components/common/SafeImage';
 import type { Artwork } from '@/types';
 
@@ -24,6 +25,7 @@ export default function WishlistTab({
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState(true);
   const [merged, setMerged] = useState(false);
+  const [removing, setRemoving] = useState<string | null>(null);
 
   // localStorage → DB 머지 (최초 1회)
   useEffect(() => {
@@ -47,6 +49,14 @@ export default function WishlistTab({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleRemove = async (artworkId: string) => {
+    setRemoving(artworkId);
+    await removeFromWishlist(artworkId);
+    removeLocal(artworkId);
+    setIds((prev) => prev.filter((id) => id !== artworkId));
+    setRemoving(null);
+  };
 
   const fetchArtworks = useCallback(async (wishlistIds: string[]) => {
     if (wishlistIds.length === 0) {
@@ -101,22 +111,34 @@ export default function WishlistTab({
   return (
     <div className="grid grid-cols-2 gap-4">
       {artworks.map((artwork) => (
-        <Link key={artwork.id} href={`/artworks/${artwork.id}`} className="group block">
-          <div className="rounded-xl overflow-hidden bg-gray-100 aspect-[4/5] relative">
-            {artwork.images[0] && (
-              <SafeImage
-                src={`/images/artworks/${artwork.images[0]}`}
-                alt={artwork.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            )}
-          </div>
-          <div className="mt-2 px-0.5">
-            <p className="text-sm font-medium text-charcoal truncate">{artwork.title}</p>
-            <p className="text-xs text-charcoal-muted">{artwork.artist}</p>
-          </div>
-        </Link>
+        <div key={artwork.id} className="group relative">
+          <Link href={`/artworks/${artwork.id}`} className="block">
+            <div className="rounded-xl overflow-hidden bg-gray-100 aspect-[4/5] relative">
+              {artwork.images[0] && (
+                <SafeImage
+                  src={`/images/artworks/${artwork.images[0]}`}
+                  alt={artwork.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              )}
+            </div>
+            <div className="mt-2 px-0.5">
+              <p className="text-sm font-medium text-charcoal truncate">{artwork.title}</p>
+              <p className="text-xs text-charcoal-muted">{artwork.artist}</p>
+            </div>
+          </Link>
+          <button
+            onClick={() => handleRemove(artwork.id)}
+            disabled={removing === artwork.id}
+            aria-label="찜 해제"
+            className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm
+                       opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity
+                       disabled:opacity-40 hover:bg-danger/10"
+          >
+            <X className="w-3.5 h-3.5 text-charcoal-muted" />
+          </button>
+        </div>
       ))}
     </div>
   );
