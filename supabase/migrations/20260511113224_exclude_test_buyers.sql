@@ -200,9 +200,10 @@ AS $$
   )
   SELECT
     sa.story_slug,
-    SUM(sa.clicks)::bigint, SUM(sa.clickers)::bigint,
-    COALESCE(SUM(ar.orders_paid), 0)::bigint,
-    COALESCE(SUM(ar.revenue), 0)::bigint
+    SUM(sa.clicks)::bigint AS total_clicks,
+    SUM(sa.clickers)::bigint AS unique_clickers,
+    COALESCE(SUM(ar.orders_paid), 0)::bigint AS attributed_orders_paid,
+    COALESCE(SUM(ar.revenue), 0)::bigint AS attributed_revenue
   FROM story_artworks sa
   LEFT JOIN artwork_revenue ar ON ar.artwork_id = sa.artwork_id
   GROUP BY sa.story_slug

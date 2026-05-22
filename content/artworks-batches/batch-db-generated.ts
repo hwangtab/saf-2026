@@ -18,7 +18,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/16',
     price: '₩1,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/675e5add-cf3f-492d-9ed3-92904172e1bf.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/675e5add-cf3f-492d-9ed3-92904172e1bf.webp',
     ],
     shopUrl: '',
     title_en: 'The Time of Quarks #137',
@@ -37,7 +37,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/16',
     price: '₩1,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/b1cc693e-c4f9-492e-9536-298f6972215d.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/b1cc693e-c4f9-492e-9536-298f6972215d.webp',
     ],
     shopUrl: '',
     title_en: 'The Time of Quarks #135',
@@ -56,7 +56,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/16',
     price: '₩1,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/40de2fae-6e9a-496e-a506-31180e3f3b31.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/40de2fae-6e9a-496e-a506-31180e3f3b31.webp',
     ],
     shopUrl: '',
     title_en: 'The Time of Quarks #138',
@@ -75,7 +75,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/16',
     price: '₩1,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/c0fbfa1f-819f-406e-b612-f502d7c928d9.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/c0fbfa1f-819f-406e-b612-f502d7c928d9.webp',
     ],
     shopUrl: '',
     title_en: 'The Time of Quarks #134',
@@ -94,7 +94,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/16',
     price: '₩1,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/c453ca97-a589-4150-839d-8322031ef58e.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/c453ca97-a589-4150-839d-8322031ef58e.webp',
     ],
     shopUrl: '',
     title_en: 'The Time of Quarks #133',
@@ -113,7 +113,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/3c785d2b-f80f-4729-baeb-e4a0efe96065.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/3c785d2b-f80f-4729-baeb-e4a0efe96065.webp',
     ],
     shopUrl: '',
     artist_en: 'Nam, Jin Hyun',
@@ -131,7 +131,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/e4pu3o7zejk_1775969299929.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/e4pu3o7zejk_1775969299929.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/540',
     artist_en: 'SIM_Moby',
@@ -148,7 +148,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩100',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-af12acbf-e692-434f-96fa-4dc972c24590/sprt2rdefrp_1775553354662.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-af12acbf-e692-434f-96fa-4dc972c24590/sprt2rdefrp_1775553354662.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/539',
   },
@@ -164,7 +164,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/037rx7aya2mc_1774968363998.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/037rx7aya2mc_1774968363998.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/538',
     title_en: '9505 SIM_Memory',
@@ -184,7 +184,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-c0f6176c-5460-46e6-a503-c8cfeba4583a/ue4mbbgbfw_1773366850821.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-c0f6176c-5460-46e6-a503-c8cfeba4583a/ue4mbbgbfw_1773366850821.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/537',
     title_en: 'Cityscape',
@@ -201,7 +201,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-b7b009d8-48f6-4ccc-b29e-8fd1a2a061a0/sydjgmparpd_1773366836612.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-b7b009d8-48f6-4ccc-b29e-8fd1a2a061a0/sydjgmparpd_1773366836612.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/536',
     title_en: 'Boy by the Sea',
@@ -218,7 +218,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-d12fb450-3d9e-4113-9a93-c7bb347e1727/1flqj8rpkkt_1773366843706.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-d12fb450-3d9e-4113-9a93-c7bb347e1727/1flqj8rpkkt_1773366843706.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/535',
     title_en: 'Hometown Village Scenery',
@@ -235,7 +235,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-41e08163-689b-46e9-a84b-f428767067f3/98ggx6qz8bm_1773366559026.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-41e08163-689b-46e9-a84b-f428767067f3/98ggx6qz8bm_1773366559026.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/534',
     title_en: 'Girl',
@@ -252,7 +252,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-8aa71477-4ab3-4f0e-a33e-62ffa72066eb/20ngd12bwasi_1773365886544.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-8aa71477-4ab3-4f0e-a33e-62ffa72066eb/20ngd12bwasi_1773365886544.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/533',
     title_en: 'Woman',
@@ -269,7 +269,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-68b671d8-106e-4c6f-9e81-9c21956e544e/34ccfstd2py_1773290111280.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-68b671d8-106e-4c6f-9e81-9c21956e544e/34ccfstd2py_1773290111280.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/532',
     title_en: 'Grandmother - Oh My Dear Grandchild',
@@ -286,7 +286,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-2901d967-4f4b-47f3-9827-ace0e105e61a/h15b2oq0iqh_1773290108269.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-2901d967-4f4b-47f3-9827-ace0e105e61a/h15b2oq0iqh_1773290108269.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/531',
     title_en: 'Hangang Riverside',
@@ -303,7 +303,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-d70d9c70-def3-482f-a50e-83e9359569e6/5xfhnju3ma5_1773290002762.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-d70d9c70-def3-482f-a50e-83e9359569e6/5xfhnju3ma5_1773290002762.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/530',
     title_en: 'Candlelight',
@@ -320,7 +320,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-4635c2c5-bae5-4b10-88b5-1f97e5ecc08a/pzf8lis86di_1773289951050.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-4635c2c5-bae5-4b10-88b5-1f97e5ecc08a/pzf8lis86di_1773289951050.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/529',
     title_en: 'There Stands Haengjusanseong',
@@ -337,7 +337,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-ccc461bd-f22a-4d54-8784-08554d049f5d/dp3yntrsyaf_1773289935746.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-ccc461bd-f22a-4d54-8784-08554d049f5d/dp3yntrsyaf_1773289935746.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/528',
     title_en: 'First Magnolia of the Year',
@@ -354,7 +354,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-7858c093-e449-4099-8bfd-deb18e6d6c11/6msfznw8y58_1773289930943.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-7858c093-e449-4099-8bfd-deb18e6d6c11/6msfznw8y58_1773289930943.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/527',
     title_en: 'Lovers',
@@ -371,7 +371,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-656bf14f-c449-4f4e-b98a-ce5544ad206c/cgha0ej7zwf_1773289926814.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-656bf14f-c449-4f4e-b98a-ce5544ad206c/cgha0ej7zwf_1773289926814.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/526',
     title_en: 'Woman',
@@ -388,7 +388,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-cd08a6c1-b2aa-4fc4-a1f8-74494dc53550/2m8r9y3zt2_1773289613272.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-cd08a6c1-b2aa-4fc4-a1f8-74494dc53550/2m8r9y3zt2_1773289613272.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/525',
     title_en: 'Mom, Look at That Tree',
@@ -405,7 +405,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-1f817351-6bc5-4927-828e-85fa7ca46dc0/th0ofoyria_1773289606388.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-1f817351-6bc5-4927-828e-85fa7ca46dc0/th0ofoyria_1773289606388.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/524',
     title_en: 'On the Hillside',
@@ -422,7 +422,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-842c49b0-27e6-4fa5-984c-5e5c427cea5e/un5v1qadhno_1773289512624.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-842c49b0-27e6-4fa5-984c-5e5c427cea5e/un5v1qadhno_1773289512624.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/523',
     title_en: 'Seaside',
@@ -439,7 +439,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-5a752957-47c0-404d-9978-247819cb04ca/x4tijee396a_1773289503427.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-5a752957-47c0-404d-9978-247819cb04ca/x4tijee396a_1773289503427.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/522',
     title_en: 'Lovers Under the Moonlight',
@@ -456,7 +456,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-4042d843-dc36-4bd6-8e38-d8b83409bb86/ztogu29f82_1773289485607.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-4042d843-dc36-4bd6-8e38-d8b83409bb86/ztogu29f82_1773289485607.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/521',
     title_en: 'Autumn Leaves',
@@ -473,7 +473,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-dc3aa636-b7d6-4b86-8ee0-888b47fd1578/9rr60h8s6ew_1773289462938.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-dc3aa636-b7d6-4b86-8ee0-888b47fd1578/9rr60h8s6ew_1773289462938.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/520',
     title_en: 'Fly, Soar High',
@@ -490,7 +490,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-9fdae648-a1bc-44f0-87c4-e7efb02f345f/ucw3l87mbq9_1773289455863.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-9fdae648-a1bc-44f0-87c4-e7efb02f345f/ucw3l87mbq9_1773289455863.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/519',
     title_en: 'Giggling',
@@ -507,7 +507,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-319d99b6-5ef5-4693-8449-d4d477e4aacc/ws2ui4wn9ag_1773289446353.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-319d99b6-5ef5-4693-8449-d4d477e4aacc/ws2ui4wn9ag_1773289446353.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/518',
     title_en: 'Winter Night, From a Windowsill',
@@ -524,7 +524,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-94535e0b-7a3b-4c38-9b71-5e46a30bcd97/5cs2v7tg9uk_1773289439033.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-94535e0b-7a3b-4c38-9b71-5e46a30bcd97/5cs2v7tg9uk_1773289439033.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/517',
     title_en: "New Year's Wish",
@@ -541,7 +541,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/u7pzatisv3h_1773208356896.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/u7pzatisv3h_1773208356896.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/516',
     title_en: 'Life, On Its Verdant Dreams',
@@ -559,7 +559,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/680bvilr57l_1773208291358.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/680bvilr57l_1773208291358.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/515',
     title_en: 'Life, On Its Emptiness',
@@ -577,7 +577,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/2fyc2difwnp_1773208153545.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/2fyc2difwnp_1773208153545.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/514',
     title_en: 'Life, On Its Contradictions',
@@ -595,7 +595,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/kh5jnroes8i_1773056833184__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/kh5jnroes8i_1773056833184__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/513',
     title_en: 'Dream of the Flamingo II',
@@ -613,7 +613,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/91a5uhgymib_1773056655041__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/91a5uhgymib_1773056655041__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/512',
     title_en: 'Dream of the Flamingo I',
@@ -632,7 +632,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/hcm05n1dk79_1773056438009__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/hcm05n1dk79_1773056438009__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/511',
     title_en: 'Flower',
@@ -651,7 +651,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/devxfdf4zh_1773056328860__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/devxfdf4zh_1773056328860__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/510',
     title_en: 'Clover',
@@ -670,7 +670,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/41ph03ecuti_1773056163848__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/41ph03ecuti_1773056163848__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/509',
     title_en: 'Flower Garden',
@@ -688,7 +688,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/n5migf1g98p_1773055953864__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/n5migf1g98p_1773055953864__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/508',
     title_en: 'From the Universe II',
@@ -707,7 +707,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/pdvigkconhc_1773043797930__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/pdvigkconhc_1773043797930__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/507',
     title_en: 'A Smile of Unwavering Spirit',
@@ -726,7 +726,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/o0y7niqw3wk_1773044832962__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/o0y7niqw3wk_1773044832962__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/506',
     title_en: 'Mudeungsan from Jeonil Building',
@@ -745,7 +745,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/ou84hr2az6_1773135064192__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/ou84hr2az6_1773135064192__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/505',
     title_en: 'A Moment of Pause',
@@ -764,7 +764,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/lomoxkql8f_1773039763798__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/lomoxkql8f_1773039763798__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/504',
     title_en: 'Comma (,)',
@@ -782,7 +782,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-a48b426e-686f-419b-819e-e0d5ade50b6e/2xkn8hubcmf_1773391698300.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-a48b426e-686f-419b-819e-e0d5ade50b6e/2xkn8hubcmf_1773391698300.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/503',
     title_en: 'Encore',
@@ -800,7 +800,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-942e0dec-c659-40ae-a953-d5d2f86c4ed6/u5dwmjo4c7_1773390867798.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-942e0dec-c659-40ae-a953-d5d2f86c4ed6/u5dwmjo4c7_1773390867798.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/502',
     title_en: 'Encore',
@@ -818,7 +818,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-099d666e-81b8-40c8-9e31-bab78ddd703f/2hwpqhmbioq_1773391711478.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-099d666e-81b8-40c8-9e31-bab78ddd703f/2hwpqhmbioq_1773391711478.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/501',
     title_en: 'Encore',
@@ -837,7 +837,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/3u7zwr5h3bq_1773042861449__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/3u7zwr5h3bq_1773042861449__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/500',
     title_en: 'Looking Back',
@@ -856,7 +856,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/ztggki9uvhd_1773037356779__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/ztggki9uvhd_1773037356779__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/499',
     title_en: 'Pink fortress',
@@ -875,7 +875,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/4ejny5io2wu_1773037253863__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/4ejny5io2wu_1773037253863__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/498',
     title_en: 'Green fortress(2)',
@@ -894,7 +894,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/7i1y9b5kit3_1773037196909__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/7i1y9b5kit3_1773037196909__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/497',
     title_en: 'Green fortress',
@@ -913,7 +913,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/imbyy1cldfm_1773036843437__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/imbyy1cldfm_1773036843437__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/495',
     title_en: 'Faintly II',
@@ -932,7 +932,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/j6svm1xfs5r_1773036772434__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/j6svm1xfs5r_1773036772434__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/494',
     title_en: 'Faintly',
@@ -951,7 +951,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/ih0p6qf6e4d_1773036668787__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/ih0p6qf6e4d_1773036668787__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/493',
     title_en: 'GreenForest(3)',
@@ -970,7 +970,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/pr671rais49_1773036590570__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/pr671rais49_1773036590570__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/492',
     title_en: 'GreenForest (2)',
@@ -989,7 +989,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/nklhepftrh7_1773036488757__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/nklhepftrh7_1773036488757__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/491',
     title_en: 'GreenForest',
@@ -1007,7 +1007,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-33ae42e2-fae1-41e3-8e65-90612f591234/tws64hgiu8_1772693182756__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-33ae42e2-fae1-41e3-8e65-90612f591234/tws64hgiu8_1772693182756__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/490',
     title_en: 'Encore',
@@ -1025,7 +1025,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e690c4a6-c39e-4dc8-9e2c-a86c50f11ed1/t2zzlspyym_1772692557546__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-e690c4a6-c39e-4dc8-9e2c-a86c50f11ed1/t2zzlspyym_1772692557546__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/489',
     title_en: 'Encore',
@@ -1043,7 +1043,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e287af24-25f1-42dc-92ec-5c8e993f589f/ozxzm3nhohc_1772692548811__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-e287af24-25f1-42dc-92ec-5c8e993f589f/ozxzm3nhohc_1772692548811__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/488',
     title_en: 'Encore',
@@ -1061,7 +1061,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-d0d349d8-258d-498a-a56d-09211ca490cd/ee2ch5i498j_1772692480741__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-d0d349d8-258d-498a-a56d-09211ca490cd/ee2ch5i498j_1772692480741__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/487',
     title_en: 'Encore',
@@ -1079,7 +1079,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-ec90cf9a-243f-48bc-b99b-a84ae8193fe4/w5hjjj9926n_1772692426723__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-ec90cf9a-243f-48bc-b99b-a84ae8193fe4/w5hjjj9926n_1772692426723__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/486',
     title_en: 'Encore',
@@ -1097,7 +1097,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-3a425968-0074-4e07-b66e-9d6f05209f81/7y7ncm0oxcb_1772692283839__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-3a425968-0074-4e07-b66e-9d6f05209f81/7y7ncm0oxcb_1772692283839__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/485',
     title_en: 'Encore',
@@ -1115,7 +1115,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-6aed838e-5588-4ddf-b712-a9ccc8f8ccd4/66o0jb9buml_1772692188207__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-6aed838e-5588-4ddf-b712-a9ccc8f8ccd4/66o0jb9buml_1772692188207__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/484',
     title_en: 'Encore',
@@ -1133,7 +1133,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-b7522a8c-b577-4130-aed2-20ebb1898d8d/zmpghy2tze_1772692087019__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-b7522a8c-b577-4130-aed2-20ebb1898d8d/zmpghy2tze_1772692087019__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/483',
     title_en: 'Encore',
@@ -1151,7 +1151,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/z0mv7xrmd2_1772517980991__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/z0mv7xrmd2_1772517980991__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/482',
     title_en: 'The Little Prince_Flower',
@@ -1169,7 +1169,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/61kcqosej5p_1772510161485__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/61kcqosej5p_1772510161485__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/481',
     title_en: 'I Have Three Fearsome Thorns',
@@ -1187,7 +1187,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/249hjf6ps36_1772509505903__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/249hjf6ps36_1772509505903__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/480',
     title_en: 'A Pleasant Day',
@@ -1205,7 +1205,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/1m6959z8jme_1772509336348__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/1m6959z8jme_1772509336348__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/479',
     title_en: "The Happy Fox at 4 O'Clock",
@@ -1223,7 +1223,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/laxm6bv53vo_1772508987973__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/laxm6bv53vo_1772508987973__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/478',
     title_en: 'The Little Prince on a Starry Night',
@@ -1241,7 +1241,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-a8cca196-abeb-4af7-9edf-e7c4e185370c/v2lih86fgu_1772178005287__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-a8cca196-abeb-4af7-9edf-e7c4e185370c/v2lih86fgu_1772178005287__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/476',
     title_en: 'Roh Moo-hyun',
@@ -1260,7 +1260,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f8b4e8f6-e93c-484f-9cc2-e3de89152262/eb0u1dcjum5_1771897517433__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-f8b4e8f6-e93c-484f-9cc2-e3de89152262/eb0u1dcjum5_1771897517433__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/472',
     title_en: '回6',
@@ -1278,7 +1278,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-ac0d34b1-6f78-4b35-b987-6661bd898545/jvrd8vu058_1771897511243__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-ac0d34b1-6f78-4b35-b987-6661bd898545/jvrd8vu058_1771897511243__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/471',
     title_en: '回5',
@@ -1296,7 +1296,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-98aa7ce3-403b-4b6b-b4a4-5929e40074fd/qhpjmy3uh88_1771897507115__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-98aa7ce3-403b-4b6b-b4a4-5929e40074fd/qhpjmy3uh88_1771897507115__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/470',
     title_en: '回4',
@@ -1314,7 +1314,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-3053bc46-108b-4ecd-97c8-60653a8bb24d/zspe6hzi6u9_1771897499985__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-3053bc46-108b-4ecd-97c8-60653a8bb24d/zspe6hzi6u9_1771897499985__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/469',
     title_en: '回3',
@@ -1332,7 +1332,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-6009bbeb-fa25-4099-a1a9-518cc6498894/2rhwb0kyuvj_1771896747137__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-6009bbeb-fa25-4099-a1a9-518cc6498894/2rhwb0kyuvj_1771896747137__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/468',
     title_en: 'Vessel of the Heart',
@@ -1350,7 +1350,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-96252f66-006c-4291-b0b3-143cbb6cf1df/5yst68jz1kq_1771896737666__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-96252f66-006c-4291-b0b3-143cbb6cf1df/5yst68jz1kq_1771896737666__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/467',
     title_en: 'Songs of the Dragons Flying to Heaven',
@@ -1368,7 +1368,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e144402b-6a15-4d33-bf11-b625cfa5c777/8eme3lhd3xt_1771896713951__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-e144402b-6a15-4d33-bf11-b625cfa5c777/8eme3lhd3xt_1771896713951__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/466',
     title_en: 'Ego, Is This Face Really Yours?',
@@ -1386,7 +1386,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f26aa92f-d09a-4469-9ff7-7cd34a2648ca/u9dh6xli5co_1771896705102__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-f26aa92f-d09a-4469-9ff7-7cd34a2648ca/u9dh6xli5co_1771896705102__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/465',
     title_en: 'Ego',
@@ -1404,7 +1404,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e292e8b4-fa55-453f-825a-1f050fdd95ae/tf0uetfcjs_1771896697698__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-e292e8b4-fa55-453f-825a-1f050fdd95ae/tf0uetfcjs_1771896697698__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/464',
     title_en: 'Old Gourd',
@@ -1422,7 +1422,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-fc6e19b3-337e-458b-949f-17afc12f6340/wk6xrrzilk_1771896687235__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-fc6e19b3-337e-458b-949f-17afc12f6340/wk6xrrzilk_1771896687235__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/463',
     title_en: 'Sacred',
@@ -1440,7 +1440,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-cb8e1679-abb0-4cf2-898c-9d85e2d2a782/0wn8bh0fdr8d_1771896503912__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-cb8e1679-abb0-4cf2-898c-9d85e2d2a782/0wn8bh0fdr8d_1771896503912__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/462',
     title_en: 'Water Flows and Flows to the Sea',
@@ -1458,7 +1458,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f14bc36b-8dae-4f81-8373-5b79199df29e/b4vaj3n4xko_1771896491032__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-f14bc36b-8dae-4f81-8373-5b79199df29e/b4vaj3n4xko_1771896491032__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/461',
     title_en: 'Beginning of Spring',
@@ -1476,7 +1476,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0/ihhciy1fbj_1771896384520__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0/ihhciy1fbj_1771896384520__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/460',
     title_en: 'Dokdo-Sea of Heart',
@@ -1495,7 +1495,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/3bztrrjbb47_1771761311943__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/3bztrrjbb47_1771761311943__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/459',
     title_en: 'Human Condition',
@@ -1514,7 +1514,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/52er5kjf6j3_1771652936867__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/52er5kjf6j3_1771652936867__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/454',
     title_en: 'Wind and Light-57',
@@ -1533,7 +1533,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/g5w3knourg_1771652781991__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/g5w3knourg_1771652781991__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/453',
     title_en: 'Wind and Light-142',
@@ -1552,7 +1552,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/timw2m7mlhe_1771652596655__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/timw2m7mlhe_1771652596655__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/452',
     title_en: 'Wind and Light-108',
@@ -1571,7 +1571,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/c8adc96xntf_1771651878439__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/c8adc96xntf_1771651878439__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/451',
     title_en: 'Wind and Light-133',
@@ -1590,7 +1590,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/kx3cftpw7s8_1771651596386__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/kx3cftpw7s8_1771651596386__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/450',
     title_en: 'Wind and Light-51',
@@ -1609,7 +1609,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/tuuaw8acz2n_1771675669923__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/tuuaw8acz2n_1771675669923__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/449',
     title_en: 'Wind and Light-54',
@@ -1628,7 +1628,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/sntqovyfone_1771648287556__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/sntqovyfone_1771648287556__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/448',
     title_en: 'Wind and Light-127',
@@ -1647,7 +1647,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩7,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/y2o7zybrc_1771578378511__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/y2o7zybrc_1771578378511__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/428',
     title_en: 'Around Sixty',
@@ -1665,7 +1665,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 3/10',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/x6oe3pvro4f_1771574933811__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/x6oe3pvro4f_1771574933811__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/429',
     title_en: 'Azalea, Azalea',
@@ -1684,7 +1684,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/5',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/s0vdxd4jk3c_1771512269293__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/s0vdxd4jk3c_1771512269293__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/430',
     title_en: 'Grass, Flower!',
@@ -1703,7 +1703,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/5',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/d1c44xq0sld_1771511944447__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/d1c44xq0sld_1771511944447__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/431',
     title_en: 'Moment',
@@ -1723,7 +1723,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 5/10',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/c5k40oyljs4_1771324133694__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/c5k40oyljs4_1771324133694__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/432',
     title_en: 'Ornament #3-1',
@@ -1742,7 +1742,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 4/10',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/trxxdjr5kbg_1771321220411__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/trxxdjr5kbg_1771321220411__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/433',
     title_en: 'Ornament #3',
@@ -1761,7 +1761,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/tuefvwzqat_1771080933306__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/tuefvwzqat_1771080933306__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/436',
     title_en: 'Serenity Fortress',
@@ -1780,7 +1780,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/y2xbs590dh_1771080775630__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/y2xbs590dh_1771080775630__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/437',
     title_en: 'Serenity Fortress',
@@ -1798,7 +1798,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/wj4qncvhw5g_1770991412361__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/wj4qncvhw5g_1770991412361__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/440',
     artist_en: 'Kang Seoktae',
@@ -1816,7 +1816,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/pvnthqu3z6_1770991227778__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/pvnthqu3z6_1770991227778__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/441',
     title_en: '9407 SIM_Visibility',
@@ -1834,7 +1834,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/z2rhab71l2_1770991303804__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/z2rhab71l2_1770991303804__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/442',
     artist_en: 'Kang Seoktae',
@@ -1852,7 +1852,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩9,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/wgafi02i94l_1770991081278__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/wgafi02i94l_1770991081278__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/443',
     title_en: 'Riding on the Clouds',
@@ -1870,7 +1870,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/090jwsq07pwe_1770991182286__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/090jwsq07pwe_1770991182286__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/444',
     title_en: '9406 SIM_Visibility',
@@ -1890,7 +1890,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/emoitdc8jwf_1770990952577__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/emoitdc8jwf_1770990952577__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/445',
     title_en: 'Happy Tea time',
@@ -1909,7 +1909,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/y9bdodpdge_1771040084426__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/y9bdodpdge_1771040084426__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/446',
     title_en: 'Sanctuary of Prayer',
@@ -1928,7 +1928,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/280__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/280__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/447',
     title_en: 'Dream Haven',
@@ -1948,7 +1948,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/419',
     title_en: 'Mandarin Fish',
@@ -1968,7 +1968,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1',
     price: '₩150,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/418',
     title_en: 'Blue Baobab of Memory',
@@ -1986,7 +1986,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/277__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/277__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/417',
     title_en: 'Person with Clasped Hands',
@@ -2006,7 +2006,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩15,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1c74a7af-81c9-4c80-aeb7-9f6ee8900aad/276__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/1c74a7af-81c9-4c80-aeb7-9f6ee8900aad/276__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/416',
     title_en: 'Winter Harbor',
@@ -2024,7 +2024,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/411',
     title_en: 'Duck',
@@ -2044,7 +2044,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩30,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/274__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/274__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/410',
     title_en: 'Barley Wine Glass',
@@ -2064,7 +2064,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/409',
     title_en: 'Morning at Baekdusan Cheonji',
@@ -2085,7 +2085,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/5',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/408',
     title_en: 'Nude',
@@ -2103,7 +2103,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩70,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/271__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/271__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/407',
     title_en: 'Apple',
@@ -2123,7 +2123,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b4a67e4-f946-4f83-b65e-0bace3e526a5/270__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/1b4a67e4-f946-4f83-b65e-0bace3e526a5/270__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/406',
     title_en: 'Extinction (滅)',
@@ -2143,7 +2143,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f7e2a47-eeba-451e-8c79-828965cff26b/269__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/5f7e2a47-eeba-451e-8c79-828965cff26b/269__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/405',
     title_en: 'Grass',
@@ -2161,7 +2161,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/9d561b47-f0b0-440e-b947-46c312ac101e/268__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/9d561b47-f0b0-440e-b947-46c312ac101e/268__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/404',
     title_en: 'Voice of Memory',
@@ -2181,7 +2181,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3052cddc-f6b3-436d-9c47-f458629337a4/267__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3052cddc-f6b3-436d-9c47-f458629337a4/267__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/403',
     title_en: 'Mobile Garden 69-Vanishing 3',
@@ -2199,7 +2199,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/402',
     title_en: 'After the Explosion',
@@ -2217,7 +2217,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/401',
     title_en: 'Making Love',
@@ -2236,7 +2236,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/264__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/264__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/400',
     title_en: 'Jeju Seopjikoji',
@@ -2255,7 +2255,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/399',
     title_en: 'Woljeong Bridge',
@@ -2273,7 +2273,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a4ad1ceb-f987-4c57-b682-0c308aff16d0/262__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a4ad1ceb-f987-4c57-b682-0c308aff16d0/262__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/398',
     title_en: 'folded tint',
@@ -2291,7 +2291,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4efdaed3-3ba2-443e-b68c-3cbbf203dd55/261__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4efdaed3-3ba2-443e-b68c-3cbbf203dd55/261__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/397',
     title_en: 'Middle ground',
@@ -2309,7 +2309,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/260__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/260__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/396',
     title_en: 'Green Feet',
@@ -2327,7 +2327,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00bb8541-b810-4ddd-892a-b3ac2da87c85/259__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/00bb8541-b810-4ddd-892a-b3ac2da87c85/259__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/395',
     title_en: 'Hope 013',
@@ -2345,7 +2345,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/394',
     title_en: 'Stone Figure Under a Tree',
@@ -2363,7 +2363,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/257__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/257__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/393',
     title_en: 'Untitled',
@@ -2383,7 +2383,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/256__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/256__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/392',
     title_en: 'Person with Clasped Hands',
@@ -2403,7 +2403,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/2d078e74-10dd-42ee-9d24-f239067e7fa6/255__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/2d078e74-10dd-42ee-9d24-f239067e7fa6/255__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/391',
     title_en: 'Angular Bottle',
@@ -2423,7 +2423,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/254__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/254__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/390',
     title_en: 'Leaf',
@@ -2443,7 +2443,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/253__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3adda803-0141-4358-8fa1-0298123f2090/253__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/389',
     title_en: 'Sprouting Tree',
@@ -2463,7 +2463,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9f5787d-da31-446d-90e6-d36ad22c517b/252__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9f5787d-da31-446d-90e6-d36ad22c517b/252__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/388',
     title_en: 'Naturance',
@@ -2483,7 +2483,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩650,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/251__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/251__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/387',
     title_en: 'Family',
@@ -2503,7 +2503,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/250__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/250__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/386',
     title_en: 'Memory of African Coffee',
@@ -2521,7 +2521,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/249__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/249__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/385',
     title_en: 'Conversation in the Jungle',
@@ -2539,7 +2539,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/248__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/248__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/384',
     title_en: 'Communion with Another World',
@@ -2559,7 +2559,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩840,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/247__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/247__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/383',
     title_en: 'Chaekgeori x Salvador Dali',
@@ -2577,7 +2577,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩840,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/246__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/246__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/382',
     title_en: 'Chaekgeori x Yayoi Kusama',
@@ -2595,7 +2595,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩840,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/245__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/245__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/381',
     title_en: 'Chaekgeori x Henri Matisse',
@@ -2615,7 +2615,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩840,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/244__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/244__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/380',
     title_en: 'Chaekgeori x Christmas',
@@ -2633,7 +2633,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/243__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/243__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/379',
     title_en: 'Wind Heading Toward You',
@@ -2653,7 +2653,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/241__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/241__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/377',
     title_en: 'Always by My Side',
@@ -2673,7 +2673,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/240__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/240__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/376',
     title_en: 'Time Together',
@@ -2693,7 +2693,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/fuxigkhocu_1771679287566__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/fuxigkhocu_1771679287566__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/456',
     title_en: 'The Stars and the Little Prince',
@@ -2712,7 +2712,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/374',
     title_en: 'Grandmother Weeding the Bean Field 2',
@@ -2731,7 +2731,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/237__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/237__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/373',
     title_en: 'A New Day',
@@ -2750,7 +2750,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/236__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/236__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/372',
     title_en: 'Good News',
@@ -2769,7 +2769,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/371',
     title_en: "What's Going On?",
@@ -2788,7 +2788,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩25,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/234__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/234__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/370',
     title_en: 'Ottogi_Mother Ya-ho',
@@ -2806,7 +2806,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩12,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/233__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/233__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/369',
     title_en: 'Ottogi Earthy Rainbow Matte',
@@ -2824,7 +2824,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩18,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/232__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/232__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/368',
     title_en: 'Ottogi Earthy Rainbow',
@@ -2842,7 +2842,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩35,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/231__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/231__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/367',
     title_en: 'Ottogi Chrome Rainbow (blue top)',
@@ -2860,7 +2860,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩35,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/230__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/230__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/366',
     title_en: 'Ottogi Chrome Rainbow (purple top)',
@@ -2878,7 +2878,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩550,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/229__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/229__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/365',
     title_en: 'Free will',
@@ -2896,7 +2896,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/228__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/228__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/364',
     title_en: 'Lovers',
@@ -2914,7 +2914,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/227__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/227__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/363',
     title_en: 'Horse of Byeongo 2',
@@ -2932,7 +2932,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/226__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/226__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/362',
     title_en: 'Winter Mid-Mountain',
@@ -2950,7 +2950,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/225__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/225__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/361',
     title_en: 'Winter Hallasan',
@@ -2968,7 +2968,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/224__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/224__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/360',
     title_en: 'Morning of the Oreum',
@@ -2987,7 +2987,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩7,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/359',
     title_en: 'Hero',
@@ -3005,7 +3005,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩7,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/222__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/222__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/358',
     title_en: 'Hero',
@@ -3023,7 +3023,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 14, 16, 18',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/221__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/221__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/357',
     title_en: 'Harvest',
@@ -3042,7 +3042,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 14, 16, 18',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/220__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/220__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/356',
     title_en: 'Embrace',
@@ -3061,7 +3061,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩18,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/219__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/219__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/355',
     title_en: 'In Seohuri - Harvesting Rice',
@@ -3079,7 +3079,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩18,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/218__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/218__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/354',
     title_en: 'Stone Turtle of Songnisan',
@@ -3097,7 +3097,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩50,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a0b1f445-0b68-46d4-9f12-8c2bfa7d9b24/217__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a0b1f445-0b68-46d4-9f12-8c2bfa7d9b24/217__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/353',
     title_en: 'When Longing Colors Everything',
@@ -3115,7 +3115,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/352',
     title_en: 'Elder Brother',
@@ -3134,7 +3134,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/351',
     title_en: 'Dance 2',
@@ -3153,7 +3153,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/214__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/214__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/350',
     title_en: 'Pansori Singer 1',
@@ -3172,7 +3172,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/349',
     title_en: 'The Earth',
@@ -3191,7 +3191,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/348',
     title_en: 'Homecoming',
@@ -3210,7 +3210,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/347',
     title_en: 'Eight-Petaled Single Flower',
@@ -3229,7 +3229,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/346',
     title_en: 'Spring Without People, Autumn Without Meaning',
@@ -3248,7 +3248,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩30,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/209__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/209__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/345',
     artist_en: 'Sin Hakcheol',
@@ -3266,7 +3266,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩65,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/208__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/208__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/344',
     artist_en: 'Sin Hakcheol',
@@ -3284,7 +3284,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩40,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/207__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/207__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/343',
     artist_en: 'Sin Hakcheol',
@@ -3302,7 +3302,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩6,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/206__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/206__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/342',
     artist_en: 'Sin Hakcheol',
@@ -3320,7 +3320,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩30,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/205__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/205__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/341',
     artist_en: 'Sin Hakcheol',
@@ -3338,7 +3338,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩20,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/204__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/204__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/340',
     artist_en: 'Sin Hakcheol',
@@ -3356,7 +3356,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩30,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/203__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/203__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/339',
     artist_en: 'Sin Hakcheol',
@@ -3374,7 +3374,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/9',
     price: '₩2,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/338',
     title_en: '#01_S1707SP',
@@ -3392,7 +3392,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/201__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/201__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/337',
     title_en: 'Roh Moo-hyun',
@@ -3411,7 +3411,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/200__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/200__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/336',
     title_en: 'Flower',
@@ -3428,7 +3428,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/199__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/199__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/335',
     title_en: 'Roh Moo-hyun (Five Works)',
@@ -3447,7 +3447,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/198__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/198__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/334',
     title_en: 'Untitled',
@@ -3465,7 +3465,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/197__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/197__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/333',
     title_en: 'Untitled',
@@ -3483,7 +3483,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/196__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/196__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/332',
     title_en: 'Horse of Byeongo 1',
@@ -3502,7 +3502,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/195__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/195__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/331',
     title_en: 'A World Between Pages - Spring',
@@ -3523,7 +3523,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/194__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/194__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/330',
     title_en: 'Kabari of the Jungle Library',
@@ -3543,7 +3543,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/193__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/193__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/329',
     title_en: 'Ottogi – Pink DB Matte',
@@ -3561,7 +3561,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/38df043c-af80-41c8-8c1b-a065c8218cf1/192__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/38df043c-af80-41c8-8c1b-a065c8218cf1/192__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/328',
     title_en: 'Lacquer Apple',
@@ -3579,7 +3579,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/191__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/191__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/301',
     title_en: '1988 Midway Up Maisan',
@@ -3597,7 +3597,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/190__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/190__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/300',
     title_en: '1988 Jeonnam Gangjin',
@@ -3615,7 +3615,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/189__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/189__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/299',
     title_en: '2003 Yangsan Yeongchuksan',
@@ -3633,7 +3633,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/188__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/188__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/298',
     title_en: '2006 Jeongseon Giusan',
@@ -3652,7 +3652,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e490e987-1f44-4190-8e18-d86623f110cf/187__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e490e987-1f44-4190-8e18-d86623f110cf/187__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/297',
     title_en: 'Sohwa: Digestion, Extinguishing, Burning (消化, 消火, 燒火)',
@@ -3670,7 +3670,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/296',
     title_en: 'Jirisan 3',
@@ -3689,7 +3689,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/444c0311-8135-4426-b57d-e60947156a34/185__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/444c0311-8135-4426-b57d-e60947156a34/185__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/295',
     title_en: 'Gate of Hell',
@@ -3707,7 +3707,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/184__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/184__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/294',
     title_en: 'Golden Flower',
@@ -3725,7 +3725,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/293',
     title_en: 'Poppy',
@@ -3745,7 +3745,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/182__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/182__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/292',
     title_en: 'Lucky Pouch (Pink)',
@@ -3765,7 +3765,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/181__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/181__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/291',
     title_en: 'Lucky Pouch (Blue)',
@@ -3785,7 +3785,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/180__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/180__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/290',
     title_en: 'Plum Blossoms',
@@ -3803,7 +3803,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/179__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/179__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/289',
     title_en: 'This Year, Your Year',
@@ -3821,7 +3821,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/178__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/178__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/288',
     title_en: 'Mountain',
@@ -3841,7 +3841,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/177__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/177__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/287',
     title_en: 'Mountain',
@@ -3859,7 +3859,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 5/20',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/176__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/176__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/286',
     title_en: 'Window',
@@ -3877,7 +3877,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 5/20',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/175__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/175__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/285',
     title_en: 'Double Existence & Space',
@@ -3896,7 +3896,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/172__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/172__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/282',
     title_en: 'Dispersing 3',
@@ -3915,7 +3915,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/171__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/171__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/281',
     title_en: 'Scattered lights 3',
@@ -3934,7 +3934,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/170__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/170__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/280',
     title_en: 'Scattered lights 2',
@@ -3953,7 +3953,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩170,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/169__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/169__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/279',
     title_en: 'Returning around 5',
@@ -3972,7 +3972,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩170,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/168__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/168__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/278',
     title_en: 'Returning around 4',
@@ -3993,7 +3993,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩170,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/167__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/167__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/277',
     title_en: 'Returning around 2',
@@ -4014,7 +4014,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/166__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/166__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/254',
     title_en: 'Kimchi 2023-2',
@@ -4033,7 +4033,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/165__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/165__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/253',
     title_en: 'Kimchi 2024-3',
@@ -4052,7 +4052,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/164__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/63f6b252-12f8-4ad8-8c41-f9cdc2b6e280/164__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/252',
     title_en: 'Kimchi 2025-2',
@@ -4071,7 +4071,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩7,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dfdcff31-caf8-4697-9be8-eabb556971c2/163__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dfdcff31-caf8-4697-9be8-eabb556971c2/163__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/251',
     title_en: 'Glory_moment#+33',
@@ -4090,7 +4090,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dfdcff31-caf8-4697-9be8-eabb556971c2/162__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dfdcff31-caf8-4697-9be8-eabb556971c2/162__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/250',
     title_en: 'Glory_moment#+30',
@@ -4109,7 +4109,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6b86987f-041b-4e01-99a6-adc3bd7e5972/161__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6b86987f-041b-4e01-99a6-adc3bd7e5972/161__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/249',
     title_en: 'Where the Light Passed 3 pm7h1m',
@@ -4128,7 +4128,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6b86987f-041b-4e01-99a6-adc3bd7e5972/160__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6b86987f-041b-4e01-99a6-adc3bd7e5972/160__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/248',
     title_en: 'reflection8 Kitchen pm5h47m',
@@ -4146,7 +4146,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/75c78d81-768d-4bd2-b323-67a4f9792719/159__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/75c78d81-768d-4bd2-b323-67a4f9792719/159__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/247',
     title_en: 'The Stare',
@@ -4164,7 +4164,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/76cf64c7-121d-4eb8-b010-8246c11a2f68/158__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/76cf64c7-121d-4eb8-b010-8246c11a2f68/158__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/246',
     title_en: 'A Double Portrait #1',
@@ -4182,7 +4182,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/2b614fe3-b563-4057-b265-c022aac31b33/157__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/2b614fe3-b563-4057-b265-c022aac31b33/157__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/245',
     title_en: 'Princess Audrey',
@@ -4200,7 +4200,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/156__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/156__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/244',
     title_en: 'Sunset',
@@ -4219,7 +4219,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/243',
     title_en: 'Boat Song of the Southern Land',
@@ -4238,7 +4238,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/242',
     title_en: 'Daytime Goblin',
@@ -4257,7 +4257,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/153__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/153__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/241',
     title_en: 'Tiger Dance',
@@ -4276,7 +4276,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/240',
     title_en: 'Gong 2',
@@ -4295,7 +4295,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,950,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/239',
     title_en: 'Song of the Blade',
@@ -4315,7 +4315,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/150__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/150__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/238',
     title_en: 'Sound of Spring 2',
@@ -4334,7 +4334,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/149__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/149__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/237',
     title_en: 'Sound of Spring 1',
@@ -4353,7 +4353,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/148__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/148__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/236',
     title_en: 'Black Bird',
@@ -4372,7 +4372,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/147__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/147__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/235',
     title_en: 'Jirisan 2',
@@ -4391,7 +4391,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/146__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/146__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/234',
     title_en: 'From the Universe I',
@@ -4409,7 +4409,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/145__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/145__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/233',
     title_en: 'Dream of a Whale',
@@ -4430,7 +4430,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/144__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/144__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/232',
     title_en: 'y&b drawing',
@@ -4449,7 +4449,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/143__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3358ece-79e1-4081-a16b-233fa5c2b7d1/143__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/231',
     title_en: 'Intersection of Memory, Speed, and Information',
@@ -4468,7 +4468,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/24950b2e-34d5-4b27-8a14-8b1d690f6fb8/142__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/24950b2e-34d5-4b27-8a14-8b1d690f6fb8/142__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/230',
     title_en: 'Chaekgado with a Pear',
@@ -4487,7 +4487,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/24950b2e-34d5-4b27-8a14-8b1d690f6fb8/141__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/24950b2e-34d5-4b27-8a14-8b1d690f6fb8/141__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/229',
     title_en: 'Escape',
@@ -4505,7 +4505,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0198814-7009-4393-a3c2-b9c7211ee5c7/140__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c0198814-7009-4393-a3c2-b9c7211ee5c7/140__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/228',
     title_en: 'The Artificial NO. 1',
@@ -4524,7 +4524,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/35871f59-bb25-4348-b025-afae048d8a1e/139__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/35871f59-bb25-4348-b025-afae048d8a1e/139__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/227',
     title_en: 'Flowers Fall and Return to Earth (花落以土) #16',
@@ -4543,7 +4543,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/35871f59-bb25-4348-b025-afae048d8a1e/138__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/35871f59-bb25-4348-b025-afae048d8a1e/138__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/226',
     title_en: 'Flowers Fall and Return to Earth (花落以土) #15',
@@ -4562,7 +4562,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/137__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/137__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/225',
     title_en: 'Dongdaemun',
@@ -4581,7 +4581,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 3/5',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/136__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/136__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/224',
     title_en: 'Time to lose',
@@ -4600,7 +4600,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 2/5',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/135__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/135__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/223',
     title_en: 'Inviting',
@@ -4619,7 +4619,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/134__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/134__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/222',
     title_en: 'Form Play #15',
@@ -4638,7 +4638,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/133__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/133__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/221',
     title_en: 'Between You and Me #2',
@@ -4657,7 +4657,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/132__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/132__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/220',
     title_en: 'Between You and Me #1',
@@ -4676,7 +4676,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/131__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/131__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/219',
     title_en: 'Shape of the Heart #2',
@@ -4695,7 +4695,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/130__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/130__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/218',
     title_en: 'Shape of the Heart #1',
@@ -4713,7 +4713,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/129__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/129__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/217',
     title_en: 'Rooster-A Splendid Outing',
@@ -4731,7 +4731,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/128__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/721b01c5-36de-4db2-af35-a9f0d6eabc2c/128__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/216',
     title_en: 'Tiger Who Loved Flowers',
@@ -4749,7 +4749,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩30,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/127__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/127__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/215',
     title_en: 'On the Dream Path of Modern Korean History',
@@ -4768,7 +4768,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩65,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/126__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/126__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/214',
     title_en: 'On the Dream Path of Modern Korean History',
@@ -4787,7 +4787,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩65,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/125__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/125__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/213',
     title_en: 'Modern Korean History DNA',
@@ -4807,7 +4807,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00e8c684-70bf-4b62-bd2e-d4d53500decf/124__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/00e8c684-70bf-4b62-bd2e-d4d53500decf/124__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/212',
     title_en: 'Symbol After Light',
@@ -4826,7 +4826,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/00e8c684-70bf-4b62-bd2e-d4d53500decf/123__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/00e8c684-70bf-4b62-bd2e-d4d53500decf/123__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/211',
     title_en: 'Symbol of Memory',
@@ -4844,7 +4844,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/122__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/122__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/210',
     title_en: 'Even When the Wind Blows',
@@ -4862,7 +4862,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/121__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/121__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/209',
     title_en: 'Hidden Emotions',
@@ -4880,7 +4880,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/120__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/17106ddc-fb29-4d46-8fe5-24f9189c8ee6/120__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/208',
     title_en: 'Struggling Through',
@@ -4899,7 +4899,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/48b9cea1-9667-4d7c-94b2-778824d0fb8f/119__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/48b9cea1-9667-4d7c-94b2-778824d0fb8f/119__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/207',
     title_en: 'WildFlower Collage 26',
@@ -4920,7 +4920,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/48b9cea1-9667-4d7c-94b2-778824d0fb8f/118__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/48b9cea1-9667-4d7c-94b2-778824d0fb8f/118__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/206',
     title_en: 'WildFlower Collage 25',
@@ -4939,7 +4939,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/117__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/117__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/205',
     title_en: 'Hollowed yellow 04',
@@ -4958,7 +4958,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/116__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c3a30f14-11d2-443f-9f5f-32914fb1e01f/116__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/204',
     title_en: 'Hollowed blue 02',
@@ -4977,7 +4977,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/115__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/115__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/203',
     title_en: 'Shelter Where the Light of Wishes Took Root',
@@ -4996,7 +4996,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/114__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/130afdb8-1f02-45ce-89db-e7d15522d2b9/114__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/202',
     title_en: 'Shelter Embracing Light',
@@ -5017,7 +5017,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3823359c-041c-46f0-8a8f-6f553be814f0/113__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3823359c-041c-46f0-8a8f-6f553be814f0/113__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/201',
     title_en: 'Not Understanding My Heart',
@@ -5038,7 +5038,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ffbc6fbd-4c92-422d-84f4-752b0f521ad8/112__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ffbc6fbd-4c92-422d-84f4-752b0f521ad8/112__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/200',
     title_en: 'Brave Wind',
@@ -5059,7 +5059,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ffbc6fbd-4c92-422d-84f4-752b0f521ad8/111__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ffbc6fbd-4c92-422d-84f4-752b0f521ad8/111__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/199',
     title_en: 'Rainbow Hunter',
@@ -5079,7 +5079,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/308f58bc-b732-4731-b62c-e94db7399ae0/110__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/308f58bc-b732-4731-b62c-e94db7399ae0/110__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/198',
     title_en: 'A Moment I Want to Linger',
@@ -5097,7 +5097,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/109__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/109__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/129',
     title_en: 'Gazing at Obong',
@@ -5115,7 +5115,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/108__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/108__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/128',
     title_en: 'Red Rooster',
@@ -5133,7 +5133,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/107__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/107__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/127',
     title_en: 'Dandelion Candlelight',
@@ -5152,7 +5152,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/106__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/106__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/126',
     title_en: 'Red Horse',
@@ -5170,7 +5170,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/105__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/105__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/125',
     title_en: 'Night Alley-Eden House',
@@ -5188,7 +5188,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/104__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/104__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/124',
     title_en: 'Night Alley-Homecoming',
@@ -5206,7 +5206,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/103__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f56aaf17-615f-47eb-b693-4cf9f8cfd6be/103__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/123',
     title_en: 'Night Alley-Snowy Road',
@@ -5224,7 +5224,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/102__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/102__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/122',
     title_en: 'Playing at Daein Market',
@@ -5245,7 +5245,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/694ba882-2df5-4483-97fd-f3078070ad5d/101__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/694ba882-2df5-4483-97fd-f3078070ad5d/101__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/121',
     title_en: 'wishlist',
@@ -5264,7 +5264,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/694ba882-2df5-4483-97fd-f3078070ad5d/100__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/694ba882-2df5-4483-97fd-f3078070ad5d/100__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/120',
     title_en: 'LEGO TECHNIC 42110',
@@ -5283,7 +5283,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/499b6329-7e86-4ed1-8bfb-34e5cc003ccd/99__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/499b6329-7e86-4ed1-8bfb-34e5cc003ccd/99__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/119',
     title_en: 'Light Stays-3',
@@ -5302,7 +5302,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/499b6329-7e86-4ed1-8bfb-34e5cc003ccd/98__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/499b6329-7e86-4ed1-8bfb-34e5cc003ccd/98__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/118',
     title_en: 'Placing the Heart in Space',
@@ -5321,7 +5321,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a46923c8-94b3-4a92-8430-f9752a2da896/97__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a46923c8-94b3-4a92-8430-f9752a2da896/97__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/117',
     title_en: 'Dot 33-2',
@@ -5340,7 +5340,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a46923c8-94b3-4a92-8430-f9752a2da896/96__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a46923c8-94b3-4a92-8430-f9752a2da896/96__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/116',
     title_en: 'People and Blue',
@@ -5359,7 +5359,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/95__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/95__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/115',
     title_en: 'Wind and Light-62',
@@ -5380,7 +5380,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/94__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/94__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/114',
     title_en: 'Wind and Light-60',
@@ -5401,7 +5401,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩9,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/da3aa1e2-53cc-41ca-ad91-b31d42d89a63/93__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/da3aa1e2-53cc-41ca-ad91-b31d42d89a63/93__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/113',
     title_en: "Butterfly's Dream",
@@ -5420,7 +5420,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩9,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/da3aa1e2-53cc-41ca-ad91-b31d42d89a63/92__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/da3aa1e2-53cc-41ca-ad91-b31d42d89a63/92__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/112',
     title_en: "Butterfly's Dream",
@@ -5438,7 +5438,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/91__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/91__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/111',
     title_en: "Playground n'3",
@@ -5458,7 +5458,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/90__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/90__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/110',
     title_en: "Playground n'2",
@@ -5479,7 +5479,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/89__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/89__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/109',
     title_en: 'TOGETHER',
@@ -5498,7 +5498,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/88__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/88__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/108',
     title_en: 'TROPICAL FOREST',
@@ -5519,7 +5519,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/87__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/87__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/107',
     title_en: 'LION KING',
@@ -5538,7 +5538,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/86__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfdac0f4-d6fc-4224-b2bb-c8c61a172cc6/86__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/106',
     title_en: 'KINDRED LIGHTS',
@@ -5556,7 +5556,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/8a61d84b-2a64-456b-991b-56015adee17d/85__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/8a61d84b-2a64-456b-991b-56015adee17d/85__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/105',
     title_en: 'Newlywed Mr. Lee (李씨)',
@@ -5574,7 +5574,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/8a61d84b-2a64-456b-991b-56015adee17d/84__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/8a61d84b-2a64-456b-991b-56015adee17d/84__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/104',
     title_en: 'Mr. Kim (金씨)',
@@ -5592,7 +5592,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/83__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/83__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/103',
     title_en: 'Landscape Where the Little Prince Stayed_Jeju Diary',
@@ -5612,7 +5612,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/102',
     title_en: 'The Day a Gentle Wind Blew',
@@ -5632,7 +5632,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/81__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/81__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/101',
     title_en: 'Fox of the Rainbow Forest',
@@ -5652,7 +5652,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/80__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/80__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/100',
     title_en: 'My Little Prince',
@@ -5673,7 +5673,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/79__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/79__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/99',
     title_en: 'Clumsy Journey',
@@ -5692,7 +5692,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/78__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/78__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/98',
     title_en: 'Clumsy Thoughts',
@@ -5711,7 +5711,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/77__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/77__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/97',
     title_en: 'A Canola-Colored Spring Day',
@@ -5732,7 +5732,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/76__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/76__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/96',
     title_en: 'Dream Haven',
@@ -5752,7 +5752,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션1/5',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d4fa70bf-57b6-4b7b-a78f-917c95b9581f/75__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d4fa70bf-57b6-4b7b-a78f-917c95b9581f/75__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/95',
     title_en: 'Portrait',
@@ -5770,7 +5770,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션1/5',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d4fa70bf-57b6-4b7b-a78f-917c95b9581f/74__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d4fa70bf-57b6-4b7b-a78f-917c95b9581f/74__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/94',
     title_en: 'Director Yeon Sang-ho',
@@ -5789,7 +5789,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f0371146-7b75-49f4-9fb1-20a3a21d701a/72__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f0371146-7b75-49f4-9fb1-20a3a21d701a/72__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/92',
     title_en: 'c ; Small Sky',
@@ -5810,7 +5810,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩9,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b0f67b3-4b09-4236-83ba-9e436646f0a7/71__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/1b0f67b3-4b09-4236-83ba-9e436646f0a7/71__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/91',
     title_en: 'Yugong Yishan-1910',
@@ -5829,7 +5829,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩6,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1b0f67b3-4b09-4236-83ba-9e436646f0a7/70__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/1b0f67b3-4b09-4236-83ba-9e436646f0a7/70__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/90',
     title_en: 'Yugong Yishan-1907',
@@ -5848,7 +5848,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/516fb33d-ce72-458a-bc17-f6003c089247/69__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/516fb33d-ce72-458a-bc17-f6003c089247/69__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/89',
     title_en: 'Snow Field 02',
@@ -5867,7 +5867,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/516fb33d-ce72-458a-bc17-f6003c089247/68__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/516fb33d-ce72-458a-bc17-f6003c089247/68__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/88',
     title_en: 'Snow Field 01',
@@ -5885,7 +5885,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bbc87551-b093-4847-9559-fe44bf4b1295/67__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bbc87551-b093-4847-9559-fe44bf4b1295/67__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/87',
     title_en: 'Revealed Di',
@@ -5903,7 +5903,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩7,700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bbc87551-b093-4847-9559-fe44bf4b1295/66__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bbc87551-b093-4847-9559-fe44bf4b1295/66__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/86',
     title_en: 'Botanical Garden',
@@ -5921,7 +5921,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩840,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/65__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/65__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/85',
     title_en: 'Chaekgeori x Keith Haring',
@@ -5939,7 +5939,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/64__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/64__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/84',
     title_en: 'Conan Playing the Flute',
@@ -5959,7 +5959,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/9429728f-1e50-4052-9e13-ddda465cf710/63__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/9429728f-1e50-4052-9e13-ddda465cf710/63__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/83',
     title_en: 'Study of Haewol',
@@ -5977,7 +5977,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩6,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/62__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/62__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/82',
     title_en: 'Hackberry Tree of Myeonjeon-ri, Jaeundo',
@@ -5995,7 +5995,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 5/10',
     price: '₩2,660,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/61__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/61__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/81',
     title_en: 'Stars and Green Baobab',
@@ -6013,7 +6013,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 7/10',
     price: '₩3,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/60__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/60__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/80',
     title_en: 'Moonlight Mangrove_Tokuo',
@@ -6031,7 +6031,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 3/10',
     price: '₩4,240,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/59__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/59__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/79',
     title_en: 'Mango tree_Sawani',
@@ -6050,7 +6050,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/5',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/58__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/58__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/78',
     title_en: 'Time of Quarks #113',
@@ -6069,7 +6069,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/5',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/57__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/57__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/77',
     title_en: 'Time of Quarks #111',
@@ -6087,7 +6087,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4921234e-c8c8-429b-ab19-514a1d13ef29/56__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4921234e-c8c8-429b-ab19-514a1d13ef29/56__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/76',
     title_en: 'That Place',
@@ -6105,7 +6105,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4921234e-c8c8-429b-ab19-514a1d13ef29/55__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4921234e-c8c8-429b-ab19-514a1d13ef29/55__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/75',
     title_en: 'That Place',
@@ -6123,7 +6123,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/51__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/51__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/71',
     title_en: 'Red Spring Plum Blossoms',
@@ -6142,7 +6142,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/50__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/50__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/70',
     title_en: 'Embracing Myself',
@@ -6161,7 +6161,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/49__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/49__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/69',
     title_en: 'Happy Days 2020',
@@ -6179,7 +6179,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/48__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/48__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/68',
     title_en: 'Bukhansan 2025',
@@ -6197,7 +6197,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/47__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/47__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/67',
     title_en: 'Sturdy Persimmon Tree',
@@ -6216,7 +6216,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/46__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3554d61a-06f8-4f10-af73-43373923a5be/46__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/66',
     title_en: 'Strolling Through Bukhansan-2',
@@ -6234,7 +6234,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0c01b57a-260b-4c95-8a10-42515e24572c/45__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/0c01b57a-260b-4c95-8a10-42515e24572c/45__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/65',
     title_en: 'No 895',
@@ -6252,7 +6252,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/44__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/44__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/64',
     title_en: 'Milky Way at My Fingertips',
@@ -6270,7 +6270,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/51544be4-4285-4abc-a3c4-db5416248094/43__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/51544be4-4285-4abc-a3c4-db5416248094/43__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/63',
     title_en: 'Every Day',
@@ -6288,7 +6288,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/42__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/1549a33f-5d05-4321-866c-49f81f250621/42__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/62',
     title_en: 'Weight of Books',
@@ -6306,7 +6306,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5604d50f-d2d6-45db-ad21-e4cae91a803d/41__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/5604d50f-d2d6-45db-ad21-e4cae91a803d/41__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/61',
     title_en: 'Trivial Everyday',
@@ -6324,7 +6324,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/40__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/309e02b1-1c58-4090-a9ea-355745623075/40__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/60',
     title_en: 'Woman Holding the Moon',
@@ -6344,7 +6344,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 5/20',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/39__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/39__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/59',
     title_en: 'Blue Moon-3',
@@ -6364,7 +6364,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 7/25',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/38__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/38__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/58',
     title_en: 'Blue night-4',
@@ -6384,7 +6384,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩7,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/37__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/37__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/57',
     title_en: 'Blue Pine Tree',
@@ -6403,7 +6403,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/36__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4c71ed18-bbba-4068-97b8-52124b8e4a20/36__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/56',
     title_en: 'Like a Mountain',
@@ -6421,7 +6421,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩6,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/34__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/34__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/54',
     title_en: 'The Great Resurrection',
@@ -6439,7 +6439,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 5/5',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/33__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/33__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/53',
     title_en: 'Over the Dream-2',
@@ -6457,7 +6457,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩50,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5f1c4d25-f6de-4f4a-b9f3-a82430e2d824/32__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/5f1c4d25-f6de-4f4a-b9f3-a82430e2d824/32__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/52',
     title_en: 'Mumonkan 50 Plates (Print Series)',
@@ -6476,7 +6476,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/31__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/31__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/51',
     title_en: 'Head Study-Portrait of a Giant',
@@ -6495,7 +6495,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/30__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/30__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/50',
     title_en: 'Head Study',
@@ -6514,7 +6514,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/29__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3fc4005a-f793-4bb6-bad8-acb1b4c8cdc9/29__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/49',
     title_en: 'Head Study - Head with a Parting 1',
@@ -6532,7 +6532,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 6/20',
     price: '₩2,300,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/47501893-6f94-4a08-8586-a2a34edc8ded/28__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/47501893-6f94-4a08-8586-a2a34edc8ded/28__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/48',
     title_en: 'So Annoying...',
@@ -6550,7 +6550,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/1__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/1__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/47',
     title_en: 'Eagle (鷲圖)',
@@ -6568,7 +6568,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/27__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/27__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/46',
     title_en: "Sisyphus's Lover",
@@ -6586,7 +6586,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/26__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/26__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/45',
     title_en: 'Beam Letter',
@@ -6604,7 +6604,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/25__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/04f45299-6f93-4734-8e40-b76cb8701ff8/25__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/44',
     title_en: 'Mountain (山)',
@@ -6624,7 +6624,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩25,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/24__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/24__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/43',
     title_en: 'Modern Korean History-June Uprising (1988)',
@@ -6643,7 +6643,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩12,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/23__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/23__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/42',
     title_en: 'Modern Korean History-Long Live Democracy (5.18)',
@@ -6662,7 +6662,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩3,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/22__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/22__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/41',
     title_en: 'Untitled',
@@ -6682,7 +6682,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/21__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/21__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/40',
     title_en: '9409 SIM_Visibility',
@@ -6703,7 +6703,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/20__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/20__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/39',
     title_en: '9408 SIM_Visibility',
@@ -6723,7 +6723,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩8,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/19__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/19__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/38',
     title_en: 'The Great Resurrection',
@@ -6741,7 +6741,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩7,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/18__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/18__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/37',
     title_en: 'The Great Resurrection',
@@ -6759,7 +6759,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩6,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/17__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9ef236c-00e6-4fb6-9e9e-dcf4942524c0/17__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/36',
     title_en: 'The Great Resurrection',
@@ -6777,7 +6777,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/16__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/16__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/35',
     title_en: 'From the Curved World_Monami Ballpoint 1',
@@ -6795,7 +6795,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/1',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/15__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/15__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/34',
     title_en: 'From Seoul Tower',
@@ -6813,7 +6813,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/33',
     title_en: 'From the Trajectory of Curvilinear Motion: Lotte World Tower 230817',
@@ -6832,7 +6832,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/13__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/13__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/32',
     title_en: 'House on the Hill',
@@ -6851,7 +6851,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩2,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/12__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/0aea8f22-3c00-4f4a-8f88-338fe69d1bb2/12__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/31',
     title_en: 'The Houses at Night, 2021, #81',
@@ -6871,7 +6871,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩6,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/11__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/11__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/30',
     title_en: 'Chaekgeori',
@@ -6889,7 +6889,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/10__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/86a6f7ca-48c2-41e4-97ca-95632a4b5848/10__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/29',
     title_en: 'Fireflies and Butterflies at Night (夜螢花蝶圖)',
@@ -6908,7 +6908,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 2/10',
     price: '₩600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/9__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/9__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/28',
     title_en: 'Authentic City',
@@ -6927,7 +6927,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/10',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/8__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/8__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/27',
     title_en: 'Authentic City',
@@ -6946,7 +6946,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 1/8',
     price: '₩2,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/7__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/5aabb63d-31c8-4418-a6af-3a8736f07e68/7__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/26',
     title_en: 'Untitled',
@@ -6964,7 +6964,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/6__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/6__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/25',
     title_en: 'Return 2 (回2)',
@@ -6982,7 +6982,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/5__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/269077db-441d-48ca-8690-5c8d37803384/5__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/24',
     title_en: 'Return 1 (回1)',
@@ -7002,7 +7002,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '에디션 5/5',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/4__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/32b69bdb-3baa-4318-96b5-4b8bd6741a29/4__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/23',
     title_en: 'Porco, Where Are You?-1',
@@ -7020,7 +7020,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/3__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/22',
     title_en: 'pop kids #96',
@@ -7038,7 +7038,7 @@ export const dbGeneratedArtworks: Artwork[] = [
     edition: '',
     price: '₩4,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/2__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dcdc982f-31b3-4a14-b375-32afa3866319/2__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/21',
     title_en: 'face #02-Hong Beomdo',

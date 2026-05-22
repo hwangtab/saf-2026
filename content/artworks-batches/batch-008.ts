@@ -13,7 +13,7 @@ export const batch008: Artwork[] = [
     edition: '',
     price: '₩15,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/1c74a7af-81c9-4c80-aeb7-9f6ee8900aad/276__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/1c74a7af-81c9-4c80-aeb7-9f6ee8900aad/276__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/416',
   },
@@ -29,7 +29,7 @@ export const batch008: Artwork[] = [
     edition: '',
     price: '₩100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/277__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/277__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/417',
     sold: true,
@@ -46,7 +46,7 @@ export const batch008: Artwork[] = [
     edition: '',
     price: '₩150,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/418',
     sold: true,
@@ -64,7 +64,7 @@ export const batch008: Artwork[] = [
     edition: '',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/419',
   },
@@ -83,7 +83,7 @@ export const batch008: Artwork[] = [
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/280__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/280__original.webp',
     ],
     shopUrl: '확인 중',
     sold: true,

@@ -22,7 +22,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩170,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/167__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/167__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/277',
     sold: true,
@@ -49,7 +49,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩170,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/168__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/168__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/278',
     sold: true,
@@ -76,7 +76,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩170,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/169__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/169__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/279',
   },
@@ -102,7 +102,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/170__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/170__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/280',
   },
@@ -128,7 +128,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/171__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/171__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/281',
   },
@@ -154,7 +154,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/172__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/172__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/282',
   },
@@ -172,7 +172,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/173__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/173__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/283',
   },
@@ -190,7 +190,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/174__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fa1cffe8-2c0c-4e68-ad9b-5a1ba7abf348/174__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/284',
   },
@@ -206,7 +206,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '에디션 5/20',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/175__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/175__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/285',
   },
@@ -222,7 +222,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '에디션 5/20',
     price: '₩2,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/176__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/db69d4d4-9d77-4fa2-b455-4072750161d2/176__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/286',
   },
@@ -238,7 +238,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/178__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/178__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/287',
   },
@@ -254,7 +254,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/178__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3b78b2d4-66fe-4343-97b8-1f0ab53de219/178__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/288',
   },
@@ -270,7 +270,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/179__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/179__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/289',
   },
@@ -286,7 +286,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/180__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/df6c8003-2ff7-4eda-a928-934b2675599c/180__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/290',
   },
@@ -303,7 +303,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/181__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/181__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/291',
   },
@@ -319,7 +319,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/182__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/182__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/292',
     sold: true,
@@ -336,7 +336,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩900,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/293',
     sold: true,
@@ -353,7 +353,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩1,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/184__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/184__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/294',
   },
@@ -369,7 +369,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/444c0311-8135-4426-b57d-e60947156a34/185__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/444c0311-8135-4426-b57d-e60947156a34/185__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/295',
   },
@@ -385,7 +385,7 @@ My painting is completed as I draw lines on the canvas and the surface is gradua
     edition: '',
     price: '₩1,550,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/296',
   },
@@ -405,7 +405,7 @@ My work is an experiment in transition, suspension, and repositioning—moving t
     edition: '',
     price: '₩1,100,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e490e987-1f44-4190-8e18-d86623f110cf/187__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e490e987-1f44-4190-8e18-d86623f110cf/187__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/297',
   },
@@ -421,7 +421,7 @@ My work is an experiment in transition, suspension, and repositioning—moving t
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/188__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/188__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/298',
   },
@@ -437,7 +437,7 @@ My work is an experiment in transition, suspension, and repositioning—moving t
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/189__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e9259d3d-7910-4e5f-a7c0-5e17df05b29c/189__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/299',
   },
@@ -453,7 +453,7 @@ My work is an experiment in transition, suspension, and repositioning—moving t
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/190__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/190__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/300',
   },
@@ -469,7 +469,7 @@ My work is an experiment in transition, suspension, and repositioning—moving t
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/191__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/191__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/301',
   },

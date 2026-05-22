@@ -3,6 +3,7 @@
 -- 이벤트로 적재되어 어드민 패널이 합산 표시. 'mode' 페이로드 추가로 destination 분리.
 -- 직전 적재 데이터는 mode 없음 — mode IS NULL은 'legacy' 분류.
 
+DROP FUNCTION IF EXISTS get_purchase_click_summary(timestamptz);
 CREATE OR REPLACE FUNCTION get_purchase_click_summary(since_ts timestamptz)
 RETURNS TABLE(
   total_clicks bigint,
@@ -28,6 +29,7 @@ AS $$
 $$;
 
 -- TOP artwork에도 mode breakdown 추가 — 어떤 작품이 어느 destination으로 clicks
+DROP FUNCTION IF EXISTS get_top_purchase_clicked_artworks(timestamptz, int);
 CREATE OR REPLACE FUNCTION get_top_purchase_clicked_artworks(since_ts timestamptz, lim int DEFAULT 10)
 RETURNS TABLE(
   artwork_id text,

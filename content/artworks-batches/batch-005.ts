@@ -12,7 +12,7 @@ export const batch005: Artwork[] = [
     edition: '',
     price: '₩3,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/38df043c-af80-41c8-8c1b-a065c8218cf1/192__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/38df043c-af80-41c8-8c1b-a065c8218cf1/192__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/328',
     description: ``,
@@ -80,7 +80,7 @@ Selected Group Exhibitions & Activities
     edition: '',
     price: '₩5,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/193__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/193__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/329',
     description: ``,
@@ -99,7 +99,7 @@ Selected Group Exhibitions & Activities
     edition: '',
     price: '₩3,600,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/194__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/194__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/330',
     sold: true,
@@ -196,7 +196,7 @@ Publications
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/195__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/e5ebf46f-6ac9-49e9-8e70-3134b57faa3b/195__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/331',
     sold: true,
@@ -293,7 +293,7 @@ Publications
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/196__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/196__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/332',
     description: ``,
@@ -392,7 +392,7 @@ Publications: <Duryun> Hexagon Publishing, 2020 / <Jiri> Hexagon Publishing, 202
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/197__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/197__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/333',
     sold: false,
@@ -421,7 +421,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩1,200,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/197__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8f538c9-bf9a-45cc-bf8b-f25a99d8f3fe/197__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/334',
     sold: false,
@@ -450,7 +450,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '문의',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/199__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/3a7840c4-eb4d-48fb-bf45-7bb55e62a091/199__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/335',
     description: ``,
@@ -473,7 +473,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩2,400,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/hcm05n1dk79_1773056438009__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b1c90901-f58d-431f-8d89-268d7f9ec06d/hcm05n1dk79_1773056438009__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/336',
     description: ``,
@@ -496,7 +496,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩1,500,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-a8cca196-abeb-4af7-9edf-e7c4e185370c/v2lih86fgu_1772178005287__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-a8cca196-abeb-4af7-9edf-e7c4e185370c/v2lih86fgu_1772178005287__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/337',
     description: ``,
@@ -519,7 +519,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '에디션 1/9',
     price: '₩2,800,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/338',
     description: ``,
@@ -538,7 +538,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩30,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/203__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/203__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/339',
     description: ``,
@@ -560,7 +560,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩20,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/204__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/204__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/340',
     description: ``,
@@ -582,7 +582,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩30,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/205__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/205__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/341',
     description: ``,
@@ -604,7 +604,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩6,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/206__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/206__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/342',
     description: ``,
@@ -626,7 +626,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩40,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/207__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/207__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/343',
     description: ``,
@@ -648,7 +648,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩65,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/208__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/208__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/344',
     description: ``,
@@ -670,7 +670,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩30,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/209__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/f901940b-d628-4322-bf3c-5a6f760edc55/209__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/345',
     description: ``,
@@ -692,7 +692,7 @@ Her career was shaped through a journey connecting Korea, China, and India. Her 
     edition: '',
     price: '₩1,950,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/346',
     description: ``,
@@ -721,7 +721,7 @@ Under the conviction that "art must be shared by many people," he gave his print
     edition: '',
     price: '₩1,950,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/347',
     description: ``,
@@ -750,7 +750,7 @@ Under the conviction that "art must be shared by many people," he gave his print
     edition: '',
     price: '₩1,950,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/212__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/348',
     description: ``,
@@ -779,7 +779,7 @@ Under the conviction that "art must be shared by many people," he gave his print
     edition: '',
     price: '₩1,950,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/349',
     description: ``,
@@ -808,7 +808,7 @@ Under the conviction that "art must be shared by many people," he gave his print
     edition: '',
     price: '₩1,550,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/214__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/214__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/350',
     description: ``,
@@ -837,7 +837,7 @@ Under the conviction that "art must be shared by many people," he gave his print
     edition: '',
     price: '₩1,550,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/215__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/351',
     description: ``,
@@ -866,7 +866,7 @@ Under the conviction that "art must be shared by many people," he gave his print
     edition: '',
     price: '₩1,550,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/352',
     description: ``,
@@ -895,7 +895,7 @@ Under the conviction that "art must be shared by many people," he gave his print
     edition: '',
     price: '₩50,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a0b1f445-0b68-46d4-9f12-8c2bfa7d9b24/217__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a0b1f445-0b68-46d4-9f12-8c2bfa7d9b24/217__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/353',
     description: ``,
@@ -953,7 +953,7 @@ During the June Democracy Struggle of 1987, upon seeing a newspaper photograph o
     edition: '',
     price: '₩18,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/218__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/218__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/354',
     description: ``,
@@ -980,7 +980,7 @@ From the initial sympathetic gaze that could not look away from the shaded back 
     edition: '',
     price: '₩18,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/219__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/219__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/355',
     description: ``,
@@ -1007,7 +1007,7 @@ From the initial sympathetic gaze that could not look away from the shaded back 
     edition: '에디션 14, 16, 18',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/220__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/220__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/356',
     description: ``,
@@ -1034,7 +1034,7 @@ From the initial sympathetic gaze that could not look away from the shaded back 
     edition: '에디션 14, 16, 18',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/221__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/55041f23-203e-4699-97dd-8c00f76c9a8b/221__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/357',
     description: `(액자별도)`,
@@ -1062,7 +1062,7 @@ From the initial sympathetic gaze that could not look away from the shaded back 
     edition: '',
     price: '₩7,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/358',
     description: ``,
@@ -1081,7 +1081,7 @@ From the initial sympathetic gaze that could not look away from the shaded back 
     edition: '',
     price: '₩7,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/14b69635-17e4-4350-b6a9-868a7ca4bdd9/223__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/359',
     description: ``,
@@ -1100,7 +1100,7 @@ From the initial sympathetic gaze that could not look away from the shaded back 
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/224__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/224__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/360',
     description: `나는 전자공학을 전공한 후 한의사의 길을 걸으면서 카메라를 들었다.
@@ -1148,7 +1148,7 @@ Participated in numerous group exhibitions for the nature and peace of Jeju`,
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/225__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/225__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/361',
     description: `나는 전자공학을 전공한 후 한의사의 길을 걸으면서 카메라를 들었다.
@@ -1196,7 +1196,7 @@ Participated in numerous group exhibitions for the nature and peace of Jeju`,
     edition: '',
     price: '₩1,000,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/226__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/009ba12d-9545-4000-9d09-9be319c14f2d/226__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/362',
     description: ``,
@@ -1244,7 +1244,7 @@ Participated in numerous group exhibitions for the nature and peace of Jeju`,
     edition: '',
     price: '₩700,000',
     images: [
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/227__original.webp',
+      'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/227__original.webp',
     ],
     shopUrl: 'https://koreasmartcoop.cafe24.com/surl/O/363',
     description: ``,
