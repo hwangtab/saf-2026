@@ -10,12 +10,20 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
+import clsx from 'clsx';
 import Button from '@/components/ui/Button';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 
+type RoleChoice = 'collector' | 'artist';
+
 const SIGNUP_COPY = {
   ko: {
-    subtitle: '아티스트 회원가입',
+    subtitle: '회원가입',
+    roleTitle: '어떤 목적으로 가입하시나요?',
+    collectorLabel: '컬렉터',
+    collectorDesc: '작품을 구매하고 위시리스트를 관리해요',
+    artistLabel: '아티스트',
+    artistDesc: '작품을 출품하고 씨앗페에 참여해요',
     continueWithGoogle: '구글로 계속하기',
     orEmailSignup: '또는 이메일 가입',
     nameLabel: '이름 (실명)',
@@ -28,7 +36,7 @@ const SIGNUP_COPY = {
     needsEmailConfirmLine1: '이메일 인증 링크가 전송되었습니다.',
     needsEmailConfirmLine2: '이메일 확인 후 로그인해주세요.',
     successLine1: '가입이 완료되었습니다.',
-    successLine2: '로그인 후 아티스트 정보를 제출해주세요.',
+    successLine2: '로그인해주세요.',
     goLogin: '로그인 페이지로 이동',
     userExists: '이미 등록된 이메일입니다. 로그인을 시도해주세요.',
     passwordMinLengthHint: '비밀번호는 최소 8자 이상이어야 합니다.',
@@ -37,7 +45,12 @@ const SIGNUP_COPY = {
     oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
   },
   en: {
-    subtitle: 'Artist sign-up',
+    subtitle: 'Sign up',
+    roleTitle: 'How will you use SAF Online?',
+    collectorLabel: 'Collector',
+    collectorDesc: 'Browse, save, and purchase artworks',
+    artistLabel: 'Artist',
+    artistDesc: 'Submit your works and join the SAF campaign',
     continueWithGoogle: 'Continue with Google',
     orEmailSignup: 'Or sign up with email',
     nameLabel: 'Name (legal name)',
@@ -50,7 +63,7 @@ const SIGNUP_COPY = {
     needsEmailConfirmLine1: 'A verification email has been sent.',
     needsEmailConfirmLine2: 'Please confirm your email and then sign in.',
     successLine1: 'Your account has been created.',
-    successLine2: 'Sign in and submit your artist information.',
+    successLine2: 'Please sign in.',
     goLogin: 'Go to sign-in page',
     userExists: 'This email is already registered. Please sign in instead.',
     passwordMinLengthHint: 'Password must be at least 8 characters long.',
@@ -63,6 +76,7 @@ const SIGNUP_COPY = {
 export default function SignUpPage() {
   const locale = useLocale();
   const copy = SIGNUP_COPY[locale as 'ko' | 'en'];
+  const [roleChoice, setRoleChoice] = useState<RoleChoice>('collector');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -104,7 +118,6 @@ export default function SignUpPage() {
       return;
     }
 
-    // 1. SignUp
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -112,6 +125,7 @@ export default function SignUpPage() {
         data: {
           full_name: name,
           name,
+          intended_role: roleChoice,
         },
       },
     });
@@ -136,7 +150,7 @@ export default function SignUpPage() {
     setLoading(false);
 
     if (data?.session) {
-      router.push('/onboarding');
+      router.push(roleChoice === 'artist' ? '/onboarding' : '/mypage');
       router.refresh();
       return;
     }
@@ -215,6 +229,34 @@ export default function SignUpPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-sm border border-gray-200 sm:rounded-2xl sm:px-10">
+          {/* 역할 선택 */}
+          <div className="mb-6">
+            <p className="text-sm font-medium text-charcoal mb-3">{copy.roleTitle}</p>
+            <div className="grid grid-cols-2 gap-3">
+              {(
+                [
+                  { value: 'collector', label: copy.collectorLabel, desc: copy.collectorDesc },
+                  { value: 'artist', label: copy.artistLabel, desc: copy.artistDesc },
+                ] as const
+              ).map(({ value, label, desc }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRoleChoice(value)}
+                  className={clsx(
+                    'flex flex-col items-center text-center p-4 rounded-xl border-2 transition-colors cursor-pointer',
+                    roleChoice === value
+                      ? 'border-primary bg-primary/5 text-primary-strong'
+                      : 'border-gray-200 bg-gray-50 text-charcoal-muted hover:border-gray-300 hover:bg-gray-100'
+                  )}
+                >
+                  <span className="font-semibold text-sm">{label}</span>
+                  <span className="text-xs mt-1 leading-snug opacity-80">{desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="space-y-3">
             <Button
               type="button"

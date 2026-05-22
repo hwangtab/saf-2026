@@ -228,7 +228,7 @@ export default memo(function AuthButtons({
       return { href: '/dashboard/suspended', label: copy.accountSuspended };
     }
     if (profile?.role === 'user') {
-      return { href: '/onboarding', label: copy.registerArtist };
+      return { href: '/mypage', label: copy.myPage };
     }
     return null;
   })();

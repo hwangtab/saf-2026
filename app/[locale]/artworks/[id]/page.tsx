@@ -11,7 +11,8 @@ import {
   getRecentlySoldArtworks,
   getTotalSoldCount,
   getSupabaseTestimonials,
-  getSupabaseStories,
+  getSupabaseStoriesLight,
+  getStoriesMentioningArtwork,
   getSupabaseArtistNoticeByName,
 } from '@/lib/supabase-data';
 import { resolveActiveNotice } from '@/lib/artist-notice';
@@ -45,7 +46,6 @@ import PosthumousPrintDetails from '@/components/features/PosthumousPrintDetails
 import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
-import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
 import {
   guideStoryHref,
@@ -122,7 +122,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
     getRecentlySoldArtworks(3, id),
     getTotalSoldCount(),
     getSupabaseTestimonials(),
-    getSupabaseStories(),
+    getSupabaseStoriesLight(),
     getTranslations({ locale, namespace: 'artworkDetail' }),
     getTranslations({ locale, namespace: 'breadcrumbs' }),
   ]);
@@ -137,12 +137,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
   }
 
   // artwork 확정 후 관련 작품만 병렬 fetch (이전 전체 330개 fetch → ~20개로 축소)
-  const [artistWorks, categoryWorks, noticeRecord] = await Promise.all([
+  const [artistWorks, categoryWorks, noticeRecord, mentionedStories] = await Promise.all([
     getSupabaseArtworksByArtist(artwork.artist),
     artwork.category
       ? getArtworksByCategoryLight(artwork.category, 20)
       : Promise.resolve([] as Artwork[]),
     getSupabaseArtistNoticeByName(artwork.artist),
+    getStoriesMentioningArtwork(artwork.id),
   ]);
   const notice = resolveActiveNotice(noticeRecord, locale === 'en' ? 'en' : 'ko');
 
@@ -196,9 +197,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // 노출해 양방향 entity graph를 닫는다. 작가 매칭을 우선하고 본문 인용을 보충해 슬롯 채움.
   const tagMatchedStories = allStories.filter((s) => s.tags?.some((tag) => tag === artwork.artist));
   const tagMatchedIds = new Set(tagMatchedStories.map((s) => s.id));
-  const bodyMentionedStories = allStories.filter(
-    (s) => !tagMatchedIds.has(s.id) && extractArtworkIdsFromBody(s.body).includes(artwork.id)
-  );
+  const bodyMentionedStories = mentionedStories.filter((s) => !tagMatchedIds.has(s.id));
   const relatedMagazineStories = [...tagMatchedStories, ...bodyMentionedStories].slice(0, 3);
   const liveStorySlugs = new Set(allStories.map((s) => s.slug));
   const localizeDataValue = (value: string | null | undefined): string | null => {

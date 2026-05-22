@@ -21,7 +21,7 @@ import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 
 const LOGIN_COPY = {
   ko: {
-    subtitle: '아티스트 로그인',
+    subtitle: '로그인',
     continueWithGoogle: '구글로 계속하기',
     orEmailLogin: '또는 이메일 로그인',
     emailLabel: '이메일 주소',
@@ -34,7 +34,7 @@ const LOGIN_COPY = {
     oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
   },
   en: {
-    subtitle: 'Artist login',
+    subtitle: 'Sign in',
     continueWithGoogle: 'Continue with Google',
     orEmailLogin: 'Or sign in with email',
     emailLabel: 'Email address',
@@ -262,7 +262,7 @@ export default function LoginPage() {
                   })
                 : defaultPath;
           } else {
-            nextPath = '/onboarding';
+            nextPath = '/mypage';
           }
         }
       }

@@ -4,10 +4,10 @@ import { trackEvent } from '@/lib/analytics/track';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { localizeStoryAuthor } from '@/lib/story-author';
-import type { Story } from '@/types';
+import type { StoryLight } from '@/lib/supabase-data';
 
 interface Props {
-  story: Story;
+  story: StoryLight & { body?: string | null };
   isEn: boolean;
   artworkId: string;
   artworkArtist: string;

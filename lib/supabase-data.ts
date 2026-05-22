@@ -111,6 +111,18 @@ const ARTWORK_SELECT_COLUMNS =
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en, career_tier';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
+// description/description_en 제외 — 카드 렌더에 불필요, 2MB cache 한도 회피
+const LIGHT_ARTWORK_COLUMNS =
+  'id, artist_id, title, title_en, size, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
+// bio/bio_en/history/history_en 제외 — 카드는 작가명·tier만 필요
+const LIGHT_ARTIST_COLUMNS = 'id, name_ko, name_en, career_tier';
+
+type LightArtworkRow = Omit<ArtworkRow, 'description' | 'description_en'>;
+type LightArtistRow = Omit<ArtistRow, 'bio' | 'bio_en' | 'history' | 'history_en' | 'profile'>;
+type LightArtworkWithArtistRow = LightArtworkRow & {
+  artists: LightArtistRow | LightArtistRow[] | null;
+};
+
 // `.from('artworks').select('..., artists(...)')` 결과 row. supabase는 1:1 FK 조인을
 // single object로 반환하지만, query에 따라 array로 떨어지기도 해 union으로 받음.
 type ArtworkWithArtistRow = ArtworkRow & {
@@ -465,6 +477,81 @@ const getArtworksByCategoryLightCached = unstable_cache(
 export const getArtworksByCategoryLight = cache(
   async (category: string, limit = 4): Promise<Artwork[]> =>
     getArtworksByCategoryLightCached(category, limit)
+);
+
+// --- Entry-level artworks (판매 가능 전체, 경량 컬럼, JS 가격 필터용) ---
+
+const getAvailableArtworksLightUncached = async (): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks.filter((a) => !a.sold && !a.reserved);
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(`${LIGHT_ARTWORK_COLUMNS}, artists (${LIGHT_ARTIST_COLUMNS})`)
+    .eq('is_hidden', false)
+    .eq('status', 'available')
+    .returns<LightArtworkWithArtistRow[]>();
+
+  if (error) {
+    console.error('Error fetching available artworks (light) from Supabase:', error);
+    return fallbackArtworks.filter((a) => !a.sold && !a.reserved);
+  }
+
+  return (data || []).map((item) =>
+    mapArtworkRow(
+      item as unknown as ArtworkRow,
+      pickArtist(item.artists as unknown as ArtistRow | ArtistRow[] | null)
+    )
+  );
+};
+
+const getAvailableArtworksLightCached = unstable_cache(
+  async () => getAvailableArtworksLightUncached(),
+  ['available-artworks-light-v1'],
+  { revalidate: ARTWORK_DATA_REVALIDATE_SECONDS, tags: ['artworks'] }
+);
+
+export const getAvailableArtworksLight = cache(
+  async (): Promise<Artwork[]> => getAvailableArtworksLightCached()
+);
+
+// --- Emerging artworks (신진 작가, DB career_tier 필터 + 경량 컬럼) ---
+
+const getEmergingArtworksUncached = async (): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackArtworks.filter((a) => a.artistTier === '신진' && !a.sold && !a.reserved);
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(`${LIGHT_ARTWORK_COLUMNS}, artists!inner (${LIGHT_ARTIST_COLUMNS})`)
+    .eq('is_hidden', false)
+    .eq('status', 'available')
+    .eq('artists.career_tier', '신진')
+    .returns<LightArtworkWithArtistRow[]>();
+
+  if (error) {
+    console.error('Error fetching emerging artworks from Supabase:', error);
+    return fallbackArtworks.filter((a) => a.artistTier === '신진' && !a.sold && !a.reserved);
+  }
+
+  return (data || []).map((item) =>
+    mapArtworkRow(
+      item as unknown as ArtworkRow,
+      pickArtist(item.artists as unknown as ArtistRow | ArtistRow[] | null)
+    )
+  );
+};
+
+const getEmergingArtworksCached = unstable_cache(
+  async () => getEmergingArtworksUncached(),
+  ['emerging-artworks-light-v1'],
+  { revalidate: ARTWORK_DATA_REVALIDATE_SECONDS, tags: ['artworks'] }
+);
+
+export const getEmergingArtworksFromDB = cache(
+  async (): Promise<Artwork[]> => getEmergingArtworksCached()
 );
 
 // --- Available categories list (for artist/detail page category links) ---
@@ -1031,6 +1118,59 @@ const getSupabaseStoriesLightCached = unstable_cache(
 
 export const getSupabaseStoriesLight = cache(
   async (): Promise<StoryLight[]> => getSupabaseStoriesLightCached()
+);
+
+// --- 특정 작품 uuid를 body에서 인용한 스토리 — body 결과 없이 WHERE 조건으로만 사용 ---
+
+const STORY_LIGHT_SELECT =
+  'id, slug, title, title_en, category, excerpt, excerpt_en, thumbnail, author, published_at, updated_at, tags';
+
+const getStoriesMentioningArtworkUncached = async (artworkId: string): Promise<StoryLight[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return fallbackStories
+      .filter((s) => s.body?.includes(artworkId) || s.body_en?.includes(artworkId))
+      .map(({ body: _b, body_en: _be, ...rest }) => rest);
+  }
+
+  const { data, error } = await supabase
+    .from('stories')
+    .select(STORY_LIGHT_SELECT)
+    .eq('is_published', true)
+    .lte('published_at', new Date().toISOString())
+    .or(`body.ilike.%${artworkId}%,body_en.ilike.%${artworkId}%`)
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error(`Error fetching stories mentioning artwork ${artworkId}:`, error);
+    return fallbackStories
+      .filter((s) => s.body?.includes(artworkId) || s.body_en?.includes(artworkId))
+      .map(({ body: _b, body_en: _be, ...rest }) => rest);
+  }
+
+  return (data || []).map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    title: sanitizeTextForRscPayload(row.title),
+    title_en: sanitizeNullableTextForRscPayload(row.title_en) || undefined,
+    category: row.category as Story['category'],
+    excerpt: sanitizeTextForRscPayload(row.excerpt || ''),
+    excerpt_en: sanitizeNullableTextForRscPayload(row.excerpt_en) || undefined,
+    thumbnail: row.thumbnail || undefined,
+    author: sanitizeNullableTextForRscPayload(row.author) || undefined,
+    published_at: row.published_at,
+    updated_at: row.updated_at || undefined,
+    tags: row.tags || undefined,
+  }));
+};
+
+const getStoriesMentioningArtworkCached = unstable_cache(
+  async (artworkId: string) => getStoriesMentioningArtworkUncached(artworkId),
+  ['stories-mentioning-artwork-v1'],
+  { revalidate: 600, tags: ['stories'] }
+);
+
+export const getStoriesMentioningArtwork = cache(
+  async (artworkId: string): Promise<StoryLight[]> => getStoriesMentioningArtworkCached(artworkId)
 );
 
 export const getSupabaseStoryBySlug = cache(async (slug: string): Promise<Story | null> => {

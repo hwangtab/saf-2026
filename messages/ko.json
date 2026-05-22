@@ -1193,5 +1193,33 @@
     "artworkCount": "{count}점",
     "viewArtist": "{name} 작품 보기",
     "browseByArtist": "작가별로 둘러보기"
+  },
+  "mypage": {
+    "title": "마이페이지",
+    "tabs": {
+      "orders": "주문 내역",
+      "wishlist": "위시리스트",
+      "profile": "프로필",
+      "artistApply": "작가 신청"
+    },
+    "orders": {
+      "empty": "주문 내역이 없습니다.",
+      "viewDetail": "상세 보기"
+    },
+    "wishlist": {
+      "empty": "찜한 작품이 없습니다.",
+      "browseArtworks": "작품 둘러보기"
+    },
+    "profile": {
+      "name": "이름",
+      "email": "이메일",
+      "save": "저장",
+      "saved": "저장됨"
+    },
+    "artistApply": {
+      "heading": "작가로 활동하고 싶으신가요?",
+      "body": "아티스트 등록을 통해 작품을 출품하고 씨앗페 캠페인에 참여할 수 있습니다.",
+      "cta": "작가 신청하기"
+    }
   }
 }

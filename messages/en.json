@@ -1193,5 +1193,33 @@
     "artworkCount": "{count, plural, =1 {1 work} other {# works}}",
     "viewArtist": "View {name}'s works",
     "browseByArtist": "Browse by Artist"
+  },
+  "mypage": {
+    "title": "My Page",
+    "tabs": {
+      "orders": "Orders",
+      "wishlist": "Wishlist",
+      "profile": "Profile",
+      "artistApply": "Artist Registration"
+    },
+    "orders": {
+      "empty": "No orders yet.",
+      "viewDetail": "View details"
+    },
+    "wishlist": {
+      "empty": "No saved artworks yet.",
+      "browseArtworks": "Browse artworks"
+    },
+    "profile": {
+      "name": "Name",
+      "email": "Email",
+      "save": "Save",
+      "saved": "Saved"
+    },
+    "artistApply": {
+      "heading": "Want to participate as an artist?",
+      "body": "Register as an artist to submit your works and join the SAF campaign.",
+      "cta": "Apply as Artist"
+    }
   }
 }
