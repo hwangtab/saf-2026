@@ -2,7 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 import { routing } from '@/i18n/routing';
 import { updateSession } from '@/lib/auth/middleware';
-import { belongsToSurface } from '@/lib/path-rules';
+import { belongsToSurface, stripLocale } from '@/lib/path-rules';
 import { resolveLegacyArtworkId } from '@/lib/artwork-legacy-map';
 
 // Legacy 숫자 작품 ID → UUID. page.tsx permanentRedirect가 error.tsx에 가로막힘.
@@ -104,6 +104,13 @@ export async function proxy(request: NextRequest) {
     STATIC_SKIP_PATHS.has(pathname)
   ) {
     return NextResponse.next();
+  }
+
+  // locale-prefixed /ko/mypage, /en/mypage: updateSession으로 세션 갱신
+  // bare /mypage는 제외 (intlProxy가 /ko/mypage로 리다이렉트해야 하므로)
+  const normalizedPath = stripLocale(pathname);
+  if (pathname !== normalizedPath && belongsToSurface(normalizedPath, '/mypage')) {
+    return await updateSession(request);
   }
 
   // Public pages: handle i18n locale routing

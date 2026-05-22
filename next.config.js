@@ -217,10 +217,52 @@ const nextConfig = {
           },
         ],
       },
-      // 공개 페이지용 CSP — portal/api/_next 제외. Kakao Share/Map + 분석 SDK 허용.
+      // /ko/mypage, /en/mypage: locale-prefixed 마이페이지 — portal strict CSP 적용
+      // (위 portal 블록은 locale prefix 없는 경로 전용이라 locale 포함 경로에 별도 패턴 필요)
+      {
+        source: '/:locale(ko|en)/mypage/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "worker-src 'self' blob:",
+              "frame-src 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
+        ],
+      },
+      {
+        source: '/:locale(ko|en)/mypage',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "worker-src 'self' blob:",
+              "frame-src 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
+        ],
+      },
+      // 공개 페이지용 CSP — portal/api/_next/mypage locale 경로 제외. Kakao Share/Map + 분석 SDK 허용.
       {
         source:
-          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth|api|_next).*)',
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth|api|_next|ko/mypage|en/mypage).*)',
         headers: [
           {
             key: 'Content-Security-Policy',
