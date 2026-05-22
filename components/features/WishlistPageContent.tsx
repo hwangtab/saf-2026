@@ -69,9 +69,10 @@ export default function WishlistPageContent({
   }, [ids, mounted, fetchArtworks]);
 
   if (!mounted || loading) {
+    if (ids.length === 0) return null;
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {Array.from({ length: ids.length || 4 }).map((_, i) => (
+        {Array.from({ length: ids.length }).map((_, i) => (
           <div key={i} className="rounded-2xl bg-gray-100 aspect-[4/5] animate-pulse" />
         ))}
       </div>
