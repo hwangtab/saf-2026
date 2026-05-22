@@ -1,5 +1,55 @@
 [
   {
+    "hash": "27199dc1",
+    "type": "fix",
+    "scope": "mypage",
+    "subject": "주문 상세 UX 단절 해소 + 찜 목록 삭제 버튼 추가",
+    "summary": "블라인드 스팟 Round 2 수정 — 마이페이지 '주문 상세 보기' 클릭 시 폼 재입력 요구 해소, 찜 탭 내 작품 삭제 버튼 신설",
+    "body": "- orders/page.tsx: searchParams.orderNo + getUser() → lookupOrderDetail로 초기 데이터 서버사이드 조회\n- OrderLookup.tsx: initialOrderDetail prop 추가, 로그인 사용자 진입 시 폼 스킵 후 OrderCard 바로 표시\n- WishlistTab.tsx: lucide X 버튼 오버레이 추가, hover/focus-visible 토글, 낙관적 UI(setIds 즉시 업데이트) + removeFromWishlist server action + removeLocal localStorage 동기화",
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "cc49e0dd",
+    "type": "fix",
+    "scope": "test",
+    "subject": "login-oauth 테스트 useSearchParams mock 누락 수정",
+    "summary": "next/navigation mock에 useSearchParams 추가 — Phase 26 login page 변경 후 CI 깨진 테스트 복구",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "e382d4d7",
+    "type": "fix",
+    "scope": "infra",
+    "subject": "/mypage proxy·path-rules·CSP 인프라 누락 3건 수정",
+    "summary": "Phase 26 컬렉터 통합 후 /mypage가 세 인프라 설정에서 누락됐던 블라인드 스팟 수정",
+    "body": "- proxy.ts: locale-prefixed /ko·/en mypage에 updateSession 적용\n  (미적용 시 Supabase JWT 갱신 안 돼 토큰 만료 후 예상치 못한 로그아웃)\n- lib/path-rules.ts: PORTAL_SURFACE_PREFIXES에 /mypage 추가\n  (누락 시 shouldShowFooterSlider('/ko/mypage') = true → 슬라이더 노출)\n- next.config.js: /:locale(ko|en)/mypage[/:path*]에 portal strict CSP 추가\n  (누락 시 Kakao SDK 허용 공개 CSP가 적용돼 보안 강도 저하)\n  공개 CSP 음수 lookahead에 ko/mypage·en/mypage 추가해 mutual exclusive 보장",
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "62868f07",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "Phase 26 회귀 8건 수정 — 위시리스트 데이터 손실·i18n·SafeImage·redirectTo",
+    "summary": "bulkAddToWishlist 실패 시 localStorage 소실 버그 수정, OrdersTab 상태 라벨 i18n, WishlistTab img→SafeImage, WishlistProvider race condition 해소(onAuthStateChange), login redirectTo 지원",
+    "body": "- WishlistTab: bulkAddToWishlist result.error 확인 후 localStorage 삭제 (데이터 손실 방지)\n- WishlistTab: setMerged(true)를 .then() 내부로 이동 (실패 시 재시도 가능)\n- WishlistTab: <img> → SafeImage (Vercel Image Optimization + fallback)\n- OrdersTab: STATUS_LABEL 하드코딩 제거 → useTranslations('mypage') + orders.status.* i18n\n- OrdersTab: '주문 {no}' / 통화 표기 → i18n 키 + Intl.NumberFormat\n- messages/ko.json + en.json: orders.orderNo, orders.status.{paid|pending|cancelled|refunded|shipped|delivered} 추가\n- WishlistProvider: getUser() 단발성 체크 → onAuthStateChange 구독 (race condition 해소, 로그인/로그아웃 실시간 반영)\n- WishlistProvider: dynamic import .catch() 추가 (청크 로드 실패 graceful degradation)\n- WishlistProvider: Server Action 에러 .catch() 추가\n- login/page.tsx: useSearchParams로 ?redirectTo= 읽어 collector 분기에 적용 (/ 시작 경로만 허용)",
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "d05fb237",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "컬렉터 회원 통합 — 가입 역할 선택·마이페이지·위시리스트 DB",
+    "summary": "구매자(컬렉터) 정식 회원 시스템 통합. 가입 시 컬렉터/아티스트 역할 선택 UI 추가, role='user' 로그인 후 /mypage 리다이렉트, 마이페이지(주문내역·위시리스트·프로필·작가신청) 신설, wishlists DB 테이블 + RLS, WishlistProvider에 로그인 시 DB 동기화.",
+    "body": "- supabase/migrations: wishlists 테이블 (user_id FK, RLS 셀프 정책)\n- types/supabase.ts: wishlists Row/Insert/Update 블록 추가\n- types/index.ts: WishlistItem 타입, CAREER_TIERS 옆 배치\n- messages/ko+en.json: mypage 섹션 신규 (탭 4개 + 각 탭 copy)\n- AuthButtons: role='user' → { href: '/mypage', label: '마이페이지' }\n- login/page.tsx: subtitle 중립화 ('로그인'), role='user' redirect /mypage\n- signup/page.tsx: subtitle 중립화, 역할 선택 카드 UI (컬렉터/아티스트), intended_role 메타 전달\n- app/[locale]/mypage/: Server page (auth guard) + MypageTabs/OrdersTab/WishlistTab/ProfileTab/ArtistApplyTab\n- app/actions/mypage.ts: addToWishlist/removeFromWishlist/bulkAddToWishlist/updateMyProfile\n- WishlistProvider: 로그인 시 toggle → DB 동기화 (dynamic import로 번들 지연)\n- lib/supabase-data.ts: LightArtworkRow/LightArtistRow unknown 캐스팅으로 tsc 오류 수정",
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
     "hash": "fb4a6b9d",
     "type": "fix",
     "scope": "a11y",
