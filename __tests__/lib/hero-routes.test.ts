@@ -27,6 +27,7 @@ describe('isHeroRoute', () => {
       '/special/min-joungki',
       '/special/lee-cheolsoo',
       '/special/park-buldong',
+      '/wishlist',
     ])('%s는 hero 경로', (path) => {
       expect(isHeroRoute(path)).toBe(true);
     });

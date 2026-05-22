@@ -112,7 +112,7 @@ export default function DesktopNav({
         </button>
 
         {/* 위시리스트 */}
-        <WishlistNavButton textColor={textColor} />
+        <WishlistNavButton textColor={textColor} className={utilityButtonClassName} />
 
         {/* Utility Menu (Order Status) — chrome utility, 매 페이지 prefetch 회피 */}
         <Link href="/orders" prefetch={false} className={utilityButtonClassName}>

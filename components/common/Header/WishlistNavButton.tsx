@@ -6,7 +6,13 @@ import { useTranslations } from 'next-intl';
 import { useWishlist } from '@/components/providers/WishlistProvider';
 import { cn } from '@/lib/utils/cn';
 
-export default function WishlistNavButton({ textColor }: { textColor: string }) {
+export default function WishlistNavButton({
+  textColor,
+  className,
+}: {
+  textColor: string;
+  className?: string;
+}) {
   const { count, mounted } = useWishlist();
   const t = useTranslations('wishlist');
 
@@ -21,7 +27,8 @@ export default function WishlistNavButton({ textColor }: { textColor: string }) 
         'transition-[transform,color] duration-150 active:scale-90',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
         textColor,
-        'hover:text-primary'
+        'hover:text-primary',
+        className
       )}
     >
       <Heart className="w-5 h-5 lg:w-4 lg:h-4" aria-hidden="true" />

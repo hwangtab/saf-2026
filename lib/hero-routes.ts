@@ -46,6 +46,7 @@ const HERO_EXACT = new Set<string>([
   '/special/lee-cheolsoo',
   '/special/park-buldong',
   '/faq',
+  '/wishlist',
 ]);
 
 /**

@@ -1178,6 +1178,7 @@
     "addAria": "Add {title} to wishlist",
     "removeAria": "Remove {title} from wishlist",
     "pageTitle": "My Wishlist",
+    "pageDescription": "Save artworks you love and review them all in one place",
     "pageEmpty": "No saved works yet",
     "pageEmptyDesc": "Tap the heart on any artwork card to save it here",
     "browseArtworks": "Browse artworks",

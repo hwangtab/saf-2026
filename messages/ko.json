@@ -1178,6 +1178,7 @@
     "addAria": "{title} 위시리스트에 추가",
     "removeAria": "위시리스트에서 {title} 제거",
     "pageTitle": "내 위시리스트",
+    "pageDescription": "관심 있는 작품을 저장하고 한눈에 모아보세요",
     "pageEmpty": "아직 저장된 작품이 없습니다",
     "pageEmptyDesc": "작품 카드의 하트를 눌러 관심 작품을 저장해 보세요",
     "browseArtworks": "작품 둘러보기",
