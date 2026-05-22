@@ -98,7 +98,7 @@ function validateArtworks() {
         if (
           typeof imgUrl === 'string' &&
           imgUrl &&
-          !imgUrl.startsWith('https://vqejnuntjnxzpgwfndtv.supabase.co/storage/')
+          !imgUrl.startsWith(`${process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://khtunrybrzntlnowlahb.supabase.co'}/storage/`)
         ) {
           errors.push(
             `ID ${artwork.id}: images[${idx}] Supabase URL이 아님 — "${imgUrl.slice(0, 60)}" (로컬 경로 혼입 금지)`
