@@ -5,7 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { usePathname } from '@/i18n/navigation';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ExternalLink } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { EXTERNAL_LINKS } from '@/lib/constants';
@@ -41,6 +41,7 @@ export default function FullscreenMenu({
   const tFooter = useTranslations('footer');
   const tA11y = useTranslations('a11y');
   const tSearch = useTranslations('globalSearch');
+  const tWishlist = useTranslations('wishlist');
 
   // body 스크롤 잠금 해제 및 위치 복원
   const restoreBodyScroll = (restorePosition = true) => {
@@ -230,9 +231,17 @@ export default function FullscreenMenu({
           </ul>
         </nav>
 
-        {/* 보조 알약 - 주문 조회 + 아티스트 메뉴 (grid-cols-2로 너비 통일, max-w-xs 가운데 정렬) */}
+        {/* 보조 알약 - 위시리스트 + 주문 조회 + 아티스트 메뉴 */}
         <div className="mt-6 border-t border-gray-100 py-5">
-          <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
+          <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto">
+            <Link
+              href="/wishlist"
+              prefetch={false}
+              className="inline-flex w-full items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
+              onClick={onClose}
+            >
+              {tWishlist('headerLabel')}
+            </Link>
             <Link
               href="/orders"
               prefetch={false}
@@ -289,6 +298,8 @@ export default function FullscreenMenu({
               }}
             >
               {t('joinMember')}
+              <ExternalLink className="inline ml-1 h-3 w-3" aria-hidden="true" />
+              <span className="sr-only">{tA11y('opensInNewTab')}</span>
             </a>
           </div>
           <Button

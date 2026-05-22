@@ -94,11 +94,12 @@
     "suspended": {
       "title": "Account Suspended",
       "description": "Your account has been restricted due to policy violations or an administrator decision.",
-      "contactSupport": "Please contact the admin team if you need assistance."
+      "contactSupport": "Please contact the admin team if you need assistance.",
+      "contactEmail": "Email the operations team"
     },
     "pending": {
       "title": "Pending Approval",
-      "applicationSubmitted": "Your application has been submitted.",
+      "applicationSubmitted": "Your artist application has been submitted.",
       "awaitingApproval": "You can start artist activities after admin approval.",
       "readyToUse": "You will be able to use the service once approval is complete.",
       "submitted": "Submitted:"

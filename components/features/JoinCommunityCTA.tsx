@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { ExternalLink } from 'lucide-react';
 import LinkButton from '@/components/ui/LinkButton';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -15,6 +16,7 @@ import { EXTERNAL_LINKS } from '@/lib/constants';
  */
 export default async function JoinCommunityCTA({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'home.joinCta' });
+  const tA11y = await getTranslations({ locale, namespace: 'a11y' });
 
   return (
     <Section variant="canvas-soft" className="py-16 md:py-20">
@@ -28,8 +30,10 @@ export default async function JoinCommunityCTA({ locale }: { locale: string }) {
             variant="primary"
             size="lg"
             className="min-w-[180px] justify-center"
+            trailingIcon={<ExternalLink className="w-4 h-4" aria-hidden="true" />}
           >
             {t('cta')}
+            <span className="sr-only">{tA11y('opensInNewTab')}</span>
           </LinkButton>
         </div>
       </div>

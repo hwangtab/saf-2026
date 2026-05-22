@@ -136,7 +136,8 @@
     "closeMenu": "Close menu",
     "close": "Close",
     "loading": "Loading",
-    "brandLogo": "SAF Online"
+    "brandLogo": "SAF Online",
+    "opensInNewTab": "Opens in a new tab"
   },
   "home": {
     "heroTitle": "Contemporary Korean Art\nBuy Original Works",
@@ -231,7 +232,8 @@
       "parkSaenggwangStatus": "Opens May 20",
       "parkSaenggwangTitle": "Park Saeng-gwang Drawings",
       "parkSaenggwangDesc": "First breaths the master of five colors held in pencil. May 20 (Wed) – Jun 8 (Mon) · Gallery PEG, M-Tower 6F, Eunpyeong · 11am–8pm. The artist's works are available now.",
-      "parkSaenggwangCta": "Park Saeng-gwang artist page"
+      "parkSaenggwangCta": "Park Saeng-gwang artist page",
+      "preparing": "Coming soon"
     },
     "magazine": {
       "title": "SAF Magazine",
@@ -350,6 +352,9 @@
     "soldNotice": "This artwork has been sold",
     "reservedNotice": "This artwork is currently reserved",
     "reservedExplore": "Browse other artworks",
+    "reservedHint": "You can purchase once the reservation is released. For inquiries, call 02-764-3114.",
+    "buyExternal": "Buy from partner shop",
+    "externalShopNotice": "You will be taken to a partner shop (new tab)",
     "soldExploreOther": "Explore other works by this artist",
     "soldExploreAll": "Browse other artworks",
     "sameCategoryBrowse": "Browse more {category} artworks",

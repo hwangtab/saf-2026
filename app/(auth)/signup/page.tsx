@@ -33,11 +33,16 @@ const SIGNUP_COPY = {
     alreadyHaveAccount: '이미 계정이 있으신가요?',
     login: '로그인',
     doneTitle: '가입 신청 완료',
+    sentToPrefix: '아래 주소로 인증 링크를 보냈습니다:',
     needsEmailConfirmLine1: '이메일 인증 링크가 전송되었습니다.',
     needsEmailConfirmLine2: '이메일 확인 후 로그인해주세요.',
     successLine1: '가입이 완료되었습니다.',
     successLine2: '로그인해주세요.',
     goLogin: '로그인 페이지로 이동',
+    resend: '인증 메일 재발송',
+    resending: '재발송 중…',
+    resent: '재발송했습니다. 이메일함을 확인해주세요.',
+    resendError: '재발송에 실패했습니다. 잠시 후 다시 시도해주세요.',
     userExists: '이미 등록된 이메일입니다. 로그인을 시도해주세요.',
     passwordMinLengthHint: '비밀번호는 최소 8자 이상이어야 합니다.',
     weakPassword: '비밀번호는 최소 8자 이상으로 설정해주세요.',
@@ -60,11 +65,16 @@ const SIGNUP_COPY = {
     alreadyHaveAccount: 'Already have an account?',
     login: 'Sign in',
     doneTitle: 'Sign-up request completed',
+    sentToPrefix: 'We sent a verification link to:',
     needsEmailConfirmLine1: 'A verification email has been sent.',
     needsEmailConfirmLine2: 'Please confirm your email and then sign in.',
     successLine1: 'Your account has been created.',
     successLine2: 'Please sign in.',
     goLogin: 'Go to sign-in page',
+    resend: 'Resend verification email',
+    resending: 'Sending…',
+    resent: 'Email resent. Please check your inbox.',
+    resendError: 'Failed to resend. Please try again shortly.',
     userExists: 'This email is already registered. Please sign in instead.',
     passwordMinLengthHint: 'Password must be at least 8 characters long.',
     weakPassword: 'Please use a password with at least 8 characters.',
@@ -85,6 +95,7 @@ export default function SignUpPage() {
   const [success, setSuccess] = useState(false);
   const [requiresConfirmation, setRequiresConfirmation] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -93,6 +104,8 @@ export default function SignUpPage() {
     const response = await fetch('/api/auth/oauth/state', {
       method: 'POST',
       cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: roleChoice }),
     });
 
     if (!response.ok) {
@@ -185,6 +198,12 @@ export default function SignUpPage() {
     }
   };
 
+  const handleResend = async () => {
+    setResendState('sending');
+    const { error: resendError } = await supabase.auth.resend({ type: 'signup', email });
+    setResendState(resendError ? 'error' : 'sent');
+  };
+
   if (success) {
     return (
       <div
@@ -192,12 +211,14 @@ export default function SignUpPage() {
       >
         <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-center">
           <h2 className="text-2xl font-bold text-success-a11y mb-4">{copy.doneTitle}</h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-4">
             {requiresConfirmation ? (
               <>
-                {copy.needsEmailConfirmLine1}
+                {copy.sentToPrefix}
                 <br />
-                {copy.needsEmailConfirmLine2}
+                <strong className="text-charcoal">{email}</strong>
+                <br />
+                <span className="text-sm">{copy.needsEmailConfirmLine2}</span>
               </>
             ) : (
               <>
@@ -207,6 +228,24 @@ export default function SignUpPage() {
               </>
             )}
           </p>
+          {requiresConfirmation && (
+            <div className="mb-4 space-y-2">
+              <Button
+                type="button"
+                variant="white"
+                className="w-full justify-center"
+                loading={resendState === 'sending'}
+                disabled={resendState === 'sending' || resendState === 'sent'}
+                onClick={handleResend}
+              >
+                {resendState === 'sending' ? copy.resending : copy.resend}
+              </Button>
+              {resendState === 'sent' && <p className="text-sm text-success-a11y">{copy.resent}</p>}
+              {resendState === 'error' && (
+                <p className="text-sm text-danger-a11y">{copy.resendError}</p>
+              )}
+            </div>
+          )}
           <Button href="/login" variant="primary">
             {copy.goLogin}
           </Button>

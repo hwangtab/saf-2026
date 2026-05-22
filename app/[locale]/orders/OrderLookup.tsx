@@ -7,6 +7,7 @@ import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
+import { ExternalLink } from 'lucide-react';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
 import {
@@ -387,6 +388,7 @@ function OrderDetail({
 }) {
   const t = useTranslations('orderLookup');
   const tCheckout = useTranslations('checkout');
+  const tA11y = useTranslations('a11y');
   const locale = useLocale();
   const [order, setOrder] = useState(initialOrder);
   const [editingShipping, setEditingShipping] = useState(false);
@@ -594,6 +596,8 @@ function OrderDetail({
                       className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-primary-surface py-2.5 text-sm font-semibold text-primary-strong hover:bg-primary-surface transition-colors"
                     >
                       {t('trackDelivery')}
+                      <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span className="sr-only">{tA11y('opensInNewTab')}</span>
                     </a>
                   )}
               </>

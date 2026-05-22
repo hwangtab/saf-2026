@@ -6,7 +6,7 @@ import LinkButton from '@/components/ui/LinkButton';
 import { trackEvent } from '@/lib/analytics/track';
 import TrustBadges from '@/components/features/TrustBadges';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
-import { Phone, Mail, CheckCircle, Clock, ArrowRight } from 'lucide-react';
+import { Phone, Mail, CheckCircle, Clock, ArrowRight, ExternalLink } from 'lucide-react';
 
 interface ArtworkPurchaseCTAProps {
   artworkId: string;
@@ -86,7 +86,8 @@ export default function ArtworkPurchaseCTA({
         <div className="text-center">
           <Clock className="w-10 h-10 text-charcoal-muted mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal-deep mb-1">{t('reservedNotice')}</p>
-          <p className="text-sm text-charcoal-soft mb-4">{t('reservedExplore')}</p>
+          <p className="text-sm text-charcoal-soft mb-1">{t('reservedExplore')}</p>
+          <p className="text-xs text-charcoal-soft mb-4">{t('reservedHint')}</p>
           <LinkButton href="/artworks" variant="outline" className="w-full">
             <span className="inline-flex items-center gap-1">
               {t('soldExploreAll')}
@@ -199,6 +200,7 @@ export default function ArtworkPurchaseCTA({
             size="lg"
             external
             className="w-full text-lg gap-3 rounded-xl shadow-[0_0_20px_rgba(33,118,255,0.15)]"
+            trailingIcon={<ExternalLink className="w-4 h-4" aria-hidden="true" />}
             onClick={() =>
               trackEvent('purchase_click', {
                 artwork_id: artworkId,
@@ -208,8 +210,9 @@ export default function ArtworkPurchaseCTA({
               })
             }
           >
-            {t('buyOnline')}
+            {t('buyExternal')}
           </LinkButton>
+          <p className="text-xs text-center text-charcoal-soft">{t('externalShopNotice')}</p>
 
           <TrustBadges />
 

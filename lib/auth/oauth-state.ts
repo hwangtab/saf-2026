@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 
 export const OAUTH_STATE_COOKIE_NAME = 'oauth_state';
+export const OAUTH_ROLE_COOKIE_NAME = 'oauth_role';
 export const OAUTH_STATE_COOKIE_PATH = '/auth/callback';
 export const OAUTH_STATE_MAX_AGE_SECONDS = 600;
 export const OAUTH_STATE_QUERY_PARAM = 'oauth_nonce';
@@ -22,7 +23,21 @@ export function isValidOAuthState(
   );
 }
 
+export function isValidIntendedRole(v: unknown): v is 'artist' | 'collector' {
+  return v === 'artist' || v === 'collector';
+}
+
 export function getOAuthStateCookieOptions(maxAge = OAUTH_STATE_MAX_AGE_SECONDS) {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    path: OAUTH_STATE_COOKIE_PATH,
+    maxAge,
+  };
+}
+
+export function getOAuthRoleCookieOptions(maxAge = OAUTH_STATE_MAX_AGE_SECONDS) {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

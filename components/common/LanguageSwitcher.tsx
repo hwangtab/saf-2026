@@ -28,7 +28,7 @@ export default function LanguageSwitcher({ className, compact, inverse }: Langua
   }
 
   const btnBase = compact
-    ? 'px-1.5 py-0.5 inline-flex items-center justify-center rounded transition-colors text-xs'
+    ? 'px-1.5 py-0.5 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors text-xs'
     : 'px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded transition-colors';
 
   return (

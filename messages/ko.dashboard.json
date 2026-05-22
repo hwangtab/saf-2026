@@ -94,11 +94,12 @@
     "suspended": {
       "title": "계정 정지됨",
       "description": "회원님의 계정은 운영 정책 위반 또는 관리자의 판단에 의해 이용이 제한되었습니다.",
-      "contactSupport": "문의사항이 있으시면 관리자에게 연락해주세요."
+      "contactSupport": "문의사항이 있으시면 관리자에게 연락해주세요.",
+      "contactEmail": "운영팀에 이메일 보내기"
     },
     "pending": {
       "title": "승인 대기 중",
-      "applicationSubmitted": "회원가입 신청이 접수되었습니다.",
+      "applicationSubmitted": "작가 신청이 접수되었습니다.",
       "awaitingApproval": "관리자의 승인 후 작가 활동을 시작할 수 있습니다.",
       "readyToUse": "승인이 완료되면 서비스를 이용하실 수 있습니다.",
       "submitted": "제출 완료:"

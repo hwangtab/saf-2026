@@ -20,6 +20,7 @@ export default async function NowShowing({ locale }: { locale: string }) {
   const { artistCount, artworkCount } = await getLiveStats();
   const counts = { artistCount, artworkCount };
   const now = new Date();
+  const preparing = t('preparing');
   const cards = items.map((item) => ({
     item,
     // 자동 derive — entry에 status 명시 X면 startDate 기준 'coming-soon'/'on' 결정.
@@ -28,6 +29,7 @@ export default async function NowShowing({ locale }: { locale: string }) {
     title: t(`${item.i18nKey}Title` as 'ohYoon40thTitle', counts),
     desc: t(`${item.i18nKey}Desc` as 'ohYoon40thDesc'),
     cta: t(`${item.i18nKey}Cta` as 'ohYoon40thCta'),
+    preparing,
   }));
 
   return (
@@ -47,6 +49,7 @@ export default async function NowShowing({ locale }: { locale: string }) {
               title={title}
               desc={desc}
               cta={cta}
+              preparing={preparing}
             />
           ))}
         </div>
@@ -62,6 +65,7 @@ function ShowingCard({
   title,
   desc,
   cta,
+  preparing,
 }: {
   item: NowShowingItem;
   derivedStatus: 'on' | 'coming-soon';
@@ -69,6 +73,7 @@ function ShowingCard({
   title: string;
   desc: string;
   cta: string;
+  preparing: string;
 }) {
   const inner = (
     <article className="group h-full overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -106,10 +111,10 @@ function ShowingCard({
         </p>
         <p
           className={`text-sm font-semibold ${
-            item.href ? 'text-primary-strong group-hover:underline' : 'text-charcoal-muted'
+            item.href ? 'text-primary-strong group-hover:underline' : 'text-charcoal-soft'
           }`}
         >
-          {cta}
+          {item.href ? cta : preparing}
         </p>
       </div>
     </article>
@@ -123,5 +128,5 @@ function ShowingCard({
     );
   }
 
-  return <div className="block h-full cursor-not-allowed opacity-80">{inner}</div>;
+  return <div className="block h-full cursor-not-allowed opacity-70">{inner}</div>;
 }

@@ -16,8 +16,8 @@ export default function WishlistNavButton({ textColor }: { textColor: string }) 
       aria-label={t('headerLabel')}
       className={cn(
         'relative flex items-center justify-center',
-        // 모바일: 44px 터치 타겟. 데스크탑: utility pill 크기에 맞춤.
-        'p-3 min-w-[44px] min-h-[44px] lg:p-2 lg:min-w-0 lg:min-h-0',
+        // 모바일/데스크탑 모두 44px 터치 타겟 (WCAG 2.5.5).
+        'p-3 min-w-[44px] min-h-[44px] lg:p-2 lg:min-w-[44px] lg:min-h-[44px]',
         'transition-[transform,color] duration-150 active:scale-90',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
         textColor,

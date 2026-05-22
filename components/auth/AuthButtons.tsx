@@ -41,7 +41,7 @@ export default memo(function AuthButtons({
   const copy =
     locale === 'en'
       ? {
-          artistMenu: 'Artist menu',
+          signInSignUp: 'Sign in / Sign up',
           adminDashboard: 'Admin',
           myPage: 'My page',
           exhibitorDashboard: 'Exhibitor dashboard',
@@ -51,7 +51,7 @@ export default memo(function AuthButtons({
           checkingAccount: 'Checking account...',
         }
       : {
-          artistMenu: '아티스트 메뉴',
+          signInSignUp: '로그인 / 회원가입',
           adminDashboard: '관리자 대시보드',
           myPage: '마이페이지',
           exhibitorDashboard: '출품자 대시보드',
@@ -205,7 +205,7 @@ export default memo(function AuthButtons({
     return (
       <div className={wrapperClassName}>
         <Button href="/login" variant={variant} size={size} className={mergedButtonClass}>
-          {copy.artistMenu}
+          {copy.signInSignUp}
         </Button>
       </div>
     );

@@ -136,7 +136,8 @@
     "closeMenu": "메뉴 닫기",
     "close": "닫기",
     "loading": "로딩 중",
-    "brandLogo": "씨앗페 온라인"
+    "brandLogo": "씨앗페 온라인",
+    "opensInNewTab": "새 탭에서 열림"
   },
   "home": {
     "heroTitle": "한국 현대미술\n작품 구매",
@@ -231,7 +232,8 @@
       "parkSaenggwangStatus": "5/20 개막",
       "parkSaenggwangTitle": "박생광 드로잉전",
       "parkSaenggwangDesc": "오방색의 거장이 연필로 잡아둔 첫 호흡들. 5/20(수)~6/8(월) · 갤러리 PEG(서울특별시 은평구 통일로 870 M타워 6층) · 오전 11시~오후 8시. 작가의 작품은 지금 만나보실 수 있습니다.",
-      "parkSaenggwangCta": "박생광 작가 페이지"
+      "parkSaenggwangCta": "박생광 작가 페이지",
+      "preparing": "준비 중"
     },
     "magazine": {
       "title": "씨앗페 매거진",
@@ -350,6 +352,9 @@
     "soldNotice": "이 작품은 판매가 완료되었습니다",
     "reservedNotice": "현재 예약 중인 작품입니다",
     "reservedExplore": "다른 작품도 둘러보세요",
+    "reservedHint": "예약이 해제되면 다시 구매하실 수 있습니다. 문의는 02-764-3114.",
+    "buyExternal": "외부 쇼핑몰에서 구매",
+    "externalShopNotice": "제휴 쇼핑몰 사이트로 이동합니다 (새 탭)",
     "soldExploreOther": "같은 작가의 다른 작품을 살펴보세요",
     "soldExploreAll": "다른 출품작 보기",
     "sameCategoryBrowse": "{category} 작품 더 보기",

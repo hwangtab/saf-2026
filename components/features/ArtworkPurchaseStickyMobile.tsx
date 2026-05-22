@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { ExternalLink } from 'lucide-react';
 import LinkButton from '@/components/ui/LinkButton';
 import WishlistHeartButton from '@/components/features/WishlistHeartButton';
 import { trackEvent } from '@/lib/analytics/track';
@@ -89,6 +90,9 @@ export default function ArtworkPurchaseStickyMobile({
           size="md"
           external={!isTossMode}
           className="shrink-0 rounded-xl px-5 shadow-[0_0_16px_rgba(33,118,255,0.2)]"
+          trailingIcon={
+            !isTossMode ? <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" /> : undefined
+          }
           onClick={handleClick}
         >
           {t('stickyBuy')}

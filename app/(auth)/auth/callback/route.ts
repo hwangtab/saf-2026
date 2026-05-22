@@ -1,8 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
+  getOAuthRoleCookieOptions,
   getOAuthStateCookieOptions,
   isValidOAuthState,
+  OAUTH_ROLE_COOKIE_NAME,
   OAUTH_STATE_COOKIE_NAME,
   OAUTH_STATE_QUERY_PARAM,
 } from '@/lib/auth/oauth-state';
@@ -21,6 +23,7 @@ import {
 function redirectWithOAuthStateCleared(url: string) {
   const response = NextResponse.redirect(url);
   response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
+  response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
   return response;
 }
 
@@ -29,6 +32,7 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const requestState = searchParams.get(OAUTH_STATE_QUERY_PARAM);
   const cookieState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
+  const intendedRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
 
   if (code && !isValidOAuthState(requestState, cookieState)) {
     return redirectWithOAuthStateCleared(`${origin}/login?error=oauth_state`);
@@ -230,7 +234,13 @@ export async function GET(request: NextRequest) {
             );
           }
 
-          return redirectWithOAuthStateCleared(`${origin}/onboarding`);
+          const noAppDestination =
+            intendedRole === 'artist'
+              ? `${origin}/onboarding?role=artist`
+              : intendedRole === 'collector'
+                ? `${origin}/mypage`
+                : `${origin}/onboarding`;
+          return redirectWithOAuthStateCleared(noAppDestination);
         }
       }
     }

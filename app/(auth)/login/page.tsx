@@ -31,7 +31,9 @@ const LOGIN_COPY = {
     signUp: '회원가입',
     invalidCredentials: '이메일 또는 비밀번호가 올바르지 않습니다.',
     loginError: '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    accountLoadError: '계정 정보를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.',
     oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    oauthStateError: '인증 세션이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.',
   },
   en: {
     subtitle: 'Sign in',
@@ -44,7 +46,9 @@ const LOGIN_COPY = {
     signUp: 'Sign up',
     invalidCredentials: 'Invalid email or password.',
     loginError: 'An error occurred while signing in. Please try again shortly.',
+    accountLoadError: 'We could not load your account info. Please refresh and try again.',
     oauthError: 'An error occurred during social sign-in. Please try again shortly.',
+    oauthStateError: 'Your sign-in session expired or was invalid. Please sign in again.',
   },
 } as const;
 
@@ -54,12 +58,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectAfterLogin = searchParams.get('redirectTo');
+  const oauthErrorParam = searchParams.get('error');
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+
+  const initialError = oauthErrorParam === 'oauth_state' ? copy.oauthStateError : null;
+  const [error, setError] = useState<string | null>(initialError);
 
   const requestOAuthState = async () => {
     const response = await fetch('/api/auth/oauth/state', {
@@ -109,7 +116,7 @@ export default function LoginPage() {
           .maybeSingle();
 
         if (profileError) {
-          setError(copy.loginError);
+          setError(copy.accountLoadError);
           setLoading(false);
           return;
         }
@@ -124,7 +131,7 @@ export default function LoginPage() {
             .maybeSingle();
 
           if (applicationError) {
-            setError(copy.loginError);
+            setError(copy.accountLoadError);
             setLoading(false);
             return;
           }
@@ -167,7 +174,7 @@ export default function LoginPage() {
             .maybeSingle();
 
           if (applicationError) {
-            setError(copy.loginError);
+            setError(copy.accountLoadError);
             setLoading(false);
             return;
           }
@@ -219,7 +226,7 @@ export default function LoginPage() {
           ]);
 
           if (exhibitorResult.error || artistResult.error) {
-            setError(copy.loginError);
+            setError(copy.accountLoadError);
             setLoading(false);
             return;
           }

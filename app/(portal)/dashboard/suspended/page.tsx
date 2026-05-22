@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
+import { CONTACT } from '@/lib/constants';
 
 export default async function SuspendedPage() {
   const t = await getTranslations('dashboard.suspended');
@@ -52,6 +53,12 @@ export default async function SuspendedPage() {
             <br />
             {t('contactSupport')}
           </p>
+          <a
+            href={`mailto:${CONTACT.EMAIL}`}
+            className="mt-4 inline-block text-sm font-medium text-danger-a11y hover:underline"
+          >
+            {t('contactEmail')}
+          </a>
         </div>
         <div className="pt-4 border-t border-charcoal/10">
           <SignOutButton />
