@@ -184,12 +184,16 @@ export default async function LocaleLayout({
     <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
       <head>
         {/* LCP 이미지가 Supabase Storage origin에서 변환되므로 preconnect로 DNS+TLS 병렬화. */}
-        <link
-          rel="preconnect"
-          href="https://vqejnuntjnxzpgwfndtv.supabase.co"
-          crossOrigin="anonymous"
-        />
-        <link rel="dns-prefetch" href="https://vqejnuntjnxzpgwfndtv.supabase.co" />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <>
+            <link
+              rel="preconnect"
+              href={process.env.NEXT_PUBLIC_SUPABASE_URL}
+              crossOrigin="anonymous"
+            />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+          </>
+        )}
         <link rel="dns-prefetch" href="https://img.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />

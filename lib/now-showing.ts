@@ -45,6 +45,8 @@ export interface NowShowingItem {
   heroPriority?: number;
 }
 
+const STORAGE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public`;
+
 export const NOW_SHOWING: NowShowingItem[] = [
   // 1번 — 본업: 전체 작품 페이지로 유도. 평상시 hero fallback, 구매 직결.
   {
@@ -52,8 +54,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
     i18nKey: 'allArtworks',
     href: '/artworks',
     // 강석태 「부드러운 바람이 불던 날」 (id 82) — SAF 인기 라인업 비주얼
-    imageUrl:
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp',
+    imageUrl: `${STORAGE}/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp`,
     startDate: '2026-01-01',
     heroPriority: 0,
   },
@@ -61,8 +62,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
     slug: 'oh-yoon-40th',
     i18nKey: 'ohYoon40th',
     href: '/special/oh-yoon',
-    imageUrl:
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp',
+    imageUrl: `${STORAGE}/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp`,
     startDate: '2026-04-01',
     // PM 확정: 오윤 40주기 commemoration 2026년 말일까지. 2027-01-01 자동 fallback (강석태 hero).
     endDate: '2026-12-31',
@@ -72,8 +72,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
     slug: 'park-saenggwang-drawings',
     i18nKey: 'parkSaenggwang',
     href: '/special/park-saenggwang',
-    imageUrl:
-      'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp',
+    imageUrl: `${STORAGE}/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp`,
     // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-08(월) 폐막.
     // 장소: 갤러리 PEG (서울시 은평구 통일로 870 M타워 6층). 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)
     startDate: '2026-05-20',
