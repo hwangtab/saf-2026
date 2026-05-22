@@ -68,3 +68,7 @@ scripts/.magazine-sql/
 /tmp/
 tmp/
 content/articles/
+
+# Supabase migration dumps
+saf2026_*.sql
+saf2026_*.dump
