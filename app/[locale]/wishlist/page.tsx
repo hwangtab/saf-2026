@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import WishlistPageContent from '@/components/features/WishlistPageContent';
@@ -30,19 +29,21 @@ export default async function WishlistPage({ params }: { params: Promise<{ local
   return (
     <div className={`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}`}>
       <PageHero title={tWishlist('pageTitle')} description={tWishlist('pageDescription')} />
-      <Section variant="canvas">
-        <WishlistPageContent
-          locale={locale}
-          untitledLabel={tCard('untitled')}
-          unknownArtistLabel={tCard('unknownArtist')}
-          pendingInfoLabel={tCard('pendingInfo')}
-          originalKoreanDataLabel={tCard('originalKoreanData')}
-          soldLabel={tCard('soldBadge')}
-          reservedLabel={tCard('reservedBadge')}
-          pendingValueLabel={tCard('pendingValue')}
-          inquiryValueLabel={tCard('inquiryValue')}
-        />
-      </Section>
+      <div className="py-10 md:py-16">
+        <div className="container-max px-4 sm:px-6 lg:px-8">
+          <WishlistPageContent
+            locale={locale}
+            untitledLabel={tCard('untitled')}
+            unknownArtistLabel={tCard('unknownArtist')}
+            pendingInfoLabel={tCard('pendingInfo')}
+            originalKoreanDataLabel={tCard('originalKoreanData')}
+            soldLabel={tCard('soldBadge')}
+            reservedLabel={tCard('reservedBadge')}
+            pendingValueLabel={tCard('pendingValue')}
+            inquiryValueLabel={tCard('inquiryValue')}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -80,7 +80,7 @@ export default function WishlistPageContent({
 
   if (ids.length > 0 && fetchError) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 md:py-16 text-center">
+      <div className="flex flex-col items-center justify-center py-8 text-center">
         <p className="text-lg font-semibold text-charcoal mb-4">{t('fetchError')}</p>
         <button
           onClick={() => fetchArtworks(ids)}
@@ -94,7 +94,7 @@ export default function WishlistPageContent({
 
   if (ids.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 md:py-16 text-center">
+      <div className="flex flex-col items-center justify-center py-8 text-center">
         <Heart className="w-12 h-12 text-gray-300 mb-4" aria-hidden="true" />
         <p className="text-lg font-semibold text-charcoal mb-2">{t('pageEmpty')}</p>
         <p className="text-sm text-charcoal-muted mb-8 max-w-xs">{t('pageEmptyDesc')}</p>
