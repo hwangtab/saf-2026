@@ -1,5 +1,15 @@
 [
   {
+    "hash": "12106294",
+    "type": "chore",
+    "scope": "infra",
+    "subject": "Supabase 뭄바이(ap-south-1) → 서울(ap-northeast-2) 이전 완료",
+    "summary": "DB·Storage·Vercel 환경변수 전체 서울 리전으로 전환 — 한국 사용자 응답속도 3~5배 개선 예상. 구 프로젝트(vqejnuntjnxzpgwfndtv) 30일 유지 후 삭제 예정",
+    "body": "- 신규 Supabase 프로젝트: khtunrybrzntlnowlahb (ap-northeast-2, Seoul)\n- 141개 migration 전체 적용 완료\n- DB 데이터 복원: artworks 415, artists 128, orders 85, artwork_sales 210, profiles 51, petition_signatures 8413\n- Storage 2,429개 오브젝트 이전 (artworks + profiles 버킷)\n- content/artworks-batches batch-001~008 + batch-db-generated Storage URL 655건 교체\n- Vercel Production·Preview·Development 환경변수 업데이트\n- migration 버그 2건 수정: get_story_attributed_revenue AS alias 누락, purchase_click_mode_split DROP FUNCTION 누락",
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
     "hash": "27199dc1",
     "type": "fix",
     "scope": "mypage",
