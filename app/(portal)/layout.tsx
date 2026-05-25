@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
-import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { BRAND_COLORS } from '@/lib/colors';
@@ -15,15 +14,7 @@ import '@/styles/portal.css';
  * 관리자·작가 포털은 KO 전용이라 <html lang="ko"> 고정.
  */
 
-// Pretendard Std Variable — [locale] layout 주석 참고. KS X 1001 한글 + Latin 단일 woff2.
-const pretendard = localFont({
-  src: '../../public/fonts/PretendardStdVariable.woff2',
-  variable: '--font-sans',
-  display: 'swap',
-  weight: '45 920',
-  style: 'normal',
-  adjustFontFallback: 'Arial',
-});
+// Pretendard Variable dynamic-subset은 styles/pretendard-subset.css에서 선언, globals.css가 import.
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -49,7 +40,7 @@ export default async function PortalLayout({ children }: { children: React.React
   const t = await getTranslations('a11y');
 
   return (
-    <html lang="ko" className={pretendard.variable} suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />

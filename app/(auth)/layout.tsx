@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
-import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { BRAND_COLORS } from '@/lib/colors';
@@ -16,15 +15,7 @@ import '@/styles/globals.css';
  * 인증 페이지는 noindex라 SEO 영향은 적지만, <html lang>은 사용자 locale에 맞춰 발행.
  */
 
-// Pretendard Std Variable — [locale] layout 주석 참고. KS X 1001 한글 + Latin 단일 woff2.
-const pretendard = localFont({
-  src: '../../public/fonts/PretendardStdVariable.woff2',
-  variable: '--font-sans',
-  display: 'swap',
-  weight: '45 920',
-  style: 'normal',
-  adjustFontFallback: 'Arial',
-});
+// Pretendard Variable dynamic-subset은 styles/pretendard-subset.css에서 선언, globals.css가 import.
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -51,7 +42,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   const skipToMain = locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동';
 
   return (
-    <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <link rel="dns-prefetch" href="https://t1.kakaocdn.net" />
         <link rel="dns-prefetch" href="https://dapi.kakao.com" />

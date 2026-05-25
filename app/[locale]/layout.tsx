@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import type { Metadata, Viewport } from 'next';
-import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -33,19 +32,19 @@ import '@/styles/globals.css';
  */
 
 /**
- * Pretendard Std Variable (v1.3.9) — KS X 1001 표준 한글(2350자) + Latin 단일 woff2 (291KB).
- * next/font/local로 self-host되어 `<link rel="preload" as="font">`가 HTML head에 자동 삽입됨.
+ * Pretendard Variable (v1.3.9) — 92개 dynamic-subset 청크로 분할 self-host.
+ * @font-face / unicode-range / preload 모두 `styles/pretendard-subset.css`에 선언.
+ * 본 layout은 별도 폰트 import 없이 globals.css 경유로 적용된다.
+ *
+ * 회귀 이력:
+ *  - 단일 PretendardStdVariable.woff2(291KB): "Std"는 Adobe 명명체계이지 한글 subset이
+ *    아니라서 한글이 fallback(Apple SD Gothic Neo)으로 떨어졌고, fallback의 최대 weight
+ *    Bold 700이 적용되어 `font-black`(900)이 hero 텍스트에서 얇게 렌더됨.
+ *  - 단일 PretendardVariable.woff2(2.0MB): 한글 11,172자 포함 정상 동작하지만 LCP 부담.
+ *  - 현재 dynamic-subset(92청크 총 2.88MB): 페이지당 실제 사용 글리프만 lazy fetch.
  *
  * 한자 영역(U+4E00-9FFF 등)은 Pretendard 미지원 → 시스템 sans fallback chain으로 떨어짐.
  */
-const pretendard = localFont({
-  src: '../../public/fonts/PretendardStdVariable.woff2',
-  variable: '--font-sans',
-  display: 'swap',
-  weight: '45 920',
-  style: 'normal',
-  adjustFontFallback: 'Arial',
-});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -181,7 +180,7 @@ export default async function LocaleLayout({
   const localBusinessSchema = generateLocalBusinessSchema(localeForSchema, schemaCounts);
 
   return (
-    <html lang={locale} className={pretendard.variable} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         {/* LCP 이미지가 Supabase Storage origin에서 변환되므로 preconnect로 DNS+TLS 병렬화. */}
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (

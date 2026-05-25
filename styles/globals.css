@@ -1,3 +1,15 @@
+/*
+ * Pretendard Variable dynamic-subset — 92개 unicode-range 청크. 브라우저가 페이지에서
+ * 사용된 글리프를 감지해 필요한 subset만 lazy fetch. 이 파일이 tailwind `font-sans` /
+ * `font-display` 가 참조하는 'Pretendard Variable' 패밀리를 제공한다.
+ *
+ * 과거: 단일 PretendardVariable.woff2(2.0MB)를 next/font/local로 self-host.
+ * 변경 이유: 한 페이지에서 실제 쓰이는 한글은 보통 수십~수백 자라 2MB 전체 로드가
+ * LCP에 부담. dynamic-subset 시 hero 한 페이지 기준 라틴(subset 0, 33KB) + 한글
+ * 청크 2~3개(40~80KB) = 약 100~150KB로 LCP critical font가 크게 줄어듦.
+ */
+@import './pretendard-subset.css';
+
 :root {
   /* Gallery White Cube edition — 작품 색이 chrome에서 왜곡되지 않도록 화이트 스케일 */
   --color-canvas: #fafafc; /* Gallery Pearl */
@@ -10,6 +22,10 @@
   --color-gray-100: #e6eaf0;
   --color-gray-200: #d1d7e0;
   --color-gray-400: #8f98a5;
+  /* tailwind `font-sans`/`font-display`가 참조하는 변수 — Pretendard Variable
+     dynamic-subset의 @font-face family명을 가리킴. 과거 next/font/local이
+     hash된 family명을 주입했지만, 이제 정적 family명으로 단순화. */
+  --font-sans: 'Pretendard Variable';
   /* `--admin-*` 변수는 styles/portal.css로 이전 — admin/dashboard/exhibitor
      라우트(app/(portal)/layout.tsx)에서만 로드되어 공개 페이지 CSS chunk에서 제외 */
 }
