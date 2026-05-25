@@ -13,16 +13,13 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL } from '@/lib/constants';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { formatPetitionDeadline } from '@/lib/petition/format';
 import { ArrowRight } from 'lucide-react';
 import {
-  PETITION_OH_YOON_DEADLINE_ISO,
   PETITION_OH_YOON_GOAL,
   PETITION_OH_YOON_PATH,
   PETITION_OH_YOON_SLUG,
 } from '@/lib/petition/constants';
 
-import CountdownTimer from './_components/CountdownTimer';
 import ProgressBar from './_components/ProgressBar';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ShareTemplates from './_components/ShareTemplates';
@@ -69,12 +66,9 @@ export async function generateMetadata({
     locale,
     namespace: 'petition.ohYoon',
   });
-  const deadline = formatPetitionDeadline(locale);
   const base = createStandardPageMetadata(
     t('metaTitle'),
-    // KO 템플릿은 {deadlineShort}, EN 템플릿은 {deadlineFull}로 변수명이 다름 — 둘 다 전달해
-    // next-intl FORMATTING_ERROR 회귀 방지 (locale별 의도된 길이 차이는 보존).
-    t('metaDescription', { deadlineFull: deadline.full, deadlineShort: deadline.short }),
+    t('metaDescription'),
     PAGE_URL,
     PETITION_OH_YOON_PATH,
     locale
@@ -151,7 +145,6 @@ export default async function PetitionOhYoonPage({
     );
   }
 
-  const deadline = formatPetitionDeadline(locale);
   const is_active = await fetchPetitionActive();
 
   const breadcrumbSchema = createBreadcrumbSchema([
@@ -190,10 +183,7 @@ export default async function PetitionOhYoonPage({
     '@type': 'AboutPage',
     '@id': `${PAGE_URL}#webpage`,
     name: t('metaTitle'),
-    description: t('metaDescription', {
-      deadlineFull: deadline.full,
-      deadlineShort: deadline.short,
-    }),
+    description: t('metaDescription'),
     url: PAGE_URL,
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     isPartOf: { '@id': `${SITE_URL}#website` },
@@ -245,9 +235,6 @@ export default async function PetitionOhYoonPage({
         {/* 다크 오버레이 — 단색 charcoal-deep로 텍스트 가독성 보장 (Apple radical subtraction) */}
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-charcoal-deep/80" />
         <div className="relative container-max text-center max-w-3xl mx-auto px-4">
-          <p className="text-sm md:text-base font-medium opacity-90 mb-4">
-            <CountdownTimer deadlineIso={PETITION_OH_YOON_DEADLINE_ISO} />
-          </p>
           <h1
             id="petition-hero-title"
             className="font-display font-black text-4xl md:text-6xl leading-tight mb-4 break-keep [text-shadow:0_2px_18px_rgba(0,0,0,0.65)]"
@@ -262,7 +249,7 @@ export default async function PetitionOhYoonPage({
           </h1>
           <p className="text-lg md:text-xl opacity-90 mb-2 text-balance">{t('heroSubtitle')}</p>
           <p className="text-sm md:text-base opacity-80 mb-8 text-balance">
-            {t('heroDeadlineLine', { deadlineFull: deadline.full })}
+            {t('heroDeadlineLine')}
           </p>
           <div className="mb-8">
             <ProgressBar goal={PETITION_OH_YOON_GOAL} />
@@ -428,10 +415,7 @@ export default async function PetitionOhYoonPage({
               <ShareButtonsWrapper
                 url={PAGE_URL}
                 title={statementText}
-                description={t('metaDescription', {
-                  deadlineFull: deadline.full,
-                  deadlineShort: deadline.short,
-                })}
+                description={t('metaDescription')}
                 imageUrl={`${SITE_URL}/images/petition-oh-yoon/mural-1.png`}
               />
             </div>
@@ -480,7 +464,7 @@ export default async function PetitionOhYoonPage({
                 {t('participationCard3Title')}
               </h3>
               <p className="text-charcoal text-sm md:text-base leading-relaxed break-keep">
-                {t('participationCard3Body', { deadlineShort: deadline.short })}
+                {t('participationCard3Body')}
               </p>
               <a
                 href="#share-templates"
