@@ -23,7 +23,7 @@ export default function CategoryFilter({
 
   return (
     <div role="radiogroup" aria-label={tA11y('filterCategory')}>
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:flex-wrap md:justify-center md:overflow-x-visible">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:justify-center">
         {/* "All" button */}
         <button
           type="button"
