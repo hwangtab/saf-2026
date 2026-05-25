@@ -96,6 +96,38 @@ const nextConfig = {
       { source: '/en/signup', destination: '/signup', permanent: true },
       { source: '/en/onboarding', destination: '/onboarding', permanent: true },
       { source: '/en/terms-consent', destination: '/terms-consent', permanent: true },
+      // 거장 작가 — 별도 /special/<slug> 페이지를 운영하지 않고 작가 페이지로 통일.
+      // (오윤·박생광은 실제 특별전 이벤트라 /special 유지)
+      {
+        source: '/special/min-joungki',
+        destination: '/artworks/artist/%EB%AF%BC%EC%A0%95%EA%B8%B0',
+        permanent: true,
+      },
+      {
+        source: '/en/special/min-joungki',
+        destination: '/en/artworks/artist/%EB%AF%BC%EC%A0%95%EA%B8%B0',
+        permanent: true,
+      },
+      {
+        source: '/special/lee-cheolsoo',
+        destination: '/artworks/artist/%EC%9D%B4%EC%B2%A0%EC%88%98',
+        permanent: true,
+      },
+      {
+        source: '/en/special/lee-cheolsoo',
+        destination: '/en/artworks/artist/%EC%9D%B4%EC%B2%A0%EC%88%98',
+        permanent: true,
+      },
+      {
+        source: '/special/park-buldong',
+        destination: '/artworks/artist/%EB%B0%95%EB%B6%88%EB%98%A5',
+        permanent: true,
+      },
+      {
+        source: '/en/special/park-buldong',
+        destination: '/en/artworks/artist/%EB%B0%95%EB%B6%88%EB%98%A5',
+        permanent: true,
+      },
     ];
   },
   async headers() {

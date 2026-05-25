@@ -42,9 +42,6 @@ const HERO_EXACT = new Set<string>([
   '/petition/oh-yoon',
   '/special/oh-yoon',
   '/special/park-saenggwang',
-  '/special/min-joungki',
-  '/special/lee-cheolsoo',
-  '/special/park-buldong',
   '/faq',
   '/wishlist',
 ]);

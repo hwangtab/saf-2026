@@ -16,15 +16,15 @@ import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
-export const dynamic = 'force-static';
-export const revalidate = 600;
+// 거장 작가 feature는 작가 페이지(/artworks/artist/이철수)에서 dispatch되어 렌더된다.
+const LEE_CHEOLSOO_PATH = `/artworks/artist/${encodeURIComponent('이철수')}`;
 
-const PARK_BULDONG_ARTIST_KEYS = new Set([
-  '박불똥',
-  'park bul-ttong',
-  'park bulttong',
-  'park buldong',
-  'parkbulttong',
+const LEE_CHEOLSOO_ARTIST_KEYS = new Set([
+  '이철수',
+  'lee chul-soo',
+  'lee cheolsoo',
+  'lee chulsoo',
+  'lee cheol-soo',
 ]);
 
 const normalizeArtistKey = (value: string): string => value.normalize('NFC').trim().toLowerCase();
@@ -32,42 +32,42 @@ const normalizeArtistKey = (value: string): string => value.normalize('NFC').tri
 const normalizeArtistCompactKey = (value: string): string =>
   normalizeArtistKey(value).replace(/[\s-]+/g, '');
 
-const isParkBuldongArtist = (artist: string): boolean => {
+const isLeeCheolsooArtist = (artist: string): boolean => {
   if (!artist) return false;
   const normalized = normalizeArtistKey(artist);
   const compact = normalizeArtistCompactKey(artist);
   return (
-    PARK_BULDONG_ARTIST_KEYS.has(normalized) ||
-    compact === '박불똥' ||
-    compact === 'parkbulttong' ||
-    compact === 'parkbuldong'
+    LEE_CHEOLSOO_ARTIST_KEYS.has(normalized) ||
+    compact === '이철수' ||
+    compact === 'leecheolsoo' ||
+    compact === 'leechulsoo'
   );
 };
 
 const PAGE_COPY = {
   ko: {
-    title: '박불똥 — 콜라주·정치 미술의 거장',
+    title: '이철수 — 판화·서화의 거장',
     description:
-      '콜라주·정치 미술의 거장 박불똥(1956–). 신문·잡지를 잘라 붙여 권력의 언어를 해체하고 재조립하는 작가. 한국 민중미술 운동의 날카로운 목소리, 박불똥의 작품을 씨앗페 온라인에서 감상하고 소장하세요.',
+      '판화·서화의 거장 이철수(1954–). 짧은 글귀와 단순한 목판 이미지로 한국인의 일상에 가장 깊이 스며든 작가. 나무처럼 사람처럼, 이철수의 작품을 씨앗페 온라인에서 감상하고 소장하세요.',
     ogDescription:
-      '콜라주·정치 미술의 거장 박불똥. 대중매체 이미지를 해체·재조합하여 권력의 이면을 폭로하는 한국 민중미술의 날카로운 목소리.',
-    ogAlt: '박불똥 대표 작품',
-    twitterTitle: '박불똥',
-    twitterDescription: '잘라내고 붙이며 세상을 읽는다 — 콜라주·정치 미술의 거장 박불똥',
+      '판화·서화의 거장 이철수. 짧은 글귀와 단순한 목판 이미지로 한국인의 마음속에 가장 깊이 스며든 작가.',
+    ogAlt: '이철수 대표 작품',
+    twitterTitle: '이철수',
+    twitterDescription: '나무처럼, 사람처럼 — 목판화·서화의 거장 이철수',
   },
   en: {
-    title: 'Park Bul-ttong — Master of Collage and Political Art',
+    title: 'Lee Chul-soo — Master of Prints and Brushwork',
     description:
-      'Selected works by Park Bul-ttong (b. 1956), master of collage and political art. Cutting and reassembling images from newspapers and magazines, he exposes the hidden structures of power. A sharp voice of the Korean minjung art movement. View and collect selected works at SAF Online.',
+      'Selected works by Lee Chul-soo (b. 1954), master of prints and brushwork. His simple woodblock prints paired with short, zen-like phrases have found their way into the everyday lives of Koreans. View and collect selected works at SAF Online.',
     ogDescription:
-      'Park Bul-ttong — master of collage and political art. Cutting and reassembling mass media images to expose the hidden structures of power.',
-    ogAlt: 'Park Bul-ttong — featured work',
-    twitterTitle: 'Park Bul-ttong',
-    twitterDescription: 'Cut, paste, read the world — master of Korean political collage art',
+      'Lee Chul-soo — master of prints and brushwork. Simple woodblock images paired with short poetic phrases that speak to everyday Korean life.',
+    ogAlt: 'Lee Chul-soo — featured work',
+    twitterTitle: 'Lee Chul-soo',
+    twitterDescription: 'Like trees, like people — master of Korean woodblock prints and brushwork',
   },
 } as const;
 
-export async function generateMetadata({
+export async function buildLeeCheolsooMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
@@ -78,17 +78,17 @@ export async function generateMetadata({
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const siteName = tSeo('siteTitle');
-  const pageUrl = buildLocaleUrl('/special/park-buldong', locale);
+  const pageUrl = buildLocaleUrl(LEE_CHEOLSOO_PATH, locale);
 
-  const allArtworks = await getSupabaseArtworksByArtist('박불똥');
-  const artwork = allArtworks.find((a) => isParkBuldongArtist(a.artist) && a.images[0]);
+  const allArtworks = await getSupabaseArtworksByArtist('이철수');
+  const artwork = allArtworks.find((a) => isLeeCheolsooArtist(a.artist) && a.images[0]);
   const ogImageUrl = artwork?.images[0]
     ? resolveSeoArtworkImageUrl(artwork.images[0])
     : OG_IMAGE.url;
   const ogImageAlt = artwork
     ? locale === 'en'
-      ? `${artwork.title_en || artwork.title} — Park Bul-ttong`
-      : `${artwork.title} — 박불똥`
+      ? `${artwork.title_en || artwork.title} — Lee Chul-soo`
+      : `${artwork.title} — 이철수`
     : copy.ogAlt;
 
   return {
@@ -96,9 +96,9 @@ export async function generateMetadata({
     description: copy.description,
     keywords:
       locale === 'en'
-        ? 'Park Bul-ttong artist, Korean political art, Korean collage art, minjung misul, political collage'
-        : '박불똥 화가, 한국 정치 미술, 콜라주 아트, 민중미술, 정치 콜라주, 씨앗페 온라인',
-    alternates: createLocaleAlternates('/special/park-buldong', locale, true),
+        ? 'Lee Chul-soo artist, Korean woodblock prints, Korean calligraphy art, prints and brushwork, minjung art'
+        : '이철수 화가, 한국 목판화, 이철수 판화, 서화, 민중미술, 씨앗페 온라인',
+    alternates: createLocaleAlternates(LEE_CHEOLSOO_PATH, locale, true),
     ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
@@ -118,17 +118,21 @@ export async function generateMetadata({
   };
 }
 
-export default async function ParkBuldongPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function LeeCheolsooFeature({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const isEnglish = locale === 'en';
-  const pageUrl = buildLocaleUrl('/special/park-buldong', locale);
+  const pageUrl = buildLocaleUrl(LEE_CHEOLSOO_PATH, locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
-  const allArtworks = await getSupabaseArtworksByArtist('박불똥');
+  const allArtworks = await getSupabaseArtworksByArtist('이철수');
   const fullArtworks = allArtworks.filter((artwork: Artwork) =>
-    isParkBuldongArtist(artwork.artist)
+    isLeeCheolsooArtist(artwork.artist)
   );
   const ARTWORKS: ArtworkListItem[] = fullArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
@@ -139,34 +143,30 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
-    { name: tBreadcrumbs('parkBuldong'), url: pageUrl },
+    { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
+    { name: isEnglish ? 'Lee Chul-soo' : '이철수', url: pageUrl },
   ]);
 
   const artistPerson = {
     '@type': 'Person',
-    '@id': `${SITE_URL}/special/park-buldong#person-park-buldong`,
-    name: isEnglish ? 'Park Bul-ttong' : '박불똥',
-    alternateName: isEnglish ? '박불똥' : 'Park Bul-ttong',
-    jobTitle: isEnglish ? 'Artist' : '화가·콜라주 작가',
+    '@id': `${SITE_URL}${LEE_CHEOLSOO_PATH}#person-lee-cheolsoo`,
+    name: isEnglish ? 'Lee Chul-soo' : '이철수',
+    alternateName: isEnglish ? '이철수' : 'Lee Chul-soo',
+    jobTitle: isEnglish ? 'Artist' : '판화가·서화가',
     description: isEnglish
-      ? 'Park Bul-ttong (b. 1956) is a Korean master of collage and political art, known for works that cut and reassemble mass media images to expose hidden power structures.'
-      : '박불똥(1956-)은 대중매체 이미지를 해체·재조합하는 콜라주와 정치 미술로 권력의 이면을 폭로해온 한국 민중미술의 거장입니다.',
-    birthDate: '1956',
+      ? 'Lee Chul-soo (b. 1954) is a Korean master printmaker and brushwork artist, known for woodblock prints that pair simple nature imagery with short, zen-like calligraphic phrases.'
+      : '이철수(1954-)는 목판화와 서화를 하나로 녹여낸 작가로, 단순한 자연 이미지와 짧은 글귀를 결합한 작품으로 한국인의 일상 속에 가장 깊이 스며든 거장입니다.',
+    birthDate: '1954',
     birthPlace: {
       '@type': 'Place',
-      name: isEnglish ? 'Hadong, South Gyeongsang, South Korea' : '경남 하동',
+      name: isEnglish ? 'Seoul, South Korea' : '서울',
     },
-    alumniOf: {
-      '@type': 'EducationalOrganization',
-      name: isEnglish ? 'Hongik University, Dept. of Western Painting' : '홍익대학교 서양화과',
+    workLocation: {
+      '@type': 'Place',
+      name: isEnglish ? 'Jecheon, Chungbuk, South Korea' : '충북 제천',
     },
-    affiliation: {
-      '@type': 'Organization',
-      name: isEnglish
-        ? "Minjung Misul Hyeopuihoe (National Artists' Association)"
-        : '민족미술협의회',
-    },
-    knowsAbout: ['Political collage', 'Korean minjung art'],
+    knowsAbout: ['Korean woodblock printmaking', 'Brushwork (서화)'],
+    sameAs: ['https://ko.wikipedia.org/wiki/이철수', 'https://www.wikidata.org/wiki/Q16183948'],
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -177,10 +177,10 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
   const exhibitionEventSchema = {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: isEnglish ? 'Park Bul-ttong — SAF Online' : '박불똥 — 씨앗페 온라인',
+    name: isEnglish ? 'Lee Chul-soo — SAF Online' : '이철수 — 씨앗페 온라인',
     description: isEnglish
-      ? 'Selected works by Park Bul-ttong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 박불똥 작품들을 소개합니다.',
+      ? 'Selected works by Lee Chul-soo from the SAF Online collection.'
+      : '씨앗페 온라인에 소장된 이철수 작품들을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventMovedOnline',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -220,7 +220,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <div className="inline-block relative mb-8">
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
-                {isEnglish ? 'Park Bul-ttong · b. 1956' : '박불똥 · 1956–'}
+                {isEnglish ? 'Lee Chul-soo · b. 1954' : '이철수 · 1954–'}
               </span>
               <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
@@ -228,16 +228,16 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black">
               {isEnglish ? (
                 <>
-                  Cut, Paste,
+                  Like Trees,
                   <br />
-                  and Read the World
+                  Like People
                 </>
               ) : (
                 <>
-                  잘라내고 붙이며
+                  나무처럼,
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-primary-soft">세상을 읽는다</span>
+                    <span className="relative z-10 text-primary-soft">사람처럼</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
                 </>
@@ -247,17 +247,16 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
             <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed break-keep border-t-2 border-b-2 border-white/20 py-5 md:py-6">
               {isEnglish ? (
                 <>
-                  <span className="block">The image was theirs. The meaning is ours.</span>
+                  <span className="block">A single cut. A short phrase. A whole life.</span>
                   <span className="mt-2 block">
-                    Park Bul-ttong tears the picture apart to show you what was always hidden
-                    inside.
+                    Lee Chul-soo&apos;s woodblock prints find you where you least expect them.
                   </span>
                 </>
               ) : (
                 <>
-                  <span className="block">이미지는 그들의 것이었다. 의미는 우리가 만든다.</span>
+                  <span className="block">한 번의 칼질. 짧은 글귀. 삶 하나.</span>
                   <span className="mt-2 block">
-                    박불똥은 그림을 해체하여 그 안에 숨겨진 것을 꺼내 보입니다.
+                    이철수의 판화는 가장 뜻밖의 순간에 당신을 찾아옵니다.
                   </span>
                 </>
               )}
@@ -271,19 +270,80 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
         </section>
 
         <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
+          {/* Quote Section */}
+          <div className="mb-24 flex justify-center">
+            <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-primary flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
+                &ldquo;
+              </div>
+              <p className="text-xl sm:text-2xl md:text-4xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
+                {isEnglish ? (
+                  <>
+                    I want to awaken inner stillness and reflection in a way anyone can feel in
+                    everyday life. This is returning art to those who are weary of living — and I
+                    think it is the affection I had long neglected for people.
+                  </>
+                ) : (
+                  <>
+                    일상 속에서 누구나 느낄 수 있는 방식으로 내적인 고요와 성찰을 일깨우려 합니다.
+                    이것이 삶에 지친 사람들에게 미술을 되돌려주는 것이고, 그동안 제 스스로가
+                    간과했던 사람들에 대한 애정이라 생각됩니다.
+                  </>
+                )}
+              </p>
+              <footer className="mt-8 space-y-1">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="h-px w-8 bg-charcoal/40"></span>
+                  <span className="text-xl text-charcoal font-bold tracking-widest">
+                    {isEnglish ? 'Lee Chul-soo' : '이철수'}
+                  </span>
+                  <span className="h-px w-8 bg-charcoal/40"></span>
+                </div>
+                <p className="text-xs text-charcoal-muted">
+                  {isEnglish ? (
+                    <>
+                      Source:{' '}
+                      <a
+                        href="https://www.cbinews.co.kr/news/articleView.html?idxno=75494"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        충북인뉴스 (CBN News), &ldquo;Lee Chul-soo · 30 Years · Printmaking ·
+                        Life&rdquo;
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      출처:{' '}
+                      <a
+                        href="https://www.cbinews.co.kr/news/articleView.html?idxno=75494"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        충북인뉴스, 「이철수·30년·판화·인생」
+                      </a>
+                    </>
+                  )}
+                </p>
+              </footer>
+            </blockquote>
+          </div>
+
           {/* Bio / Narrative Section */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-32 items-start">
             <div className="space-y-8">
               <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
                 {isEnglish ? (
                   <>
-                    Scissors as critique —<br />
-                    <span className="text-primary-strong">the collage that cuts through power</span>
+                    One cut, one phrase —<br />
+                    <span className="text-primary-strong">art that lives outside museums</span>
                   </>
                 ) : (
                   <>
-                    가위가 곧 비평 —<br />
-                    <span className="text-primary-strong">권력을 오려내는 콜라주</span>
+                    한 번의 칼질, 한 줄의 글 —<br />
+                    <span className="text-primary-strong">미술관 밖에 사는 예술</span>
                   </>
                 )}
               </h2>
@@ -291,51 +351,53 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                 {isEnglish ? (
                   <>
                     <p>
-                      Park Bul-ttong (b. 1956) chose his medium deliberately:{' '}
+                      Lee Chul-soo (b. 1954) occupies a singular place in Korean art: he is the
+                      artist whose work most Koreans have lived with, without necessarily knowing
+                      his name. His woodblock prints — a bird on a bare branch, two hands cupped
+                      together, a single leaf in wind — have appeared on calendars, postcards, book
+                      covers, and the walls of ordinary homes across the country for four decades.
+                    </p>
+                    <p>
+                      What makes his work{' '}
                       <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
-                        collage
-                      </strong>
-                      . Not painting, not printmaking — but the act of cutting images produced by
-                      power and rearranging them into new, unauthorized meanings. Newspapers,
-                      magazines, advertisements: the raw material of his work is the very media
-                      through which authority speaks.
+                        travel so far
+                      </strong>{' '}
+                      is precisely its restraint. Each print begins with stripping away: the image
+                      reduced to its simplest form, the accompanying phrase pared to its fewest
+                      syllables. The result is something that feels both complete and open — a frame
+                      that the viewer can step into.
                     </p>
                     <p>
-                      In the Korea of the 1980s, this was a radical choice. As a member of the
-                      Minjung Misul Hyeopuihoe (National Artists&apos; Association), Park understood
-                      that the most effective critique of a media-saturated world was to{' '}
-                      <strong className="font-bold text-charcoal">work from inside it</strong> —
-                      taking the images that were fed to people and showing, by simple
-                      rearrangement, what they concealed.
-                    </p>
-                    <p>
-                      His collages are direct without being blunt, political without being didactic.
-                      The scissors do the arguing. And the result — a world reassembled honestly —
-                      is both a critique and a kind of liberation.
+                      Rooted in the minjung art movement of the 1980s, Lee&apos;s work took a turn
+                      toward the personal and philosophical rather than the overtly political. He
+                      found that the most{' '}
+                      <strong className="font-bold text-charcoal">democratic art</strong> was not
+                      one that argued, but one that a market vendor, a factory worker, and a student
+                      could each quietly take home.
                     </p>
                   </>
                 ) : (
                   <>
                     <p>
-                      박불똥(1956-)은 자신의 매체를 의도적으로 선택했습니다:{' '}
+                      이철수(1954-)는 한국인 대부분이 알게 모르게 함께 살아온 작가입니다. 앙상한
+                      가지 위의 새, 두 손을 모아 담은 것, 바람에 흔들리는 나뭇잎 하나. 그의 판화는
+                      40년 넘게 달력과 엽서, 책 표지와 평범한 가정의 벽 위에 자리해 왔습니다.
+                    </p>
+                    <p>
+                      그의 작품이{' '}
                       <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
-                        콜라주
+                        이토록 멀리 가는 이유
                       </strong>
-                      . 회화도 판화도 아닌, 권력이 생산한 이미지를 오려내어 승인받지 않은 새로운
-                      의미로 재배열하는 행위. 신문, 잡지, 광고 — 그의 작업 재료는 권력이 말하는 바로
-                      그 매체입니다.
+                      는 정확히 그 절제 때문입니다. 모든 그림은 덜어내기에서 시작합니다. 이미지는
+                      가장 단순한 형태로, 함께 쓰인 글귀는 가장 적은 음절로. 결과는 완결되어
+                      있으면서도 열려있는 것 — 보는 이가 스스로 걸어 들어올 수 있는 공간입니다.
                     </p>
                     <p>
-                      1980년대 한국에서 이것은 급진적인 선택이었습니다. 민족미술협의회의 일원으로서,
-                      박불똥은 미디어로 포화된 세계를 가장 효과적으로 비판하는 방법이{' '}
-                      <strong className="font-bold text-charcoal">그 안에서 작업하는 것</strong>임을
-                      알았습니다. 사람들에게 공급된 이미지를 가져다가, 단순한 재배열만으로, 그
-                      이미지가 감추고 있던 것을 드러내는 방법으로.
-                    </p>
-                    <p>
-                      그의 콜라주는 직접적이지만 무디지 않고, 정치적이지만 설교하지 않습니다. 가위가
-                      논증합니다. 그리고 그 결과 — 정직하게 재조합된 세계 — 는 비평이자 하나의
-                      해방입니다.
+                      1980년대 민중미술 운동에 뿌리를 두면서도, 이철수는 직접적인 정치 대신
+                      개인적이고 철학적인 방향으로 걸음을 옮겼습니다. 가장{' '}
+                      <strong className="font-bold text-charcoal">민주적인 예술</strong>은 주장하는
+                      예술이 아니라, 시장 상인도 공장 노동자도 학생도 각자의 마음에 조용히 가져갈 수
+                      있는 예술이라고 믿었기 때문입니다.
                     </p>
                   </>
                 )}
@@ -356,12 +418,12 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Deconstruction of image' : '이미지의 해체'}
+                        {isEnglish ? 'Trees and people' : '나무와 사람'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Mass media images are cut apart and reassembled to expose the power structures hidden within them.'
-                          : '대중매체 이미지를 해체·재조합하여 그 이면의 권력 구조를 드러냅니다.'}
+                          ? 'Nature and humanity mirror each other — a single branch holds as much life as a human life does.'
+                          : '자연의 이치를 인간의 삶에 포개어, 두 존재가 다르지 않음을 보여줍니다.'}
                       </p>
                     </div>
                   </li>
@@ -371,12 +433,12 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Satire and directness' : '풍자와 직접성'}
+                        {isEnglish ? 'Text and image' : '글과 그림'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Without detour, his works deliver social and political messages with immediate visual impact.'
-                          : '우회 없이 사회·정치적 메시지를 직접적이고 강렬한 시각 언어로 전달합니다.'}
+                          ? 'Short calligraphic phrases and woodblock images fuse into one — each work a small, self-contained poem.'
+                          : '짧은 글귀와 목판 이미지가 하나가 되어, 한 장면이 작은 시가 됩니다.'}
                       </p>
                     </div>
                   </li>
@@ -386,12 +448,12 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Democracy of collage' : '콜라주의 민주성'}
+                        {isEnglish ? 'Folk lyricism' : '민중의 서정'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Using everyday printed materials rather than costly supplies, he lowers the threshold of art while raising the stakes of critique.'
-                          : '값비싼 재료 대신 누구나 접할 수 있는 인쇄물로, 예술의 문턱은 낮추고 비평의 날은 높입니다.'}
+                          ? 'Simple lines carry the feelings most widely shared — his prints hang in homes precisely because they need no explanation.'
+                          : '화려한 기교 대신 단순한 선으로, 가장 많은 사람이 공감하는 감정을 담아냅니다.'}
                       </p>
                     </div>
                   </li>
@@ -406,30 +468,20 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                 <ol className="space-y-4">
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1956
+                      1954
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? 'Born in Hadong, South Gyeongsang province.' : '경남 하동 출생.'}
+                      {isEnglish ? 'Born in Seoul.' : '서울 출생.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1984
+                      1981
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Graduates from Hongik University, Department of Western Painting.'
-                        : '홍익대학교 서양화과 졸업.'}
-                    </span>
-                  </li>
-                  <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1985
-                    </span>
-                    <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? "First solo exhibition 〈Nunbit〉 at Gwanhun Gallery; participates in founding the Minjung Misul Hyeopuihoe (National Artists' Association)."
-                        : '첫 개인전 〈눈빛展〉 (관훈미술관); 「민족미술협의회」 창립 참여.'}
+                        ? 'First solo woodblock print exhibition at Gwanhun Gallery, Seoul — launching a career defined by accessible, lyrical prints.'
+                        : '첫 목판화 개인전 개최 (관훈미술관, 서울). 서정적·접근 가능한 판화 작업 본격 시작.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -438,8 +490,18 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Develops his signature political collage style, using mass media materials to critique power.'
-                        : '대중매체 재료를 활용한 정치 콜라주 스타일 확립, 권력 비판 작업 다수 발표.'}
+                        ? 'Work rooted in minjung art sensibilities while charting an independent path in text-image fusion (서화).'
+                        : '민중미술적 감성을 바탕으로, 독자적인 서화(書畵) 세계를 열어감.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1987
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Relocates to Jecheon, North Chungcheong — farming and printmaking become inseparable.'
+                        : '충북 제천 귀농. 농사와 판화 작업을 하나의 삶으로 통합.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -448,8 +510,8 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Continues exhibiting nationally and internationally; participated in major group exhibitions.'
-                        : '국내외 지속 전시, 국내 주요 그룹전 참여 다수.'}
+                        ? 'Works appear on calendars, books, posters — his prints become part of the texture of everyday Korean life.'
+                        : '달력·책·포스터 등 생활 매체에 작품 확산. 한국인의 일상 속으로.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -457,9 +519,32 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                       현재
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Continues working; his collages remain one of the sharpest visual critiques in contemporary Korean art.'
-                        : '작업 지속. 한국 현대미술에서 가장 날카로운 시각 비평의 목소리 중 하나.'}
+                      {isEnglish ? (
+                        <>
+                          Continues working in Jecheon. Works exhibited internationally (Germany,
+                          France, Ireland and more). Official shop:{' '}
+                          <a
+                            href="https://mokpan.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-strong underline"
+                          >
+                            mokpan.com
+                          </a>
+                        </>
+                      ) : (
+                        <>
+                          제천에서 작업 지속. 독일·프랑스·아일랜드 등 국제 전시 다수. 공식 판매처:{' '}
+                          <a
+                            href="https://mokpan.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-strong underline"
+                          >
+                            mokpan.com
+                          </a>
+                        </>
+                      )}
                     </span>
                   </li>
                 </ol>
@@ -474,49 +559,66 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? '〈Nunbit〉 (1985) · 〈Joljak〉 (1987) · 〈Gyeolsa Bandae〉 (1989) — Geurimadang Min, Seoul'
-                        : '〈눈빛展〉 (1985) · 〈졸작展〉 (1987) · 〈결사반대展〉 (1989) — 그림마당 민, 서울'}
+                        ? 'First solo exhibition, Gwanhun Gallery, Seoul (1981); second solo, same venue (1985)'
+                        : '첫 개인전 관훈미술관 (1981); 2회전 동일 장소 (1985)'}
                     </span>
                   </li>
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? '〈Confession on the Disability of Desire〉, Kumho Museum of Art (1992); 〈Park Bul-ttong 1985–2016〉, Gallery 175 (2016)'
-                        : '〈관능의 불구에 대한 자백展〉 금호미술관 (1992); 〈박불똥, 1985–2016〉 갤러리 175 (2016)'}
+                        ? '"Not a Trivial Life" solo exhibition (2020); "Was It a Door?" solo exhibition (2021)'
+                        : '〈비루하지 않은 삶을 위하여〉 (2020); 〈문인가 하였더니, 다시 길〉 (2021)'}
                     </span>
                   </li>
                   <li className="flex gap-4 items-start">
-                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-charcoal rotate-45" />
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? (
-                        <>
-                          Group exhibition:{' '}
-                          <a
-                            href="https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=200904050002593"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            《15 Years of Minjung Art: 1980–1994》, MMCA (1994)
-                          </a>
-                        </>
-                      ) : (
-                        <>
-                          단체전:{' '}
-                          <a
-                            href="https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=200904050002593"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            《민중미술 15년: 1980–1994》, 국립현대미술관 (1994)
-                          </a>
-                        </>
-                      )}
+                      {isEnglish
+                        ? 'International exhibitions in Germany, Switzerland, Ireland, Hungary, Spain, France, Belgium, Italy, Kazakhstan, United States and South Africa (first retrospective)'
+                        : '독일·스위스·아일랜드·헝가리·스페인·프랑스·벨기에·이탈리아·카자흐스탄·미국·남아공(첫 회고전) 등 국제 전시'}
                     </span>
                   </li>
                 </ul>
+                <div className="mt-5 border-t border-charcoal/15 pt-4 space-y-2">
+                  <p className="text-sm font-bold text-charcoal break-keep">
+                    {isEnglish
+                      ? '✦ Accessible entry points to the collection'
+                      : '✦ 진입 가능한 소장 경로'}
+                  </p>
+                  <p className="text-sm text-charcoal-muted break-keep">
+                    {isEnglish ? (
+                      <>
+                        Print postcards and annual print calendars are widely available — making Lee
+                        Chul-soo one of the most accessible artists in the collection. Original
+                        works also available via{' '}
+                        <a
+                          href="https://mokpan.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-strong underline"
+                        >
+                          mokpan.com
+                        </a>
+                        .
+                      </>
+                    ) : (
+                      <>
+                        판화 엽서 및 연간 판화 달력 등 생활 매체로 광범위하게 보급. 씨앗페 컬렉션 중
+                        가장 접근하기 쉬운 작가 중 한 명. 원화 작품은{' '}
+                        <a
+                          href="https://mokpan.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-strong underline"
+                        >
+                          mokpan.com
+                        </a>
+                        에서도 구매 가능.
+                      </>
+                    )}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -547,9 +649,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
-              <span className="text-xs text-white/70 uppercase tracking-widest">
-                Park Bul-ttong
-              </span>
+              <span className="text-xs text-white/70 uppercase tracking-widest">Lee Chul-soo</span>
               <span className="text-sm text-white/60">
                 {isEnglish
                   ? 'Click a work to view its details'
@@ -569,15 +669,15 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
               <p className="text-base md:text-lg text-white/90 leading-relaxed break-keep font-medium">
                 {isEnglish ? (
                   <>
-                    Park Bul-ttong joined this campaign in solidarity with fellow artists. Every
-                    work sold flows directly into the{' '}
+                    Lee Chul-soo joined this campaign in solidarity with fellow artists. Every work
+                    sold flows directly into the{' '}
                     <strong className="text-white">artists&apos; mutual-aid loan fund</strong> — a
                     purchase becomes the next month&apos;s lifeline for an artist navigating
                     financial exclusion today.
                   </>
                 ) : (
                   <>
-                    박불똥 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
+                    이철수 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
                     수익은 전액 <strong className="text-white">예술인 상호부조 대출 기금</strong>
                     으로 이어집니다. 작품 한 점의 구매가, 오늘 금융 차별을 겪는 예술인 한 사람의
                     다음 한 달이 됩니다.
@@ -592,7 +692,7 @@ export default async function ParkBuldongPage({ params }: { params: Promise<{ lo
               <MasterArtistMediumSections
                 artworks={ARTWORKS}
                 isEnglish={isEnglish}
-                returnTo="/special/park-buldong"
+                returnTo={LEE_CHEOLSOO_PATH}
               />
             ) : (
               <section className="py-24 text-center">

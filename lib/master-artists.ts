@@ -57,7 +57,6 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: 'b. 1949',
     taglineKo: '한국 풍경화의 거장',
     taglineEn: 'Master of Korean landscape painting',
-    specialSlug: 'min-joungki',
   },
   {
     artistName: '이철수',
@@ -66,7 +65,6 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: 'b. 1954',
     taglineKo: '판화·서화 거장',
     taglineEn: 'Master of prints and brushwork',
-    specialSlug: 'lee-cheolsoo',
   },
   {
     artistName: '박불똥',
@@ -75,6 +73,5 @@ export const MASTER_ARTISTS: MasterArtist[] = [
     yearsEn: 'b. 1956',
     taglineKo: '콜라주·정치 미술의 거장',
     taglineEn: 'Master of collage and political art',
-    specialSlug: 'park-buldong',
   },
 ];

@@ -16,15 +16,15 @@ import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
-export const dynamic = 'force-static';
-export const revalidate = 600;
+// 거장 작가 feature는 작가 페이지(/artworks/artist/민정기)에서 dispatch되어 렌더된다.
+const MIN_JOUNGKI_PATH = `/artworks/artist/${encodeURIComponent('민정기')}`;
 
-const LEE_CHEOLSOO_ARTIST_KEYS = new Set([
-  '이철수',
-  'lee chul-soo',
-  'lee cheolsoo',
-  'lee chulsoo',
-  'lee cheol-soo',
+const MIN_JOUNGKI_ARTIST_KEYS = new Set([
+  '민정기',
+  'min joung-ki',
+  'min joungki',
+  'min jung-ki',
+  'minjungki',
 ]);
 
 const normalizeArtistKey = (value: string): string => value.normalize('NFC').trim().toLowerCase();
@@ -32,42 +32,40 @@ const normalizeArtistKey = (value: string): string => value.normalize('NFC').tri
 const normalizeArtistCompactKey = (value: string): string =>
   normalizeArtistKey(value).replace(/[\s-]+/g, '');
 
-const isLeeCheolsooArtist = (artist: string): boolean => {
+const isMinJoungkiArtist = (artist: string): boolean => {
   if (!artist) return false;
   const normalized = normalizeArtistKey(artist);
   const compact = normalizeArtistCompactKey(artist);
   return (
-    LEE_CHEOLSOO_ARTIST_KEYS.has(normalized) ||
-    compact === '이철수' ||
-    compact === 'leecheolsoo' ||
-    compact === 'leechulsoo'
+    MIN_JOUNGKI_ARTIST_KEYS.has(normalized) || compact === '민정기' || compact === 'minjoungki'
   );
 };
 
 const PAGE_COPY = {
   ko: {
-    title: '이철수 — 판화·서화의 거장',
+    title: '민정기 — 한국 현실주의 풍경화의 거장',
     description:
-      '판화·서화의 거장 이철수(1954–). 짧은 글귀와 단순한 목판 이미지로 한국인의 일상에 가장 깊이 스며든 작가. 나무처럼 사람처럼, 이철수의 작품을 씨앗페 온라인에서 감상하고 소장하세요.',
+      '한국 현실주의 풍경화의 거장 민정기(1949–). 「현실과 발언」 결성 동인으로(1979) 민중미술 운동의 핵심에 섰던 작가가, 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아온 반세기의 여정을 씨앗페 온라인에서 만나보세요.',
     ogDescription:
-      '판화·서화의 거장 이철수. 짧은 글귀와 단순한 목판 이미지로 한국인의 마음속에 가장 깊이 스며든 작가.',
-    ogAlt: '이철수 대표 작품',
-    twitterTitle: '이철수',
-    twitterDescription: '나무처럼, 사람처럼 — 목판화·서화의 거장 이철수',
+      '한국 현실주의 풍경화의 거장 민정기. 민중미술 운동의 핵심으로서 한국의 산하와 민중의 삶을 담아온 반세기의 여정.',
+    ogAlt: '민정기 대표 작품',
+    twitterTitle: '민정기',
+    twitterDescription: '한국 현실주의 풍경화의 거장 — 사라져가는 산하를 화폭에 새긴 민정기',
   },
   en: {
-    title: 'Lee Chul-soo — Master of Prints and Brushwork',
+    title: 'Min Joung-ki — Korean Realist Landscape Painter',
     description:
-      'Selected works by Lee Chul-soo (b. 1954), master of prints and brushwork. His simple woodblock prints paired with short, zen-like phrases have found their way into the everyday lives of Koreans. View and collect selected works at SAF Online.',
+      'Selected works by Min Joung-ki (b. 1949), a pivotal figure in Korean minjung art and master of realist landscape painting. Co-founder of the Reality and Utterance collective, Min has spent five decades recording a vanishing agrarian Korea on monumental canvases. View and collect selected works at SAF Online.',
     ogDescription:
-      'Lee Chul-soo — master of prints and brushwork. Simple woodblock images paired with short poetic phrases that speak to everyday Korean life.',
-    ogAlt: 'Lee Chul-soo — featured work',
-    twitterTitle: 'Lee Chul-soo',
-    twitterDescription: 'Like trees, like people — master of Korean woodblock prints and brushwork',
+      'Min Joung-ki — master of Korean realist landscape painting and co-founder of Reality and Utterance. Five decades of monumental canvases at SAF Online.',
+    ogAlt: 'Min Joung-ki — featured work',
+    twitterTitle: 'Min Joung-ki',
+    twitterDescription:
+      'Korean realist landscape master — five decades of recording a vanishing Korea',
   },
 } as const;
 
-export async function generateMetadata({
+export async function buildMinJoungkiMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
@@ -78,17 +76,17 @@ export async function generateMetadata({
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const siteName = tSeo('siteTitle');
-  const pageUrl = buildLocaleUrl('/special/lee-cheolsoo', locale);
+  const pageUrl = buildLocaleUrl(MIN_JOUNGKI_PATH, locale);
 
-  const allArtworks = await getSupabaseArtworksByArtist('이철수');
-  const artwork = allArtworks.find((a) => isLeeCheolsooArtist(a.artist) && a.images[0]);
+  const allArtworks = await getSupabaseArtworksByArtist('민정기');
+  const artwork = allArtworks.find((a) => isMinJoungkiArtist(a.artist) && a.images[0]);
   const ogImageUrl = artwork?.images[0]
     ? resolveSeoArtworkImageUrl(artwork.images[0])
     : OG_IMAGE.url;
   const ogImageAlt = artwork
     ? locale === 'en'
-      ? `${artwork.title_en || artwork.title} — Lee Chul-soo`
-      : `${artwork.title} — 이철수`
+      ? `${artwork.title_en || artwork.title} — Min Joung-ki`
+      : `${artwork.title} — 민정기`
     : copy.ogAlt;
 
   return {
@@ -96,9 +94,9 @@ export async function generateMetadata({
     description: copy.description,
     keywords:
       locale === 'en'
-        ? 'Lee Chul-soo artist, Korean woodblock prints, Korean calligraphy art, prints and brushwork, minjung art'
-        : '이철수 화가, 한국 목판화, 이철수 판화, 서화, 민중미술, 씨앗페 온라인',
-    alternates: createLocaleAlternates('/special/lee-cheolsoo', locale, true),
+        ? 'Min Joung-ki artist, Korean landscape painting, minjung misul, Reality and Utterance, Korean realism'
+        : '민정기 화가, 한국 풍경화, 민중미술, 현실과 발언, 한국 현실주의 회화, 씨앗페 온라인',
+    alternates: createLocaleAlternates(MIN_JOUNGKI_PATH, locale, true),
     ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
@@ -118,18 +116,20 @@ export async function generateMetadata({
   };
 }
 
-export default async function LeeCheolsooPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function MinJoungkiFeature({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const isEnglish = locale === 'en';
-  const pageUrl = buildLocaleUrl('/special/lee-cheolsoo', locale);
+  const pageUrl = buildLocaleUrl(MIN_JOUNGKI_PATH, locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
-  const allArtworks = await getSupabaseArtworksByArtist('이철수');
-  const fullArtworks = allArtworks.filter((artwork: Artwork) =>
-    isLeeCheolsooArtist(artwork.artist)
-  );
+  const allArtworks = await getSupabaseArtworksByArtist('민정기');
+  const fullArtworks = allArtworks.filter((artwork: Artwork) => isMinJoungkiArtist(artwork.artist));
   const ARTWORKS: ArtworkListItem[] = fullArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
@@ -139,29 +139,33 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
-    { name: tBreadcrumbs('leeCheolsoo'), url: pageUrl },
+    { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
+    { name: isEnglish ? 'Min Joung-ki' : '민정기', url: pageUrl },
   ]);
 
   const artistPerson = {
     '@type': 'Person',
-    '@id': `${SITE_URL}/special/lee-cheolsoo#person-lee-cheolsoo`,
-    name: isEnglish ? 'Lee Chul-soo' : '이철수',
-    alternateName: isEnglish ? '이철수' : 'Lee Chul-soo',
-    jobTitle: isEnglish ? 'Artist' : '판화가·서화가',
+    '@id': `${SITE_URL}${MIN_JOUNGKI_PATH}#person-min-joungki`,
+    name: isEnglish ? 'Min Joung-ki' : '민정기',
+    alternateName: isEnglish ? '민정기' : 'Min Joung-ki',
+    jobTitle: isEnglish ? 'Artist' : '화가',
     description: isEnglish
-      ? 'Lee Chul-soo (b. 1954) is a Korean master printmaker and brushwork artist, known for woodblock prints that pair simple nature imagery with short, zen-like calligraphic phrases.'
-      : '이철수(1954-)는 목판화와 서화를 하나로 녹여낸 작가로, 단순한 자연 이미지와 짧은 글귀를 결합한 작품으로 한국인의 일상 속에 가장 깊이 스며든 거장입니다.',
-    birthDate: '1954',
+      ? 'Min Joung-ki (b. 1949) is a leading Korean realist painter who co-founded the Reality and Utterance collective (formed 1979; inaugural exhibition 1980), known for monumental landscape paintings documenting a vanishing rural Korea.'
+      : '민정기(1949-)는 한국 현실주의 회화의 대표 작가로, 1979년 「현실과 발언」 결성에 참여하고 1980년 창립전을 열며 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아왔습니다.',
+    birthDate: '1949',
     birthPlace: {
       '@type': 'Place',
-      name: isEnglish ? 'Seoul, South Korea' : '서울',
+      name: isEnglish ? 'Seoul (Seodaemun-gu), South Korea' : '서울 서대문구',
     },
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: isEnglish ? 'Seoul National University College of Fine Arts' : '서울대학교 미술대학',
+    },
+    award: isEnglish ? '18th Lee Jung-seob Art Award (2006)' : '제18회 이중섭미술상 (2006)',
     workLocation: {
       '@type': 'Place',
-      name: isEnglish ? 'Jecheon, Chungbuk, South Korea' : '충북 제천',
+      name: isEnglish ? 'Yangpyeong, Gyeonggi, South Korea' : '경기 양평',
     },
-    knowsAbout: ['Korean woodblock printmaking', 'Brushwork (서화)'],
-    sameAs: ['https://ko.wikipedia.org/wiki/이철수', 'https://www.wikidata.org/wiki/Q16183948'],
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -172,10 +176,10 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
   const exhibitionEventSchema = {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: isEnglish ? 'Lee Chul-soo — SAF Online' : '이철수 — 씨앗페 온라인',
+    name: isEnglish ? 'Min Joung-ki — SAF Online' : '민정기 — 씨앗페 온라인',
     description: isEnglish
-      ? 'Selected works by Lee Chul-soo from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이철수 작품들을 소개합니다.',
+      ? 'Selected works by Min Joung-ki from the SAF Online collection.'
+      : '씨앗페 온라인에 소장된 민정기 작품들을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventMovedOnline',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -215,7 +219,7 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <div className="inline-block relative mb-8">
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
-                {isEnglish ? 'Lee Chul-soo · b. 1954' : '이철수 · 1954–'}
+                {isEnglish ? 'Min Joung-ki · b. 1949' : '민정기 · 1949–'}
               </span>
               <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
@@ -223,18 +227,20 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black">
               {isEnglish ? (
                 <>
-                  Like Trees,
+                  Painting the Korean Land
                   <br />
-                  Like People
+                  into Memory
                 </>
               ) : (
                 <>
-                  나무처럼,
+                  한국의 산하를
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-primary-soft">사람처럼</span>
+                    <span className="relative z-10 text-primary-soft">기억으로 새긴</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
+                  <br />
+                  화가
                 </>
               )}
             </h1>
@@ -242,17 +248,15 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
             <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed break-keep border-t-2 border-b-2 border-white/20 py-5 md:py-6">
               {isEnglish ? (
                 <>
-                  <span className="block">A single cut. A short phrase. A whole life.</span>
+                  <span className="block">Five decades of monumental canvases.</span>
                   <span className="mt-2 block">
-                    Lee Chul-soo&apos;s woodblock prints find you where you least expect them.
+                    The Korean countryside, remembered before it vanishes.
                   </span>
                 </>
               ) : (
                 <>
-                  <span className="block">한 번의 칼질. 짧은 글귀. 삶 하나.</span>
-                  <span className="mt-2 block">
-                    이철수의 판화는 가장 뜻밖의 순간에 당신을 찾아옵니다.
-                  </span>
+                  <span className="block">반세기의 대형 화폭.</span>
+                  <span className="mt-2 block">사라지기 전에 기억하는 한국의 산하.</span>
                 </>
               )}
             </p>
@@ -265,65 +269,96 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
         </section>
 
         <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
-          {/* Quote Section */}
+          {/* 2018 판문점 하이라이트 */}
           <div className="mb-24 flex justify-center">
-            <blockquote className="relative p-8 sm:p-10 md:p-16 text-center max-w-4xl border-4 border-charcoal bg-white shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)]">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-primary flex items-center justify-center rounded-full text-white font-display font-black text-3xl">
-                &ldquo;
+            <div className="relative p-8 sm:p-10 md:p-14 text-center max-w-4xl border-4 border-primary bg-white shadow-[8px_8px_0px_0px_rgba(33,118,255,0.12)]">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-charcoal flex items-center justify-center rounded-full text-white font-bold text-xs leading-none tracking-tighter">
+                2018
               </div>
-              <p className="text-xl sm:text-2xl md:text-4xl text-charcoal leading-relaxed text-balance pt-4 font-display font-black">
+              <p className="text-xl sm:text-2xl md:text-4xl text-charcoal leading-relaxed text-balance pt-4 font-display font-bold break-keep">
                 {isEnglish ? (
                   <>
-                    I want to awaken inner stillness and reflection in a way anyone can feel in
-                    everyday life. This is returning art to those who are weary of living — and I
-                    think it is the affection I had long neglected for people.
+                    At the 2018 inter-Korean summit at Panmunjeom, Min Joung-ki&apos;s{' '}
+                    <em className="not-italic text-primary-strong">
+                      &ldquo;Panoramic View of Bugaksan&rdquo;
+                    </em>{' '}
+                    hung at the Peace House — seen by the entire world.
                   </>
                 ) : (
                   <>
-                    일상 속에서 누구나 느낄 수 있는 방식으로 내적인 고요와 성찰을 일깨우려 합니다.
-                    이것이 삶에 지친 사람들에게 미술을 되돌려주는 것이고, 그동안 제 스스로가
-                    간과했던 사람들에 대한 애정이라 생각됩니다.
+                    2018년 남북정상회담 판문점 평화의 집.
+                    <br className="md:hidden" /> 민정기의{' '}
+                    <em className="not-italic text-primary-strong">「북한산 전도」</em>가 배경에
+                    걸렸고, 전 세계가 그 그림을 보았습니다.
                   </>
                 )}
               </p>
-              <footer className="mt-8 space-y-1">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="h-px w-8 bg-charcoal/40"></span>
-                  <span className="text-xl text-charcoal font-bold tracking-widest">
-                    {isEnglish ? 'Lee Chul-soo' : '이철수'}
-                  </span>
-                  <span className="h-px w-8 bg-charcoal/40"></span>
-                </div>
-                <p className="text-xs text-charcoal-muted">
-                  {isEnglish ? (
-                    <>
-                      Source:{' '}
-                      <a
-                        href="https://www.cbinews.co.kr/news/articleView.html?idxno=75494"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline"
-                      >
-                        충북인뉴스 (CBN News), &ldquo;Lee Chul-soo · 30 Years · Printmaking ·
-                        Life&rdquo;
-                      </a>
-                    </>
-                  ) : (
-                    <>
-                      출처:{' '}
-                      <a
-                        href="https://www.cbinews.co.kr/news/articleView.html?idxno=75494"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline"
-                      >
-                        충북인뉴스, 「이철수·30년·판화·인생」
-                      </a>
-                    </>
-                  )}
-                </p>
+              <footer className="mt-6 text-sm text-charcoal-muted">
+                {isEnglish ? (
+                  <>
+                    Sources:{' '}
+                    <a
+                      href="https://www.nocutnews.co.kr/news/5101349"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Nocutnews
+                    </a>
+                    {' · '}
+                    <a
+                      href="http://www.kyeongin.com/main/view.php?key=20180605010001536"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Gyeongin Ilbo
+                    </a>
+                    {' · '}
+                    <a
+                      href="https://www.kmib.co.kr/article/view.asp?arcid=0012320714"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      Kookmin Ilbo
+                    </a>
+                    {', April 2018'}
+                  </>
+                ) : (
+                  <>
+                    출처:{' '}
+                    <a
+                      href="https://www.nocutnews.co.kr/news/5101349"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      노컷뉴스
+                    </a>
+                    {' · '}
+                    <a
+                      href="http://www.kyeongin.com/main/view.php?key=20180605010001536"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      경인일보
+                    </a>
+                    {' · '}
+                    <a
+                      href="https://www.kmib.co.kr/article/view.asp?arcid=0012320714"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      국민일보
+                    </a>
+                    {', 2018년 4월'}
+                  </>
+                )}
               </footer>
-            </blockquote>
+            </div>
           </div>
 
           {/* Bio / Narrative Section */}
@@ -332,13 +367,13 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
               <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
                 {isEnglish ? (
                   <>
-                    One cut, one phrase —<br />
-                    <span className="text-primary-strong">art that lives outside museums</span>
+                    From protest to panorama —<br />
+                    <span className="text-primary-strong">the land as witness</span>
                   </>
                 ) : (
                   <>
-                    한 번의 칼질, 한 줄의 글 —<br />
-                    <span className="text-primary-strong">미술관 밖에 사는 예술</span>
+                    저항에서 파노라마로 —<br />
+                    <span className="text-primary-strong">땅이 증언한다</span>
                   </>
                 )}
               </h2>
@@ -346,53 +381,53 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                 {isEnglish ? (
                   <>
                     <p>
-                      Lee Chul-soo (b. 1954) occupies a singular place in Korean art: he is the
-                      artist whose work most Koreans have lived with, without necessarily knowing
-                      his name. His woodblock prints — a bird on a bare branch, two hands cupped
-                      together, a single leaf in wind — have appeared on calendars, postcards, book
-                      covers, and the walls of ordinary homes across the country for four decades.
-                    </p>
-                    <p>
-                      What makes his work{' '}
+                      Min Joung-ki (b. 1949) co-founded{' '}
                       <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
-                        travel so far
+                        Reality and Utterance
                       </strong>{' '}
-                      is precisely its restraint. Each print begins with stripping away: the image
-                      reduced to its simplest form, the accompanying phrase pared to its fewest
-                      syllables. The result is something that feels both complete and open — a frame
-                      that the viewer can step into.
+                      (현실과 발언) alongside Oh Yoon and fellow artists in 1979 — a collective that
+                      called for a Korean art rooted in social reality. Where Oh Yoon chose the
+                      woodblock knife, Min chose the painter&apos;s brush trained on the land
+                      itself.
                     </p>
                     <p>
-                      Rooted in the minjung art movement of the 1980s, Lee&apos;s work took a turn
-                      toward the personal and philosophical rather than the overtly political. He
-                      found that the most{' '}
-                      <strong className="font-bold text-charcoal">democratic art</strong> was not
-                      one that argued, but one that a market vendor, a factory worker, and a student
-                      could each quietly take home.
+                      His signature works are panoramic landscape paintings: monumental canvases
+                      that stretch across entire walls and pull the viewer inside the hills,
+                      paddies, and villages of a Korea in swift transformation. These are not
+                      decorative views. They are{' '}
+                      <strong className="font-bold text-charcoal">acts of memory</strong> — an
+                      artist&apos;s refusal to let the agrarian life of ordinary Koreans be erased
+                      without record.
+                    </p>
+                    <p>
+                      For over four decades, Min has refined a realism that is at once sociological
+                      and lyrical. The land in his paintings is alive with specific light, specific
+                      season, specific labor — and it asks us to slow down, look, and remember who
+                      built the country we stand in.
                     </p>
                   </>
                 ) : (
                   <>
                     <p>
-                      이철수(1954-)는 한국인 대부분이 알게 모르게 함께 살아온 작가입니다. 앙상한
-                      가지 위의 새, 두 손을 모아 담은 것, 바람에 흔들리는 나뭇잎 하나. 그의 판화는
-                      40년 넘게 달력과 엽서, 책 표지와 평범한 가정의 벽 위에 자리해 왔습니다.
-                    </p>
-                    <p>
-                      그의 작품이{' '}
+                      민정기(1949-)는 1979년 오윤 등과 함께{' '}
                       <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
-                        이토록 멀리 가는 이유
-                      </strong>
-                      는 정확히 그 절제 때문입니다. 모든 그림은 덜어내기에서 시작합니다. 이미지는
-                      가장 단순한 형태로, 함께 쓰인 글귀는 가장 적은 음절로. 결과는 완결되어
-                      있으면서도 열려있는 것 — 보는 이가 스스로 걸어 들어올 수 있는 공간입니다.
+                        「현실과 발언」
+                      </strong>{' '}
+                      결성에 참여하고 1980년 창립전을 열며 민중미술 운동의 핵심에 섰습니다. 오윤이
+                      목판 칼을 들었다면, 민정기는 붓을 들어 이 땅 자체를 응시했습니다.
                     </p>
                     <p>
-                      1980년대 민중미술 운동에 뿌리를 두면서도, 이철수는 직접적인 정치 대신
-                      개인적이고 철학적인 방향으로 걸음을 옮겼습니다. 가장{' '}
-                      <strong className="font-bold text-charcoal">민주적인 예술</strong>은 주장하는
-                      예술이 아니라, 시장 상인도 공장 노동자도 학생도 각자의 마음에 조용히 가져갈 수
-                      있는 예술이라고 믿었기 때문입니다.
+                      그의 대표작은 파노라마식 풍경화입니다. 벽 한 면을 채우는 대형 화폭 위에
+                      펼쳐지는 한국의 산과 들, 농촌의 마을 — 이것은 단순한 경치가 아닙니다. 빠르게
+                      사라져가는 농촌의 풍경을 붙잡아 두려는{' '}
+                      <strong className="font-bold text-charcoal">기억의 행위</strong>이며, 그 땅
+                      위에서 살아온 민중의 삶을 기록으로 남기겠다는 작가의 선언입니다.
+                    </p>
+                    <p>
+                      반세기가 넘는 세월 동안 민정기는 사회학적이면서도 서정적인 리얼리즘을
+                      다듬어왔습니다. 그의 그림 속 땅에는 특정한 빛, 특정한 계절, 특정한 노동이
+                      살아있습니다. 그리고 그 땅은 우리에게 묻습니다: 이 나라를 만든 사람들을
+                      기억하고 있느냐고.
                     </p>
                   </>
                 )}
@@ -413,12 +448,12 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Trees and people' : '나무와 사람'}
+                        {isEnglish ? 'Korean landscape' : '한국의 산하'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Nature and humanity mirror each other — a single branch holds as much life as a human life does.'
-                          : '자연의 이치를 인간의 삶에 포개어, 두 존재가 다르지 않음을 보여줍니다.'}
+                          ? 'Panoramic canvases preserve the hills, paddies, and villages of a Korea in rapid transformation.'
+                          : '사라져가는 한국의 농촌 풍경을 파노라마 화폭에 담아 시대의 증언으로 남겼습니다.'}
                       </p>
                     </div>
                   </li>
@@ -428,12 +463,12 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Text and image' : '글과 그림'}
+                        {isEnglish ? "People's lives" : '민중의 삶'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Short calligraphic phrases and woodblock images fuse into one — each work a small, self-contained poem.'
-                          : '짧은 글귀와 목판 이미지가 하나가 되어, 한 장면이 작은 시가 됩니다.'}
+                          ? 'The land is never empty — it carries the specific labor and memory of the people who worked it.'
+                          : '땅 위에 뿌리내린 사람들의 이야기를 담담하고 진솔하게 기록했습니다.'}
                       </p>
                     </div>
                   </li>
@@ -443,12 +478,12 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Folk lyricism' : '민중의 서정'}
+                        {isEnglish ? 'Reality and memory' : '현실과 기억'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Simple lines carry the feelings most widely shared — his prints hang in homes precisely because they need no explanation.'
-                          : '화려한 기교 대신 단순한 선으로, 가장 많은 사람이 공감하는 감정을 담아냅니다.'}
+                          ? 'Rooted in direct observation, his work transforms seen places into collective memory that outlasts the places themselves.'
+                          : '현실을 직시하면서도 집단적 기억의 풍경으로 재구성하는 작업을 반세기 넘게 지속했습니다.'}
                       </p>
                     </div>
                   </li>
@@ -463,20 +498,30 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                 <ol className="space-y-4">
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1954
+                      1949
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? 'Born in Seoul.' : '서울 출생.'}
+                      {isEnglish ? 'Born in Seoul (Seodaemun-gu).' : '서울 서대문구 출생.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1981
+                      1972
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'First solo woodblock print exhibition at Gwanhun Gallery, Seoul — launching a career defined by accessible, lyrical prints.'
-                        : '첫 목판화 개인전 개최 (관훈미술관, 서울). 서정적·접근 가능한 판화 작업 본격 시작.'}
+                        ? 'Graduates from Seoul National University College of Fine Arts (Western Painting).'
+                        : '서울대학교 미술대학 서양화과 졸업.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1979
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Co-founds Reality and Utterance (현실과 발언) alongside Oh Yoon and others; inaugural group exhibition held October 1980.'
+                        : '오윤 등과 「현실과 발언」 창립. 창립전은 1980년 10월 미술회관 개최.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -485,8 +530,18 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Work rooted in minjung art sensibilities while charting an independent path in text-image fusion (서화).'
-                        : '민중미술적 감성을 바탕으로, 독자적인 서화(書畵) 세계를 열어감.'}
+                        ? 'Begins his landmark panoramic landscape series documenting rural Korea.'
+                        : '한국 농촌 풍경을 주제로 한 파노라마 풍경화 연작 발표 시작.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1984
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Completes graduate studies (Western Painting) at Seoul National University.'
+                        : '서울대학교 대학원 회화과 수료.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -495,18 +550,41 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Relocates to Jecheon, North Chungcheong — farming and printmaking become inseparable.'
-                        : '충북 제천 귀농. 농사와 판화 작업을 하나의 삶으로 통합.'}
+                        ? 'Moves studio to Yangpyeong, Gyeonggi — deepens long-term engagement with natural landscape.'
+                        : '경기도 양평으로 작업실 이전. 자연과의 장기적 밀착 작업 심화.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1990s–
+                      2006
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Works appear on calendars, books, posters — his prints become part of the texture of everyday Korean life.'
-                        : '달력·책·포스터 등 생활 매체에 작품 확산. 한국인의 일상 속으로.'}
+                      {isEnglish ? (
+                        <>
+                          Receives the{' '}
+                          <a
+                            href="https://www.ilyosisa.co.kr/news/articleView.html?idxno=113689"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            18th Lee Jung-seob Art Award
+                          </a>
+                          .
+                        </>
+                      ) : (
+                        <>
+                          <a
+                            href="https://www.ilyosisa.co.kr/news/articleView.html?idxno=113689"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            제18회 이중섭미술상
+                          </a>
+                          {' 수상.'}
+                        </>
+                      )}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -516,28 +594,30 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish ? (
                         <>
-                          Continues working in Jecheon. Works exhibited internationally (Germany,
-                          France, Ireland and more). Official shop:{' '}
+                          Continues working in Yangpyeong. Work reportedly held in major
+                          institutional collections including the{' '}
                           <a
-                            href="https://mokpan.com"
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary-strong underline"
+                            className="underline"
                           >
-                            mokpan.com
+                            National Museum of Modern and Contemporary Art (MMCA)
                           </a>
+                          .
                         </>
                       ) : (
                         <>
-                          제천에서 작업 지속. 독일·프랑스·아일랜드 등 국제 전시 다수. 공식 판매처:{' '}
+                          양평에서 작업 지속.{' '}
                           <a
-                            href="https://mokpan.com"
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary-strong underline"
+                            className="underline"
                           >
-                            mokpan.com
-                          </a>
+                            국립현대미술관(MMCA)
+                          </a>{' '}
+                          등 주요 기관에 소장된 것으로 알려져 있다.
                         </>
                       )}
                     </span>
@@ -554,66 +634,62 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'First solo exhibition, Gwanhun Gallery, Seoul (1981); second solo, same venue (1985)'
-                        : '첫 개인전 관훈미술관 (1981); 2회전 동일 장소 (1985)'}
+                        ? 'Solo exhibition, Kumho Museum of Art (2016) — 27 paintings & 55 prints'
+                        : '금호미술관 개인전 (2016) — 회화 27점·판화 55점'}
                     </span>
                   </li>
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? '"Not a Trivial Life" solo exhibition (2020); "Was It a Door?" solo exhibition (2021)'
-                        : '〈비루하지 않은 삶을 위하여〉 (2020); 〈문인가 하였더니, 다시 길〉 (2021)'}
+                        ? 'Solo exhibition, Kukje Gallery (2019) — new and retrospective works'
+                        : '국제갤러리 개인전 (2019) — 신작·구작 병합 전시'}
                     </span>
                   </li>
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'International exhibitions in Germany, Switzerland, Ireland, Hungary, Spain, France, Belgium, Italy, Kazakhstan, United States and South Africa (first retrospective)'
-                        : '독일·스위스·아일랜드·헝가리·스페인·프랑스·벨기에·이탈리아·카자흐스탄·미국·남아공(첫 회고전) 등 국제 전시'}
+                        ? 'Archive exhibition "Landscape I Cannot Let Go," Yangpyeong County Art Museum (2024)'
+                        : '양평군립미술관 아카이브전 《놓치지 못하는 풍경》 (2024)'}
+                    </span>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-charcoal rotate-45" />
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish ? (
+                        <>
+                          Permanent collection:{' '}
+                          <a
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            National Museum of Modern and Contemporary Art, Korea (MMCA)
+                          </a>
+                        </>
+                      ) : (
+                        <>
+                          <a
+                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            국립현대미술관(MMCA)
+                          </a>
+                          {' 소장'}
+                        </>
+                      )}
                     </span>
                   </li>
                 </ul>
-                <div className="mt-5 border-t border-charcoal/15 pt-4 space-y-2">
-                  <p className="text-sm font-bold text-charcoal break-keep">
-                    {isEnglish
-                      ? '✦ Accessible entry points to the collection'
-                      : '✦ 진입 가능한 소장 경로'}
-                  </p>
-                  <p className="text-sm text-charcoal-muted break-keep">
-                    {isEnglish ? (
-                      <>
-                        Print postcards and annual print calendars are widely available — making Lee
-                        Chul-soo one of the most accessible artists in the collection. Original
-                        works also available via{' '}
-                        <a
-                          href="https://mokpan.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary-strong underline"
-                        >
-                          mokpan.com
-                        </a>
-                        .
-                      </>
-                    ) : (
-                      <>
-                        판화 엽서 및 연간 판화 달력 등 생활 매체로 광범위하게 보급. 씨앗페 컬렉션 중
-                        가장 접근하기 쉬운 작가 중 한 명. 원화 작품은{' '}
-                        <a
-                          href="https://mokpan.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary-strong underline"
-                        >
-                          mokpan.com
-                        </a>
-                        에서도 구매 가능.
-                      </>
-                    )}
-                  </p>
-                </div>
+                <p className="mt-5 text-sm text-charcoal-muted border-t border-charcoal/15 pt-4 break-keep">
+                  {isEnglish
+                    ? 'Prints (woodblock, screenprint) offer a more accessible entry point alongside major paintings.'
+                    : '판화(목판화·실크스크린) 작품은 대형 회화와 함께 비교적 접근 가능한 소장 경로입니다.'}
+                </p>
               </div>
             </div>
           </div>
@@ -644,7 +720,7 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
-              <span className="text-xs text-white/70 uppercase tracking-widest">Lee Chul-soo</span>
+              <span className="text-xs text-white/70 uppercase tracking-widest">Min Joung-ki</span>
               <span className="text-sm text-white/60">
                 {isEnglish
                   ? 'Click a work to view its details'
@@ -664,7 +740,7 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
               <p className="text-base md:text-lg text-white/90 leading-relaxed break-keep font-medium">
                 {isEnglish ? (
                   <>
-                    Lee Chul-soo joined this campaign in solidarity with fellow artists. Every work
+                    Min Joung-ki joined this campaign in solidarity with fellow artists. Every work
                     sold flows directly into the{' '}
                     <strong className="text-white">artists&apos; mutual-aid loan fund</strong> — a
                     purchase becomes the next month&apos;s lifeline for an artist navigating
@@ -672,7 +748,7 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
                   </>
                 ) : (
                   <>
-                    이철수 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
+                    민정기 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
                     수익은 전액 <strong className="text-white">예술인 상호부조 대출 기금</strong>
                     으로 이어집니다. 작품 한 점의 구매가, 오늘 금융 차별을 겪는 예술인 한 사람의
                     다음 한 달이 됩니다.
@@ -687,7 +763,7 @@ export default async function LeeCheolsooPage({ params }: { params: Promise<{ lo
               <MasterArtistMediumSections
                 artworks={ARTWORKS}
                 isEnglish={isEnglish}
-                returnTo="/special/lee-cheolsoo"
+                returnTo={MIN_JOUNGKI_PATH}
               />
             ) : (
               <section className="py-24 text-center">

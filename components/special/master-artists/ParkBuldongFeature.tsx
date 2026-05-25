@@ -16,15 +16,16 @@ import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
-export const dynamic = 'force-static';
-export const revalidate = 600;
+// 거장 작가 feature는 작가 페이지(/artworks/artist/박불똥)에서 dispatch되어 렌더된다.
+// canonical/og/breadcrumb 모두 작가 페이지 URL을 가리켜 SEO 신호를 작가 페이지로 통합.
+const PARK_BULDONG_PATH = `/artworks/artist/${encodeURIComponent('박불똥')}`;
 
-const MIN_JOUNGKI_ARTIST_KEYS = new Set([
-  '민정기',
-  'min joung-ki',
-  'min joungki',
-  'min jung-ki',
-  'minjungki',
+const PARK_BULDONG_ARTIST_KEYS = new Set([
+  '박불똥',
+  'park bul-ttong',
+  'park bulttong',
+  'park buldong',
+  'parkbulttong',
 ]);
 
 const normalizeArtistKey = (value: string): string => value.normalize('NFC').trim().toLowerCase();
@@ -32,40 +33,42 @@ const normalizeArtistKey = (value: string): string => value.normalize('NFC').tri
 const normalizeArtistCompactKey = (value: string): string =>
   normalizeArtistKey(value).replace(/[\s-]+/g, '');
 
-const isMinJoungkiArtist = (artist: string): boolean => {
+const isParkBuldongArtist = (artist: string): boolean => {
   if (!artist) return false;
   const normalized = normalizeArtistKey(artist);
   const compact = normalizeArtistCompactKey(artist);
   return (
-    MIN_JOUNGKI_ARTIST_KEYS.has(normalized) || compact === '민정기' || compact === 'minjoungki'
+    PARK_BULDONG_ARTIST_KEYS.has(normalized) ||
+    compact === '박불똥' ||
+    compact === 'parkbulttong' ||
+    compact === 'parkbuldong'
   );
 };
 
 const PAGE_COPY = {
   ko: {
-    title: '민정기 — 한국 현실주의 풍경화의 거장',
+    title: '박불똥 — 콜라주·정치 미술의 거장',
     description:
-      '한국 현실주의 풍경화의 거장 민정기(1949–). 「현실과 발언」 결성 동인으로(1979) 민중미술 운동의 핵심에 섰던 작가가, 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아온 반세기의 여정을 씨앗페 온라인에서 만나보세요.',
+      '콜라주·정치 미술의 거장 박불똥(1956–). 신문·잡지를 잘라 붙여 권력의 언어를 해체하고 재조립하는 작가. 한국 민중미술 운동의 날카로운 목소리, 박불똥의 작품을 씨앗페 온라인에서 감상하고 소장하세요.',
     ogDescription:
-      '한국 현실주의 풍경화의 거장 민정기. 민중미술 운동의 핵심으로서 한국의 산하와 민중의 삶을 담아온 반세기의 여정.',
-    ogAlt: '민정기 대표 작품',
-    twitterTitle: '민정기',
-    twitterDescription: '한국 현실주의 풍경화의 거장 — 사라져가는 산하를 화폭에 새긴 민정기',
+      '콜라주·정치 미술의 거장 박불똥. 대중매체 이미지를 해체·재조합하여 권력의 이면을 폭로하는 한국 민중미술의 날카로운 목소리.',
+    ogAlt: '박불똥 대표 작품',
+    twitterTitle: '박불똥',
+    twitterDescription: '잘라내고 붙이며 세상을 읽는다 — 콜라주·정치 미술의 거장 박불똥',
   },
   en: {
-    title: 'Min Joung-ki — Korean Realist Landscape Painter',
+    title: 'Park Bul-ttong — Master of Collage and Political Art',
     description:
-      'Selected works by Min Joung-ki (b. 1949), a pivotal figure in Korean minjung art and master of realist landscape painting. Co-founder of the Reality and Utterance collective, Min has spent five decades recording a vanishing agrarian Korea on monumental canvases. View and collect selected works at SAF Online.',
+      'Selected works by Park Bul-ttong (b. 1956), master of collage and political art. Cutting and reassembling images from newspapers and magazines, he exposes the hidden structures of power. A sharp voice of the Korean minjung art movement. View and collect selected works at SAF Online.',
     ogDescription:
-      'Min Joung-ki — master of Korean realist landscape painting and co-founder of Reality and Utterance. Five decades of monumental canvases at SAF Online.',
-    ogAlt: 'Min Joung-ki — featured work',
-    twitterTitle: 'Min Joung-ki',
-    twitterDescription:
-      'Korean realist landscape master — five decades of recording a vanishing Korea',
+      'Park Bul-ttong — master of collage and political art. Cutting and reassembling mass media images to expose the hidden structures of power.',
+    ogAlt: 'Park Bul-ttong — featured work',
+    twitterTitle: 'Park Bul-ttong',
+    twitterDescription: 'Cut, paste, read the world — master of Korean political collage art',
   },
 } as const;
 
-export async function generateMetadata({
+export async function buildParkBuldongMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
@@ -76,17 +79,17 @@ export async function generateMetadata({
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const siteName = tSeo('siteTitle');
-  const pageUrl = buildLocaleUrl('/special/min-joungki', locale);
+  const pageUrl = buildLocaleUrl(PARK_BULDONG_PATH, locale);
 
-  const allArtworks = await getSupabaseArtworksByArtist('민정기');
-  const artwork = allArtworks.find((a) => isMinJoungkiArtist(a.artist) && a.images[0]);
+  const allArtworks = await getSupabaseArtworksByArtist('박불똥');
+  const artwork = allArtworks.find((a) => isParkBuldongArtist(a.artist) && a.images[0]);
   const ogImageUrl = artwork?.images[0]
     ? resolveSeoArtworkImageUrl(artwork.images[0])
     : OG_IMAGE.url;
   const ogImageAlt = artwork
     ? locale === 'en'
-      ? `${artwork.title_en || artwork.title} — Min Joung-ki`
-      : `${artwork.title} — 민정기`
+      ? `${artwork.title_en || artwork.title} — Park Bul-ttong`
+      : `${artwork.title} — 박불똥`
     : copy.ogAlt;
 
   return {
@@ -94,9 +97,9 @@ export async function generateMetadata({
     description: copy.description,
     keywords:
       locale === 'en'
-        ? 'Min Joung-ki artist, Korean landscape painting, minjung misul, Reality and Utterance, Korean realism'
-        : '민정기 화가, 한국 풍경화, 민중미술, 현실과 발언, 한국 현실주의 회화, 씨앗페 온라인',
-    alternates: createLocaleAlternates('/special/min-joungki', locale, true),
+        ? 'Park Bul-ttong artist, Korean political art, Korean collage art, minjung misul, political collage'
+        : '박불똥 화가, 한국 정치 미술, 콜라주 아트, 민중미술, 정치 콜라주, 씨앗페 온라인',
+    alternates: createLocaleAlternates(PARK_BULDONG_PATH, locale, true),
     ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
@@ -116,16 +119,22 @@ export async function generateMetadata({
   };
 }
 
-export default async function MinJoungkiPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function ParkBuldongFeature({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const isEnglish = locale === 'en';
-  const pageUrl = buildLocaleUrl('/special/min-joungki', locale);
+  const pageUrl = buildLocaleUrl(PARK_BULDONG_PATH, locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
-  const allArtworks = await getSupabaseArtworksByArtist('민정기');
-  const fullArtworks = allArtworks.filter((artwork: Artwork) => isMinJoungkiArtist(artwork.artist));
+  const allArtworks = await getSupabaseArtworksByArtist('박불똥');
+  const fullArtworks = allArtworks.filter((artwork: Artwork) =>
+    isParkBuldongArtist(artwork.artist)
+  );
   const ARTWORKS: ArtworkListItem[] = fullArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
@@ -135,32 +144,35 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
-    { name: tBreadcrumbs('minJoungki'), url: pageUrl },
+    { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
+    { name: isEnglish ? 'Park Bul-ttong' : '박불똥', url: pageUrl },
   ]);
 
   const artistPerson = {
     '@type': 'Person',
-    '@id': `${SITE_URL}/special/min-joungki#person-min-joungki`,
-    name: isEnglish ? 'Min Joung-ki' : '민정기',
-    alternateName: isEnglish ? '민정기' : 'Min Joung-ki',
-    jobTitle: isEnglish ? 'Artist' : '화가',
+    '@id': `${SITE_URL}${PARK_BULDONG_PATH}#person-park-buldong`,
+    name: isEnglish ? 'Park Bul-ttong' : '박불똥',
+    alternateName: isEnglish ? '박불똥' : 'Park Bul-ttong',
+    jobTitle: isEnglish ? 'Artist' : '화가·콜라주 작가',
     description: isEnglish
-      ? 'Min Joung-ki (b. 1949) is a leading Korean realist painter who co-founded the Reality and Utterance collective (formed 1979; inaugural exhibition 1980), known for monumental landscape paintings documenting a vanishing rural Korea.'
-      : '민정기(1949-)는 한국 현실주의 회화의 대표 작가로, 1979년 「현실과 발언」 결성에 참여하고 1980년 창립전을 열며 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아왔습니다.',
-    birthDate: '1949',
+      ? 'Park Bul-ttong (b. 1956) is a Korean master of collage and political art, known for works that cut and reassemble mass media images to expose hidden power structures.'
+      : '박불똥(1956-)은 대중매체 이미지를 해체·재조합하는 콜라주와 정치 미술로 권력의 이면을 폭로해온 한국 민중미술의 거장입니다.',
+    birthDate: '1956',
     birthPlace: {
       '@type': 'Place',
-      name: isEnglish ? 'Seoul (Seodaemun-gu), South Korea' : '서울 서대문구',
+      name: isEnglish ? 'Hadong, South Gyeongsang, South Korea' : '경남 하동',
     },
     alumniOf: {
       '@type': 'EducationalOrganization',
-      name: isEnglish ? 'Seoul National University College of Fine Arts' : '서울대학교 미술대학',
+      name: isEnglish ? 'Hongik University, Dept. of Western Painting' : '홍익대학교 서양화과',
     },
-    award: isEnglish ? '18th Lee Jung-seob Art Award (2006)' : '제18회 이중섭미술상 (2006)',
-    workLocation: {
-      '@type': 'Place',
-      name: isEnglish ? 'Yangpyeong, Gyeonggi, South Korea' : '경기 양평',
+    affiliation: {
+      '@type': 'Organization',
+      name: isEnglish
+        ? "Minjung Misul Hyeopuihoe (National Artists' Association)"
+        : '민족미술협의회',
     },
+    knowsAbout: ['Political collage', 'Korean minjung art'],
     nationality: {
       '@type': 'Country',
       name: 'South Korea',
@@ -171,10 +183,10 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
   const exhibitionEventSchema = {
     '@context': 'https://schema.org',
     '@type': 'ExhibitionEvent',
-    name: isEnglish ? 'Min Joung-ki — SAF Online' : '민정기 — 씨앗페 온라인',
+    name: isEnglish ? 'Park Bul-ttong — SAF Online' : '박불똥 — 씨앗페 온라인',
     description: isEnglish
-      ? 'Selected works by Min Joung-ki from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 민정기 작품들을 소개합니다.',
+      ? 'Selected works by Park Bul-ttong from the SAF Online collection.'
+      : '씨앗페 온라인에 소장된 박불똥 작품들을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventMovedOnline',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -214,7 +226,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <div className="inline-block relative mb-8">
               <span className="relative z-10 inline-block px-6 py-3 border-4 border-charcoal bg-white text-charcoal font-bold text-lg tracking-widest transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(49,57,60,0.2)]">
-                {isEnglish ? 'Min Joung-ki · b. 1949' : '민정기 · 1949–'}
+                {isEnglish ? 'Park Bul-ttong · b. 1956' : '박불똥 · 1956–'}
               </span>
               <div className="absolute inset-0 border-4 border-primary transform rotate-2 translate-x-1 translate-y-1 -z-0 opacity-60" />
             </div>
@@ -222,20 +234,18 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl mb-8 md:mb-10 leading-tight text-white tracking-tighter text-balance drop-shadow-sm font-display font-black">
               {isEnglish ? (
                 <>
-                  Painting the Korean Land
+                  Cut, Paste,
                   <br />
-                  into Memory
+                  and Read the World
                 </>
               ) : (
                 <>
-                  한국의 산하를
+                  잘라내고 붙이며
                   <br />
                   <span className="relative inline-block px-2">
-                    <span className="relative z-10 text-primary-soft">기억으로 새긴</span>
+                    <span className="relative z-10 text-primary-soft">세상을 읽는다</span>
                     <span className="absolute bottom-2 left-0 w-full h-4 bg-white/15 -z-0 -rotate-1" />
                   </span>
-                  <br />
-                  화가
                 </>
               )}
             </h1>
@@ -243,15 +253,18 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
             <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed break-keep border-t-2 border-b-2 border-white/20 py-5 md:py-6">
               {isEnglish ? (
                 <>
-                  <span className="block">Five decades of monumental canvases.</span>
+                  <span className="block">The image was theirs. The meaning is ours.</span>
                   <span className="mt-2 block">
-                    The Korean countryside, remembered before it vanishes.
+                    Park Bul-ttong tears the picture apart to show you what was always hidden
+                    inside.
                   </span>
                 </>
               ) : (
                 <>
-                  <span className="block">반세기의 대형 화폭.</span>
-                  <span className="mt-2 block">사라지기 전에 기억하는 한국의 산하.</span>
+                  <span className="block">이미지는 그들의 것이었다. 의미는 우리가 만든다.</span>
+                  <span className="mt-2 block">
+                    박불똥은 그림을 해체하여 그 안에 숨겨진 것을 꺼내 보입니다.
+                  </span>
                 </>
               )}
             </p>
@@ -264,111 +277,19 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
         </section>
 
         <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
-          {/* 2018 판문점 하이라이트 */}
-          <div className="mb-24 flex justify-center">
-            <div className="relative p-8 sm:p-10 md:p-14 text-center max-w-4xl border-4 border-primary bg-white shadow-[8px_8px_0px_0px_rgba(33,118,255,0.12)]">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-charcoal flex items-center justify-center rounded-full text-white font-bold text-xs leading-none tracking-tighter">
-                2018
-              </div>
-              <p className="text-xl sm:text-2xl md:text-4xl text-charcoal leading-relaxed text-balance pt-4 font-display font-bold break-keep">
-                {isEnglish ? (
-                  <>
-                    At the 2018 inter-Korean summit at Panmunjeom, Min Joung-ki&apos;s{' '}
-                    <em className="not-italic text-primary-strong">
-                      &ldquo;Panoramic View of Bugaksan&rdquo;
-                    </em>{' '}
-                    hung at the Peace House — seen by the entire world.
-                  </>
-                ) : (
-                  <>
-                    2018년 남북정상회담 판문점 평화의 집.
-                    <br className="md:hidden" /> 민정기의{' '}
-                    <em className="not-italic text-primary-strong">「북한산 전도」</em>가 배경에
-                    걸렸고, 전 세계가 그 그림을 보았습니다.
-                  </>
-                )}
-              </p>
-              <footer className="mt-6 text-sm text-charcoal-muted">
-                {isEnglish ? (
-                  <>
-                    Sources:{' '}
-                    <a
-                      href="https://www.nocutnews.co.kr/news/5101349"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      Nocutnews
-                    </a>
-                    {' · '}
-                    <a
-                      href="http://www.kyeongin.com/main/view.php?key=20180605010001536"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      Gyeongin Ilbo
-                    </a>
-                    {' · '}
-                    <a
-                      href="https://www.kmib.co.kr/article/view.asp?arcid=0012320714"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      Kookmin Ilbo
-                    </a>
-                    {', April 2018'}
-                  </>
-                ) : (
-                  <>
-                    출처:{' '}
-                    <a
-                      href="https://www.nocutnews.co.kr/news/5101349"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      노컷뉴스
-                    </a>
-                    {' · '}
-                    <a
-                      href="http://www.kyeongin.com/main/view.php?key=20180605010001536"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      경인일보
-                    </a>
-                    {' · '}
-                    <a
-                      href="https://www.kmib.co.kr/article/view.asp?arcid=0012320714"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      국민일보
-                    </a>
-                    {', 2018년 4월'}
-                  </>
-                )}
-              </footer>
-            </div>
-          </div>
-
           {/* Bio / Narrative Section */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-32 items-start">
             <div className="space-y-8">
               <h2 className="text-4xl border-l-[12px] border-charcoal pl-6 py-2 leading-tight font-bold font-display text-balance">
                 {isEnglish ? (
                   <>
-                    From protest to panorama —<br />
-                    <span className="text-primary-strong">the land as witness</span>
+                    Scissors as critique —<br />
+                    <span className="text-primary-strong">the collage that cuts through power</span>
                   </>
                 ) : (
                   <>
-                    저항에서 파노라마로 —<br />
-                    <span className="text-primary-strong">땅이 증언한다</span>
+                    가위가 곧 비평 —<br />
+                    <span className="text-primary-strong">권력을 오려내는 콜라주</span>
                   </>
                 )}
               </h2>
@@ -376,53 +297,51 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                 {isEnglish ? (
                   <>
                     <p>
-                      Min Joung-ki (b. 1949) co-founded{' '}
+                      Park Bul-ttong (b. 1956) chose his medium deliberately:{' '}
                       <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
-                        Reality and Utterance
-                      </strong>{' '}
-                      (현실과 발언) alongside Oh Yoon and fellow artists in 1979 — a collective that
-                      called for a Korean art rooted in social reality. Where Oh Yoon chose the
-                      woodblock knife, Min chose the painter&apos;s brush trained on the land
-                      itself.
+                        collage
+                      </strong>
+                      . Not painting, not printmaking — but the act of cutting images produced by
+                      power and rearranging them into new, unauthorized meanings. Newspapers,
+                      magazines, advertisements: the raw material of his work is the very media
+                      through which authority speaks.
                     </p>
                     <p>
-                      His signature works are panoramic landscape paintings: monumental canvases
-                      that stretch across entire walls and pull the viewer inside the hills,
-                      paddies, and villages of a Korea in swift transformation. These are not
-                      decorative views. They are{' '}
-                      <strong className="font-bold text-charcoal">acts of memory</strong> — an
-                      artist&apos;s refusal to let the agrarian life of ordinary Koreans be erased
-                      without record.
+                      In the Korea of the 1980s, this was a radical choice. As a member of the
+                      Minjung Misul Hyeopuihoe (National Artists&apos; Association), Park understood
+                      that the most effective critique of a media-saturated world was to{' '}
+                      <strong className="font-bold text-charcoal">work from inside it</strong> —
+                      taking the images that were fed to people and showing, by simple
+                      rearrangement, what they concealed.
                     </p>
                     <p>
-                      For over four decades, Min has refined a realism that is at once sociological
-                      and lyrical. The land in his paintings is alive with specific light, specific
-                      season, specific labor — and it asks us to slow down, look, and remember who
-                      built the country we stand in.
+                      His collages are direct without being blunt, political without being didactic.
+                      The scissors do the arguing. And the result — a world reassembled honestly —
+                      is both a critique and a kind of liberation.
                     </p>
                   </>
                 ) : (
                   <>
                     <p>
-                      민정기(1949-)는 1979년 오윤 등과 함께{' '}
+                      박불똥(1956-)은 자신의 매체를 의도적으로 선택했습니다:{' '}
                       <strong className="font-bold text-charcoal-deep border-b-2 border-charcoal-deep">
-                        「현실과 발언」
-                      </strong>{' '}
-                      결성에 참여하고 1980년 창립전을 열며 민중미술 운동의 핵심에 섰습니다. 오윤이
-                      목판 칼을 들었다면, 민정기는 붓을 들어 이 땅 자체를 응시했습니다.
+                        콜라주
+                      </strong>
+                      . 회화도 판화도 아닌, 권력이 생산한 이미지를 오려내어 승인받지 않은 새로운
+                      의미로 재배열하는 행위. 신문, 잡지, 광고 — 그의 작업 재료는 권력이 말하는 바로
+                      그 매체입니다.
                     </p>
                     <p>
-                      그의 대표작은 파노라마식 풍경화입니다. 벽 한 면을 채우는 대형 화폭 위에
-                      펼쳐지는 한국의 산과 들, 농촌의 마을 — 이것은 단순한 경치가 아닙니다. 빠르게
-                      사라져가는 농촌의 풍경을 붙잡아 두려는{' '}
-                      <strong className="font-bold text-charcoal">기억의 행위</strong>이며, 그 땅
-                      위에서 살아온 민중의 삶을 기록으로 남기겠다는 작가의 선언입니다.
+                      1980년대 한국에서 이것은 급진적인 선택이었습니다. 민족미술협의회의 일원으로서,
+                      박불똥은 미디어로 포화된 세계를 가장 효과적으로 비판하는 방법이{' '}
+                      <strong className="font-bold text-charcoal">그 안에서 작업하는 것</strong>임을
+                      알았습니다. 사람들에게 공급된 이미지를 가져다가, 단순한 재배열만으로, 그
+                      이미지가 감추고 있던 것을 드러내는 방법으로.
                     </p>
                     <p>
-                      반세기가 넘는 세월 동안 민정기는 사회학적이면서도 서정적인 리얼리즘을
-                      다듬어왔습니다. 그의 그림 속 땅에는 특정한 빛, 특정한 계절, 특정한 노동이
-                      살아있습니다. 그리고 그 땅은 우리에게 묻습니다: 이 나라를 만든 사람들을
-                      기억하고 있느냐고.
+                      그의 콜라주는 직접적이지만 무디지 않고, 정치적이지만 설교하지 않습니다. 가위가
+                      논증합니다. 그리고 그 결과 — 정직하게 재조합된 세계 — 는 비평이자 하나의
+                      해방입니다.
                     </p>
                   </>
                 )}
@@ -443,12 +362,12 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Korean landscape' : '한국의 산하'}
+                        {isEnglish ? 'Deconstruction of image' : '이미지의 해체'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Panoramic canvases preserve the hills, paddies, and villages of a Korea in rapid transformation.'
-                          : '사라져가는 한국의 농촌 풍경을 파노라마 화폭에 담아 시대의 증언으로 남겼습니다.'}
+                          ? 'Mass media images are cut apart and reassembled to expose the power structures hidden within them.'
+                          : '대중매체 이미지를 해체·재조합하여 그 이면의 권력 구조를 드러냅니다.'}
                       </p>
                     </div>
                   </li>
@@ -458,12 +377,12 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? "People's lives" : '민중의 삶'}
+                        {isEnglish ? 'Satire and directness' : '풍자와 직접성'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'The land is never empty — it carries the specific labor and memory of the people who worked it.'
-                          : '땅 위에 뿌리내린 사람들의 이야기를 담담하고 진솔하게 기록했습니다.'}
+                          ? 'Without detour, his works deliver social and political messages with immediate visual impact.'
+                          : '우회 없이 사회·정치적 메시지를 직접적이고 강렬한 시각 언어로 전달합니다.'}
                       </p>
                     </div>
                   </li>
@@ -473,12 +392,12 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     </span>
                     <div>
                       <h4 className="font-bold text-charcoal text-xl mb-2 group-hover:text-primary-strong transition-colors">
-                        {isEnglish ? 'Reality and memory' : '현실과 기억'}
+                        {isEnglish ? 'Democracy of collage' : '콜라주의 민주성'}
                       </h4>
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
-                          ? 'Rooted in direct observation, his work transforms seen places into collective memory that outlasts the places themselves.'
-                          : '현실을 직시하면서도 집단적 기억의 풍경으로 재구성하는 작업을 반세기 넘게 지속했습니다.'}
+                          ? 'Using everyday printed materials rather than costly supplies, he lowers the threshold of art while raising the stakes of critique.'
+                          : '값비싼 재료 대신 누구나 접할 수 있는 인쇄물로, 예술의 문턱은 낮추고 비평의 날은 높입니다.'}
                       </p>
                     </div>
                   </li>
@@ -493,40 +412,10 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                 <ol className="space-y-4">
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1949
+                      1956
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? 'Born in Seoul (Seodaemun-gu).' : '서울 서대문구 출생.'}
-                    </span>
-                  </li>
-                  <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1972
-                    </span>
-                    <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Graduates from Seoul National University College of Fine Arts (Western Painting).'
-                        : '서울대학교 미술대학 서양화과 졸업.'}
-                    </span>
-                  </li>
-                  <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1979
-                    </span>
-                    <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Co-founds Reality and Utterance (현실과 발언) alongside Oh Yoon and others; inaugural group exhibition held October 1980.'
-                        : '오윤 등과 「현실과 발언」 창립. 창립전은 1980년 10월 미술회관 개최.'}
-                    </span>
-                  </li>
-                  <li className="flex gap-5 items-baseline">
-                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1980s
-                    </span>
-                    <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Begins his landmark panoramic landscape series documenting rural Korea.'
-                        : '한국 농촌 풍경을 주제로 한 파노라마 풍경화 연작 발표 시작.'}
+                      {isEnglish ? 'Born in Hadong, South Gyeongsang province.' : '경남 하동 출생.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -535,51 +424,38 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Completes graduate studies (Western Painting) at Seoul National University.'
-                        : '서울대학교 대학원 회화과 수료.'}
+                        ? 'Graduates from Hongik University, Department of Western Painting.'
+                        : '홍익대학교 서양화과 졸업.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      1987
+                      1985
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Moves studio to Yangpyeong, Gyeonggi — deepens long-term engagement with natural landscape.'
-                        : '경기도 양평으로 작업실 이전. 자연과의 장기적 밀착 작업 심화.'}
+                        ? "First solo exhibition 〈Nunbit〉 at Gwanhun Gallery; participates in founding the Minjung Misul Hyeopuihoe (National Artists' Association)."
+                        : '첫 개인전 〈눈빛展〉 (관훈미술관); 「민족미술협의회」 창립 참여.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
                     <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
-                      2006
+                      1980s
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? (
-                        <>
-                          Receives the{' '}
-                          <a
-                            href="https://www.ilyosisa.co.kr/news/articleView.html?idxno=113689"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            18th Lee Jung-seob Art Award
-                          </a>
-                          .
-                        </>
-                      ) : (
-                        <>
-                          <a
-                            href="https://www.ilyosisa.co.kr/news/articleView.html?idxno=113689"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            제18회 이중섭미술상
-                          </a>
-                          {' 수상.'}
-                        </>
-                      )}
+                      {isEnglish
+                        ? 'Develops his signature political collage style, using mass media materials to critique power.'
+                        : '대중매체 재료를 활용한 정치 콜라주 스타일 확립, 권력 비판 작업 다수 발표.'}
+                    </span>
+                  </li>
+                  <li className="flex gap-5 items-baseline">
+                    <span className="shrink-0 font-bold text-charcoal-muted text-base tabular-nums w-12">
+                      1990s–
+                    </span>
+                    <span className="text-charcoal text-base leading-snug break-keep">
+                      {isEnglish
+                        ? 'Continues exhibiting nationally and internationally; participated in major group exhibitions.'
+                        : '국내외 지속 전시, 국내 주요 그룹전 참여 다수.'}
                     </span>
                   </li>
                   <li className="flex gap-5 items-baseline">
@@ -587,34 +463,9 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                       현재
                     </span>
                     <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish ? (
-                        <>
-                          Continues working in Yangpyeong. Work reportedly held in major
-                          institutional collections including the{' '}
-                          <a
-                            href="https://www.mmca.go.kr/collections/collectionsList.do"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            National Museum of Modern and Contemporary Art (MMCA)
-                          </a>
-                          .
-                        </>
-                      ) : (
-                        <>
-                          양평에서 작업 지속.{' '}
-                          <a
-                            href="https://www.mmca.go.kr/collections/collectionsList.do"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            국립현대미술관(MMCA)
-                          </a>{' '}
-                          등 주요 기관에 소장된 것으로 알려져 있다.
-                        </>
-                      )}
+                      {isEnglish
+                        ? 'Continues working; his collages remain one of the sharpest visual critiques in contemporary Korean art.'
+                        : '작업 지속. 한국 현대미술에서 가장 날카로운 시각 비평의 목소리 중 하나.'}
                     </span>
                   </li>
                 </ol>
@@ -629,24 +480,16 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Solo exhibition, Kumho Museum of Art (2016) — 27 paintings & 55 prints'
-                        : '금호미술관 개인전 (2016) — 회화 27점·판화 55점'}
+                        ? '〈Nunbit〉 (1985) · 〈Joljak〉 (1987) · 〈Gyeolsa Bandae〉 (1989) — Geurimadang Min, Seoul'
+                        : '〈눈빛展〉 (1985) · 〈졸작展〉 (1987) · 〈결사반대展〉 (1989) — 그림마당 민, 서울'}
                     </span>
                   </li>
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Solo exhibition, Kukje Gallery (2019) — new and retrospective works'
-                        : '국제갤러리 개인전 (2019) — 신작·구작 병합 전시'}
-                    </span>
-                  </li>
-                  <li className="flex gap-4 items-start">
-                    <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
-                    <span className="text-charcoal text-base leading-snug break-keep">
-                      {isEnglish
-                        ? 'Archive exhibition "Landscape I Cannot Let Go," Yangpyeong County Art Museum (2024)'
-                        : '양평군립미술관 아카이브전 《놓치지 못하는 풍경》 (2024)'}
+                        ? '〈Confession on the Disability of Desire〉, Kumho Museum of Art (1992); 〈Park Bul-ttong 1985–2016〉, Gallery 175 (2016)'
+                        : '〈관능의 불구에 대한 자백展〉 금호미술관 (1992); 〈박불똥, 1985–2016〉 갤러리 175 (2016)'}
                     </span>
                   </li>
                   <li className="flex gap-4 items-start">
@@ -654,37 +497,32 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish ? (
                         <>
-                          Permanent collection:{' '}
+                          Group exhibition:{' '}
                           <a
-                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            href="https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=200904050002593"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="underline"
                           >
-                            National Museum of Modern and Contemporary Art, Korea (MMCA)
+                            《15 Years of Minjung Art: 1980–1994》, MMCA (1994)
                           </a>
                         </>
                       ) : (
                         <>
+                          단체전:{' '}
                           <a
-                            href="https://www.mmca.go.kr/collections/collectionsList.do"
+                            href="https://www.mmca.go.kr/exhibitions/exhibitionsDetail.do?exhId=200904050002593"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="underline"
                           >
-                            국립현대미술관(MMCA)
+                            《민중미술 15년: 1980–1994》, 국립현대미술관 (1994)
                           </a>
-                          {' 소장'}
                         </>
                       )}
                     </span>
                   </li>
                 </ul>
-                <p className="mt-5 text-sm text-charcoal-muted border-t border-charcoal/15 pt-4 break-keep">
-                  {isEnglish
-                    ? 'Prints (woodblock, screenprint) offer a more accessible entry point alongside major paintings.'
-                    : '판화(목판화·실크스크린) 작품은 대형 회화와 함께 비교적 접근 가능한 소장 경로입니다.'}
-                </p>
               </div>
             </div>
           </div>
@@ -715,7 +553,9 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
               </p>
             </div>
             <div className="flex flex-col md:items-end gap-1">
-              <span className="text-xs text-white/70 uppercase tracking-widest">Min Joung-ki</span>
+              <span className="text-xs text-white/70 uppercase tracking-widest">
+                Park Bul-ttong
+              </span>
               <span className="text-sm text-white/60">
                 {isEnglish
                   ? 'Click a work to view its details'
@@ -735,15 +575,15 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
               <p className="text-base md:text-lg text-white/90 leading-relaxed break-keep font-medium">
                 {isEnglish ? (
                   <>
-                    Min Joung-ki joined this campaign in solidarity with fellow artists. Every work
-                    sold flows directly into the{' '}
+                    Park Bul-ttong joined this campaign in solidarity with fellow artists. Every
+                    work sold flows directly into the{' '}
                     <strong className="text-white">artists&apos; mutual-aid loan fund</strong> — a
                     purchase becomes the next month&apos;s lifeline for an artist navigating
                     financial exclusion today.
                   </>
                 ) : (
                   <>
-                    민정기 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
+                    박불똥 작가는 동료 예술인을 위한 연대의 뜻으로 씨앗페에 함께했습니다. 작품 판매
                     수익은 전액 <strong className="text-white">예술인 상호부조 대출 기금</strong>
                     으로 이어집니다. 작품 한 점의 구매가, 오늘 금융 차별을 겪는 예술인 한 사람의
                     다음 한 달이 됩니다.
@@ -758,7 +598,7 @@ export default async function MinJoungkiPage({ params }: { params: Promise<{ loc
               <MasterArtistMediumSections
                 artworks={ARTWORKS}
                 isEnglish={isEnglish}
-                returnTo="/special/min-joungki"
+                returnTo={PARK_BULDONG_PATH}
               />
             ) : (
               <section className="py-24 text-center">

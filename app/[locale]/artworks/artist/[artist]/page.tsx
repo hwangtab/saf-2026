@@ -43,6 +43,28 @@ import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
+import MinJoungkiFeature, {
+  buildMinJoungkiMetadata,
+} from '@/components/special/master-artists/MinJoungkiFeature';
+import LeeCheolsooFeature, {
+  buildLeeCheolsooMetadata,
+} from '@/components/special/master-artists/LeeCheolsooFeature';
+import ParkBuldongFeature, {
+  buildParkBuldongMetadata,
+} from '@/components/special/master-artists/ParkBuldongFeature';
+
+// 거장 작가는 작가 페이지(/artworks/artist/<이름>) URL에서 큐레이션 feature를 렌더한다.
+// 일반 작가 페이지 로직 대신 거장 전용 컴포넌트로 분기 — 사용자는 작품 필터에서 작가 이름을
+// 클릭하면 거장답게 큐레이션된 화면을 보게 된다. /special/<slug>는 308 redirect로 이 URL로 정리됨.
+const MASTER_ARTIST_FEATURES = {
+  민정기: { Component: MinJoungkiFeature, buildMetadata: buildMinJoungkiMetadata },
+  이철수: { Component: LeeCheolsooFeature, buildMetadata: buildLeeCheolsooMetadata },
+  박불똥: { Component: ParkBuldongFeature, buildMetadata: buildParkBuldongMetadata },
+} as const;
+
+type MasterArtistName = keyof typeof MASTER_ARTIST_FEATURES;
+
+const isMasterArtist = (name: string): name is MasterArtistName => name in MASTER_ARTIST_FEATURES;
 
 // force-dynamic 영구 유지 — force-static 환경에서만 발생하는 production-only throw 회귀
 // (류연복·천지윤·송광호·이문호 등). dev mode는 200 정상 응답, force-dynamic도 200, 오직
@@ -82,6 +104,12 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const artistName = decodeURIComponent(artist);
+
+  // 거장 작가는 큐레이션 feature의 metadata를 그대로 사용.
+  if (isMasterArtist(artistName)) {
+    return MASTER_ARTIST_FEATURES[artistName].buildMetadata({ params });
+  }
+
   const artistArtworks = await getSupabaseArtworksByArtist(artistName);
   const t = await getTranslations({ locale, namespace: 'artistPage' });
 
@@ -249,8 +277,15 @@ async function renderArtistPage({ params }: Props) {
   const { locale: rawLocale, artist } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const isEnglish = locale === 'en';
   const artistName = decodeURIComponent(artist);
+
+  // 거장 작가는 큐레이션 feature를 통째로 렌더 — hero·약력·갤러리·schema 자체 발행.
+  if (isMasterArtist(artistName)) {
+    const { Component } = MASTER_ARTIST_FEATURES[artistName];
+    return <Component params={params} />;
+  }
+
+  const isEnglish = locale === 'en';
   // 병렬 fetch — 이전 getSupabaseArtworks() (전체 330개) → 카테고리 문자열 배열만으로 축소
   const [artistArtworks, availableCategories] = await Promise.all([
     getSupabaseArtworksByArtist(artistName),
