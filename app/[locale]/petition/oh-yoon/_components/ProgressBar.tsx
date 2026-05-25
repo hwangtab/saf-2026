@@ -70,11 +70,18 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
     };
   }, [pollIntervalMs]);
 
-  const ratio = Math.min(1, total / goal);
+  // 라운드 시스템: 1만 명 달성마다 다음 라운드 시작. 1라운드(1만), 2라운드(2만), 3라운드(3만)…
+  // 막대 너비는 effectiveGoal 기준으로 누적 표시 — 1만 도달 시 좌측 절반이 primary로
+  // "고정"되고, 다음 라운드 진행분이 success 색으로 이어 자란다.
+  const round = total < goal ? 1 : Math.ceil(total / goal);
+  const effectiveGoal = round * goal;
+  const ratio = Math.min(1, total / effectiveGoal);
   const percent = Math.round(ratio * 100);
-  // 시각 보정: 1만 명 목표 대비 초기 0~수십 명에서 막대가 거의 안 보이는 무력감 완화.
-  // ARIA value(`aria-valuenow`)는 실제 값 그대로, 시각만 floor 적용.
   const visualWidthPct = Math.max(ratio * 100, 1.5);
+  // round >= 2일 때 segment 분리 — primary(이전 라운드 누적) + success(현재 라운드 진행)
+  const primarySegmentPct = round >= 2 ? (((round - 1) * goal) / effectiveGoal) * 100 : 0;
+  const successSegmentPct =
+    round >= 2 ? Math.max(0, ((total - (round - 1) * goal) / effectiveGoal) * 100) : 0;
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -82,26 +89,49 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
         <span className="font-semibold tabular-nums">
           {t('heroProgressLabel', {
             current: total.toLocaleString('ko-KR'),
-            goal: goal.toLocaleString('ko-KR'),
+            goal: effectiveGoal.toLocaleString('ko-KR'),
           })}
         </span>
         <span className="tabular-nums opacity-80">{percent}%</span>
       </div>
       <div
-        className="h-3 w-full rounded-full bg-white/20 overflow-hidden"
+        className="relative h-3 w-full rounded-full bg-white/20 overflow-hidden flex"
         role="progressbar"
         aria-valuenow={total}
         aria-valuemin={0}
-        aria-valuemax={goal}
+        aria-valuemax={effectiveGoal}
         aria-label={t('heroProgressLabel', {
           current: total.toLocaleString('ko-KR'),
-          goal: goal.toLocaleString('ko-KR'),
+          goal: effectiveGoal.toLocaleString('ko-KR'),
         })}
       >
-        <div
-          className="h-full bg-primary transition-[width] duration-500 ease-out"
-          style={{ width: `${visualWidthPct}%` }}
-        />
+        {round === 1 ? (
+          <div
+            className="h-full bg-primary transition-[width] duration-500 ease-out"
+            style={{ width: `${visualWidthPct}%` }}
+          />
+        ) : (
+          <>
+            <div
+              className="h-full bg-primary transition-[width] duration-500 ease-out"
+              style={{ width: `${primarySegmentPct}%` }}
+            />
+            <div
+              className="h-full bg-success transition-[width] duration-500 ease-out"
+              style={{ width: `${successSegmentPct}%` }}
+            />
+            {/* 라운드 경계 마커 — 1만, 2만 등 각 라운드 시작점을 흰 세로선으로 표시.
+                round >= 2일 때만 그리고, round-1개의 선이 effectiveGoal 기준 균등 분할 위치에 박힌다. */}
+            {Array.from({ length: round - 1 }).map((_, i) => (
+              <div
+                key={i}
+                aria-hidden="true"
+                className="absolute top-0 bottom-0 w-px bg-white/50"
+                style={{ left: `${(((i + 1) * goal) / effectiveGoal) * 100}%` }}
+              />
+            ))}
+          </>
+        )}
       </div>
       {/* 보조 지표 — 모멘텀 신호 (PRD §14 OQ-6).
           SSR에서 0으로 내려와 미렌더 → useEffect refresh 후 실값 오면 추가됨
