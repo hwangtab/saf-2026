@@ -75,12 +75,10 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
   // 시각 보정: 1만 명 목표 대비 초기 0~수십 명에서 막대가 거의 안 보이는 무력감 완화.
   // ARIA value(`aria-valuenow`)는 실제 값 그대로, 시각만 floor 적용.
   const visualWidthPct = Math.max(ratio * 100, 1.5);
-  // 1만 초과 시 막대를 100% 가득 채우고, 막대 내부를 두 segment로 분할 — 좌측 primary는
-  // 1만 지점, 우측 success는 초과분. total이 늘수록 1만 지점(분할선)이 좌측으로 후퇴해
-  // 초과 비율이 막대 안에서 직접 보인다. 목표 자체는 1만으로 고정, 라벨도 그대로.
-  const exceededGoal = total > goal;
-  const primarySegmentPct = exceededGoal ? (goal / total) * 100 : 0;
-  const successSegmentPct = exceededGoal ? ((total - goal) / total) * 100 : 0;
+  // 1만 도달 시 막대 색이 primary→success로 전환 = "달성" 시각 신호.
+  // 1만 초과 시 막대 우측 끝에 흰 배지 "+N명"으로 초과 수치 표시 — 막대 자체는 100% 가득.
+  const achievedGoal = total >= goal;
+  const excess = Math.max(0, total - goal);
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -93,33 +91,29 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
         </span>
         <span className="tabular-nums opacity-80">{percent}%</span>
       </div>
-      <div
-        className="h-3 w-full rounded-full bg-white/20 overflow-hidden flex"
-        role="progressbar"
-        aria-valuenow={total}
-        aria-valuemin={0}
-        aria-valuemax={goal}
-        aria-label={t('heroProgressLabel', {
-          current: total.toLocaleString('ko-KR'),
-          goal: goal.toLocaleString('ko-KR'),
-        })}
-      >
-        {exceededGoal ? (
-          <>
-            <div
-              className="h-full bg-primary transition-[width] duration-500 ease-out"
-              style={{ width: `${primarySegmentPct}%` }}
-            />
-            <div
-              className="h-full bg-success transition-[width] duration-500 ease-out"
-              style={{ width: `${successSegmentPct}%` }}
-            />
-          </>
-        ) : (
+      <div className="relative">
+        <div
+          className="h-3 w-full rounded-full bg-white/20 overflow-hidden"
+          role="progressbar"
+          aria-valuenow={total}
+          aria-valuemin={0}
+          aria-valuemax={goal}
+          aria-label={t('heroProgressLabel', {
+            current: total.toLocaleString('ko-KR'),
+            goal: goal.toLocaleString('ko-KR'),
+          })}
+        >
           <div
-            className="h-full bg-primary transition-[width] duration-500 ease-out"
+            className={`h-full transition-[width,background-color] duration-500 ease-out ${
+              achievedGoal ? 'bg-success' : 'bg-primary'
+            }`}
             style={{ width: `${visualWidthPct}%` }}
           />
+        </div>
+        {excess > 0 && (
+          <span className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1 inline-flex items-center bg-white text-charcoal-deep text-[11px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap tabular-nums">
+            {t('heroProgressExcessBadge', { count: excess.toLocaleString('ko-KR') })}
+          </span>
         )}
       </div>
       {/* 보조 지표 — 모멘텀 신호 (PRD §14 OQ-6).
