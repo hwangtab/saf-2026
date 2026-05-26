@@ -32,6 +32,7 @@ export const HERO_CURATION_OVERRIDES: Record<string, string> = {
   'our-reality': '/images/hero/16.jpg',
   'our-proof': '/images/hero/15.jpg',
   transparency: '/images/hero/9.jpg',
+  changelog: '/images/hero/6.jpg',
   // /news는 자동 DB-driven fallback 사용 — 첫 article thumbnail(현재 월간 믹싱 "왜
   // 예술인은 고금리 대출을 받을 수 밖에 없나")이 사용자 선호. 원래 검증 시 NONE이었던 건
   // ISR/timing 이슈로 추정. override 제거.

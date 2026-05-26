@@ -8,6 +8,7 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { loadChangelog, toPublicEntries } from '@/lib/changelog-data';
+import { getHeroOverride } from '@/lib/hero-curation';
 import ChangelogFeed from './changelog-feed';
 
 export const dynamic = 'force-static';
@@ -70,6 +71,7 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
         title={copy.title}
         description={copy.description}
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={getHeroOverride('changelog')}
       />
       <ChangelogFeed entries={entries} locale={locale} />
     </>
