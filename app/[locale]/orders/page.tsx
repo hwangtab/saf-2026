@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import OrderLookup from './OrderLookup';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
+import { redirect } from '@/i18n/navigation';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { lookupOrderDetail } from '@/app/actions/order-lookup';
 import type { OrderPublicInfo } from '@/app/actions/order-lookup';
@@ -24,27 +25,33 @@ export async function generateMetadata({
 }
 
 export default async function OrdersPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ orderNo?: string }>;
 }) {
+  const { locale } = await params;
   const { orderNo } = await searchParams;
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 로그인 사용자가 주문번호 없이 진입 → 마이페이지 주문 탭으로 (기본 활성 탭 = orders)
+  if (user && !orderNo) {
+    redirect({ href: '/mypage', locale });
+  }
 
   let initialOrderDetail: OrderPublicInfo | null = null;
   let initialBuyerEmail: string | null = null;
 
-  // 로그인 사용자 + orderNo 있으면 직접 조회 (마이페이지 "주문 상세 보기" 링크 흐름)
-  if (orderNo) {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user?.email) {
-      const result = await lookupOrderDetail(orderNo, user.email);
-      if (result.success) {
-        initialOrderDetail = result.order;
-        initialBuyerEmail = user.email;
-      }
+  if (orderNo && user?.email) {
+    const result = await lookupOrderDetail(orderNo, user.email);
+    if (result.success) {
+      initialOrderDetail = result.order;
+      initialBuyerEmail = user.email;
     }
   }
 
