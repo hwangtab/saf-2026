@@ -58,7 +58,7 @@
     "termsOfService": "Terms of Service",
     "refundPolicy": "Shipping & Refund",
     "faq": "FAQ",
-    "masterArtists": "Korean Modern Art Masters",
+    "masterArtists": "Special Exhibitions on View",
     "description": "A mutual-aid platform building a brighter future together with Korean artists.",
     "guide": "Visit our links and contact section for information about online exhibitions and purchases.",
     "businessInfo": "Organization: {org} | Representative: {rep} | Business Registration: {bizNo}",
@@ -208,8 +208,8 @@
       "viewAll": "Browse all works"
     },
     "emergingArtists": {
-      "title": "Discover Emerging Artists",
-      "subtitle": "The artists shaping the next chapter of Korean contemporary art. Lesser known to media — discovered first by collectors with an eye.",
+      "title": "Discover Them First",
+      "subtitle": "The artists shaping the next chapter of Korean contemporary art — works the most discerning collectors spot first.",
       "viewAll": "Browse all works"
     },
     "nowShowing": {

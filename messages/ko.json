@@ -58,7 +58,7 @@
     "termsOfService": "이용약관",
     "refundPolicy": "배송·교환·환불 안내",
     "faq": "자주 묻는 질문",
-    "masterArtists": "한국 현대미술 거장",
+    "masterArtists": "지금 만나는 특별전",
     "description": "한국 예술인들의 내일을 함께 만드는 상호부조 플랫폼입니다.",
     "guide": "온라인 전시 및 구매 안내는 링크 메뉴와 고객문의를 통해 확인하실 수 있습니다.",
     "businessInfo": "상호명: {org} | 대표자명: {rep} | 사업자등록번호: {bizNo}",
@@ -208,8 +208,8 @@
       "viewAll": "전체 작품 보기"
     },
     "emergingArtists": {
-      "title": "신진 작가 발견",
-      "subtitle": "한국 현대미술의 다음을 만드는 작가들. 미디어 노출은 적지만 안목 있는 컬렉터가 먼저 발견하는 작품들입니다.",
+      "title": "먼저 발견하는 작품",
+      "subtitle": "한국 현대미술의 다음을 만들어 갈 작가들. 안목 있는 컬렉터가 먼저 알아본 작품들입니다.",
       "viewAll": "전체 작품 보기"
     },
     "nowShowing": {
