@@ -43,6 +43,7 @@ export type OrderPublicInfo = {
   shippingPhone: string | null;
   shippingAddress: string;
   shippingAddressDetail: string | null;
+  shippingPostalCode: string | null;
   shippingMemo: string | null;
   shippingCarrier: string | null;
   trackingNumber: string | null;
@@ -163,7 +164,12 @@ export async function lookupOrderDetail(
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
 
-  if (!trimmedOrderNo || !trimmedEmail) {
+  const sessionClient = await createSupabaseServerClient();
+  const {
+    data: { user: sessionUser },
+  } = await sessionClient.auth.getUser();
+
+  if (!trimmedOrderNo || (!trimmedEmail && !sessionUser)) {
     return { success: false, error: 'REQUIRED' };
   }
 
@@ -187,6 +193,7 @@ export async function lookupOrderDetail(
       created_at,
       shipping_name,
       shipping_phone,
+      shipping_postal_code,
       shipping_address,
       shipping_address_detail,
       shipping_memo,
@@ -210,12 +217,9 @@ export async function lookupOrderDetail(
     return { success: false, error: 'NOT_FOUND' };
   }
 
-  const sessionClient = await createSupabaseServerClient();
-  const {
-    data: { user: sessionUser },
-  } = await sessionClient.auth.getUser();
   const isOwner = !!sessionUser && order.buyer_user_id === sessionUser.id;
 
+  if (!isOwner && !trimmedEmail) return { success: false, error: 'NOT_FOUND' };
   if (!isOwner && order.buyer_email?.toLowerCase() !== trimmedEmail) {
     return { success: false, error: 'NOT_FOUND' };
   }
@@ -281,6 +285,7 @@ export async function lookupOrderDetail(
       createdAt: order.created_at,
       shippingName: order.shipping_name,
       shippingPhone: order.shipping_phone ?? null,
+      shippingPostalCode: order.shipping_postal_code ?? null,
       shippingAddress: order.shipping_address,
       shippingAddressDetail: order.shipping_address_detail,
       shippingMemo: order.shipping_memo ?? null,
@@ -294,6 +299,7 @@ export async function lookupOrderDetail(
 export type UpdateShippingInput = {
   shippingName: string;
   shippingPhone: string;
+  shippingPostalCode?: string;
   shippingAddress: string;
   shippingAddressDetail?: string;
   shippingMemo?: string;
@@ -315,7 +321,12 @@ export async function updateBuyerShipping(
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
 
-  if (!trimmedOrderNo || !trimmedEmail) {
+  const sessionClientShipping = await createSupabaseServerClient();
+  const {
+    data: { user: sessionUserShipping },
+  } = await sessionClientShipping.auth.getUser();
+
+  if (!trimmedOrderNo || (!trimmedEmail && !sessionUserShipping)) {
     return { success: false, error: 'REQUIRED' };
   }
 
@@ -324,6 +335,7 @@ export async function updateBuyerShipping(
     trimmedEmail.length > 254 ||
     data.shippingName.length > 50 ||
     data.shippingPhone.length > 20 ||
+    (data.shippingPostalCode?.length ?? 0) > 10 ||
     data.shippingAddress.length > 200 ||
     (data.shippingAddressDetail?.length ?? 0) > 200 ||
     (data.shippingMemo?.length ?? 0) > 500
@@ -341,17 +353,18 @@ export async function updateBuyerShipping(
 
   if (error || !order) return { success: false, error: 'NOT_FOUND' };
 
-  const sessionClientShipping = await createSupabaseServerClient();
-  const {
-    data: { user: sessionUserShipping },
-  } = await sessionClientShipping.auth.getUser();
   const isOwnerShipping = !!sessionUserShipping && order.buyer_user_id === sessionUserShipping.id;
 
+  if (!isOwnerShipping && !trimmedEmail) return { success: false, error: 'NOT_FOUND' };
   if (!isOwnerShipping && order.buyer_email?.toLowerCase() !== trimmedEmail)
     return { success: false, error: 'NOT_FOUND' };
   if (!['paid', 'preparing'].includes(order.status)) {
     return { success: false, error: 'INVALID_STATUS' };
   }
+
+  const postalCodeUpdate = data.shippingPostalCode?.trim()
+    ? { shipping_postal_code: data.shippingPostalCode.trim() }
+    : {};
 
   const { error: updateError } = await adminClient
     .from('orders')
@@ -361,6 +374,7 @@ export async function updateBuyerShipping(
       shipping_address: data.shippingAddress.trim(),
       shipping_address_detail: data.shippingAddressDetail?.trim() ?? null,
       shipping_memo: data.shippingMemo?.trim() ?? null,
+      ...postalCodeUpdate,
     })
     .eq('id', order.id)
     .in('status', ['paid', 'preparing']);
@@ -387,7 +401,12 @@ export async function cancelBuyerOrder(
   const trimmedEmail = buyerEmail.trim().toLowerCase();
   const trimmedReason = cancelReason.trim();
 
-  if (!trimmedOrderNo || !trimmedEmail || !trimmedReason) {
+  const sessionClientCancel = await createSupabaseServerClient();
+  const {
+    data: { user: sessionUserCancel },
+  } = await sessionClientCancel.auth.getUser();
+
+  if (!trimmedOrderNo || (!trimmedEmail && !sessionUserCancel) || !trimmedReason) {
     return { success: false, error: 'REQUIRED' };
   }
 
@@ -407,12 +426,9 @@ export async function cancelBuyerOrder(
 
   if (error || !order) return { success: false, error: 'NOT_FOUND' };
 
-  const sessionClientCancel = await createSupabaseServerClient();
-  const {
-    data: { user: sessionUserCancel },
-  } = await sessionClientCancel.auth.getUser();
   const isOwnerCancel = !!sessionUserCancel && order.buyer_user_id === sessionUserCancel.id;
 
+  if (!isOwnerCancel && !trimmedEmail) return { success: false, error: 'NOT_FOUND' };
   if (!isOwnerCancel && order.buyer_email?.toLowerCase() !== trimmedEmail)
     return { success: false, error: 'NOT_FOUND' };
   if (order.status !== 'paid' && order.status !== 'awaiting_deposit') {

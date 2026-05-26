@@ -22,7 +22,7 @@ const navItemsByLocale = {
 export default function ExhibitorNav() {
   const pathname = usePathname();
   const locale = useLocale();
-  const navItems = navItemsByLocale[locale as 'ko' | 'en'];
+  const navItems = navItemsByLocale[locale as 'ko' | 'en'] ?? navItemsByLocale['ko'];
 
   const isActive = (href: string) => {
     if (href === '/exhibitor') {

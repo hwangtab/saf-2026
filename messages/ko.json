@@ -965,6 +965,7 @@
     "orderRefundedNotice": "이 주문은 환불 처리되었습니다.",
     "editShipping": "배송지 수정",
     "shippingPhone": "연락처",
+    "shippingPostalCode": "우편번호",
     "shippingMemo": "배송 메모",
     "shippingMemoPlaceholder": "부재 시 문 앞에 놓아주세요",
     "saveChanges": "저장",
@@ -1208,12 +1209,16 @@
       "viewDetail": "상세 보기",
       "orderNo": "주문 {no}",
       "status": {
+        "pending_payment": "결제진행중",
+        "awaiting_deposit": "입금대기",
         "paid": "결제완료",
         "pending": "결제대기",
+        "preparing": "배송준비",
         "cancelled": "취소됨",
         "refunded": "환불됨",
         "shipped": "배송중",
-        "delivered": "배송완료"
+        "delivered": "배송완료",
+        "completed": "구매확정"
       }
     },
     "wishlist": {

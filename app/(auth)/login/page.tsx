@@ -12,6 +12,7 @@ import {
   needsPrivacyConsent,
   needsTosConsent,
   resolveArtistReconsentRequirements,
+  sanitizeInternalPath,
 } from '@/lib/auth/terms-consent';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
@@ -272,8 +273,8 @@ export default function LoginPage() {
                   })
                 : defaultPath;
           } else {
-            // collector — redirectTo 파라미터 우선, 외부 URL 차단
-            nextPath = redirectAfterLogin?.startsWith('/') ? redirectAfterLogin : '/mypage';
+            // collector — redirectTo 파라미터 우선, 외부 URL/open redirect 차단
+            nextPath = sanitizeInternalPath(redirectAfterLogin, '/mypage');
           }
         }
       }

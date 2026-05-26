@@ -37,6 +37,7 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
       .from('orders')
       .select('id, order_no, artwork_id, status, total_amount, created_at, buyer_name')
       .eq('buyer_user_id', user.id)
+      .neq('status', 'pending_payment')
       .order('created_at', { ascending: false })
       .limit(50),
     supabase

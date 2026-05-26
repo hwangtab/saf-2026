@@ -183,6 +183,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
   const t = useTranslations('orderLookup');
   const [name, setName] = useState(order.shippingName);
   const [phone, setPhone] = useState(order.shippingPhone ?? '');
+  const [postalCode, setPostalCode] = useState(order.shippingPostalCode ?? '');
   const [address, setAddress] = useState(order.shippingAddress);
   const [detail, setDetail] = useState(order.shippingAddressDetail ?? '');
   const [memo, setMemo] = useState(order.shippingMemo ?? '');
@@ -199,6 +200,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
     const input: UpdateShippingInput = {
       shippingName: name,
       shippingPhone: phone,
+      shippingPostalCode: postalCode || undefined,
       shippingAddress: address,
       shippingAddressDetail: detail || undefined,
       shippingMemo: memo || undefined,
@@ -209,6 +211,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
       onSaved({
         shippingName: name.trim(),
         shippingPhone: phone.trim(),
+        shippingPostalCode: postalCode.trim() || null,
         shippingAddress: address.trim(),
         shippingAddressDetail: detail.trim() || null,
         shippingMemo: memo.trim() || null,
@@ -242,6 +245,18 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
             type="tel"
           />
         </div>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-charcoal-soft">
+          {t('shippingPostalCode')}
+        </label>
+        <input
+          className={inputClass}
+          value={postalCode}
+          onChange={(e) => setPostalCode(e.target.value)}
+          inputMode="numeric"
+          maxLength={10}
+        />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-charcoal-soft">{t('address')}</label>

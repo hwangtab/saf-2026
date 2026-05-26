@@ -24,12 +24,16 @@ export default function OrdersTab({ orders, emptyMessage, viewDetailLabel }: Ord
   const locale = useLocale();
 
   const statusLabels: Record<string, string> = {
+    pending_payment: t('orders.status.pending_payment'),
+    awaiting_deposit: t('orders.status.awaiting_deposit'),
     paid: t('orders.status.paid'),
     pending: t('orders.status.pending'),
+    preparing: t('orders.status.preparing'),
     cancelled: t('orders.status.cancelled'),
     refunded: t('orders.status.refunded'),
     shipped: t('orders.status.shipped'),
     delivered: t('orders.status.delivered'),
+    completed: t('orders.status.completed'),
   };
 
   const formatAmount = (amount: number) =>

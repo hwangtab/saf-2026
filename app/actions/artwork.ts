@@ -279,6 +279,10 @@ export async function updateArtwork(
       .eq('artist_id', artist.id)
       .single();
 
+    if (!beforeArtwork) {
+      return { message: '작품을 찾을 수 없습니다.', error: true };
+    }
+
     const { error } = await supabase
       .from('artworks')
       .update({

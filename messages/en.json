@@ -965,6 +965,7 @@
     "orderRefundedNotice": "This order has been refunded.",
     "editShipping": "Edit Address",
     "shippingPhone": "Phone",
+    "shippingPostalCode": "Postal Code",
     "shippingMemo": "Delivery Note",
     "shippingMemoPlaceholder": "e.g. Leave at door if absent",
     "saveChanges": "Save",
@@ -1208,12 +1209,16 @@
       "viewDetail": "View details",
       "orderNo": "Order #{no}",
       "status": {
+        "pending_payment": "Payment in Progress",
+        "awaiting_deposit": "Awaiting Deposit",
         "paid": "Paid",
         "pending": "Pending",
+        "preparing": "Preparing",
         "cancelled": "Cancelled",
         "refunded": "Refunded",
         "shipped": "Shipped",
-        "delivered": "Delivered"
+        "delivered": "Delivered",
+        "completed": "Completed"
       }
     },
     "wishlist": {

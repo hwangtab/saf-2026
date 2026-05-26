@@ -219,6 +219,12 @@ export default memo(function AuthButtons({
       return { href: '/dashboard/artworks', label: copy.myPage };
     }
     if (profile?.role === 'exhibitor') {
+      if (profile.status === 'suspended') {
+        return { href: '/exhibitor/suspended', label: copy.accountSuspended };
+      }
+      if (profile.status !== 'active') {
+        return { href: '/exhibitor/pending', label: copy.pendingApproval };
+      }
       return { href: '/exhibitor', label: copy.exhibitorDashboard };
     }
     if (profile?.status === 'pending') {
