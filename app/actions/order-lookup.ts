@@ -415,8 +415,85 @@ export async function cancelBuyerOrder(
 
   if (!isOwnerCancel && order.buyer_email?.toLowerCase() !== trimmedEmail)
     return { success: false, error: 'NOT_FOUND' };
-  if (order.status !== 'paid') {
+  if (order.status !== 'paid' && order.status !== 'awaiting_deposit') {
     return { success: false, error: 'INVALID_STATUS' };
+  }
+
+  // 무통장 입금 대기 — 입금 전이므로 Toss 환불·sale void 없이 주문만 취소하고 작품 예약 해제
+  if (order.status === 'awaiting_deposit') {
+    const now = new Date().toISOString();
+
+    const { data: updatedRows, error: updateError } = await adminClient
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: now, updated_at: now })
+      .eq('id', order.id)
+      .eq('status', 'awaiting_deposit')
+      .select('id');
+
+    if (updateError || !updatedRows || updatedRows.length === 0) {
+      return { success: false, error: 'ORDER_CANCEL_FAILED' };
+    }
+
+    if (order.artwork_id) {
+      await adminClient
+        .from('artworks')
+        .update({ status: 'available', updated_at: now })
+        .eq('id', order.artwork_id)
+        .eq('status', 'reserved');
+      revalidatePublicArtworkSurfaces();
+      revalidatePath(`/artworks/${order.artwork_id}`);
+      revalidatePath(`/en/artworks/${order.artwork_id}`);
+    }
+
+    await logBuyerAction(
+      'order_buyer_cancelled',
+      'order',
+      order.id,
+      trimmedEmail,
+      {
+        order_no: order.order_no,
+        reason: trimmedReason,
+        artwork_id: order.artwork_id,
+        buyer_name: order.buyer_name,
+        total_amount: order.total_amount,
+        payment_status: 'awaiting_deposit',
+      },
+      {
+        summary: `구매자 셀프 취소(입금대기): ${order.order_no} (${order.buyer_name ?? '구매자 미상'}, ₩${order.total_amount.toLocaleString('ko-KR')}, 사유: ${trimmedReason})`,
+        reversible: false,
+      }
+    );
+
+    void (async () => {
+      try {
+        const info = await getOrderNotificationInfo(adminClient, { id: order.id });
+        if (info) {
+          void notifyEmail(
+            'warning',
+            '구매자 입금대기 주문 취소 (셀프서비스)',
+            buildAdminNotificationFields(info, { 취소사유: trimmedReason })
+          );
+        }
+        if (order.buyer_email) {
+          void sendBuyerEmail(
+            order.buyer_email,
+            'auto_cancelled',
+            {
+              orderNo: order.order_no,
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: info?.artworkTitle ?? '',
+              artistName: info?.artistName ?? '',
+              amount: order.total_amount,
+            },
+            extractBuyerLocale(order.metadata)
+          );
+        }
+      } catch (err) {
+        console.error('[cancelBuyerOrder] awaiting cancel email failed:', err);
+      }
+    })();
+
+    return { success: true };
   }
 
   const { data: payment } = await adminClient

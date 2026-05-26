@@ -336,7 +336,11 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
         <h2 id="cancel-modal-title" className="mb-1 text-base font-bold text-charcoal">
           {t('cancelOrderConfirm')}
         </h2>
-        <p className="mb-4 text-sm text-charcoal-soft">{t('cancelOrderDescription')}</p>
+        <p className="mb-4 text-sm text-charcoal-soft">
+          {order.status === 'awaiting_deposit'
+            ? t('cancelOrderDescriptionAwaiting')
+            : t('cancelOrderDescription')}
+        </p>
 
         <label className="mb-1.5 block text-sm font-medium text-charcoal">
           {t('cancelReasonLabel')}
@@ -395,7 +399,7 @@ function OrderDetail({
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const canEditShipping = ['paid', 'preparing'].includes(order.status);
-  const canCancel = order.status === 'paid';
+  const canCancel = ['paid', 'awaiting_deposit'].includes(order.status);
 
   const bankTransferDeadline =
     order.status === 'awaiting_deposit' && !order.virtualAccount
@@ -636,7 +640,7 @@ function OrderDetail({
             onClick={() => setShowCancelModal(true)}
             className="w-full rounded-xl border border-danger/30 py-2.5 text-sm font-medium text-danger-a11y hover:bg-danger/10 transition-colors"
           >
-            {t('cancelOrder')}
+            {order.status === 'awaiting_deposit' ? t('cancelOrderAwaiting') : t('cancelOrder')}
           </button>
         </div>
       )}
