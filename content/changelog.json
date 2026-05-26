@@ -1,11 +1,231 @@
 [
   {
-    "hash": "12106294",
-    "type": "chore",
-    "scope": "infra",
-    "subject": "Supabase 뭄바이(ap-south-1) → 서울(ap-northeast-2) 이전 완료",
-    "summary": "DB·Storage·Vercel 환경변수 전체 서울 리전으로 전환 — 한국 사용자 응답속도 3~5배 개선 예상. 구 프로젝트(vqejnuntjnxzpgwfndtv) 30일 유지 후 삭제 예정",
-    "body": "- 신규 Supabase 프로젝트: khtunrybrzntlnowlahb (ap-northeast-2, Seoul)\n- 141개 migration 전체 적용 완료\n- DB 데이터 복원: artworks 415, artists 128, orders 85, artwork_sales 210, profiles 51, petition_signatures 8413\n- Storage 2,429개 오브젝트 이전 (artworks + profiles 버킷)\n- content/artworks-batches batch-001~008 + batch-db-generated Storage URL 655건 교체\n- Vercel Production·Preview·Development 환경변수 업데이트\n- migration 버그 2건 수정: get_story_attributed_revenue AS alias 누락, purchase_click_mode_split DROP FUNCTION 누락",
+    "hash": "1147b6c4",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "가입 역할 선택 흐름·UX 개선 및 로고 일관성 통일",
+    "summary": "OAuth/이메일 양쪽 가입에서 역할 선택이 명확히 이어지도록 개선.",
+    "body": "아티스트 승인 안내 문구 추가, 콜백 intended_role fallback 보강,\nonboarding 페이지 SAF Online 텍스트 로고를 씨앗페 로고로 통일\n\n- signup: 아티스트 선택 시 \"관리자 승인 필요\" 안내 박스 조건부 표시\n- callback: oauth_role 쿠키 없을 때 user_metadata.intended_role fallback으로\n  이메일 확인 경로에서도 컬렉터→/mypage, 아티스트→/onboarding 일관 라우팅\n- onboarding: \"SAF Online\" 텍스트 2곳을 SafeImage 씨앗페 로고로 교체",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "69d9eccd",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "프로그레스 바에서 '목표 10000명' 텍스트 제거",
+    "summary": "목표 이미 초과(113%) 상태라 '목표 10,000명' 노출이 어색해 제거. ko/en 양 로케일 적용",
+    "body": "- heroProgressLabel 메시지를 '현재 {current}명'으로 단순화\n- ProgressBar t() 호출에서 사용하지 않는 goal 인자 제거\n- aria-valuemax={goal}은 유지되어 접근성 정보 보존",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "b18ff161",
+    "type": "fix",
+    "scope": "signup",
+    "subject": "회원가입 페이지 헤더 씨앗페 로고로 통일",
+    "summary": "로그인 페이지와 달리 텍스트(\"SAF Online\")로 하드코딩되어 있던",
+    "body": "회원가입 페이지 상단 헤더를 SafeImage 씨앗페 로고로 교체",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "97dbab48",
+    "type": "fix",
+    "scope": "wishlist",
+    "subject": "로그아웃 시 localStorage 초기화",
+    "summary": "SIGNED_OUT 이벤트 시 위시리스트 localStorage 비우기 — 공유 기기 보안 개선",
+    "body": "- clearWishlist() 함수 추가 (lib/wishlist.ts)\n- WishlistProvider의 onAuthStateChange에서 SIGNED_OUT 이벤트 감지 시\n  localStorage 초기화 + Context ids 빈 배열로 동기화\n- 로그아웃 후 같은 기기에서 이전 사용자의 위시리스트가 보이던 문제 해결",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "492d2c24",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "1만 달성 = 막대 success 전체 전환 + 우측 끝 흰 배지로 초과 수치",
+    "summary": "1만 도달 시 막대 전체가 success로 바뀌어 \"달성\" 명확 + 막대 우측 끝에 떠 있는 흰 배지로 초과 N명 표시",
+    "body": "- 막대 색: total < 1만이면 primary, total ≥ 1만이면 막대 100% success 가득\n- 배지: total > 1만일 때만 막대 우측 끝에 absolute 알약 — \"+400명\" 식, 흰 배경 + charcoal 텍스트 + shadow로 막대 위에 떠 있는 도장 느낌\n- 직전 커밋의 segment 분할(좌측 1만, 우측 초과분 비율)이 초과량 적을 때 \"100% 미달성\"처럼 보이는 회귀 해결\n- 라벨/목표/percent 그대로 1만 고정\n\ni18n 키 추가: heroProgressExcessBadge (KO/EN)",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "086b6feb",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "1만 초과 비율을 막대 안에서 segment로 시각화",
+    "summary": "막대 폭 100% 고정, 안에서 좌측 primary(1만 지점) + 우측 success(초과분)로 분할. 1만 지점이 total에 따라 좌측으로 후퇴하며 초과 비율 직관 시각화",
+    "body": "- total ≤ 1만: 단일 primary, 0~100% 채우기 (기존 그대로)\n- total > 1만: primary = (1만/total)·100%, success = (초과분/total)·100%. 막대는 항상 100% 가득\n- 라벨/ARIA의 goal은 영원히 1만 고정, percent는 100% cap — 목표·라벨 변경 없음",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "b02c17fe",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "ProgressBar 초과 시각만 — 새 목표 박지 않음",
+    "summary": "1만 초과 시 막대 색만 primary→success로 전환. 목표·라벨·라운드 시스템 전부 원복",
+    "body": "- 직전 커밋(라운드 시스템·effectiveGoal·라운드 마커)이 자의로 새 목표(2만)를 라벨에 박은 사고 — \"초과 느낌만\" 요청에서 벗어난 범위 확장\n- 목표는 영원히 1만으로 고정, 라벨 \"현재 X명 / 목표 1만 명\" 그대로, percent도 100%에서 cap\n- 1만 도달 시 막대 색 전환(primary→success) 하나로만 초과 사실 시각화",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "644e5960",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "1만 달성 시 ProgressBar 라운드 시각화",
+    "summary": "1만 명 넘어가면 막대가 색을 바꿔 다음 라운드를 누적 표시. 라운드 경계엔 흰 세로선 마커.",
+    "body": "- 1라운드(<1만): 단일 primary 색, 기존 동작\n- 2라운드 이상(≥1만): effectiveGoal = round × 1만으로 확장. 막대 안에 두 segment — primary(이전 라운드 누적 ⅔ 또는 ½) + success(현재 라운드 진행분). 라운드별 경계는 흰 세로선으로 표시\n- 라벨/ARIA의 goal 값도 effectiveGoal로 동적 갱신, percent는 현재 라운드 기준 0~100%\n- 캠페인 무기한 운영 전환과 맞물려 \"운동이 계속 굴러간다\" 시각 메시지 제공",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "e5ec75cb",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "오윤 청원 마감 표기·제한 모두 해제",
+    "summary": "페이지·메타·OG·DB에서 마감일을 전부 제거 — 무기한 청원으로 운영",
+    "body": "- messages: metaDescription/heroDeadlineLine/participationCard3Body/shareTemplateSns 4개 키에서 {deadlineFull/Short} placeholder 삭제, 자연스러운 문장으로 재작성 (KO/EN 동기화)\n- page.tsx: CountdownTimer 컴포넌트 호출 제거, heroDeadlineLine·metaDescription·participationCard3Body 호출에서 인자 정리, formatPetitionDeadline 임포트 삭제\n- opengraph-image.tsx: 메타 라인의 '{date} 마감' 표기 → '시민 청원 · 1만 명'으로 교체\n- DB petitions.deadline_at: 2099-12-31로 박아 sign_petition RPC와 petition_auto_close cron의 자동 차단 영구 비활성\n- 직전 커밋(6/1 연장)에서 자의로 6/1 마감을 페이지에 박은 사고 회복",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "a23bd566",
+    "type": "fix",
+    "scope": "fonts",
+    "subject": "Pretendard dynamic-subset 전환 — hero 한글 weight 회귀 차단",
+    "summary": "깨진 Pretendard Std Variable(한글 0자, Latin 전용 291KB)로 인해 한글이 fallback으로 떨어져 hero `font-black`이 Apple SD Gothic Neo Bold 700으로 다운그레이드되던 회귀 수정",
+    "body": "- public/fonts/PretendardStdVariable.woff2(291KB) 삭제 — \"Std\"는 Adobe 명명체계\n  변종이지 한글 subset이 아니었음. cmap에 한글 음절(AC00-D7A3) 0자, 박/생/광 모두\n  부재. 한글이 fallback chain의 Apple SD Gothic Neo로 떨어졌고, 그 폰트의 최대\n  weight Bold 700이 적용되어 `font-black`(900) 호출도 hero에서 얇게 렌더됨\n\n- public/fonts/pretendard-subset/ 추가 — Pretendard v1.3.9 공식 dynamic-subset\n  92 청크 (한글 11,172자, 라틴, 합계 2.88MB). unicode-range로 페이지 사용\n  글리프만 lazy fetch — 박생광 페이지 기준 라틴(33KB) + 한글 subset 2-3개(50KB)\n  = 약 80KB로 LCP critical font 90%+ 절감\n\n- styles/pretendard-subset.css 추가 + globals.css에서 @import. tailwind\n  font-display/font-sans가 참조하는 --font-sans 변수를 'Pretendard Variable'로\n  단순화 (next/font/local의 hash된 family명 의존 제거)\n\n- 3개 root layout(app/[locale]·(auth)·(portal))에서 `next/font/local` Pretendard\n  설정 및 `<html className={pretendard.variable}>` 제거 — globals.css 경유로 일원화\n\n- package-lock.json: web-vitals 패키지 누락 회복 (dev 컴파일 막혀 검증 불가했음)\n\n검증:\n- @font-face 92개 + unicode-range 92개가 CSS chunk에 인라인 (postcss-import 통과)\n- subset.0/88/89 (박/생/광 포함) HTTP 200 정상 서빙\n- CSP `font-src 'self'` 통과",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "dd70c188",
+    "type": "fix",
+    "scope": "gallery",
+    "subject": "전체작품 카테고리 필터 두 줄 wrap 제거 — 데스크톱에서도 가로 스크롤",
+    "summary": "카테고리 11개가 데스크톱에서 두 줄로 wrap되어 보기 좋지 않던 회귀 수정",
+    "body": "- 데스크톱(md+)에서 `flex-wrap md:justify-center md:overflow-x-visible` →\n  `md:justify-center`로 변경\n- 모바일과 동일하게 한 줄 가로 스크롤, 중앙 정렬 유지\n- shrink-0이 버튼에 박혀 있어 스크롤 중에도 버튼 폭 보존",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "3b3f18f9",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "오윤 청원 마감 6월 1일까지 1주 연장",
+    "summary": "오윤 구의동 벽화 시민 청원 마감일을 5/25에서 6/1 23:59 KST로 연장",
+    "body": "- lib/petition/constants.ts 기본값 2026-06-01T23:59:59+09:00\n- DB petitions.deadline_at도 동일하게 UPDATE (단일 출처라 페이지·OG·카운트다운·메일 자동 갱신)\n- DB의 deadline_at이 실제 차단 결정자 — 26일 00:00 KST부터 차단되던 sign_petition RPC 가드가 6월 2일 00:00로 이동\n- petition_auto_close cron도 새 마감일 기준 동작 (deadline_at <= now() 조건이 6/1까지 false)",
+    "date": "2026-05-25",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "d06026fd",
+    "type": "fix",
+    "scope": "wishlist",
+    "subject": "empty state 레이아웃 시프트 제거",
+    "summary": "진입 시 하단이 늘어났다 줄어드는 CLS 수정 — empty state를 mount 가드 앞으로 이동",
+    "body": "- !mounted && ids=0 → null 반환 시 min-h-screen이 빈 공간 채워\n  하이드레이션 후 empty state 등장하며 페이지 높이가 급격히 줄어드는 현상\n- ids.length === 0 체크를 !mounted 가드 앞으로 이동 → SSR/CSR 모두\n  동일한 empty state 렌더, 하이드레이션 후 변화 없음",
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "85ae6bd9",
+    "type": "fix",
+    "scope": "wishlist",
+    "subject": "임의 패딩 제거 — Section 기본 py-12 md:py-20으로 통일",
+    "summary": "pt-16 md:pt-24 하드코딩 제거, 다른 PageHero 페이지와 동일한 Section 기본 패딩 사용",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "dcf62291",
+    "type": "fix",
+    "scope": "wishlist",
+    "subject": "빈 위시리스트 스켈레톤 제거 + 상단 여백 충분히 확보",
+    "summary": "ids 없을 때 null 반환으로 스켈레톤 플래시 제거, pt-16 md:pt-24로 톱니 아래 여백 확보",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "54849722",
+    "type": "feat",
+    "scope": "footer",
+    "subject": "거장 작가 푸터 링크 전원 노출 — 민정기·이철수·박불똥 footerHidden 제거",
+    "summary": "임시 제외 상태였던 민정기·이철수·박불똥 footerHidden 플래그 제거, 5명 전원 표시",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "1e447054",
+    "type": "fix",
+    "scope": "wishlist",
+    "subject": "PageHero 직후 SAWTOOTH_BOTTOM_SAFE_PADDING 적용",
+    "summary": "톱날 경계선 직후 콘텐츠가 상단에 붙어 보이는 문제 — SAWTOOTH_BOTTOM_SAFE_PADDING(pt-12 md:pt-16) 적용",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "271d3889",
+    "type": "fix",
+    "scope": "wishlist",
+    "subject": "흰띠 제거 — Section 배경 제거 및 이중 패딩 정리",
+    "summary": "Section wrapper 제거로 bg-canvas 흰띠 없애고 py 이중 합산 패딩 축소",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "9718b06f",
+    "type": "fix",
+    "scope": "header",
+    "subject": "위시리스트 하트 pill 스타일 제거 + 로그인 버튼 옆으로 이동",
+    "summary": "하트 아이콘 스타일 원복, 위치를 로그인/회원가입 버튼 오른쪽으로 이동",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "69107f34",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "로그인 페이지 헤더 SAF Online 텍스트 → 씨앗페 로고 이미지 교체",
+    "summary": "로그인 폼 상단 \"SAF Online\" 텍스트를 공식 씨앗페 로고(320pxX90px.webp)로 교체",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "f1283802",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "OAuth 역할 분기 라우팅 + 헤더·CTA 개선",
+    "summary": "구글 로그인 시 artist/collector 역할별 리다이렉트 분기, 헤더 네비·CTA 컴포넌트 개선, i18n 키 보완",
+    "body": "- lib/auth/oauth-state.ts: OAUTH_ROLE_COOKIE 추가 (역할 전달용)\n- app/api/auth/oauth/state/route.ts: OAuth state + role 쿠키 발행 라우트\n- app/(auth)/auth/callback: intendedRole 기반 onboarding?role=artist / mypage 분기\n- login/signup: 역할 선택 플로우 개선\n- Header: DesktopNav·FullscreenMenu·WishlistNavButton useLocalizedNavigation 적용\n- ArtworkPurchaseCTA·StickyMobile·JoinCommunityCTA: 구매/참여 CTA 개선\n- NowShowing: 카드 렌더링 개선\n- messages: 신규 i18n 키 추가 (ko·en·dashboard)",
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "71e2916f",
+    "type": "fix",
+    "scope": "legal",
+    "subject": "청원 개인정보 국외 이전 고지 서울 이전 완료 반영",
+    "summary": "저장 리전 '인도 뭄바이 → 서울 이전 예정'을 '대한민국 서울'로 업데이트",
+    "body": null,
+    "date": "2026-05-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "22ed0eb1",
+    "type": "fix",
+    "scope": "scripts",
+    "subject": "validate_artworks 구 Supabase URL 하드코딩 제거",
+    "summary": "서울 이전 후 validate_artworks.js의 뭄바이 project ref 하드코딩을 env 기반으로 교체",
+    "body": null,
     "date": "2026-05-22",
     "author": "황경하"
   },
@@ -14,8 +234,8 @@
     "type": "fix",
     "scope": "mypage",
     "subject": "주문 상세 UX 단절 해소 + 찜 목록 삭제 버튼 추가",
-    "summary": "블라인드 스팟 Round 2 수정 — 마이페이지 '주문 상세 보기' 클릭 시 폼 재입력 요구 해소, 찜 탭 내 작품 삭제 버튼 신설",
-    "body": "- orders/page.tsx: searchParams.orderNo + getUser() → lookupOrderDetail로 초기 데이터 서버사이드 조회\n- OrderLookup.tsx: initialOrderDetail prop 추가, 로그인 사용자 진입 시 폼 스킵 후 OrderCard 바로 표시\n- WishlistTab.tsx: lucide X 버튼 오버레이 추가, hover/focus-visible 토글, 낙관적 UI(setIds 즉시 업데이트) + removeFromWishlist server action + removeLocal localStorage 동기화",
+    "summary": "마이페이지 구매 내역에서 \"주문 상세 보기\" 클릭 시 폼 없이 바로 상세 표시, 찜 탭에 × 삭제 버튼 추가",
+    "body": "- orders/page.tsx: searchParams + 세션 체크 → 로그인 사용자 + orderNo 있으면\n  lookupOrderDetail(orderNo, userEmail) 직접 호출, initialOrderDetail 전달\n- OrderLookup.tsx: initialOrderDetail·initialBuyerEmail props 추가.\n  initialOrderDetail 있으면 검색 폼 스킵, OrderCard 바로 표시\n  (비로그인 / orderNo 없는 접근은 기존 이름·이메일·전화번호 폼 그대로)\n- WishlistTab.tsx: handleRemove(artworkId) 추가 (removeFromWishlist server action +\n  removeLocal + ids 낙관적 업데이트). 카드 hover 시 × 버튼 표시",
     "date": "2026-05-22",
     "author": "황경하"
   },
