@@ -25,6 +25,8 @@ const SIGNUP_COPY = {
     collectorDesc: '작품을 구매하고 위시리스트를 관리해요',
     artistLabel: '아티스트',
     artistDesc: '작품을 출품하고 씨앗페에 참여해요',
+    artistApprovalNote:
+      '아티스트는 가입 후 작품·프로필 심사와 관리자 승인을 거쳐 활동이 시작됩니다.',
     continueWithGoogle: '구글로 계속하기',
     orEmailSignup: '또는 이메일 가입',
     nameLabel: '이름 (실명)',
@@ -57,6 +59,8 @@ const SIGNUP_COPY = {
     collectorDesc: 'Browse, save, and purchase artworks',
     artistLabel: 'Artist',
     artistDesc: 'Submit your works and join the SAF campaign',
+    artistApprovalNote:
+      'Artists become active after submitting works and receiving admin approval.',
     continueWithGoogle: 'Continue with Google',
     orEmailSignup: 'Or sign up with email',
     nameLabel: 'Name (legal name)',
@@ -302,6 +306,12 @@ export default function SignUpPage() {
               ))}
             </div>
           </div>
+
+          {roleChoice === 'artist' && (
+            <p className="mb-4 text-xs text-charcoal-muted bg-canvas-strong rounded-lg px-3 py-2">
+              {copy.artistApprovalNote}
+            </p>
+          )}
 
           <div className="space-y-3">
             <Button

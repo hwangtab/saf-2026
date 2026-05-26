@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
   getOAuthRoleCookieOptions,
   getOAuthStateCookieOptions,
+  isValidIntendedRole,
   isValidOAuthState,
   OAUTH_ROLE_COOKIE_NAME,
   OAUTH_STATE_COOKIE_NAME,
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const requestState = searchParams.get(OAUTH_STATE_QUERY_PARAM);
   const cookieState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
-  const intendedRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
+  const cookieRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
 
   if (code && !isValidOAuthState(requestState, cookieState)) {
     return redirectWithOAuthStateCleared(`${origin}/login?error=oauth_state`);
@@ -233,6 +234,10 @@ export async function GET(request: NextRequest) {
               }`
             );
           }
+
+          const metadataRole = user.user_metadata?.intended_role;
+          const intendedRole =
+            cookieRole ?? (isValidIntendedRole(metadataRole) ? metadataRole : null);
 
           const noAppDestination =
             intendedRole === 'artist'

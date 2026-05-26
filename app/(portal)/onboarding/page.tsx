@@ -6,6 +6,7 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import SafeImage from '@/components/common/SafeImage';
 
 export default async function OnboardingPage({
   searchParams,
@@ -96,8 +97,17 @@ export default async function OnboardingPage({
           <SignOutButton />
         </div>
         <div className="sm:mx-auto sm:w-full sm:max-w-xl">
-          <h2 className="mt-6 text-center text-3xl font-black text-gray-900">SAF Online</h2>
-          <p className="mt-2 text-center text-lg font-medium text-gray-600">{t('chooseType')}</p>
+          <div className="mt-6 flex flex-col items-center gap-3">
+            <SafeImage
+              src="/images/logo/320pxX90px.webp"
+              alt="씨앗페"
+              width={160}
+              height={45}
+              className="h-10 w-auto object-contain"
+              priority
+            />
+            <p className="text-lg font-medium text-gray-600">{t('chooseType')}</p>
+          </div>
           <p className="mt-3 text-center text-sm text-gray-500">{t('chooseDescription')}</p>
         </div>
 
@@ -131,13 +141,19 @@ export default async function OnboardingPage({
         <SignOutButton />
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
-        <h2 className="mt-6 text-center text-3xl font-black text-gray-900">
-          SAF Online
-          <br />
-          <span className="text-xl font-medium text-gray-600">
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <SafeImage
+            src="/images/logo/320pxX90px.webp"
+            alt="씨앗페"
+            width={160}
+            height={45}
+            className="h-10 w-auto object-contain"
+            priority
+          />
+          <p className="text-xl font-medium text-gray-600">
             {isArtistRecovery ? t('artistRecoveryTitle') : t('artistOnboardingTitle')}
-          </span>
-        </h2>
+          </p>
+        </div>
         <p className="mt-4 text-center text-sm text-gray-500">
           {isArtistRecovery ? t('artistRecoveryDescription') : t('artistOnboardingDescription')}
         </p>
