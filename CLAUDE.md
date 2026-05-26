@@ -67,7 +67,8 @@ npm run trash:purge:expired                # Purge expired trash items
 | 로컬 dev DB 기동      | (없음)                                               | `supabase start` / `supabase db reset` |
 | Edge function 배포    | `mcp__claude_ai_Supabase__deploy_edge_function`      | `supabase functions deploy`            |
 
-- **Project ID**: `vqejnuntjnxzpgwfndtv` (MCP 호출 시 `project_id` 파라미터)
+- **Project ID**: `khtunrybrzntlnowlahb` (서울 ap-northeast-2, 라이브. MCP 호출 시 `project_id` 파라미터)
+- **⚠ 구 프로젝트 `vqejnuntjnxzpgwfndtv`(뭄바이)는 2026-05-22 이후 동결 deprecated** — 절대 이 ID로 마이그레이션·DML 실행 금지
 - **위험 작업** (`apply_migration`, DML/DDL을 담은 `execute_sql`, `pause_project` 등)은 사용자 컨펌 필수
 - **읽기 전용** (`list_*`, `get_*`, `search_docs`)은 승인 없이 자유롭게 사용
 - Migration 파일은 여전히 `supabase/migrations/`에 작성 — 코드 리뷰·git 이력 보존. MCP `apply_migration`의 `query` 파라미터에 본문 전달
