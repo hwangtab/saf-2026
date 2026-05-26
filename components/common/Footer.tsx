@@ -81,6 +81,15 @@ export default async function Footer({ locale }: { locale: string }) {
                   </li>
                   <li>
                     <Link
+                      href="/changelog"
+                      prefetch={false}
+                      className="text-gray-300 hover:text-white transition-colors"
+                    >
+                      {tNav('updates')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       href="/news"
                       prefetch={false}
                       className="text-gray-300 hover:text-white transition-colors"

@@ -33,6 +33,8 @@
     "parkSaenggwangNavDesc": "First breaths the master of obangsaek held in pencil before color",
     "transparency": "Reports",
     "transparencyDesc": "Annual transparency reports for the mutual aid loan program",
+    "updates": "Updates",
+    "updatesDesc": "Site improvements and fixes",
     "magazine": "Magazine",
     "allStories": "All Stories",
     "allStoriesDesc": "Browse all artist stories, buying guides, and art knowledge",
@@ -253,7 +255,8 @@
     "stories": "Magazine",
     "ohYoon": "Oh Yoon Special Exhibition",
     "parkSaenggwang": "Park Saeng-gwang Drawings",
-    "transparency": "Transparency Reports"
+    "transparency": "Transparency Reports",
+    "changelog": "Updates"
   },
   "seo": {
     "siteTitle": "SAF Online Gallery",
@@ -1236,5 +1239,14 @@
       "body": "Register as an artist to submit your works and join the SAF campaign.",
       "cta": "Apply as Artist"
     }
+  },
+  "changelog": {
+    "filterAll": "All",
+    "filterFeat": "New Features",
+    "filterFix": "Bug Fixes",
+    "filterPerf": "Performance",
+    "loadMore": "Load more",
+    "empty": "No entries found.",
+    "noEntries": "No updates yet."
   }
 }

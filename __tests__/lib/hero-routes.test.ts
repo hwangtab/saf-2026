@@ -25,6 +25,7 @@ describe('isHeroRoute', () => {
       '/special/oh-yoon',
       '/special/park-saenggwang',
       '/wishlist',
+      '/changelog',
     ])('%s는 hero 경로', (path) => {
       expect(isHeroRoute(path)).toBe(true);
     });

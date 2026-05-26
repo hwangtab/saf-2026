@@ -96,6 +96,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date('2026-04-06'),
     },
     {
+      path: '/changelog',
+      changeFrequency: 'weekly',
+      priority: 0.7,
+      lastModified: now,
+    },
+    {
       path: '/special/oh-yoon',
       changeFrequency: 'monthly',
       priority: 0.85,

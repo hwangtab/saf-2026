@@ -1,43 +1,15 @@
-import fs from 'fs';
-import path from 'path';
 import { requireAdmin } from '@/lib/auth/guards';
 import {
   AdminPageHeader,
   AdminPageTitle,
   AdminPageDescription,
 } from '@/app/admin/_components/admin-ui';
-import {
-  sanitizeNullableSingleLineTextForRscPayload,
-  sanitizeNullableTextForRscPayload,
-  sanitizeSingleLineTextForRscPayload,
-} from '@/lib/utils/text-sanitizer';
+import { loadChangelog } from '@/lib/changelog-data';
 import { ChangelogList } from './changelog-list';
-import type { ChangelogEntry } from '@/types';
 
 const PER_PAGE = 30;
 
 type ChangelogFilter = 'all' | 'feat' | 'fix' | 'perf' | 'refactor';
-
-function loadChangelog(): ChangelogEntry[] {
-  try {
-    const filePath = path.join(process.cwd(), 'content', 'changelog.json');
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    const parsed = JSON.parse(raw) as ChangelogEntry[];
-    return parsed.map((entry) => ({
-      ...entry,
-      hash: sanitizeSingleLineTextForRscPayload(entry.hash),
-      scope: sanitizeNullableSingleLineTextForRscPayload(entry.scope),
-      subject: sanitizeSingleLineTextForRscPayload(entry.subject),
-      summary: sanitizeNullableSingleLineTextForRscPayload(entry.summary),
-      body: sanitizeNullableTextForRscPayload(entry.body),
-      date: sanitizeSingleLineTextForRscPayload(entry.date),
-      author: sanitizeSingleLineTextForRscPayload(entry.author),
-    }));
-  } catch (error) {
-    console.error('[admin-changelog] Changelog loading failed:', error);
-    return [];
-  }
-}
 
 function parseFilter(value: string | string[] | undefined): ChangelogFilter {
   const v = Array.isArray(value) ? value[0] : value;

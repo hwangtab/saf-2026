@@ -59,6 +59,11 @@ export function useLocalizedNavigation(): NavigationItem[] {
           description: t('transparencyDesc'),
         },
         {
+          name: t('updates'),
+          href: '/changelog',
+          description: t('updatesDesc'),
+        },
+        {
           name: t('news'),
           href: '/news',
           description: t('newsDesc'),

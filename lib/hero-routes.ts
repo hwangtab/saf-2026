@@ -44,6 +44,7 @@ const HERO_EXACT = new Set<string>([
   '/special/park-saenggwang',
   '/faq',
   '/wishlist',
+  '/changelog',
 ]);
 
 /**

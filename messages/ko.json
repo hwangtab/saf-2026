@@ -33,6 +33,8 @@
     "parkSaenggwangNavDesc": "오방색 한국화의 거장이 채색 이전에 연필로 잡아둔 첫 호흡",
     "transparency": "운용 보고서",
     "transparencyDesc": "상호부조 대출 운용 현황과 연간 보고서",
+    "updates": "업데이트 소식",
+    "updatesDesc": "사이트 기능 개선·버그 수정 내역",
     "magazine": "매거진",
     "allStories": "전체 보기",
     "allStoriesDesc": "작가 이야기, 컬렉팅 가이드, 미술 상식 모두 보기",
@@ -253,7 +255,8 @@
     "stories": "매거진",
     "ohYoon": "오윤 특별전",
     "parkSaenggwang": "박생광 드로잉전",
-    "transparency": "운용 보고서"
+    "transparency": "운용 보고서",
+    "changelog": "업데이트 소식"
   },
   "seo": {
     "siteTitle": "씨앗페 온라인 갤러리",
@@ -1236,5 +1239,14 @@
       "body": "아티스트 등록을 통해 작품을 출품하고 씨앗페 캠페인에 참여할 수 있습니다.",
       "cta": "작가 신청하기"
     }
+  },
+  "changelog": {
+    "filterAll": "전체",
+    "filterFeat": "새 기능",
+    "filterFix": "버그 수정",
+    "filterPerf": "성능 개선",
+    "loadMore": "더 보기",
+    "empty": "해당 항목이 없습니다.",
+    "noEntries": "업데이트 내역이 없습니다."
   }
 }
