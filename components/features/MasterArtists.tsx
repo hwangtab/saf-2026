@@ -14,7 +14,7 @@ import { ArrowRight } from 'lucide-react';
  * 한국 현대미술 거장 영역 [E] — 매뉴얼 6.4 + 9.2 컬렉션 2 (운영 큐레이션 반영).
  *
  * 메인 페이지 NowShowing 직후 노출. 페르소나 B의 "왜 이 사이트인가" 첫 인지 자산.
- * 현재 5명 거장 카드 그리드 (모바일 2열·데스크탑 5열) → 작가 페이지로 deep-link.
+ * 현재 6명 거장 카드 그리드 (모바일 2열·태블릿 3열·데스크탑 6열) → 작가 페이지로 deep-link.
  *
  * 데이터:
  * - 메타(이름·생몰년·부제)는 lib/master-artists.ts 정적 정의 (운영 큐레이션 결과 반영)
@@ -41,7 +41,7 @@ export default async function MasterArtists({ locale }: { locale: string }) {
   const cards = cardsRaw.filter(({ cover }) => cover);
   if (cards.length === 0) return null;
 
-  // ItemList schema — 거장 라인업을 GSC structured data entity로. Person 엔티티 5개.
+  // ItemList schema — 거장 라인업을 GSC structured data entity로.
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -68,8 +68,8 @@ export default async function MasterArtists({ locale }: { locale: string }) {
           <SectionTitle className="mb-3">{t('title')}</SectionTitle>
           <p className="text-body-large text-charcoal-muted text-balance">{t('subtitle')}</p>
         </div>
-        {/* 5명 라인업 — 모바일 2열·태블릿 3열·데스크탑 5열 한 줄 배치. */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 max-w-6xl mx-auto">
+        {/* 6명 라인업 — 모바일 2열·태블릿 3열·데스크탑 6열 한 줄 배치. */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 max-w-6xl mx-auto">
           {cards.map(({ artist, cover }) => {
             const displayName = isEn ? artist.artistNameEn : artist.artistName;
             const displayYears = isEn ? artist.yearsEn : artist.yearsKo;
@@ -92,7 +92,7 @@ export default async function MasterArtists({ locale }: { locale: string }) {
                       src={coverSrc}
                       alt={isEn ? `${displayName} — representative work` : `${displayName} 대표작`}
                       fill
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 230px"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 190px"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
