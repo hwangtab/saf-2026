@@ -387,10 +387,11 @@ export type Database = {
           edition_type: Database['public']['Enums']['edition_type'] | null;
           id: string;
           images: string[] | null;
-          tone: string[] | null;
           is_hidden: boolean | null;
           material: string | null;
           price: string | null;
+          quote: string | null;
+          quote_en: string | null;
           shop_url: string | null;
           size: string | null;
           sold_at: string | null;
@@ -398,8 +399,7 @@ export type Database = {
           tax_type: string;
           title: string;
           title_en: string | null;
-          quote: string | null;
-          quote_en: string | null;
+          tone: string[] | null;
           updated_at: string | null;
           year: string | null;
         };
@@ -415,10 +415,11 @@ export type Database = {
           edition_type?: Database['public']['Enums']['edition_type'] | null;
           id?: string;
           images?: string[] | null;
-          tone?: string[] | null;
           is_hidden?: boolean | null;
           material?: string | null;
           price?: string | null;
+          quote?: string | null;
+          quote_en?: string | null;
           shop_url?: string | null;
           size?: string | null;
           sold_at?: string | null;
@@ -426,8 +427,7 @@ export type Database = {
           tax_type?: string;
           title: string;
           title_en?: string | null;
-          quote?: string | null;
-          quote_en?: string | null;
+          tone?: string[] | null;
           updated_at?: string | null;
           year?: string | null;
         };
@@ -443,10 +443,11 @@ export type Database = {
           edition_type?: Database['public']['Enums']['edition_type'] | null;
           id?: string;
           images?: string[] | null;
-          tone?: string[] | null;
           is_hidden?: boolean | null;
           material?: string | null;
           price?: string | null;
+          quote?: string | null;
+          quote_en?: string | null;
           shop_url?: string | null;
           size?: string | null;
           sold_at?: string | null;
@@ -454,8 +455,7 @@ export type Database = {
           tax_type?: string;
           title?: string;
           title_en?: string | null;
-          quote?: string | null;
-          quote_en?: string | null;
+          tone?: string[] | null;
           updated_at?: string | null;
           year?: string | null;
         };
@@ -968,7 +968,7 @@ export type Database = {
       };
       petition_signatures: {
         Row: {
-          agreed_overseas: boolean;
+          agreed_overseas: boolean | null;
           agreed_petition: boolean;
           agreed_privacy: boolean;
           created_at: string;
@@ -990,7 +990,7 @@ export type Database = {
           user_agent: string | null;
         };
         Insert: {
-          agreed_overseas: boolean;
+          agreed_overseas?: boolean | null;
           agreed_petition: boolean;
           agreed_privacy: boolean;
           created_at?: string;
@@ -1012,7 +1012,7 @@ export type Database = {
           user_agent?: string | null;
         };
         Update: {
-          agreed_overseas?: boolean;
+          agreed_overseas?: boolean | null;
           agreed_petition?: boolean;
           agreed_privacy?: boolean;
           created_at?: string;
@@ -1095,30 +1095,36 @@ export type Database = {
       petitions: {
         Row: {
           closed_at: string | null;
+          committee_total: number;
           created_at: string;
           deadline_at: string;
           goal: number;
           is_active: boolean;
+          signature_total: number;
           slug: string;
           title: string;
           updated_at: string;
         };
         Insert: {
           closed_at?: string | null;
+          committee_total?: number;
           created_at?: string;
           deadline_at: string;
           goal?: number;
           is_active?: boolean;
+          signature_total?: number;
           slug: string;
           title: string;
           updated_at?: string;
         };
         Update: {
           closed_at?: string | null;
+          committee_total?: number;
           created_at?: string;
           deadline_at?: string;
           goal?: number;
           is_active?: boolean;
+          signature_total?: number;
           slug?: string;
           title?: string;
           updated_at?: string;
@@ -1361,32 +1367,24 @@ export type Database = {
       };
       wishlists: {
         Row: {
-          id: string;
-          user_id: string;
           artwork_id: string;
           created_at: string;
+          id: string;
+          user_id: string;
         };
         Insert: {
-          id?: string;
-          user_id: string;
           artwork_id: string;
           created_at?: string;
+          id?: string;
+          user_id: string;
         };
         Update: {
-          id?: string;
-          user_id?: string;
           artwork_id?: string;
           created_at?: string;
+          id?: string;
+          user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'wishlists_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
     };
     Views: {
@@ -1556,6 +1554,18 @@ export type Database = {
       };
       get_my_role: { Args: never; Returns: string };
       get_my_status: { Args: never; Returns: string };
+      get_petition_duplicate_signatures: {
+        Args: {
+          p_limit?: number;
+          p_offset?: number;
+          p_search?: string;
+          p_slug: string;
+        };
+        Returns: {
+          rows: Json;
+          total: number;
+        }[];
+      };
       get_petition_region_breakdown: {
         Args: { p_slug: string };
         Returns: {
@@ -1829,6 +1839,16 @@ export type Database = {
           p75_value: number;
           poor_count: number;
           total_events: number;
+        }[];
+      };
+      get_web_vitals_worst_cls_targets: {
+        Args: { days_back?: number; lim?: number; min_samples?: number };
+        Returns: {
+          p75: number;
+          page_path: string;
+          poor_rate: number;
+          samples: number;
+          shift_target: string;
         }[];
       };
       get_web_vitals_worst_pages: {

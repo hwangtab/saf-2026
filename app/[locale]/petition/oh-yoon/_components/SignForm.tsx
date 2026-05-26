@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 import RegionSelect from './RegionSelect';
 import { signPetition } from '@/app/actions/petition';
@@ -31,7 +32,6 @@ export default function SignForm() {
   const [messagePublic, setMessagePublic] = useState(false);
   const [agreedPetition, setAgreedPetition] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
-  const [agreedOverseas, setAgreedOverseas] = useState(false);
 
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SignPetitionResult | null>(null);
@@ -93,7 +93,6 @@ export default function SignForm() {
         messagePublic,
         agreedPetition,
         agreedPrivacy,
-        agreedOverseas,
       });
       setResult(res);
     });
@@ -275,22 +274,15 @@ export default function SignForm() {
         </label>
         {fieldError('agreedPrivacy') && <p className={ERROR_TEXT}>{fieldError('agreedPrivacy')}</p>}
 
-        <label className="flex items-start gap-3 text-sm text-charcoal break-keep cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreedOverseas}
-            onChange={(e) => setAgreedOverseas(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-            required
-          />
-          <span>
-            <strong>{t('formConsentRequired')}</strong> {t('formConsentOverseas')}{' '}
-            <span className="text-charcoal-muted">{t('formOverseasBlurb')}</span>
-          </span>
-        </label>
-        {fieldError('agreedOverseas') && (
-          <p className={ERROR_TEXT}>{fieldError('agreedOverseas')}</p>
-        )}
+        <p className="text-xs text-charcoal-muted break-keep leading-relaxed">
+          {t('formPrivacyPolicyLink')}{' '}
+          <Link
+            href="/privacy"
+            className="underline underline-offset-2 hover:text-primary transition-colors"
+          >
+            {t('formPrivacyPolicyLinkText')}
+          </Link>
+        </p>
       </fieldset>
 
       {/* 결과 메시지 */}

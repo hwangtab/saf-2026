@@ -21,7 +21,6 @@ export interface SignPetitionInput {
   messagePublic: boolean;
   agreedPetition: boolean;
   agreedPrivacy: boolean;
-  agreedOverseas: boolean;
 }
 
 export type SignPetitionResultCode =
@@ -87,9 +86,6 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
   if (!input.agreedPrivacy) {
     errors.agreedPrivacy = '개인정보 수집·이용 동의는 필수입니다.';
   }
-  if (!input.agreedOverseas) {
-    errors.agreedOverseas = '국외 이전 동의는 필수입니다.';
-  }
   if (Object.keys(errors).length > 0) {
     return fail('INVALID_INPUT', '입력을 확인해 주십시오.', errors);
   }
@@ -121,7 +117,6 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
     message_public: input.messagePublic === true && message.length > 0,
     agreed_petition: true,
     agreed_privacy: true,
-    agreed_overseas: true,
     user_agent: meta.userAgent,
     ip: meta.ip,
   };

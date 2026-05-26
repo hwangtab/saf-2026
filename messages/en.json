@@ -1158,8 +1158,8 @@
       "formConsentPetition": "We ask Seoul's next mayor and the Minister of Culture, Sports and Tourism to ensure the safe removal, conservation, and public transfer of Oh Yoon's 1974 Guui-dong mural. — I agree with the above petition and sign it.",
       "formConsentPrivacy": "I consent to the collection and use of personal data.",
       "formPrivacyBlurb": "Items collected: name (legal name), email, phone, region of residence. Purpose: petition tally, transmission to the next Seoul mayor and the Minister of Culture, Sports and Tourism, progress updates (email/phone). Retention: 6 months after petition closes. Collector: Korea Smart Cooperative. Refusal makes participation impossible.",
-      "formConsentOverseas": "I consent to overseas transfer of personal data.",
-      "formOverseasBlurb": "Your signature data is never sold or shared with third parties and is used only for petition operations. Korea Smart Cooperative remains the data controller. Infrastructure partners: Vercel Inc. (US, hosting); Supabase Inc. (US legal entity, storage region: Seoul, South Korea). These partners hold internationally recognized security certifications including SOC 2 and GDPR. Transfer timing/method: HTTPS-encrypted transmission immediately at signing. Transferred items, purpose, and retention match the 《Collection & Use》 consent above (destroyed within 6 months after the petition closes). Refusal makes participation impossible.",
+      "formPrivacyPolicyLink": "Full details including overseas data transfer (Supabase, Vercel, Google) are in our",
+      "formPrivacyPolicyLinkText": "Privacy Policy",
       "formSubmitting": "Submitting…",
       "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close."
     }
