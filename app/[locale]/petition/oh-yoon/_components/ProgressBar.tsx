@@ -106,9 +106,9 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
                 className="absolute inset-y-0 left-0 bg-primary transition-[width] duration-500 ease-out"
                 style={{ width: `${goalPct}%` }}
               />
-              {/* 초과분 success 초록 — "목표를 넘어선" 시각 신호 */}
+              {/* 초과분 sun 노랑 — 목표를 넘어선 강조 */}
               <div
-                className="absolute inset-y-0 bg-success transition-[left] duration-500 ease-out"
+                className="absolute inset-y-0 bg-sun transition-[left] duration-500 ease-out"
                 style={{ left: `${goalPct}%`, right: 0 }}
               />
               {/* 목표선 작대기 */}
