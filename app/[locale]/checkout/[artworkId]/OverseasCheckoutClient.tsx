@@ -184,8 +184,7 @@ export default function OverseasCheckoutClient({
           setSubmitting(false);
           return;
         }
-        window.location.href = `${window.location.origin}/en/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW`;
-        await new Promise(() => {});
+        // 성공 시 서버 액션이 직접 redirect — 이 줄 이후에는 도달하지 않음.
         return;
       }
 

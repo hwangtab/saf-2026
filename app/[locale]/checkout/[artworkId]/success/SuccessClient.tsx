@@ -65,8 +65,19 @@ export default function SuccessClient({ paymentKey, orderId, amount, currency, m
     if (confirmedRef.current) return;
     confirmedRef.current = true;
 
-    // 무통장 계좌이체 흐름은 Toss confirm 호출 없이 바로 안내 페이지 노출
+    // 무통장 계좌이체 흐름은 Toss confirm 호출 없이 바로 안내 페이지 노출.
+    // add_payment_info는 여기서 발화 — success 페이지 진입 = 서버가 awaiting_deposit 검증 완료,
+    // 즉 확정된 주문에만 발화하므로 phantom hit 없음. orderId 가드로 새로고침 중복 방지.
     if (method === 'BANK_TRANSFER') {
+      const bankTransferKey = `add_payment_info_fired_${orderId}`;
+      if (!sessionGet<boolean>(bankTransferKey)) {
+        sessionSet(bankTransferKey, true);
+        trackEvent('add_payment_info', {
+          value: Number(amount),
+          currency,
+          payment_type: 'TRANSFER',
+        });
+      }
       setPageState('bank_transfer');
       return;
     }

@@ -1,6 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { getClientIp } from '@/lib/security/get-client-ip';
@@ -567,7 +568,15 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     }
   })();
 
-  return result;
+  // 서버 액션이 직접 success 페이지로 redirect. window.location.href 풀 리로드 대신
+  // soft navigation이 일어나므로 흰 화면 깜빡임이 없고, 현재 라우트 자동 refresh로 인한
+  // page.tsx reserved-guard 리다이렉트(→ 작품 상세 경유)와의 경쟁도 사라진다.
+  // localePrefix: 'as-needed' — ko 기본 locale은 prefix 없음, en만 /en/.
+  const successPath =
+    buyerLocale === 'en'
+      ? `/en/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW`
+      : `/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+  redirect(successPath);
 }
 
 /**
