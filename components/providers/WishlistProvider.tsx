@@ -49,8 +49,20 @@ export default function WishlistProvider({ children }: { children: React.ReactNo
           data: { subscription },
         } = supabase.auth.onAuthStateChange((event, session) => {
           if (cancelled) return;
-          userIdRef.current = session?.user?.id ?? null;
+          const newUserId = session?.user?.id ?? null;
+          const prevUserId = userIdRef.current;
+          userIdRef.current = newUserId;
+
           if (event === 'SIGNED_OUT') {
+            clearWishlist();
+            setState((prev) => ({ ...prev, ids: [] }));
+            return;
+          }
+
+          // 이미 다른 계정으로 로그인된 상태에서 신원이 바뀐 경우,
+          // 이전 사용자의 로컬 찜이 새 사용자 DB로 병합되지 않도록 비운다.
+          // (prevUserId === null인 첫 로그인은 게스트 찜을 본인 것으로 병합하므로 보존)
+          if (event === 'SIGNED_IN' && prevUserId !== null && prevUserId !== newUserId) {
             clearWishlist();
             setState((prev) => ({ ...prev, ids: [] }));
           }

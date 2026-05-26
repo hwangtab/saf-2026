@@ -659,13 +659,14 @@ export async function confirmDeposit(orderId: string) {
         주문번호: order.order_no,
         주문ID: orderId,
         에러: salesError.message,
-        참고: '입금 확인 완료, 판매 기록만 누락 — 수동 확인 필요',
+        참고: '주문은 paid 처리됨 — 판매 기록 수동 생성 필요',
       });
+      throw new Error(
+        '입금은 확인되었으나 판매 기록 생성에 실패했습니다. 작품 판매 상태가 갱신되지 않았으니 수동 확인이 필요합니다.'
+      );
     }
 
-    if (!salesError) {
-      await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
-    }
+    await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
   }
 
   // 3. 관리자 + 구매자 입금 확인 이메일 발송 (fire-and-forget)

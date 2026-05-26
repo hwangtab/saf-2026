@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { getWishlist, removeFromWishlist as removeLocal } from '@/lib/wishlist';
@@ -21,6 +22,7 @@ export default function WishlistTab({
   emptyMessage,
   browseLabel,
 }: WishlistTabProps) {
+  const t = useTranslations('wishlist');
   const [ids, setIds] = useState<string[]>(initialWishlistIds);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,7 +133,7 @@ export default function WishlistTab({
           <button
             onClick={() => handleRemove(artwork.id)}
             disabled={removing === artwork.id}
-            aria-label="찜 해제"
+            aria-label={t('removeAria', { title: artwork.title })}
             className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm
                        opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity
                        disabled:opacity-40 hover:bg-danger/10"
