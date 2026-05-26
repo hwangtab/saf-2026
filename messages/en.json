@@ -1001,7 +1001,7 @@
       "heroSubtitle": "A citizens' petition to Seoul's next mayor and the Minister of Culture, Sports and Tourism",
       "heroDeadlineLine": "Gathering 10,000 names — now",
       "heroCta": "Sign now",
-      "heroProgressLabel": "{current} of {goal}",
+      "heroProgressLabel": "{current}",
       "heroProgressLoading": "Loading count…",
       "heroProgressRegions": "{count}/17 regions",
       "heroProgressRecent24h": "{count} in last 24h",

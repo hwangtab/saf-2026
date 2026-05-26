@@ -1001,7 +1001,7 @@
       "heroSubtitle": "차기 서울시장과 문화체육관광부 장관께 드리는 시민 청원",
       "heroDeadlineLine": "지금, 1만 명의 이름을 모읍니다",
       "heroCta": "지금 서명하기",
-      "heroProgressLabel": "현재 {current}명 / 목표 {goal}명",
+      "heroProgressLabel": "현재 {current}명",
       "heroProgressLoading": "집계 불러오는 중…",
       "heroProgressRegions": "참여 시·도 {count}/17",
       "heroProgressRecent24h": "24h 신규 {count}명",

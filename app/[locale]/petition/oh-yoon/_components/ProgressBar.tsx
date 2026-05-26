@@ -84,10 +84,7 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
     <div className="w-full max-w-md mx-auto">
       <div className="flex items-baseline justify-between mb-2 text-sm">
         <span className="font-semibold tabular-nums">
-          {t('heroProgressLabel', {
-            current: total.toLocaleString('ko-KR'),
-            goal: goal.toLocaleString('ko-KR'),
-          })}
+          {t('heroProgressLabel', { current: total.toLocaleString('ko-KR') })}
         </span>
         <span className="tabular-nums opacity-80">{percent}%</span>
       </div>
@@ -98,10 +95,7 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
           aria-valuenow={total}
           aria-valuemin={0}
           aria-valuemax={goal}
-          aria-label={t('heroProgressLabel', {
-            current: total.toLocaleString('ko-KR'),
-            goal: goal.toLocaleString('ko-KR'),
-          })}
+          aria-label={t('heroProgressLabel', { current: total.toLocaleString('ko-KR') })}
         >
           <div
             className={`h-full transition-[width,background-color] duration-500 ease-out ${
