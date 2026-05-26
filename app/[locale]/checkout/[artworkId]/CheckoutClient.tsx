@@ -58,6 +58,8 @@ interface Props {
   displayPrice: string;
   imageUrl: string;
   clientKey: string;
+  prefillName?: string;
+  prefillEmail?: string;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
@@ -105,6 +107,8 @@ export default function CheckoutClient({
   displayPrice,
   imageUrl,
   clientKey,
+  prefillName,
+  prefillEmail,
 }: Props) {
   const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
@@ -291,7 +295,10 @@ export default function CheckoutClient({
 
         {/* Buyer / shipping form */}
         <div className="mb-6">
-          <BuyerInfoForm ref={buyerInfoRef} />
+          <BuyerInfoForm
+            ref={buyerInfoRef}
+            initialBuyer={{ name: prefillName, email: prefillEmail }}
+          />
         </div>
 
         {/* Price breakdown */}

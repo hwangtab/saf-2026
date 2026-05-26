@@ -16,6 +16,7 @@ import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getClientIp } from '@/lib/security/get-client-ip';
 import { logBuyerAction } from './activity-log-writer';
+import { createSupabaseServerClient } from '@/lib/auth/server';
 
 export type PublicOrderListItem = {
   orderNo: string;
@@ -192,6 +193,7 @@ export async function lookupOrderDetail(
       shipping_carrier,
       tracking_number,
       buyer_email,
+      buyer_user_id,
       artworks (
         title,
         images,
@@ -208,7 +210,13 @@ export async function lookupOrderDetail(
     return { success: false, error: 'NOT_FOUND' };
   }
 
-  if (order.buyer_email?.toLowerCase() !== trimmedEmail) {
+  const sessionClient = await createSupabaseServerClient();
+  const {
+    data: { user: sessionUser },
+  } = await sessionClient.auth.getUser();
+  const isOwner = !!sessionUser && order.buyer_user_id === sessionUser.id;
+
+  if (!isOwner && order.buyer_email?.toLowerCase() !== trimmedEmail) {
     return { success: false, error: 'NOT_FOUND' };
   }
 
@@ -327,12 +335,19 @@ export async function updateBuyerShipping(
 
   const { data: order, error } = await adminClient
     .from('orders')
-    .select('id, status, buyer_email')
+    .select('id, status, buyer_email, buyer_user_id')
     .eq('order_no', trimmedOrderNo)
     .maybeSingle();
 
   if (error || !order) return { success: false, error: 'NOT_FOUND' };
-  if (order.buyer_email?.toLowerCase() !== trimmedEmail)
+
+  const sessionClientShipping = await createSupabaseServerClient();
+  const {
+    data: { user: sessionUserShipping },
+  } = await sessionClientShipping.auth.getUser();
+  const isOwnerShipping = !!sessionUserShipping && order.buyer_user_id === sessionUserShipping.id;
+
+  if (!isOwnerShipping && order.buyer_email?.toLowerCase() !== trimmedEmail)
     return { success: false, error: 'NOT_FOUND' };
   if (!['paid', 'preparing'].includes(order.status)) {
     return { success: false, error: 'INVALID_STATUS' };
@@ -384,12 +399,21 @@ export async function cancelBuyerOrder(
 
   const { data: order, error } = await adminClient
     .from('orders')
-    .select('id, order_no, status, total_amount, artwork_id, buyer_email, buyer_name, metadata')
+    .select(
+      'id, order_no, status, total_amount, artwork_id, buyer_email, buyer_user_id, buyer_name, metadata'
+    )
     .eq('order_no', trimmedOrderNo)
     .maybeSingle();
 
   if (error || !order) return { success: false, error: 'NOT_FOUND' };
-  if (order.buyer_email?.toLowerCase() !== trimmedEmail)
+
+  const sessionClientCancel = await createSupabaseServerClient();
+  const {
+    data: { user: sessionUserCancel },
+  } = await sessionClientCancel.auth.getUser();
+  const isOwnerCancel = !!sessionUserCancel && order.buyer_user_id === sessionUserCancel.id;
+
+  if (!isOwnerCancel && order.buyer_email?.toLowerCase() !== trimmedEmail)
     return { success: false, error: 'NOT_FOUND' };
   if (order.status !== 'paid') {
     return { success: false, error: 'INVALID_STATUS' };

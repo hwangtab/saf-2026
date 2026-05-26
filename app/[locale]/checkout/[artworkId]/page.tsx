@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
-import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { getPaymentMode, getTossDomesticClientKey } from '@/lib/integrations/toss/config';
 import { parsePrice } from '@/lib/parsePrice';
 import { formatPriceForDisplay, resolveArtworkImageUrl } from '@/lib/utils';
@@ -34,6 +34,12 @@ export default async function CheckoutPage({ params }: Props) {
   }
 
   const adminClient = createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const prefillName = user?.user_metadata?.name ?? '';
+  const prefillEmail = user?.email ?? '';
 
   const { data: artwork, error } = await adminClient
     .from('artworks')
@@ -95,6 +101,8 @@ export default async function CheckoutPage({ params }: Props) {
         displayPrice={displayPrice}
         imageUrl={imageUrl}
         clientKey={clientKey}
+        prefillName={prefillName}
+        prefillEmail={prefillEmail}
       />
     );
   }
@@ -108,6 +116,8 @@ export default async function CheckoutPage({ params }: Props) {
       displayPrice={displayPrice}
       imageUrl={imageUrl}
       clientKey={clientKey}
+      prefillName={prefillName}
+      prefillEmail={prefillEmail}
     />
   );
 }

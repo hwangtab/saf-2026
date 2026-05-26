@@ -89,7 +89,10 @@ function FieldError({ msg, id }: { msg: string | undefined; id: string }) {
   );
 }
 
-const BuyerInfoForm = forwardRef<BuyerInfoHandle, object>((_props, ref) => {
+const BuyerInfoForm = forwardRef<
+  BuyerInfoHandle,
+  { initialBuyer?: { name?: string; email?: string } }
+>(({ initialBuyer }, ref) => {
   const t = useTranslations('checkout');
   const locale = useLocale();
   const langAttr = locale === 'ko' ? 'ko' : 'en';
@@ -98,8 +101,8 @@ const BuyerInfoForm = forwardRef<BuyerInfoHandle, object>((_props, ref) => {
   const detailRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormState>({
-    buyerName: '',
-    buyerEmail: '',
+    buyerName: initialBuyer?.name ?? '',
+    buyerEmail: initialBuyer?.email ?? '',
     buyerPhone: '',
     shippingName: '',
     shippingPhone: '',

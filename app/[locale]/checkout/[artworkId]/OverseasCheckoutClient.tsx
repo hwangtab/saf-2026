@@ -96,6 +96,8 @@ interface Props {
   displayPrice: string;
   imageUrl: string;
   clientKey: string;
+  prefillName?: string;
+  prefillEmail?: string;
 }
 
 /**
@@ -125,6 +127,8 @@ export default function OverseasCheckoutClient({
   displayPrice,
   imageUrl,
   clientKey,
+  prefillName,
+  prefillEmail,
 }: Props) {
   const t = useTranslations('checkout');
   const shippingFee = calculateShippingFee(price);
@@ -317,7 +321,10 @@ export default function OverseasCheckoutClient({
 
         {/* Buyer / shipping form */}
         <div className="mb-6">
-          <BuyerInfoForm ref={buyerInfoRef} />
+          <BuyerInfoForm
+            ref={buyerInfoRef}
+            initialBuyer={{ name: prefillName, email: prefillEmail }}
+          />
         </div>
 
         {/* Price breakdown — KRW lines + USD final (PayPal 결제 시 USD로 청구) */}
