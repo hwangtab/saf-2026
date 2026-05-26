@@ -1,5 +1,195 @@
 [
   {
+    "hash": "ee9e82eb",
+    "type": "fix",
+    "scope": "changelog",
+    "subject": "히어로 배경 이미지 추가",
+    "summary": "/changelog PageHero에 hero/6.jpg 큐레이션 이미지 적용",
+    "body": null,
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "f54ad7fa",
+    "type": "feat",
+    "scope": "changelog",
+    "subject": "개발 이력 공개 페이지 /changelog 신설",
+    "summary": "관리자 전용이던 개발 이력을 \"업데이트 소식\"으로 일반 공개. 헤더 소개 그룹·푸터 탐색에 진입점 추가.",
+    "body": "- lib/changelog.ts 추출: TYPE_CONFIG·SCOPE_KO·순수 함수 admin·공개 공유\n- lib/changelog-data.ts: loadChangelog(fs) + toPublicEntries() 서버 전용\n- app/[locale]/changelog/page.tsx: force-static SSG, EN noindex\n- changelog-feed.tsx: 종류 필터 pill + 30건 더 보기, 브랜드 토큰만 사용\n- hero-routes.ts: /changelog 헤더 투명화 등록\n- 헤더 소개 그룹·푸터 Explore·sitemap에 /changelog 추가",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "dfc58897",
+    "type": "fix",
+    "scope": "header",
+    "subject": "데스크톱 드롭다운 클릭 후 안 닫히는 버그 수정",
+    "summary": "하위 메뉴 항목 클릭 시 dismissed state로 즉시 숨김, onMouseLeave 시 리셋",
+    "body": "- DesktopNavItem 컴포넌트 분리 (dismissed 로컬 state 도입)\n- 하위·부모 NavLink onClick에 handleDismiss 연결 + blur() 포커스 해제\n- dismissed=true → group-hover 무시하고 강제 invisible\n- onMouseLeave → dismissed 리셋 (다음 hover 정상 동작)",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "96e36bc8",
+    "type": "fix",
+    "scope": "master-artists",
+    "subject": "거장 섹션 데스크탑 6열로 변경",
+    "summary": "신학철 추가(6명)로 5+1 줄바꿈 발생 → lg:grid-cols-6 한 줄 정렬로 교체",
+    "body": null,
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "c84c9f61",
+    "type": "fix",
+    "scope": "copy,master-artists",
+    "subject": "홈·푸터 카피 개선 + 신학철 거장 라인업 복원",
+    "summary": "\"신진 작가 발견\" 프레이밍 교체, 푸터 거장 라벨 → 특별전 프레임, 신학철 라인업 복원",
+    "body": "- home.emergingArtists: \"신진 작가 발견\" → \"먼저 발견하는 작품\"\n  작가 라벨링·\"미디어 노출 적다\" 약점 프레이밍 제거, 컬렉터 안목 시선으로 전환\n- footer.masterArtists: \"한국 현대미술 거장\" → \"지금 만나는 특별전\"\n  링크 목적(오윤·박생광 특별전 직링크)에 맞게 라벨 교체\n- lib/master-artists.ts: 신학철 MASTER_ARTISTS 배열 복원 (6명, 매뉴얼 원안)\n  DB 확인 결과 총 13점 중 3점 is_hidden=false·available 상태 확인",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "6e69caba",
+    "type": "fix",
+    "scope": "petition,wishlist",
+    "subject": "청원 개인정보 링크 로케일 누출·위시리스트 입력 검증 추가",
+    "summary": "영문 방문자가 청원 서명폼의 개인정보 링크 클릭 시 한국어 페이지로 떨어지는 버그,",
+    "body": "위시리스트 bulk 추가에 길이 상한·dedup·numeric 포맷 검증 없어 garbage row 삽입 가능한 버그 수정\n\n- SignForm.tsx: next/link → @/i18n/navigation Link (로케일 prefix 자동 적용)\n- mypage.ts: isValidArtworkId (numeric string, 길이≤12) + MAX_WISHLIST_BATCH(200) 상한\n  addToWishlist에 단건 id 검증, bulkAddToWishlist에 dedup·상한·garbage 필터 추가",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "0144682e",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "가상계좌 결제 시 작품 상세 깜빡임·경유 버그 수정",
+    "summary": "createBankTransferOrder 서버 액션이 success 페이지로 직접 redirect하도록 변경해 작품 상세 경유 및 흰 화면 깜빡임 제거",
+    "body": "근본 원인: TRANSFER는 결제 전에 작품을 reserved로 변경 →\n서버 액션 완료 후 Next.js 자동 route refresh가 page.tsx의\nreserved 가드를 발동해 /artworks/[id]로 SPA 이동 (깜빡임).\n카드/간편결제는 createOrder가 작품 상태를 건드리지 않으므로\n이 문제가 발생하지 않음.\n\n수정 내용:\n- checkout.ts: createBankTransferOrder가 성공 시 locale 별\n  /checkout/[id]/success 또는 /en/checkout/[id]/success로 redirect.\n  서버 액션 redirect는 route 자동 refresh를 대체하므로 경쟁 없음.\n- CheckoutClient.tsx: 클라이언트 window.location.href 제거\n- OverseasCheckoutClient.tsx: 동일 처리\n- SuccessClient.tsx: BANK_TRANSFER 분기에 orderId 가드된\n  add_payment_info GA 이벤트 발화 (서버 검증 후 확정 주문만)",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "15eeffd1",
+    "type": "fix",
+    "scope": "wishlist,admin",
+    "subject": "위시리스트 교차 계정 누수·입금확인 무음 실패·aria-label i18n 수정",
+    "summary": "공용 기기에서 계정 전환 시 이전 사용자 찜이 새 계정 DB로 병합되는 버그,",
+    "body": "입금 확인 시 artwork_sales INSERT 실패를 무시해 작품이 오버셀 가능한 버그,\n  WishlistTab 삭제 버튼 aria-label 한국어 하드코딩을 각각 수정\n\n- WishlistProvider: SIGNED_IN 시 prevUserId !== null && prevUserId !== newUserId이면\n  clearWishlist() — 게스트 첫 로그인은 그대로 병합, 계정 전환만 차단\n- admin-orders confirmDeposit: salesError 시 throw — 관리자 UI에 명시적 실패 노출\n- WishlistTab: aria-label 하드코딩 한국어 → t('removeAria', { title })",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "b3952362",
+    "type": "fix",
+    "scope": "multi",
+    "subject": "회원가입·구매·아티스트·출품자 플로우 버그 8건 수정",
+    "summary": "소셜 로그인 이메일 없는 계정 주문 조회 불가, 배송지 우편번호 미저장, 마이페이지 pending_payment 노출, 상태 라벨 누락, open redirect, locale prefix 누락 등 플로우 전반 버그 수정",
+    "body": "- order-lookup: lookupOrderDetail·updateBuyerShipping·cancelBuyerOrder에서 session 사용자 fetch를 이메일 유효성 검사 앞으로 이동 → 소셜 로그인(이메일 없음) 계정이 buyer_user_id 오너십으로 주문 조회·수정·취소 가능\n- order-lookup: OrderPublicInfo에 shippingPostalCode 추가, updateBuyerShipping에 postal_code 업데이트 지원 (NOT NULL 컬럼이므로 값 있을 때만 갱신)\n- OrderLookup: 배송지 수정 폼에 우편번호 필드 추가\n- mypage/page.tsx: 주문 목록 쿼리에 .neq('status','pending_payment') 필터 추가\n- OrdersTab: statusLabels에 awaiting_deposit·pending_payment·preparing·completed 추가\n- ko/en i18n: mypage orders.status 누락 키 추가, orderLookup shippingPostalCode 키 추가\n- login/page.tsx: redirectAfterLogin 검증을 sanitizeInternalPath로 교체 → //evil.com open redirect 차단\n- ArtistApplyTab: href=\"/onboarding\" → useRouter from @/i18n/navigation → en locale에서 /en/onboarding으로 올바르게 이동\n- artwork.ts: updateArtwork에서 beforeArtwork null 체크 추가 → 존재하지 않는 id에 잘못된 성공 redirect 방지\n- AuthButtons: exhibitor 역할에 pending/suspended status 분기 추가 → 불필요한 이중 redirect 제거\n- dashboard-nav·exhibitor-nav: navItemsByLocale에 ko fallback 추가 → 예외 locale에서 undefined.map 오류 방지",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "c041bd66",
+    "type": "feat",
+    "scope": "orders",
+    "subject": "무통장 입금대기 주문 구매자 셀프 취소 허용",
+    "summary": "awaiting_deposit 상태 주문도 구매자가 직접 취소할 수 있도록 cancelBuyerOrder에 분기 추가 — 입금 전이라 Toss 환불·sale void 없이 주문 cancelled + 작품 reserved→available 복원",
+    "body": "- cancelBuyerOrder 가드를 paid|awaiting_deposit 허용으로 완화\n- awaiting_deposit: 낙관적 잠금 업데이트, 작품 직접 복원, auto_cancelled 이메일, audit log 후 early return\n- canCancel에 awaiting_deposit 포함 (OrderLookup.tsx)\n- 입금대기 취소 모달 문구: \"환불\" 대신 \"예약 해제\" 로 분기 (cancelOrderDescriptionAwaiting, cancelOrderAwaiting)\n- paid 경로(Toss 환불 + sale void) 변경 없음",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "d7b8e50a",
+    "type": "fix",
+    "scope": "orders,nav",
+    "subject": "exhibitor-nav locale 링크 버그 + 소셜 로그인 주문 조회 차단 수정",
+    "summary": "exhibitor-nav plain next/link → next-intl Link 교체(en locale 보존), 이메일 없는 로그인 사용자도 orderNo 자동 조회 허용",
+    "body": "- exhibitor-nav: next/link → @/i18n/navigation Link·usePathname 교체\n  (en exhibitor \"내 주문\" 클릭 시 /en/mypage로 올바르게 이동)\n- orders/page.tsx: orderNo + user?.email → orderNo + user 조건으로 완화\n  isOwner bypass 덕에 이메일 없어도 buyer_user_id 소유권으로 자동 조회",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "182ca39c",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "퍼센트 100% 캡 제거 — 목표 초과 시 실제 비율 표시",
+    "summary": "percent를 ratio(Math.min 캡) 기준 대신 total/goal 그대로 계산, 1만 초과 시 113% 등 실값 노출",
+    "body": null,
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "1d88878b",
+    "type": "feat",
+    "scope": "mypage",
+    "subject": "비-컬렉터 계정의 구매 내역 동선 정비",
+    "summary": "artist/exhibitor 포털 nav에 내 주문 링크 추가, mypage 작가등록 탭을 컬렉터(user) 역할에만 노출",
+    "body": "- artist 대시보드·exhibitor 포털 nav에 \"내 주문\" → /mypage 링크 추가\n- /mypage의 \"작가 등록\" 탭을 role === 'user'(컬렉터)에만 노출, 그 외 역할은 숨김\n- ?tab=artist-apply 직접 접근 시 비-컬렉터는 orders 탭으로 fallback\n- profile role 조회를 Promise.all에 통합(쿼리 1회 추가)",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "ab515df7",
+    "type": "fix",
+    "scope": "infra",
+    "subject": "라이브 서울 DB 동기화 복구 — 청원 재개 + CLAUDE.md project_id 갱신",
+    "summary": "Supabase 서울 이전(05-22) 후 CLAUDE.md의 project_id가 구 뭄바이(vqejnuntjnxzpgwfndtv)로",
+    "body": "남아 있어 청원 관련 마이그레이션 3건이 죽은 DB로 오적용됨. 라이브 청원이 05-26 자정에\n마감됐고 국외 이전 RPC 수정도 누락된 상태를 복구.\n\n- 20260526120000_petition_drop_overseas_consent: 라이브 서울 DB에 재적용 (agreed_overseas\n  NOT NULL·CHECK 해제 + sign_petition RPC 갱신)\n- 20260526130000_petition_reopen_oh_yoon (신규): deadline_at=2099, is_active=true,\n  closed_at=NULL — 무기한 재개. 기존 remove_deadline 마이그레이션의 closed_at IS NULL\n  가드 우회.\n- CLAUDE.md: project_id vqejnuntjnxzpgwfndtv → khtunrybrzntlnowlahb (서울, 라이브)로 교체,\n  구 프로젝트 재사용 금지 경고 추가\n- types/supabase.ts: 라이브 서울 DB 기준으로 재생성",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "d572ba2e",
+    "type": "feat",
+    "scope": "orders",
+    "subject": "로그인 사용자 /orders 진입 시 마이페이지로 redirect",
+    "summary": "로그인 상태로 주문 조회 페이지에 진입하면 수기 폼 없이 마이페이지 주문 탭으로 바로 이동",
+    "body": "- /orders (orderNo 없음) + 로그인 → /mypage redirect (주문 탭 기본 활성)\n- /orders?orderNo=… + 로그인 → 기존대로 상세 inline 표시 유지\n- 비로그인 게스트 → 기존 수기 폼 (이름·이메일·전화) 유지, 회귀 없음\n- @/i18n/navigation redirect 사용으로 en locale 보존 (as-needed prefix)\n- supabase getUser() 호출을 함수 상단으로 통합 (redirect + orderNo 조회 재사용)",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "aa9d2d2b",
+    "type": "fix",
+    "scope": "petition",
+    "subject": "목표선 라벨 '목표' 접두사 제거 + 초과분 막대 색 노랑으로 변경",
+    "summary": "목표선 라벨을 '10,000명'으로 단순화, 초과분 segment를 bg-success(초록) → bg-sun(노랑)으로 변경해 가시성 개선",
+    "body": null,
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "2b831689",
+    "type": "feat",
+    "scope": "checkout",
+    "subject": "로그인 회원 구매 정보 자동 채움 + 이메일 불일치 주문 조회 보완",
+    "summary": "로그인 회원의 체크아웃 폼에 이름·이메일 자동 입력, buyer_user_id 소유권으로 이메일 불일치 주문도 조회·수정·취소 가능",
+    "body": "- BuyerInfoForm: initialBuyer prop 추가, buyerName/buyerEmail 초기값 세팅\n- CheckoutClient, OverseasCheckoutClient: prefillName/prefillEmail props 수신 → BuyerInfoForm 전달\n- checkout page.tsx: createSupabaseServerClient로 세션 조회, user_metadata.name + email prefill\n- order-lookup.ts: lookupOrderDetail, updateBuyerShipping, cancelBuyerOrder 세 함수에 buyer_user_id 소유권 우회 추가 — 게스트는 기존 이메일 일치 검사 유지",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "66339836",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "프로그레스 바에 1만 목표선 작대기 표기",
+    "summary": "초과 상태일 때 막대를 현재 총합 스케일로 전환하고, 1만 지점에 흰 작대기 + '목표 10,000명' 라벨 추가",
+    "body": "- over=true 시 primary(파랑, 0→1만) + success(초록, 1만→현재) 2색 분할\n- 목표선 위치(goalPct %)에 흰 세로 작대기 렌더 (w-0.5 bg-white/80)\n- 작대기 왼쪽에 '목표 {goal}명' 라벨 — invisible로 height 항상 예약해 CLS 방지\n- 기존 우측 흰 \"+N명\" 배지 제거 (초록 segment로 대체)\n- aria-valuemax를 over 시 total로 조정 (valuenow > valuemax 방지)\n- heroProgressExcessBadge → heroProgressGoalMarker로 i18n 키 교체 (ko/en)",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "4efad076",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "국외 이전 별도 동의 제거 → 처리방침 공개 모델 전환",
+    "summary": "개인정보보호법 제28조의8 ①항 제3호에 따라 서비스 이용 계약의 체결·이행에",
+    "body": "필요한 처리위탁·보관이면 처리방침 공개만으로 충분하므로, 국외 이전 동의 체크박스를\n청원 폼에서 제거하고 개인정보처리방침 제7조를 법정 5개 항목으로 보강함\n\n- SignForm.tsx: agreedOverseas state·payload·체크박스 UI 제거, 처리방침 링크 추가\n- petition.ts: SignPetitionInput agreedOverseas 필드·검증·RPC payload 제거\n- legal-documents.ts: 제7조 6열 테이블(연락처·시기·방법 포함) + 거부 방법 subsection,\n  처리방침 버전 v3·시행일 2026-05-26 갱신 (lib/constants.ts PRIVACY_POLICY_VERSION 유지)\n- messages/ko.json, en.json: formConsentOverseas·formOverseasBlurb 제거,\n  formPrivacyPolicyLink·formPrivacyPolicyLinkText 추가\n- supabase/migrations/20260526120000: agreed_overseas NOT NULL·CHECK 제거,\n  sign_petition RPC 재정의 (agreed_overseas INSERT 라인 제거) — 이미 production 적용 완료\n- types/supabase.ts: agreed_overseas boolean | null 재생성",
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
     "hash": "1147b6c4",
     "type": "fix",
     "scope": "auth",
