@@ -102,6 +102,9 @@ jest.mock('@/lib/auth/server', () => ({
       }),
     };
   }),
+  createSupabaseServerClient: jest.fn(async () => ({
+    auth: { getUser: jest.fn(async () => ({ data: { user: null }, error: null })) },
+  })),
 }));
 
 function createOrdersMock() {

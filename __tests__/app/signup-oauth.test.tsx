@@ -81,6 +81,8 @@ describe('SignUpPage OAuth', () => {
       expect(mockFetch).toHaveBeenCalledWith('/api/auth/oauth/state', {
         method: 'POST',
         cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'collector' }),
       });
       expect(mockSignInWithOAuth).toHaveBeenCalledWith({
         provider: 'google',
