@@ -2,7 +2,13 @@
 
 import { createSupabaseServerClient } from '@/lib/auth/server';
 
+const MAX_WISHLIST_BATCH = 200;
+const isValidArtworkId = (id: unknown): id is string =>
+  typeof id === 'string' && /^\d+$/.test(id) && id.length <= 12;
+
 export async function addToWishlist(artworkId: string): Promise<{ error?: string }> {
+  if (!isValidArtworkId(artworkId)) return { error: 'invalid_id' };
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -37,7 +43,9 @@ export async function removeFromWishlist(artworkId: string): Promise<{ error?: s
 }
 
 export async function bulkAddToWishlist(artworkIds: string[]): Promise<{ error?: string }> {
-  if (artworkIds.length === 0) return {};
+  const validIds = [...new Set(artworkIds.filter(isValidArtworkId))];
+  if (validIds.length === 0) return {};
+  if (validIds.length > MAX_WISHLIST_BATCH) return { error: 'too_many' };
 
   const supabase = await createSupabaseServerClient();
   const {
@@ -46,7 +54,7 @@ export async function bulkAddToWishlist(artworkIds: string[]): Promise<{ error?:
 
   if (!user) return { error: 'unauthenticated' };
 
-  const rows = artworkIds.map((artwork_id) => ({ user_id: user.id, artwork_id }));
+  const rows = validIds.map((artwork_id) => ({ user_id: user.id, artwork_id }));
   const { error } = await supabase
     .from('wishlists')
     .upsert(rows, { onConflict: 'user_id,artwork_id' });
