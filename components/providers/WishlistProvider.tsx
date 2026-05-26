@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { getWishlist, toggleWishlist as toggleUtil } from '@/lib/wishlist';
+import { clearWishlist, getWishlist, toggleWishlist as toggleUtil } from '@/lib/wishlist';
 
 interface WishlistContextValue {
   ids: string[];
@@ -47,9 +47,12 @@ export default function WishlistProvider({ children }: { children: React.ReactNo
         const supabase = createSupabaseBrowserClient();
         const {
           data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-          if (!cancelled) {
-            userIdRef.current = session?.user?.id ?? null;
+        } = supabase.auth.onAuthStateChange((event, session) => {
+          if (cancelled) return;
+          userIdRef.current = session?.user?.id ?? null;
+          if (event === 'SIGNED_OUT') {
+            clearWishlist();
+            setState((prev) => ({ ...prev, ids: [] }));
           }
         });
         unsubscribe = () => subscription.unsubscribe();

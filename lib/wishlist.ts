@@ -31,3 +31,8 @@ export function toggleWishlist(artworkId: string): { ids: string[]; added: boole
   }
   return { ids: addToWishlist(artworkId), added: true };
 }
+
+export function clearWishlist(): string[] {
+  storageSet(WISHLIST_KEY, []);
+  return [];
+}
