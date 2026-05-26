@@ -47,11 +47,11 @@ export default async function OrdersPage({
   let initialOrderDetail: OrderPublicInfo | null = null;
   let initialBuyerEmail: string | null = null;
 
-  if (orderNo && user?.email) {
-    const result = await lookupOrderDetail(orderNo, user.email);
+  if (orderNo && user) {
+    const result = await lookupOrderDetail(orderNo, user.email ?? '');
     if (result.success) {
       initialOrderDetail = result.order;
-      initialBuyerEmail = user.email;
+      initialBuyerEmail = user.email ?? null;
     }
   }
 
