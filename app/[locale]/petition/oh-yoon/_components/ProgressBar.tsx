@@ -70,15 +70,17 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
     };
   }, [pollIntervalMs]);
 
+  // 목표 초과 시 막대 스케일을 현재 총합으로 전환해 목표선(작대기)을 막대 안에 표기.
+  // 초과 전에는 기존 동작 유지 — 단일 fill, primary→success 전환.
+  const over = total > goal;
   const ratio = Math.min(1, total / goal);
   const percent = Math.round(ratio * 100);
   // 시각 보정: 1만 명 목표 대비 초기 0~수십 명에서 막대가 거의 안 보이는 무력감 완화.
   // ARIA value(`aria-valuenow`)는 실제 값 그대로, 시각만 floor 적용.
   const visualWidthPct = Math.max(ratio * 100, 1.5);
-  // 1만 도달 시 막대 색이 primary→success로 전환 = "달성" 시각 신호.
-  // 1만 초과 시 막대 우측 끝에 흰 배지 "+N명"으로 초과 수치 표시 — 막대 자체는 100% 가득.
   const achievedGoal = total >= goal;
-  const excess = Math.max(0, total - goal);
+  // 목표선 위치(%) — 초과 시 "goal / total", 미달 시 사용 안 함(라벨 invisible 상태).
+  const goalPct = over ? (goal / total) * 100 : 100;
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -90,25 +92,49 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
       </div>
       <div className="relative">
         <div
-          className="h-3 w-full rounded-full bg-white/20 overflow-hidden"
+          className="h-3 w-full rounded-full bg-white/20 overflow-hidden relative"
           role="progressbar"
           aria-valuenow={total}
           aria-valuemin={0}
-          aria-valuemax={goal}
+          aria-valuemax={over ? total : goal}
           aria-label={t('heroProgressLabel', { current: total.toLocaleString('ko-KR') })}
         >
-          <div
-            className={`h-full transition-[width,background-color] duration-500 ease-out ${
-              achievedGoal ? 'bg-success' : 'bg-primary'
-            }`}
-            style={{ width: `${visualWidthPct}%` }}
-          />
+          {over ? (
+            <>
+              {/* 목표까지 primary 블루 — 미달 막대와 색 연속성 */}
+              <div
+                className="absolute inset-y-0 left-0 bg-primary transition-[width] duration-500 ease-out"
+                style={{ width: `${goalPct}%` }}
+              />
+              {/* 초과분 success 초록 — "목표를 넘어선" 시각 신호 */}
+              <div
+                className="absolute inset-y-0 bg-success transition-[left] duration-500 ease-out"
+                style={{ left: `${goalPct}%`, right: 0 }}
+              />
+              {/* 목표선 작대기 */}
+              <div
+                className="absolute inset-y-0 w-0.5 bg-white/80 transition-[left] duration-500 ease-out"
+                style={{ left: `${goalPct}%` }}
+              />
+            </>
+          ) : (
+            <div
+              className={`h-full transition-[width,background-color] duration-500 ease-out ${
+                achievedGoal ? 'bg-success' : 'bg-primary'
+              }`}
+              style={{ width: `${visualWidthPct}%` }}
+            />
+          )}
         </div>
-        {excess > 0 && (
-          <span className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1 inline-flex items-center bg-white text-charcoal-deep text-[11px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap tabular-nums">
-            {t('heroProgressExcessBadge', { count: excess.toLocaleString('ko-KR') })}
-          </span>
-        )}
+        {/* 목표선 라벨 — 작대기 바로 아래, 작대기에 우측 정렬.
+            invisible로 height 항상 예약(CLS 방지 — 초기 SSR total=0 → over=false 후 true 전환 시). */}
+        <div
+          className={`mt-0.5 text-[11px] font-semibold text-white/90 tabular-nums whitespace-nowrap flex justify-end ${over ? '' : 'invisible'}`}
+          style={{ paddingRight: `${100 - goalPct}%` }}
+          aria-hidden={!over}
+        >
+          {t('heroProgressGoalMarker', { goal: goal.toLocaleString('ko-KR') })}
+        </div>
       </div>
       {/* 보조 지표 — 모멘텀 신호 (PRD §14 OQ-6).
           SSR에서 0으로 내려와 미렌더 → useEffect refresh 후 실값 오면 추가됨
