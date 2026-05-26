@@ -74,7 +74,7 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
   // 초과 전에는 기존 동작 유지 — 단일 fill, primary→success 전환.
   const over = total > goal;
   const ratio = Math.min(1, total / goal);
-  const percent = Math.round(ratio * 100);
+  const percent = Math.round((total / goal) * 100);
   // 시각 보정: 1만 명 목표 대비 초기 0~수십 명에서 막대가 거의 안 보이는 무력감 완화.
   // ARIA value(`aria-valuenow`)는 실제 값 그대로, 시각만 floor 적용.
   const visualWidthPct = Math.max(ratio * 100, 1.5);
