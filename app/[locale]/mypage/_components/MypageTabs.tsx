@@ -42,6 +42,7 @@ interface MypageTabsProps {
   user: { id: string; email: string; name: string };
   initialOrders: Order[];
   initialWishlistIds: string[];
+  showArtistApply: boolean;
   messages: Messages;
 }
 
@@ -49,6 +50,7 @@ export default function MypageTabs({
   user,
   initialOrders,
   initialWishlistIds,
+  showArtistApply,
   messages,
 }: MypageTabsProps) {
   const searchParams = useSearchParams();
@@ -57,7 +59,11 @@ export default function MypageTabs({
 
   const rawTab = searchParams.get('tab');
   const activeTab: Tab =
-    rawTab === 'wishlist' || rawTab === 'profile' || rawTab === 'artist-apply' ? rawTab : 'orders';
+    rawTab === 'wishlist' || rawTab === 'profile'
+      ? rawTab
+      : rawTab === 'artist-apply' && showArtistApply
+        ? 'artist-apply'
+        : 'orders';
 
   const setTab = (tab: Tab) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -69,7 +75,7 @@ export default function MypageTabs({
     { id: 'orders', label: messages.tabOrders },
     { id: 'wishlist', label: messages.tabWishlist },
     { id: 'profile', label: messages.tabProfile },
-    { id: 'artist-apply', label: messages.tabArtistApply },
+    ...(showArtistApply ? [{ id: 'artist-apply' as const, label: messages.tabArtistApply }] : []),
   ];
 
   return (

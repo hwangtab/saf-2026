@@ -32,7 +32,7 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
     redirect('/login?redirectTo=/mypage');
   }
 
-  const [ordersResult, wishlistResult] = await Promise.all([
+  const [ordersResult, wishlistResult, profileResult] = await Promise.all([
     supabase
       .from('orders')
       .select('id, order_no, artwork_id, status, total_amount, created_at, buyer_name')
@@ -44,10 +44,13 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
       .select('artwork_id, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
+    supabase.from('profiles').select('role').eq('id', user.id).maybeSingle(),
   ]);
 
   const orders = ordersResult.data ?? [];
   const wishlistIds = (wishlistResult.data ?? []).map((w) => w.artwork_id);
+  const role = (profileResult.data as { role: string } | null)?.role ?? null;
+  const showArtistApply = role === 'user';
 
   const t = await getTranslations({ locale, namespace: 'mypage' });
 
@@ -56,6 +59,7 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
       user={{ id: user.id, email: user.email ?? '', name: user.user_metadata?.name ?? '' }}
       initialOrders={orders}
       initialWishlistIds={wishlistIds}
+      showArtistApply={showArtistApply}
       messages={{
         title: t('title'),
         tabOrders: t('tabs.orders'),

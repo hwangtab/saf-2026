@@ -8,10 +8,12 @@ const navItemsByLocale = {
   ko: [
     { href: '/dashboard/artworks', label: '작품 관리' },
     { href: '/dashboard/profile', label: '프로필 설정' },
+    { href: '/mypage', label: '내 주문' },
   ],
   en: [
     { href: '/dashboard/artworks', label: 'Artworks' },
     { href: '/dashboard/profile', label: 'Profile Settings' },
+    { href: '/mypage', label: 'My Orders' },
   ],
 } as const;
 

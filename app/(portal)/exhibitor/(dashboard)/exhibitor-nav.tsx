@@ -10,11 +10,13 @@ const navItemsByLocale = {
     { href: '/exhibitor', label: '대시보드' },
     { href: '/exhibitor/artists', label: '작가 관리' },
     { href: '/exhibitor/artworks', label: '작품 관리' },
+    { href: '/mypage', label: '내 주문' },
   ],
   en: [
     { href: '/exhibitor', label: 'Dashboard' },
     { href: '/exhibitor/artists', label: 'Artists' },
     { href: '/exhibitor/artworks', label: 'Artworks' },
+    { href: '/mypage', label: 'My Orders' },
   ],
 } as const;
 
