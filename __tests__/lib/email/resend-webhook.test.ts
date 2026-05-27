@@ -50,9 +50,18 @@ describe('verifyResendWebhook', () => {
 
   it('accepts when one of multiple space-delimited signatures matches', () => {
     const ts = now();
-    const multi = `v1,AAAAwrongAAAA ${sign(SECRET, ID, ts, BODY)}`;
+    const realSig = sign(SECRET, ID, ts, BODY);
+    // craft a wrong sig of the same length — same format, wrong value
+    const wrongSig = 'v1,' + 'A'.repeat(realSig.length - 3);
+    const multi = `${wrongSig} ${realSig}`;
     const h = { svixId: ID, svixTimestamp: ts, svixSignature: multi };
     expect(verifyResendWebhook(BODY, h, SECRET)).toBe(true);
+  });
+
+  it('rejects a future timestamp (replay)', () => {
+    const ts = String(Math.floor(Date.now() / 1000) + 10 * 60);
+    const h = { svixId: ID, svixTimestamp: ts, svixSignature: sign(SECRET, ID, ts, BODY) };
+    expect(verifyResendWebhook(BODY, h, SECRET)).toBe(false);
   });
 });
 
@@ -84,5 +93,8 @@ describe('extractRecipientEmail', () => {
   });
   it('returns null when to is missing', () => {
     expect(extractRecipientEmail({ type: 'email.bounced', data: {} })).toBeNull();
+  });
+  it('returns null for empty array', () => {
+    expect(extractRecipientEmail({ type: 'email.bounced', data: { to: [] } })).toBeNull();
   });
 });

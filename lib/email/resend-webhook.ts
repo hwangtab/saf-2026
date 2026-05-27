@@ -39,7 +39,7 @@ export function verifyResendWebhook(
   const secretBytes = Buffer.from(secret.replace(/^whsec_/, ''), 'base64');
   const signedContent = `${svixId}.${svixTimestamp}.${rawBody}`;
   const expected = crypto.createHmac('sha256', secretBytes).update(signedContent).digest('base64');
-  const expectedBuf = Buffer.from(expected);
+  const expectedBuf = Buffer.from(expected, 'base64');
 
   return svixSignature.split(' ').some((part) => {
     const commaIdx = part.indexOf(',');
@@ -47,7 +47,7 @@ export function verifyResendWebhook(
     const version = part.slice(0, commaIdx);
     const sig = part.slice(commaIdx + 1);
     if (version !== 'v1' || !sig) return false;
-    const sigBuf = Buffer.from(sig);
+    const sigBuf = Buffer.from(sig, 'base64');
     return sigBuf.length === expectedBuf.length && crypto.timingSafeEqual(sigBuf, expectedBuf);
   });
 }
