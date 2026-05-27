@@ -482,7 +482,7 @@ export default async function PetitionOhYoonPage({
 
           <div id="sign-form-anchor" className="mx-auto max-w-2xl">
             {is_active ? (
-              <SignForm />
+              <SignForm url={PAGE_URL} />
             ) : (
               <div className="rounded-xl border border-gray-200 bg-canvas px-6 py-12 text-center">
                 <p className="text-base text-charcoal-deep font-semibold">{t('closedTitle')}</p>

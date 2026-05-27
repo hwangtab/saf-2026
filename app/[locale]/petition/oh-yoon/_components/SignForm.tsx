@@ -5,8 +5,10 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 import RegionSelect from './RegionSelect';
+import ShareTemplates from './ShareTemplates';
 import { signPetition } from '@/app/actions/petition';
 import type { SignPetitionInput, SignPetitionResult } from '@/app/actions/petition';
+import { trackEvent } from '@/lib/analytics/track';
 import Button from '@/components/ui/Button';
 import { ArrowRight } from 'lucide-react';
 
@@ -19,7 +21,7 @@ const LABEL_BASE = 'block text-sm font-semibold text-charcoal-deep mb-1.5';
 
 const ERROR_TEXT = 'mt-1.5 text-sm text-danger';
 
-export default function SignForm() {
+export default function SignForm({ url }: { url: string }) {
   const t = useTranslations('petition.ohYoon');
 
   const [fullName, setFullName] = useState('');
@@ -73,6 +75,12 @@ export default function SignForm() {
         <p className="text-xs font-semibold text-primary-strong break-keep">
           {t('successScrollHint')}
         </p>
+        <div className="mt-6 text-left">
+          <p className="text-sm font-semibold text-charcoal-deep mb-3">
+            {t('successShareHeading')}
+          </p>
+          <ShareTemplates url={url} />
+        </div>
       </div>
     );
   }
@@ -95,6 +103,16 @@ export default function SignForm() {
         agreedPrivacy,
       });
       setResult(res);
+      if (res.ok) {
+        trackEvent('petition_sign', {
+          petition: 'oh-yoon',
+          region_top: regionTop,
+          is_committee: isCommittee,
+          has_message: message.length > 0,
+        });
+      } else if (res.code !== 'INVALID_INPUT') {
+        trackEvent('petition_sign_error', { petition: 'oh-yoon', code: res.code });
+      }
     });
   }
 

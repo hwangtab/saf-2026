@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { ArrowRight } from 'lucide-react';
 import { useKakaoShareSDK } from '@/lib/hooks/useKakaoSDK';
 import { formatPetitionDeadline } from '@/lib/petition/format';
+import { trackEvent } from '@/lib/analytics/track';
 
 interface ShareTemplatesProps {
   url: string;
@@ -75,6 +76,7 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
     void navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(key);
       window.setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 2000);
+      trackEvent('share_click', { channel: key, context: 'petition_oh_yoon', action: 'copy' });
     });
   }
 
@@ -98,7 +100,14 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={tpl.share}
+                  onClick={() => {
+                    tpl.share();
+                    trackEvent('share_click', {
+                      channel: tpl.key,
+                      context: 'petition_oh_yoon',
+                      action: 'open',
+                    });
+                  }}
                   className="rounded-md bg-primary-strong px-2.5 py-0.5 text-[11px] font-semibold text-white hover:bg-primary-strong"
                 >
                   <span className="inline-flex items-center gap-1">
