@@ -129,25 +129,6 @@ export async function requireAdminClient() {
 }
 
 /**
- * Checks if the user has the 'exhibitor' role.
- * Does NOT check for 'active' status.
- * Used for onboarding and pending pages where inactive exhibitors need access.
- */
-export async function requireExhibitorRole() {
-  const { profile, user } = await getCurrentProfile();
-
-  if (profile?.role === 'admin') {
-    return { user, profile, isAdmin: true };
-  }
-
-  if (!profile || profile.role !== 'exhibitor') {
-    redirect('/');
-  }
-
-  return { user, profile, isAdmin: false };
-}
-
-/**
  * Enforces strict access control for exhibitor dashboard.
  * Requires both 'exhibitor' role AND 'active' status.
  * Redirects to onboarding or pending pages if status is not active.

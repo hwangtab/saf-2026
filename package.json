@@ -38,7 +38,8 @@
     "trash:purge:expired:dry": "node scripts/purge-expired-trash.js --dry-run",
     "trash:purge:expired": "node scripts/purge-expired-trash.js",
     "generate-changelog": "node scripts/generate-changelog.js",
-    "sync-artworks": "node scripts/sync-artworks-from-db.js"
+    "sync-artworks": "node scripts/sync-artworks-from-db.js",
+    "knip": "knip"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -107,6 +108,7 @@
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "jiti": "^2.6.1",
+    "knip": "^6.14.2",
     "lint-staged": "^15.0.0",
     "playwright": "^1.59.1",
     "postcss": "^8.4.31",
