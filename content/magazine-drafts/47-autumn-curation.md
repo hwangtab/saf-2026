@@ -262,4 +262,6 @@ A. 의도적 구성입니다. 오윤의 사후 판화가 가을 주제에서 가
 
 가을은 **차곡차곡 쌓는 계절**입니다. 벽에도 덧칠의 두께가 필요합니다. 이 20선 중 한 점이 거실의 색을 한 단계 깊게 만들어주길 바랍니다.
 
+계절의 흐름으로 다음 큐레이션도 살펴보세요: [여름 큐레이션](/stories/summer-curation-saf) · [겨울 큐레이션](/stories/winter-curation-saf) · [100만원 이하 전체](/stories/saf-under-one-million) · [민중미술 입문](/stories/minjung-art-intro)
+
 [씨앗페에서 가을 작품 전체 둘러보기 →](/artworks)

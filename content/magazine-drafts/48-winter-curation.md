@@ -262,4 +262,6 @@ A. 씨앗페 [전체 작품 갤러리](/artworks)에서 "겨울"·"눈"·"단색
 
 겨울은 가장 오래 작품과 함께하는 계절입니다. **말이 적은 한 점**이 이 겨울 내내 당신과 같이 살기를 바랍니다.
 
+계절의 흐름으로 다음 큐레이션도 살펴보세요: [가을 큐레이션](/stories/autumn-curation-saf) · [봄 큐레이션](/stories/spring-curation-saf) · [100만원 이하 전체](/stories/saf-under-one-million) · [단색화 입문](/stories/dansaekhwa-intro)
+
 [씨앗페에서 겨울 작품 전체 둘러보기 →](/artworks)

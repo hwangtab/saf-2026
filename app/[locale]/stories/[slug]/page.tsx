@@ -165,6 +165,12 @@ export default async function StoryDetailPage({ params }: Props) {
     story.category === 'artist-story'
       ? story.tags?.find((tag) => tag.trim().length > 0)?.trim()
       : null;
+  // 작가 태그의 실제 갤러리 보유 여부를 1회 조회 — artist-fallback + 푸터 링크 양쪽에서 재사용.
+  // primaryArtistTag가 없으면 빈 배열로 단락(추가 쿼리 없음).
+  const artistArtworks = primaryArtistTag
+    ? await getSupabaseArtworksByArtist(primaryArtistTag)
+    : [];
+  const artistTagHasArtworks = artistArtworks.length > 0;
   const categoryLabel = isEn
     ? CATEGORY_LABELS_EN[story.category]
     : CATEGORY_LABELS_KO[story.category];
@@ -222,9 +228,8 @@ export default async function StoryDetailPage({ params }: Props) {
   }
 
   if (relatedArtworks.length === 0 && primaryArtistTag) {
-    relatedArtworks = (await getSupabaseArtworksByArtist(primaryArtistTag))
-      .sort(sortAvailableFirst)
-      .slice(0, 3);
+    // artistArtworks는 primaryArtistTag 계산 직후 이미 fetch됨 — 중복 쿼리 없음.
+    relatedArtworks = [...artistArtworks].sort(sortAvailableFirst).slice(0, 3);
     artworksSource = 'artist-fallback';
   }
 
@@ -239,16 +244,20 @@ export default async function StoryDetailPage({ params }: Props) {
 
   const footerLinks = [
     {
-      href: primaryArtistTag
-        ? `/artworks/artist/${encodeURIComponent(primaryArtistTag)}`
-        : '/artworks',
-      label: primaryArtistTag
-        ? isEn
-          ? `View ${primaryArtistTag}'s Artworks`
-          : `${primaryArtistTag}의 작품 보기`
-        : isEn
-          ? 'Browse Artworks'
-          : '작품 보기',
+      // 작가 태그가 실제 갤러리 작품을 보유할 때만 /artworks/artist/{tag}로 링크.
+      // 태그가 작가명이 아닌 경우(예: "컬렉터", "여성 작가") soft-404 방지.
+      href:
+        artistTagHasArtworks && primaryArtistTag
+          ? `/artworks/artist/${encodeURIComponent(primaryArtistTag)}`
+          : '/artworks',
+      label:
+        artistTagHasArtworks && primaryArtistTag
+          ? isEn
+            ? `View ${primaryArtistTag}'s Artworks`
+            : `${primaryArtistTag}의 작품 보기`
+          : isEn
+            ? 'Browse Artworks'
+            : '작품 보기',
     },
     {
       href: `/stories/category/${story.category}`,

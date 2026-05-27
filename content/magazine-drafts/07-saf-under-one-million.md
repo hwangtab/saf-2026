@@ -276,7 +276,7 @@ note_to_editor: |
 
 1. **작품 상세 페이지에서 `edition_type` 확인**
    - `unique`(유일 원화) / `limited`(한정 판화) / `open`(오픈 에디션)
-   - 자세한 차이는 [판화 vs 원화 vs 프린트](/stories/print-vs-original)에서
+   - 자세한 차이는 [판화 vs 원화 vs 프린트](/stories/print-vs-original-price-economics)에서
 
 2. **크기를 실제 공간과 매칭**
    - 벽 크기를 미리 재어 두기
@@ -284,7 +284,7 @@ note_to_editor: |
 
 3. **총 지출 계산**
    - 작품가 + 배송비 + (필요 시) 액자 비용
-   - 자세한 내용은 [30만원으로 시작하는 첫 원화 컬렉팅](/stories/first-collecting-guide-under-300k)
+   - 자세한 내용은 [30만원으로 시작하는 첫 원화 컬렉팅](/stories/first-art-collection-under-400k)
 
 ## 작품 하나가 기금 한 알이 됩니다
 
@@ -311,5 +311,7 @@ A. 아닙니다. 가격대별 배치입니다. 리스트 내 순서는 큐레이
 ---
 
 이 리스트가 첫 작품을 들이는 첫걸음이 되기를 바랍니다. 한 점이 벽에 걸리면, 그 다음부터는 더 이상 가이드가 필요 없어집니다. 집이 당신을 가르쳐주기 시작합니다.
+
+계절별로 어울리는 작품을 더 찾고 있다면 계절 큐레이션 시리즈도 참고하세요: [봄](/stories/spring-curation-saf) · [여름](/stories/summer-curation-saf) · [가을](/stories/autumn-curation-saf) · [겨울](/stories/winter-curation-saf)
 
 [씨앗페 갤러리에서 100만원 이하 필터로 전체 작품 보기 →](/artworks?priceMax=1000000)

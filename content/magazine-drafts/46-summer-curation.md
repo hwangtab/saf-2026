@@ -264,4 +264,6 @@ A. 씨앗페 [전체 작품 갤러리](/artworks)에서 "바다"·"강"·"여름
 
 여름은 공기의 온도보다 **시각의 온도**가 먼저 내려갑니다. 바다 한 점, 강 한 점, 숲 한 점이 벽에 걸리면 에어컨이 닿지 않는 공간의 구석까지 시원해집니다.
 
+계절의 흐름으로 다음 큐레이션도 살펴보세요: [봄 큐레이션](/stories/spring-curation-saf) · [가을 큐레이션](/stories/autumn-curation-saf) · [100만원 이하 전체](/stories/saf-under-one-million)
+
 [씨앗페에서 여름 풍경 작품 전체 둘러보기 →](/artworks)
