@@ -9,7 +9,7 @@ import type { BroadcastChannel } from '@/lib/email/audiences/types';
 const CHANNEL_OPTIONS: { value: BroadcastChannel; label: string; available: boolean }[] = [
   { value: 'member', label: '작가·출품자 업무', available: true },
   { value: 'customer', label: '고객 마케팅 (광고)', available: true },
-  { value: 'petition', label: '청원 캠페인 알림', available: false },
+  { value: 'petition', label: '청원 캠페인 알림', available: true },
 ];
 
 export function BroadcastForm() {
@@ -20,6 +20,7 @@ export function BroadcastForm() {
   const [bodyMd, setBodyMd] = useState('');
   const [ctaLabel, setCtaLabel] = useState('');
   const [ctaUrl, setCtaUrl] = useState('');
+  const [petitionSlug, setPetitionSlug] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -43,6 +44,7 @@ export function BroadcastForm() {
         bodyMd,
         ctaLabel: ctaLabel || undefined,
         ctaUrl: ctaUrl || undefined,
+        petitionSlug: channel === 'petition' ? petitionSlug : undefined,
       });
 
       if (result.error) {
@@ -93,6 +95,25 @@ export function BroadcastForm() {
           <AudiencePreview channel={channel} />
         </div>
       </div>
+
+      {channel === 'petition' && (
+        <div>
+          <label
+            htmlFor="broadcast-petition-slug"
+            className="mb-1 block text-sm font-medium text-charcoal"
+          >
+            청원 슬러그
+          </label>
+          <input
+            id="broadcast-petition-slug"
+            type="text"
+            value={petitionSlug}
+            onChange={(e) => setPetitionSlug(e.target.value)}
+            placeholder="oh-yoon"
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          />
+        </div>
+      )}
 
       <div>
         <label htmlFor="broadcast-subject" className="mb-1 block text-sm font-medium text-charcoal">

@@ -5,6 +5,7 @@ import { logAdminAction } from '@/app/actions/activity-log-writer';
 import type { BroadcastChannel, Recipient } from '@/lib/email/audiences/types';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import { CustomerAudienceResolver } from '@/lib/email/audiences/customer';
+import { PetitionAudienceResolver } from '@/lib/email/audiences/petition';
 import type { ActionState } from '@/types';
 import type { Json } from '@/types/supabase';
 
@@ -38,6 +39,11 @@ export async function enqueueBroadcast(
     resolver = new MemberAudienceResolver();
   } else if (channel === 'customer') {
     resolver = new CustomerAudienceResolver();
+  } else if (channel === 'petition') {
+    if (!input.petitionSlug) {
+      return { message: '청원 채널은 petitionSlug가 필요합니다.', error: true };
+    }
+    resolver = new PetitionAudienceResolver(input.petitionSlug);
   } else {
     return { message: `채널 '${channel}'은 아직 지원하지 않습니다.`, error: true };
   }
@@ -158,6 +164,11 @@ export async function previewAudience(channel: BroadcastChannel): Promise<{
       total: recipients.length,
       breakdown: { '동의자·거래고객': recipients.length },
     };
+  }
+
+  // petition preview requires slug — return placeholder
+  if (channel === 'petition') {
+    return { total: 0, breakdown: { '(청원 슬러그 입력 필요)': 0 } };
   }
 
   return { total: 0, breakdown: {} };
