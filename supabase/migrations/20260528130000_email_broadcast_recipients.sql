@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.email_broadcast_recipients (
     CHECK (locale IN ('ko', 'en'))
 );
 
-CREATE INDEX idx_broadcast_recipients_dispatch
+CREATE INDEX IF NOT EXISTS idx_broadcast_recipients_dispatch
   ON public.email_broadcast_recipients (broadcast_id, status)
   WHERE status = 'pending';
 
