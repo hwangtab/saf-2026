@@ -18,7 +18,10 @@ export class CustomerAudienceResolver implements AudienceResolver {
       .eq('marketing_consent', true)
       .not('email', 'is', null);
 
-    if (consentError) console.error('[customer-audience] consent query error:', consentError);
+    if (consentError) {
+      console.error('[customer-audience] consent query error:', consentError);
+      throw new Error(`동의자 목록 조회 실패: ${consentError.message}`);
+    }
 
     // 2) 6개월 거래고객 — DB-level filter (정통망법 §50 예외)
     const { data: recentBuyers, error: buyerError } = await supabase
@@ -28,13 +31,21 @@ export class CustomerAudienceResolver implements AudienceResolver {
       .gte('created_at', sixMonthsAgo)
       .not('buyer_email', 'is', null);
 
-    if (buyerError) console.error('[customer-audience] buyer query error:', buyerError);
+    if (buyerError) {
+      console.error('[customer-audience] buyer query error:', buyerError);
+      throw new Error(`거래고객 목록 조회 실패: ${buyerError.message}`);
+    }
 
     // 3) 수신거부 해시 — customer·all 채널만
-    const { data: suppressions } = await supabase
+    const { data: suppressions, error: suppressionsError } = await supabase
       .from('email_suppressions')
       .select('email_hash')
       .in('channel', ['customer', 'all']);
+
+    if (suppressionsError) {
+      console.error('[customer-audience] suppressions query error:', suppressionsError);
+      throw new Error('수신거부 목록 조회 실패 — 발송을 중단합니다');
+    }
 
     const suppressedHashes = new Set(
       (suppressions ?? []).map((s: { email_hash: string }) => s.email_hash)

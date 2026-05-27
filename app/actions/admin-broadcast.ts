@@ -2,7 +2,7 @@
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { logAdminAction } from '@/app/actions/activity-log-writer';
-import type { BroadcastChannel } from '@/lib/email/audiences/types';
+import type { BroadcastChannel, Recipient } from '@/lib/email/audiences/types';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import { CustomerAudienceResolver } from '@/lib/email/audiences/customer';
 import type { ActionState } from '@/types';
@@ -42,7 +42,14 @@ export async function enqueueBroadcast(
     return { message: `채널 '${channel}'은 아직 지원하지 않습니다.`, error: true };
   }
 
-  const recipients = await resolver.resolve();
+  let recipients: Recipient[];
+  try {
+    recipients = await resolver.resolve();
+  } catch (err) {
+    console.error('[enqueue-broadcast] resolver error:', err);
+    const message = err instanceof Error ? err.message : '수신자 추출 중 오류가 발생했습니다.';
+    return { message, error: true };
+  }
   if (recipients.length === 0) {
     return {
       message: '발송 대상 수신자가 없습니다. (전원 수신거부 또는 이메일 없음)',
