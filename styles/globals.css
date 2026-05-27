@@ -35,9 +35,15 @@
  * display:swap 시 시스템 한글 폰트가 이 metric으로 렌더되어 Pretendard 도착 후
  * reflow(ascent/descent/size 차이)를 최소화 → CLS 개선.
  *
- * ascent-override/descent-override: Pretendard Std Variable sTypoAscender=800/sTypoDescender=-200 추정값.
- * 정확한 측정: fontforge 또는 브라우저 FontFace API로 확인 후 미세 조정 가능.
- * RUM 데이터(admin/analytics → CLS worst targets)에서 개선 여부 1주 모니터링.
+ * 실측값(fonttools, 2026-05-27): unitsPerEm=2048, hhea ascent=1950, descent=-494, lineGap=0.
+ *   ascent-override  = 1950/2048 ≈ 95.21%
+ *   descent-override = 494/2048  ≈ 24.12%
+ *   line-gap-override = 0%
+ * size-adjust: 100% 유지 — fallback 글리프 폭까지 정렬하려면 OS별 시스템 폰트 실측 필요;
+ *   poor 기여 최대 OS(Mac/Win)에서 회귀 위험 대비 효과가 낮아 이번에는 변경하지 않음.
+ * Android: local() 4종이 Android에서 미해석이라 이 @font-face가 무효 → override 미적용.
+ *   Android real-Chrome poor n=2/28일이라 ROI 낮아 별도 Android fallback 추가는 보류.
+ * RUM 모니터링: 배포 후 1~2주, body>div.relative 전체 페이지 wrapper 점프(현 28일 n≈21) 추세 확인.
  */
 @font-face {
   font-family: 'Pretendard Fallback';
@@ -45,8 +51,8 @@
     local('Apple SD Gothic Neo'), local('Malgun Gothic'), local('Noto Sans CJK KR'), local('Arial');
   font-weight: 100 900;
   font-style: normal;
-  ascent-override: 80%;
-  descent-override: 20%;
+  ascent-override: 95.21%;
+  descent-override: 24.12%;
   line-gap-override: 0%;
   size-adjust: 100%;
 }
