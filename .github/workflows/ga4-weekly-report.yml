@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - run: npm ci
@@ -41,7 +41,7 @@ jobs:
 
       - name: Create issue (성공)
         if: success()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           REPORT: ${{ steps.ga4.outputs.report }}
         with:
@@ -68,7 +68,7 @@ jobs:
 
       - name: Create issue (실패 알림)
         if: failure()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
