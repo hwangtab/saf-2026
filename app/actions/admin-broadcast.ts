@@ -4,6 +4,7 @@ import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { logAdminAction } from '@/app/actions/activity-log-writer';
 import type { BroadcastChannel } from '@/lib/email/audiences/types';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
+import { CustomerAudienceResolver } from '@/lib/email/audiences/customer';
 import type { ActionState } from '@/types';
 import type { Json } from '@/types/supabase';
 
@@ -35,6 +36,8 @@ export async function enqueueBroadcast(
   let resolver;
   if (channel === 'member') {
     resolver = new MemberAudienceResolver();
+  } else if (channel === 'customer') {
+    resolver = new CustomerAudienceResolver();
   } else {
     return { message: `채널 '${channel}'은 아직 지원하지 않습니다.`, error: true };
   }
@@ -139,6 +142,15 @@ export async function previewAudience(channel: BroadcastChannel): Promise<{
     const resolver = new MemberAudienceResolver();
     const recipients = await resolver.resolve();
     return { total: recipients.length, breakdown: { member: recipients.length } };
+  }
+
+  if (channel === 'customer') {
+    const resolver = new CustomerAudienceResolver();
+    const recipients = await resolver.resolve();
+    return {
+      total: recipients.length,
+      breakdown: { '동의자·거래고객': recipients.length },
+    };
   }
 
   return { total: 0, breakdown: {} };

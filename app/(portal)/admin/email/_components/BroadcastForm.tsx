@@ -8,7 +8,7 @@ import type { BroadcastChannel } from '@/lib/email/audiences/types';
 
 const CHANNEL_OPTIONS: { value: BroadcastChannel; label: string; available: boolean }[] = [
   { value: 'member', label: '작가·출품자 업무', available: true },
-  { value: 'customer', label: '고객 마케팅 (광고)', available: false },
+  { value: 'customer', label: '고객 마케팅 (광고)', available: true },
   { value: 'petition', label: '청원 캠페인 알림', available: false },
 ];
 
