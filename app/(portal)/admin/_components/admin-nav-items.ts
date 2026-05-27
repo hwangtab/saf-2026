@@ -105,8 +105,3 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
 
 export const getAdminNavGroups = (locale: LocaleCode): AdminNavGroup[] =>
   ADMIN_NAV_GROUPS_BY_LOCALE[locale];
-
-export const adminNavGroups: AdminNavGroup[] = ADMIN_NAV_GROUPS_BY_LOCALE.ko;
-
-/** Flat list for mobile nav and backward compat */
-export const adminNavItems = adminNavGroups.flatMap((g) => g.items);

@@ -7,11 +7,11 @@ export function getWishlist(): string[] {
   return Array.isArray(parsed) ? (parsed as string[]) : [];
 }
 
-export function isInWishlist(artworkId: string): boolean {
+function isInWishlist(artworkId: string): boolean {
   return getWishlist().includes(artworkId);
 }
 
-export function addToWishlist(artworkId: string): string[] {
+function addToWishlist(artworkId: string): string[] {
   const list = getWishlist();
   if (list.includes(artworkId)) return list;
   const next = [artworkId, ...list];

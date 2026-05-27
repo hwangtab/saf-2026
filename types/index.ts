@@ -47,11 +47,6 @@ export const ARTWORK_CATEGORIES = [
 export const CAREER_TIERS = ['신진', '중견', '거장'] as const;
 export type CareerTier = (typeof CAREER_TIERS)[number];
 
-export type WishlistItem = {
-  artwork_id: string;
-  created_at: string;
-};
-
 export const ARTWORK_TONES = [
   '차분한',
   '따뜻한',

@@ -81,21 +81,10 @@ export function formatEffectiveDateForLocale(rawDate: string, locale: 'ko' | 'en
   });
 }
 
-// Re-export all artwork image utilities for backwards compatibility
+// Re-export active artwork image utilities
 export {
-  ARTWORK_IMAGE_VARIANTS,
-  ARTWORK_TRANSFORM_PRESETS,
-  getArtworkImageFamilyKey,
-  resolveArtworkImageFallbackUrl,
   resolveArtworkImageUrl,
   resolveArtworkImageUrlForPreset,
-  resolveArtworkVariantUrl,
   resolveOptimizedArtworkImageUrl,
   resolveSupabaseOriginalPublicUrl,
-} from './artwork-image';
-
-export type {
-  ArtworkImagePreset,
-  ArtworkImageVariant,
-  SupabaseImageTransformOptions,
 } from './artwork-image';
