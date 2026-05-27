@@ -26,6 +26,7 @@ import ShareTemplates from './_components/ShareTemplates';
 import PetitionFAQ from './_components/PetitionFAQ';
 import ProposalModal from './_components/ProposalModal';
 import SignForm from './_components/SignForm';
+import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 
 // ISR revalidate=60: 60초마다 background 갱신.
 // 카운터는 /api/petition/[slug]/counts edge-cached API route를 ProgressBar가 polling (N→1 결합).
@@ -654,6 +655,21 @@ export default async function PetitionOhYoonPage({
               </div>
             </div>
           </article>
+
+          {/* 미션 전환 — 서명자를 SAF 상호부조 미션으로 연결 */}
+          <div className="mt-14 pt-10 border-t border-charcoal/10 text-center">
+            <h3 className="font-display font-bold text-xl md:text-2xl text-charcoal-deep mb-3 break-keep">
+              {t('missionBridgeHeading')}
+            </h3>
+            <p className="text-base text-charcoal leading-relaxed break-keep mb-6 max-w-xl mx-auto text-balance">
+              {t('missionBridgeBody')}
+            </p>
+            <CTAButtonGroup
+              variant="large"
+              trackingPosition="petition-oh-yoon"
+              className="justify-center"
+            />
+          </div>
 
           {/* 추가 탐색 링크 — 캠페인 방문자를 스토리/홈으로 연결하여 캠페인 종료 후 트래픽 유지 */}
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
