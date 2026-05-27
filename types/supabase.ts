@@ -469,6 +469,142 @@ export type Database = {
           },
         ];
       };
+      email_broadcast_recipients: {
+        Row: {
+          broadcast_id: string;
+          created_at: string;
+          email: string;
+          error: string | null;
+          id: string;
+          locale: string;
+          name: string | null;
+          resend_id: string | null;
+          sent_at: string | null;
+          status: string;
+        };
+        Insert: {
+          broadcast_id: string;
+          created_at?: string;
+          email: string;
+          error?: string | null;
+          id?: string;
+          locale?: string;
+          name?: string | null;
+          resend_id?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          broadcast_id?: string;
+          created_at?: string;
+          email?: string;
+          error?: string | null;
+          id?: string;
+          locale?: string;
+          name?: string | null;
+          resend_id?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'email_broadcast_recipients_broadcast_id_fkey';
+            columns: ['broadcast_id'];
+            isOneToOne: false;
+            referencedRelation: 'email_broadcasts';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      email_broadcasts: {
+        Row: {
+          audience_filter: Json;
+          body_md: string;
+          channel: string;
+          created_at: string;
+          created_by: string | null;
+          cta_label: string | null;
+          cta_url: string | null;
+          failed_count: number;
+          id: string;
+          petition_slug: string | null;
+          queued_at: string | null;
+          recipient_count: number;
+          sent_at: string | null;
+          sent_count: number;
+          status: string;
+          subject: string;
+        };
+        Insert: {
+          audience_filter?: Json;
+          body_md: string;
+          channel: string;
+          created_at?: string;
+          created_by?: string | null;
+          cta_label?: string | null;
+          cta_url?: string | null;
+          failed_count?: number;
+          id?: string;
+          petition_slug?: string | null;
+          queued_at?: string | null;
+          recipient_count?: number;
+          sent_at?: string | null;
+          sent_count?: number;
+          status?: string;
+          subject: string;
+        };
+        Update: {
+          audience_filter?: Json;
+          body_md?: string;
+          channel?: string;
+          created_at?: string;
+          created_by?: string | null;
+          cta_label?: string | null;
+          cta_url?: string | null;
+          failed_count?: number;
+          id?: string;
+          petition_slug?: string | null;
+          queued_at?: string | null;
+          recipient_count?: number;
+          sent_at?: string | null;
+          sent_count?: number;
+          status?: string;
+          subject?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'email_broadcasts_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      email_suppressions: {
+        Row: {
+          channel: string;
+          created_at: string;
+          email_hash: string;
+          id: string;
+          reason: string | null;
+        };
+        Insert: {
+          channel: string;
+          created_at?: string;
+          email_hash: string;
+          id?: string;
+          reason?: string | null;
+        };
+        Update: {
+          channel?: string;
+          created_at?: string;
+          email_hash?: string;
+          id?: string;
+          reason?: string | null;
+        };
+        Relationships: [];
+      };
       exhibitor_applications: {
         Row: {
           bio: string;
@@ -1137,6 +1273,9 @@ export type Database = {
           created_at: string | null;
           email: string | null;
           id: string;
+          marketing_consent: boolean;
+          marketing_consent_at: string | null;
+          marketing_consent_source: string | null;
           name: string | null;
           role: Database['public']['Enums']['user_role'] | null;
           status: Database['public']['Enums']['user_status'] | null;
@@ -1147,6 +1286,9 @@ export type Database = {
           created_at?: string | null;
           email?: string | null;
           id: string;
+          marketing_consent?: boolean;
+          marketing_consent_at?: string | null;
+          marketing_consent_source?: string | null;
           name?: string | null;
           role?: Database['public']['Enums']['user_role'] | null;
           status?: Database['public']['Enums']['user_status'] | null;
@@ -1157,6 +1299,9 @@ export type Database = {
           created_at?: string | null;
           email?: string | null;
           id?: string;
+          marketing_consent?: boolean;
+          marketing_consent_at?: string | null;
+          marketing_consent_source?: string | null;
           name?: string | null;
           role?: Database['public']['Enums']['user_role'] | null;
           status?: Database['public']['Enums']['user_status'] | null;
