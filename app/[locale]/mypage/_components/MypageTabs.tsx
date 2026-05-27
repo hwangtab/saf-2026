@@ -33,6 +33,9 @@ type Messages = {
   profileEmail: string;
   profileSave: string;
   profileSaved: string;
+  profileMarketingConsent: string;
+  profileMarketingConsentDesc: string;
+  profileMarketingConsentSaved: string;
   artistApplyHeading: string;
   artistApplyBody: string;
   artistApplyCta: string;
@@ -43,6 +46,7 @@ interface MypageTabsProps {
   initialOrders: Order[];
   initialWishlistIds: string[];
   showArtistApply: boolean;
+  initialMarketingConsent: boolean;
   messages: Messages;
 }
 
@@ -51,6 +55,7 @@ export default function MypageTabs({
   initialOrders,
   initialWishlistIds,
   showArtistApply,
+  initialMarketingConsent,
   messages,
 }: MypageTabsProps) {
   const searchParams = useSearchParams();
@@ -125,6 +130,10 @@ export default function MypageTabs({
             emailLabel={messages.profileEmail}
             saveLabel={messages.profileSave}
             savedLabel={messages.profileSaved}
+            initialMarketingConsent={initialMarketingConsent}
+            marketingConsentLabel={messages.profileMarketingConsent}
+            marketingConsentDesc={messages.profileMarketingConsentDesc}
+            marketingConsentSavedLabel={messages.profileMarketingConsentSaved}
           />
         )}
         {activeTab === 'artist-apply' && (

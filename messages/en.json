@@ -1235,7 +1235,10 @@
       "name": "Name",
       "email": "Email",
       "save": "Save",
-      "saved": "Saved"
+      "saved": "Saved",
+      "marketingConsent": "Marketing Email Consent",
+      "marketingConsentDesc": "Receive updates about new artworks, exhibitions, and campaigns. (Promotional email)",
+      "marketingConsentSaved": "Settings saved."
     },
     "artistApply": {
       "heading": "Want to participate as an artist?",

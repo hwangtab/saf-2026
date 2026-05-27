@@ -1,6 +1,7 @@
 'use server';
 
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/auth/server';
+import { hashEmail } from '@/lib/email/email-hash';
 
 const MAX_WISHLIST_BATCH = 200;
 const isValidArtworkId = (id: unknown): id is string =>
@@ -86,5 +87,48 @@ export async function updateMyProfile(name: string): Promise<{ error?: string }>
     .eq('id', user.id);
 
   if (profileError) return { error: profileError.message };
+  return {};
+}
+
+export async function updateMarketingConsent(consent: boolean): Promise<{ error?: string }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: 'unauthenticated' };
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      marketing_consent: consent,
+      marketing_consent_at: new Date().toISOString(),
+      marketing_consent_source: 'mypage',
+    })
+    .eq('id', user.id);
+
+  if (error) return { error: error.message };
+
+  // 수신거부 시 email_suppressions에도 반영
+  if (!consent) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.email) {
+      const adminSupabase = createSupabaseAdminClient();
+      await adminSupabase.from('email_suppressions').upsert(
+        {
+          email_hash: hashEmail(profile.email as string),
+          channel: 'customer',
+          reason: 'unsubscribe',
+        },
+        { onConflict: 'email_hash,channel', ignoreDuplicates: true }
+      );
+    }
+  }
+
   return {};
 }

@@ -1235,7 +1235,10 @@
       "name": "이름",
       "email": "이메일",
       "save": "저장",
-      "saved": "저장됨"
+      "saved": "저장됨",
+      "marketingConsent": "마케팅 이메일 수신 동의",
+      "marketingConsentDesc": "씨앗페 신작·전시·캠페인 소식을 받아보세요. (광고성 이메일)",
+      "marketingConsentSaved": "설정이 저장되었습니다."
     },
     "artistApply": {
       "heading": "작가로 활동하고 싶으신가요?",

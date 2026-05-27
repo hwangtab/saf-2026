@@ -45,12 +45,16 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
       .select('artwork_id, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
-    supabase.from('profiles').select('role').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('role, marketing_consent').eq('id', user.id).maybeSingle(),
   ]);
 
   const orders = ordersResult.data ?? [];
   const wishlistIds = (wishlistResult.data ?? []).map((w) => w.artwork_id);
-  const role = (profileResult.data as { role: string } | null)?.role ?? null;
+  const role =
+    (profileResult.data as { role: string; marketing_consent: boolean } | null)?.role ?? null;
+  const marketingConsent =
+    (profileResult.data as { role: string; marketing_consent: boolean } | null)
+      ?.marketing_consent ?? false;
   const showArtistApply = role === 'user';
 
   const t = await getTranslations({ locale, namespace: 'mypage' });
@@ -61,6 +65,7 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
       initialOrders={orders}
       initialWishlistIds={wishlistIds}
       showArtistApply={showArtistApply}
+      initialMarketingConsent={marketingConsent}
       messages={{
         title: t('title'),
         tabOrders: t('tabs.orders'),
@@ -75,6 +80,9 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
         profileEmail: t('profile.email'),
         profileSave: t('profile.save'),
         profileSaved: t('profile.saved'),
+        profileMarketingConsent: t('profile.marketingConsent'),
+        profileMarketingConsentDesc: t('profile.marketingConsentDesc'),
+        profileMarketingConsentSaved: t('profile.marketingConsentSaved'),
         artistApplyHeading: t('artistApply.heading'),
         artistApplyBody: t('artistApply.body'),
         artistApplyCta: t('artistApply.cta'),
