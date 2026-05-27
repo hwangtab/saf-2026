@@ -32,27 +32,27 @@ const logoW = file('public/images/logo/320pxX90px_white.webp');
 
 // ─── Artwork URLs (배경용 + 스포트라이트용) ───
 const BG = [
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/037rx7aya2mc_1774968363998.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-c0f6176c-5460-46e6-a503-c8cfeba4583a/ue4mbbgbfw_1773366850821.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/247__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-6009bbeb-fa25-4099-a1a9-518cc6498894/2rhwb0kyuvj_1771896747137__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/234__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-96252f66-006c-4291-b0b3-143cbb6cf1df/5yst68jz1kq_1771896737666__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/x6oe3pvro4f_1771574933811__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-b7b009d8-48f6-4ccc-b29e-8fd1a2a061a0/sydjgmparpd_1773366836612.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-d12fb450-3d9e-4113-9a93-c7bb347e1727/1flqj8rpkkt_1773366843706.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/pvnthqu3z6_1770991227778__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/274__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/277__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e144402b-6a15-4d33-bf11-b625cfa5c777/8eme3lhd3xt_1771896713951__original.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-68b671d8-106e-4c6f-9e81-9c21956e544e/34ccfstd2py_1773290111280.webp',
-  'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/090jwsq07pwe_1770991182286__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/037rx7aya2mc_1774968363998.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-c0f6176c-5460-46e6-a503-c8cfeba4583a/ue4mbbgbfw_1773366850821.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/247__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-6009bbeb-fa25-4099-a1a9-518cc6498894/2rhwb0kyuvj_1771896747137__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/a8d68dcb-f8c5-4e40-9705-b2bb95f18190/234__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-96252f66-006c-4291-b0b3-143cbb6cf1df/5yst68jz1kq_1771896737666__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52701ac8-6f38-465d-b6cb-229dcc454e4b/272__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/x6oe3pvro4f_1771574933811__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6013c2fb-9efb-4695-855f-18c892c9bbe6/265__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-b7b009d8-48f6-4ccc-b29e-8fd1a2a061a0/sydjgmparpd_1773366836612.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-d12fb450-3d9e-4113-9a93-c7bb347e1727/1flqj8rpkkt_1773366843706.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/31950760-2c0f-43b7-8b42-39a8a5b8f992/258__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/pvnthqu3z6_1770991227778__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/7abe1f77-c8db-4b07-8ffa-c0d91e26b480/275__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/11507750-e624-432a-9fc2-249561633e75/274__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/0ddf36d2-5171-48f5-8402-c9ab188e4b3f/277__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-e144402b-6a15-4d33-bf11-b625cfa5c777/8eme3lhd3xt_1771896713951__original.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-68b671d8-106e-4c6f-9e81-9c21956e544e/34ccfstd2py_1773290111280.webp',
+  'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/090jwsq07pwe_1770991182286__original.webp',
 ];
 
 const ART = {
@@ -98,7 +98,7 @@ const HT = {
 };
 
 // ─── 오윤 작품 이미지 URLs ───
-const SUPABASE = 'https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8';
+const SUPABASE = 'https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8';
 const OY = {
   낮도깨비: `${SUPABASE}/154__original.webp`,
   칼노래:   `${SUPABASE}/151__original.webp`,
