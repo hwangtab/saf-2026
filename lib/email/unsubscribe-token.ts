@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export type BroadcastChannel = 'customer' | 'member' | 'petition';
+import type { BroadcastChannel } from './audiences/types';
 
 // HMAC-SHA256 기반 무상태 수신거부 토큰.
 // 형식: base64url(emailHash|channel).HMAC_SHA256_hex(secret, payload)
@@ -43,9 +43,11 @@ export function verifyUnsubscribeToken(
     if (pipeIndex === -1) return null;
 
     const emailHash = decoded.slice(0, pipeIndex);
-    const channel = decoded.slice(pipeIndex + 1) as BroadcastChannel;
-
-    if (!['customer', 'member', 'petition'].includes(channel)) return null;
+    const raw = decoded.slice(pipeIndex + 1);
+    if (!(['customer', 'member', 'petition'] as const).includes(raw as BroadcastChannel)) {
+      return null;
+    }
+    const channel = raw as BroadcastChannel;
 
     return { emailHash, channel };
   } catch {
