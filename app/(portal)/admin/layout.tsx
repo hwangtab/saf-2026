@@ -5,12 +5,17 @@ import { AdminDesktopNav } from './admin-desktop-nav';
 import PortalShell from '@/components/layout/PortalShell';
 import { getTranslations } from 'next-intl/server';
 import { getWebVitalsRegressionCount } from '@/app/actions/admin-analytics';
+import { getAdminNotifications } from '@/app/actions/admin-notifications';
+import { AdminNotificationBell } from './_components/AdminNotificationBell';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
   const t = await getTranslations('admin.common');
-  // 회귀 페이지 개수 — analytics 그룹 옆 alert dot. RPC 실패 시 0 반환 (silent fallback).
-  const regressionCount = await getWebVitalsRegressionCount();
+  // 두 fetch를 병렬로 — regressionCount는 nav dot, notifications는 벨 드롭다운.
+  const [regressionCount, notifications] = await Promise.all([
+    getWebVitalsRegressionCount(),
+    getAdminNotifications().catch(() => [] as Awaited<ReturnType<typeof getAdminNotifications>>),
+  ]);
   return (
     <PortalShell
       title="SAF Admin"
@@ -30,6 +35,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           {t('modeLabel')}
         </span>
       }
+      rightSlot={<AdminNotificationBell notifications={notifications} />}
     >
       {children}
     </PortalShell>
