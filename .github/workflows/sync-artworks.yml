@@ -57,3 +57,4 @@ jobs:
           branch: chore/sync-artworks
           commit-message: 'chore(content): sync artworks from DB'
           delete-branch: true
+          auto-merge: squash
