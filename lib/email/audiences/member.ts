@@ -7,7 +7,7 @@ import type { AudienceResolver, Recipient } from './types';
 // 동의 불요 (업무·거래 관계). 수신거부 테이블(member + all)만 차감.
 export class MemberAudienceResolver implements AudienceResolver {
   async resolve(): Promise<Recipient[]> {
-    const supabase = createSupabaseAdminClient() as any;
+    const supabase = createSupabaseAdminClient();
 
     const { data: artists, error: artistsError } = await supabase
       .from('artists')

@@ -5,6 +5,7 @@ import { logAdminAction } from '@/app/actions/activity-log-writer';
 import type { BroadcastChannel } from '@/lib/email/audiences/types';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import type { ActionState } from '@/types';
+import type { Json } from '@/types/supabase';
 
 export interface EnqueueBroadcastInput {
   channel: BroadcastChannel;
@@ -23,7 +24,7 @@ export async function enqueueBroadcast(
 ): Promise<ActionState & { broadcastId?: string }> {
   const admin = await requireAdmin();
 
-  const supabase = (await requireAdminClient()) as any;
+  const supabase = await requireAdminClient();
 
   const { channel, subject, bodyMd, ctaLabel, ctaUrl, petitionSlug, audienceFilter } = input;
 
@@ -55,7 +56,7 @@ export async function enqueueBroadcast(
       body_md: bodyMd,
       cta_label: ctaLabel ?? null,
       cta_url: ctaUrl ?? null,
-      audience_filter: audienceFilter ?? {},
+      audience_filter: (audienceFilter ?? {}) as Json,
       status: 'queued',
       recipient_count: recipients.length,
       created_by: admin.id,
@@ -100,7 +101,7 @@ export async function enqueueBroadcast(
 export async function getBroadcasts() {
   await requireAdmin();
 
-  const supabase = (await requireAdminClient()) as any;
+  const supabase = await requireAdminClient();
 
   const { data, error } = await supabase
     .from('email_broadcasts')

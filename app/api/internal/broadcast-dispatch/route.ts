@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { render } from '@react-email/render';
+import type { Database } from '@/types/supabase';
 import * as React from 'react';
 
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
@@ -27,10 +28,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'supabase credentials missing' }, { status: 500 });
   }
 
-  const supabase = createClient(supabaseUrl, adminKey, {
+  const supabase = createClient<Database>(supabaseUrl, adminKey, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: `Bearer ${adminKey}` } },
-  }) as any;
+  });
 
   const { data: broadcasts } = await supabase
     .from('email_broadcasts')
