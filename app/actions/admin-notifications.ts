@@ -237,7 +237,7 @@ async function fetchAnalytics(supabase: SupabaseClient): Promise<AdminNotificati
           title: 'GSC 데이터 동기화 중단',
           detail: `마지막 수집: ${status.latest_date} (${Math.floor(staleDays)}일 전)`,
           href: '/admin/analytics',
-          createdAt: latestDate.toISOString(),
+          createdAt: todayUtcIso(),
         });
       }
     }
