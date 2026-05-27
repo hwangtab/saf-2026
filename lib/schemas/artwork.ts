@@ -10,6 +10,7 @@ import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from 
 import { getMaterialLabel, getSizeLabel, getEditionLabel } from '@/lib/artwork-material';
 import { createBreadcrumbSchema } from './breadcrumb';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
+import { getArtworkSeoOverride } from '@/lib/artwork-seo-overrides';
 import {
   EXHIBITION_END_DATE,
   EXHIBITION_START_DATE,
@@ -114,7 +115,9 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       : isEnglish
         ? ' · Inquiry'
         : ' · 가격 문의';
-  const pageTitle = `${titleForLocale} · ${artistForLocale}${titleStatusSuffix}`;
+  const seoOverride = getArtworkSeoOverride(artwork.id);
+  const overrideTitle = isEnglish ? seoOverride?.titleEn : seoOverride?.titleKo;
+  const pageTitle = overrideTitle ?? `${titleForLocale} · ${artistForLocale}${titleStatusSuffix}`;
 
   const baseMetadata = createPageMetadata(
     pageTitle,
