@@ -114,18 +114,14 @@ export async function submitExhibitorApplication(
 
     if (error) throw error;
 
-    if (
-      profile.role !== 'exhibitor' ||
-      (profile.status !== 'pending' && profile.status !== 'active')
-    ) {
-      // profiles.role/status 는 prevent_profile_self_escalation 트리거에 의해
-      // 비관리자 세션에서는 변경할 수 없음. 온보딩 흐름은 본인 검증을 이미
-      // requireAuth + status !== suspended 로 마쳤으므로 service_role 클라이언트로
-      // 전환해 신청 결과에 따른 role/status 상승을 수행한다.
+    // 신청서 제출 시 심사 큐 진입: status만 pending으로. role은 승인 시 approveExhibitor가 부여.
+    // 이미 active 출품자(재편집)는 상태 변경 불필요. (작가 onboarding.ts와 동일 패턴)
+    // prevent_profile_self_escalation 트리거가 비관리자의 status 변경을 막으므로 service_role 사용.
+    if (!(profile.role === 'exhibitor' && profile.status === 'active')) {
       const adminClient = createSupabaseAdminClient();
       const { error: profileUpdateError } = await adminClient
         .from('profiles')
-        .update({ role: 'exhibitor', status: 'pending' })
+        .update({ status: 'pending' })
         .eq('id', user.id);
 
       if (profileUpdateError) throw profileUpdateError;

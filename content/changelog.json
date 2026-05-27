@@ -1,5 +1,105 @@
 [
   {
+    "hash": "a4760559",
+    "type": "fix",
+    "scope": "scripts",
+    "subject": "인스타그램 캐러셀 스크립트 스토리지 URL 서울로 교정",
+    "summary": "generate-instagram-carousels.mjs 하드코딩 이미지 URL 22건을 뭄바이→서울로 교체",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "28b921c4",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "심사 큐 정합성 개선 — collector 즉시 active, 신청서 제출자만 큐 진입",
+    "summary": "신규 가입자를 즉시 active로 설정하고, 신청서(artist application) 제출 시에만 pending으로 전환해 심사 큐에 진입하도록 수정. 구성원 메뉴에 \"고객\" 항목 추가.",
+    "body": "- DB 트리거 handle_new_user: status='pending' → 'active' 로 변경\n- 기존에 갇힌 collector(role='user', 신청서 없음, pending) 백필로 active 해제\n- submitArtistApplication: 신청서 제출 시 createSupabaseAdminClient로 status='pending' 승격\n  (prevent_profile_self_escalation 트리거 우회 — exhibitor-onboarding 동일 패턴)\n- admin nav: 구성원 그룹에 \"고객(/admin/users?role=user)\" 항목 추가 (ko/en)\n- NavDropdown, admin-mobile-nav: role=user 필터 시 \"고객\"만 하이라이트 되도록 active 로직 보강",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "048d6b7e",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "GSC 동기화 중단 알림 매일 재-unread 안 되던 버그 수정",
+    "summary": "gsc-sync-stale 알림의 createdAt을 sync 중단일 고정값에서 todayUtcIso()로 변경해 중단 지속 시 매일 재-unread 되도록 수정",
+    "body": "- Web Vitals·action_needed는 todayUtcIso() 사용 중이었으나 gsc-sync-stale만 latestDate.toISOString()으로 고착 — 동일 패턴으로 통일",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "3d0cfa1a",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "신규 등록 알림 데이터 소스·시간 윈도우 버그 수정",
+    "summary": "activity_logs 의존 제거하고 artworks/artists 테이블 직접 조회로 전환해 import 경로 누락 해결, 30일 시간 윈도우 추가로 오래된 이벤트 알림 차단",
+    "body": "- fetchRegistrations: activity_logs(artwork_created/artist_created) → artworks·artists 테이블 created_at 직접 조회\n- 개별 작품 제목 나열(Encore 중복 8건 도배) → \"신규 작품 N건\" 카운트 요약 1건\n- 작가 신청(pending) 항목 제거 — fetchActionNeeded의 alert:pending-applications와 중복\n- fetchPurchases에 .gte('paid_at', sinceIso) 추가 — 구매도 동일 결함 있어 함께 수정\n- RECENT_WINDOW_DAYS = 30 상수로 두 함수 윈도우 통일",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "a30bb1be",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "아티스트 신청서 미제출 시에도 관리자 승인 허용",
+    "summary": "온보딩 폼을 작성하지 않은 아티스트도 관리자가 직접 승인할 수 있도록 차단 조건 완화",
+    "body": "- 신청서(artist_name/contact/bio) 미제출 → 승인 차단 로직 제거\n- application이 존재하는데 동의가 미완료인 경우만 차단 유지\n- 신청서 없이 승인 시 artists 레코드는 프로필 이름/이메일로 생성(기존 fallback 활용)",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "179ce026",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "알림 벨 hydration 불일치·Web Vitals 재-unread 버그 수정",
+    "summary": "배지 조건부 렌더로 인한 SSR/client 구조 불일치 제거, Web Vitals 알림 createdAt을 todayUtcIso()로 변경해 회귀 지속 시 매일 재-unread 되도록 수정",
+    "body": "- badge span을 항상 렌더 후 hidden 클래스로 제어 — suppressHydrationWarning이 속성 변화만 억제하므로 자식 요소 presence 불일치는 직접 제거해야 함\n- Web Vitals createdAt: 7일 전 고정값 → todayUtcIso() (action_needed 패턴과 동일하게 일별 재-unread)",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "e12438fc",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "GSC 트래픽 급락 알림 항상 미발화 버그 수정",
+    "summary": "GSC ~2일 지연으로 14일치 요청 시 실제 수신 행이 12~13개라 >= 14 조건을 만족 못해 알림이 영구 미발화되던 버그를 16일치 요청으로 수정",
+    "body": "- since14d → since16d (16 * 86_400_000) : 버퍼 2일 확보\n- 폴백 날짜 참조 변수명도 since16d로 정정\n- target_type 미사용 select 컬럼 제거(이전 커밋 선적용 포함)",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "85f6b66c",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "알림 벨 하이드레이션 불일치 + GSC 비교 로직 수정",
+    "summary": "localStorage 기반 읽음 상태가 SSR/클라이언트 간 달라 발생하는",
+    "body": "React hydration mismatch 버그 수정. GSC 트래픽 급락 감지 기준을 14일\n이상으로 올려 7vs7 공평한 비교 보장.\n\n- AdminNotificationBell: 버튼·배지에 suppressHydrationWarning 추가,\n  드롭다운 div의 무의미한 aria-label 제거\n- admin-notifications: GSC traffic drop 게이트를 >= 7 → >= 14로 수정,\n  prior 슬라이스를 rows.slice(length-14, length-7)로 정확히 수정",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "604d193f",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "관리자 알림 벨 — 구매/등록/운영액션/GSC 이상 통합 알림",
+    "summary": "admin 상단 우측에 페이스북식 알림 벨 추가. 구매 발생, 새",
+    "body": "작가·작품 등록, 운영 액션 필요(SLA 초과/에스컬레이션/환불 요청/승인\n대기), GSC·Web Vitals 이상 징후를 페이지 로드 시 집계해 드롭다운으로\n표시. 읽음 상태는 localStorage(admin:notifications:lastSeenAt)로 관리.\n\n- app/actions/admin-notifications.ts: 4개 소스 집계 서버 액션\n  - orders(paid) 직접 조회로 구매 알림 (결제 코드 미수정)\n  - activity_logs에서 작가·작품 등록 이벤트 재사용\n  - SLA 초과·에스컬레이션·환불 요청·승인 대기 카운트 알림화\n  - get_web_vitals_regression_count + get_gsc_sync_status/daily_trend\n    RPC 재사용 (새 마이그레이션 없음)\n- app/(portal)/admin/_components/AdminNotificationBell.tsx: 'use client'\n  드롭다운 벨 — severity 색상 점 + 상대시간 + click-outside 닫기\n- app/(portal)/admin/layout.tsx: getAdminNotifications() 병렬 fetch +\n  PortalShell의 기존 rightSlot에 벨 마운트",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "b6d235fd",
+    "type": "fix",
+    "scope": "changelog",
+    "subject": "Vercel shallow clone로 git log 누락되던 문제 수정",
+    "summary": "빌드 전 git fetch --unshallow로 전체 히스토리 확보. changelog.json이 최근 커밋만 포함하던 문제 근본 해결.",
+    "body": null,
+    "date": "2026-05-26",
+    "author": "황경하"
+  },
+  {
     "hash": "ee9e82eb",
     "type": "fix",
     "scope": "changelog",

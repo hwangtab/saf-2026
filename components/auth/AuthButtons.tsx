@@ -67,6 +67,8 @@ export default memo(function AuthButtons({
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  /** role='user' + status='pending' 사용자에 한해 lazy 조회: 출품자 신청서 보유 여부 */
+  const [hasExhibitorApp, setHasExhibitorApp] = useState<boolean | null>(null);
   const userIdRef = useRef<string | null>(null);
   const profileRef = useRef<Profile | null>(null);
 
@@ -115,7 +117,27 @@ export default memo(function AuthButtons({
           return;
         }
 
-        setProfile(isProfile(data) ? data : null);
+        const resolvedProfile = isProfile(data) ? data : null;
+        setProfile(resolvedProfile);
+
+        // role='user' + pending 사용자만: 출품자 신청자인지 구분해 헤더 버튼 목적지 결정.
+        // 승인 전 전이 상태라 소수인 이 케이스에만 추가 쿼리 발생.
+        if (resolvedProfile?.role === 'user' && resolvedProfile.status === 'pending') {
+          try {
+            const { data: exhibitorRow } = await supabase
+              .from('exhibitor_applications')
+              .select('user_id')
+              .eq('user_id', id)
+              .maybeSingle();
+            if (isMounted && !signal.aborted && id === userIdRef.current) {
+              setHasExhibitorApp(!!exhibitorRow);
+            }
+          } catch {
+            // 조회 실패 시 null 유지 → /dashboard/pending fallback
+          }
+        } else {
+          setHasExhibitorApp(null);
+        }
       } catch (err: unknown) {
         if (isAbortError(err)) return;
         console.error('Unexpected error in fetchProfile:', err);
@@ -168,6 +190,7 @@ export default memo(function AuthButtons({
           } else {
             userIdRef.current = null;
             setProfile(null);
+            setHasExhibitorApp(null);
             setIsLoading(false);
           }
         } else if (newId && !profileRef.current) {
@@ -228,7 +251,10 @@ export default memo(function AuthButtons({
       return { href: '/exhibitor', label: copy.exhibitorDashboard };
     }
     if (profile?.status === 'pending') {
-      return { href: '/dashboard/pending', label: copy.pendingApproval };
+      return {
+        href: hasExhibitorApp ? '/exhibitor/pending' : '/dashboard/pending',
+        label: copy.pendingApproval,
+      };
     }
     if (profile?.status === 'suspended') {
       return { href: '/dashboard/suspended', label: copy.accountSuspended };
