@@ -16,6 +16,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       items: [
         { href: '/admin/users?status=pending', label: '심사 큐' },
         { href: '/admin/users', label: '사용자 관리' },
+        { href: '/admin/users?role=user', label: '고객' },
         { href: '/admin/artists', label: '작가 관리' },
       ],
     },
@@ -62,6 +63,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       items: [
         { href: '/admin/users?status=pending', label: 'Review Queue' },
         { href: '/admin/users', label: 'Users' },
+        { href: '/admin/users?role=user', label: 'Customers' },
         { href: '/admin/artists', label: 'Artists' },
       ],
     },

@@ -15,12 +15,21 @@ interface NavDropdownProps {
   alertCount?: number;
 }
 
-function isItemActive(item: AdminNavItem, pathname: string, isReviewQueueMode: boolean): boolean {
+function isItemActive(
+  item: AdminNavItem,
+  pathname: string,
+  isReviewQueueMode: boolean,
+  roleFilter: string | null
+): boolean {
   const isReviewQueueItem = item.href.includes('status=pending');
+  const isCustomersItem = item.href.includes('role=user');
   const isUsersItem = item.href === '/admin/users';
 
   if (isReviewQueueItem) return isReviewQueueMode;
-  if (isUsersItem) return pathname === '/admin/users' && !isReviewQueueMode;
+  if (isCustomersItem)
+    return pathname === '/admin/users' && !isReviewQueueMode && roleFilter === 'user';
+  if (isUsersItem)
+    return pathname === '/admin/users' && !isReviewQueueMode && roleFilter !== 'user';
 
   const targetPath = item.href.split('?')[0];
   return pathname.startsWith(targetPath);
@@ -33,8 +42,11 @@ export function NavDropdown({ label, items, alertCount = 0 }: NavDropdownProps) 
   const ref = useRef<HTMLDivElement>(null);
 
   const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
+  const roleFilter = pathname === '/admin/users' ? searchParams.get('role') : null;
 
-  const isGroupActive = items.some((item) => isItemActive(item, pathname, isReviewQueueMode));
+  const isGroupActive = items.some((item) =>
+    isItemActive(item, pathname, isReviewQueueMode, roleFilter)
+  );
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -81,7 +93,7 @@ export function NavDropdown({ label, items, alertCount = 0 }: NavDropdownProps) 
       {open && (
         <div className="absolute left-0 top-full z-50 mt-1 min-w-[160px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black/5">
           {items.map((item) => {
-            const isActive = isItemActive(item, pathname, isReviewQueueMode);
+            const isActive = isItemActive(item, pathname, isReviewQueueMode, roleFilter);
             return (
               <Link
                 key={item.href}

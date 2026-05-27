@@ -21,6 +21,7 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
   const adminNavGroups = getAdminNavGroups(locale);
   const searchParams = useSearchParams();
   const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
+  const roleFilter = pathname === '/admin/users' ? searchParams.get('role') : null;
 
   // Handle ESC key to close drawer
   useEffect(() => {
@@ -131,13 +132,20 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
                       {group.items.map((item) => {
                         const targetPath = item.href.split('?')[0];
                         const isReviewQueueItem = item.href.includes('status=pending');
+                        const isCustomersItem = item.href.includes('role=user');
                         const isUsersItem = item.href === '/admin/users';
 
                         const isActive = isReviewQueueItem
                           ? pathname === '/admin/users' && isReviewQueueMode
-                          : isUsersItem
-                            ? pathname === '/admin/users' && !isReviewQueueMode
-                            : pathname.startsWith(targetPath);
+                          : isCustomersItem
+                            ? pathname === '/admin/users' &&
+                              !isReviewQueueMode &&
+                              roleFilter === 'user'
+                            : isUsersItem
+                              ? pathname === '/admin/users' &&
+                                !isReviewQueueMode &&
+                                roleFilter !== 'user'
+                              : pathname.startsWith(targetPath);
                         const hasAnalyticsAlert =
                           item.href === '/admin/analytics' && regressionCount > 0;
                         return (

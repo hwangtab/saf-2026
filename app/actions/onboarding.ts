@@ -1,6 +1,6 @@
 'use server';
 
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/auth/server';
 import { requireAuth } from '@/lib/auth/guards';
 import {
   ARTIST_APPLICATION_TERMS_VERSION,
@@ -92,6 +92,20 @@ export async function submitArtistApplication(
     );
 
     if (error) throw error;
+
+    // 신청서 제출 시 심사 큐 진입: active 상태인 일반 사용자(collector)도
+    // 신청 후에는 pending으로 전환해 관리자 심사를 받도록 한다.
+    // 이미 active 작가(재편집)는 상태 변경 불필요.
+    // prevent_profile_self_escalation 트리거가 비관리자의 status 변경을 막으므로
+    // service_role 클라이언트로 처리한다 (exhibitor-onboarding.ts 동일 패턴).
+    if (!(profile?.role === 'artist' && profile.status === 'active')) {
+      const adminClient = createSupabaseAdminClient();
+      const { error: statusError } = await adminClient
+        .from('profiles')
+        .update({ status: 'pending' })
+        .eq('id', user.id);
+      if (statusError) throw statusError;
+    }
 
     // Fetch the application for snapshot
     const { data: application } = await supabase
