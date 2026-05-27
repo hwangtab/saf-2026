@@ -142,6 +142,7 @@ export default async function StoryDetailPage({ params }: Props) {
   setRequestLocale(locale);
   const story = await getSupabaseStoryBySlug(slug);
 
+  // notFound()는 레이아웃 스트리밍 특성상 HTTP 200 + noindex로 응답 (Next.js streaming.mdx — SEO-safe).
   if (!story) notFound();
 
   const isEn = locale === 'en';

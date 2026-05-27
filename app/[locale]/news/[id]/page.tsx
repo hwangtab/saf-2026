@@ -114,6 +114,7 @@ export default async function NewsArticlePage({ params }: Props) {
   setRequestLocale(locale);
   const article = await getSupabaseNewsById(id);
 
+  // notFound()는 레이아웃 스트리밍 특성상 HTTP 200 + noindex로 응답 (Next.js streaming.mdx — SEO-safe).
   if (!article) notFound();
 
   const isEn = locale === 'en';

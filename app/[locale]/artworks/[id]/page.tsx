@@ -129,10 +129,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const tCard = await getTranslations({ locale, namespace: 'artworkCard' });
 
   if (!artwork) {
-    // 삭제·숨김 작품은 not-found.tsx 렌더(noindex 메타).
-    // Vercel + Next.js 16 + force-dynamic 조합에서 segment-level notFound() / permanentRedirect()가
-    // status 200으로 응답하는 한계는 실측 확인됨. 다만 SEO 측면에선 noindex 메타가 송출되어
-    // Google이 색인 제거하는 효과는 동일해 그대로 유지(GSC 보고서엔 NOINDEX 카테고리로 표시).
+    // 삭제·숨김 작품은 not-found.tsx 렌더(robots: noindex).
+    // Next.js + Vercel 스트리밍 아키텍처에서 notFound()는 HTTP 200을 반환 — 레이아웃 레벨
+    // 스트리밍이 상태 코드를 먼저 커밋하기 때문. standalone await 분리(news/[id] 패턴)로도
+    // 200 → 404 전환 불가(2026-05 production curl 재확인). Next.js 공식 문서 streaming.mdx:
+    // "this does not lead to indexation because the page is explicitly marked noindex" — SEO 안전.
+    // GSC에서 'noindex 태그에 의해 제외됨' 카테고리로 분류됨(Soft 404 아님).
     notFound();
   }
 
