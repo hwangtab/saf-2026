@@ -32,6 +32,7 @@ const SIGNUP_COPY = {
     nameLabel: '이름 (실명)',
     emailLabel: '이메일 주소',
     passwordLabel: '비밀번호',
+    marketingConsentLabel: '(선택) 마케팅 이메일 수신 동의 — 신작·전시·캠페인 소식',
     submit: '가입하기',
     alreadyHaveAccount: '이미 계정이 있으신가요?',
     login: '로그인',
@@ -66,6 +67,7 @@ const SIGNUP_COPY = {
     nameLabel: 'Name (legal name)',
     emailLabel: 'Email address',
     passwordLabel: 'Password',
+    marketingConsentLabel: '(Optional) Marketing emails — new works, exhibitions, campaigns',
     submit: 'Create account',
     alreadyHaveAccount: 'Already have an account?',
     login: 'Sign in',
@@ -101,6 +103,7 @@ export default function SignUpPage() {
   const [requiresConfirmation, setRequiresConfirmation] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<'google' | null>(null);
   const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [marketingConsent, setMarketingConsent] = useState(false);
 
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -163,6 +166,17 @@ export default function SignUpPage() {
       );
       setLoading(false);
       return;
+    }
+
+    if (data?.user && marketingConsent) {
+      await supabase
+        .from('profiles')
+        .update({
+          marketing_consent: true,
+          marketing_consent_at: new Date().toISOString(),
+          marketing_consent_source: 'signup',
+        })
+        .eq('id', data.user.id);
     }
 
     setLoading(false);
@@ -388,6 +402,17 @@ export default function SignUpPage() {
                 <p className="mt-1 text-xs text-charcoal-soft">{copy.passwordMinLengthHint}</p>
               </div>
             </div>
+
+            <label className="flex cursor-pointer items-start gap-2 text-sm text-charcoal-muted">
+              <input
+                id="marketing-consent"
+                type="checkbox"
+                checked={marketingConsent}
+                onChange={(e) => setMarketingConsent(e.target.checked)}
+                className="mt-0.5 rounded border-gray-300"
+              />
+              <span>{copy.marketingConsentLabel}</span>
+            </label>
 
             {error && (
               <div role="alert" className="text-danger-a11y text-sm">
