@@ -15,6 +15,8 @@ export type AdminNotification = {
 type SupabaseClient = Awaited<ReturnType<typeof requireAdminClient>>;
 type RpcResult<T> = { data: T | null; error: unknown };
 
+const RECENT_WINDOW_DAYS = 30; // 신규 등록·구매 알림에 포함할 최대 기간
+
 // 운영 상태 알림은 당일 UTC 자정을 createdAt으로 써서 하루 단위 재-unread 방지.
 function todayUtcIso(): string {
   const d = new Date();
@@ -27,11 +29,13 @@ function formatKrw(amount: number): string {
 }
 
 async function fetchPurchases(supabase: SupabaseClient): Promise<AdminNotification[]> {
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
   const { data, error } = await supabase
     .from('orders')
     .select('id, order_no, buyer_name, total_amount, paid_at')
     .eq('status', 'paid')
     .not('paid_at', 'is', null)
+    .gte('paid_at', sinceIso)
     .order('paid_at', { ascending: false })
     .limit(10);
 
@@ -49,43 +53,51 @@ async function fetchPurchases(supabase: SupabaseClient): Promise<AdminNotificati
 }
 
 async function fetchRegistrations(supabase: SupabaseClient): Promise<AdminNotification[]> {
-  const { data, error } = await supabase
-    .from('activity_logs')
-    .select('id, action, summary, metadata, created_at')
-    .in('action', ['artist_application_submitted', 'artist_created', 'artwork_created'])
-    .order('created_at', { ascending: false })
-    .limit(10);
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  const notifications: AdminNotification[] = [];
 
-  if (error || !data) return [];
+  const [artworksRes, artistsRes] = await Promise.all([
+    supabase
+      .from('artworks')
+      .select('created_at', { count: 'exact' })
+      .gte('created_at', sinceIso)
+      .order('created_at', { ascending: false })
+      .limit(1),
+    supabase
+      .from('artists')
+      .select('created_at', { count: 'exact' })
+      .gte('created_at', sinceIso)
+      .order('created_at', { ascending: false })
+      .limit(1),
+  ]);
 
-  return data.map((row) => {
-    const meta = row.metadata as Record<string, unknown> | null;
-    const targetName =
-      (meta?.target_name as string | undefined) ?? (meta?.title as string | undefined) ?? null;
-
-    let title: string;
-    let href: string;
-    if (row.action === 'artist_application_submitted') {
-      title = `작가 신청 — ${targetName ?? '신규 작가'}`;
-      href = '/admin/users?status=pending';
-    } else if (row.action === 'artist_created') {
-      title = `작가 등록 — ${targetName ?? '신규 작가'}`;
-      href = '/admin/artists';
-    } else {
-      title = `작품 등록 — ${targetName ?? '신규 작품'}`;
-      href = '/admin/artworks';
-    }
-
-    return {
-      id: `log:${row.id}`,
+  const artworkCount = artworksRes.count ?? 0;
+  if (artworkCount > 0 && artworksRes.data?.[0]?.created_at) {
+    notifications.push({
+      id: 'reg:artworks',
       category: 'registration',
       severity: 'info',
-      title,
-      detail: row.summary ?? undefined,
-      href,
-      createdAt: row.created_at,
-    } satisfies AdminNotification;
-  });
+      title: `신규 작품 ${artworkCount}건 등록`,
+      detail: `최근 ${RECENT_WINDOW_DAYS}일`,
+      href: '/admin/artworks',
+      createdAt: artworksRes.data[0].created_at,
+    });
+  }
+
+  const artistCount = artistsRes.count ?? 0;
+  if (artistCount > 0 && artistsRes.data?.[0]?.created_at) {
+    notifications.push({
+      id: 'reg:artists',
+      category: 'registration',
+      severity: 'info',
+      title: `신규 작가 ${artistCount}명 등록`,
+      detail: `최근 ${RECENT_WINDOW_DAYS}일`,
+      href: '/admin/artists',
+      createdAt: artistsRes.data[0].created_at,
+    });
+  }
+
+  return notifications;
 }
 
 async function fetchActionNeeded(supabase: SupabaseClient): Promise<AdminNotification[]> {
