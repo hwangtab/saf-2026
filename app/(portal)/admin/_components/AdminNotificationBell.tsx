@@ -74,6 +74,7 @@ export function AdminNotificationBell({ notifications }: Props) {
         aria-label={`알림${unreadCount > 0 ? ` (${unreadCount}건 미확인)` : ''}`}
         aria-expanded={open}
         onClick={handleToggle}
+        suppressHydrationWarning
         className="relative inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-charcoal"
       >
         <svg
@@ -93,6 +94,7 @@ export function AdminNotificationBell({ notifications }: Props) {
         {unreadCount > 0 && (
           <span
             aria-hidden="true"
+            suppressHydrationWarning
             className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-danger-a11y px-1 text-[10px] font-bold leading-none text-white"
           >
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -101,10 +103,7 @@ export function AdminNotificationBell({ notifications }: Props) {
       </button>
 
       {open && (
-        <div
-          aria-label="알림"
-          className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] shadow-xl"
-        >
+        <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] shadow-xl">
           {/* 헤더 */}
           <div className="flex items-center justify-between border-b border-[var(--admin-border-soft)] px-4 py-3">
             <h2 className="text-sm font-semibold text-charcoal-deep">알림</h2>

@@ -232,10 +232,11 @@ async function fetchAnalytics(supabase: SupabaseClient): Promise<AdminNotificati
   }
 
   // GSC 트래픽 급락 (최근 7일 vs 직전 7일, -30% 초과)
-  if (!dailyRes.error && (dailyRes.data?.length ?? 0) >= 7) {
+  // 14일치 데이터가 있어야 7일 vs 7일 공평한 비교 가능.
+  if (!dailyRes.error && (dailyRes.data?.length ?? 0) >= 14) {
     const rows = [...(dailyRes.data ?? [])].sort((a, b) => a.day.localeCompare(b.day));
     const recent = rows.slice(-7);
-    const prior = rows.slice(0, Math.min(7, rows.length - 7));
+    const prior = rows.slice(rows.length - 14, rows.length - 7);
     const recentClicks = recent.reduce((s, r) => s + (r.clicks ?? 0), 0);
     const priorClicks = prior.reduce((s, r) => s + (r.clicks ?? 0), 0);
     if (priorClicks > 10 && recentClicks / priorClicks < 0.7) {
