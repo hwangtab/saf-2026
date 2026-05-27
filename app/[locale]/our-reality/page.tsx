@@ -26,6 +26,7 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
+import RelatedStoriesGrid from '@/components/features/RelatedStoriesGrid';
 import { AlertTriangle, Ban, Drama, Leaf, Timer } from 'lucide-react';
 
 export const dynamic = 'force-static';
@@ -696,6 +697,14 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
           </div>
         </div>
       </Section>
+
+      {/* 관련 매거진 — 예술인 금융 현실 심화 읽기 */}
+      <RelatedStoriesGrid
+        locale={locale}
+        eyebrow={{ ko: '데이터 더 읽기', en: 'Read the Data' }}
+        title={{ ko: '숫자 뒤의 이야기', en: 'The Stories Behind the Numbers' }}
+        slugs={['artist-finance-5-numbers', 'why-banks-reject-artists', 'testimonials-narrative']}
+      />
 
       {/* 제언: 산소호흡기가 필요하다 */}
       <Section variant="canvas" prevVariant="white">

@@ -18,6 +18,7 @@ import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
+import RelatedStoriesGrid from '@/components/features/RelatedStoriesGrid';
 
 export const dynamic = 'force-static';
 export const revalidate = false;
@@ -494,6 +495,18 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           </div>
         </Section>
 
+        {/* 관련 매거진 — 상호부조 기금 심화 읽기 (EN) */}
+        <RelatedStoriesGrid
+          locale={locale}
+          eyebrow={{ ko: '기금 이야기 더 읽기', en: 'More on the Fund' }}
+          title={{ ko: '상호부조는 어떻게 작동하나', en: 'How Mutual Aid Works' }}
+          slugs={[
+            'bank-vs-mutual-aid-comparison',
+            'what-95-percent-repayment-rate-means',
+            'how-mutual-aid-fund-works',
+          ]}
+        />
+
         <Section variant="primary-soft" prevVariant="canvas" className="pb-24 md:pb-32">
           <div className="container-max text-center">
             <SectionTitle className="mb-8">You can join this trust network</SectionTitle>
@@ -822,6 +835,18 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           </p>
         </div>
       </Section>
+
+      {/* 관련 매거진 — 상호부조 기금 심화 읽기 (KO) */}
+      <RelatedStoriesGrid
+        locale={locale}
+        eyebrow={{ ko: '기금 이야기 더 읽기', en: 'More on the Fund' }}
+        title={{ ko: '상호부조는 어떻게 작동하나', en: 'How Mutual Aid Works' }}
+        slugs={[
+          'bank-vs-mutual-aid-comparison',
+          'what-95-percent-repayment-rate-means',
+          'how-mutual-aid-fund-works',
+        ]}
+      />
 
       {/* Call to Action */}
       <Section variant="primary-soft" prevVariant="canvas" className="pb-24 md:pb-32">
