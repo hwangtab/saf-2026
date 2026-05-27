@@ -207,8 +207,7 @@ async function fetchAnalytics(supabase: SupabaseClient): Promise<AdminNotificati
       title: `Web Vitals 회귀 ${regressionCount}건`,
       detail: '7일 이내 poor 임계값 초과 페이지',
       href: '/admin/analytics',
-      createdAt:
-        new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10) + 'T00:00:00.000Z',
+      createdAt: todayUtcIso(),
     });
   }
 
