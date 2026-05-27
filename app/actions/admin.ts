@@ -557,8 +557,18 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
       .eq('user_id', userId)
       .maybeSingle();
 
-    // application이 있는데 동의가 미완료인 경우만 차단 (신청서 미제출은 허용)
-    if (application && !hasAllRequiredConsents(application, 'artist')) {
+    if (
+      !application?.artist_name?.trim() ||
+      !application?.contact?.trim() ||
+      !application?.bio?.trim()
+    ) {
+      return {
+        message: '아티스트 신청서가 제출되지 않아 승인할 수 없습니다.',
+        error: true,
+      };
+    }
+
+    if (!hasAllRequiredConsents(application, 'artist')) {
       return {
         message: '동의가 완료되지 않은 사용자입니다.',
         error: true,
