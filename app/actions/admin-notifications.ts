@@ -51,7 +51,7 @@ async function fetchPurchases(supabase: SupabaseClient): Promise<AdminNotificati
 async function fetchRegistrations(supabase: SupabaseClient): Promise<AdminNotification[]> {
   const { data, error } = await supabase
     .from('activity_logs')
-    .select('id, action, target_type, summary, metadata, created_at')
+    .select('id, action, summary, metadata, created_at')
     .in('action', ['artist_application_submitted', 'artist_created', 'artwork_created'])
     .order('created_at', { ascending: false })
     .limit(10);
@@ -185,7 +185,8 @@ async function fetchAnalytics(supabase: SupabaseClient): Promise<AdminNotificati
   };
   type GscDailyRow = { day: string; impressions: number; clicks: number };
 
-  const since14d = new Date(Date.now() - 14 * 86_400_000).toISOString().slice(0, 10);
+  // GSC has ~2-day lag — request 16 days back to guarantee ≥14 rows for 7-vs-7 comparison.
+  const since16d = new Date(Date.now() - 16 * 86_400_000).toISOString().slice(0, 10);
 
   const [wvRes, syncRes, dailyRes] = await Promise.all([
     untypedRpc<number>('get_web_vitals_regression_count', {
@@ -193,7 +194,7 @@ async function fetchAnalytics(supabase: SupabaseClient): Promise<AdminNotificati
       min_sample_size: 10,
     }),
     untypedRpc<GscSyncStatusRow[]>('get_gsc_sync_status', {}),
-    untypedRpc<GscDailyRow[]>('get_gsc_daily_trend', { since_date: since14d }),
+    untypedRpc<GscDailyRow[]>('get_gsc_daily_trend', { since_date: since16d }),
   ]);
 
   // Web Vitals 회귀
@@ -241,7 +242,7 @@ async function fetchAnalytics(supabase: SupabaseClient): Promise<AdminNotificati
     const priorClicks = prior.reduce((s, r) => s + (r.clicks ?? 0), 0);
     if (priorClicks > 10 && recentClicks / priorClicks < 0.7) {
       const drop = Math.round((1 - recentClicks / priorClicks) * 100);
-      const latestDay = recent[recent.length - 1]?.day ?? since14d;
+      const latestDay = recent[recent.length - 1]?.day ?? since16d;
       notifications.push({
         id: 'alert:gsc-traffic-drop',
         category: 'analytics',
