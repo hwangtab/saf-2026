@@ -58,14 +58,14 @@ export default function BroadcastEmail({
   const unsubscribeText =
     locale === 'en' ? 'Unsubscribe from this mailing list' : '이메일 수신거부 및 구독취소';
 
-  // 'customer' 채널 시 헤더 색상을 주황색(경고) 톤으로 → 광고임을 명시
-  const headerColor = isAd ? '#E3AC0D' : '#2E9F7B';
+  // 'customer' 채널 시 헤더 색상을 primary 블루로 → 광고임을 명시
+  const headerColor = isAd ? '#0E4ECF' : '#2176FF';
 
   return (
     <SAFEmailLayout
       headerColor={headerColor}
       headerTitle={headerTitle}
-      previewText={subject}
+      previewText={headerTitle}
       locale={locale}
     >
       <Text style={greetingText}>{greeting}</Text>
