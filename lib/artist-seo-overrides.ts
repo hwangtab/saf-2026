@@ -190,6 +190,20 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
     titleKo: '정채희 — 옻칠로 그리는 칠화·칠벽화, 서울대·북경 중앙미술학원 | 씨앗페',
     titleEn: 'Jeong Chaehui — Lacquer Painting and Murals, SNU & Beijing CAFA | SAF Online',
   },
+
+  // ─── GSC 2026-05-27: 잔여 0-click 작가 페이지 gap-fill ──────────────────────
+  // 합계 ~89 imp / 0~1 click. T2-13 이후 미커버된 2건.
+
+  김지영: {
+    // GSC: 48 imp / 0 click / pos 8.9 — 도예가. 자연 소재 작품, '순 돋는 나무'·'나무 한 그루' 시리즈.
+    titleKo: '김지영 — 자연을 빚는 도예가, 순 돋는 나무·나무 한 그루 시리즈 | 씨앗페',
+    titleEn: 'Kim Jiyeong — Ceramicist of Natural Forms, Budding Trees Series | SAF Online',
+  },
+  정영신: {
+    // GSC: 41 imp / 0 click — 1958년생, 40년째 오일장 기록 사진가·소설가. 전국 600여 장터 모두 기록.
+    titleKo: '정영신 — 40년 오일장 기록 사진가·소설가, 전국 600여 장터를 누빈 바람의 여행자 | 씨앗페',
+    titleEn: 'Jeong Yeongsin — Photographer & Novelist, 40 Years Documenting 600+ Rural Markets | SAF Online',
+  },
 };
 
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */

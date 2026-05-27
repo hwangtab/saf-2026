@@ -151,6 +151,17 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     descriptionEn:
       '1985: police shut down his exhibition. Decades later, Park Bul-ttong still records the contradictions of his era through photomontage and digital art.',
   },
+  'meet-artist-jung-young-shin': {
+    // GSC: 41 imp / 1 click / pos 7.6 — "정영신" 검색어. 1958년생, 오일장 기록 사진가·소설가.
+    titleKo:
+      '사진가·소설가 정영신 인터뷰 — 40년 오일장, 전국 600여 장터를 기록한 바람의 여행자 | 씨앗페 매거진',
+    titleEn:
+      'Jeong Yeongsin Interview — 40 Years at 600+ Rural Markets, Photographer & Novelist | SAF Magazine',
+    descriptionKo:
+      '1958년 전남 함평 출생. 40년째 전국 오일장을 탐구하는 기록사진가이자 소설가. 6백여 곳의 장터를 발로 누빈 바람의 여행자 정영신의 이야기.',
+    descriptionEn:
+      'Born 1958 in Hampyeong. For 40 years, Jeong Yeongsin has photographed over 600 rural markets across Korea — part documentarian, part novelist, always wandering.',
+  },
 };
 
 /** 슬러그로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
