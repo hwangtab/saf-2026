@@ -84,6 +84,8 @@ display_order: 8
 
 [![이철수, 〈호박옹〉, 목판·한지, 60x50cm, 에디션 10 — 작가명·작품명·재료·크기·에디션이 모두 명시된 정식 한정 판화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e292e8b4-fa55-453f-825a-1f050fdd95ae/tf0uetfcjs_1771896697698__original.webp)](/artworks/e292e8b4-fa55-453f-825a-1f050fdd95ae)
 
+_[이철수](/artworks/artist/이철수) — 온라인으로 처음 접할 수 있는 한지 목판화의 대가. 작품 이미지만으로도 판화 고유의 결을 느낄 수 있다._
+
 플랫폼이 안전하면, 다음은 **작품 자체의 정보**입니다. 온라인은 갤러리와 달리 직접 만져볼 수 없으므로 정보가 더 풍부해야 합니다.
 
 #### 회화·드로잉의 경우

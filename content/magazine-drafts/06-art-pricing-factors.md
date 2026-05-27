@@ -56,6 +56,8 @@ display_order: 6
 
 [![오윤, 〈낮도깨비〉, 사후판화 목판, 54.5x36cm — 한국 민중미술의 대표 작가, 작고 작가의 사후판화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp)](/artworks/b3838f14-0601-4e2a-a502-4b099ecd50ad)
 
+_[오윤](/artworks/artist/오윤) — 민중미술의 거목. 목판화 특유의 힘찬 선으로 민초의 삶을 새긴 작가._
+
 가격을 만드는 가장 큰 힘은 **작가가 누구인가**입니다. 한국 미술 시장에서 작가의 위치는 대략 네 단계로 나뉩니다.
 
 ### 단계 1 — 신진(Emerging Artist)
@@ -107,6 +109,8 @@ display_order: 6
 
 [![이철수, 〈물흐르고 흘러 바다〉, 목판·한지, 98x42cm, 에디션 10 — 회화 원본보다 5~10배 합리적인 한정 판화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-cb8e1679-abb0-4cf2-898c-9d85e2d2a782/0wn8bh0fdr8d_1771896503912__original.webp)](/artworks/cb8e1679-abb0-4cf2-898c-9d85e2d2a782)
 
+_[이철수](/artworks/artist/이철수) — 한지 목판화의 대가. 느리고 정직한 손의 시간이 작품 가격에 녹아 있다._
+
 같은 작가라도 매체가 다르면 가격이 5~10배 차이가 납니다.
 
 | 매체               | 같은 작가 가격 비율 | 이유                         |
@@ -133,6 +137,8 @@ display_order: 6
 ## 요소 ③ 크기(호수) — 호당 가격 시스템
 
 [![김규학, 〈바람과 빛-142〉, 캔버스에 유화, 65x91cm — 큰 사이즈일수록 호당 가격이 적용되어 가격이 비례적으로 결정된다](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/g5w3knourg_1771652781991__original.webp)](/artworks/e4ab8c28-4e83-448b-b381-68a7ab1f4951)
+
+_[김규학](/artworks/artist/김규학) — 빛과 대기, 한국의 풍경을 현대적 감각으로 재해석하는 중견 화가._
 
 한국 미술 시장은 **호당 가격(price per ho)** 시스템으로 작동합니다.
 

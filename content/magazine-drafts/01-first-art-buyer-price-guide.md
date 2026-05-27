@@ -96,6 +96,8 @@ display_order: 1
 
 [![안은경, 〈쉼표(,)〉, 장지에 채색, 19x24cm — 100만원대에서 만날 수 있는 신진 한국화 작가의 소형 원본](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/lomoxkql8f_1773039763798__original.webp)](/artworks/8d143bb8-ebf5-4aa7-ac76-9da489a69eab)
 
+_[안은경](/artworks/artist/안은경) — 일상의 사물과 감정을 섬세한 색채로 담아내는 작가. 첫 컬렉터에게 친숙하고 따뜻한 첫 만남을 선사한다._
+
 가장 많은 첫 컬렉터가 진입하는 가격대입니다. 신진~중견 작가의 회화 원본을 만날 수 있는 첫 구간입니다.
 
 ### 이 구간에서 살 수 있는 것
@@ -121,6 +123,8 @@ display_order: 1
 ## 가격대 3 — 300만원 구간: "중견 작가의 회화 원본"
 
 [![김규학, 〈바람과 빛-51〉, 캔버스에 유화, 50x65cm — 300만원대 중견 작가의 회화 원본 예시](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/kx3cftpw7s8_1771651596386__original.webp)](/artworks/2d4e2768-eeae-4fca-8cf0-4bdf9ab1991a)
+
+_[김규학](/artworks/artist/김규학) — 빛과 대기를 한국화적 감각으로 재해석하는 중견 화가. 가격 대비 완성도 높은 진입 작품으로 알려져 있다._
 
 여기서부터는 본격적인 컬렉터의 영역입니다. 인지도 있는 중견 작가의 회화 원본, 또는 중요한 시리즈의 작품을 만날 수 있습니다.
 

@@ -71,6 +71,8 @@ display_order: 14
 
 [![김규학, 〈바람과 빛-51〉, 캔버스에 유화, 50x65cm — 절제된 색채와 긴 호흡의 붓질](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/kx3cftpw7s8_1771651596386__original.webp)](/artworks/2d4e2768-eeae-4fca-8cf0-4bdf9ab1991a)
 
+_[김규학](/artworks/artist/김규학) — 단색화 이후 세대의 감수성으로 빛과 대기를 탐구하는 중견 화가. 씨앗페에서 만날 수 있는 단색 계열 작가._
+
 ## 5거장으로 읽는 단색화
 
 단색화는 단일 양식이 아니라 **작가별로 전혀 다른 접근**을 갖습니다. 대표 5인을 통해 그 스펙트럼을 봅니다.

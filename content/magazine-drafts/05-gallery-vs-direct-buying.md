@@ -84,6 +84,8 @@ display_order: 5
 
 [![안은경, 〈서툰 여행〉, 장지 혼합재료, 45.5x53cm — 신진 작가의 작업실에서 직접 만나는 한국화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/79__original.webp)](/artworks/734ed0f3-1f9f-41bd-b0a1-70a09417f6c1)
 
+_[안은경](/artworks/artist/안은경) — 일상의 온기를 섬세한 색채로 담아내는 작가. 직거래 플랫폼을 통해 컬렉터와 직접 만나는 대표적인 사례._
+
 ### 작가 직매란
 
 작가의 스튜디오를 직접 방문하거나, 작가의 SNS·홈페이지·이메일을 통해 작품을 구매하는 방식입니다. 한국 미술 시장에서 점점 더 일반화되고 있습니다.

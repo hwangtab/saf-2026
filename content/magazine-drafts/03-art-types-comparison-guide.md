@@ -63,6 +63,8 @@ display_order: 3
 
 [![김규학, 〈바람과 빛-142〉, 캔버스에 유화, 65x91cm, 유일본 — 시장에 한 점만 존재하는 회화 원본](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/g5w3knourg_1771652781991__original.webp)](/artworks/e4ab8c28-4e83-448b-b381-68a7ab1f4951)
 
+_[김규학](/artworks/artist/김규학) — 빛과 대기를 한국화적 감각으로 풀어낸 중견 화가._
+
 **한 줄 요약**: 캔버스나 종이 위에 작가가 직접 붓·나이프로 안료를 올린 단 한 점의 원본. 미술 시장의 중심이며 가장 비쌉니다.
 
 ### 회화의 가격 구조
@@ -100,6 +102,8 @@ display_order: 3
 ## ② 판화(Printmaking) — 합리적 가격의 진짜 원작
 
 [![이철수, 〈독도-마음바다〉, 목판·한지, 76x47cm, 에디션 10 — 작가가 직접 판을 제작·감수한 한정 판화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0/ihhciy1fbj_1771896384520__original.webp)](/artworks/4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0)
+
+_[이철수](/artworks/artist/이철수) — 한지 목판화의 대가. 판화 원작으로 시작하는 컬렉션의 첫 문장._
 
 **한 줄 요약**: 작가가 직접 판(版)을 제작·감수해 정해진 수량만 찍어낸 공식 원작. 회화 원본보다 5~10배 저렴하지만, **공식 원작의 지위**는 동일합니다.
 
@@ -144,6 +148,8 @@ display_order: 3
 
 [![강레아, 〈#01_S1707SP〉, 한지에 피그먼트 프린트, 66x45cm — 한국 동시대 사진 작가의 한정 에디션 작품](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp)](/artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3)
 
+_[강레아](/artworks/artist/강레아) — 산을 오르며 찍고, 한지에 인화한다. 사진 원작의 새로운 언어._
+
 **한 줄 요약**: 작가가 직접 검수·서명한 한정 에디션 사진 프린트. 판화와 비슷한 에디션 시스템을 따르며, 가격대는 30~500만원으로 다양합니다.
 
 ### 사진 작품 vs 일반 사진의 차이
@@ -183,6 +189,8 @@ display_order: 3
 ## ④ 조각·공예(Sculpture & Craft) — 공간을 차지하는 입체 작품
 
 [![정채희, 〈옻사과〉, 디지털프린트에 옻칠·난각·자개, 65x70cm — 디지털 이미지 위 천년의 광택, 한국 공예의 동시대성](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/38df043c-af80-41c8-8c1b-a065c8218cf1/192__original.webp)](/artworks/586fa73b-105e-4a6f-a61e-a41fe4b36f55)
+
+_[정채희](/artworks/artist/정채희) — 옻칠·난각 기법으로 동시대 한국 공예의 새 지평을 여는 작가._
 
 **한 줄 요약**: 청동·돌·나무·도자 등 다양한 재료로 만든 입체 작품. 한국 공예 작가의 옻칠·자개·금박 작품도 이 범주에 속합니다. 회화와 비슷한 가격대지만 보존·이동·설치에 더 신경 써야 합니다.
 

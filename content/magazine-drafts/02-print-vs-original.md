@@ -133,7 +133,7 @@ display_order: 2
 
 세 힘이 곱해져 최종 가격 비율이 결정됩니다. 공급은 정량적이지만, 나머지 둘은 **주관적·문화적 요인**이라 시장마다·시기마다 유동적입니다.
 
-## 실제 사례 — 이철수·오윤·이광수를 통해 본 계산법
+## 실제 사례 — [이철수](/artworks/artist/이철수)·[오윤](/artworks/artist/오윤)·이광수를 통해 본 계산법
 
 [![이철수, 〈에고, ego〉, 목판·한지, 50x42cm, 에디션 10 — ₩1,200,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f26aa92f-d09a-4469-9ff7-7cd34a2648ca/u9dh6xli5co_1771896705102__original.webp)](/artworks/f26aa92f-d09a-4469-9ff7-7cd34a2648ca)
 

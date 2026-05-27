@@ -1,5 +1,265 @@
 [
   {
+    "hash": "ea722dab",
+    "type": "fix",
+    "scope": "email",
+    "subject": "Svix 서명 비교를 raw bytes로 수정 + 테스트 강화",
+    "summary": "Buffer.from(sig, 'base64')로 32바이트 HMAC 비교 — ASCII 비교 버그 수정",
+    "body": "- Buffer.from(expected|sig, 'base64') → 올바른 이진 timing-safe 비교\n- 다중 서명 테스트: 동일 길이 wrong sig으로 실질 검증\n- 엣지케이스 2건 추가: 미래 timestamp, 빈 배열 to",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "4856adad",
+    "type": "feat",
+    "scope": "email",
+    "subject": "Resend 웹훅 Svix 서명 검증 헬퍼",
+    "summary": "바운스/컴플레인 웹훅용 Svix 수동 HMAC 검증 + 페이로드 파싱",
+    "body": "- verifyResendWebhook: whsec_ 시크릿 디코드 → HMAC-SHA256 → timing-safe 비교, replay 방지(5분 tolerance)\n- parseResendEvent: 페이로드 타입 파싱\n- extractRecipientEmail: to 배열·문자열 양쪽 처리\n- 단위 테스트 12건 (위변조·replay·다중 서명·엣지케이스)",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "c5de03b9",
+    "type": "feat",
+    "scope": "email",
+    "subject": "recipients status CHECK에 bounced/complained 추가",
+    "summary": "Resend 웹훅 통계 갱신을 위한 발송 상태 enum 확장",
+    "body": "- email_broadcast_recipients status에 bounced·complained 허용\n- 바운스/컴플레인 웹훅이 발송 통계를 갱신할 때 필요",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "bde5e31a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "/artworks/artist/오윤 link equity 집중 — 오윤 내부 링크 통합",
+    "summary": "/special/oh-yoon에 \"함께 읽을 매거진\" 블록과 작가 갤러리 CTA 추가, 오윤 관련 스토리 4편 본문에 /artworks/artist/오윤 in-content 링크 삽입 (Supabase 라이브 body + draft .md 동기화)",
+    "body": "- /special/oh-yoon: getSupabaseStoriesLight()로 큐레이션된 오윤 스토리 5편 매거진 블록 (page.tsx 하단 신규 white 섹션)\n- /special/oh-yoon: \"오윤 작품 전체 보기\" CTA → /artworks/artist/오윤 (신규 crawlable 링크)\n- korean-shamanism-art: §2 도입부에 오윤 작가 갤러리 링크 추가 (art-knowledge 카테고리라 푸터 자동링크 없음 → 유일 경로)\n- oh-yun-song-of-the-blade / oh-yun-market-01-after-forty / oh-yun-40th-anniversary: FAQ·결론부에 in-content 링크 보강\n- docs/CONTENT-STRATEGY.md 추가 — \"30 of 1,745\" 방법론 씨앗페 실측 검증 + 4개 콘텐츠 필러 + Sprint 로드맵\n\n배경: GSC 실측에서 /artworks/artist/오윤 92 impressions / 0 clicks / rank 9.5 — 내부 링크 dead-end가 1페이지 진입 저해. 전략 분석은 docs/CONTENT-STRATEGY.md 참조.\nnote: oh-yun-40th-anniversary는 draft .md 없음 (Supabase-only 수정, git 소스 미동기화)",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "82d2f08f",
+    "type": "feat",
+    "scope": "email",
+    "subject": "청원 캠페인 알림 채널 audience resolver (Phase 3)",
+    "summary": "petition_signatures(is_masked=false, email not null)에서 수신자 추출, petition/all 수신거부 차감. 11508명 대량 발송 대응. BroadcastForm에서 청원 채널 활성화",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "82c34976",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "회원가입 선택적 마케팅 이메일 동의 체크박스",
+    "summary": "가입 시 선택 동의 수집 → marketing_consent_source='signup'. 기존 고객은 마이페이지 토글로 별도 동의 가능",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "45a66564",
+    "type": "feat",
+    "scope": "mypage",
+    "subject": "광고 이메일 수신동의 토글 추가",
+    "summary": "마이페이지 ProfileTab에 marketing_consent 토글. 거부 시 email_suppressions에도 반영해 즉시 수신거부 처리",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "61bb621e",
+    "type": "fix",
+    "scope": "email",
+    "subject": "customer resolver 에러 처리 강화 — suppressions 실패 시 throw, 쿼리 오류 전파",
+    "summary": "suppressions 조회 실패 시 발송 중단(컴플라이언스). 동의자·거래고객 쿼리 실패 시 오류 메시지 전파로 admin에게 명확한 피드백 제공",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "e8350c8e",
+    "type": "fix",
+    "scope": "email",
+    "subject": "customer audience resolver DB-level 필터링 + mock 체이닝 수정",
+    "summary": "JS-side 필터링을 DB-level 쿼리로 교체 (role/marketing_consent/status/created_at/channel 필터). suppression 채널 필터 복원. 테스트 mock 체이닝 지원으로 재작성",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "879c5187",
+    "type": "feat",
+    "scope": "email",
+    "subject": "고객 마케팅 채널 audience resolver + enqueue 활성화 (Phase 2)",
+    "summary": "marketing_consent=true 또는 6개월 거래고객 합집합, customer/all 수신거부 차감. BroadcastForm에서 고객 채널 활성화",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "70852374",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "이메일 발송 관리 UI (/admin/email)",
+    "summary": "채널 선택·본문 작성·수신자 미리보기·발송 예약 폼과 발송 이력 테이블. 야간 발송 경고 포함. nav 도구 그룹에 추가",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "dcbc9b0e",
+    "type": "feat",
+    "scope": "email",
+    "subject": "수신거부 엔드포인트 (/api/email/unsubscribe)",
+    "summary": "HMAC 토큰 검증 후 email_suppressions upsert. 로그인 불필요. 정통망법 §50 무료 즉시 수신거부 요건 충족",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "699ec75a",
+    "type": "feat",
+    "scope": "email",
+    "subject": "브로드캐스트 dispatch 크론 핸들러 + vercel.json 등록",
+    "summary": "1분 주기 크론이 pending 수신자를 100건 청크로 Resend batch 발송. status=pending만 처리해 재실행 멱등성 보장",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "8071664c",
+    "type": "feat",
+    "scope": "email",
+    "subject": "브로드캐스트 enqueue 서버 액션",
+    "summary": "관리자가 채널 선택 후 발송 예약하면 email_broadcasts + email_broadcast_recipients(pending) 생성. dispatch 크론이 실제 발송",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "c6306961",
+    "type": "feat",
+    "scope": "email",
+    "subject": "작가·출품자 audience resolver (Phase 1)",
+    "summary": "artists.contact_email ∪ profiles(exhibitor)에서 수신자 추출, member/all 수신거부 차감, 중복 제거",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "fbc629b3",
+    "type": "fix",
+    "scope": "email",
+    "subject": "broadcast 템플릿 색상 규칙 준수 + previewText 광고 표기 추가",
+    "summary": "헤더 색상을 primary 블루로 통일(sun/teal 제거), customer 채널 previewText에도 (광고) 접두어 적용",
+    "body": "- 헤더 색상: #E3AC0D(금지된 sun) → #0E4ECF(primary strong), #2E9F7B(teal) → #2176FF(primary default)\n- previewText: subject → headerTitle (이메일 미리보기에도 (광고) 표기 반영)",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "eccecd38",
+    "type": "feat",
+    "scope": "email",
+    "subject": "브로드캐스트 React Email 템플릿",
+    "summary": "고객(광고)/작가/청원 채널별 이메일 템플릿. customer 채널 시 정통망법 §50 발송자 정보 푸터 표시 + 제목에 (광고) 접두어. 모든 채널 수신거부 링크 지원.",
+    "body": "- channel: 'customer' | 'member' | 'petition'\n- customer 채널: 헤더 황금색(경고 톤) + 발송사 정보(법인명/대표자/사업자등록/주소/연락처) 별도 섹션\n- member/petition: 헤더 초록색(성공 톤) + 간단한 푸터\n- locale 지원: 'ko' / 'en'\n- CTA 선택사항: ctaLabel + ctaUrl 모두 제공 시만 렌더링\n- 수신거부 링크: 모든 채널에서 필수 (unsubscribeUrl)",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "38dafe35",
+    "type": "feat",
+    "scope": "email",
+    "subject": "Resend batch API wrapper (100건/요청, 1회 재시도)",
+    "summary": "단체 발송용 Resend /emails/batch 래퍼. 429/5xx 1회 재시도, 30초 타임아웃, 절대 throw 안 함",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "c41303c0",
+    "type": "feat",
+    "scope": "email",
+    "subject": "AudienceResolver 인터페이스 정의",
+    "summary": "채널별 수신자 추출을 위한 공통 Recipient·AudienceResolver 타입",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "83382b9a",
+    "type": "feat",
+    "scope": "email",
+    "subject": "HMAC unsubscribe 토큰 생성/검증 유틸리티",
+    "summary": "HMAC-SHA256 무상태 수신거부 토큰. 로그인 불필요, 위변조 방지, timing-safe 비교",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "372a218a",
+    "type": "feat",
+    "scope": "email",
+    "subject": "email-hash 유틸리티 추가 (petition salt 동일)",
+    "summary": "수신거부 테이블 email_hash 컬럼 생성용 sha256 해시 함수. petition_signatures와 동일 salt 정책 적용",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "db18aaab",
+    "type": "fix",
+    "scope": "email",
+    "subject": "DB 마이그레이션 품질 수정 — 인덱스 멱등성 + FK SET NULL",
+    "summary": "email_broadcast_recipients 인덱스에 IF NOT EXISTS 추가, email_broadcasts.created_by FK를 ON DELETE SET NULL로 교체",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "9cf0e57b",
+    "type": "feat",
+    "scope": "email",
+    "subject": "단체 이메일 발송 시스템 DB 스키마 추가",
+    "summary": "profiles 광고동의 컬럼, email_suppressions(수신거부), email_broadcasts(캠페인), email_broadcast_recipients(수신자 큐) 4개 테이블 마이그레이션",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "17da13c3",
+    "type": "fix",
+    "scope": "perf",
+    "subject": "Pretendard fallback font metric 실측값으로 교정 (CLS 꼬리 완화)",
+    "summary": "ascent-override 80%→95.21%, descent-override 20%→24.12%로 교정.",
+    "body": "fonttools 실측(unitsPerEm=2048, hhea ascent=1950, descent=-494).\n기존 추정값과 ascent 15%p 괴리가 Mac/Win에서 swap reflow 누적 원인.\n\n- Pretendard Variable 실측: hhea ascent=1950, descent=-494, unitsPerEm=2048\n- 현행 ascent 80%는 실측 95.21%와 15%p 차이 → swap 시 line box 확장 누적 CLS\n- size-adjust=100% 유지 (OS별 시스템 폰트 실측 없이 변경 시 회귀 위험)\n- Android: local() 미해석으로 이 @font-face가 Android에서 무효,\n  Android real-Chrome poor n=2/28일이라 보류 (주석 명시)\n- RUM 모니터링: 배포 후 1~2주, body>div.relative poor 건수(현 n≈21/28일) 추세 확인",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "4cc543f6",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "nav 고객 라벨 정정 + 개발 이력 동기화",
+    "summary": "'고객' 메뉴 라벨을 '고객 관리'로 정정하여 작가 관리·주문 관리 등 타 항목과 표기 일관성 맞춤. content/changelog.json에 최근 커밋 항목 자동 반영",
+    "body": null,
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "b402e059",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "무호도 작품 SERP 제목 override — \"오윤\" top-3 슬롯 클릭 회수",
+    "summary": "오윤 목판화 무호도가 \"오윤\" 검색 pos 3.4에 174노출/0클릭인 문제를 작품 단위 SEO 제목 override로 수정. `무호도 · 오윤 · ₩가격` 가격표 제목을 정보탐색 의도에 맞는 `무호도 — 오윤의 민중미술 목판화`로 교체.",
+    "body": "- lib/artwork-seo-overrides.ts 신설: artist/stories-seo-overrides 패턴 미러, artwork UUID 키 기반 제목 override\n- generateArtworkMetadata(artwork.ts): overrideTitle ?? 기존 generic 제목 분기 1줄 추가, titleStatusSuffix 등 기존 로직 무변\n- 무호도(45dac49b) ko/en 초기 매핑 시드: 가격 제거, 오윤·민중미술·목판화 맥락 노출\n- 매핑 없는 작품은 자동 generic fallback — 기존 동작 무변\n\nGSC 데이터: artwork 상세 pages 중 pos≤6/noclick≥20 쿼리 = \"오윤\"(192노출)·\"오윤후\"(21) 뿐.\n전 작가 패턴 아님 — 유명 작고 거장 오윤 한정 특수 케이스. 향후 동일 현상 발생 시 override 파일에 추가.",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
     "hash": "8de7c2b8",
     "type": "feat",
     "scope": "petition",
