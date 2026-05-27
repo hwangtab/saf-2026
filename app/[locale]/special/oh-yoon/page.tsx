@@ -12,7 +12,7 @@ import {
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
-import { getSupabaseArtworksByArtist } from '@/lib/supabase-data';
+import { getSupabaseArtworksByArtist, getSupabaseStoriesLight } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
@@ -135,6 +135,21 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
   const artworkCountLabel = new Intl.NumberFormat(isEnglish ? 'en-US' : 'ko-KR').format(
     OH_YOON_ARTWORKS.length
   );
+
+  // 오윤 관련 매거진 — SEO link equity를 /artworks/artist/오윤으로 집중 (CONTENT-STRATEGY §8)
+  const OH_YOON_STORY_SLUGS = [
+    'oh-yun-40th-anniversary',
+    'oh-yun-song-of-the-blade',
+    'oh-yun-market-01-after-forty',
+    'korean-shamanism-art',
+    'oh-yoon-estate-print-guide',
+  ];
+  const allStoriesLight = await getSupabaseStoriesLight();
+  const ohYoonStories = OH_YOON_STORY_SLUGS.flatMap((slug) => {
+    const found = allStoriesLight.find((s) => s.slug === slug);
+    return found ? [found] : [];
+  });
+
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('ohYoon'), url: pageUrl },
@@ -663,6 +678,72 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
             )}
           </div>
         </div>
+
+        {/* 함께 읽을 매거진 — 오윤 콘텐츠 클러스터 + 작가 갤러리 CTA */}
+        <section className="py-16 md:py-24 bg-canvas-soft border-t border-gallery-divider">
+          <div className="max-w-[1440px] mx-auto px-4">
+            <header className="mb-10">
+              <span className="block text-[10px] font-semibold tracking-widest uppercase text-primary-strong mb-2">
+                {isEnglish ? 'Read Next' : '함께 읽을 매거진'}
+              </span>
+              <h2 className="text-3xl md:text-4xl font-black font-display text-charcoal-deep text-balance">
+                {isEnglish ? 'More on Oh Yoon' : '오윤을 더 깊이 읽다'}
+              </h2>
+            </header>
+            {ohYoonStories.length > 0 && (
+              <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 list-none p-0 m-0">
+                {ohYoonStories.map((story) => {
+                  const storyTitle = isEnglish && story.title_en ? story.title_en : story.title;
+                  const storyExcerpt =
+                    isEnglish && story.excerpt_en ? story.excerpt_en : story.excerpt;
+                  return (
+                    <li key={story.slug}>
+                      <Link
+                        href={`/stories/${story.slug}`}
+                        className="group block h-full overflow-hidden rounded-2xl border border-gallery-hairline bg-white shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+                      >
+                        {story.thumbnail && (
+                          <div className="relative aspect-[16/10] overflow-hidden">
+                            <SafeImage
+                              src={story.thumbnail}
+                              alt={storyTitle}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          </div>
+                        )}
+                        <div className="p-5">
+                          <span className="text-[10px] font-semibold tracking-wider uppercase text-primary-strong">
+                            {isEnglish ? 'Magazine' : '매거진'}
+                          </span>
+                          <h3 className="mt-1.5 text-sm font-bold line-clamp-2 text-charcoal-deep group-hover:text-primary-strong transition-colors duration-300">
+                            {storyTitle}
+                          </h3>
+                          {storyExcerpt && (
+                            <p className="mt-1.5 text-xs text-charcoal-muted line-clamp-2 leading-relaxed">
+                              {storyExcerpt}
+                            </p>
+                          )}
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            <div className="flex justify-center">
+              <Link
+                href="/artworks/artist/오윤"
+                className="inline-flex items-center gap-2 rounded bg-primary px-8 py-4 text-sm font-bold tracking-wide text-white transition-colors duration-300 hover:bg-primary-strong"
+              >
+                {isEnglish ? 'View all works by Oh Yoon' : '오윤 작품 전체 보기'}
+                <span aria-hidden="true" className="text-base">
+                  →
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );
