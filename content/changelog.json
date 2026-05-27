@@ -1,5 +1,35 @@
 [
   {
+    "hash": "8de7c2b8",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "청원 헌사 섹션에 SAF 상호부조 미션 전환 CTA 추가",
+    "summary": "오윤 청원 페이지(사이트 트래픽 ~92%)의 tribute 마무리에 조합원 가입·작품 구매 CTAButtonGroup 삽입, 서명 완료자를 캠페인 본미션으로 연결",
+    "body": "- CTAButtonGroup(trackingPosition='petition-oh-yoon')으로 member_join_click GA4 트래킹 자동 포함\n- 오윤 민중미술 유산 → SAF 상호부조 기금 연결 bridge 카피 i18n(ko/en) 추가\n- 기존 explore-links(/our-reality·홈) 보조 동선으로 유지, 전환 CTA 아래 배치",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "8f819463",
+    "type": "feat",
+    "scope": "petition",
+    "subject": "청원 서명 GA4 트래킹·공유 CTA·SEO title 개선",
+    "summary": "청원 서명 성공 이벤트 GA4 누락 수정, 서명 직후 공유 버튼 노출, artist SEO override 업데이트",
+    "body": "- SignForm: signPetition 성공 시 petition_sign 이벤트 발화 (region_top·is_committee·has_message 비식별 파라미터)\n- SignForm: 서버 에러(RATE_LIMITED·DUPLICATE_EMAIL 등) 시 petition_sign_error 이벤트 발화\n- SignForm: 서명 완료 화면에 ShareTemplates 노출 (서명 직후 공유 유도)\n- ShareTemplates: 복사(copy) 및 열기(open) 버튼에 share_click 이벤트 트래킹 추가\n- artist-seo-overrides: 오윤 title에 \"1만여 명 서명\" 사회적 증거 반영",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
+    "hash": "31f83dbf",
+    "type": "fix",
+    "scope": "exhibitor",
+    "subject": "출품자 role 부여 시점을 승인 시로 통일",
+    "summary": "출품자 신청서 제출 시 role='exhibitor' 즉시 부여를 제거하고, 작가 흐름과 동일하게 승인 시에만 role='exhibitor'를 부여하도록 수정",
+    "body": "- exhibitor-onboarding.ts: 신청 시 status='pending'만 설정, role은 user 유지 (approveExhibitor가 승인 시 role='exhibitor' 부여 — 기존 동작)\n- AuthButtons.tsx: role='user'+pending 사용자에 한해 exhibitor_applications 존재 여부를 lazy 조회해 헤더 버튼을 /exhibitor/pending 으로 직행 라우팅\n- 기존 role='exhibitor'+status='pending' 백필 불필요 — DB 쿼리로 대상 0건 확인",
+    "date": "2026-05-27",
+    "author": "황경하"
+  },
+  {
     "hash": "a4760559",
     "type": "fix",
     "scope": "scripts",
