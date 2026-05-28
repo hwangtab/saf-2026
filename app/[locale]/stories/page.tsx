@@ -5,6 +5,7 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import { getSupabaseStories } from '@/lib/supabase-data';
+import { isCanonicalHub } from '@/lib/story-canonical-hubs';
 import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
@@ -150,7 +151,11 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
   // /stories는 항상 전체 매거진 노출. 카테고리별 필터는 정적 라우트
   // /stories/category/[category]가 별도 담당 — 양쪽 모두 SSG, CDN HIT.
   const allStories = await getSupabaseStories();
-  const stories = allStories;
+  // /stories 메인 진입 시 정전 hub 글이 fold 위 결정론 노출 — featured 카드도 hub 글로 강제.
+  // 카테고리 페이지(Sprint 23)와 동일 정렬 정책 — 매거진 root entry의 link equity가 hub에 집중.
+  const stories = [...allStories].sort(
+    (a, b) => (isCanonicalHub(a.slug) ? 0 : 1) - (isCanonicalHub(b.slug) ? 0 : 1)
+  );
 
   const breadcrumbItems = [
     { name: isEnglish ? 'Home' : '홈', url: buildLocaleUrl('/', locale) },
