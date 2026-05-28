@@ -489,6 +489,8 @@ async function renderArtistPage({ params }: Props) {
         name: locale === 'en' && s.title_en ? s.title_en : s.title,
         datePublished: s.published_at,
       })),
+      // 작가의 dominant medium — Person.knowsAbout에 매체 hub CreativeWork entity 추가.
+      dominantCategory,
     })
   );
 

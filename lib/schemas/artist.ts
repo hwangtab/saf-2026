@@ -1,5 +1,6 @@
 import { SITE_URL } from '@/lib/constants';
 import { resolveSeoArtworkImageUrl } from './utils';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 
 export interface ArtistSchemaInput {
   name: string;
@@ -30,6 +31,11 @@ export interface EnhancedArtistSchemaInput extends ArtistSchemaInput {
   artworks?: Array<{ id: string; title: string; image: string }>;
   /** 이 작가를 다룬 매거진 글 목록 — Person.subjectOf로 발행되어 양방향 entity 그래프 형성 */
   relatedStories?: readonly ArtistRelatedStory[];
+  /**
+   * 작가 작품의 dominant medium 카테고리(빈도 최다). knowsAbout에 매체 hub
+   * CreativeWork entity 추가에 사용 — Person ↔ 매체 hub 양방향 KG association.
+   */
+  dominantCategory?: string | null;
 }
 
 /** sameAs URL 정규화 + 중복 제거. 빈 문자열 / null / undefined 제거. */
@@ -219,8 +225,22 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
     mainEntityOfPage: {
       '@id': `${artist.url}#webpage`,
     },
-    // Expertise areas
-    ...(knowsAbout.length > 0 && { knowsAbout }),
+    // Expertise areas — text-derived topics + 매체 hub CreativeWork entity (양방향 KG link).
+    ...(() => {
+      const hubSlug = getMediumHubSlug(artist.dominantCategory);
+      const hubEntity = hubSlug
+        ? [
+            {
+              '@type': 'CreativeWork',
+              '@id': `${SITE_URL}/stories/${hubSlug}#about`,
+              url: `${SITE_URL}/stories/${hubSlug}`,
+              name: 'Medium guide',
+            },
+          ]
+        : [];
+      const merged: Array<string | object> = [...knowsAbout, ...hubEntity];
+      return merged.length > 0 ? { knowsAbout: merged } : {};
+    })(),
     // Education and awards
     ...(credentials.length > 0 && {
       hasCredential: credentials.map((cred) => ({
