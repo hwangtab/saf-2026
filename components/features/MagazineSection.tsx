@@ -4,6 +4,7 @@ import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { getSupabaseStoriesLight } from '@/lib/supabase-data';
+import { isCanonicalHub } from '@/lib/story-canonical-hubs';
 import { localizeStoryAuthor } from '@/lib/story-author';
 import { ArrowRight } from 'lucide-react';
 
@@ -18,7 +19,11 @@ export default async function MagazineSection({ locale }: { locale: string }) {
   const isEn = locale === 'en';
 
   const allStories = await getSupabaseStoriesLight();
-  const stories = allStories.slice(0, 3);
+  // Homepage 매거진 카드 3건 — 정전 hub 글 우선 노출(Sprint 23/24 정책 적용).
+  // root entry(/) 진입 시 hub의 link equity inflow가 thin content 대신 hub에 집중.
+  const stories = [...allStories]
+    .sort((a, b) => (isCanonicalHub(a.slug) ? 0 : 1) - (isCanonicalHub(b.slug) ? 0 : 1))
+    .slice(0, 3);
 
   if (stories.length === 0) return null;
 
