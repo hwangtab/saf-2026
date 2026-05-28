@@ -1,5 +1,25 @@
 [
   {
+    "hash": "34cf965f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 10 — 거장 작가 7편 tags 보강 + 관련 매거진 인링크",
+    "summary": "오윤·박생광·주재환·이철수·민병산·강석태·박재동 tags 보강 후 Sprint 9 DML 재실행으로 관련 매거진 섹션 부착",
+    "body": "- Phase 1: 7편 tags 보강 (idempotent array_cat + @> guard)\n  - joo-jaehwan-art-and-life: [주재환] → [주재환, 콜라주, 민중미술]\n  - kang-seoktae-little-prince: [강석태] → [강석태, 회화, 드로잉]\n  - lee-cheolsu-from-resistance-to-zen: [이철수] → [이철수, 판화, 목판화]\n  - min-byungsan-philosopher: [민병산] → [민병산, 회화, 드로잉]\n  - oh-yun-40th-anniversary: [오윤] → [오윤, 판화, 민중미술]\n  - park-jaedong-25-artworks: [박재동] → [박재동, 시사만화, 한국 민중미술]\n  - park-saenggwang-last-transformation: [박생광] → [박생광, 한국화, 민화]\n- Phase 2: Sprint 9 DML 재실행 → 7편 body+body_en 관련 매거진 인링크 부착\n- Coverage: 67/82(82%) → 74/82(90%)\n- Sprint 7+9 처리된 67편 무회귀 (idempotency guard)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "d0f39bba",
+    "type": "fix",
+    "scope": "email",
+    "subject": "멱등 가드 orphan broadcast 재사용 차단 (P1-F)",
+    "summary": "enqueueBroadcast 멱등 가드가 recipients 0건인 orphan broadcast를 재사용하지 않도록 recipient_count > 0 필터 추가",
+    "body": "- 첫 호출이 broadcast INSERT 후 recipients INSERT 전에 죽으면 orphan 발생\n- 5분 윈도우 안에 재시도 시 orphan ID 반환 → cron이 0건 finalize → 무발송 사고\n- recipient_count > 0 가드로 orphan 무시, 새 broadcast 생성으로 복구",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "f0b3bebd",
     "type": "feat",
     "scope": "seo",
