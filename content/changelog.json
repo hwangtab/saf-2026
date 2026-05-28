@@ -1,5 +1,25 @@
 [
   {
+    "hash": "5e360c16",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 7 — artist-story orphan profile → hub 매거진 교차링크 (tag 기반)",
+    "summary": "tags[] medium 분류를 활용해 orphan 작가 프로필 38편에 관련 매거진 hub 섹션 자동 부착",
+    "body": "- artist-story 82편 중 72편(88%)이 story↔story 교차링크 0건이던 문제 해결\n- tags[2..] medium 키워드 → hub 글 18가지 매핑 (판화·사진·민중미술·한지·옻칠·석채·금박·한국화·단색화·조각·도자)\n- 각 프로필에 최대 2개 hub 링크, 한·영 동시 업데이트 (ko_ok=38 / en_ok=38)\n- Supabase execute_sql DML — idempotent (`body NOT ILIKE '%## 관련 매거진%'` guard)\n- 코드 변경 0, .md 동기화 생략 (DB authoritative)\n- 미커버 44편(회화·콜라주 등): hub 부재 → 별도 cycle\n\n[Sprint 7 / DB-only]",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "8b161afb",
+    "type": "fix",
+    "scope": "email",
+    "subject": "audience resolver role/채널 필터 + max_rows truncation 수정",
+    "summary": "member 채널 발송이 잘못된 대상에 가던 버그와 청원 11,508명 발송이 1000명에서 잘리던 버그 수정",
+    "body": "- member.ts: profiles에 role='exhibitor' 필터 추가 (admin/user에게 업무메일 발송 차단)\n- member.ts: email_suppressions에 channel IN ('member','all') 필터 추가 (over-suppress 해소)\n- member.ts: artists/exhibitors 쿼리 실패 시 throw로 변경 (customer.ts 패턴 동기화)\n- audience 3종 모두 fetchAllInBatches 적용 (PostgREST db-max-rows=1000 silent truncation 방지, 청원 11,508명 전원 발송)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "b62b56d9",
     "type": "feat",
     "scope": "seo",
