@@ -1,5 +1,15 @@
 [
   {
+    "hash": "b212336b",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 11 — artist↔artist sister mesh (같은 길을 걷는 작가들)",
+    "summary": "같은 medium tag 공유 작가끼리 직접 cross-link — 73편 작가 프로필에 동료 작가 2~3명씩 자동 매핑",
+    "body": "- 73 artist-story 업데이트 (body + body_en 동시)\n- '같은 길을 걷는 작가들' / 'Artists on the Same Path' 섹션\n- 매칭 알고리즘: tags[2:] (medium) 교집합 개수 desc, tgt_slug asc → top 3\n- canonical 작가당 1편 (distinct on tags[1], deterministic)\n- 자기 작가명 제외 (s.artist_name != c.artist_name)\n- 동일 medium 다중 작가 → SEO link equity flow 강화\n- Sprint 7~10 hub-spoke topology + Sprint 11 mesh = bidirectional + lateral\n\n예시:\n- 오윤 → 이인철·주재환·아트만두 (판화+민중미술)\n- 박재동 → 이윤엽·아트만두 (시사만화·민중미술)\n- 김주호 → 최혜수·박소형·양순열 (조각 계열)\n\nIdempotency: body not ilike '%## 같은 길을 걷는 작가들%' guard",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "34cf965f",
     "type": "feat",
     "scope": "seo",
