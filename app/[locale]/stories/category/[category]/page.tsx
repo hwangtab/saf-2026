@@ -17,6 +17,7 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 import { localizeStoryAuthor } from '@/lib/story-author';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { getSupabaseStories } from '@/lib/supabase-data';
+import { isCanonicalHub } from '@/lib/story-canonical-hubs';
 import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { generateFaqPageSchema } from '@/lib/markdown-faq';
 import { Link } from '@/i18n/navigation';
@@ -390,7 +391,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const categoryPath = `/stories/category/${category}`;
 
   const allStories = await getSupabaseStories();
-  const stories = allStories.filter((s) => s.category === category);
+  // 카테고리 페이지: 정전 hub 글을 top, 그 외는 기존 정렬(published_at desc) 보존.
+  // 'artist-story' 카테고리는 hub 개념 부재 → 영향 없음(모든 글 sortKey=1로 동일).
+  const stories = allStories
+    .filter((s) => s.category === category)
+    .sort((a, b) => (isCanonicalHub(a.slug) ? 0 : 1) - (isCanonicalHub(b.slug) ? 0 : 1));
 
   // 대표 이미지: 첫 번째 스토리 썸네일
   const representativeImage =
@@ -457,7 +462,11 @@ export default async function StoryCategoryPage({ params }: Props) {
   const pageUrl = buildLocaleUrl(categoryPath, locale);
 
   const allStories = await getSupabaseStories();
-  const stories = allStories.filter((s) => s.category === category);
+  // 카테고리 페이지: 정전 hub 글을 top, 그 외는 기존 정렬(published_at desc) 보존.
+  // 'artist-story' 카테고리는 hub 개념 부재 → 영향 없음(모든 글 sortKey=1로 동일).
+  const stories = allStories
+    .filter((s) => s.category === category)
+    .sort((a, b) => (isCanonicalHub(a.slug) ? 0 : 1) - (isCanonicalHub(b.slug) ? 0 : 1));
 
   // Breadcrumbs
   const breadcrumbItems = [
