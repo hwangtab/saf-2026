@@ -163,6 +163,18 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  // 매거진 root CollectionPage about entity — 정전 hub 6편을 결정론 entity로 명시.
+  // Sprint 24 정렬에 의해 stories.slice는 이미 hub-first 순서 → hub만 필터하면 top 6 hub 추출.
+  const aboutHubs = stories
+    .filter((s) => isCanonicalHub(s.slug))
+    .slice(0, 6)
+    .map((s) => ({
+      '@type': 'CreativeWork' as const,
+      '@id': `${SITE_URL}/stories/${s.slug}#about`,
+      url: `${SITE_URL}/stories/${s.slug}`,
+      name: isEnglish && s.title_en ? s.title_en : s.title,
+    }));
+
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -175,6 +187,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
       '@id': `${SITE_URL}#organization`,
       name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
+    ...(aboutHubs.length > 0 && { about: aboutHubs }),
     ...(stories.length > 0
       ? {
           mainEntity: {
