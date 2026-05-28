@@ -96,6 +96,24 @@ export default async function TransparencyPage({
     name: locale === 'en' ? 'Transparency Reports | SAF Online' : '운용 보고서 | 씨앗페 온라인',
     isPartOf: { '@id': `${SITE_URL}#website` },
     mainEntity: { '@id': `${pageUrl}#reports` },
+    // 상호부조 운영 hub stories entity — Sprint 29~41 정책 일관 적용.
+    about: (
+      [
+        ['how-mutual-aid-fund-works', '상호부조 기금 작동 원리', 'How the Mutual Aid Fund Works'],
+        [
+          'what-95-percent-repayment-rate-means',
+          '95% 상환율의 의미',
+          'What 95% Repayment Rate Means',
+        ],
+        ['saf-three-year-journey', 'SAF 3년 여정', "SAF's Three-Year Journey"],
+        ['bank-vs-mutual-aid-comparison', '은행 vs 상호부조 비교', 'Bank vs Mutual Aid Comparison'],
+      ] as const
+    ).map(([slug, koName, enName]) => ({
+      '@type': 'CreativeWork' as const,
+      '@id': `${SITE_URL}/stories/${slug}#about`,
+      url: `${SITE_URL}/stories/${slug}`,
+      name: locale === 'en' ? enName : koName,
+    })),
     datePublished: '2022-12-01',
     dateModified: LAST_UPDATED,
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
