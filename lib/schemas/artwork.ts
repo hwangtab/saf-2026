@@ -8,6 +8,7 @@ import { getCategoryLabel } from '@/lib/artwork-category';
 import { Artwork } from '@/types';
 import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from './utils';
 import { getMaterialLabel, getSizeLabel, getEditionLabel } from '@/lib/artwork-material';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { createBreadcrumbSchema } from './breadcrumb';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { getArtworkSeoOverride } from '@/lib/artwork-seo-overrides';
@@ -408,6 +409,29 @@ export function generateArtworkJsonLd(
         alternateName: isEnglish ? mediumCategory.name : mediumCategory.nameEn,
       },
     }),
+    // 매체 hub guide entity — 작품과 매체 hub story의 schema-level 강한 association.
+    // Google Knowledge Graph가 작품을 매체 hub의 instance로 인식 → 매체 hub authority 강화.
+    ...(() => {
+      const hubSlug = getMediumHubSlug(artwork.category);
+      if (!hubSlug) return {};
+      const catLabel = artwork.category ? getCategoryLabel(artwork.category, locale) : null;
+      return {
+        about: [
+          {
+            '@type': 'CreativeWork',
+            '@id': `${SITE_URL}/stories/${hubSlug}#about`,
+            url: `${SITE_URL}/stories/${hubSlug}`,
+            name: catLabel
+              ? isEnglish
+                ? `${catLabel} guide`
+                : `${catLabel} 가이드`
+              : isEnglish
+                ? 'Medium guide'
+                : '매체 가이드',
+          },
+        ],
+      };
+    })(),
     image: {
       '@type': 'ImageObject',
       url: resolvedImageUrl.startsWith('http')
