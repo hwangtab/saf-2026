@@ -1,5 +1,115 @@
 [
   {
+    "hash": "a5a7d0ae",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 28 — sitemap.xml에서 canonical hub stories priority 차별화",
+    "summary": "정전 hub 26편 sitemap entry를 priority 0.85 + weekly로 차별화 (일반 글은 0.7 + monthly 유지) — 검색엔진 크롤링 우선순위와 lastmod refresh 빈도 강화",
+    "body": "배경:\n- 모든 stories sitemap entry가 priority 0.7로 동일 → hub의 link equity가 검색엔진 신호로 반영 안 됨\n- Sprint 23/24/26에서 코드 진입로 hub-first 정렬은 완성됐지만, sitemap 시그널은 미적용\n- Google·Bing은 sitemap priority + changeFrequency를 크롤링 budget 분배에 활용\n\n변경:\n- app/sitemap.ts:\n  - isCanonicalHub(slug) 분기로 hub 26편만 priority 0.85, weekly\n  - 일반 글 그대로 0.7, monthly (기존 정책 보존)\n  - KO + EN entry 양쪽 적용 (EN_INDEXABLE_STORY_SLUGS 내 hub 포함)\n\n효과:\n- Google Search Console에서 hub 글의 크롤링 budget 증가 → 새 link graph(Sprint 7~17) 변경분 빠르게 인덱싱\n- weekly changeFrequency로 mesh sprint cycle 변경분 reflection 가속\n- 작품 detail 수정 시(Sprint 18~22) hub priority가 작품 페이지(0.8)와 동급으로 인식되어 hub의 \"중요 페이지\" 시그널 강화\n\n회귀 방지:\n- Set 미등재 slug 기본 정책 유지 → 회귀 0\n- 전체 stories 카운트·URL·image·alternates 시그널 무변동\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "102c3362",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 27 — 작가 갤러리에 commerce hub 인링크 추가 (Sprint 22 확장)",
+    "summary": "/artworks/artist/[artist] 페이지의 relatedStories 슬롯에 knowledge hub + commerce hub 둘 다 결정론적 삽입 — 작가 검색 → 작가 갤러리 → 작가 + knowledge + commerce 3-way 한 슬롯 노출",
+    "body": "배경:\n- Sprint 22에서 knowledge hub 1편만 추가 — commerce hub 누락\n- 작품 detail(Sprint 19/20)·매체 갤러리(Sprint 21)는 knowledge + commerce 양쪽 모두\n- 작가 갤러리만 누락 상태 → 일관성 완성\n\n변경:\n- app/[locale]/artworks/artist/[artist]/page.tsx:\n  - getMediumCommerceHubSlug 추가 import (Sprint 20 lib)\n  - dominantCategory → mediumHubSlug + commerceHubSlug 매핑\n  - hubInserts 배열로 둘 다 끼움 (knowledge → commerce 순)\n  - pinnedStories[0](정전) → hub inserts → 나머지 pinnedStories slice(0,3)\n  - 중복 제거 guard: knowledge hub === commerce hub 시 commerce 미적용, 정전과 중복 시 미적용\n\n효과:\n- 작가 갤러리 49개 페이지에서 작가 + knowledge + commerce hub 3중 노출\n- 예: 김주호 갤러리 → 정전 스토리 + 한국 현대 판화의 지형 + 판화 vs 원화 가격 경제학\n- 박생광 갤러리 → 정전 + 한국화 전통과 현대 + 현대미술 작품 가격(art-pricing-factors)\n- 작가 entity + 매체 entity + commerce funnel 동시 강화\n\n회귀 방지:\n- knowledge/commerce hub가 정전 스토리와 중복 시 자동 제외\n- 두 hub가 같은 slug인 케이스 방지 (commerceHubSlug !== mediumHubSlug)\n- pinnedStories[0] 부재 시 hubInserts만으로 fallback\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "d8d595ca",
+    "type": "fix",
+    "scope": null,
+    "subject": "잔존 버그 정리 — P1 8건 + P2 8건 (보안·로직·UI 회귀)",
+    "summary": "코드리뷰 잔존 버그 16건 일괄 정리. Toss 결제 webhook 안전망 강화, broadcast/cron 멱등 강화, hydration mismatch 차단, i18n 일관성, 입력 검증 보강",
+    "body": "P1 (8건):\n- app/api/webhooks/toss/route.ts: PAYMENT_STATUS_CHANGED DONE 분기 추가 — confirm route 실패 시 order→paid + artwork_sales INSERT 보정\n- app/api/internal/broadcast-dispatch/route.ts: recipient_count > 0 가드 (orphan broadcast 회귀 차단)\n- app/api/internal/expire-stale-orders/route.ts: artworkIds dedupe\n- app/actions/petition-admin.ts: forceCloseCampaign audit log + reopenCampaign actorId\n- app/actions/admin-broadcast.ts: enqueueBroadcast ctaUrl/ctaLabel validateUrl/validateTextLength (javascript: URI 차단)\n- app/global-error.tsx: usePathname으로 SSR/CSR 동일 path (hydration mismatch + lint 위반 해소)\n- components/features/SupportMessage.tsx: useReducedMotion → useSyncExternalStore (hydration-safe)\n- components/features/RelatedArtworksSlider.tsx: 한국어 리터럴 → useTranslations + 신규 i18n 키\n\nP2 (8건):\n- app/api/internal/{gsc-sync,broadcast-dispatch,expire-stale-orders,purge-trash}/route.ts: createClient → createSupabaseAdminClient 일관화\n- app/api/internal/expire-stale-orders/route.ts: 내부 void sendBuyerEmail → await\n- app/api/internal/reconcile-payments/route.ts: 루프 내부 중복 admin client 제거\n- app/actions/mypage.ts: updateMyProfile name max length 100 가드\n- app/actions/admin-content.ts: createVideo/updateVideo title·description·transcript validateTextLength\n- app/api/webhooks/vercel-drain/route.ts: Content-Length + body 5MB guard\n- app/[locale]/stories/error.tsx: stories 전용 error boundary\n- components/features/ArtworkImage.tsx: raw <picture>+<img> 의도 명시\n\n검증: type-check ✓ / next build ✓ / verify-i18n-placeholders ✓",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "3d370f65",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 26 — Homepage MagazineSection에 hub-first 정렬 적용",
+    "summary": "Homepage(/) 매거진 카드 3건이 정전 hub 글 우선 노출 — Sprint 23/24와 일관된 정렬 정책으로 root entry의 link equity가 hub에 집중",
+    "body": "배경:\n- Homepage 매거진 섹션은 매거진 root → site root로 link equity flow가 가장 강한 위치\n- 현재 slice(0,3) 단순 — 최신순으로 thin content가 노출될 가능성\n- Sprint 23(/stories/category) + Sprint 24(/stories)에서 이미 hub-first 적용\n- 매거진 entry 3단계(/ → /stories → /stories/category) 정렬 정책 일관성 완성\n\n변경:\n- components/features/MagazineSection.tsx:\n  - allStories를 isCanonicalHub priority sort 후 slice(0,3)\n  - stable sort로 hub 내부는 published_at desc 유지\n\n회귀 방지:\n- 미등재 slug sortKey=1 fallback → 기본 published_at desc 보존\n- 새 배열에서만 정렬 (cache mutation 회피)\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "7551766f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 25 — /artworks 메인 카테고리 가이드 카드에 매거진 hub link 추가",
+    "summary": "/artworks 메인의 mainCategoryGuides 4개 카드(회화·판화·사진·조각)에 매체 매거진 hub로 link 추가 — 매체 갤러리 + 매거진 hub 양방향 link equity flow",
+    "body": "배경:\n- /artworks 메인의 mainCategoryGuides는 매체 갤러리(/artworks/category/[key])로만 link\n- 매거진 hub로의 link 0 — 매체 갤러리에서 매거진 hub로의 link equity 부재\n- 갤러리 페이지(Sprint 21)는 이미 매체 hub link 보유, 그 진입로(/artworks)도 동일 처리\n\n변경:\n- app/[locale]/artworks/page.tsx:\n  - mainCategoryGuides 각 항목에 hubSlug = getMediumHubSlug(key) 추가\n  - 카드 구조 nested Link → div + 2 Link로 분리\n  - main link: 매체 갤러리\n  - sub link: 매거진 hub (border-t 구분, 작은 텍스트 'Magazine guide / 매거진 가이드')\n  - hover 흐름: 카드 border → primary, sub link → primary-strong\n\n효과:\n- /artworks 메인 → 매체 갤러리 + 매체 hub 매거진 동시 link 노출\n- 매체 hub의 link equity inflow: artworks 메인 hub와 페이지(가장 높은 PageRank entry 중 하나)에서 직접 인링크\n- 회화→saf-2026-painters, 판화→korean-contemporary-printmaking-saf, 사진→korean-documentary-landscape-photography, 조각→saf-2026-sculpture-and-ceramics\n\n회귀 방지:\n- hubSlug 미매핑(null) → 매거진 link 미렌더\n- Sprint 19 ARTWORK_MEDIUM_HUB 재사용 (단일 출처)\n- npm run type-check: 내 변경 통과 (admin-broadcast 무관 unused import는 별개 untracked)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "e208fe93",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 24 — /stories 메인 페이지에 hub-first 정렬 적용",
+    "summary": "매거진 root entry(/stories)에서 정전 hub 글이 fold 위 결정론적으로 노출 — featured 카드도 hub 글로 자동 강제",
+    "body": "배경:\n- /stories 메인은 매거진 navigational query의 최상위 landing\n- 현재 published_at desc 정렬 → featured = 가장 최신 글\n- 최신 글이 thin content일 경우 매거진 root entry의 link equity가 hub에 집중 못 함\n- Sprint 23에서 카테고리 페이지는 이미 hub-first 적용 → 매거진 root도 동일 정책\n\n변경:\n- app/[locale]/stories/page.tsx:\n  - allStories를 [...allStories].sort((a,b) => isCanonicalHub priority)로 재정렬\n  - stable sort로 hub 내부는 published_at desc 유지, 일반 글도 기본 정렬 보존\n  - featured = stories[0] → 자동으로 hub 글 중 가장 최신\n  - ItemList JSON-LD도 자동 반영\n\n효과:\n- /stories 진입 → featured 카드가 hub 글로 자동 선택\n- 매거진 root entry의 link equity가 thin content 대신 hub에 집중\n- 26개 canonical hub(art-knowledge 19 + buying-guide 7)가 fold 위 top 노출\n\n회귀 방지:\n- isCanonicalHub Set에 미등재 slug는 sortKey=1로 fallback → 기본 정렬 유지\n- 정렬은 새 배열에서만 진행 (allStories cache mutation 회피)\n- 빌드/타입체크 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "5dcaa498",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 23 — /stories/category 페이지에 hub-first 정렬 추가",
+    "summary": "카테고리 페이지에서 정전 hub 글이 published_at desc 정렬에 밀려 fold 아래로 내려가는 문제 해결 — hub 글을 결정론적으로 top에 배치",
+    "body": "배경:\n- /stories/category/art-knowledge, /stories/category/buying-guide 페이지가 published_at desc 정렬\n- 최신 큐레이션 글이 거장 hub 글(saf-2026-painters, korean-contemporary-printmaking-saf 등)을 fold 아래로 밀어냄\n- 카테고리 navigational query의 link equity가 fold 위 thin content에 분산\n- artist-story 카테고리는 hub 개념 부재 → 영향 없음\n\n변경:\n- lib/story-canonical-hubs.ts (신규): CANONICAL_HUB_SLUGS Set (26 slug)\n  - art-knowledge 19 hubs (매체·주제 hub)\n  - buying-guide 7 hubs (entry-level commerce)\n  - Sprint 7~22에서 매핑 채택 + 거장급 introductory 글\n- app/[locale]/stories/category/[category]/page.tsx:\n  - stories.sort((a, b) => (isCanonicalHub(a.slug) ? 0 : 1) - (isCanonicalHub(b.slug) ? 0 : 1))\n  - stable sort 특성으로 같은 priority 내에서는 기존 published_at desc 보존\n\n효과:\n- art-knowledge 카테고리 → 26 hub 중 art-knowledge 19개가 top에 노출\n- buying-guide 카테고리 → 7 commerce hub가 top\n- 카테고리 navigational query의 link equity가 hub에 집중 → entity authority 강화\n- ItemList JSON-LD에도 hub 우선 노출 (Google rich snippet 영향)\n\n회귀 방지:\n- 미등재 슬러그는 sortKey=1로 fallback → 기본 정렬 유지\n- artist-story 모든 slug sortKey=1 → 정렬 무영향\n- 빌드/타입체크 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "2a34cb1a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 22 — 작가 갤러리에 매체 hub 인링크 추가",
+    "summary": "/artworks/artist/[artist] 페이지의 relatedStories 슬롯에 작가 주력 매체 hub 1편을 결정론적으로 2번 슬롯 삽입 — 작가 entity + 매체 entity 양방향 강화",
+    "body": "배경:\n- 작가별 갤러리는 작가 navigational query의 핵심 landing\n- 이미 pinPrimaryStory로 정전 스토리 1번 슬롯 보장\n- 매체 hub로의 결정론적 link 없음 — recency 정렬에만 의존\n\n변경:\n- app/[locale]/artworks/artist/[artist]/page.tsx:\n  - 작가 작품의 dominant category(빈도 최다) 추출\n  - getMediumHubSlug로 해당 매체 hub 매핑\n  - relatedStories 슬롯 순서: [정전, 매체hub, 다른매거진] → slice(0,3)\n  - 정전 스토리에 매체 hub가 이미 포함된 경우 회피 (중복 제거)\n  - 미매핑 카테고리 → null로 회귀 0\n\n효과:\n- 작가 검색 → 작가 갤러리 → 정전 스토리 + 매체 hub mesh가 결정론적으로 above-the-fold\n- 매체 hub의 link equity inflow가 작가 페이지 49개(GSC 등재 작가)에서 강화\n- 작가 entity authority + 매체 entity authority 동시 boost\n\n예시:\n- 김주호 갤러리(주력 매체: 판화·도자) → '한국 현대 판화의 지형' hub 자동 노출\n- 강레아 갤러리(주력 매체: 사진) → '한국 풍경과 민초의 기록' hub\n- 박생광 갤러리(주력 매체: 한국화) → '한국화, 전통과 현대 사이에서' hub\n\n회귀 방지:\n- 정전 스토리 자체가 매체 hub인 경우 자동 제외\n- pinnedStories[0]이 undefined일 수 있어 filter로 NonNullable 안전 처리\n- npm run type-check 통과, 12 test 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "0f432c92",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 21 — 매체별 작품 갤러리 페이지에 hub/commerce 인링크 추가",
+    "summary": "/artworks/category/[category] 페이지에 매체 hub(knowledge) + commerce hub 카드 섹션 추가 — 매체별 navigational landing page에서 hub stories로 결정론 link equity flow",
+    "body": "배경:\n- 매체별 갤러리 페이지(/artworks/category/판화 등)는 navigational query 가장 강한 entry 중 하나\n- 현재 매거진 일반 link(/stories) 1개뿐 — 매체별 적절한 hub로 specific link 부재\n- 작품 detail은 Sprint 19/20으로 해결됐지만, 카테고리 landing page는 누락\n\n변경:\n- app/[locale]/artworks/category/[category]/page.tsx:\n  - getSupabaseStoriesLight() Promise.all에 추가\n  - getMediumHubSlug + getMediumCommerceHubSlug로 hub 매핑\n  - \"Deeper into {category}\" / \"{매체} 더 깊이 보기\" 섹션 추가\n  - 매거진 가이드 카드 + 가격·구매 가이드 카드 (2칸 grid)\n  - title source-of-truth = stories DB\n\n매체별 매핑(Sprint 19/20 ARTWORK_MEDIUM_HUB 재사용):\n- 판화 카테고리 → korean-contemporary-printmaking-saf + print-vs-original-price-economics\n- 회화 → saf-2026-painters + art-pricing-factors\n- 사진 → korean-documentary-landscape-photography + first-art-buyer-price-guide\n- 한국화 → korean-painting-tradition-meets-modern + art-pricing-factors\n- ...\n\n회귀 방지:\n- Sawtooth divider 흐름 유지 (FAQ prevVariant 조건부 보정)\n- mediumHubSlug === commerceHubSlug 중복 방지\n- 미매핑 카테고리(null)는 섹션 자체 미렌더\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "ba6cc909",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 20 — 작품 detail에 매체별 commerce hub 인링크 추가",
+    "summary": "artwork.category(매체) → buying-guide commerce hub 결정론 매핑으로 작품 detail의 '관련 매거진' 슬롯에 가격/구매 의도 가이드 1편 보장",
+    "body": "배경:\n- 작품 detail에 buying-guide 인링크는 /stories/guide 1개뿐 — commerce funnel 진입 거의 없음\n- 415개 작품 detail이 매체별 가격 가이드(art-pricing-factors, print-vs-original-price-economics 등)로 명시 link 부재\n- Sprint 19에서 art-knowledge hub 추가했으니 같은 패턴으로 commerce hub도 추가\n\n변경:\n- lib/artwork-medium-hub.ts: ARTWORK_MEDIUM_COMMERCE_HUB 추가 (11 매체 → 2 commerce hub)\n  - 판화·사후판화·아트프린트 → print-vs-original-price-economics\n  - 회화·한국화 → art-pricing-factors\n  - 그 외(드로잉·사진·혼합매체·조각·도자공예·디지털아트) → first-art-buyer-price-guide\n- app/[locale]/artworks/[id]/page.tsx: tagMatched + mediumHub + commerceHub + bodyMentioned\n\n매거진 슬롯 우선순위(slice 0,3):\n1. 작가 정전 스토리 (Sprint 18 pinPrimaryStory)\n2. 매체 hub (Sprint 19 art-knowledge)\n3. 매체 commerce hub (Sprint 20 buying-guide) ← 신규\n4. body 인용 stories (fallback)\n\n효과:\n- 작품 detail 415개에서 매체별 commerce hub로 명시 link → buying-guide 카테고리 entity authority 강화\n- 작가 검색 → 작품 detail → 작가 + knowledge + commerce 3-way mesh 한 슬롯에서 노출\n- Conversion funnel: 작품 페이지 → 가격 이해 가이드 → 구매 의사결정\n\n회귀 방지:\n- 작가 매칭 + 매체 hub + commerce hub 중복 제거 (reservedIds set)\n- 미매핑 category(null) → null 반환으로 회귀 0\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "0af4e58e",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "PageHero svh fallback 안전화 + stories hero i18n 누락 보강",
+    "summary": "버그 점검에서 발견한 2건 — PageHero svh CSS cascade 보장 + stories PageHero description 한국어 리터럴",
+    "body": "1. components/ui/PageHero.tsx + styles/globals.css\n   기존: `min-h-[60vh] min-h-[60svh]` Tailwind arbitrary 클래스 2개는 별개 utility로 컴파일되어\n   stylesheet 순서가 보장되지 않음. svh가 vh보다 늦게 선언될 보장이 없어 svh 미지원 브라우저뿐\n   아니라 모던 브라우저에서도 vh로 적용될 위험 (역효과). page-hero-min-h 클래스 1개에 vh\n   fallback + svh override 두 줄 선언으로 cascade 확정.\n\n2. app/[locale]/stories/[slug]/page.tsx\n   PageHero description에 `isEn ? 'Published' : '발행'` 인라인 조건문 잔존 — 본문에선 i18n\n   적용했지만 hero는 누락. tStory('publishedAt', { date: formattedDate })로 통일.\n\n검증: type-check ✓ / next build ✓ / verify-i18n-placeholders ✓",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "6f32da39",
     "type": "feat",
     "scope": "seo",

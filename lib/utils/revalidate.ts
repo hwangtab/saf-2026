@@ -7,7 +7,8 @@ export function revalidatePublicArtworkSurfaces(
   revalidatePath('/en');
   revalidatePath('/artworks');
   revalidatePath('/en/artworks');
-  revalidatePath('/api/artworks');
+  // /api/artworks는 Route Handler — revalidatePath는 page 캐시 대상이라 no-op.
+  // route 자체의 unstable_cache는 아래 revalidateTag('artworks', 'max')가 무효화.
 
   const uniqueArtistNames = Array.from(
     new Set(

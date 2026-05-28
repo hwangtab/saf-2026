@@ -33,14 +33,17 @@ const nextConfig = {
     // 30일. 작품 이미지는 한 번 업로드되면 거의 변경되지 않으므로 길게 잡아 cache hit률 ↑.
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
+      // Supabase Storage — Seoul live 프로젝트만 명시. 와일드카드(*.supabase.co)는 deprecated
+      // 뭄바이 프로젝트(vqejnuntjnxzpgwfndtv)를 비롯한 임의 프로젝트 이미지를 Vercel optimizer가
+      // fetching하는 회귀를 차단.
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
+        hostname: 'khtunrybrzntlnowlahb.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
+        hostname: 'khtunrybrzntlnowlahb.supabase.co',
         pathname: '/storage/v1/render/image/public/**',
       },
       { protocol: 'https', hostname: 'mmagimg.speedgabia.com' },

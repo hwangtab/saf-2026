@@ -76,7 +76,9 @@ export default function BroadcastEmail({
         </Text>
       ))}
 
-      {ctaLabel && ctaUrl && (
+      {/* CTA URL은 admin-broadcast.ts의 validateUrl이 이미 검증하지만, 향후 DB 직접 수정/마이그레이션
+          오류로 javascript:/data: URI가 들어올 수 있으므로 컴포넌트 레벨 2차 방어. */}
+      {ctaLabel && ctaUrl && /^https?:\/\//i.test(ctaUrl) && (
         <Section style={ctaWrapperStyle}>
           <Button
             href={ctaUrl}

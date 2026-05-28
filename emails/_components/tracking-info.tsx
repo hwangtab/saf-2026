@@ -19,14 +19,20 @@ const CARRIER_TRACKING_URLS: Record<string, string> = {
   카카오택배: 'https://accounts.kakao.com/',
 };
 
+// 운송장 번호는 영문/숫자/하이픈만. 쿼리스트링·경로 조작 문자가 들어가면 carrier base URL을
+// 벗어나 임의 도메인으로 redirect되는 phishing 벡터로 변할 수 있으므로 strict 검증.
+const SAFE_TRACKING_NUMBER = /^[A-Za-z0-9-]{4,30}$/;
+
 export default function TrackingInfo({
   carrier,
   trackingNumber,
   locale = 'ko',
 }: TrackingInfoProps) {
+  const safeTrackingNumber =
+    trackingNumber && SAFE_TRACKING_NUMBER.test(trackingNumber) ? trackingNumber : null;
   const trackingUrl =
-    trackingNumber && CARRIER_TRACKING_URLS[carrier]
-      ? `${CARRIER_TRACKING_URLS[carrier]}${trackingNumber}`
+    safeTrackingNumber && CARRIER_TRACKING_URLS[carrier]
+      ? `${CARRIER_TRACKING_URLS[carrier]}${encodeURIComponent(safeTrackingNumber)}`
       : null;
   const carrierLabel = locale === 'en' ? 'Carrier' : '택배사';
   const trackingLabel = locale === 'en' ? 'Tracking No.' : '운송장 번호';

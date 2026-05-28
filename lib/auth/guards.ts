@@ -107,6 +107,11 @@ export const requireArtistActive = cache(async function requireArtistActive() {
     }
     if (profile?.status === 'suspended') redirect('/dashboard/suspended');
 
+    // exhibitor가 /dashboard/*에 도달한 경우 자기 portal로 보냄 — /onboarding은 일반 user의
+    // 아티스트 등록 진입 경로라 exhibitor가 보면 컨텍스트가 엉뚱함.
+    // (admin은 L59에서 이미 처리됨, 여기 도달 시 profile.role은 'artist' | 'user' | 'exhibitor')
+    if (profile?.role === 'exhibitor') redirect('/exhibitor');
+
     redirect('/onboarding');
   }
 

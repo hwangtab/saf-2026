@@ -557,6 +557,11 @@
       "message": "An error occurred while loading news articles. Please try again shortly.",
       "backLabel": "Back to news"
     },
+    "stories": {
+      "title": "Unable to load magazine",
+      "message": "An error occurred while loading the magazine. Please try again shortly.",
+      "backLabel": "Back to magazine"
+    },
     "home": {
       "title": "Unable to load page",
       "message": "An error occurred while loading the homepage. Please try again shortly.",
@@ -1263,5 +1268,13 @@
     "loadMore": "Load more",
     "empty": "No entries found.",
     "noEntries": "No updates yet."
+  },
+  "relatedArtworksSlider": {
+    "title": "More artworks from SAF",
+    "description": "Discover more featured works and support artists",
+    "play": "Play",
+    "pause": "Pause",
+    "playAria": "Play related artworks slider",
+    "pauseAria": "Pause related artworks slider"
   }
 }
