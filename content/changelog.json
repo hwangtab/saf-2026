@@ -1,5 +1,55 @@
 [
   {
+    "hash": "b62b56d9",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 6 — 갤러리→스토리 inlink 확장 (ARTIST_PRIMARY_STORY 6명→26명)",
+    "summary": "GSC 검증 작가 20명의 갤러리 페이지에 정전 프로필 스토리 above-the-fold inlink 추가",
+    "body": "- ARTIST_PRIMARY_STORY 맵 6명 → 26명 확장\n- override 보유 24명 후보 중 artist-story 슬러그 실재 확인된 20명만 등재\n  (4명 고자영·박은선·정채희·김지영은 프로필 스토리 부재 → 별도 follow-up)\n- 박재동 2개 스토리 중 장문 guide(park-jae-dong-artist-guide) canonical 채택\n- T2-5/T2-6/T2-8/T2-13/T2-잔여 GSC 그룹별 주석으로 가독성 확보\n- Sprint 4·5(스토리→갤러리 link-equity)의 역방향 완성\n- DB DML 0, .md 변경 0 — 정적 ts 상수만 변경",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "0623e17f",
+    "type": "fix",
+    "scope": "home",
+    "subject": "히어로·카드 타이틀 whitespace-pre-line 추가 — \\n 줄바꿈 적용",
+    "summary": "allArtworksTitle의 \\n 이스케이프가 HTML 렌더에서 공백으로 합쳐지는 문제 수정",
+    "body": "- HomeHero h1, NowShowing 카드 h3에 whitespace-pre-line 추가\n- 기존 슬라이드 타이틀엔 \\n 없어 side-effect 없음",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "82eb7694",
+    "type": "fix",
+    "scope": "email",
+    "subject": "dispatch offset 누락 + 크론 중복 발송 수정",
+    "summary": "발송 시 수신자 건너뜀 버그와 매분 크론 겹침 중복 발송을 리스 락으로 차단",
+    "body": "- Bug A: pending을 sent로 비우며 offset을 누적해 수신자 절반씩 건너뛰던 버그 → 항상 선두 청크 fetch\n- Bug B: maxDuration 초과 대량 발송에서 다음 분 cron이 같은 pending을 재발송 → 브로드캐스트 리스 락(claim/renew RPC)으로 직렬화 + resume\n- email_broadcasts에 dispatch_locked_until/dispatch_lock_token 추가",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "d2904db3",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 5 — 작가 프로필 69편 자기 갤러리 link-equity",
+    "summary": "작가 프로필 69편 말미에 자기 갤러리(/artworks/artist/{name}) CTA 섹션 추가로 link-equity 집중",
+    "body": "- artist-story 카테고리 발행 69편 body·body_en 말미에 갤러리 CTA append\n- UPDATE...FROM gallery_artists CTE (tags[1]=artists.name_ko 조인) 일괄 처리\n- 공백 포함 작가(칡뫼 김구·장천 김성태)는 %20 인코딩 적용\n- en body: 라벨 name_en, 경로 한글(갤러리 라우트 name_ko exact 매칭)\n- 8편 hand-written + 61편 meet-artist-* 전체, 멱등성 가드 적용\n- .md 동기화: 18-kang-lea-interview.md·19-shin-hakchul-interview.md (나머지 61편 DB-only)\n- Supabase stories DML: 69 slug × ko+en body (서울 khtunrybrzntlnowlahb)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "7c9e5f9e",
+    "type": "feat",
+    "scope": "home",
+    "subject": "메커니즘 전면 challenger 카피 + 섹션 상향 (A-1~A-4)",
+    "summary": "홈 히어로·정체성 리본·조합원 CTA 카피를 상호부조 메커니즘 중심으로 재작업하고 MechanismSection을 fold 위로 상향",
+    "body": "- A-1 히어로 allArtworks: \"사는 순간, 연대\" / \"당신의 안목이 예술가의 산소가 됩니다\" + 10%·10배 메커니즘 desc\n- A-2 정체성 리본: subtitle에 \"10%→10배 기금→저금리 대출\" 메커니즘 명시\n- A-3 섹션 순서: MechanismSection을 MasterArtists 다음(#5)→AboutIdentity 직후(#3)로 상향\n- A-4 조합원 CTA: \"당신도 예술가의 산소가 될 수 있습니다\" + 투명성 결과 카피 부여\n- fix(i18n): HomeHero·NowShowing desc t() 호출에 {artistCount,artworkCount} 변수 전달 누락 보정",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "d34c9e6c",
     "type": "fix",
     "scope": "email",
