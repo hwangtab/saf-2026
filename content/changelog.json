@@ -1,5 +1,25 @@
 [
   {
+    "hash": "890fcdd6",
+    "type": "fix",
+    "scope": "email",
+    "subject": "이메일 발송 블라인드스팟 5건 수정 (P0·P1)",
+    "summary": "수신거부 silent 누락·중복 발송·false finalize·이중 enqueue·prefetch bot 자동 unsub 차단",
+    "body": "- dispatch: EMAIL_UNSUB_SECRET 미설정 시 broadcast를 failed로 마킹하고 발송 중단 (정통망법 §50의2)\n- dispatch: 청크 후 per-recipient UPDATE 실패를 검사 + 재시도 — 중복 발송 차단\n- dispatch: remainingPending select 에러를 검사 — false 'sent' finalize로 orphan pending 발생 차단\n- admin-broadcast: 같은 admin+channel+subject 최근 5분 내 캠페인은 기존 ID 반환 (이중 클릭 가드)\n- unsubscribe: GET=확인 폼, POST=실제 suppression — 이메일 prefetch bot의 자동 unsub 차단\n- .env.local.example: EMAIL_UNSUB_SECRET 항목 추가 (필수 환경변수 문서화)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "7effaeb7",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 8 — Hub→meet-artist 역방향 인링크 (6 hub × 14 inlinks)",
+    "summary": "hub 매거진 6편에 \"대표 작가 만나기\" 섹션 추가, Sprint 7(spoke→hub)의 역방향 완성",
+    "body": "- 8개 미커버 hub 중 작가 profile story 보유한 6개 처리\n  (옻칠·단색화 2개는 후보 0편으로 스킵 — 별도 follow-up)\n- hub title 언급 작가 우선 큐레이션\n  · 한지: 이철수·강레아·신예리 (title 그대로)\n  · 사진: 조문호·정영신·김수오 (title 그대로)\n  · 민중미술: 신학철·오윤·박불똥\n  · 한국화: 신예리·이문형·장천 김성태\n  · 금박: 최혜수 / 석채: 조이락\n- 사전 검증: 13 slug is_published=true 전수 확인\n- 사후 검증: ko_ok=14, en_ok=14 (한·영 대칭)\n- Supabase execute_sql DML — idempotent (body NOT ILIKE '## 대표 작가 만나기' guard)\n- 코드 변경 0, .md 변경 0\n\n[Sprint 8 / DB-only]",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "5e360c16",
     "type": "feat",
     "scope": "seo",
