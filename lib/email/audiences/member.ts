@@ -1,5 +1,6 @@
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { hashEmail } from '@/lib/email/email-hash';
+import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 import type { AudienceResolver, Recipient } from './types';
 
 // 작가·출품자 업무 채널 수신자 추출.
@@ -9,23 +10,48 @@ export class MemberAudienceResolver implements AudienceResolver {
   async resolve(): Promise<Recipient[]> {
     const supabase = createSupabaseAdminClient();
 
-    const { data: artists, error: artistsError } = await supabase
-      .from('artists')
-      .select('contact_email, name_ko, name_en');
+    const { data: artists } = await fetchAllInBatches<{
+      contact_email: string | null;
+      name_ko: string | null;
+      name_en: string | null;
+    }>((from, to) =>
+      supabase
+        .from('artists')
+        .select('contact_email, name_ko, name_en')
+        .order('created_at', { ascending: true })
+        .range(from, to)
+    ).catch((err) => {
+      console.error('[member-audience] artists query error:', err);
+      throw new Error(`작가 명단 조회 실패: ${err?.message ?? err}`);
+    });
 
-    if (artistsError) {
-      console.error('[member-audience] artists query error:', artistsError);
-    }
+    // role='exhibitor'만 — 채널 정의("작가·출품자 업무")에 부합. 과거 role 누락으로 admin/user에게도 발송되던 버그 수정.
+    const { data: exhibitors } = await fetchAllInBatches<{
+      email: string | null;
+      name: string | null;
+    }>((from, to) =>
+      supabase
+        .from('profiles')
+        .select('email, name')
+        .eq('role', 'exhibitor')
+        .not('email', 'is', null)
+        .range(from, to)
+    ).catch((err) => {
+      console.error('[member-audience] exhibitors query error:', err);
+      throw new Error(`출품자 명단 조회 실패: ${err?.message ?? err}`);
+    });
 
-    const { data: exhibitors, error: exhibitorsError } = await supabase
-      .from('profiles')
-      .select('email, name');
-
-    if (exhibitorsError) {
-      console.error('[member-audience] exhibitors query error:', exhibitorsError);
-    }
-
-    const { data: suppressions } = await supabase.from('email_suppressions').select('email_hash');
+    // 회원 채널·전체 차단만 차감. 과거 채널 필터 누락으로 customer/petition 차단도 적용되던 over-suppress 버그 수정.
+    const { data: suppressions } = await fetchAllInBatches<{ email_hash: string }>((from, to) =>
+      supabase
+        .from('email_suppressions')
+        .select('email_hash')
+        .in('channel', ['member', 'all'])
+        .range(from, to)
+    ).catch((err) => {
+      console.error('[member-audience] suppressions query error:', err);
+      throw new Error('수신거부 목록 조회 실패 — 발송을 중단합니다');
+    });
 
     const suppressedHashes = new Set(
       (suppressions ?? []).map((s: { email_hash: string }) => s.email_hash)
