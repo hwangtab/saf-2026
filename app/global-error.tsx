@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 
@@ -11,16 +11,23 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  // global-error.tsx는 root layout 바깥이라 next-intl 사용 불가.
-  // usePathname은 SSR/CSR에서 동일한 path를 반환 (Next.js 공식 — App Router가 client에 path를
-  // 직렬화 전달). 이전 typeof window 패턴은 hydration mismatch + react-hooks/set-state-in-effect
-  // lint 위반이었음. usePathname으로 단일 표현식 derive.
-  const pathname = usePathname();
-  const isEnglish = pathname?.startsWith('/en') ?? false;
+  // global-error.tsx는 root layout 바깥이라 next-intl 사용 불가. usePathname은 root layout이
+  // throw한 시나리오에서 navigation context가 없을 수 있어 안전하지 않음.
+  // window.location.pathname을 mount 후 1회만 읽어 lang 결정. useState 초기값에 window 접근하면
+  // hydration mismatch라 useEffect로 분리. ESLint set-state-in-effect 룰은 mount-only 1회
+  // 분기에 한해 의도된 패턴.
+  const [isEnglish, setIsEnglish] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/en')) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsEnglish(true);
+    }
+  }, []);
   const lang = isEnglish ? 'en' : 'ko';
 
   return (
-    <html lang={lang}>
+    // hydration 직후 isEnglish가 true로 변하면 <html lang>가 바뀌므로 noise 차단.
+    <html lang={lang} suppressHydrationWarning>
       <body>
         <ErrorView
           icon={<AlertTriangle className="h-16 w-16" />}

@@ -1,5 +1,55 @@
 [
   {
+    "hash": "d6ad2f73",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 42 — /transparency WebPage schema에 운영 hub 4편 about entity 추가",
+    "summary": "/transparency 운용 보고서 페이지 WebPage JSON-LD에 상호부조 운영 관련 hub stories 4편을 about CreativeWork[]로 명시 — Sprint 41(/our-reality)과 동일 정책",
+    "body": "배경:\n- /transparency는 SAF 상호부조 기금 운용 보고서 (분기 누적 데이터)\n- WebPage schema의 about 필드 부재 — 운영 hub stories와 entity 연결 부재\n- Sprint 41(/our-reality)에서 finance/social hub 5편 적용 후 transparency 페이지 보완\n\n변경:\n- app/[locale]/transparency/page.tsx:\n  - WebPage schema에 about CreativeWork[] 4편 추가\n    - how-mutual-aid-fund-works (운영 원리)\n    - what-95-percent-repayment-rate-means (95% 상환율 의미)\n    - saf-three-year-journey (3년 여정)\n    - bank-vs-mutual-aid-comparison (은행 vs 상호부조)\n  - locale별 짧은 anchor label hardcoded\n\n효과:\n- /transparency와 4 운영 hub schema entity cluster 형성\n- Knowledge Graph \"상호부조 운영\" 주제 entity 매칭\n- Sprint 41 /our-reality + Sprint 42 /transparency = 사회금융 주제 페이지 2종 모두 entity 완성\n\n회귀 방지:\n- 4 hub story 모두 DB 등재 확인 (라이브 SELECT)\n- 기존 speakable/mainEntity 등 필드 무변동\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "520ac90a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 41 — /our-reality AboutPage.about에 finance/social hub 5편 entity 추가",
+    "summary": "/our-reality AboutPage JSON-LD의 about Thing 단일 → about[Thing + CreativeWork[5]] 배열로 확장 — 한국 예술인 금융 배제 주제 + 관련 finance/social hub stories와 schema-level entity 연결",
+    "body": "배경:\n- /our-reality는 한국 예술인 84.9% 금융 배제, 48.6% 고금리 등 통계 페이지(AboutPage schema)\n- about: Thing 단일(주제명) — 관련 finance/social hub stories와 entity 연결 부재\n- Sprint 36 패턴(/stories/category)과 동일하게 about 배열 확장\n\n변경:\n- app/[locale]/our-reality/page.tsx:\n  - about: Thing 단일 → 배열 (Thing + 5 CreativeWork)\n  - 매핑 5편: how-mutual-aid-fund-works, artist-finance-5-numbers,\n    what-is-an-artist-profession, bank-vs-mutual-aid-comparison, global-artist-finance\n  - locale별 짧은 anchor label hardcoded (entity name 명확성)\n  - Sprint 17(testimonials-narrative) 수동 매핑과 동일 hub set\n\n효과:\n- /our-reality와 5 finance/social hub stories schema entity cluster\n- Sprint 29~41 누적: 11번째 entity 시그널 적용 페이지\n- Knowledge Graph에서 \"예술인 금융 배제\" 주제와 hub stories 묶음 인식\n\n회귀 방지:\n- 5 hub story 모두 DB 등재 확인 (Sprint 7~17 cycle 처리분)\n- 기존 author/publisher/datePublished/dateModified 필드 무변동\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "05b2a3c7",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 40 — 작품 detail ItemPage WebPage schema에 매체 hub about entity 추가",
+    "summary": "415개 작품 detail의 ItemPage(WebPage subtype) JSON-LD에 매체 hub URL을 about CreativeWork entity로 명시 — Sprint 30 VisualArtwork.about과 별개로 WebPage 레벨에서도 동일 시그널 양립",
+    "body": "배경:\n- 작품 detail은 ItemPage(WebPage) + VisualArtwork(Product) 두 schema 발행\n- Sprint 30에서 VisualArtwork.about 추가했으나 ItemPage는 미적용\n- WebPage 레벨 entity 시그널은 일반 SERP에 직접 영향 (VisualArtwork는 product 카드)\n- Sprint 29~39에서 WebPage/CollectionPage/BlogPosting 모두 about 적용, 마지막 누락 ItemPage 보완\n\n변경:\n- lib/schemas/artwork.ts:\n  - ItemPage schema에 about: CreativeWork[] 필드 추가\n  - getMediumHubSlug + getCategoryLabel로 hub slug와 locale별 label 매핑\n  - IIFE로 변수 scope 격리 + 매핑 없을 시 null\n\nSchema 출력 (판화 작품):\n{\n  \"@type\": \"ItemPage\",\n  \"url\": \".../artworks/abc\",\n  \"mainEntity\": { \"@id\": \"...\" },\n  \"about\": [{\n    \"@type\": \"CreativeWork\",\n    \"@id\": \"...stories/korean-contemporary-printmaking-saf#about\",\n    \"url\": \"...stories/korean-contemporary-printmaking-saf\",\n    \"name\": \"판화 가이드\"\n  }]\n}\n\n효과:\n- 415 작품 detail의 WebPage(ItemPage) → 매체 hub schema entity 연결\n- VisualArtwork.about(Sprint 30, Product 카드 시그널) + ItemPage.about(Sprint 40, WebPage 시그널)\n  → schema dual-layer entity 매핑\n- Sprint 29~40 완성: 10대 schema entity 시그널 시리즈\n  - BlogPosting, VisualArtwork(Product), Person, WebPage(Homepage),\n    CollectionPage(/artworks·/stories·/stories/category·/artworks/category·/artworks/artist),\n    WebSite(site-wide), ItemPage(작품 detail) ← 신규\n\n회귀 방지:\n- getMediumHubSlug null → about 필드 자체 생략 (회귀 0)\n- 기존 ItemPage 필드(speakable, mainEntity 등) 무변동\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "c4b571b6",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 39 — WebSite schema에 매체 hub mainEntity 4편 추가 (site-wide entity)",
+    "summary": "WebSite JSON-LD에 4 매체 매거진 hub URL을 mainEntity CreativeWork[]로 명시 — Sprint 38(Homepage WebPage.about)이 root 1 페이지에만 적용된 것을 WebSite 발행되는 모든 페이지로 확장",
+    "body": "배경:\n- WebSite schema는 site-wide 모든 페이지의 root JSON-LD로 발행됨\n- 기존: name·url·description·publisher·potentialAction(SearchAction) + accessibility\n- 매체 hub entity 시그널 부재 — site root와 hub의 schema-level 연결 site-wide 미적용\n- Sprint 29~38의 entity 시그널이 페이지별 schema에만 적용된 것의 보완\n\n변경:\n- lib/schemas/organization.ts:\n  - getMediumHubSlug import (artwork-medium-hub.ts)\n  - generateWebsiteSchema에 mainEntity CreativeWork[] 추가\n  - 4 매체(회화·판화·사진·조각) → getMediumHubSlug 매핑\n  - locale별 label (회화 가이드 / Painting guide 등)\n  - IIFE로 변수 scope 격리\n\n효과:\n- 모든 SAF 2026 페이지에서 WebSite schema 발행 시 매체 hub 4편 mainEntity 노출\n- Sprint 38(Homepage WebPage.about, 1 page) → Sprint 39(WebSite.mainEntity, all pages) 확장\n- AI Overview, Knowledge Graph가 SAF 사이트 전체와 매체 hub를 같은 entity cluster로 인식\n\n회귀 방지:\n- getMediumHubSlug null → 해당 hub 자동 제외 (회귀 0)\n- 기존 SearchAction, accessibility, publisher 필드 무변동\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "13f65afa",
+    "type": "fix",
+    "scope": null,
+    "subject": "잔존 버그 cycle 5 — P2 7건 (a11y 보강 + DB 안전망 + 보안 강화)",
+    "summary": "보류된 P2 7건 정리. P2이지만 누적되면 운영 사고로 이어지는 항목 우선 처리",
+    "body": "코드 (4건):\n- components/features/DynamicCounter.tsx: CountUp JS animation이 prefers-reduced-motion 무시 — 최종값 즉시 표시 분기 추가\n- lib/security/get-client-ip.ts: x-vercel-forwarded-for의 segment 선택 일관성 — 모든 헤더에서 마지막 segment로 통일 (multi-edge proxy 위조 회피)\n- proxy.ts: LEGACY_ARTWORK_PATH가 /ko/ prefix 미커버 — /(ko|en)/ 모두 처리 후 default locale은 prefix 제거\n- scripts/generate-changelog.js: 보안 강화 — execSync → execFileSync (shell 우회) + RS/US ASCII 제어문자 구분자(git format placeholder %x1E/%x1F로 안전 출력)\n\nDB (3건 — MCP apply 완료):\n- 20260529170000: update_artwork_status_on_sale 함수에 void 시 sold→available 복구 분기 추가 (직전 cycle의 트리거 UPDATE 등록과 짝)\n- 20260529171000: admin_logs 테이블 service_role SELECT/INSERT grant 추가 (다른 테이블과 일관성)\n- 20260529172000: email_broadcast_recipients (broadcast_id) 인덱스 추가 (admin 보고서 seq scan 차단)\n\n미처리 — 변경 범위 큰 P2 (후속 cycle):\n- petition_signatures.email 평문 → at-rest 암호화 또는 컬럼 제거 (정책 결정 필요)\n- artwork_sales.currency 컬럼 추가 (해외 판매 정산 — 모든 INSERT 경로 + 분석 쿼리 수정 필요)\n\n검증: type-check ✓ / build ✓ / verify-i18n-placeholders ✓",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "30eb3898",
     "type": "feat",
     "scope": "seo",

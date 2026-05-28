@@ -33,9 +33,7 @@ const nextConfig = {
     // 30일. 작품 이미지는 한 번 업로드되면 거의 변경되지 않으므로 길게 잡아 cache hit률 ↑.
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
-      // Supabase Storage — Seoul live 프로젝트만 명시. 와일드카드(*.supabase.co)는 deprecated
-      // 뭄바이 프로젝트(vqejnuntjnxzpgwfndtv)를 비롯한 임의 프로젝트 이미지를 Vercel optimizer가
-      // fetching하는 회귀를 차단.
+      // Supabase Storage — Seoul live 프로젝트 (현재 운영).
       {
         protocol: 'https',
         hostname: 'khtunrybrzntlnowlahb.supabase.co',
@@ -44,6 +42,19 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'khtunrybrzntlnowlahb.supabase.co',
+        pathname: '/storage/v1/render/image/public/**',
+      },
+      // Supabase Storage — 뭄바이 (deprecated 2026-05-22). DB stories 171건이 본문에 뭄바이
+      // URL을 잔존 보유하고 있어 image optimization 실패를 막기 위해 한시 허용.
+      // 장기적으로 stories.body의 뭄바이 URL을 Seoul URL로 일괄 치환하는 backfill 필요.
+      {
+        protocol: 'https',
+        hostname: 'vqejnuntjnxzpgwfndtv.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'vqejnuntjnxzpgwfndtv.supabase.co',
         pathname: '/storage/v1/render/image/public/**',
       },
       { protocol: 'https', hostname: 'mmagimg.speedgabia.com' },

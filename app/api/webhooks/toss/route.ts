@@ -512,14 +512,14 @@ export async function POST(req: NextRequest) {
             .maybeSingle();
 
           if (!existingSale) {
+            // source_detail은 order metadata에서 resolve한 provider 기준 — 위쪽 라인 322 패턴과 동일.
+            // 보고서에서 widget/api_v1 구분이 유지되도록 하드코딩 회피.
             const { error: saleInsertError } = await supabase.from('artwork_sales').insert({
               artwork_id: existingOrder.artwork_id,
               sale_price: existingOrder.total_amount,
               quantity: 1,
               source: 'toss',
-              // confirm route 실패 보정이지만 source_detail 자체는 일반 toss_api와 같음.
-              // 별도 값은 CHECK constraint 추가가 필요하므로 'toss_api'로 통일.
-              source_detail: 'toss_api',
+              source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
               order_id: paymentRow.order_id,
               external_order_id: existingOrder.order_no,
               buyer_name: existingOrder.buyer_name,
