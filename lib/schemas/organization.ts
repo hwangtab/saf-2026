@@ -9,6 +9,7 @@ import {
 } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT } from '@/lib/site-stats';
 import { isExhibitionCompleted } from '@/lib/schemas/event';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 
 export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
   const isEnglish = locale === 'en';
@@ -119,6 +120,34 @@ export function generateWebsiteSchema(
       },
       'query-input': 'required name=search_term_string',
     },
+    // mainEntity — 매체 매거진 hub 4편. WebSite 전체와 매체 hub의 schema-level entity 연결.
+    // Sprint 38(Homepage WebPage.about)이 root page 1개에만 적용된다면 이 필드는 모든
+    // WebSite 발행 페이지에서 노출되므로 KG entity 시그널 site-wide 영향.
+    mainEntity: (() => {
+      const items: Array<{
+        '@type': 'CreativeWork';
+        '@id': string;
+        url: string;
+        name: string;
+      }> = [];
+      const mapping: Array<[string, string]> = [
+        ['회화', isEnglish ? 'Painting guide' : '회화 가이드'],
+        ['판화', isEnglish ? 'Printmaking guide' : '판화 가이드'],
+        ['사진', isEnglish ? 'Photography guide' : '사진 가이드'],
+        ['조각', isEnglish ? 'Sculpture guide' : '조각 가이드'],
+      ];
+      for (const [cat, name] of mapping) {
+        const slug = getMediumHubSlug(cat);
+        if (!slug) continue;
+        items.push({
+          '@type': 'CreativeWork',
+          '@id': `${SITE_URL}/stories/${slug}#about`,
+          url: `${SITE_URL}/stories/${slug}`,
+          name,
+        });
+      }
+      return items;
+    })(),
   };
 }
 
