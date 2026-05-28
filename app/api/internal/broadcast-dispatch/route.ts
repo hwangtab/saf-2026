@@ -116,19 +116,25 @@ export async function GET(request: NextRequest) {
 
       const result = await sendBatch(batchItems);
 
-      const sentIds = (pending as Array<{ id: string }>)
-        .slice(0, result.ids.length)
-        .map((r) => r.id);
-      const failedIds = (pending as Array<{ id: string }>)
-        .slice(result.ids.length)
-        .map((r) => r.id);
+      const pendingRows = pending as Array<{ id: string }>;
 
-      if (sentIds.length > 0) {
-        await supabase
-          .from('email_broadcast_recipients')
-          .update({ status: 'sent', sent_at: new Date().toISOString() })
-          .in('id', sentIds);
-      }
+      // result.ids[i] = batchItems[i] = pendingRows[i]의 Resend 메시지 ID (요청 순서 보존).
+      // 웹훅(app/api/webhooks/resend)이 resend_id로 바운스/컴플레인을 매칭하므로 수신자별로 저장.
+      const sentAt = new Date().toISOString();
+      const sentUpdates = result.ids.map((resendId, i) => ({
+        id: pendingRows[i].id,
+        resendId,
+      }));
+      const failedIds = pendingRows.slice(result.ids.length).map((r) => r.id);
+
+      await Promise.all(
+        sentUpdates.map(({ id, resendId }) =>
+          supabase
+            .from('email_broadcast_recipients')
+            .update({ status: 'sent', sent_at: sentAt, resend_id: resendId })
+            .eq('id', id)
+        )
+      );
 
       if (failedIds.length > 0) {
         await supabase
@@ -137,7 +143,7 @@ export async function GET(request: NextRequest) {
           .in('id', failedIds);
       }
 
-      totalDispatched += sentIds.length;
+      totalDispatched += sentUpdates.length;
 
       if (pending.length < CHUNK_SIZE) {
         hasMore = false;
