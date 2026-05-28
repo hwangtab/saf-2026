@@ -124,6 +124,14 @@ export default async function ArtistsIndexPage({ params }: { params: Promise<Loc
 
   const pageUrl = buildLocaleUrl('/artworks/artist', locale);
 
+  // 매체 hub about entity — 작가 인덱스도 4 매체 hub와 schema 연결(작품수 top 4).
+  const aboutHubs = mediumHubCards.map((card) => ({
+    '@type': 'CreativeWork' as const,
+    '@id': `${SITE_URL}/stories/${card.slug}#about`,
+    url: `${SITE_URL}/stories/${card.slug}`,
+    name: isEn && card.titleEn ? card.titleEn : card.title,
+  }));
+
   const collectionPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -135,6 +143,7 @@ export default async function ArtistsIndexPage({ params }: { params: Promise<Loc
     url: pageUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: isEn ? 'en-US' : 'ko-KR',
+    ...(aboutHubs.length > 0 && { about: aboutHubs }),
     author: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,

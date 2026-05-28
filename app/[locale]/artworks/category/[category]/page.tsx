@@ -276,10 +276,36 @@ async function renderCategoryPage({ params }: Props) {
     name: t('title', { category: displayCategory }),
     description: heroDescription,
     isPartOf: { '@id': `${SITE_URL}#website` },
-    about: {
-      '@type': 'Thing',
-      name: isEnglish ? getCategoryEnName(category) : category,
-    },
+    // 카테고리 명 Thing + 매체 hub + commerce hub CreativeWork — schema entity cluster.
+    about: [
+      { '@type': 'Thing' as const, name: isEnglish ? getCategoryEnName(category) : category },
+      ...(mediumHubStory
+        ? [
+            {
+              '@type': 'CreativeWork' as const,
+              '@id': `${SITE_URL}/stories/${mediumHubStory.slug}#about`,
+              url: `${SITE_URL}/stories/${mediumHubStory.slug}`,
+              name:
+                isEnglish && mediumHubStory.title_en
+                  ? mediumHubStory.title_en
+                  : mediumHubStory.title,
+            },
+          ]
+        : []),
+      ...(commerceHubStory
+        ? [
+            {
+              '@type': 'CreativeWork' as const,
+              '@id': `${SITE_URL}/stories/${commerceHubStory.slug}#about`,
+              url: `${SITE_URL}/stories/${commerceHubStory.slug}`,
+              name:
+                isEnglish && commerceHubStory.title_en
+                  ? commerceHubStory.title_en
+                  : commerceHubStory.title,
+            },
+          ]
+        : []),
+    ],
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${pageUrl}#item-list` },
     author: {
