@@ -4,6 +4,7 @@ import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { ANIMATION } from '@/lib/constants';
 import Card from '@/components/ui/Card';
+import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 
 interface CounterItem {
   label: string;
@@ -21,6 +22,9 @@ export default function DynamicCounter({ items, locale = 'ko' }: DynamicCounterP
     triggerOnce: true,
     threshold: 0.5,
   });
+  // CountUp은 JS requestAnimationFrame 기반이라 globals.css의 prefers-reduced-motion CSS
+  // guard(animation-duration: 0.01ms)가 적용되지 않음. reduced-motion 사용자는 최종값 즉시 표시.
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <div ref={ref}>
@@ -40,14 +44,21 @@ export default function DynamicCounter({ items, locale = 'ko' }: DynamicCounterP
                 }}
               >
                 {inView ? (
-                  <>
-                    <CountUp
-                      end={item.value}
-                      duration={ANIMATION.COUNTER_DURATION / 1000}
-                      separator=","
-                    />
-                    <span className="text-2xl md:text-3xl">{item.unit}</span>
-                  </>
+                  prefersReducedMotion ? (
+                    <span>
+                      {item.value.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR')}
+                      <span className="text-2xl md:text-3xl">{item.unit}</span>
+                    </span>
+                  ) : (
+                    <>
+                      <CountUp
+                        end={item.value}
+                        duration={ANIMATION.COUNTER_DURATION / 1000}
+                        separator=","
+                      />
+                      <span className="text-2xl md:text-3xl">{item.unit}</span>
+                    </>
+                  )
                 ) : (
                   <span>
                     {item.value.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR')}

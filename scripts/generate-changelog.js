@@ -7,13 +7,16 @@
  * content/changelog.json으로 출력한다.
  */
 
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const ALLOWED_TYPES = ['feat', 'fix', 'perf'];
-const DELIMITER = '---COMMIT_DELIM---';
-const FIELD_SEP = '---FIELD_SEP---';
+// ASCII 제어문자 RS/US — 커밋 메시지에 등장하지 않는 character set이라 충돌 위험 0.
+// 이전 문자열 sentinel('---FIELD_SEP---')은 본문에 그대로 입력하면 파싱 오염.
+// NUL(\x00)은 shell-piped execSync를 통과 못 하므로 회피.
+const DELIMITER = '\x1E'; // Record Separator (커밋 구분)
+const FIELD_SEP = '\x1F'; // Unit Separator (필드 구분)
 
 const TYPE_KO = {
   feat: '새 기능 추가',
@@ -58,7 +61,8 @@ const SCOPE_KO = {
   webhook: '웹훅',
 };
 
-// git log 실행
+// git log 실행 — execFileSync로 shell 우회. git format placeholder %x1E/%x1F로 git이 직접
+// control 문자를 출력해 안전한 구분자 사용. (커밋 메시지에 등장하지 않는 character set)
 function getGitLog() {
   try {
     const format = [
@@ -67,9 +71,9 @@ function getGitLog() {
       '%aI', // author date ISO
       '%an', // author name
       '%b', // body
-    ].join(FIELD_SEP);
+    ].join('%x1F');
 
-    const raw = execSync(`git log --no-merges --format="${DELIMITER}${format}"`, {
+    const raw = execFileSync('git', ['log', '--no-merges', `--format=%x1E${format}`], {
       encoding: 'utf-8',
       maxBuffer: 10 * 1024 * 1024,
     });

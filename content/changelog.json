@@ -1,5 +1,45 @@
 [
   {
+    "hash": "30eb3898",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 38 — Homepage WebPage schema에 매체 hub about entity 추가",
+    "summary": "Homepage(/) WebPage JSON-LD에 4 매체 매거진 hub URL을 about CreativeWork[] entity로 명시 — site root entry의 schema entity 시그널 강화",
+    "body": "배경:\n- Homepage WebPage schema는 speakable·breadcrumb만 보유\n- about 필드로 매체 hub와 schema-level entity 연결 부재\n- Sprint 29~37에서 site-wide 7대 schema entity 시그널 완성\n- site root(/) 마지막 미적용 위치 — 가장 중요한 entity signal entry\n\n변경:\n- app/[locale]/page.tsx:\n  - WebPage schema에 about: CreativeWork[] 필드 추가\n  - 4 매체(회화·판화·사진·조각) → getMediumHubSlug 매핑\n  - locale별 label (한국어 '회화 가이드', 영어 'Painting guide')\n  - IIFE로 변수 scope 격리\n\nSchema 출력:\n{\n  \"@type\": \"WebPage\",\n  \"url\": \"https://saf2026.com\",\n  \"about\": [\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/saf-2026-painters\", \"name\": \"회화 가이드\" },\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/korean-contemporary-printmaking-saf\", \"name\": \"판화 가이드\" },\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/korean-documentary-landscape-photography\", \"name\": \"사진 가이드\" },\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/saf-2026-sculpture-and-ceramics\", \"name\": \"조각 가이드\" }\n  ]\n}\n\n효과:\n- site root WebPage → 4 매체 hub schema-level entity 연결\n- Google Knowledge Graph: 루트 페이지와 매체 hub가 entity cluster\n- 모든 페이지(Homepage 포함)에서 7대 schema entity 시그널 완성:\n  - Sprint 29 BlogPosting (174 stories)\n  - Sprint 30 VisualArtwork (415 artworks)\n  - Sprint 31 Person (49 artists)\n  - Sprint 34 CollectionPage (/artworks)\n  - Sprint 35 CollectionPage (/stories)\n  - Sprint 36 CollectionPage (/stories/category × 3)\n  - Sprint 37 CollectionPage (/artworks/category × 8 + /artworks/artist)\n  - Sprint 38 WebPage (/) ← 신규\n\n회귀 방지:\n- getMediumHubSlug null → 해당 hub entity 자동 제외\n- 기존 speakable/breadcrumb 필드 무변동\n- npm run type-check 통과 (내 변경)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "308ec3ef",
+    "type": "fix",
+    "scope": null,
+    "subject": "잔존 버그 cycle 4 — a11y WCAG/scripts crash guard/DB trigger UPDATE/PayPal usd_amount",
+    "summary": "a11y 6건 + scripts 3건 + DB trigger 1건 + 결제 정합성 1건 = 11건 일괄 정리",
+    "body": "P0 (2건):\n- RelatedArtworksSlider: AutoScroll prefers-reduced-motion 무시 (WCAG 2.2.2). lib/hooks/useReducedMotion.ts 공유 훅 추출\n- scripts/gsc-backfill-once.js: JSON.parse(undefined) crash guard\n\nP1 (8건):\n- SortControls: <button role=\"option\"> ARIA 중첩 → <li role=\"option\"> + aria-controls (W3C APG listbox 패턴)\n- GlobalSearchDialog: 모바일 close aria-label + 44px target + 결과 aria-live=\"polite\"\n- VirtualGalleryPortal: room preset type/aria-pressed/aria-label + close 44px + focus-visible\n- Modal: close button min-w/min-h 44px (WCAG 2.5.5)\n- HomeHero: no-href CTA에 role=\"link\" aria-disabled\n- purge-expired-trash.js: 부분 실패 시 process.exitCode = 1\n- sync-site-stats.js: anon key fallback 시 경고\n- eslint.config.mjs: scripts/* ignore 해제 + CommonJS/TS 환경 override\n- app/actions/checkout.ts: PayPal usd_amount를 metadata에서 읽기 (환율 재배포 amount_mismatch 차단)\n\nDB (1건 — MCP apply 완료):\n- artwork_sales_status_sync 트리거에 UPDATE 이벤트 추가 (voided_at UPDATE 시 sold→available DB-level 복구)\n\n검증: type-check ✓ / build ✓ / verify-i18n-placeholders ✓ / scripts eslint 0 errors",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "c5df317d",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 37 — 작품 카테고리/작가 인덱스 CollectionPage.about에 hub entity 추가",
+    "summary": "/artworks/category/[category] + /artworks/artist 두 CollectionPage의 about 필드를 hub CreativeWork entity로 확장 — Sprint 34/35/36과 동일 패턴 site-wide 일관 완성",
+    "body": "배경:\n- /artworks/category: about Thing 단일 → about[Thing(매체) + CreativeWork(매체 hub) + CreativeWork(commerce hub)]\n- /artworks/artist: about 필드 부재 → 4 매체 hub CreativeWork[] 추가 (Sprint 33의 mediumHubCards 재사용)\n- Sprint 29~36 entity 시그널 정책의 마지막 collection page 적용\n\n변경:\n- app/[locale]/artworks/category/[category]/page.tsx:\n  - about: Thing 단일 → 배열로 확장\n  - mediumHubStory + commerceHubStory(Sprint 21에서 이미 fetch)를 CreativeWork entity로 추가\n  - hub 미매핑 시 자동 제외 (회귀 0)\n- app/[locale]/artworks/artist/page.tsx:\n  - mediumHubCards(Sprint 33)를 CreativeWork[] 변환\n  - about 조건부 spread\n\n7대 schema entity 시그널 site-wide 완성:\n- Sprint 29 BlogPosting.about (174 stories)\n- Sprint 30 VisualArtwork.about (415 artworks)\n- Sprint 31 Person.knowsAbout (49 artists)\n- Sprint 34 CollectionPage.about (/artworks)\n- Sprint 35 CollectionPage.about (/stories)\n- Sprint 36 CollectionPage.about (/stories/category × 3)\n- Sprint 37 CollectionPage.about (/artworks/category × 8 + /artworks/artist) ← 신규\n\n회귀 방지:\n- 카테고리 페이지: 매체 hub와 commerce hub 모두 미매핑 시에도 Thing 단일은 보존\n- 작가 인덱스: aboutHubs 빈 배열 → 필드 자체 생략\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "687dbdb0",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 36 — /stories/category CollectionPage.about에 카테고리 hub 6편 추가",
+    "summary": "매거진 카테고리별 페이지(/stories/category/[category])의 CollectionPage about 필드를 Thing 단일 → Thing + CreativeWork[6] 배열로 확장 — 카테고리 entity + 카테고리별 hub stories 둘 다 schema-level entity 명시",
+    "body": "배경:\n- 기존 about은 Thing 단일 (카테고리 명) — 카테고리 hub stories와 schema-level 연결 부재\n- Sprint 35(/stories) + 34(/artworks)와 동일 패턴 카테고리 페이지에 일관 적용\n- Sprint 23 hub-first 정렬로 stories.filter(isCanonicalHub).slice(0,6) 결정론적\n\n변경:\n- app/[locale]/stories/category/[category]/page.tsx:\n  - aboutHubs = stories.filter(isCanonicalHub).slice(0,6) → CreativeWork entity\n  - about: [{Thing: category명}, ...aboutHubs(CreativeWork)] 배열로 변경\n  - title source-of-truth = DB (locale별 swap)\n\n효과:\n- art-knowledge·buying-guide 카테고리 페이지에서 6 hub와 schema entity 연결\n  - art-knowledge: 매체·주제 hub 19개 중 카테고리 내 hub 6개\n  - buying-guide: entry-level commerce hub 7개 중 카테고리 내 hub 6개\n- Sprint 29~31, 34, 35, 36 → 6대 schema entity 시그널 site-wide 완성\n  - BlogPosting(174) + VisualArtwork(415) + Person(49) + CollectionPage(/artworks)\n  + CollectionPage(/stories) + CollectionPage(/stories/category × 3)\n\n회귀 방지:\n- artist-story 카테고리는 aboutHubs 빈 배열 → Thing 단일만 노출(기존 동작)\n- about 배열 타입은 valid schema.org (Thing/CreativeWork 혼합 array 허용)\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "6b6ba96b",
     "type": "feat",
     "scope": "seo",

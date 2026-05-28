@@ -7,7 +7,10 @@ import { resolveLegacyArtworkId } from '@/lib/artwork-legacy-map';
 
 // Legacy 숫자 작품 ID → UUID. page.tsx permanentRedirect가 error.tsx에 가로막힘.
 // proxy(=구 middleware)에서 렌더 전에 처리.
-const LEGACY_ARTWORK_PATH = /^\/(en\/)?artworks\/(\d+)\/?$/;
+// Legacy ID (/artworks/151, /en/artworks/151, /ko/artworks/151) → UUID 308 redirect.
+// /ko/ prefix는 next-intl 기본 locale이라 사용자가 직접 입력해야만 도달하지만,
+// fallthrough 시 404로 색인 누락되는 사고를 막기 위해 매칭 대상에 포함.
+const LEGACY_ARTWORK_PATH = /^\/(?:(ko|en)\/)?artworks\/(\d+)\/?$/;
 
 // /stories?category=foo → /stories/category/foo 308 redirect.
 // stories 정적화 후 server-side query 필터 제거. 외부 백링크나 직접 입력으로 들어온 query URL이
@@ -76,10 +79,12 @@ export async function proxy(request: NextRequest) {
   // page.tsx의 permanentRedirect이 error boundary에 가로막히므로 proxy에서 처리
   const legacyMatch = pathname.match(LEGACY_ARTWORK_PATH);
   if (legacyMatch) {
-    const [, enPrefix, legacyId] = legacyMatch;
+    const [, localePrefix, legacyId] = legacyMatch;
     const uuid = resolveLegacyArtworkId(legacyId);
     if (uuid) {
-      const newPath = `/${enPrefix ?? ''}artworks/${uuid}`;
+      // localePrefix는 'ko' | 'en' | undefined. /ko/는 default locale이라 prefix 제거.
+      const localeSegment = localePrefix === 'en' ? 'en/' : '';
+      const newPath = `/${localeSegment}artworks/${uuid}`;
       return NextResponse.redirect(new URL(newPath, request.url), 308);
     }
     // 매핑 못 찾은 numeric ID는 404로 차단.

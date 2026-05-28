@@ -19,10 +19,22 @@ import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapte
  *
  * @see https://vercel.com/docs/edge-network/headers#x-vercel-forwarded-for
  */
+
+// X-Forwarded-For 계열 헤더는 proxy chain 끝(마지막)이 가장 신뢰 가능한 detected IP.
+// x-vercel-forwarded-for는 보통 single IP이지만 multi-edge proxy 시나리오에서 multi-segment
+// 가능성이 있어 x-forwarded-for와 동일하게 마지막 segment를 취해 일관성 확보.
+function lastSegment(value: string): string | undefined {
+  const segments = value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return segments[segments.length - 1];
+}
+
 export function getClientIp(headerList: ReadonlyHeaders | Headers): string {
   const vercelForwarded = headerList.get('x-vercel-forwarded-for');
   if (vercelForwarded) {
-    const ip = vercelForwarded.split(',')[0]?.trim();
+    const ip = lastSegment(vercelForwarded);
     if (ip) return ip;
   }
 
@@ -32,11 +44,7 @@ export function getClientIp(headerList: ReadonlyHeaders | Headers): string {
   const forwarded = headerList.get('x-forwarded-for');
   if (forwarded) {
     // 마지막 segment = Vercel이 append한 검증된 IP. 첫 segment는 클라이언트 위조 가능.
-    const segments = forwarded
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const last = segments[segments.length - 1];
+    const last = lastSegment(forwarded);
     if (last) return last;
   }
 
