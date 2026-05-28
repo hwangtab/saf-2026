@@ -476,6 +476,17 @@ export default async function StoryCategoryPage({ params }: Props) {
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  // 카테고리 hub about entities — Sprint 23 hub-first 정렬 활용해 top 6 hub 추출.
+  const aboutHubs = stories
+    .filter((s) => isCanonicalHub(s.slug))
+    .slice(0, 6)
+    .map((s) => ({
+      '@type': 'CreativeWork' as const,
+      '@id': `${SITE_URL}/stories/${s.slug}#about`,
+      url: `${SITE_URL}/stories/${s.slug}`,
+      name: isEnglish && s.title_en ? s.title_en : s.title,
+    }));
+
   // CollectionPage JSON-LD
   const collectionSchema = {
     '@context': 'https://schema.org',
@@ -485,10 +496,8 @@ export default async function StoryCategoryPage({ params }: Props) {
     name: meta.title,
     description: meta.description,
     isPartOf: { '@id': `${SITE_URL}#website` },
-    about: {
-      '@type': 'Thing',
-      name: meta.heroTitle,
-    },
+    // about: 카테고리 명 Thing + hub CreativeWork 6편 — entity cluster schema-level 명시.
+    about: [{ '@type': 'Thing' as const, name: meta.heroTitle }, ...aboutHubs],
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     publisher: {
       '@type': 'Organization',
