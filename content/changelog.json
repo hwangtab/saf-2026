@@ -1,5 +1,15 @@
 [
   {
+    "hash": "0f8a7702",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 14 — cross-category mesh (commerce ↔ authority 연결)",
+    "summary": "buying-guide → artist-story/art-knowledge + art-knowledge → buying-guide 양방향 cross-category 인링크",
+    "body": "- Phase 1: 17편 buying-guide body+body_en 업데이트 (## 작가·지식 더 보기 / ## Explore Further)\n  - tag overlap top 3, artist-story + art-knowledge 통합 ranking\n- Phase 2: 11편 art-knowledge body+body_en 업데이트 (## 작품 사러 가기 / ## Start Collecting)\n  - tag overlap top 2, buying-guide 매핑\n\n예시:\n- print-vs-original-price-economics → prints-vs-originals(knowledge, overlap 2) → 한국 현대 판화 hub → 이철수 작가 (commerce → knowledge → artist 완벽 흐름)\n- art-auction-guide-korea → drawing-vs-painting\n\n5축 hub-spoke + mesh + cross-category로 graph 완성:\n1. Sprint 7+9+10: artist-story → hub (74편)\n2. Sprint 8: hub → meet-artist (6 hub)\n3. Sprint 11: artist↔artist mesh (73편)\n4. Sprint 12: art-knowledge↔art-knowledge mesh (23편)\n5. Sprint 13: buying-guide↔buying-guide mesh (28편)\n6. Sprint 14: buying-guide → cross (17편) + art-knowledge → buying-guide (11편) ← 신규\n\nCommerce funnel ↔ authority cross-pollination 완성.\n\nIdempotency: body not ilike '%## 작가·지식 더 보기%' / '%## 작품 사러 가기%' guard",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "675b3544",
     "type": "feat",
     "scope": "seo",
