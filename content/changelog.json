@@ -1,5 +1,15 @@
 [
   {
+    "hash": "f0b3bebd",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 9 — 회화 fallback hub + tag_hub_map 누락 보강",
+    "summary": "Sprint 7 미커버 44편 중 29편 추가 cover, 전체 coverage 38→67/82(82%)",
+    "body": "- tag_hub_map 18 → 35 entries 확장\n  · 회화 fallback (회화·유화·아크릴·추상·추상회화·추상미술·믹스미디어·드로잉·콜라주·시사만화) → saf-2026-painters\n  · 누락 tag 보강 (다색 목판→판화 hub, 산악 사진·사진 예술→사진 hub, 동양화→한국화 hub, 한국 민중미술·노동 미술→민중미술 hub)\n- 주요 매핑: 강레아(산악사진→사진), 이윤엽(다색목판+노동미술), 박재동(한국민중미술→민중미술), 안은경(동양화+회화)\n- Sprint 7 idempotency guard 재사용 → 기존 38편 무회귀\n- 사후 검증: ko_ok=67 / en_ok=67 / total=82 (82% coverage)\n- 잔여 15편: tags 미부착 작가·일반 큐레이션 글(별도 cycle)\n\n[Sprint 9 / DB-only]",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "890fcdd6",
     "type": "fix",
     "scope": "email",
