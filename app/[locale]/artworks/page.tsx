@@ -26,6 +26,7 @@ import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 
@@ -167,26 +168,31 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
     .sort((a, b) => b.count - a.count);
 
   // 메인 카테고리 가이드 — visible H2 + 본문 (SEO 키워드 흡수)
+  // 각 카드는 매체 갤러리(/artworks/category/[k])와 매거진 hub(/stories/[hub]) 양쪽으로 link.
   const mainCategoryGuides = [
     {
       key: '회화',
       title: t('categoryPaintingTitle'),
       description: t('categoryPaintingDescription'),
+      hubSlug: getMediumHubSlug('회화'),
     },
     {
       key: '판화',
       title: t('categoryPrintTitle'),
       description: t('categoryPrintDescription'),
+      hubSlug: getMediumHubSlug('판화'),
     },
     {
       key: '사진',
       title: t('categoryPhotoTitle'),
       description: t('categoryPhotoDescription'),
+      hubSlug: getMediumHubSlug('사진'),
     },
     {
       key: '조각',
       title: t('categorySculptureTitle'),
       description: t('categorySculptureDescription'),
+      hubSlug: getMediumHubSlug('조각'),
     },
   ];
 
@@ -276,20 +282,33 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 max-w-5xl mx-auto">
               {mainCategoryGuides.map((cat) => (
-                <Link
+                <div
                   key={cat.key}
-                  href={`/artworks/category/${encodeURIComponent(cat.key)}`}
-                  className="block bg-canvas rounded-2xl p-6 md:p-7 border border-gray-200 hover:border-primary/40 hover:bg-canvas transition-colors"
+                  className="bg-canvas rounded-2xl p-6 md:p-7 border border-gray-200 hover:border-primary/40 transition-colors"
                 >
-                  <h3 className="text-lg md:text-xl font-section font-bold text-charcoal-deep mb-3">
-                    {cat.title}
-                  </h3>
-                  <p className="text-charcoal text-base leading-relaxed">{cat.description}</p>
-                  <span className="inline-flex items-center gap-1 mt-4 text-sm text-primary-strong font-medium">
-                    {t('categoryViewAll', { category: getCategoryLabel(cat.key, locale) })}
-                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  </span>
-                </Link>
+                  <Link
+                    href={`/artworks/category/${encodeURIComponent(cat.key)}`}
+                    className="block"
+                  >
+                    <h3 className="text-lg md:text-xl font-section font-bold text-charcoal-deep mb-3">
+                      {cat.title}
+                    </h3>
+                    <p className="text-charcoal text-base leading-relaxed">{cat.description}</p>
+                    <span className="inline-flex items-center gap-1 mt-4 text-sm text-primary-strong font-medium">
+                      {t('categoryViewAll', { category: getCategoryLabel(cat.key, locale) })}
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                  </Link>
+                  {cat.hubSlug && (
+                    <Link
+                      href={`/stories/${cat.hubSlug}`}
+                      className="inline-flex items-center gap-1 mt-3 pt-3 border-t border-gray-200 text-xs text-charcoal-muted hover:text-primary-strong transition-colors"
+                    >
+                      {locale === 'en' ? 'Magazine guide' : '매거진 가이드'}
+                      <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
           </div>
