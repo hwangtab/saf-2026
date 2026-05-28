@@ -1,5 +1,15 @@
 [
   {
+    "hash": "1780943f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 12 — art-knowledge mesh (함께 읽기)",
+    "summary": "art-knowledge hub 41편 중 23편에 tag overlap 기반 cross-link 자동 부착",
+    "body": "- 23편 art-knowledge body+body_en 업데이트\n- '함께 읽기' / 'Further Reading' 섹션\n- 매칭: tag 교집합 desc → tgt_slug asc, top 3\n- 동일 mesh 패턴(Sprint 11)을 art-knowledge 카테고리에 적용\n- 잔여 18편: tags 비어있음(12편) + tag unique해 매칭 없음(6편, 예: dansaekhwa-intro)\n\n예시:\n- minjung-art-intro → 농경·노동(overlap 2)·샤머니즘·회화 hub\n- how-mutual-aid-fund-works → 예술인 금융 5개 숫자(overlap 2)·은행 거절(overlap 2)·미술품 보관\n- hanji-aesthetics → 농경 노동·장지 채색·판화\n\nTopology 완성:\n1. Sprint 7+9+10: artist-story → hub (## 관련 매거진) 74편\n2. Sprint 8: hub → meet-artist (## 대표 작가 만나기) 6 hub\n3. Sprint 11: artist↔artist sister mesh (## 같은 길을 걷는 작가들) 73편\n4. Sprint 12: art-knowledge↔art-knowledge mesh (## 함께 읽기) 23편 ← 신규\n\nIdempotency: body not ilike '%## 함께 읽기%' guard",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "b212336b",
     "type": "feat",
     "scope": "seo",
