@@ -24,6 +24,7 @@ import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
 import { pinPrimaryStory } from '@/lib/artist-story-map';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import ArtworkImage from '@/components/features/ArtworkImage';
 import ArtworkDetailNav from '@/components/features/ArtworkDetailNav';
 import { parsePrice } from '@/lib/parsePrice';
@@ -202,8 +203,20 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // 정전 스토리(ARTIST_PRIMARY_STORY 등재 작가)는 결정론적으로 1번 슬롯. recency 정렬에 밀리는 회귀 차단.
   const pinnedTagMatched = pinPrimaryStory(artwork.artist, tagMatchedStories);
   const tagMatchedIds = new Set(pinnedTagMatched.map((s) => s.id));
-  const bodyMentionedStories = mentionedStories.filter((s) => !tagMatchedIds.has(s.id));
-  const relatedMagazineStories = [...pinnedTagMatched, ...bodyMentionedStories].slice(0, 3);
+  // 매체 hub(category → art-knowledge hub) 1편 보장 — 매체별 link equity inflow 강화.
+  const mediumHubSlug = getMediumHubSlug(artwork.category);
+  const mediumHubStory = mediumHubSlug
+    ? allStories.find((s) => s.slug === mediumHubSlug && !tagMatchedIds.has(s.id))
+    : undefined;
+  const mediumHubIds = mediumHubStory ? new Set([mediumHubStory.id]) : new Set<string>();
+  const bodyMentionedStories = mentionedStories.filter(
+    (s) => !tagMatchedIds.has(s.id) && !mediumHubIds.has(s.id)
+  );
+  const relatedMagazineStories = [
+    ...pinnedTagMatched,
+    ...(mediumHubStory ? [mediumHubStory] : []),
+    ...bodyMentionedStories,
+  ].slice(0, 3);
   const liveStorySlugs = new Set(allStories.map((s) => s.slug));
   const localizeDataValue = (value: string | null | undefined): string | null => {
     if (!value) return null;
