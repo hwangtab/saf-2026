@@ -36,7 +36,7 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 import { resolveLocale } from '@/lib/server-locale';
 import { getArtistSeoOverride } from '@/lib/artist-seo-overrides';
 import { getPrimaryStorySlug, pinPrimaryStory } from '@/lib/artist-story-map';
-import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
+import { getMediumHubSlug, getMediumCommerceHubSlug } from '@/lib/artwork-medium-hub';
 import { containsHangul } from '@/lib/search-utils';
 import { ArrowRight, Globe, Instagram } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
@@ -423,8 +423,21 @@ async function renderArtistPage({ params }: Props) {
     mediumHubSlug && !pinnedStories.some((s) => s.slug === mediumHubSlug)
       ? (allStories.find((s) => s.slug === mediumHubSlug) ?? null)
       : null;
+  // 매체 commerce hub(buying-guide) — knowledge hub와 별개로 가격/구매 의도 funnel link.
+  const commerceHubSlug = getMediumCommerceHubSlug(dominantCategory);
+  const commerceHubStory =
+    commerceHubSlug &&
+    commerceHubSlug !== mediumHubSlug &&
+    !pinnedStories.some((s) => s.slug === commerceHubSlug)
+      ? (allStories.find((s) => s.slug === commerceHubSlug) ?? null)
+      : null;
+  const hubInserts = [mediumHubStory, commerceHubStory].filter((s): s is NonNullable<typeof s> =>
+    Boolean(s)
+  );
   const relatedStories = (
-    mediumHubStory ? [pinnedStories[0], mediumHubStory, ...pinnedStories.slice(1)] : pinnedStories
+    pinnedStories.length > 0
+      ? [pinnedStories[0], ...hubInserts, ...pinnedStories.slice(1)]
+      : hubInserts
   )
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
     .slice(0, 3);
