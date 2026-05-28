@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 import fs from 'fs';
 import path from 'path';
-import { getSupabaseStories, getSupabaseStoryBySlug } from '@/lib/supabase-data';
+import { getSupabaseStoriesLight, getSupabaseStoryBySlug } from '@/lib/supabase-data';
 import { routing } from '@/i18n/routing';
 import { BRAND_COLORS } from '@/lib/colors';
 import { localizeStoryAuthor } from '@/lib/story-author';
@@ -18,7 +18,9 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const stories = await getSupabaseStories();
+  // Light fetch — slug만 필요. body/body_en 컬럼 fetch 시 statement_timeout (57014) 회귀 위험
+  // (sitemap.ts와 동일한 이유로 light 버전 사용).
+  const stories = await getSupabaseStoriesLight();
   return stories.flatMap((story) =>
     routing.locales.map((locale) => ({ locale, slug: story.slug }))
   );

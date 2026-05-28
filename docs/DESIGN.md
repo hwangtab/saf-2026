@@ -152,16 +152,16 @@ Tailwind weight ↔ Noto Sans KR 호출:
 
 베이스: `font-bold rounded-lg transition-all duration-300`. 호버 시 `scale-[1.02]` + shadow.
 
-| variant         | 배경                    | 호버                | 사용처         |
-| --------------- | ----------------------- | ------------------- | -------------- |
-| `primary`       | `bg-primary` (블루)     | `bg-primary-strong` | 기본 액션      |
-| `secondary`     | `bg-gray-900`           | `bg-gray-800`       | 어두운 면      |
-| `accent`        | `bg-accent` (테라코타)  | `bg-accent-strong`  | **CTA / 기부** |
-| `outline`       | 흰 배경 + gray-200 보더 | 보더 → primary      | 보조 액션      |
-| `outline-white` | 투명 + white/50 보더    | 흰 배경             | 다크 히어로 위 |
-| `white`         | 흰 배경                 | 보더 → primary      | 강조 면 위     |
-| `ghost`         | 투명                    | gray-100 배경       | 인라인         |
-| `ghost-white`   | 투명                    | white/10 배경       | 다크 위        |
+| variant         | 배경                    | 호버                | 사용처                             |
+| --------------- | ----------------------- | ------------------- | ---------------------------------- |
+| `primary`       | `bg-primary` (블루)     | `bg-primary-strong` | 기본 액션                          |
+| `secondary`     | `bg-gray-900`           | `bg-gray-800`       | 어두운 면                          |
+| `accent`        | `bg-accent` (테라코타)  | `bg-accent-strong`  | ⚠ **deprecated** — `primary` 사용 |
+| `outline`       | 흰 배경 + gray-200 보더 | 보더 → primary      | 보조 액션                          |
+| `outline-white` | 투명 + white/50 보더    | 흰 배경             | 다크 히어로 위                     |
+| `white`         | 흰 배경                 | 보더 → primary      | 강조 면 위                         |
+| `ghost`         | 투명                    | gray-100 배경       | 인라인                             |
+| `ghost-white`   | 투명                    | white/10 배경       | 다크 위                            |
 
 | size | 패딩          | 텍스트 | 최소 높이   |
 | ---- | ------------- | ------ | ----------- |
@@ -174,8 +174,19 @@ Tailwind weight ↔ Noto Sans KR 호출:
 
 ```tsx
 'rounded-2xl border border-gray-200 bg-white shadow-sm';
-// hoverable: 'hover:-translate-y-1 hover:shadow-xl' transition 300ms
 ```
+
+**호버 패턴 2종 — 컨텍스트별로 사용:**
+
+1. **갤러리 그리드 카드** (작품/매거진 카드처럼 클릭 가능 + 시각적 강조 필요):
+   `hover:-translate-y-1 hover:shadow-xl transition-[transform,box-shadow] duration-300 ease-out`
+   적용처: `ArtworkGridCard`, `ArtworkCategoryGrid`, `MasterArtists`, `NowShowing`,
+   `MagazineSection`, `RelatedStoriesGrid`
+2. **정적 정보 카드** (Card.tsx 기본 — 클릭 불필요 또는 미세한 정보 카드):
+   `hover:shadow-gallery-hover` 그림자 전용 (translate/scale 없음)
+   적용처: `Card.tsx`, `ArtworkCard.tsx`, `RelatedArtworkCard.tsx`, `RelatedArticles.tsx`
+
+터치 디바이스에서는 `@media (hover: none)` 블록이 두 패턴 모두 자동 비활성화 (sticky hover 차단).
 
 ### Badge ([components/ui/Badge.tsx](../components/ui/Badge.tsx))
 
@@ -198,9 +209,9 @@ Tailwind weight ↔ Noto Sans KR 호출:
 
 ### PageHero ([components/ui/PageHero.tsx](../components/ui/PageHero.tsx))
 
-- 그라디언트 `from-charcoal-deep via-charcoal to-primary-strong/70`
-- `min-h-[60vh]`, 흰 텍스트, 라디얼 액센트 오버레이
-- 작품 이미지 배경(`customBackgroundImage`) 시 `bg-black/60` 오버레이
+- 단색 `bg-charcoal-deep` (Gallery White Cube 모델 — Apple/Tesla 다크 hero 패턴)
+- `min-h-[60vh] min-h-[60svh]` 병기 (svh 미지원 구형 iOS Safari fallback), 흰 텍스트
+- 작품 이미지 배경(`customBackgroundImage`) 시 `bg-gradient-to-b from-black/55 via-black/25 to-black/55` 오버레이 + 라디얼 액센트
 - 하단에 항상 `SawtoothDivider position="bottom"`
 
 ### SawtoothDivider ([components/ui/SawtoothDivider.tsx](../components/ui/SawtoothDivider.tsx))

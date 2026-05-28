@@ -57,6 +57,11 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+// generateMetadata가 Supabase fetch(getLiveStats)를 포함하므로 Next.js 16의 conservative
+// inference가 layout 전체를 dynamic으로 추정할 수 있다. force-static + 페이지별 revalidate에
+// 의존하도록 의도를 명시.
+export const dynamic = 'force-static';
+
 export async function generateMetadata({
   params,
 }: {
@@ -171,6 +176,7 @@ export default async function LocaleLayout({
   const publicMessages = Object.fromEntries(
     Object.entries(messages).filter(([namespace]) => !EXCLUDED_PUBLIC_NAMESPACES.has(namespace))
   );
+  const tA11y = await getTranslations({ locale, namespace: 'a11y' });
 
   const localeForSchema = locale === 'en' ? 'en' : 'ko';
   const { artistCount, artworkCount } = await getLiveStats();
@@ -204,15 +210,13 @@ export default async function LocaleLayout({
             <WishlistProvider>
               <ReturningVisitorGreeting />
               <a href="#main-content" className="skip-to-main">
-                {locale === 'en' ? 'Skip to main content' : '메인 콘텐츠로 이동'}
+                {tA11y('skipToMain')}
               </a>
               <Header />
-              <main id="main-content" className="flex-1 min-h-[100svh]">
-                <Suspense fallback={<div className="min-h-[100svh]" aria-hidden="true" />}>
-                  {children}
-                </Suspense>
+              <main id="main-content" className="flex-1">
+                {children}
               </main>
-              <Suspense>
+              <Suspense fallback={null}>
                 <Footer locale={locale} />
               </Suspense>
               <JsonLdScript data={organizationSchema} />

@@ -235,6 +235,13 @@
       "title": "SAF Magazine",
       "subtitle": "Artist interviews, collecting guides, and walks through Korean contemporary art",
       "viewAll": "Browse all articles"
+    },
+    "storyDetail": {
+      "publishedAt": "Published {date}",
+      "share": "Share",
+      "featuredArtworks": "Featured Artworks",
+      "viewAll": "View all",
+      "relatedStories": "Related Stories"
     }
   },
   "breadcrumbs": {
@@ -361,6 +368,8 @@
     "relatedArtworks": "Featured Works",
     "relatedStories": "Related Stories",
     "magazineLabel": "Magazine",
+    "authenticityLabel": "Authenticity",
+    "fundContextProse": "Sales proceeds go to the <link>artist mutual-aid fund</link>.",
     "statusAvailable": "Available",
     "statusReserved": "Reserved",
     "statusSold": "Sold",

@@ -229,7 +229,7 @@ export default async function TransparencyPage({
             </p>
             <div className="overflow-x-auto">
               <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
-                <thead className="bg-gray-100 border-b-2 border-gray-300">
+                <thead className="bg-canvas-strong border-b-2 border-gray-300">
                   <tr>
                     <th className="px-6 py-4 text-left font-bold">Year</th>
                     <th className="px-6 py-4 text-center font-bold">Loans</th>
@@ -413,7 +413,7 @@ export default async function TransparencyPage({
           </p>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
-              <thead className="bg-gray-100 border-b-2 border-gray-300">
+              <thead className="bg-canvas-strong border-b-2 border-gray-300">
                 <tr>
                   <th className="px-6 py-4 text-left font-bold">연도</th>
                   <th className="px-6 py-4 text-center font-bold">대출 건수</th>

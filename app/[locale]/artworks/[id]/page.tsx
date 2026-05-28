@@ -426,23 +426,13 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
               {/* Fund context cross-link */}
               <p className="text-xs text-charcoal-muted text-center leading-relaxed">
-                {locale === 'en' ? (
-                  <>
-                    Sales proceeds go to the{' '}
+                {t.rich('fundContextProse', {
+                  link: (chunks) => (
                     <Link href="/our-proof" className="text-primary-strong hover:underline">
-                      artist mutual-aid fund
+                      {chunks}
                     </Link>
-                    .
-                  </>
-                ) : (
-                  <>
-                    판매 수익이{' '}
-                    <Link href="/our-proof" className="text-primary-strong hover:underline">
-                      예술인 상호부조 기금
-                    </Link>
-                    이 되어 동료 작가의 저금리 대출로 이어집니다.
-                  </>
-                )}
+                  ),
+                })}
               </p>
 
               {/* Share Section */}
@@ -479,7 +469,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {mediumLabelText && (
                 <div className="rounded-2xl border border-gray-200 bg-canvas-soft px-6 py-5 shadow-sm">
                   <p className="text-xs uppercase tracking-widest text-charcoal-muted mb-1">
-                    {locale === 'en' ? 'Authenticity' : '진품성'}
+                    {t('authenticityLabel')}
                   </p>
                   <p className="text-xl md:text-2xl font-bold text-charcoal-deep break-keep">
                     {mediumLabelText}
@@ -674,7 +664,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
               {relatedMagazineStories.length > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-sm font-bold text-charcoal-soft uppercase tracking-wider">
-                    {locale === 'en' ? 'Magazine' : '관련 매거진'}
+                    {t('magazineLabel')}
                   </h2>
                   <div className="space-y-4">
                     {relatedMagazineStories.map((story, i) => (

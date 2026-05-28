@@ -40,7 +40,7 @@ export default async function NowShowing({ locale }: { locale: string }) {
           <p className="mt-3 text-body-large text-charcoal-muted">{t('subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-          {cards.map(({ item, derivedStatus, status, title, desc, cta }) => (
+          {cards.map(({ item, derivedStatus, status, title, desc, cta }, idx) => (
             <ShowingCard
               key={item.slug}
               item={item}
@@ -50,6 +50,7 @@ export default async function NowShowing({ locale }: { locale: string }) {
               desc={desc}
               cta={cta}
               preparing={preparing}
+              priority={idx === 0}
             />
           ))}
         </div>
@@ -66,6 +67,7 @@ function ShowingCard({
   desc,
   cta,
   preparing,
+  priority = false,
 }: {
   item: NowShowingItem;
   derivedStatus: 'on' | 'coming-soon';
@@ -74,6 +76,7 @@ function ShowingCard({
   desc: string;
   cta: string;
   preparing: string;
+  priority?: boolean;
 }) {
   const inner = (
     <article className="group h-full overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -84,6 +87,7 @@ function ShowingCard({
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1056px) 50vw, 512px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
+          priority={priority}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         <span

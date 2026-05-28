@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@supabase/supabase-js';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { sanitizeConfirmResponse } from '@/lib/integrations/toss/sanitize';
@@ -9,6 +8,9 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import type { Database, Json } from '@/types/supabase';
+
+type PaymentsInsert = Database['public']['Tables']['payments']['Insert'];
 
 export const runtime = 'nodejs';
 
@@ -33,17 +35,14 @@ export async function GET(request: NextRequest) {
     return authError;
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const adminKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !adminKey) {
+  // System cron route: service-role client (no user session context).
+  let supabase;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (err) {
+    console.error('[reconcile-payments] admin client init failed:', err);
     return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
   }
-
-  // System cron route: explicit service-role client usage is intentional (no user session context).
-  const supabase = createClient(supabaseUrl, adminKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { Authorization: `Bearer ${adminKey}` } },
-  });
 
   // 5분~28분 경과한 pending_payment 주문 (5분 미만은 정상 결제 진행 중일 수 있고,
   // 30분 이상은 expire-stale-orders 크론이 이미 취소함 — 2분 안전 마진)
@@ -92,19 +91,22 @@ export async function GET(request: NextRequest) {
           .maybeSingle();
 
         if (!existingPayment) {
-          const { error: paymentInsertError } = await supabase.from('payments').insert({
+          const insertPayload: PaymentsInsert = {
             order_id: order.id,
             payment_key: tossPayment.paymentKey,
             toss_order_id: tossPayment.orderId,
             method: tossPayment.method ?? null,
-            method_detail: tossPayment.card ?? tossPayment.virtualAccount ?? null,
+            method_detail: (tossPayment.card ?? tossPayment.virtualAccount ?? null) as Json | null,
             amount: tossPayment.totalAmount,
             currency: tossPayment.currency ?? 'KRW',
             status: tossPayment.status,
             approved_at: tossPayment.approvedAt ?? null,
-            confirm_response: sanitizeConfirmResponse(tossPayment),
+            confirm_response: sanitizeConfirmResponse(tossPayment) as Json,
             idempotency_key: `reconcile-${order.order_no}`,
-          });
+          };
+          const { error: paymentInsertError } = await supabase
+            .from('payments')
+            .insert(insertPayload);
 
           if (paymentInsertError) {
             errors.push(`${order.order_no}: payment insert failed: ${paymentInsertError.message}`);
@@ -197,18 +199,21 @@ export async function GET(request: NextRequest) {
           .maybeSingle();
 
         if (!existingPayment) {
-          const { error: paymentInsertError } = await supabase.from('payments').insert({
+          const insertPayload: PaymentsInsert = {
             order_id: order.id,
             payment_key: tossPayment.paymentKey,
             toss_order_id: tossPayment.orderId,
             method: tossPayment.method ?? null,
-            method_detail: tossPayment.virtualAccount ?? null,
+            method_detail: (tossPayment.virtualAccount ?? null) as Json | null,
             amount: tossPayment.totalAmount,
             currency: tossPayment.currency ?? 'KRW',
             status: tossPayment.status,
-            confirm_response: sanitizeConfirmResponse(tossPayment),
+            confirm_response: sanitizeConfirmResponse(tossPayment) as Json,
             idempotency_key: `reconcile-${order.order_no}`,
-          });
+          };
+          const { error: paymentInsertError } = await supabase
+            .from('payments')
+            .insert(insertPayload);
 
           if (paymentInsertError) {
             errors.push(`${order.order_no}: payment insert failed: ${paymentInsertError.message}`);

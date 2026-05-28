@@ -184,6 +184,7 @@ export default async function StoryDetailPage({ params }: Props) {
   const categoryUrl = buildLocaleUrl(`/stories/category/${story.category}`, locale);
 
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
+  const tStory = await getTranslations({ locale, namespace: 'home.storyDetail' });
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('stories'), url: buildLocaleUrl('/stories', locale) },
@@ -388,12 +389,12 @@ export default async function StoryDetailPage({ params }: Props) {
                   {localizeStoryAuthor(story.author, locale)}
                 </p>
                 <p className="text-xs text-charcoal-muted">
-                  {isEn ? `Published ${formattedDate}` : `발행 ${formattedDate}`}
+                  {tStory('publishedAt', { date: formattedDate })}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-charcoal-muted">{isEn ? 'Share' : '공유하기'}</span>
+              <span className="text-sm text-charcoal-muted">{tStory('share')}</span>
               <ShareButtonsWrapper title={title} description={excerpt} url={pageUrl} />
             </div>
           </div>
@@ -411,14 +412,14 @@ export default async function StoryDetailPage({ params }: Props) {
           <div className="max-w-3xl mx-auto px-4 sm:px-5">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-display font-bold text-charcoal">
-                {isEn ? 'Featured Artworks' : '관련 작품'}
+                {tStory('featuredArtworks')}
               </h2>
               <Link
                 href="/artworks"
                 className="text-sm font-medium text-primary hover:text-primary-strong transition-colors"
               >
                 <span className="inline-flex items-center gap-1">
-                  {isEn ? 'View all' : '전체 보기'}
+                  {tStory('viewAll')}
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </span>
               </Link>
@@ -448,7 +449,7 @@ export default async function StoryDetailPage({ params }: Props) {
         >
           <div className="max-w-3xl mx-auto px-4 sm:px-5">
             <h2 className="text-2xl font-display font-bold text-charcoal mb-6">
-              {isEn ? 'Related Stories' : '관련 글'}
+              {tStory('relatedStories')}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {relatedStories.map((related, i) => {

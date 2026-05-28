@@ -153,16 +153,26 @@ export async function lookupOrderDetail(
   orderNo: string,
   buyerEmail: string
 ): Promise<OrderDetailResult> {
-  // Rate limiting — IP 기준 분당 5회
+  // Rate limiting — IP 분당 5회 + email 시간당 20회 (가상계좌 번호 노출 분산 공격 차단)
   const headersList = await headers();
   const ip = getClientIp(headersList);
-  const rl = await rateLimit(`lookupOrderDetail:${ip}`, { limit: 5, windowMs: 60_000 });
+  const rl = await rateLimit(`lookupOrderDetail:ip:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
   }
 
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
+
+  if (trimmedEmail) {
+    const emailRl = await rateLimit(`lookupOrderDetail:email:${trimmedEmail}`, {
+      limit: 20,
+      windowMs: 3_600_000,
+    });
+    if (!emailRl.success) {
+      return { success: false, error: 'RATE_LIMITED' };
+    }
+  }
 
   const sessionClient = await createSupabaseServerClient();
   const {
@@ -310,16 +320,26 @@ export async function updateBuyerShipping(
   buyerEmail: string,
   data: UpdateShippingInput
 ): Promise<{ success: true } | { success: false; error: string }> {
-  // Rate limiting — IP 기준 분당 3회
+  // Rate limiting — IP 분당 3회 + email 시간당 10회 (분산 공격 차단)
   const headersList = await headers();
   const ip = getClientIp(headersList);
-  const rl = await rateLimit(`updateBuyerShipping:${ip}`, { limit: 3, windowMs: 60_000 });
+  const rl = await rateLimit(`updateBuyerShipping:ip:${ip}`, { limit: 3, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
   }
 
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
+
+  if (trimmedEmail) {
+    const emailRl = await rateLimit(`updateBuyerShipping:email:${trimmedEmail}`, {
+      limit: 10,
+      windowMs: 3_600_000,
+    });
+    if (!emailRl.success) {
+      return { success: false, error: 'RATE_LIMITED' };
+    }
+  }
 
   const sessionClientShipping = await createSupabaseServerClient();
   const {
@@ -389,10 +409,10 @@ export async function cancelBuyerOrder(
   buyerEmail: string,
   cancelReason: string
 ): Promise<{ success: true } | { success: false; error: string }> {
-  // Rate limiting — IP 기준 분당 3회
+  // Rate limiting — IP 분당 3회 + email 시간당 5회 (분산 공격 차단)
   const headersList = await headers();
   const ip = getClientIp(headersList);
-  const rl = await rateLimit(`cancelBuyerOrder:${ip}`, { limit: 3, windowMs: 60_000 });
+  const rl = await rateLimit(`cancelBuyerOrder:ip:${ip}`, { limit: 3, windowMs: 60_000 });
   if (!rl.success) {
     return { success: false, error: 'RATE_LIMITED' };
   }
@@ -400,6 +420,16 @@ export async function cancelBuyerOrder(
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
   const trimmedReason = cancelReason.trim();
+
+  if (trimmedEmail) {
+    const emailRl = await rateLimit(`cancelBuyerOrder:email:${trimmedEmail}`, {
+      limit: 5,
+      windowMs: 3_600_000,
+    });
+    if (!emailRl.success) {
+      return { success: false, error: 'RATE_LIMITED' };
+    }
+  }
 
   const sessionClientCancel = await createSupabaseServerClient();
   const {

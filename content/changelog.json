@@ -1,5 +1,15 @@
 [
   {
+    "hash": "91a24d36",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 15 — artist-story → buying-guide commerce funnel 진입",
+    "summary": "80편 작가 페이지에서 commerce funnel로 진입할 수 있는 인링크 자동 부착",
+    "body": "- 80편 artist-story body+body_en 업데이트\n- '작품 구매 가이드' / 'Collecting Guides' 섹션\n- Tag overlap top 2 매칭(55편) + universal fallback(25편)\n  - Fallback links: first-time-buying-art + saf-under-one-million\n- 일반 큐레이션 글(좌담회·컬렉터·studio-visit·regional·young-artist·patron 등)도 fallback으로 commerce funnel 진입\n\n예시:\n- 이철수 작가 → 판화 vs 원화 가격 경제학 (tag overlap)\n- 오윤 → 판화 vs 원화 가격 경제학\n- 김주호·강레아·박생광 등 unique-tag 작가 → first-time-buying-art + saf-under-one-million (fallback)\n\n전체 6 Sprint Topology graph:\n1. Sprint 7+9+10: artist-story → hub (74편)\n2. Sprint 8: hub → meet-artist (6 hub)\n3. Sprint 11: artist↔artist mesh (73편)\n4. Sprint 12: art-knowledge↔art-knowledge mesh (23편)\n5. Sprint 13: buying-guide↔buying-guide mesh (28편)\n6. Sprint 14: B → A+K (17편) + K → B (11편)\n7. Sprint 15: A → B (80편) ← 신규\n\nartist-story 82편 중 80편이 모든 카테고리와 outbound link 보유.\n\nIdempotency: body not ilike '%## 작품 구매 가이드%' guard",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "0f8a7702",
     "type": "feat",
     "scope": "seo",

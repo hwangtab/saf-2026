@@ -388,7 +388,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
             <SectionTitle className="mb-12">Traditional finance vs mutual-aid lending</SectionTitle>
             <div className="overflow-x-auto">
               <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden">
-                <thead className="bg-gray-100 border-b-2 border-gray-300">
+                <thead className="bg-canvas-strong border-b-2 border-gray-300">
                   <tr>
                     <th className="px-6 py-4 text-left font-bold">Category</th>
                     <th className="px-6 py-4 text-center font-bold">Traditional lenders</th>
@@ -467,16 +467,16 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 <div key={s.step} className="flex md:flex-row flex-col items-center gap-2">
                   <div
                     className={`flex flex-col items-center rounded-2xl px-6 py-4 shadow-sm w-44 md:w-auto ${
-                      s.highlight ? 'bg-primary text-white' : 'bg-white border border-gray-100'
+                      s.highlight
+                        ? 'bg-primary-surface border-2 border-primary'
+                        : 'bg-white border border-gray-100'
                     }`}
                   >
-                    <span
-                      className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary-strong'}`}
-                    >
+                    <span className="text-xs font-semibold tracking-wider uppercase mb-1 text-primary-strong">
                       {s.note}
                     </span>
                     <span
-                      className={`text-sm font-bold ${s.highlight ? 'text-white' : 'text-charcoal-deep'}`}
+                      className={`text-sm font-bold ${s.highlight ? 'text-primary-strong' : 'text-charcoal-deep'}`}
                     >
                       {s.label}
                     </span>
@@ -730,7 +730,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           <SectionTitle className="mb-12">기존 금융 vs 상호부조 대출</SectionTitle>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden">
-              <thead className="bg-gray-100 border-b-2 border-gray-300">
+              <thead className="bg-canvas-strong border-b-2 border-gray-300">
                 <tr>
                   <th className="px-6 py-4 text-left font-bold">항목</th>
                   <th className="px-6 py-4 text-center font-bold">기존 금융기관</th>

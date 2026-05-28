@@ -901,9 +901,9 @@ export async function batchToggleHidden(
       errors: [],
     } satisfies BatchArtworkMutationResult;
   }
-  validateBatchSize(ids);
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
+  validateBatchSize(ids);
 
   const { data: beforeArtworks } = await supabase
     .from('artworks')
@@ -957,9 +957,9 @@ export async function batchToggleHidden(
 
 export async function batchDeleteArtworks(ids: string[]) {
   if (ids.length === 0) return { success: true, count: 0 };
-  validateBatchSize(ids);
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
+  validateBatchSize(ids);
 
   // Keep full snapshots so deleted rows can be restored from activity logs.
   const { data: artworks } = await supabase

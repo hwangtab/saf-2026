@@ -94,7 +94,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             required
             maxLength={100}
             placeholder={t('titlePlaceholder')}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus-visible:outline-none focus-visible:border-gray-900 focus-visible:ring-1 focus-visible:ring-gray-900"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary"
           />
         </div>
 
@@ -112,7 +112,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             rows={4}
             maxLength={2000}
             placeholder={t('descriptionPlaceholder')}
-            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-base focus-visible:outline-none focus-visible:border-gray-900 focus-visible:ring-1 focus-visible:ring-gray-900"
+            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-base focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary"
           />
         </div>
 

@@ -346,22 +346,32 @@ button:focus:not(:focus-visible) {
 }
 
 @media (hover: none) {
-  /* Gallery 모델 적용 후 dead override 정리됨. 살아있는 호버 효과만 유지.
-     hover:scale-[1.02], hover:-translate-y-1, hover:shadow-xl는 코드베이스에서 제거됨 */
+  /* 터치 디바이스 sticky hover 차단. 카드 그리드(MasterArtists, NowShowing,
+     ArtworkGridCard, ArtworkCategoryGrid, MagazineSection, RelatedStoriesGrid)에서
+     hover:-translate-y-1 + hover:shadow-xl이 살아 있으므로 함께 차단. */
 
   /* Disable hover scale effects on touch devices to prevent sticky hover states */
   .group:hover .group-hover\:scale-105 {
     transform: none;
   }
 
-  /* Disable shadow hover effects (살아있음: shadow-md/lg) */
+  /* Disable shadow hover effects (살아있음: shadow-md/lg/xl) */
   .hover\:shadow-md:hover,
-  .hover\:shadow-lg:hover {
+  .hover\:shadow-lg:hover,
+  .hover\:shadow-xl:hover,
+  .hover\:shadow-gallery-hover:hover {
     box-shadow: none;
   }
 
-  /* Disable lift hover effects (살아있음: -translate-y-0.5) */
-  .hover\:-translate-y-0\.5:hover {
+  /* Disable lift hover effects (살아있음: -translate-y-0.5, -translate-y-1) */
+  .hover\:-translate-y-0\.5:hover,
+  .hover\:-translate-y-1:hover {
+    transform: none;
+  }
+
+  /* Disable hover scale effects on buttons / CTAs */
+  .hover\:scale-\[1\.02\]:hover,
+  .hover\:scale-105:hover {
     transform: none;
   }
 

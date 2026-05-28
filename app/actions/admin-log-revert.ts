@@ -1064,7 +1064,9 @@ export async function revertActivityLog(
         if (revertError) throw revertError;
       }
     } else if (log.target_type === 'artist_application') {
-      // Revert application submission by deleting the application
+      // Revert application submission by deleting the application.
+      // ⚠ artist_applications에는 terms_accepted_at 등 동의 이력이 저장되어 있으므로
+      // 작가가 이미 active/suspended로 승인된 경우 복구 삭제 금지(개인정보 동의 증거 보존).
       const { data: existingApplication } = await supabase
         .from('artist_applications')
         .select('user_id')
@@ -1073,6 +1075,18 @@ export async function revertActivityLog(
 
       if (!existingApplication) {
         throw new Error('삭제할 신청서가 존재하지 않습니다. (이미 삭제됨)');
+      }
+
+      const { data: artistProfile } = await supabase
+        .from('profiles')
+        .select('status')
+        .eq('id', log.target_id)
+        .maybeSingle();
+
+      if (artistProfile?.status && artistProfile.status !== 'pending') {
+        throw new Error(
+          `이미 ${artistProfile.status === 'active' ? '승인' : '정지'}된 작가의 신청서는 복구로 삭제할 수 없습니다. (동의 이력 보존)`
+        );
       }
 
       const { error: deleteError } = await supabase

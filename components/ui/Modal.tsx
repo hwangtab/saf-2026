@@ -119,7 +119,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
           {title && (
-            <h2 id="modal-title" className="text-lg font-bold text-gray-900">
+            <h2 id="modal-title" className="text-lg font-bold text-charcoal-deep">
               {title}
             </h2>
           )}

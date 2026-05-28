@@ -72,7 +72,8 @@ export default function PageHero({
       )}
       <section
         className={cn(
-          'relative min-h-[60svh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
+          // svh는 구형 iOS Safari 미지원 → vh fallback을 먼저 선언하고 svh로 덮어쓰기.
+          'relative min-h-[60vh] min-h-[60svh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
           // Gallery White Cube: 다크 hero를 단색 charcoal-deep로 — Apple/Tesla 모델
           'bg-charcoal-deep',
           className

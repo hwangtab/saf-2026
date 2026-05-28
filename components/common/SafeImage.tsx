@@ -1,7 +1,7 @@
 'use client';
 
 import Image, { type ImageProps } from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 /**
  * 이미지 컴포넌트 — Vercel Image Optimization 기반.
@@ -45,18 +45,20 @@ export default function SafeImage({ src, alt, onError, ...props }: ImageProps) {
     console.warn('[SafeImage] Missing alt prop. Pass alt="" for decorative images.', { src });
   }
 
-  const [currentSrc, setCurrentSrc] = useState<ImageProps['src']>(() => normalizeSrc(src));
-
-  useEffect(() => {
-    setCurrentSrc(normalizeSrc(src));
-  }, [src]);
+  const normalized = normalizeSrc(src);
+  const [failed, setFailed] = useState(false);
 
   const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     onError?.(event);
-    if (currentSrc !== TRANSPARENT_FALLBACK) {
-      setCurrentSrc(TRANSPARENT_FALLBACK);
-    }
+    if (!failed) setFailed(true);
   };
 
-  return <Image {...props} src={currentSrc} alt={alt ?? ''} onError={handleError} />;
+  return (
+    <Image
+      {...props}
+      src={failed ? TRANSPARENT_FALLBACK : normalized}
+      alt={alt ?? ''}
+      onError={handleError}
+    />
+  );
 }

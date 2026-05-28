@@ -34,20 +34,30 @@ import type {
 export function verifyWebhookRequest(req: {
   headers: { get(name: string): string | null };
 }): boolean {
+  const secret = process.env.TOSS_PAYMENTS_WEBHOOK_SECRET;
   const authHeader = req.headers.get('Authorization');
 
-  // 헤더 부재 — 신규 결제위젯 MID처럼 토스가 Authorization 헤더를 보내지 않는 케이스.
-  // 상위 검증 layer(DEPOSIT_CALLBACK은 body의 per-payment secret, PAYMENT_STATUS_CHANGED는
-  // Toss API 재조회)에 의존하므로 헤더 없이도 통과시킨다.
-  if (!authHeader || !authHeader.startsWith('Basic ')) {
+  // 시나리오 분기는 env 존재 여부로 명시 — "헤더 없으면 무조건 통과"라는 암묵 분기 금지.
+  //
+  // Case A: env가 설정되어 있다 → legacy MID. Authorization 헤더는 반드시 존재해야 하고
+  //         secret과 timing-safe 일치해야 한다. 헤더가 비었으면 검증 실패로 거부.
+  // Case B: env가 미설정이다 → 신규 결제위젯 MID(토스가 헤더를 보내지 않음). 상위 검증
+  //         layer(DEPOSIT_CALLBACK은 body의 per-payment secret, PAYMENT_STATUS_CHANGED는
+  //         Toss API 재조회)에 위임한다. 운영자가 의도적으로 env를 비워야 통과한다.
+  if (!secret) {
+    // 신규 MID 모드. 헤더가 잘못 붙어 있으면 무시하지 말고 경고로 흔적 남기되 통과.
+    if (authHeader) {
+      console.warn(
+        '[TossWebhook] TOSS_PAYMENTS_WEBHOOK_SECRET 미설정 상태에서 Authorization 헤더 수신 — env 설정 여부 확인 필요'
+      );
+    }
     return true;
   }
 
-  // 헤더가 존재하면 반드시 env에 설정된 secret과 일치해야 한다 (legacy cafe24 경유 MID).
-  const secret = process.env.TOSS_PAYMENTS_WEBHOOK_SECRET;
-  if (!secret) {
+  // Legacy MID 모드. 헤더 필수.
+  if (!authHeader || !authHeader.startsWith('Basic ')) {
     console.error(
-      '[TossWebhook] Authorization 헤더는 있는데 TOSS_PAYMENTS_WEBHOOK_SECRET이 미설정 — 검증 실패'
+      '[TossWebhook] TOSS_PAYMENTS_WEBHOOK_SECRET 설정 상태에서 Authorization 헤더 누락 — 검증 실패'
     );
     return false;
   }

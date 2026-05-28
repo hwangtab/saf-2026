@@ -235,6 +235,13 @@
       "title": "씨앗페 매거진",
       "subtitle": "작가 인터뷰, 컬렉팅 가이드, 한국 현대미술 산책",
       "viewAll": "전체 매거진 보기"
+    },
+    "storyDetail": {
+      "publishedAt": "발행 {date}",
+      "share": "공유하기",
+      "featuredArtworks": "관련 작품",
+      "viewAll": "전체 보기",
+      "relatedStories": "관련 글"
     }
   },
   "breadcrumbs": {
@@ -361,6 +368,8 @@
     "relatedArtworks": "관련 작품",
     "relatedStories": "관련 글",
     "magazineLabel": "매거진",
+    "authenticityLabel": "진품성",
+    "fundContextProse": "판매 수익이 <link>예술인 상호부조 기금</link>이 되어 동료 작가의 저금리 대출로 이어집니다.",
     "statusAvailable": "판매중",
     "statusReserved": "예약중",
     "statusSold": "판매완료",

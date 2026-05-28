@@ -160,10 +160,10 @@ export default function VirtualGalleryPortal({
           role="dialog"
           aria-modal="true"
           aria-labelledby={dialogTitleId}
-          className="relative w-full max-w-5xl h-[70vh] md:h-[75vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col"
+          className="relative w-full max-w-5xl h-[70vh] md:h-[75vh] bg-gallery-tile rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-2.5 bg-gray-900/95 border-b border-white/10">
+          <div className="flex items-center justify-between px-4 py-2.5 bg-gallery-tile/95 border-b border-white/10">
             <div className="flex items-center gap-4 min-w-0">
               {/* Artwork info */}
               <div className="text-sm text-white truncate">

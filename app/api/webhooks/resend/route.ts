@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { hashEmail } from '@/lib/email/email-hash';
 import {
   verifyResendWebhook,
@@ -66,16 +66,13 @@ export async function POST(req: NextRequest) {
   const recipientStatus = isComplaint ? 'complained' : 'bounced';
   const emailHash = hashEmail(email);
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const adminKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !adminKey) {
-    console.error('[resend-webhook] missing supabase config');
+  let supabase;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (err) {
+    console.error('[resend-webhook] missing supabase config:', err);
     return NextResponse.json({ error: 'Server config error' }, { status: 500 });
   }
-
-  const supabase = createClient(supabaseUrl, adminKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  }) as any;
 
   // 1) 전 채널 영구 차단 (멱등 — Resend 재시도 안전)
   const { error: suppressError } = await supabase
