@@ -14,12 +14,44 @@
 import type { Story } from '@/types';
 
 export const ARTIST_PRIMARY_STORY: Record<string, string> = {
+  // ─── 초기 등재 (GSC 집중 분석 기반) ────────────────────────────────────────
   김주호: 'meet-artist-kim-ju-ho',
   오윤: 'oh-yun-40th-anniversary',
   이호철: 'meet-artist-lee-ho-chul',
   최윤정: 'meet-artist-choi-yun-jung',
   민정기: 'meet-artist-min-jeonggi',
   이철수: 'lee-cheol-soo-artist-guide',
+
+  // ─── GSC 2026-04-19~05-16: T2-5 0-click 작가 ────────────────────────────
+  // artist-seo-overrides.ts T2-5 그룹(합계 ~342 imp / 0 click) 중 artist-story 보유 작가.
+  조문호: 'meet-artist-cho-moon-ho',
+  박불똥: 'meet-artist-park-bul-ttong',
+  윤겸: 'meet-artist-yoon-gyeom',
+  신연진: 'meet-artist-sin-yeonjin',
+  박성완: 'meet-artist-park-seongwan',
+  김수오: 'meet-artist-kim-suoh',
+  이은화: 'meet-artist-lee-eun-hwa',
+  양순열: 'meet-artist-yang-sunyeol',
+  천지수: 'meet-artist-cheon-jisu',
+  이문형: 'meet-artist-lee-munhyeong',
+  박재동: 'park-jae-dong-artist-guide', // 2개 스토리 중 장문 프로필 guide 채택
+  이홍원: 'meet-artist-lee-hongwon',
+
+  // ─── GSC 2026-04-19~05-16: T2-6 추가 ────────────────────────────────────
+  김준권: 'meet-artist-kim-jun-kwon',
+  정금희: 'meet-artist-jeong-geumhui',
+
+  // ─── GSC 2026-04-22~05-20: T2-8 잔여 ────────────────────────────────────
+  손은영: 'meet-artist-son-eunyeong',
+  주재환: 'joo-jaehwan-art-and-life',
+  최혜수: 'meet-artist-choe-hyesu',
+  강석태: 'kang-seoktae-little-prince',
+
+  // ─── GSC 2026-04-19~05-17: T2-13 미커버 ─────────────────────────────────
+  박소형: 'meet-artist-park-sohyeong',
+
+  // ─── GSC 2026-05-27: T2 잔여 gap-fill ───────────────────────────────────
+  정영신: 'meet-artist-jung-young-shin',
 };
 
 /** 작가명으로 정전 스토리 slug 조회. 미등재 작가는 null. */
