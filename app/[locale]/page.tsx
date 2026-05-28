@@ -125,6 +125,10 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           1단 첫 구매자에게 "미술 플랫폼" 인상 우선, 상호부조 보조 톤 (매뉴얼 톤 원칙). */}
       <AboutIdentity locale={locale} />
 
+      {/* 매뉴얼 6.4 [F] + 8.4 사회금융 메커니즘 — 4단계 도식 + 라이브 카운터 + /our-proof 링크.
+          challenger 카피 재작업(A-3): 메커니즘을 fold 위로 상향. */}
+      <MechanismSection locale={locale} />
+
       {/* Now Showing 그리드 — fold-below 시한성 큐레이션 카드. hero에 노출된 동일 슬라이드도 카드로
           한 번 더 노출(매거진 톤). 정적 SSR, hydration 0. */}
       <NowShowing locale={locale} />
@@ -132,9 +136,6 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       {/* 한국 현대미술의 거장 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2.
           시한성 NowShowing[D] 직후 영구 거장 라인업 [E]. 페르소나 B "왜 이 사이트인가" 첫 인지 자산. */}
       <MasterArtists locale={locale} />
-
-      {/* 매뉴얼 6.4 [F] + 8.4 사회금융 메커니즘 — 4단계 도식 + 라이브 카운터 + /our-proof 링크 */}
-      <MechanismSection locale={locale} />
 
       {/* 30만원 이하 첫 그림 — 매뉴얼 6.4 [H] + 9.2 컬렉션 4.
           페르소나 A·1단 첫 구매자 진입 동선. 가격 ₩100,000~₩300,000 + 작가 단위 dedupe + sold/reserved 제외. */}

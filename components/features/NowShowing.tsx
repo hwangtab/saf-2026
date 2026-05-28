@@ -27,7 +27,7 @@ export default async function NowShowing({ locale }: { locale: string }) {
     derivedStatus: getCardStatus(item, now),
     status: t(`${item.i18nKey}Status` as 'ohYoon40thStatus'),
     title: t(`${item.i18nKey}Title` as 'ohYoon40thTitle', counts),
-    desc: t(`${item.i18nKey}Desc` as 'ohYoon40thDesc'),
+    desc: t(`${item.i18nKey}Desc` as 'ohYoon40thDesc', counts),
     cta: t(`${item.i18nKey}Cta` as 'ohYoon40thCta'),
     preparing,
   }));

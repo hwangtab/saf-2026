@@ -42,7 +42,7 @@ export default async function HomeHero({ locale }: { locale: string }) {
     artistCount,
     artworkCount,
   });
-  const desc = t(`${slide.i18nKey}Desc` as 'allArtworksDesc');
+  const desc = t(`${slide.i18nKey}Desc` as 'allArtworksDesc', { artistCount, artworkCount });
   const cta = t(`${slide.i18nKey}Cta` as 'allArtworksCta');
 
   const inner = (

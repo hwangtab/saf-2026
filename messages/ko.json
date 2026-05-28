@@ -143,8 +143,8 @@
     "shareTitle": "한국 현대미술 원본 {artworkCount}점 · 작품 구매가 예술인 상호부조 기금",
     "shareDescription": "{artistCount}명 한국 작가가 동료 예술인을 돕기 위해 내놓은 회화·판화·사진·조각 원본. 구매 수익이 {loanCount}건 저금리 대출로. 무료 배송·7일 반품.",
     "joinCta": {
-      "title": "더 깊이 함께하기",
-      "subtitle": "한국스마트협동조합 조합원으로 예술인 상호부조 플랫폼의 일원이 되어주세요. 작품 구매 외에도 함께할 수 있는 길이 있습니다.",
+      "title": "당신도 예술가의 산소가 될 수 있습니다",
+      "subtitle": "조합원이 되면 매달 기금에 함께하고, 누가 얼마를 빌려 어떻게 갚는지 투명하게 확인합니다. 작품 구매 외에도 연대할 길이 있습니다.",
       "cta": "조합원 가입하기"
     },
     "joinMember": "조합원 가입",
@@ -190,7 +190,7 @@
     },
     "aboutIdentity": {
       "headline": "한국 작가 {artistCount}명, 작품 {artworkCount}점",
-      "subtitle": "한국스마트협동조합이 운영하는 예술인 상호부조 플랫폼",
+      "subtitle": "구매액의 10%가 10배 기금이 되어 예술인 저금리 대출로 — 한국스마트협동조합이 운영하는 상호부조 플랫폼",
       "statOperationLabel": "운영",
       "statOperationValue": "온라인 24시간",
       "statArtistsLabel": "연대 작가",
@@ -217,9 +217,9 @@
     "nowShowing": {
       "title": "스포트라이트",
       "subtitle": "한 작가의 한 시기를 한 자리에 — 기간 한정 코너",
-      "allArtworksStatus": "온라인 갤러리",
-      "allArtworksTitle": "한국 작가 {artistCount}인, {artworkCount}점 원본",
-      "allArtworksDesc": "안목으로 고르는 작가 직매 원본. 한 점의 구매가 동료 작가의 다음 한 달이 됩니다.",
+      "allArtworksStatus": "사는 순간, 연대",
+      "allArtworksTitle": "당신의 안목이\n예술가의 산소가 됩니다",
+      "allArtworksDesc": "한국 작가 {artistCount}인의 원본을 작가에게서 직접. 판매액의 10%가 상호부조 기금이 되어, 10배 레버리지로 금융에서 밀려난 예술인의 저금리 대출로 이어집니다.",
       "allArtworksCta": "전체 작품 보기",
       "ohYoon40thStatus": "전시 중",
       "ohYoon40thTitle": "오윤 40주기 특별전",
