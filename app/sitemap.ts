@@ -6,6 +6,7 @@ import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { STORY_CATEGORIES } from '@/types';
 import { EN_INDEXABLE_PAGES, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
+import { isCanonicalHub } from '@/lib/story-canonical-hubs';
 
 export const revalidate = 3600;
 
@@ -371,11 +372,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const absoluteStoryImage =
       storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
 
+    // 정전 hub 글은 priority 0.85 + weekly로 차별화 — 매체·주제 hub의 검색엔진 크롤링 우선순위 강화.
+    // 그 외 일반 글은 0.7 + monthly 유지 (기존 정책 보존).
+    const isHub = isCanonicalHub(story.slug);
     return {
       url: koUrl(baseUrl, storyPath),
       lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
+      changeFrequency: isHub ? ('weekly' as const) : ('monthly' as const),
+      priority: isHub ? 0.85 : 0.7,
       alternates: enIndexable
         ? bilingualAlternates(baseUrl, storyPath)
         : koAlternates(baseUrl, storyPath),
@@ -395,11 +399,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const absoluteStoryImage =
         storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
 
+      // EN 인덱싱 가능한 hub story는 동일하게 priority 차별화.
+      const isHub = isCanonicalHub(story.slug);
       return {
         url: enUrl(baseUrl, storyPath),
         lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
-        changeFrequency: 'monthly' as const,
-        priority: 0.7,
+        changeFrequency: isHub ? ('weekly' as const) : ('monthly' as const),
+        priority: isHub ? 0.85 : 0.7,
         alternates: bilingualAlternates(baseUrl, storyPath),
         ...(safeSitemapImageUrl(absoluteStoryImage)
           ? { images: [safeSitemapImageUrl(absoluteStoryImage)!] }
