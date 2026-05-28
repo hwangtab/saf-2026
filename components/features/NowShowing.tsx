@@ -103,7 +103,7 @@ function ShowingCard({
         </span>
       </div>
       <div className="p-6 md:p-7">
-        <h3 className="text-xl md:text-2xl font-bold text-charcoal-deep mb-2 break-keep text-balance">
+        <h3 className="text-xl md:text-2xl font-bold text-charcoal-deep mb-2 break-keep text-balance whitespace-pre-line">
           {title}
         </h3>
         <p className="text-base text-charcoal-muted leading-relaxed break-keep text-balance mb-4">

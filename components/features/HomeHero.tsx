@@ -87,7 +87,7 @@ export default async function HomeHero({ locale }: { locale: string }) {
           )}
           {status}
         </span>
-        <h1 className="text-hero text-white mb-5 drop-shadow-lg break-keep text-balance max-w-4xl">
+        <h1 className="text-hero text-white mb-5 drop-shadow-lg break-keep text-balance max-w-4xl whitespace-pre-line">
           {title}
         </h1>
         <p className="text-body-large text-white/90 mb-8 max-w-2xl break-keep text-balance">
