@@ -15,7 +15,18 @@ fs.readFileSync(envPath, 'utf8').split('\n').forEach(line => {
   }
 });
 
-const SA_KEY = JSON.parse(process.env.GSC_SERVICE_ACCOUNT_KEY);
+const SA_KEY_JSON = process.env.GSC_SERVICE_ACCOUNT_KEY;
+if (!SA_KEY_JSON) {
+  console.error('[gsc-backfill] GSC_SERVICE_ACCOUNT_KEY 환경변수 미설정');
+  process.exit(1);
+}
+let SA_KEY;
+try {
+  SA_KEY = JSON.parse(SA_KEY_JSON);
+} catch (err) {
+  console.error('[gsc-backfill] GSC_SERVICE_ACCOUNT_KEY JSON 파싱 실패:', err.message);
+  process.exit(1);
+}
 const SITE_URL = process.env.GSC_SITE_URL || 'sc-domain:saf2026.com';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;

@@ -127,7 +127,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 h-auto text-gray-500 hover:text-charcoal"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-gray-500 hover:text-charcoal"
             aria-label="Close modal"
           >
             ✕

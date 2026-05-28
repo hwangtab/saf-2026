@@ -1,5 +1,85 @@
 [
   {
+    "hash": "6b6ba96b",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 35 — /stories CollectionPage.about에 매거진 hub 6편 entity 명시",
+    "summary": "매거진 root CollectionPage JSON-LD에 정전 hub 6편을 CreativeWork about entity로 추가 — Sprint 34(/artworks)와 동일 패턴 매거진 root entry에 일관 적용",
+    "body": "배경:\n- /stories CollectionPage는 mainEntity로 ItemList(전체 stories)만 연결\n- 정전 hub와의 schema-level entity 시그널 부재\n- Sprint 24에서 stories는 이미 hub-first 정렬 → filter+slice로 top 6 hub 추출 가능\n\n변경:\n- app/[locale]/stories/page.tsx:\n  - aboutHubs = stories.filter(isCanonicalHub).slice(0,6) → CreativeWork entity 배열\n  - CollectionPage에 about 필드 조건부 spread\n  - title source-of-truth = DB(locale별 swap)\n\n효과:\n- /stories CollectionPage → 6 hub CreativeWork entity schema-level 연결\n- Sprint 29(BlogPosting) + 30(VisualArtwork) + 31(Person) + 34(/artworks CollectionPage) + 35(/stories CollectionPage) → 5대 schema entity 시그널 완성\n- 매거진 root entry와 hub의 KG entity cluster 완전 형성\n\n회귀 방지:\n- aboutHubs 빈 배열 → 필드 자체 생략 (회귀 0)\n- Sprint 24 정렬 의존 — hub-first 정렬 보장됨\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "c915b8ee",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 34 — /artworks CollectionPage schema에 매체 hub about entity 4개 추가",
+    "summary": "/artworks 메인 페이지의 CollectionPage JSON-LD에 4 매체 매거진 hub URL을 about CreativeWork[] entity로 명시 — Page 자체와 매체 hub의 schema-level entity 연결",
+    "body": "배경:\n- /artworks CollectionPage는 mainEntity로 ItemList(작품 목록)만 연결\n- 4 매체 매거진 hub와의 schema entity 시그널 부재\n- Sprint 29~31에서 BlogPosting/VisualArtwork/Person 모두 about/knowsAbout 추가 완성\n- /artworks 메인 (가장 강한 PageRank entry)도 동일 시그널 적용\n\n변경:\n- app/[locale]/artworks/page.tsx:\n  - CollectionPage에 about: CreativeWork[] 필드 추가\n  - 4 매체 카테고리(회화·판화·사진·조각) → getMediumHubSlug 매핑\n  - hub 미매핑 케이스 자동 제외 (회귀 0)\n  - locale별 label (한국어 '회화 가이드', 영어 'Painting guide')\n\nSchema 출력:\n{\n  \"@type\": \"CollectionPage\",\n  \"url\": \"...artworks\",\n  \"mainEntity\": { \"@id\": \"...artworks#item-list\" },\n  \"about\": [\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/saf-2026-painters\", \"name\": \"회화 가이드\" },\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/korean-contemporary-printmaking-saf\", \"name\": \"판화 가이드\" },\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/korean-documentary-landscape-photography\", \"name\": \"사진 가이드\" },\n    { \"@type\": \"CreativeWork\", \"url\": \"...stories/saf-2026-sculpture-and-ceramics\", \"name\": \"조각 가이드\" }\n  ]\n}\n\n효과:\n- /artworks → 4 매체 hub schema-level entity 연결\n- Sprint 29(BlogPosting) + 30(VisualArtwork) + 31(Person) + 34(CollectionPage) → 4대 schema entity 시그널 site-wide 완성\n- AI Overview/Knowledge Graph가 /artworks와 매체 hub를 같은 entity cluster로 인식\n\n회귀 방지:\n- aboutHubs 빈 배열 → CollectionPage.about 필드 자체 생략 (조건부 spread 패턴)\n- 기존 mainEntity, breadcrumb, ItemList 시그널 무변동\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "f9aa64dc",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 33 — 작가 인덱스 페이지에 매체별 매거진 hub 카드 추가",
+    "summary": "/artworks/artist (전체 작가 인덱스)에 작품수 기준 top 4 매체의 매거진 hub 카드 섹션 추가 — 작가 인덱스 → 매체 hub link equity flow",
+    "body": "배경:\n- 작가 인덱스 페이지는 단순 작가 grid (ko-KR 사전순)\n- 매거진 entry 0개 — 작가 navigational query에서 진입 후 매체 hub로 dead-end\n- Sprint 25(/artworks 메인 4 카테고리 카드)와 동일 패턴 적용\n\n변경:\n- app/[locale]/artworks/artist/page.tsx:\n  - getSupabaseStoriesLight Promise.all에 추가\n  - artwork 매체 카테고리 빈도 집계 → top 4 추출\n  - 각 매체별 getMediumHubSlug → hub story title lookup\n  - 페이지 하단에 'Magazine guides by medium' / '매체별 매거진 가이드' 섹션 (2칸 grid)\n\n효과:\n- 작가 인덱스 → 매체 hub 4개로 link equity (data-driven top 4: 회화·판화·드로잉·사진)\n- 매체 hub story title source-of-truth = DB\n- 작품수 기준 결정론 정렬 (random 또는 manual 매핑 회피)\n\n회귀 방지:\n- mediumHubCards 빈 배열 → 섹션 자체 미렌더\n- hub story DB에 없으면 null 반환 (안전 처리)\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "b0f028d1",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 32 — 작가 갤러리 breadcrumb에 매체 카테고리 단계 추가",
+    "summary": "49 작가 갤러리 페이지의 BreadcrumbList JSON-LD 및 hero breadcrumb UI에 dominant medium category 단계 추가 — Home > Artworks > [매체] > [작가]",
+    "body": "배경:\n- 작가 갤러리 breadcrumb은 3단계 (Home > Artworks > Artist)\n- 매체 카테고리 단계 부재 → 작가-매체 hierarchy schema-level 표현 없음\n- Sprint 31에서 Person.knowsAbout으로 매체 hub entity 추가했으니 breadcrumb hierarchy도 일관 적용\n\n변경:\n- app/[locale]/artworks/artist/[artist]/page.tsx:\n  - dominantCategory(Sprint 22 이미 계산) 있으면 categoryBreadcrumbItem 생성\n  - breadcrumbItems 배열에 조건부 끼움\n  - locale별 라벨 (CATEGORY_EN_MAP 활용, 이미 import됨)\n  - URL: /artworks/category/[category]\n\n효과:\n- BreadcrumbList JSON-LD: Home > Artworks > Printmaking > Lee Cheolsu (이철수)\n- Hero breadcrumb UI 동일 표시 → 사용자 탐색 + 검색엔진 hierarchy 시그널 동시 강화\n- 매체 카테고리 페이지로의 link equity inflow 추가 (작가 갤러리 49개 → 매체 카테고리 8개)\n- Google sitelink/breadcrumb rich snippet에서 매체 단계 노출\n\n회귀 방지:\n- dominantCategory null → 기존 3단계 유지\n- BreadcrumbList itemListElement는 자동 position 재계산 (createBreadcrumbSchema 처리)\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "c10a1b53",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 31 — Artist Person.knowsAbout에 매체 hub CreativeWork entity 추가",
+    "summary": "49개 작가 갤러리의 Enhanced Artist Person schema에서 knowsAbout 필드에 작가의 dominant medium hub URL을 CreativeWork entity로 추가 — 작가 ↔ 매체 hub 양방향 Knowledge Graph association",
+    "body": "배경:\n- Person.knowsAbout은 string topic만 추출 중 (artist history/profile text matching)\n- 매체 hub story URL을 schema entity로 명시하면 작가-매체 hub 강한 KG 시그널\n- Sprint 30(VisualArtwork.about) + Sprint 29(BlogPosting.about) 완성 후 Person schema 마지막 leg\n\n변경:\n- lib/schemas/artist.ts:\n  - EnhancedArtistSchemaInput에 dominantCategory?: string | null 추가\n  - knowsAbout 출력: 기존 string[] + 매체 hub CreativeWork entity 병합 배열\n  - 미매핑 카테고리(null) → 기존 knowsAbout만 출력 (회귀 0)\n  - getMediumHubSlug import (Sprint 19/20 lib 재사용)\n- app/[locale]/artworks/artist/[artist]/page.tsx:\n  - generateEnhancedArtistSchema 호출에 dominantCategory 전달\n\n예시(이철수 작가 페이지 Person schema):\n{\n  \"@type\": \"Person\",\n  \"name\": \"이철수\",\n  \"knowsAbout\": [\n    \"Printmaking\",\n    \"Woodcut Printmaking\",\n    {\n      \"@type\": \"CreativeWork\",\n      \"@id\": \"https://saf2026.com/stories/korean-contemporary-printmaking-saf#about\",\n      \"url\": \"https://saf2026.com/stories/korean-contemporary-printmaking-saf\",\n      \"name\": \"Medium guide\"\n    }\n  ]\n}\n\n효과:\n- 49 작가 Person schema → 매체 hub CreativeWork 양방향 entity 연결\n- Google Knowledge Graph: 작가 ↔ 매체 hub clustered entity\n- AI Overview \"이철수 어떤 작가\" 같은 query에서 매체 hub 우선 노출\n- Sprint 29(BlogPosting.about) + Sprint 30(VisualArtwork.about) + Sprint 31(Person.knowsAbout) → 3대 schema entity 시그널 site-wide 완성\n\n회귀 방지:\n- dominantCategory null → hubEntity 빈 배열 → 기존 동작\n- knowsAbout 빈 배열 → 필드 자체 생략 (기존 정책)\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "0b4e2e61",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 30 — artwork VisualArtwork schema에 매체 hub about entity 추가",
+    "summary": "415개 작품 detail의 VisualArtwork JSON-LD에 매체 hub URL을 about CreativeWork entity로 명시 — Google Knowledge Graph가 작품을 매체 hub의 instance로 인식",
+    "body": "배경:\n- VisualArtwork schema는 category(Thing) 필드로 매체 분류 노출 (faceted nav)\n- 매체 hub story 자체는 schema-level entity 시그널 부재 — link만 존재\n- Sprint 29에서 BlogPosting.about Thing entity 추가 후 양방향 entity 그래프 완성 필요\n\n변경:\n- lib/schemas/artwork.ts:\n  - getMediumHubSlug import (Sprint 19/20 lib 재사용)\n  - VisualArtwork schema에 about CreativeWork[] 필드 추가\n  - @id, url, name(locale별 라벨) 명시\n\n예시(판화 작품 detail Product schema):\n{\n  \"@type\": \"VisualArtwork\",\n  \"category\": { \"@type\": \"Thing\", \"name\": \"Printmaking\" },\n  \"about\": [{\n    \"@type\": \"CreativeWork\",\n    \"@id\": \"https://saf2026.com/stories/korean-contemporary-printmaking-saf#about\",\n    \"url\": \"https://saf2026.com/stories/korean-contemporary-printmaking-saf\",\n    \"name\": \"Printmaking guide\"\n  }]\n}\n\n효과:\n- 415 작품 → 매체 hub 양방향 schema entity 연결\n- Google Knowledge Graph 매칭 강화: 작품과 매체 hub이 같은 entity cluster\n- AI Overview의 매체별 작품 grouping에서 hub 우선 노출\n- Sprint 29 BlogPosting.about과 함께 site-wide entity 그래프 완성\n\n회귀 방지:\n- getMediumHubSlug null → about 필드 생략 (회귀 0)\n- 기존 category/Thing 필드 무변동\n- IIFE로 변수 scope 격리 (mediumCategory 등 기존 변수 영향 없음)\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "4e41b3af",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 29 — BlogPosting schema에 about Thing entity 추가",
+    "summary": "story detail page의 BlogPosting JSON-LD에 about Thing entity 배열 추가 — story.tags가 검색엔진 entity 매칭 시그널로 변환",
+    "body": "배경:\n- 기존 BlogPosting schema는 keywords(string)와 mentions(URL entity)만 지원\n- about 필드는 schema.org에서 \"이 글이 다루는 주요 주제 entity\"를 가리킴\n- Knowledge Graph, AI Overview, related searches에 직접 영향\n- Sprint 28까지 link graph + sitemap 시그널 강화했지만 entity 시그널은 누락 상태\n\n변경:\n- lib/schemas/content.ts:\n  - BlogPostingSchemaInput에 about?: readonly string[] 필드 추가\n  - schema 출력에 about: Thing[] 매핑\n- app/[locale]/stories/[slug]/page.tsx:\n  - story.tags.slice(0, 5)를 about으로 전달\n  - tags 비어있으면 생략 (회귀 0)\n\n효과:\n- 174편 story 모두 BlogPosting.about에 매체·작가·주제 entity 노출\n  - 예: '한지의 미학' → about: [한지, 한국 종이, 재료학, 이철수, 한지 작품]\n  - 예: '오윤 인터뷰' → about: [오윤, 판화, 민중미술]\n- Google Knowledge Graph entity 매칭 강화 — AI Overview, \"관련 검색\"에 hub 우선 노출\n- KO/EN 양쪽 schema 모두 발행 (entity name 정규화는 검색엔진이 처리)\n\n회귀 방지:\n- about 필드 미존재 시 schema 출력에서 자동 생략\n- 기존 mentions·keywords 정책 무변동\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "71f39af6",
+    "type": "fix",
+    "scope": null,
+    "subject": "잔존 버그 cycle 3 — DB GRANT 회수 + 보안 함수 search_path + config·email 방어",
+    "summary": "lib/middleware/DB/emails/config 영역 잔존 버그 12건 정리. 추가로 직전 commit에서 누락된 RelatedArtworksSlider messages 키 동봉",
+    "body": "P0 (3건):\n- supabase migration: prevent_profile_self_escalation() SECURITY DEFINER에 search_path 잠금 (search_path 조작 우회 차단)\n- supabase migration: artwork_sales / activity_logs / artist_applications / exhibitor_applications GRANT 과도 회수 (최소권한)\n- .env.local.example: SUPABASE_SERVICE_ROLE_KEY / CRON_SECRET / EMAIL_UNSUB_SECRET 누락 보강\n\nP1 (7건):\n- lib/auth/guards.ts: requireArtistActive에서 exhibitor가 /onboarding으로 잘못 redirect → /exhibitor로 교정\n- lib/utils/revalidate.ts: revalidatePath('/api/artworks') no-op 제거 (Route Handler는 page cache 대상 아님)\n- emails/_components/tracking-info.tsx: trackingNumber [A-Za-z0-9-]{4,30} strict 검증 + encodeURIComponent (Open Redirect 차단)\n- emails/broadcast.tsx: CTA href에 ^https?:// 컴포넌트 레벨 2차 방어 (DB 직접 수정 시 javascript: 진입 차단)\n- vercel.json: cron 5개에 functions.maxDuration 명시 (route export 의존 제거)\n- next.config.js: *.supabase.co 와일드카드 → khtunrybrzntlnowlahb.supabase.co 명시 (deprecated 뭄바이 프로젝트 차단)\n- messages/{ko,en}.json: relatedArtworksSlider 키 + pageErrors.stories 키 누락 보강 (직전 commit 누락분)\n\nDB 적용: MCP apply_migration 2건 production 적용 성공\n검증: type-check ✓ / next build ✓ / verify-i18n-placeholders ✓",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "a5a7d0ae",
     "type": "feat",
     "scope": "seo",

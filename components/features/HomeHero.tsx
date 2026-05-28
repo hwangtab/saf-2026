@@ -124,7 +124,16 @@ export default async function HomeHero({ locale }: { locale: string }) {
           {inner}
         </Link>
       ) : (
-        <div className="block h-full cursor-not-allowed">{inner}</div>
+        // 비활성 CTA — SR이 "준비 중/disabled" 상태를 인식하도록 aria-disabled + role="link"로 명시.
+        // 실제 nav는 일어나지 않지만 시각적으로는 CTA 버튼 모양이라 SR 사용자 혼란 방지.
+        <div
+          role="link"
+          aria-disabled="true"
+          aria-label={`${title} — ${cta}`}
+          className="block h-full cursor-not-allowed"
+        >
+          {inner}
+        </div>
       )}
 
       {/* Sawtooth divider — 다음 섹션(NowShowing)이 canvas-soft 배경이므로 그 색으로 톱니 채움. */}

@@ -357,6 +357,8 @@ async function purgeExpiredTrash() {
   console.log(`purge_failed=${failed}`);
   console.log(`artwork_removed=${removedArtwork}`);
   console.log(`profile_removed=${removedProfile}`);
+  // 개별 row 실패 시 cron이 성공으로 판단하지 않도록 non-zero exit 표시.
+  if (failed > 0) process.exitCode = 1;
 }
 
 purgeExpiredTrash().catch((error) => {

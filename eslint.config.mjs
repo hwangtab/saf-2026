@@ -69,7 +69,43 @@ const config = [
     },
   },
   {
-    ignores: ['scripts/*', 'coverage/**', '.next/**', '.worktrees/**'],
+    // scripts/는 ESLint 검사 대상에 포함시키되 Node.js CommonJS 글로벌을 인식하도록 별도 환경 지정.
+    // (process.exit, require, module 등 — 미적용 시 no-undef 폭발)
+    files: ['scripts/**/*.{js,mjs,ts}'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        require: 'readonly',
+        module: 'writable',
+        exports: 'writable',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        console: 'readonly',
+        global: 'readonly',
+        fetch: 'readonly',
+        AbortSignal: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        TextEncoder: 'readonly',
+        TextDecoder: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+      },
+    },
+    rules: {
+      // 스크립트는 운영 로깅이 필수 — no-console 비활성화
+      'no-console': 'off',
+      // CommonJS 스크립트엔 import 순서 규칙 부적합
+      'import/first': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
+    ignores: ['coverage/**', '.next/**', '.worktrees/**'],
   },
 ];
 

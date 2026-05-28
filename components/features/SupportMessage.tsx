@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { LOAN_COUNT } from '@/lib/site-stats';
+import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 
 const STAT_COUNT = 4;
 const STAT_INTERVAL = 6000;
@@ -14,24 +15,6 @@ interface SupportMessageProps {
   className?: string;
   totalSoldCount?: number;
   testimonials: { quote: string; author: string }[];
-}
-
-// useSyncExternalStore — SSR snapshot은 false 고정으로 hydration mismatch 차단,
-// client에서는 matchMedia 구독으로 reduced-motion 변화 실시간 반영.
-// useEffect+setState 패턴은 react-hooks/set-state-in-effect 위반이고,
-// useSyncExternalStore가 hydration-safe + lint 만족 + 표준 패턴.
-const subscribe = (cb: () => void) => {
-  if (typeof window === 'undefined') return () => undefined;
-  const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mql.addEventListener('change', cb);
-  return () => mql.removeEventListener('change', cb);
-};
-const getSnapshot = () =>
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const getServerSnapshot = () => false;
-
-function useReducedMotion() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
 function useCycleIndex(count: number, interval: number, enabled: boolean) {

@@ -6,6 +6,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import { useTranslations } from 'next-intl';
 import ArtworkCard from '@/components/ui/ArtworkCard';
+import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 
 interface RelatedArtworksProps {
   artworks?: ArtworkCardData[];
@@ -84,6 +85,8 @@ export default function RelatedArtworksSlider({
     ]
   );
 
+  const prefersReducedMotion = useReducedMotion();
+
   useEffect(() => {
     if (!emblaApi) return;
 
@@ -91,12 +94,14 @@ export default function RelatedArtworksSlider({
     if (!('autoScroll' in plugins)) return;
 
     const autoScroll = plugins.autoScroll;
-    if (isPaused) {
+    // WCAG 2.2.2: prefers-reduced-motion 사용자에게는 auto-scroll 자체를 시작하지 않음.
+    // 사용자가 Play 버튼을 명시적으로 누르더라도 isPaused 상태에서 보존.
+    if (isPaused || prefersReducedMotion) {
       autoScroll.stop();
       return;
     }
     autoScroll.play();
-  }, [emblaApi, isPaused]);
+  }, [emblaApi, isPaused, prefersReducedMotion]);
 
   // Create a deterministic seed from currentArtworkId
   const seed = useMemo(() => {

@@ -179,11 +179,14 @@ export default function VirtualGalleryPortal({
               <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
                 {ROOM_PRESETS.map((preset) => (
                   <button
+                    type="button"
                     key={preset.key}
                     onClick={() => setSelectedPreset(preset)}
+                    aria-pressed={selectedPreset.key === preset.key}
+                    aria-label={isKo ? preset.labelKo : preset.labelEn}
                     className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                       selectedPreset.key === preset.key
-                        ? 'bg-white text-gray-900'
+                        ? 'bg-white text-gallery-tile'
                         : 'bg-white/10 text-white/70 hover:bg-white/20'
                     }`}
                   >
@@ -193,8 +196,9 @@ export default function VirtualGalleryPortal({
               </div>
 
               <button
+                type="button"
                 onClick={onClose}
-                className="ml-1 p-1.5 rounded-full bg-white/10 text-white/70 hover:bg-white/20 transition-colors"
+                className="ml-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
                 aria-label={copy.close}
               >
                 <X className="w-4 h-4" />

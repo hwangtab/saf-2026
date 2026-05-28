@@ -188,14 +188,19 @@ export default function GlobalSearchDialog({
           <button
             type="button"
             onClick={onClose}
-            className="sm:hidden flex-shrink-0 text-sm text-charcoal-muted hover:text-charcoal transition-colors px-2 py-1"
+            aria-label={t('close')}
+            className="sm:hidden flex-shrink-0 text-sm text-charcoal-muted hover:text-charcoal transition-colors px-2 py-1 min-w-[44px] min-h-[44px] inline-flex items-center justify-center"
           >
             {t('close')}
           </button>
         </div>
 
-        {/* 결과 영역 */}
-        <div className="flex-1 overflow-y-auto overscroll-contain">
+        {/* 결과 영역 — error/empty 메시지를 스크린리더가 즉시 announce하도록 polite live region */}
+        <div
+          className="flex-1 overflow-y-auto overscroll-contain"
+          aria-live="polite"
+          aria-atomic="false"
+        >
           {/* 빈 상태 - 초기 */}
           {!query && (
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">

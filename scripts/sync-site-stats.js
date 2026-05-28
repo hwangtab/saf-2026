@@ -12,12 +12,20 @@ const { createClient } = require('@supabase/supabase-js');
 dotenv.config({ path: path.join(__dirname, '..', '.env.local'), override: true });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY;
+const supabaseKey = serviceRoleKey ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.warn('[sync-site-stats] Supabase 환경 변수 없음 — site-stats.ts 갱신 건너뜀 (기존 상수 유지)');
   process.exit(0);
+}
+
+// anon key fallback 시 RLS 제약으로 hidden 작품/작가가 빠져 카운트가 부정확할 수 있음.
+// prebuild에서 자동 실행되므로 실수로 service role이 빠진 채 빌드되는 상황을 명시 경고.
+if (!serviceRoleKey) {
+  console.warn(
+    '[sync-site-stats] SUPABASE_SERVICE_ROLE_KEY 미설정 — anon key로 fallback. RLS 제약상 카운트가 부정확할 수 있음. Vercel/CI에서는 service role 설정 권장'
+  );
 }
 
 const supabaseFetch = (url, opts) =>

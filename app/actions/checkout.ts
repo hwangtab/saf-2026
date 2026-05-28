@@ -337,7 +337,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
   const adminClient = createSupabaseAdminClient();
   const { data: dbOrder } = await adminClient
     .from('orders')
-    .select('total_amount, status')
+    .select('total_amount, status, metadata')
     .eq('order_no', input.orderNo)
     .maybeSingle();
 
@@ -351,6 +351,16 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
     return { success: false, error: apiError('amount_mismatch', buyerLocale) };
   }
 
+  // overseas 결제는 createOrder가 metadata.usd_amount를 미리 고정해두므로 그 값을 단일 출처로
+  // 사용. krwToUsd()를 initiatePayment 시점에 재계산하면 NEXT_PUBLIC_KRW_USD_RATE 변경 +
+  // 재배포 사이에 confirm route의 expectedAmount(=metadata.usd_amount)와 mismatch 발생.
+  const storedUsdAmount =
+    typeof dbOrder.metadata === 'object' &&
+    dbOrder.metadata !== null &&
+    typeof (dbOrder.metadata as Record<string, unknown>).usd_amount === 'number'
+      ? ((dbOrder.metadata as Record<string, unknown>).usd_amount as number)
+      : null;
+
   const config = getTossConfig(provider);
   if (!config) {
     return { success: false, error: apiError('payment_session_failed', buyerLocale) };
@@ -358,14 +368,17 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
 
   // PayPal foreignEasyPay 페이로드 — products 정보 포함하여 리스크 검증 통과율 향상.
   // (Toss 가이드: PayPal 판매자 보호를 받으려면 상품/배송 정보 권장)
-  // shipping은 형식 명세가 불확실해서 제외 (선택 필드)
+  // shipping은 형식 명세가 불확실해서 제외 (선택 필드).
+  // usd_amount는 createOrder가 고정한 metadata 값을 사용 — 환율 재배포 시 confirm route와의
+  // mismatch 차단. metadata에 값이 없는 legacy 주문(이전 createOrder 호출분)만 fallback 계산.
+  const usdAmount = storedUsdAmount ?? krwToUsd(input.totalAmount);
   const buildForeignEasyPay = () => ({
     country: 'KR',
     products: [
       {
         name: input.orderName.slice(0, 127),
         quantity: 1,
-        unitAmount: krwToUsd(input.totalAmount),
+        unitAmount: usdAmount,
         currency: 'USD',
         description: input.orderName.slice(0, 127),
       },
@@ -381,7 +394,7 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
             method: 'FOREIGN_EASY_PAY',
             provider: 'PAYPAL',
             currency: 'USD',
-            amount: krwToUsd(input.totalAmount),
+            amount: usdAmount,
             orderId: input.orderNo,
             orderName: input.orderName,
             successUrl: input.successUrl,
