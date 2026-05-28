@@ -1,18 +1,5 @@
 import { PetitionAudienceResolver } from '@/lib/email/audiences/petition';
-
-type QueryResult = { data: unknown[]; error: null };
-
-function createQueryBuilder(result: QueryResult) {
-  const builder: Record<string, unknown> = {};
-  const methods = ['select', 'eq', 'not', 'in'];
-  methods.forEach((m) => {
-    builder[m] = jest.fn().mockReturnValue(builder);
-  });
-  builder['then'] = jest.fn((resolve: (v: QueryResult) => unknown) =>
-    Promise.resolve(result).then(resolve)
-  );
-  return builder;
-}
+import { createSupabaseQueryMock } from '@/lib/test-utils/email-audience-mock';
 
 const mockFrom = jest.fn();
 
@@ -25,13 +12,15 @@ describe('PetitionAudienceResolver', () => {
 
   it('petition_slug로 필터링하고 is_masked=false 서명자만 반환한다', async () => {
     mockFrom
+      // petition_signatures query
       .mockReturnValueOnce(
-        createQueryBuilder({
+        createSupabaseQueryMock({
           data: [{ email: 'signer@example.com', full_name: '서명자' }],
           error: null,
         })
       )
-      .mockReturnValueOnce(createQueryBuilder({ data: [], error: null }));
+      // suppressions query
+      .mockReturnValueOnce(createSupabaseQueryMock({ data: [], error: null }));
 
     const resolver = new PetitionAudienceResolver('oh-yoon');
     const recipients = await resolver.resolve();
@@ -50,9 +39,11 @@ describe('PetitionAudienceResolver', () => {
     const { hashEmail } = jest.requireActual('@/lib/email/email-hash') as {
       hashEmail: (e: string) => string;
     };
+
     mockFrom
+      // petition_signatures query
       .mockReturnValueOnce(
-        createQueryBuilder({
+        createSupabaseQueryMock({
           data: [
             { email: 'suppressed@example.com', full_name: '차단됨' },
             { email: 'ok@example.com', full_name: '정상' },
@@ -60,8 +51,9 @@ describe('PetitionAudienceResolver', () => {
           error: null,
         })
       )
+      // suppressions query
       .mockReturnValueOnce(
-        createQueryBuilder({
+        createSupabaseQueryMock({
           data: [{ email_hash: hashEmail('suppressed@example.com') }],
           error: null,
         })
