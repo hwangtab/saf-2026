@@ -2,6 +2,7 @@
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { logAdminAction } from '@/app/actions/activity-log-writer';
+import { validateUrl, validateTextLength } from '@/lib/utils/input-validation';
 import type { BroadcastChannel, Recipient } from '@/lib/email/audiences/types';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import { CustomerAudienceResolver } from '@/lib/email/audiences/customer';
@@ -32,6 +33,20 @@ export async function enqueueBroadcast(
 
   if (!subject.trim() || !bodyMd.trim()) {
     return { message: '제목과 본문은 필수입니다.', error: true };
+  }
+
+  // CTA URL은 http(s)만 허용 — javascript:/data: 등 protocol 주입 차단.
+  // validateUrl이 invalid protocol 시 throw — try/catch로 user-friendly 메시지 반환.
+  let validatedCtaUrl: string | null;
+  let validatedCtaLabel: string | null;
+  try {
+    validatedCtaUrl = ctaUrl ? validateUrl(ctaUrl, 'CTA URL') : null;
+    validatedCtaLabel = ctaLabel ? validateTextLength(ctaLabel, 200, 'CTA 라벨') : null;
+  } catch (err) {
+    return {
+      message: err instanceof Error ? err.message : 'CTA 입력 검증 실패',
+      error: true,
+    };
   }
 
   let resolver;
@@ -99,8 +114,8 @@ export async function enqueueBroadcast(
       petition_slug: petitionSlug ?? null,
       subject,
       body_md: bodyMd,
-      cta_label: ctaLabel ?? null,
-      cta_url: ctaUrl ?? null,
+      cta_label: validatedCtaLabel,
+      cta_url: validatedCtaUrl,
       audience_filter: (audienceFilter ?? {}) as Json,
       status: 'queued',
       recipient_count: recipients.length,

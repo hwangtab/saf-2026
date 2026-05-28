@@ -213,8 +213,21 @@ export async function GET(request: NextRequest) {
   });
 }
 
+// Vercel drain은 NDJSON 배치로 보통 수십~수백 KB. 5MB 초과는 정상 batch가 아니므로
+// HMAC 검증 전에 거부해 serverless 메모리 보호.
+const MAX_DRAIN_BODY_BYTES = 5 * 1024 * 1024;
+
 export async function POST(request: NextRequest) {
+  const contentLength = Number(request.headers.get('content-length') ?? '0');
+  if (Number.isFinite(contentLength) && contentLength > MAX_DRAIN_BODY_BYTES) {
+    return NextResponse.json({ error: 'Payload too large' }, { status: 413 });
+  }
+
   const raw = await request.text();
+  if (raw.length > MAX_DRAIN_BODY_BYTES) {
+    // Content-Length 헤더 누락/위조 대비 second-layer guard
+    return NextResponse.json({ error: 'Payload too large' }, { status: 413 });
+  }
 
   // HMAC-SHA1 서명 검증
   const secret = process.env.VERCEL_DRAIN_SECRET;

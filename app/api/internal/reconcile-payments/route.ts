@@ -176,9 +176,9 @@ export async function GET(request: NextRequest) {
             }
           }
 
-          // artwork_sales 반영 후 작품 상태 동기화 + 공개 페이지 캐시 무효화
-          const adminClient = createSupabaseAdminClient();
-          await deriveAndSyncArtworkStatus(adminClient, order.artwork_id);
+          // artwork_sales 반영 후 작품 상태 동기화 + 공개 페이지 캐시 무효화.
+          // outer supabase가 이미 admin 클라이언트이므로 재사용 (루프마다 신규 client 생성 회피)
+          await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
           revalidatePublicArtworkSurfaces();
           revalidatePath(`/artworks/${order.artwork_id}`);
           revalidatePath(`/en/artworks/${order.artwork_id}`);

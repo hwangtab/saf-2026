@@ -75,6 +75,8 @@ export async function updateMyProfile(name: string): Promise<{ error?: string }>
 
   const trimmed = name.trim();
   if (!trimmed) return { error: 'name_required' };
+  // max length 가드 — auth.users raw_user_meta_data JSON 비대화 + profiles 컬럼 bloat 방지
+  if (trimmed.length > 100) return { error: 'name_too_long' };
 
   const { error: authError } = await supabase.auth.updateUser({
     data: { full_name: trimmed, name: trimmed },

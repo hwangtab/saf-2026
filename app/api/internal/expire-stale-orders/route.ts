@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { getOrderNotificationInfo } from '@/lib/utils/get-order-notification-info';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
@@ -20,16 +20,13 @@ export async function GET(request: NextRequest) {
     return authError;
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const adminKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !adminKey) {
+  let supabase;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (err) {
+    console.error('[expire-stale-orders] admin client init failed:', err);
     return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
   }
-
-  const supabase = createClient(supabaseUrl, adminKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { Authorization: `Bearer ${adminKey}` } },
-  });
 
   const now = new Date().toISOString();
 
@@ -96,10 +93,12 @@ export async function GET(request: NextRequest) {
 
     for (const expiredOrder of actuallyCancelled) {
       if (expiredOrder.buyer_email && expiredOrder.order_no) {
+        // 안쪽 `void sendBuyerEmail(...)`은 Promise를 즉시 버려서 try/catch가 비동기 throw를
+        // 잡지 못함. await로 묶어야 catch가 실제로 동작.
         void (async () => {
           try {
             const info = await getOrderNotificationInfo(supabase, { id: expiredOrder.id });
-            void sendBuyerEmail(
+            await sendBuyerEmail(
               expiredOrder.buyer_email!,
               'auto_cancelled',
               {
@@ -118,10 +117,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 실제 취소된 주문의 artwork reserved→available 복원
-    const artworkIds = actuallyCancelled
-      .map((o) => o.artwork_id)
-      .filter((id): id is string => !!id);
+    // 실제 취소된 주문의 artwork reserved→available 복원.
+    // Set 으로 dedupe — limited/open edition은 같은 artwork_id로 여러 awaiting_deposit 주문이
+    // 동시에 만료될 수 있고, 중복 ID는 revalidatePath 중복 호출 등 redundant work를 유발.
+    const artworkIds = Array.from(
+      new Set(actuallyCancelled.map((o) => o.artwork_id).filter((id): id is string => !!id))
+    );
 
     if (artworkIds.length > 0) {
       const { error: artworkError } = await supabase

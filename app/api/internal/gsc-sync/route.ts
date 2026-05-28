@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { fetchGscDataRange } from '@/lib/gsc-client';
 
@@ -22,16 +22,13 @@ export async function GET(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const adminKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !adminKey) {
+  let supabase;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (err) {
+    console.error('[gsc-sync] admin client init failed:', err);
     return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
   }
-
-  const supabase = createClient(supabaseUrl, adminKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { Authorization: `Bearer ${adminKey}` } },
-  });
 
   // 1) GSC에서 7일치 fetch (lag 2일 + 7일치 = D-2 ~ D-8)
   let dailyResults;

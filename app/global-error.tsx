@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { AlertTriangle } from 'lucide-react';
 import ErrorView from '@/components/common/ErrorView';
 
@@ -11,8 +12,11 @@ export default function GlobalError({
   reset: () => void;
 }) {
   // global-error.tsx는 root layout 바깥이라 next-intl 사용 불가.
-  // pathname에서 /en 프리픽스를 감지해 언어 결정.
-  const isEnglish = typeof window !== 'undefined' && window.location.pathname.startsWith('/en');
+  // usePathname은 SSR/CSR에서 동일한 path를 반환 (Next.js 공식 — App Router가 client에 path를
+  // 직렬화 전달). 이전 typeof window 패턴은 hydration mismatch + react-hooks/set-state-in-effect
+  // lint 위반이었음. usePathname으로 단일 표현식 derive.
+  const pathname = usePathname();
+  const isEnglish = pathname?.startsWith('/en') ?? false;
   const lang = isEnglish ? 'en' : 'ko';
 
   return (

@@ -173,8 +173,14 @@ export default function ArtworkImage({
         >
           {isRemoteImage ? (
             // LCP 최적화: 첫 이미지만 eager+high. carousel 이동 시 src 교체로 layout shift 0.
+            // SafeImage 대신 raw <picture>+<img>를 쓰는 이유: <source media srcset>로 모바일/데스크톱
+            // 별도 URL을 제공해 LCP critical path에서 viewport별 최적 이미지를 즉시 받기 위함.
+            // SafeImage(next/image)는 모바일/데스크톱 srcset이 동일 base URL의 size 변형이라 같은
+            // 효과를 낼 수 없음. URL은 이미 resolveArtworkImageUrlForPreset로 Supabase render →
+            // Vercel optimize 호환 형태로 변환된 상태라 SafeImage의 toRawSupabaseUrl 변환도 불필요.
             <picture key={currentIndex}>
               <source media="(min-width: 768px)" srcSet={`${desktop1x} 1x, ${desktop2x} 2x`} />
+              {}
               {}
               <img
                 src={mobileSrc}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import { Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
@@ -16,19 +16,22 @@ interface SupportMessageProps {
   testimonials: { quote: string; author: string }[];
 }
 
+// useSyncExternalStore — SSR snapshot은 false 고정으로 hydration mismatch 차단,
+// client에서는 matchMedia 구독으로 reduced-motion 변화 실시간 반영.
+// useEffect+setState 패턴은 react-hooks/set-state-in-effect 위반이고,
+// useSyncExternalStore가 hydration-safe + lint 만족 + 표준 패턴.
+const subscribe = (cb: () => void) => {
+  if (typeof window === 'undefined') return () => undefined;
+  const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mql.addEventListener('change', cb);
+  return () => mql.removeEventListener('change', cb);
+};
+const getSnapshot = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const getServerSnapshot = () => false;
+
 function useReducedMotion() {
-  const [reduced, setReduced] = useState(() =>
-    typeof window !== 'undefined'
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false
-  );
-  useEffect(() => {
-    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, []);
-  return reduced;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
 function useCycleIndex(count: number, interval: number, enabled: boolean) {

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { render } from '@react-email/render';
-import type { Database } from '@/types/supabase';
 import * as React from 'react';
 
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { sendBatch } from '@/lib/email/resend-batch';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
@@ -23,21 +22,22 @@ export async function GET(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const adminKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !adminKey) {
+  let supabase;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (err) {
+    console.error('[broadcast-dispatch] admin client init failed:', err);
     return NextResponse.json({ error: 'supabase credentials missing' }, { status: 500 });
   }
 
-  const supabase = createClient<Database>(supabaseUrl, adminKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { Authorization: `Bearer ${adminKey}` } },
-  });
-
+  // recipient_count > 0 가드: enqueueBroadcast가 recipients INSERT 전에 crash한 orphan broadcast를
+  // 자동 dispatch에서 제외 (sent_count=0인 상태로 silently 'sent' 마킹되는 회귀 차단).
+  // commit d0f39bba의 멱등 가드 정책과 동일 원칙.
   const { data: broadcasts } = await supabase
     .from('email_broadcasts')
     .select('id, channel, subject, body_md, cta_label, cta_url, status')
     .in('status', ['queued', 'sending'])
+    .gt('recipient_count', 0)
     .order('queued_at', { ascending: true })
     .limit(5);
 

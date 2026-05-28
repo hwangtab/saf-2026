@@ -466,6 +466,91 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // PAYMENT_STATUS_CHANGED DONE — confirm route 실패 안전망.
+    // 정상 흐름: confirm/route.ts가 INSERT payment + UPDATE order → paid + INSERT artwork_sales까지 처리.
+    // 실패 시나리오: payment 기록은 성공했으나 order UPDATE 또는 artwork_sales INSERT에서 실패하면
+    // order는 pending_payment로 stuck. reconcile cron이 5~28분 window에서 처리하지만 그 사이의
+    // gap을 webhook으로 즉시 보정한다. 멱등성은 order.status 가드로 확보.
+    if (newStatus === 'DONE' && paymentRow.order_id) {
+      const { data: existingOrder } = await supabase
+        .from('orders')
+        .select(
+          'status, artwork_id, order_no, buyer_email, buyer_name, buyer_phone, total_amount, metadata'
+        )
+        .eq('id', paymentRow.order_id)
+        .single();
+
+      if (
+        existingOrder &&
+        existingOrder.status !== 'paid' &&
+        !['refunded', 'cancelled'].includes(existingOrder.status)
+      ) {
+        const now = new Date().toISOString();
+
+        // pending_payment / awaiting_deposit → paid (멱등 가드: 이미 paid이면 매칭 안 됨)
+        const { data: updatedOrders, error: orderUpdateError } = await supabase
+          .from('orders')
+          .update({ status: 'paid', paid_at: now })
+          .eq('id', paymentRow.order_id)
+          .in('status', ['pending_payment', 'awaiting_deposit'])
+          .select('id');
+
+        if (orderUpdateError) {
+          console.error(
+            `[toss-webhook] STATUS_CHANGED DONE order UPDATE failed: ${existingOrder.order_no}`,
+            orderUpdateError
+          );
+        }
+
+        // artwork_sales INSERT — confirm route가 이미 INSERT했다면 existingSale로 skip (멱등)
+        if (updatedOrders && updatedOrders.length > 0 && existingOrder.artwork_id) {
+          const { data: existingSale } = await supabase
+            .from('artwork_sales')
+            .select('id')
+            .eq('order_id', paymentRow.order_id)
+            .is('voided_at', null)
+            .maybeSingle();
+
+          if (!existingSale) {
+            const { error: saleInsertError } = await supabase.from('artwork_sales').insert({
+              artwork_id: existingOrder.artwork_id,
+              sale_price: existingOrder.total_amount,
+              quantity: 1,
+              source: 'toss',
+              // confirm route 실패 보정이지만 source_detail 자체는 일반 toss_api와 같음.
+              // 별도 값은 CHECK constraint 추가가 필요하므로 'toss_api'로 통일.
+              source_detail: 'toss_api',
+              order_id: paymentRow.order_id,
+              external_order_id: existingOrder.order_no,
+              buyer_name: existingOrder.buyer_name,
+              buyer_phone: existingOrder.buyer_phone,
+              sold_at: now,
+            });
+
+            if (saleInsertError) {
+              console.error(
+                `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed: ${existingOrder.order_no}`,
+                saleInsertError
+              );
+            }
+          }
+
+          await deriveAndSyncArtworkStatus(supabase, existingOrder.artwork_id);
+          revalidatePublicArtworkSurfaces();
+          revalidatePath(`/artworks/${existingOrder.artwork_id}`);
+          revalidatePath(`/en/artworks/${existingOrder.artwork_id}`);
+
+          // confirm route가 실패해 webhook이 보정한 시나리오 — 운영팀 알림
+          void notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
+            주문번호: existingOrder.order_no ?? '',
+            paymentKey,
+            상태: newStatus,
+            참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
+          });
+        }
+      }
+    }
+
     // Cascade cancel to order + artwork_sales when Toss marks payment as canceled
     if (CANCELED_STATUSES.has(newStatus) && paymentRow.order_id) {
       const { data: existingOrder } = await supabase

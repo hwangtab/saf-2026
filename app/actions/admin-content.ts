@@ -4,7 +4,14 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { logAdminAction } from './activity-log-writer';
 import { getString, getNumber } from '@/lib/utils/form-helpers';
-import { validateUrl } from '@/lib/utils/input-validation';
+import { validateUrl, validateTextLength } from '@/lib/utils/input-validation';
+
+// admin 운영자 paste 사고(MB 단위 텍스트) 방어용 상한. 위협 모델은 권한 있는 admin이지
+// 외부 공격자가 아니므로 관대한 한도 적용. RSC payload OOM + DB row bloat 차단이 목적.
+// MAX_AUTHOR, MAX_QUOTE는 createTestimonial 등 추가 적용 대상 — 점진 확대.
+const MAX_TITLE = 500;
+const MAX_DESCRIPTION = 5000;
+const MAX_TRANSCRIPT = 100_000;
 
 const normalizeStoryTitleColonSpacing = (value: string) => value.replace(/[^\S\r\n]+:/g, ':');
 
@@ -325,10 +332,18 @@ export async function createVideo(formData: FormData) {
 
   const youtube_id = getString(formData, 'youtube_id');
   const id = getString(formData, 'id') || youtube_id || crypto.randomUUID();
-  const title = getString(formData, 'title');
-  const description = getString(formData, 'description');
+  const title = validateTextLength(getString(formData, 'title'), MAX_TITLE, '제목');
+  const description = validateTextLength(
+    getString(formData, 'description'),
+    MAX_DESCRIPTION,
+    '설명'
+  );
   const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
-  const transcript = getString(formData, 'transcript');
+  const transcript = validateTextLength(
+    getString(formData, 'transcript'),
+    MAX_TRANSCRIPT,
+    '스크립트'
+  );
 
   const { data: video, error } = await supabase
     .from('videos')
@@ -361,10 +376,18 @@ export async function updateVideo(id: string, formData: FormData) {
   const { data: oldVideo } = await supabase.from('videos').select('*').eq('id', id).single();
 
   const youtube_id = getString(formData, 'youtube_id');
-  const title = getString(formData, 'title');
-  const description = getString(formData, 'description');
+  const title = validateTextLength(getString(formData, 'title'), MAX_TITLE, '제목');
+  const description = validateTextLength(
+    getString(formData, 'description'),
+    MAX_DESCRIPTION,
+    '설명'
+  );
   const thumbnail = validateUrl(getString(formData, 'thumbnail'), '썸네일');
-  const transcript = getString(formData, 'transcript');
+  const transcript = validateTextLength(
+    getString(formData, 'transcript'),
+    MAX_TRANSCRIPT,
+    '스크립트'
+  );
 
   const { data: newVideo, error } = await supabase
     .from('videos')

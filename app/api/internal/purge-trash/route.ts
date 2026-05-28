@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { type SupabaseClient } from '@supabase/supabase-js';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import type { Database } from '@/types/supabase';
 export const runtime = 'nodejs';
@@ -201,27 +202,17 @@ export async function GET(request: NextRequest) {
     return authError;
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const adminKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !adminKey) {
-    return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
-  }
-
   const limitParam = Number(request.nextUrl.searchParams.get('limit') || '200');
   const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 1000) : 200;
   const nowIso = new Date().toISOString();
 
-  const supabase = createClient(supabaseUrl, adminKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-    global: {
-      headers: {
-        Authorization: `Bearer ${adminKey}`,
-      },
-    },
-  });
+  let supabase;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch (err) {
+    console.error('[purge-trash] admin client init failed:', err);
+    return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
+  }
 
   const { data: logs, error: fetchError } = await supabase
     .from('activity_logs')

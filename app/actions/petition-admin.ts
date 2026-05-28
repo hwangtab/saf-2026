@@ -80,19 +80,26 @@ export async function setMessageMasked(
 
 // ─── 청원 강제 마감 / 재개 ────────────────────────────────────────
 export async function forceCloseCampaign(): Promise<AdminActionResult> {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const t = await getTranslations('admin.petition');
-  const admin = createSupabaseAdminClient();
-  const { data, error } = await admin.rpc('close_petition', {
+  const adminDb = createSupabaseAdminClient();
+  const { data, error } = await adminDb.rpc('close_petition', {
     p_slug: PETITION_OH_YOON_SLUG,
   });
   if (error) {
     console.error('[petition-admin] force_close error:', error);
     return { ok: false, message: t('errorForceCloseFailed') };
   }
+  const result = data as { ok: boolean; total?: number } | null;
+  // 가장 파괴적인 액션이므로 누가 언제 닫았는지 감사 기록 필수.
+  await logAudit({
+    action: 'force_close_campaign',
+    targetType: 'campaign',
+    details: { total: result?.total },
+    actorId: admin.id,
+  });
   revalidatePath(ADMIN_PATH);
   revalidatePath(PETITION_OH_YOON_PATH);
-  const result = data as { ok: boolean; total?: number } | null;
   return {
     ok: Boolean(result?.ok),
     rowCount: result?.total,
@@ -101,10 +108,10 @@ export async function forceCloseCampaign(): Promise<AdminActionResult> {
 }
 
 export async function reopenCampaign(): Promise<AdminActionResult> {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const t = await getTranslations('admin.petition');
-  const admin = createSupabaseAdminClient();
-  const { error } = await admin
+  const adminDb = createSupabaseAdminClient();
+  const { error } = await adminDb
     .from('petitions')
     .update({ is_active: true, closed_at: null })
     .eq('slug', PETITION_OH_YOON_SLUG);
@@ -112,7 +119,12 @@ export async function reopenCampaign(): Promise<AdminActionResult> {
     console.error('[petition-admin] reopen error:', error);
     return { ok: false, message: t('errorReopenFailed') };
   }
-  await logAudit({ action: 'reopen_campaign', targetType: 'campaign', details: {} });
+  await logAudit({
+    action: 'reopen_campaign',
+    targetType: 'campaign',
+    details: {},
+    actorId: admin.id,
+  });
   revalidatePath(ADMIN_PATH);
   revalidatePath(PETITION_OH_YOON_PATH);
   return { ok: true, message: t('successReopened') };
