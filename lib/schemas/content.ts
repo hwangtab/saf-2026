@@ -199,6 +199,11 @@ export interface BlogPostingSchemaInput {
   keywords?: readonly string[];
   /** 본문에서 인용된 관련 매거진·작품·작가 entity (mentions 필드) */
   mentions?: readonly BlogPostingMention[];
+  /**
+   * 글이 다루는 주제 entity. tags(매체·인물·주제 키워드)에서 추출.
+   * Knowledge Graph entity 매칭 강화 — AI Overview, related searches에 직접 영향.
+   */
+  about?: readonly string[];
 }
 
 export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
@@ -251,6 +256,9 @@ export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
       : {}),
     ...(post.keywords && post.keywords.length > 0 ? { keywords: post.keywords.join(', ') } : {}),
     ...(mentions && mentions.length > 0 ? { mentions } : {}),
+    ...(post.about && post.about.length > 0
+      ? { about: post.about.map((name) => ({ '@type': 'Thing', name })) }
+      : {}),
   };
 }
 

@@ -318,6 +318,9 @@ export default async function StoryDetailPage({ params }: Props) {
     // story.tags는 DB에 KO만 저장 (tags_en 컬럼 부재). /en에 KO 키워드 발행하면
     // BlogPosting.keywords에 한국어 노출 누락 — 영문 검색 시그널 의미 없음. /en은 생략.
     keywords: isEn ? undefined : (story.tags ?? undefined),
+    // about Thing entity — Knowledge Graph 매칭 + AI Overview 신호. KO/EN 양쪽 노출
+    // (entity name은 검색엔진이 정규화 처리). tags 비어있으면 생략.
+    about: story.tags && story.tags.length > 0 ? story.tags.slice(0, 5) : undefined,
     mentions: [
       ...relatedArtworks.map((art) => ({
         type: 'Product' as const,
