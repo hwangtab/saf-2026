@@ -36,6 +36,7 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 import { resolveLocale } from '@/lib/server-locale';
 import { getArtistSeoOverride } from '@/lib/artist-seo-overrides';
 import { getPrimaryStorySlug, pinPrimaryStory } from '@/lib/artist-story-map';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { containsHangul } from '@/lib/search-utils';
 import { ArrowRight, Globe, Instagram } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
@@ -408,8 +409,25 @@ async function renderArtistPage({ params }: Props) {
     ];
     return referencedIds.some((id) => thisArtistArtworkIds.has(id));
   });
-  // 정전 스토리를 맨 앞에 고정 후 slice — recency 순이 정전 스토리를 밀어내는 cannibalization 방지.
-  const relatedStories = pinPrimaryStory(artistName, matchedStories).slice(0, 3);
+  // 정전 스토리를 맨 앞에 고정 후 매체 hub 결정론 삽입(2번 슬롯) — 작가 + 매체 entity 양쪽 강화.
+  const pinnedStories = pinPrimaryStory(artistName, matchedStories);
+  const dominantCategoryEntry = Object.entries(
+    artistArtworks.reduce<Record<string, number>>((acc, a) => {
+      if (a.category) acc[a.category] = (acc[a.category] ?? 0) + 1;
+      return acc;
+    }, {})
+  ).sort((a, b) => b[1] - a[1])[0];
+  const dominantCategory = dominantCategoryEntry?.[0] ?? null;
+  const mediumHubSlug = getMediumHubSlug(dominantCategory);
+  const mediumHubStory =
+    mediumHubSlug && !pinnedStories.some((s) => s.slug === mediumHubSlug)
+      ? (allStories.find((s) => s.slug === mediumHubSlug) ?? null)
+      : null;
+  const relatedStories = (
+    mediumHubStory ? [pinnedStories[0], mediumHubStory, ...pinnedStories.slice(1)] : pinnedStories
+  )
+    .filter((s): s is NonNullable<typeof s> => Boolean(s))
+    .slice(0, 3);
   // bio 섹션 문맥 링크용 — gallery page bio block(outbound 링크 0)에 정전 스토리 above-the-fold 링크 추가.
   const primaryStorySlug = getPrimaryStorySlug(artistName);
   const primaryStory = primaryStorySlug
