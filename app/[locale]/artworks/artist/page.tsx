@@ -12,7 +12,8 @@ import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { createPageMetadata } from '@/lib/seo';
 import { createLocaleAlternates, buildLocaleUrl } from '@/lib/locale-alternates';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
-import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { getSupabaseArtworks, getSupabaseStoriesLight } from '@/lib/supabase-data';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import type { Artwork } from '@/types';
@@ -87,9 +88,32 @@ export default async function ArtistsIndexPage({ params }: { params: Promise<Loc
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const isEn = locale === 'en';
 
-  const artworks = await getSupabaseArtworks();
+  const [artworks, allStories] = await Promise.all([
+    getSupabaseArtworks(),
+    getSupabaseStoriesLight(),
+  ]);
   const artists = groupArtistsByName(artworks);
   const artistCount = artists.length;
+
+  // 매체별 hub 매거진 카드 — 작가 인덱스 → 매체 hub link equity flow.
+  // 작품수 기준 top 4 매체 카테고리만 노출(noise 최소화).
+  const categoryCounts = artworks.reduce<Record<string, number>>((acc, a) => {
+    if (a.category) acc[a.category] = (acc[a.category] ?? 0) + 1;
+    return acc;
+  }, {});
+  const topCategories = Object.entries(categoryCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([cat]) => cat);
+  const mediumHubCards = topCategories
+    .map((cat) => {
+      const slug = getMediumHubSlug(cat);
+      if (!slug) return null;
+      const story = allStories.find((s) => s.slug === slug);
+      if (!story) return null;
+      return { category: cat, slug, title: story.title, titleEn: story.title_en };
+    })
+    .filter((x): x is NonNullable<typeof x> => Boolean(x));
 
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
@@ -210,6 +234,31 @@ export default async function ArtistsIndexPage({ params }: { params: Promise<Loc
             </div>
           </div>
         </Section>
+
+        {/* 매체별 hub 매거진 — 작가 인덱스 → 매체 hub link equity. top 4 매체만 노출. */}
+        {mediumHubCards.length > 0 && (
+          <Section variant="canvas-soft" prevVariant="white" className="pt-10 md:pt-16 pb-16">
+            <div className="container-max max-w-4xl">
+              <h2 className="text-xl md:text-2xl font-section font-bold text-charcoal-deep mb-6 text-center">
+                {isEn ? 'Magazine guides by medium' : '매체별 매거진 가이드'}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {mediumHubCards.map((card) => (
+                  <Link
+                    key={card.slug}
+                    href={`/stories/${card.slug}`}
+                    className="block rounded-2xl border border-gallery-hairline bg-white p-4 hover:border-primary/40 transition-colors"
+                  >
+                    <div className="text-eyebrow text-primary-strong mb-1.5">{card.category}</div>
+                    <div className="text-sm md:text-base font-medium text-charcoal-deep leading-snug">
+                      {isEn && card.titleEn ? card.titleEn : card.title}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
       </div>
     </>
   );
