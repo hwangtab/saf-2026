@@ -103,10 +103,35 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
         ? 'Our Reality — Artist Financial Exclusion in Korea'
         : '우리의 현실 — 한국 예술인 금융 배제',
     isPartOf: { '@id': `${SITE_URL}#website` },
-    about: {
-      '@type': 'Thing',
-      name: locale === 'en' ? 'Artist Financial Exclusion in Korea' : '한국 예술인 금융 배제',
-    },
+    // 주제 Thing + finance/social hub CreativeWork — Sprint 29~40 entity 시그널 정책 일관 적용.
+    about: [
+      {
+        '@type': 'Thing' as const,
+        name: locale === 'en' ? 'Artist Financial Exclusion in Korea' : '한국 예술인 금융 배제',
+      },
+      ...(
+        [
+          ['how-mutual-aid-fund-works', '상호부조 기금 작동 원리', 'How the Mutual Aid Fund Works'],
+          ['artist-finance-5-numbers', '예술인 금융 5개 숫자', 'Five Numbers on Artist Finance'],
+          [
+            'what-is-an-artist-profession',
+            '예술인이라는 직업의 진실',
+            'The Truth About Being an Artist',
+          ],
+          [
+            'bank-vs-mutual-aid-comparison',
+            '은행 vs 상호부조 비교',
+            'Bank vs Mutual Aid Comparison',
+          ],
+          ['global-artist-finance', '해외 예술인 금융 지원 사례', 'Global Artist Finance Support'],
+        ] as const
+      ).map(([slug, koName, enName]) => ({
+        '@type': 'CreativeWork' as const,
+        '@id': `${SITE_URL}/stories/${slug}#about`,
+        url: `${SITE_URL}/stories/${slug}`,
+        name: locale === 'en' ? enName : koName,
+      })),
+    ],
     datePublished: '2026-01-14',
     dateModified: LAST_UPDATED,
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
