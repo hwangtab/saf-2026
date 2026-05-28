@@ -74,6 +74,7 @@ export async function enqueueBroadcast(
     .eq('channel', channel)
     .eq('subject', subject)
     .in('status', ['queued', 'sending'])
+    .gt('recipient_count', 0) // orphan broadcast(recipients INSERT 직전 crash) 제외
     .gte('created_at', fiveMinAgo)
     .order('created_at', { ascending: false })
     .limit(1)
