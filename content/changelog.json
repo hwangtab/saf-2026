@@ -1,5 +1,15 @@
 [
   {
+    "hash": "675b3544",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 13 — buying-guide mesh (함께 보면 좋은 가이드)",
+    "summary": "buying-guide 51편 commerce funnel link graph 진입 — 28편에 tag overlap 기반 cross-link 자동 부착",
+    "body": "- 28편 buying-guide body+body_en 업데이트\n- '함께 보면 좋은 가이드' / 'Related Guides' 섹션\n- 매칭: tag 교집합 desc → tgt_slug asc, top 3\n- Sprint 11/12 mesh 패턴을 buying-guide 카테고리에 적용\n- 잔여 23편: tags 비어있음(9편) + tag unique해 매칭 없음(14편, 안국·삼청동/서울옥션 등 고유)\n\n예시:\n- 7-mistakes-first-time-collectors → budget-10k-to-5m·choosing-art-by-space·first-time-buying-art\n- art-pricing-factors → print-vs-original-price-economics (overlap 2, 가격 책정 매칭)\n- art-auction-guide-korea → artwork-tax-guide·frieze-kiaf-seoul·saf-under-one-million\n\n전체 Topology 5축 완성:\n1. Sprint 7+9+10: artist-story → hub 74편 (## 관련 매거진)\n2. Sprint 8: hub → meet-artist 6 hub (## 대표 작가 만나기)\n3. Sprint 11: artist↔artist mesh 73편 (## 같은 길을 걷는 작가들)\n4. Sprint 12: art-knowledge↔art-knowledge mesh 23편 (## 함께 읽기)\n5. Sprint 13: buying-guide↔buying-guide mesh 28편 (## 함께 보면 좋은 가이드) ← 신규\n\nCommerce funnel dead-end 해소: 51편 중 28편(55%) graph 진입.\n\nIdempotency: body not ilike '%## 함께 보면 좋은 가이드%' guard",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "1780943f",
     "type": "feat",
     "scope": "seo",
