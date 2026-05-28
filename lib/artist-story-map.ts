@@ -11,8 +11,6 @@
  * GSC imp≥10 작가만 등재 (데이터 기반 scope). 모든 slug은 Supabase stories SELECT로 실재 확인.
  */
 
-import type { Story } from '@/types';
-
 export const ARTIST_PRIMARY_STORY: Record<string, string> = {
   // ─── 초기 등재 (GSC 집중 분석 기반) ────────────────────────────────────────
   김주호: 'meet-artist-kim-ju-ho',
@@ -62,8 +60,12 @@ export function getPrimaryStorySlug(artistName: string): string | null {
 /**
  * pool에서 정전 스토리를 맨 앞으로 끌어올림(중복 제거).
  * 미등재 작가 또는 정전 스토리가 pool에 없으면 pool 그대로 반환 → 회귀 0.
+ * generic T로 Story/StoryLight 등 slug 보유 형태 모두 수용.
  */
-export function pinPrimaryStory(artistName: string, pool: readonly Story[]): Story[] {
+export function pinPrimaryStory<T extends { slug: string }>(
+  artistName: string,
+  pool: readonly T[]
+): T[] {
   const slug = getPrimaryStorySlug(artistName);
   if (!slug) return [...pool];
   const primary = pool.find((s) => s.slug === slug);

@@ -23,6 +23,7 @@ import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
+import { pinPrimaryStory } from '@/lib/artist-story-map';
 import ArtworkImage from '@/components/features/ArtworkImage';
 import ArtworkDetailNav from '@/components/features/ArtworkDetailNav';
 import { parsePrice } from '@/lib/parsePrice';
@@ -198,9 +199,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
   // 매거진→작품 인용은 schema.org mentions로 이미 송출 중이고, 그 역방향을 작품 페이지에서
   // 노출해 양방향 entity graph를 닫는다. 작가 매칭을 우선하고 본문 인용을 보충해 슬롯 채움.
   const tagMatchedStories = allStories.filter((s) => s.tags?.some((tag) => tag === artwork.artist));
-  const tagMatchedIds = new Set(tagMatchedStories.map((s) => s.id));
+  // 정전 스토리(ARTIST_PRIMARY_STORY 등재 작가)는 결정론적으로 1번 슬롯. recency 정렬에 밀리는 회귀 차단.
+  const pinnedTagMatched = pinPrimaryStory(artwork.artist, tagMatchedStories);
+  const tagMatchedIds = new Set(pinnedTagMatched.map((s) => s.id));
   const bodyMentionedStories = mentionedStories.filter((s) => !tagMatchedIds.has(s.id));
-  const relatedMagazineStories = [...tagMatchedStories, ...bodyMentionedStories].slice(0, 3);
+  const relatedMagazineStories = [...pinnedTagMatched, ...bodyMentionedStories].slice(0, 3);
   const liveStorySlugs = new Set(allStories.map((s) => s.slug));
   const localizeDataValue = (value: string | null | undefined): string | null => {
     if (!value) return null;
