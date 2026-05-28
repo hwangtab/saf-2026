@@ -12,6 +12,7 @@ import {
   getOrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { rateLimit } from '@/lib/rate-limit';
+import { hashEmail } from '@/lib/email/email-hash';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getClientIp } from '@/lib/security/get-client-ip';
@@ -165,7 +166,7 @@ export async function lookupOrderDetail(
   const trimmedEmail = buyerEmail.trim().toLowerCase();
 
   if (trimmedEmail) {
-    const emailRl = await rateLimit(`lookupOrderDetail:email:${trimmedEmail}`, {
+    const emailRl = await rateLimit(`lookupOrderDetail:email:${hashEmail(trimmedEmail)}`, {
       limit: 20,
       windowMs: 3_600_000,
     });
@@ -332,7 +333,7 @@ export async function updateBuyerShipping(
   const trimmedEmail = buyerEmail.trim().toLowerCase();
 
   if (trimmedEmail) {
-    const emailRl = await rateLimit(`updateBuyerShipping:email:${trimmedEmail}`, {
+    const emailRl = await rateLimit(`updateBuyerShipping:email:${hashEmail(trimmedEmail)}`, {
       limit: 10,
       windowMs: 3_600_000,
     });
@@ -422,7 +423,7 @@ export async function cancelBuyerOrder(
   const trimmedReason = cancelReason.trim();
 
   if (trimmedEmail) {
-    const emailRl = await rateLimit(`cancelBuyerOrder:email:${trimmedEmail}`, {
+    const emailRl = await rateLimit(`cancelBuyerOrder:email:${hashEmail(trimmedEmail)}`, {
       limit: 5,
       windowMs: 3_600_000,
     });
