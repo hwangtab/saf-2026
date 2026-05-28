@@ -525,6 +525,8 @@ export type Database = {
           created_by: string | null;
           cta_label: string | null;
           cta_url: string | null;
+          dispatch_lock_token: string | null;
+          dispatch_locked_until: string | null;
           failed_count: number;
           id: string;
           petition_slug: string | null;
@@ -543,6 +545,8 @@ export type Database = {
           created_by?: string | null;
           cta_label?: string | null;
           cta_url?: string | null;
+          dispatch_lock_token?: string | null;
+          dispatch_locked_until?: string | null;
           failed_count?: number;
           id?: string;
           petition_slug?: string | null;
@@ -561,6 +565,8 @@ export type Database = {
           created_by?: string | null;
           cta_label?: string | null;
           cta_url?: string | null;
+          dispatch_lock_token?: string | null;
+          dispatch_locked_until?: string | null;
           failed_count?: number;
           id?: string;
           petition_slug?: string | null;
@@ -1566,6 +1572,10 @@ export type Database = {
           success: boolean;
         }[];
       };
+      claim_broadcast_dispatch: {
+        Args: { p_broadcast_id: string; p_lease_seconds?: number };
+        Returns: string;
+      };
       close_petition: { Args: { p_slug: string }; Returns: Json };
       close_petitions_due: { Args: never; Returns: Json };
       execute_sql: { Args: { sql: string }; Returns: undefined };
@@ -2027,6 +2037,14 @@ export type Database = {
         Returns: Json;
       };
       purge_petitions_expired: { Args: never; Returns: Json };
+      renew_broadcast_dispatch: {
+        Args: {
+          p_broadcast_id: string;
+          p_lease_seconds?: number;
+          p_token: string;
+        };
+        Returns: boolean;
+      };
       sign_petition: { Args: { p_payload: Json }; Returns: Json };
     };
     Enums: {

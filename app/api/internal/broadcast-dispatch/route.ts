@@ -15,6 +15,7 @@ export const maxDuration = 300;
 
 const CHUNK_SIZE = 100;
 const THROTTLE_MS = 500;
+const LEASE_SECONDS = 120; // 청크당 시간(~5s)보다 충분히 커서 발송 중 만료 없음; run 사망 시 2분 후 resume
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'noreply@saf2026.com';
 
@@ -47,23 +48,48 @@ export async function GET(request: NextRequest) {
   let totalDispatched = 0;
 
   for (const broadcast of broadcasts) {
-    await supabase
-      .from('email_broadcasts')
-      .update({ status: 'sending' })
-      .eq('id', broadcast.id)
-      .eq('status', 'queued');
+    // 리스 락 획득. 다른 동시 run(매분 cron, maxDuration 초과 발송)이 락을 쥐고 있으면
+    // token이 null → 이 브로드캐스트는 건너뛴다(중복 발송 차단).
+    const { data: lockToken, error: claimError } = await supabase.rpc('claim_broadcast_dispatch', {
+      p_broadcast_id: broadcast.id,
+      p_lease_seconds: LEASE_SECONDS,
+    });
+    if (claimError) {
+      console.error(
+        `[broadcast-dispatch] claim RPC error for ${broadcast.id}:`,
+        claimError.message
+      );
+      continue;
+    }
+    if (!lockToken) continue;
 
-    let offset = 0;
     let hasMore = true;
 
     while (hasMore) {
+      // 청크마다 리스 갱신. 실패(token 불일치)면 락을 빼앗긴 것 → 즉시 중단(중복 방지).
+      const { data: renewed, error: renewError } = await supabase.rpc('renew_broadcast_dispatch', {
+        p_broadcast_id: broadcast.id,
+        p_token: lockToken,
+        p_lease_seconds: LEASE_SECONDS,
+      });
+      if (renewError) {
+        console.error(
+          `[broadcast-dispatch] renew RPC error for ${broadcast.id}:`,
+          renewError.message
+        );
+        break;
+      }
+      if (!renewed) break;
+
+      // 처리된 행은 sent/failed로 빠지므로 항상 pending 선두 청크만 가져온다
+      // (offset 누적 금지 — pending 변형 중 offset 증가는 행 누락 버그).
       const { data: pending } = await supabase
         .from('email_broadcast_recipients')
         .select('id, email, name, locale')
         .eq('broadcast_id', broadcast.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: true })
-        .range(offset, offset + CHUNK_SIZE - 1);
+        .limit(CHUNK_SIZE);
 
       if (!pending || pending.length === 0) {
         hasMore = false;
@@ -148,7 +174,6 @@ export async function GET(request: NextRequest) {
       if (pending.length < CHUNK_SIZE) {
         hasMore = false;
       } else {
-        offset += CHUNK_SIZE;
         await new Promise((r) => setTimeout(r, THROTTLE_MS));
       }
     }
@@ -181,8 +206,11 @@ export async function GET(request: NextRequest) {
           sent_count: sentCount ?? 0,
           failed_count: failedCount ?? 0,
           sent_at: new Date().toISOString(),
+          dispatch_locked_until: null,
+          dispatch_lock_token: null,
         })
-        .eq('id', broadcast.id);
+        .eq('id', broadcast.id)
+        .eq('dispatch_lock_token', lockToken); // 여전히 락 보유 중일 때만 finalize
     }
   }
 
