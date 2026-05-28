@@ -267,6 +267,15 @@ button:focus:not(:focus-visible) {
   color: var(--color-primary);
 }
 
+/* PageHero 높이 — vh fallback + svh override. Tailwind arbitrary 두 utility의 cascade
+   순서가 보장되지 않아 inline CSS로 확정. svh 미지원 브라우저(iOS Safari < 15.4)는
+   첫 줄의 vh로 fallback, 지원 브라우저는 두 번째 svh로 override (브라우저 UI bar 변화에
+   따른 height jump 방지). */
+.page-hero-min-h {
+  min-height: 60vh;
+  min-height: 60svh;
+}
+
 .text-balance {
   text-wrap: balance;
 }

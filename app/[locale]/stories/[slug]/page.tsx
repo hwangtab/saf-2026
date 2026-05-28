@@ -344,7 +344,7 @@ export default async function StoryDetailPage({ params }: Props) {
       />
       <PageHero
         title={title}
-        description={`${categoryLabel} · ${isEn ? 'Published' : '발행'} ${formattedDate} · ${localizeStoryAuthor(story.author, locale)}`}
+        description={`${categoryLabel} · ${tStory('publishedAt', { date: formattedDate })} · ${localizeStoryAuthor(story.author, locale)}`}
         breadcrumbItems={breadcrumbItems}
         // 매거진 자체 thumbnail 또는 본문 첫 이미지 — OG 사이트 대표 이미지는 hero에 부적합해
         // schemaImage 변수와 달리 OG_IMAGE.url fallback은 제외 (hero 단색 fallback이 더 자연스러움).

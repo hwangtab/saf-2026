@@ -72,8 +72,9 @@ export default function PageHero({
       )}
       <section
         className={cn(
-          // svh는 구형 iOS Safari 미지원 → vh fallback을 먼저 선언하고 svh로 덮어쓰기.
-          'relative min-h-[60vh] min-h-[60svh] flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
+          // page-hero-min-h: vh fallback + svh override를 globals.css의 동일 selector에 두 줄로
+          // 선언해 CSS cascade를 확정 (Tailwind arbitrary 클래스 2개는 순서 보장 X).
+          'page-hero-min-h relative flex items-center justify-center pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden',
           // Gallery White Cube: 다크 hero를 단색 charcoal-deep로 — Apple/Tesla 모델
           'bg-charcoal-deep',
           className

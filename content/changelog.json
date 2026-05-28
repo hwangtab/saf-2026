@@ -1,5 +1,55 @@
 [
   {
+    "hash": "6f32da39",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 19 — 작품 detail에 매체 hub 인링크 추가",
+    "summary": "artwork.category(매체) → art-knowledge hub 자동 매핑으로 작품 detail의 '관련 매거진' 슬롯에 매체 hub 1편 보장",
+    "body": "배경:\n- artwork detail의 매거진 슬롯은 작가 매칭 stories만 사용 (Sprint 18에서 pinPrimaryStory 적용)\n- 판화 작품 진입 트래픽이 판화 hub로 흐를 결정론적 경로 없음 — recency 정렬에만 의존\n- artworks DB의 12개 매체 카테고리(회화 198·판화 40·드로잉 38·사진 36·한국화 25 등) 모두 적절한 hub 보유\n\n변경:\n- lib/artwork-medium-hub.ts (신규): 11 매체 → 7 hub 결정론 매핑\n  - 회화·혼합매체 → saf-2026-painters\n  - 한국화 → korean-painting-tradition-meets-modern\n  - 드로잉 → drawing-vs-painting\n  - 판화·사후판화 → korean-contemporary-printmaking-saf\n  - 아트프린트 → prints-vs-originals-and-edition-numbers\n  - 사진 → korean-documentary-landscape-photography\n  - 조각·도자공예 → saf-2026-sculpture-and-ceramics\n  - 디지털아트 → digital-meets-traditional\n- app/[locale]/artworks/[id]/page.tsx: tagMatched + mediumHub + bodyMentioned 순서로 합치고 slice(0,3)\n\n효과:\n- 매체 hub의 link equity inflow 강화 (작품 detail에서 매체 hub로 명시적 인링크)\n- 작가 검색 → 작품 detail → 작가 canonical story + 매체 hub → mesh로 확산\n- 매체별 SEO authority concentration\n\n회귀 방지:\n- 작가 매칭과 매체 hub 중복 제거 (mediumHubIds set으로 bodyMentioned 필터)\n- 미매핑 category(null 등) → null 반환으로 회귀 0\n- npm run type-check 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "e1f0a5a9",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 18 — 작품 detail page에 pinPrimaryStory 적용 (정전 스토리 결정론적 top 슬롯)",
+    "summary": "artwork detail 페이지의 '관련 매거진' 슬롯에 pinPrimaryStory 적용 — 정전(canonical) 스토리가 recency 정렬에 밀리지 않고 결정론적으로 1번 슬롯 차지",
+    "body": "문제:\n- artwork detail 페이지의 tagMatchedStories는 allStories 순서 그대로 사용\n- recency 순으로 최신 큐레이션 글이 정전 스토리보다 앞에 노출되는 경우 발생\n- 작가 검색 → 작품 detail로 이어진 트래픽이 canonical story로 link equity 잘 안 흘러감\n- 이미 artist gallery 페이지(/artworks/artist/[artist])에서는 동일 보호 적용 중\n\n변경:\n- app/[locale]/artworks/[id]/page.tsx: tagMatchedStories에 pinPrimaryStory 적용\n- lib/artist-story-map.ts: pinPrimaryStory를 generic <T extends { slug: string }>으로 변경\n  - Story 전체 타입 → StoryLight 등 slug 보유 형태 모두 수용\n  - 기존 12 test 무회귀\n\n효과:\n- ARTIST_PRIMARY_STORY 등재 26명 작가(GSC imp≥10 navigational query 작가)의 정전 스토리가\n  artwork detail 페이지에서도 결정론적 top\n- 작가 검색 → artwork detail → canonical story → link equity strong flow\n\n타입 안전성:\n- generic 도입으로 Story/StoryLight 양쪽에서 사용 가능\n- pool.find/filter는 slug만 사용해 안전\n- npm run type-check 통과, 12개 기존 test 통과",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "40deecd1",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 17 — buying-guide 12편 universal fallback + testimonials 매핑 (100% coverage 완성)",
+    "summary": "mesh 미진입 13편(buying-guide 12 + art-knowledge 1)을 universal fallback + 수동 매핑으로 완전 cover. 전체 174/174 stories link graph 진입 완성",
+    "body": "Phase 1: buying-guide 12편 universal fallback (## 함께 보면 좋은 가이드)\n- Unique commerce-vertical tags (선물·갤러리 지역·B2B·페르소나) → mesh 매칭 0\n- Fallback 3개: first-time-buying-art, saf-under-one-million, budget-guide-10k-to-5m\n- 대상: 선물 5편 + 갤러리 2편 + B2B + 첫컬·두번째·50만원·art-types + tools-for-hanging-artworks\n  (Sprint 16 cascade 이후에도 잔여)\n\nPhase 2: art-knowledge testimonials-narrative 수동 매핑 (## 함께 읽기)\n- 예술인 증언 글 — finance/social 의미 매칭\n- 인링크: how-mutual-aid-fund-works · what-is-an-artist-profession · artist-finance-5-numbers\n\n최종 graph coverage (174/174 = 100%):\n- artist-story: 82/82 ← 100%\n- art-knowledge: 41/41 ← 100%\n- buying-guide: 51/51 ← 100%\n\n전체 9-sprint cycle 완성:\n1. Sprint 7+9+10: artist-story → hub (74편)\n2. Sprint 8: hub → meet-artist (6 hub)\n3. Sprint 11: artist↔artist mesh (73편)\n4. Sprint 12: art-knowledge↔art-knowledge mesh\n5. Sprint 13: buying-guide↔buying-guide mesh\n6. Sprint 14: B↔K cross-category (28편)\n7. Sprint 15: artist-story → buying-guide (80편)\n8. Sprint 16: tags 22편 보강 + cascade (48편 추가)\n9. Sprint 17: buying-guide universal fallback + testimonials ← 신규 (13편)\n\nKorean art SEO/SXO topology graph 완전 완성. 회귀 없음(idempotency guard).",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "cf8e6b69",
+    "type": "fix",
+    "scope": "security",
+    "subject": "order-lookup email rate limit key를 SHA256 hash로 변경",
+    "summary": "rate limit 키에 평문 이메일이 들어가 DB rate_limit 테이블에 PII가 잠시 기록되던 문제 — hashEmail() 적용해 평문 노출 차단",
+    "body": "블라인드 스팟 체크에서 발견. lookupOrderDetail / cancelBuyerOrder / updateBuyerShipping 3건 모두 적용.",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
+    "hash": "9e1aa842",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 16 — tags 22편 보강 + 모든 mesh DML 재실행",
+    "summary": "tags 비어있던 22편(art-knowledge 12 + buying-guide 9 + 127-artists-solidarity 1)에 의미적 tags 부여 후 Sprint 11~15 DML 재실행으로 graph 완성",
+    "body": "Phase 1: tags 보강 22편\n- art-knowledge 12편 (예: world-of-printmaking → [판화, 에디션, 컬렉팅 입문, 미술 입문])\n- artist-story 1편 (127-artists-solidarity → [씨앗페2026, 연대, 출품 작가, 작가 이야기])\n- buying-guide 9편 (예: editions-explained → [에디션, 판화, 한정판, 원화, 컬렉팅 입문])\n\nPhase 2: 5개 mesh DML 재실행 (idempotency guard로 신규만 매칭)\n- Sprint 12 (art-knowledge mesh): 17편 추가\n- Sprint 13 (buying-guide mesh): 10편 추가\n- Sprint 14 Phase 1 (buying-guide → cross): 13편 추가\n- Sprint 14 Phase 2 (art-knowledge → buying-guide): 7편 추가\n- Sprint 15 (artist-story → buying-guide): 127-artists-solidarity 1편\n\n최종 graph coverage:\n- artist-story: 82/82 (100%) ← 완전 cover\n- art-knowledge: 40/41 (98%)\n- buying-guide: 39/51 (76%)\n\ntags 비어있는 글: 0편 (전체 graph 진입 가능)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "91a24d36",
     "type": "feat",
     "scope": "seo",
