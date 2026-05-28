@@ -63,6 +63,34 @@ export async function enqueueBroadcast(
     };
   }
 
+  // 멱등 가드: 같은 admin이 같은 channel+subject로 최근 5분 내 큐에 올린(또는 발송 중인)
+  // 캠페인이 있으면 새 broadcast를 만들지 않고 기존 ID 반환.
+  // 더블 클릭 + 슬로우 네트워크 경합으로 두 캠페인이 생성되어 같은 수신자에게 두 번 발송되는 사고 방지.
+  const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+  const { data: existing, error: existingError } = await supabase
+    .from('email_broadcasts')
+    .select('id')
+    .eq('created_by', admin.id)
+    .eq('channel', channel)
+    .eq('subject', subject)
+    .in('status', ['queued', 'sending'])
+    .gte('created_at', fiveMinAgo)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (existingError) {
+    console.error('[enqueue-broadcast] idempotency check error:', existingError);
+    // 검사 실패는 안전 측 — 차단보다 진행 (best-effort idempotency).
+  }
+
+  if (existing?.id) {
+    return {
+      message: '동일한 캠페인이 최근 등록되어 있습니다. 기존 발송이 진행 중입니다.',
+      broadcastId: existing.id,
+    };
+  }
+
   const { data: broadcast, error: broadcastError } = await supabase
     .from('email_broadcasts')
     .insert({

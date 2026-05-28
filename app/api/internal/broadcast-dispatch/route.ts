@@ -63,6 +63,34 @@ export async function GET(request: NextRequest) {
     }
     if (!lockToken) continue;
 
+    // EMAIL_UNSUB_SECRET 누락 시 silent하게 invalid=1 URL로 발송되어 정통망법 위반.
+    // 환경변수 미설정이면 broadcast를 failed로 마킹하고 발송 중단.
+    const sanityToken = generateUnsubscribeToken(
+      'sanity-check-hash',
+      broadcast.channel as 'customer' | 'member' | 'petition'
+    );
+    if (!sanityToken) {
+      console.error(
+        `[broadcast-dispatch] EMAIL_UNSUB_SECRET missing — refusing to send ${broadcast.id}`
+      );
+      const { error: failMarkError } = await supabase
+        .from('email_broadcasts')
+        .update({
+          status: 'failed',
+          dispatch_locked_until: null,
+          dispatch_lock_token: null,
+        })
+        .eq('id', broadcast.id)
+        .eq('dispatch_lock_token', lockToken);
+      if (failMarkError) {
+        console.error(
+          `[broadcast-dispatch] failed to mark ${broadcast.id} as failed:`,
+          failMarkError.message
+        );
+      }
+      continue;
+    }
+
     let hasMore = true;
 
     while (hasMore) {
@@ -153,14 +181,41 @@ export async function GET(request: NextRequest) {
       }));
       const failedIds = pendingRows.slice(result.ids.length).map((r) => r.id);
 
-      await Promise.all(
-        sentUpdates.map(({ id, resendId }) =>
-          supabase
+      // 각 UPDATE 결과를 명시 검사. supabase-js는 RLS/네트워크 에러 시 reject하지 않고
+      // {error} 객체로 resolve — 이를 무시하면 row가 'pending'으로 남아 다음 cron이 같은
+      // 수신자에게 재발송한다(중복 발송 버그).
+      const updateResults = await Promise.all(
+        sentUpdates.map(async ({ id, resendId }) => {
+          const { error } = await supabase
             .from('email_broadcast_recipients')
             .update({ status: 'sent', sent_at: sentAt, resend_id: resendId })
-            .eq('id', id)
-        )
+            .eq('id', id);
+          return { id, error };
+        })
       );
+
+      const updateFailedIds = updateResults
+        .filter((r) => r.error)
+        .map((r) => {
+          console.error(
+            `[broadcast-dispatch] sent-update failed for ${r.id}:`,
+            r.error?.message ?? r.error
+          );
+          return r.id;
+        });
+
+      if (updateFailedIds.length > 0) {
+        // Resend는 이미 발송했으므로 'failed'가 아닌 'sent'로 재시도.
+        // 일시적 RLS/네트워크 오류였다면 두 번째에서 성공해 pending 잔존 방지.
+        await Promise.all(
+          updateFailedIds.map((id) =>
+            supabase
+              .from('email_broadcast_recipients')
+              .update({ status: 'sent', sent_at: sentAt })
+              .eq('id', id)
+          )
+        );
+      }
 
       if (failedIds.length > 0) {
         await supabase
@@ -179,14 +234,25 @@ export async function GET(request: NextRequest) {
     }
 
     // 전량 처리 후 카운터 집계 및 broadcast status 갱신
-    const { data: remainingPending } = await supabase
+    // select 에러를 silent하게 무시하면 data가 null → 잔존 없음으로 오인 →
+    // status='sent'로 false finalize → pending row가 영원히 발송되지 않는 orphan 버그.
+    const { data: remainingPending, error: remainingError } = await supabase
       .from('email_broadcast_recipients')
       .select('id')
       .eq('broadcast_id', broadcast.id)
       .eq('status', 'pending')
       .limit(1);
 
-    if (!remainingPending || remainingPending.length === 0) {
+    if (remainingError) {
+      console.error(
+        `[broadcast-dispatch] remainingPending query failed for ${broadcast.id}:`,
+        remainingError.message
+      );
+      // finalize 보류 — 락은 만료(120s) 후 다음 cron이 재시도.
+      continue;
+    }
+
+    if (remainingPending.length === 0) {
       const { count: sentCount } = await supabase
         .from('email_broadcast_recipients')
         .select('id', { count: 'exact', head: true })
