@@ -494,11 +494,22 @@ async function renderArtistPage({ params }: Props) {
     })
   );
 
-  // Breadcrumb Schema: Home > Artworks > Artist Name
+  // Breadcrumb Schema: Home > Artworks > [Medium Category] > Artist Name
+  // dominantCategory가 있으면 매체 카테고리 단계를 끼움 — 작가↔매체 hub 양방향 link equity.
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
+  const categoryBreadcrumbItem = dominantCategory
+    ? {
+        name:
+          locale === 'en'
+            ? CATEGORY_EN_MAP[dominantCategory] || dominantCategory
+            : dominantCategory,
+        url: buildLocaleUrl(`/artworks/category/${encodeURIComponent(dominantCategory)}`, locale),
+      }
+    : null;
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
     { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
+    ...(categoryBreadcrumbItem ? [categoryBreadcrumbItem] : []),
     { name: formattedName, url: pageUrl },
   ];
   const breadcrumbSchema = safeBuild('breadcrumb', () => createBreadcrumbSchema(breadcrumbItems));
