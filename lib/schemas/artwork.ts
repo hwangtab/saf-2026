@@ -570,6 +570,27 @@ export function generateArtworkJsonLd(
 
   // ItemPage: explicitly links this WebPage to the VisualArtwork/Product entity
   const artworkPageUrl = buildLocaleUrl(`/artworks/${artwork.id}`, locale);
+  // 매체 hub about entity — ItemPage(WebPage subtype)가 매체 매거진 hub와 schema-level 연결.
+  // VisualArtwork.about(Sprint 30)과 별개로 WebPage 레벨에서도 동일 시그널 발행 → 양쪽 schema 모두 KG entity.
+  const itemPageAboutHubs = (() => {
+    const hubSlug = getMediumHubSlug(artwork.category);
+    if (!hubSlug) return null;
+    const catLabel = artwork.category ? getCategoryLabel(artwork.category, locale) : null;
+    return [
+      {
+        '@type': 'CreativeWork' as const,
+        '@id': `${SITE_URL}/stories/${hubSlug}#about`,
+        url: `${SITE_URL}/stories/${hubSlug}`,
+        name: catLabel
+          ? isEnglish
+            ? `${catLabel} guide`
+            : `${catLabel} 가이드`
+          : isEnglish
+            ? 'Medium guide'
+            : '매체 가이드',
+      },
+    ];
+  })();
   const webPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemPage',
@@ -578,6 +599,7 @@ export function generateArtworkJsonLd(
     name: `${titleForLocale} - ${artistForLocale}`,
     isPartOf: { '@id': `${SITE_URL}#website` },
     mainEntity: { '@id': artworkPageUrl },
+    ...(itemPageAboutHubs && { about: itemPageAboutHubs }),
     datePublished: CAMPAIGN.START_DATE,
     dateModified: artwork.sold_at
       ? new Date(artwork.sold_at).toISOString().slice(0, 10)
