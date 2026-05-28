@@ -32,6 +32,7 @@ import {
 import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
 import { getSupabaseArtworksByCategories, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import type { Artwork } from '@/types';
 
@@ -192,6 +193,33 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
             name: locale === 'en' ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
             url: SITE_URL,
           },
+          // 매체 hub about entity — Homepage가 site root entry로서 매체 매거진 hub 4개와
+          // schema-level entity 연결. Sprint 29~37 site-wide entity 시그널 정책 일관 적용.
+          about: (() => {
+            const hubs: Array<{
+              '@type': 'CreativeWork';
+              '@id': string;
+              url: string;
+              name: string;
+            }> = [];
+            const mapping: Array<[string, string]> = [
+              ['회화', locale === 'en' ? 'Painting guide' : '회화 가이드'],
+              ['판화', locale === 'en' ? 'Printmaking guide' : '판화 가이드'],
+              ['사진', locale === 'en' ? 'Photography guide' : '사진 가이드'],
+              ['조각', locale === 'en' ? 'Sculpture guide' : '조각 가이드'],
+            ];
+            for (const [cat, name] of mapping) {
+              const slug = getMediumHubSlug(cat);
+              if (!slug) continue;
+              hubs.push({
+                '@type': 'CreativeWork',
+                '@id': `${SITE_URL}/stories/${slug}#about`,
+                url: `${SITE_URL}/stories/${slug}`,
+                name,
+              });
+            }
+            return hubs;
+          })(),
           // 홈페이지에서 음성검색 대응 — Hero h1만 매칭. 이전 .mission-banner /
           // .hero-subtitle selector는 실제 DOM에 존재하지 않아 schema 검사기가 4개
           // 오류로 보고하던 회귀(빈 매칭 = 검증 실패). 현재 h1은 HomeHero가 노출하는
