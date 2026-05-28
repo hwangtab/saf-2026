@@ -130,6 +130,20 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
   const artworksUrl = buildLocaleUrl('/artworks', locale);
   const itemListSchema = generateArtworkListSchema(artworks, locale, 30, artworksUrl);
   const aggregateOfferSchema = generateGalleryAggregateOffer(artworks, locale, artworksUrl);
+  // 매체 hub about entity — /artworks CollectionPage가 4 매체 매거진 hub와 schema-level 연결.
+  // Sprint 29~31 entity 시그널 정책과 일관.
+  const aboutHubs: Array<{ '@type': 'CreativeWork'; '@id': string; url: string; name: string }> =
+    [];
+  for (const cat of ['회화', '판화', '사진', '조각']) {
+    const slug = getMediumHubSlug(cat);
+    if (!slug) continue;
+    aboutHubs.push({
+      '@type': 'CreativeWork',
+      '@id': `${SITE_URL}/stories/${slug}#about`,
+      url: `${SITE_URL}/stories/${slug}`,
+      name: locale === 'en' ? `${getCategoryLabel(cat, locale)} guide` : `${cat} 가이드`,
+    });
+  }
   const collectionPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -140,6 +154,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
     isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${artworksUrl}#item-list` },
+    ...(aboutHubs.length > 0 && { about: aboutHubs }),
     author: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
