@@ -29,7 +29,8 @@ import {
 } from '@/lib/seo-utils';
 import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/schemas/howto';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
-import { getSupabaseArtworksByCategory } from '@/lib/supabase-data';
+import { getSupabaseArtworksByCategory, getSupabaseStoriesLight } from '@/lib/supabase-data';
+import { getMediumHubSlug, getMediumCommerceHubSlug } from '@/lib/artwork-medium-hub';
 import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { getCategorySeoContent } from '@/lib/category-seo-content';
@@ -207,14 +208,24 @@ async function renderCategoryPage({ params }: Props) {
     return <CategoryNotFoundView />;
   }
 
-  const [categoryArtworks, { artistCount }] = await Promise.all([
+  const [categoryArtworks, { artistCount }, allStories] = await Promise.all([
     getSupabaseArtworksByCategory(category),
     getLiveStats(),
+    getSupabaseStoriesLight(),
   ]);
 
   if (categoryArtworks.length === 0) {
     return <CategoryNotFoundView />;
   }
+
+  // 매체 hub 인링크 — knowledge + commerce 각각 결정론적으로 1편.
+  const mediumHubSlug = getMediumHubSlug(category);
+  const mediumHubStory = mediumHubSlug ? allStories.find((s) => s.slug === mediumHubSlug) : null;
+  const commerceHubSlug = getMediumCommerceHubSlug(category);
+  const commerceHubStory =
+    commerceHubSlug && commerceHubSlug !== mediumHubSlug
+      ? allStories.find((s) => s.slug === commerceHubSlug)
+      : null;
 
   const listArtworks: ArtworkListItem[] = categoryArtworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
@@ -436,9 +447,56 @@ async function renderCategoryPage({ params }: Props) {
           </div>
         </Section>
 
+        {/* 매체 hub 인링크 — knowledge(작품 이해) + commerce(가격/구매) 결정론 link */}
+        {(mediumHubStory || commerceHubStory) && (
+          <Section variant="white" prevVariant="primary-surface" className="pt-12 pb-12">
+            <div className="container-max max-w-3xl">
+              <h2 className="text-2xl md:text-3xl font-section font-bold text-charcoal-deep mb-6">
+                {isEnglish ? `Deeper into ${displayCategory}` : `${displayCategory} 더 깊이 보기`}
+              </h2>
+              <div className="grid gap-3 md:grid-cols-2">
+                {mediumHubStory && (
+                  <Link
+                    href={`/stories/${mediumHubStory.slug}`}
+                    className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+                  >
+                    <div className="text-eyebrow mb-2 text-primary-strong">
+                      {isEnglish ? 'Magazine guide' : '매거진 가이드'}
+                    </div>
+                    <div className="text-base font-medium text-charcoal-deep leading-snug">
+                      {isEnglish && mediumHubStory.title_en
+                        ? mediumHubStory.title_en
+                        : mediumHubStory.title}
+                    </div>
+                  </Link>
+                )}
+                {commerceHubStory && (
+                  <Link
+                    href={`/stories/${commerceHubStory.slug}`}
+                    className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+                  >
+                    <div className="text-eyebrow mb-2 text-primary-strong">
+                      {isEnglish ? 'Pricing & buying' : '가격·구매 가이드'}
+                    </div>
+                    <div className="text-base font-medium text-charcoal-deep leading-snug">
+                      {isEnglish && commerceHubStory.title_en
+                        ? commerceHubStory.title_en
+                        : commerceHubStory.title}
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </Section>
+        )}
+
         {/* 카테고리별 자주 묻는 질문 — visible accordion (long-tail "X 뜻", "X 가격" 검색 흡수) */}
         {faqs && faqs.length > 0 && (
-          <Section variant="white" prevVariant="primary-surface" className="pt-12 pb-12">
+          <Section
+            variant="white"
+            prevVariant={mediumHubStory || commerceHubStory ? 'white' : 'primary-surface'}
+            className="pt-12 pb-12"
+          >
             <div className="container-max max-w-3xl">
               <h2 className="text-2xl md:text-3xl font-section font-bold text-charcoal-deep mb-6">
                 {isEnglish
