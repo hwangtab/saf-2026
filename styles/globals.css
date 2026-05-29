@@ -331,6 +331,15 @@ button:focus:not(:focus-visible) {
   .text-artwork-title {
     @apply font-display font-black text-2xl md:text-3xl tracking-tight leading-tight;
   }
+
+  /* 전량 렌더 갤러리(MasterArtistGallery — 특별전·거장 페이지)의 화면 밖 카드 렌더 스킵.
+     대량 작품(예: 오윤 175점)을 페이지네이션 없이 한 번에 렌더할 때의 레이아웃/페인트 부하 감소.
+     전 작품을 HTML에 유지(SEO) + contain-intrinsic-size로 공간 예약 → CLS 없음.
+     content-visibility 미지원 브라우저는 선언을 무시하고 정상 렌더(graceful degradation). */
+  .cv-gallery-card {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 560px;
+  }
 }
 
 .shimmer-loading {
