@@ -9,6 +9,7 @@ import StatCard from '@/components/ui/StatCard';
 import CTAButtonGroup from '@/components/common/CTAButtonGroup';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import RelatedStoriesGrid from '@/components/features/RelatedStoriesGrid';
 import { createBreadcrumbSchema, generateExhibitionSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveEnRobots, EN_INDEXABLE_PAGES } from '@/lib/en-indexable';
@@ -538,6 +539,20 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             </div>
           </div>
         </Section>
+
+        <RelatedStoriesGrid
+          slugs={[
+            'saf-three-year-journey',
+            'how-mutual-aid-fund-works',
+            'what-is-an-artist-profession',
+          ]}
+          locale={locale}
+          eyebrow={{ ko: '더 깊이 읽기', en: 'Read More' }}
+          title={{
+            ko: '씨앗페를 더 깊이 알아가기',
+            en: 'Understand SAF Deeper',
+          }}
+        />
       </>
     );
   }
@@ -894,6 +909,20 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </div>
         </div>
       </Section>
+
+      <RelatedStoriesGrid
+        slugs={[
+          'saf-three-year-journey',
+          'how-mutual-aid-fund-works',
+          'what-is-an-artist-profession',
+        ]}
+        locale={locale}
+        eyebrow={{ ko: '더 깊이 읽기', en: 'Read More' }}
+        title={{
+          ko: '씨앗페를 더 깊이 알아가기',
+          en: 'Understand SAF Deeper',
+        }}
+      />
     </>
   );
 }
