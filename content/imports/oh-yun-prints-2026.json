@@ -10,7 +10,8 @@
     "new_inserted": 157,
     "price_basis": "CSV 작품가격(도상가격 반영)",
     "payment": "토스 직접 결제 (cafe24 종료, shop_url=null)",
-    "guard_policy": "admin_product_name='OYN-{가나번호3자리}'. 재등록 시 SELECT ... WHERE admin_product_name LIKE 'OYN-%' 확인 후 skip"
+    "guard_policy": "admin_product_name='OYN-{가나번호3자리}'. 재등록 시 SELECT ... WHERE admin_product_name LIKE 'OYN-%' 확인 후 skip",
+    "title_en_added": "2026-05-29 (KO→EN 번역+독립검수 워크플로, 정확성13/일관성1 보정)"
   },
   "works": [
     {
@@ -27,7 +28,8 @@
       "action": "update",
       "artwork_id": "e637bb45-e888-443b-8f2e-8911c79d9ba7",
       "storage_num": 1001,
-      "source_image": "001_대지_1983_41.3×35.0.png"
+      "source_image": "001_대지_1983_41.3×35.0.png",
+      "title_en": "The Land"
     },
     {
       "gana": 2,
@@ -43,7 +45,8 @@
       "action": "insert",
       "artwork_id": "da417149-9c39-4f22-a936-10be6eaaff9b",
       "storage_num": 1002,
-      "source_image": "002_애비_1983_35x36.png"
+      "source_image": "002_애비_1983_35x36.png",
+      "title_en": "Father"
     },
     {
       "gana": 3,
@@ -59,7 +62,8 @@
       "action": "insert",
       "artwork_id": "a0786887-52c1-43ac-9563-cb5ccadb887d",
       "storage_num": 1003,
-      "source_image": "003_인물_1984_51.0x39.0.png"
+      "source_image": "003_인물_1984_51.0x39.0.png",
+      "title_en": "Figure"
     },
     {
       "gana": 4,
@@ -75,7 +79,8 @@
       "action": "insert",
       "artwork_id": "86bf1aef-3f53-4059-b783-af551aeab3b3",
       "storage_num": 1004,
-      "source_image": "004_할머니Ⅱ_1983_51x35.png"
+      "source_image": "004_할머니Ⅱ_1983_51x35.png",
+      "title_en": "Grandmother II"
     },
     {
       "gana": 5,
@@ -91,7 +96,8 @@
       "action": "update",
       "artwork_id": "b3838f14-0601-4e2a-a502-4b099ecd50ad",
       "storage_num": 1005,
-      "source_image": "005_낮도깨비_1985_54.0×35.8.png"
+      "source_image": "005_낮도깨비_1985_54.0×35.8.png",
+      "title_en": "Daytime Goblin"
     },
     {
       "gana": 6,
@@ -107,7 +113,8 @@
       "action": "update",
       "artwork_id": "74824081-63a0-4b76-9de6-a57d865c110e",
       "storage_num": 1006,
-      "source_image": "006_춘무인추무의_1985_62.0×40.0.png"
+      "source_image": "006_춘무인추무의_1985_62.0×40.0.png",
+      "title_en": "No Benevolence in Spring, No Justice in Autumn"
     },
     {
       "gana": 7,
@@ -123,7 +130,8 @@
       "action": "update",
       "artwork_id": "4c920878-32dd-4727-ab03-6eda996597d5",
       "storage_num": 1007,
-      "source_image": null
+      "source_image": null,
+      "title_en": "Sword Song"
     },
     {
       "gana": 8,
@@ -139,7 +147,8 @@
       "action": "update",
       "artwork_id": "4a78be2f-01b1-4db2-956e-32b11df89177",
       "storage_num": 1008,
-      "source_image": "008_징Ⅱ_1985_33.0×25.5.png"
+      "source_image": "008_징Ⅱ_1985_33.0×25.5.png",
+      "title_en": "Gong II"
     },
     {
       "gana": 9,
@@ -155,7 +164,8 @@
       "action": "insert",
       "artwork_id": "f6d05463-90ce-49fe-bf6a-fd9f46ea5353",
       "storage_num": 1009,
-      "source_image": "009_바람부는곳Ⅰ_1985_25x35.png"
+      "source_image": "009_바람부는곳Ⅰ_1985_25x35.png",
+      "title_en": "Where the Wind Blows I"
     },
     {
       "gana": 10,
@@ -171,7 +181,8 @@
       "action": "insert",
       "artwork_id": "79809f0e-2272-47c7-844d-cc8e63da0f65",
       "storage_num": 1010,
-      "source_image": "010_바람부는곳Ⅱ_1985_34x25.png"
+      "source_image": "010_바람부는곳Ⅱ_1985_34x25.png",
+      "title_en": "Where the Wind Blows II"
     },
     {
       "gana": 11,
@@ -187,7 +198,8 @@
       "action": "insert",
       "artwork_id": "44826590-578a-486c-a2fe-83f316feed57",
       "storage_num": 1011,
-      "source_image": "011_겨울새_1985_25.5x35.png"
+      "source_image": "011_겨울새_1985_25.5x35.png",
+      "title_en": "Winter Bird"
     },
     {
       "gana": 12,
@@ -203,7 +215,8 @@
       "action": "update",
       "artwork_id": "45dac49b-e8f2-4aea-8b86-8452dba853c0",
       "storage_num": 1012,
-      "source_image": "012_무호도_1985_35.0×25.6.png"
+      "source_image": "012_무호도_1985_35.0×25.6.png",
+      "title_en": "Dancing Tiger"
     },
     {
       "gana": 13,
@@ -219,7 +232,8 @@
       "action": "insert",
       "artwork_id": "0e9ce433-07b6-4762-9f21-38938edb1847",
       "storage_num": 1013,
-      "source_image": "013_소리꾼Ⅱ_1985_27x25.png"
+      "source_image": "013_소리꾼Ⅱ_1985_27x25.png",
+      "title_en": "Singer II"
     },
     {
       "gana": 14,
@@ -235,7 +249,8 @@
       "action": "update",
       "artwork_id": "1cb51984-cc53-49e2-bf93-1eb4e00f780a",
       "storage_num": 1014,
-      "source_image": "014_춤Ⅱ_1985_29.5×23.5.png"
+      "source_image": "014_춤Ⅱ_1985_29.5×23.5.png",
+      "title_en": "Dance II"
     },
     {
       "gana": 15,
@@ -251,7 +266,8 @@
       "action": "update",
       "artwork_id": "618357b4-b410-472d-8ba5-e0cf3189380e",
       "storage_num": 1015,
-      "source_image": "015_형님_1985_24.0×34.0.png"
+      "source_image": "015_형님_1985_24.0×34.0.png",
+      "title_en": "Elder Brother"
     },
     {
       "gana": 16,
@@ -267,7 +283,8 @@
       "action": "insert",
       "artwork_id": "cde29bea-eed4-4bcb-9f8f-f4760793f4db",
       "storage_num": 1016,
-      "source_image": "016_시방(十方)_1984_17.5x20.png"
+      "source_image": "016_시방(十方)_1984_17.5x20.png",
+      "title_en": "The Ten Directions"
     },
     {
       "gana": 17,
@@ -283,7 +300,8 @@
       "action": "insert",
       "artwork_id": "12d16f35-44e2-4f29-b12b-eba7bb16a954",
       "storage_num": 1017,
-      "source_image": "017_천지굿_1985_21x17.png"
+      "source_image": "017_천지굿_1985_21x17.png",
+      "title_en": "Cheonji Gut (Heaven and Earth Ritual)"
     },
     {
       "gana": 18,
@@ -299,7 +317,8 @@
       "action": "update",
       "artwork_id": "7d93201f-1397-4b76-91e6-a504ac2edf36",
       "storage_num": 1018,
-      "source_image": "018_검은새_1980_16.8×14.8.png"
+      "source_image": "018_검은새_1980_16.8×14.8.png",
+      "title_en": "Black Bird"
     },
     {
       "gana": 19,
@@ -315,7 +334,8 @@
       "action": "insert",
       "artwork_id": "edfd5dbd-8c89-442d-9961-a666decf35d4",
       "storage_num": 1019,
-      "source_image": "019_향교마을_1984_22.7x17.png"
+      "source_image": "019_향교마을_1984_22.7x17.png",
+      "title_en": "Hyanggyo Village"
     },
     {
       "gana": 20,
@@ -331,7 +351,8 @@
       "action": "insert",
       "artwork_id": "afb01239-517b-4a21-9404-550745ed72a9",
       "storage_num": 1020,
-      "source_image": "020_저녁_1984_20x17.7.png"
+      "source_image": "020_저녁_1984_20x17.7.png",
+      "title_en": "Evening"
     },
     {
       "gana": 21,
@@ -347,7 +368,8 @@
       "action": "insert",
       "artwork_id": "e2eba818-dc9e-49e9-9206-2877067a6b9f",
       "storage_num": 1021,
-      "source_image": "021_자화상_1983_18x13.2.png"
+      "source_image": "021_자화상_1983_18x13.2.png",
+      "title_en": "Self-Portrait"
     },
     {
       "gana": 22,
@@ -363,7 +385,8 @@
       "action": "update",
       "artwork_id": "7f154b6f-a158-49ef-877f-618f9da166c1",
       "storage_num": 1022,
-      "source_image": "022_봄의소리Ⅰ_1983_16.5×16.5.png"
+      "source_image": "022_봄의소리Ⅰ_1983_16.5×16.5.png",
+      "title_en": "Sound of Spring I"
     },
     {
       "gana": 23,
@@ -379,7 +402,8 @@
       "action": "update",
       "artwork_id": "b8a497d3-862d-4d98-81d9-dfec5e0bdb7d",
       "storage_num": 1023,
-      "source_image": "023_석양_1985_24.0×22.5.png"
+      "source_image": "023_석양_1985_24.0×22.5.png",
+      "title_en": "Sunset"
     },
     {
       "gana": 24,
@@ -395,7 +419,8 @@
       "action": "insert",
       "artwork_id": "d87a7752-ba4b-4bb8-897e-d5476f22d1fd",
       "storage_num": 1024,
-      "source_image": "024_원귀_1985_25.5x35.png"
+      "source_image": "024_원귀_1985_25.5x35.png",
+      "title_en": "Vengeful Ghost"
     },
     {
       "gana": 25,
@@ -411,7 +436,8 @@
       "action": "insert",
       "artwork_id": "a2aa4551-f661-4573-98fe-a17ffe5613b2",
       "storage_num": 1025,
-      "source_image": "025_윷놀이_1984_28x35.5.png"
+      "source_image": "025_윷놀이_1984_28x35.5.png",
+      "title_en": "Yut Game"
     },
     {
       "gana": 26,
@@ -427,7 +453,8 @@
       "action": "insert",
       "artwork_id": "26d7bfbb-1d78-4d17-a38c-5d03e5331c88",
       "storage_num": 1026,
-      "source_image": "026_봄_1985_21.5x18.png"
+      "source_image": "026_봄_1985_21.5x18.png",
+      "title_en": "Spring"
     },
     {
       "gana": 27,
@@ -443,7 +470,8 @@
       "action": "insert",
       "artwork_id": "381c8608-dc70-4573-b8ef-1dfd222cc4b5",
       "storage_num": 1027,
-      "source_image": "027_춤Ⅲ_1985_29.5x23.5.png"
+      "source_image": "027_춤Ⅲ_1985_29.5x23.5.png",
+      "title_en": "Dance III"
     },
     {
       "gana": 28,
@@ -459,7 +487,8 @@
       "action": "insert",
       "artwork_id": "c3cb1a8b-ab7f-4279-94c4-4305318be6a9",
       "storage_num": 1028,
-      "source_image": "028_설제_1985_34x25.5.png"
+      "source_image": "028_설제_1985_34x25.5.png",
+      "title_en": "Snowscape"
     },
     {
       "gana": 29,
@@ -475,7 +504,8 @@
       "action": "update",
       "artwork_id": "d0188743-0eb3-4c07-97e1-8021163a0d63",
       "storage_num": 1029,
-      "source_image": "029_봄의소리Ⅱ_1985_25.5×35.0.png"
+      "source_image": "029_봄의소리Ⅱ_1985_25.5×35.0.png",
+      "title_en": "Sound of Spring II"
     },
     {
       "gana": 30,
@@ -491,7 +521,8 @@
       "action": "update",
       "artwork_id": "951c0751-1e28-446e-9786-4dfd7ced92e8",
       "storage_num": 1030,
-      "source_image": "030_소리꾼Ⅰ_1985_35.0×25.0.png"
+      "source_image": "030_소리꾼Ⅰ_1985_35.0×25.0.png",
+      "title_en": "Singer I"
     },
     {
       "gana": 31,
@@ -507,7 +538,8 @@
       "action": "insert",
       "artwork_id": "f7776074-4619-4ccf-9bec-03198a6cdaa0",
       "storage_num": 1031,
-      "source_image": "031_징Ⅰ_1985_29x24.png"
+      "source_image": "031_징Ⅰ_1985_29x24.png",
+      "title_en": "Gong I"
     },
     {
       "gana": 32,
@@ -523,7 +555,8 @@
       "action": "insert",
       "artwork_id": "21debb45-1635-47c4-93ce-c50b55bb172b",
       "storage_num": 1032,
-      "source_image": "032_밭갈이_1984_24x33.5.png"
+      "source_image": "032_밭갈이_1984_24x33.5.png",
+      "title_en": "Plowing the Field"
     },
     {
       "gana": 33,
@@ -539,7 +572,8 @@
       "action": "insert",
       "artwork_id": "4ccdd59a-b60e-4418-965b-9f4f55134001",
       "storage_num": 1033,
-      "source_image": "033_피로_1982_24x34.png"
+      "source_image": "033_피로_1982_24x34.png",
+      "title_en": "Fatigue"
     },
     {
       "gana": 34,
@@ -555,7 +589,8 @@
       "action": "insert",
       "artwork_id": "01c68646-cf9d-45da-8b3a-d87216240dbd",
       "storage_num": 1034,
-      "source_image": "034_산팔자 물팔자_1985_25.5x35.png"
+      "source_image": "034_산팔자 물팔자_1985_25.5x35.png",
+      "title_en": "A Life of Mountains, A Life of Water"
     },
     {
       "gana": 35,
@@ -571,7 +606,8 @@
       "action": "insert",
       "artwork_id": "3bd24775-bca2-44ff-8823-70176ab83b54",
       "storage_num": 1035,
-      "source_image": "035_북_1985_31.5x25.5.png"
+      "source_image": "035_북_1985_31.5x25.5.png",
+      "title_en": "Drum"
     },
     {
       "gana": 36,
@@ -587,7 +623,8 @@
       "action": "insert",
       "artwork_id": "e1ced31e-9d1f-487a-a30c-3cbee2cea4cb",
       "storage_num": 1036,
-      "source_image": "036_사상팔면도(四像八面圖)_1983_35.5x38.png"
+      "source_image": "036_사상팔면도(四像八面圖)_1983_35.5x38.png",
+      "title_en": "Diagram of Four Images and Eight Aspects"
     },
     {
       "gana": 37,
@@ -603,7 +640,8 @@
       "action": "insert",
       "artwork_id": "7e3732f3-68c2-43b7-b344-8e08b036bf11",
       "storage_num": 1037,
-      "source_image": "037_모자_1979_45x35.6.png"
+      "source_image": "037_모자_1979_45x35.6.png",
+      "title_en": "Mother and Child"
     },
     {
       "gana": 38,
@@ -619,7 +657,8 @@
       "action": "insert",
       "artwork_id": "95500aab-4d98-49e6-8882-00709395337b",
       "storage_num": 1038,
-      "source_image": "038_새참_1984_22.3x17.7.png"
+      "source_image": "038_새참_1984_22.3x17.7.png",
+      "title_en": "Field Snack"
     },
     {
       "gana": 39,
@@ -635,7 +674,8 @@
       "action": "insert",
       "artwork_id": "ada13cc9-e5e0-4d4d-adae-fddb16bfab4a",
       "storage_num": 1039,
-      "source_image": "039_이향_1982-83_20.8x17.png"
+      "source_image": "039_이향_1982-83_20.8x17.png",
+      "title_en": "Leaving Home"
     },
     {
       "gana": 40,
@@ -651,7 +691,8 @@
       "action": "insert",
       "artwork_id": "a17be53e-d025-428b-86e8-1d95c510bbc2",
       "storage_num": 1040,
-      "source_image": "040_노동의_새벽_1984_27.3x17.7.png"
+      "source_image": "040_노동의_새벽_1984_27.3x17.7.png",
+      "title_en": "Dawn of Labor"
     },
     {
       "gana": 41,
@@ -667,7 +708,8 @@
       "action": "update",
       "artwork_id": "ec78c03b-9e16-46a2-af71-7e28ac12da60",
       "storage_num": 1041,
-      "source_image": "041_지리산Ⅲ_1977_25.0×26.3.png"
+      "source_image": "041_지리산Ⅲ_1977_25.0×26.3.png",
+      "title_en": "Mt. Jirisan III"
     },
     {
       "gana": 42,
@@ -683,7 +725,8 @@
       "action": "insert",
       "artwork_id": "00e08d67-7cc8-4010-9f82-797a6e80977b",
       "storage_num": 1042,
-      "source_image": "042_우는_아이_1977_25.7x18.8.png"
+      "source_image": "042_우는_아이_1977_25.7x18.8.png",
+      "title_en": "Crying Child"
     },
     {
       "gana": 43,
@@ -699,7 +742,8 @@
       "action": "insert",
       "artwork_id": "3a847697-9076-4d36-91c9-6523a03bb35f",
       "storage_num": 1043,
-      "source_image": "043_새벽_1984_15x14.5.png"
+      "source_image": "043_새벽_1984_15x14.5.png",
+      "title_en": "Dawn"
     },
     {
       "gana": 44,
@@ -715,7 +759,8 @@
       "action": "insert",
       "artwork_id": "31fea0b7-6fb2-4448-a5a1-1a24e7d24fbd",
       "storage_num": 1044,
-      "source_image": "044_우리시대의_손_1977_19x19.png"
+      "source_image": "044_우리시대의_손_1977_19x19.png",
+      "title_en": "Hands of Our Time"
     },
     {
       "gana": 46,
@@ -731,7 +776,8 @@
       "action": "insert",
       "artwork_id": "d6fbbccd-d6a0-4721-8a9d-220b7cf701a0",
       "storage_num": 1046,
-      "source_image": "046_아이들의_노래_1984_17.5x12.5.png"
+      "source_image": "046_아이들의_노래_1984_17.5x12.5.png",
+      "title_en": "Children's Song"
     },
     {
       "gana": 47,
@@ -747,7 +793,8 @@
       "action": "insert",
       "artwork_id": "270f803d-e81e-4040-a58b-bbb576c0e578",
       "storage_num": 1047,
-      "source_image": "047_上京_1984_22x16.png"
+      "source_image": "047_上京_1984_22x16.png",
+      "title_en": "Coming Up to Seoul"
     },
     {
       "gana": 48,
@@ -763,7 +810,8 @@
       "action": "update",
       "artwork_id": "1350256c-5137-4a99-afcc-043e4c72287b",
       "storage_num": 1048,
-      "source_image": "048_팔엽일화_1985_53.5×53.5.png"
+      "source_image": "048_팔엽일화_1985_53.5×53.5.png",
+      "title_en": "One Flower, Eight Petals"
     },
     {
       "gana": 49,
@@ -779,7 +827,8 @@
       "action": "insert",
       "artwork_id": "73434a4d-6c55-4efd-859f-7332a9e203b6",
       "storage_num": 1049,
-      "source_image": "049_노동의 새벽 습작_1976_70.2x35.3.png"
+      "source_image": "049_노동의 새벽 습작_1976_70.2x35.3.png",
+      "title_en": "Dawn of Labor, Study"
     },
     {
       "gana": 50,
@@ -795,7 +844,8 @@
       "action": "insert",
       "artwork_id": "89db7a78-ae8f-472e-9709-567fa6f911d1",
       "storage_num": 1050,
-      "source_image": "050_범놀이_1984_28.7x36.png"
+      "source_image": "050_범놀이_1984_28.7x36.png",
+      "title_en": "Tiger Play"
     },
     {
       "gana": 51,
@@ -811,7 +861,8 @@
       "action": "update",
       "artwork_id": "6a47a8a2-764a-4da9-8d9c-217b05536662",
       "storage_num": 1051,
-      "source_image": "051_귀향_1984_25.5×32.5.png"
+      "source_image": "051_귀향_1984_25.5×32.5.png",
+      "title_en": "Returning Home"
     },
     {
       "gana": 52,
@@ -827,7 +878,8 @@
       "action": "insert",
       "artwork_id": "fe781e74-5f5c-4b12-9dc3-f1c55aa757eb",
       "storage_num": 1052,
-      "source_image": "052_보충수업_1985_35x25.5.png"
+      "source_image": "052_보충수업_1985_35x25.5.png",
+      "title_en": "Supplementary Lesson"
     },
     {
       "gana": 53,
@@ -843,7 +895,8 @@
       "action": "insert",
       "artwork_id": "946c4b3c-7c08-4437-822f-f2a772a03eda",
       "storage_num": 1053,
-      "source_image": "053_아라리요_1985_41x35.png"
+      "source_image": "053_아라리요_1985_41x35.png",
+      "title_en": "Arariyo (Arirang refrain)"
     },
     {
       "gana": 54,
@@ -859,7 +912,8 @@
       "action": "insert",
       "artwork_id": "f484b564-712d-4742-a449-3c2842054a43",
       "storage_num": 1054,
-      "source_image": "054_김장_1984_27.5x35.png"
+      "source_image": "054_김장_1984_27.5x35.png",
+      "title_en": "Kimjang (Making Kimchi)"
     },
     {
       "gana": 55,
@@ -875,7 +929,8 @@
       "action": "insert",
       "artwork_id": "f4273f3c-bc7a-4681-b51f-0983546d26a7",
       "storage_num": 1055,
-      "source_image": "055_공해시대_1985_35x25.5.png"
+      "source_image": "055_공해시대_1985_35x25.5.png",
+      "title_en": "Age of Pollution"
     },
     {
       "gana": 56,
@@ -891,7 +946,8 @@
       "action": "insert",
       "artwork_id": "65fa8de5-23f5-4eb7-9aed-74008ca56153",
       "storage_num": 1056,
-      "source_image": "056_우리들의_소원_1985_35x25.png"
+      "source_image": "056_우리들의_소원_1985_35x25.png",
+      "title_en": "Our Wish"
     },
     {
       "gana": 57,
@@ -907,7 +963,8 @@
       "action": "insert",
       "artwork_id": "08f34388-d451-445d-847e-19b39f9e9456",
       "storage_num": 1057,
-      "source_image": "057_밭일_1984_35x25.5.png"
+      "source_image": "057_밭일_1984_35x25.5.png",
+      "title_en": "Field Work"
     },
     {
       "gana": 58,
@@ -923,7 +980,8 @@
       "action": "insert",
       "artwork_id": "4b72c1fd-3881-4e0c-a4b4-29da0b6fe04f",
       "storage_num": 1058,
-      "source_image": "058_농부와_아들_1985_35x25.5.png"
+      "source_image": "058_농부와_아들_1985_35x25.5.png",
+      "title_en": "Farmer and Son"
     },
     {
       "gana": 59,
@@ -939,7 +997,8 @@
       "action": "insert",
       "artwork_id": "771c9c9c-0240-4472-8de0-dad4e0b26e25",
       "storage_num": 1059,
-      "source_image": "059_남부여대(男負女戴)Ⅰ_1983_23.5x24.png"
+      "source_image": "059_남부여대(男負女戴)Ⅰ_1983_23.5x24.png",
+      "title_en": "Men with Loads on Their Backs, Women on Their Heads I"
     },
     {
       "gana": 60,
@@ -955,7 +1014,8 @@
       "action": "insert",
       "artwork_id": "f6ee0f10-f286-418c-addf-45f6514e23bc",
       "storage_num": 1060,
-      "source_image": "060_소리_1984_35x26.png"
+      "source_image": "060_소리_1984_35x26.png",
+      "title_en": "Sound"
     },
     {
       "gana": 61,
@@ -971,7 +1031,8 @@
       "action": "insert",
       "artwork_id": "b37e1c2b-a1aa-41d3-9dad-787704f80a9d",
       "storage_num": 1061,
-      "source_image": "061_여공의_수기_1985_25.5x35.png"
+      "source_image": "061_여공의_수기_1985_25.5x35.png",
+      "title_en": "A Factory Girl's Memoir"
     },
     {
       "gana": 62,
@@ -987,7 +1048,8 @@
       "action": "insert",
       "artwork_id": "72c02e65-bc2f-45c0-ab22-b44d3f5f11e3",
       "storage_num": 1062,
-      "source_image": "062_앵적가_1985_35x25.png"
+      "source_image": "062_앵적가_1985_35x25.png",
+      "title_en": "Song of the Magpie Thief"
     },
     {
       "gana": 63,
@@ -1003,7 +1065,8 @@
       "action": "insert",
       "artwork_id": "e9f91c97-9ae6-486c-9d99-5d0f7540e77d",
       "storage_num": 1063,
-      "source_image": "063_쑥_1985_35x25.5.png"
+      "source_image": "063_쑥_1985_35x25.5.png",
+      "title_en": "Mugwort"
     },
     {
       "gana": 64,
@@ -1019,7 +1082,8 @@
       "action": "update",
       "artwork_id": "536f693e-ef7d-487a-86f9-5dc986220001",
       "storage_num": 1064,
-      "source_image": "064_남녘땅뱃노래_1985_25.3×34.0.png"
+      "source_image": "064_남녘땅뱃노래_1985_25.3×34.0.png",
+      "title_en": "Boat Song of the Southern Land"
     },
     {
       "gana": 65,
@@ -1035,7 +1099,8 @@
       "action": "insert",
       "artwork_id": "8eddba14-5e75-40f3-8d1a-2ca3c55cecc2",
       "storage_num": 1065,
-      "source_image": "065_사상체질도(四像體質圖)_1983_35.3x51.png"
+      "source_image": "065_사상체질도(四像體質圖)_1983_35.3x51.png",
+      "title_en": "Sasang Constitution Chart"
     },
     {
       "gana": 66,
@@ -1051,7 +1116,8 @@
       "action": "insert",
       "artwork_id": "27f07e51-b69a-49c4-a392-f3b6f7dc168c",
       "storage_num": 1066,
-      "source_image": "066_밥_1984_20.5x17.3.png"
+      "source_image": "066_밥_1984_20.5x17.3.png",
+      "title_en": "A Bowl of Rice"
     },
     {
       "gana": 67,
@@ -1067,7 +1133,8 @@
       "action": "insert",
       "artwork_id": "0552ce52-9802-4b81-bc63-f68b027362cd",
       "storage_num": 1067,
-      "source_image": "067_쇠깨머리바람_1984_22x17.png"
+      "source_image": "067_쇠깨머리바람_1984_22x17.png",
+      "title_en": "Soekkaemeori Baram (A Named Wind)"
     },
     {
       "gana": 68,
@@ -1083,7 +1150,8 @@
       "action": "insert",
       "artwork_id": "c6db1034-baa2-43d9-9943-5c6391ce7d5c",
       "storage_num": 1068,
-      "source_image": "068_일월산천_1984_26x20.png"
+      "source_image": "068_일월산천_1984_26x20.png",
+      "title_en": "Sun, Moon, Mountains and Rivers"
     },
     {
       "gana": 69,
@@ -1099,7 +1167,8 @@
       "action": "insert",
       "artwork_id": "d3cc7694-b0f8-4f0d-8078-327bdfd993e5",
       "storage_num": 1069,
-      "source_image": "069_국밥과_희망_1984_17x15.png"
+      "source_image": "069_국밥과_희망_1984_17x15.png",
+      "title_en": "Gukbap and Hope"
     },
     {
       "gana": 70,
@@ -1115,7 +1184,8 @@
       "action": "insert",
       "artwork_id": "d3acf69d-4011-498b-8e75-8868ffba063c",
       "storage_num": 1070,
-      "source_image": "070_할머니Ⅰ_1976-77_26x18.7.png"
+      "source_image": "070_할머니Ⅰ_1976-77_26x18.7.png",
+      "title_en": "Grandmother I"
     },
     {
       "gana": 71,
@@ -1131,7 +1201,8 @@
       "action": "insert",
       "artwork_id": "45c531be-65f3-4604-86cd-4e32401f796f",
       "storage_num": 1071,
-      "source_image": "071_아이들_1977_25.8x18.6.png"
+      "source_image": "071_아이들_1977_25.8x18.6.png",
+      "title_en": "Children"
     },
     {
       "gana": 72,
@@ -1147,7 +1218,8 @@
       "action": "insert",
       "artwork_id": "dcdfe289-ea3f-4a93-9902-4c473fd4a1d5",
       "storage_num": 1072,
-      "source_image": "072_이원수_선생_1984_16.5x12.png"
+      "source_image": "072_이원수_선생_1984_16.5x12.png",
+      "title_en": "Master Yi Won-su"
     },
     {
       "gana": 73,
@@ -1163,7 +1235,8 @@
       "action": "insert",
       "artwork_id": "986fb9a5-b09f-4b0d-a0cf-85297f306fa4",
       "storage_num": 1073,
-      "source_image": "073_대밭_1985_25.5x36.png"
+      "source_image": "073_대밭_1985_25.5x36.png",
+      "title_en": "Bamboo Grove"
     },
     {
       "gana": 74,
@@ -1179,7 +1252,8 @@
       "action": "insert",
       "artwork_id": "e49d9366-33bf-4dc2-8b6a-ba507cef308f",
       "storage_num": 1074,
-      "source_image": "074_일하는_한울님_1984_26.5x17.png"
+      "source_image": "074_일하는_한울님_1984_26.5x17.png",
+      "title_en": "The Laboring Hanullim (Donghak God Who Works)"
     },
     {
       "gana": 75,
@@ -1195,7 +1269,8 @@
       "action": "insert",
       "artwork_id": "86f1f8c5-19d0-40f2-a138-568f71a58ad5",
       "storage_num": 1075,
-      "source_image": "075_초전박살_1984-85_35x25.png"
+      "source_image": "075_초전박살_1984-85_35x25.png",
+      "title_en": "Smashed to Bits at the First Blow"
     },
     {
       "gana": 76,
@@ -1211,7 +1286,8 @@
       "action": "insert",
       "artwork_id": "8e747ab3-cd63-4f5c-b8d2-97f83abd1914",
       "storage_num": 1076,
-      "source_image": "076_미시마에게_1985_35x25.5.png"
+      "source_image": "076_미시마에게_1985_35x25.5.png",
+      "title_en": "To Mishima"
     },
     {
       "gana": 77,
@@ -1227,7 +1303,8 @@
       "action": "insert",
       "artwork_id": "555069a8-8b74-4a34-b44f-ed065ec453dd",
       "storage_num": 1077,
-      "source_image": "077_山河_1984_16.7x29.5.png"
+      "source_image": "077_山河_1984_16.7x29.5.png",
+      "title_en": "Mountains and Rivers"
     },
     {
       "gana": 79,
@@ -1243,7 +1320,8 @@
       "action": "update",
       "artwork_id": "d17d1423-20f7-4bf6-9611-89a3688280f8",
       "storage_num": 1079,
-      "source_image": "079_지리산Ⅱ_1984_22.5×32.0.png"
+      "source_image": "079_지리산Ⅱ_1984_22.5×32.0.png",
+      "title_en": "Mt. Jirisan II"
     },
     {
       "gana": 80,
@@ -1259,7 +1337,8 @@
       "action": "insert",
       "artwork_id": "bf080ca6-44d6-4ae6-869d-447b8af3ed3d",
       "storage_num": 1080,
-      "source_image": "080_문자도-신(信)_1985_35x25.7.png"
+      "source_image": "080_문자도-신(信)_1985_35x25.7.png",
+      "title_en": "Munjado (Ideograph Painting) — Sin / Trust (信)"
     },
     {
       "gana": 81,
@@ -1275,7 +1354,8 @@
       "action": "insert",
       "artwork_id": "578c412b-1a6b-4075-9a55-59100162005e",
       "storage_num": 1081,
-      "source_image": "081_유신_사천왕(維新_四天王)_1985_34x26.png"
+      "source_image": "081_유신_사천왕(維新_四天王)_1985_34x26.png",
+      "title_en": "Four Heavenly Kings of Yusin"
     },
     {
       "gana": 82,
@@ -1291,7 +1371,8 @@
       "action": "insert",
       "artwork_id": "ad437b7f-a143-4292-b270-378f08f44fc1",
       "storage_num": 1082,
-      "source_image": "082_낙화(落花)_Ⅱ_1984_18x15.png"
+      "source_image": "082_낙화(落花)_Ⅱ_1984_18x15.png",
+      "title_en": "Falling Blossoms II"
     },
     {
       "gana": 83,
@@ -1307,7 +1388,8 @@
       "action": "insert",
       "artwork_id": "26213c65-2910-4213-95f5-1c5fdf15046b",
       "storage_num": 1083,
-      "source_image": "083_여공_1985_35x25.5.png"
+      "source_image": "083_여공_1985_35x25.5.png",
+      "title_en": "Factory Girl"
     },
     {
       "gana": 84,
@@ -1323,7 +1405,8 @@
       "action": "insert",
       "artwork_id": "2f60d5f2-6985-4905-8321-c56a7795ab52",
       "storage_num": 1084,
-      "source_image": "084_설움_1979_26.5x24.5.png"
+      "source_image": "084_설움_1979_26.5x24.5.png",
+      "title_en": "Sorrow"
     },
     {
       "gana": 85,
@@ -1339,7 +1422,8 @@
       "action": "insert",
       "artwork_id": "f42ad231-ad40-48f6-ba6e-69d0f04fff20",
       "storage_num": 1085,
-      "source_image": "085_동학_1981_25.5x26.2.png"
+      "source_image": "085_동학_1981_25.5x26.2.png",
+      "title_en": "Donghak"
     },
     {
       "gana": 86,
@@ -1355,7 +1439,8 @@
       "action": "insert",
       "artwork_id": "de89ffe3-7afb-44ad-b891-ef998daf668f",
       "storage_num": 1086,
-      "source_image": "086_울음_1984_32.2x24.png"
+      "source_image": "086_울음_1984_32.2x24.png",
+      "title_en": "Weeping"
     },
     {
       "gana": 87,
@@ -1371,7 +1456,8 @@
       "action": "insert",
       "artwork_id": "baea359b-ac64-4d73-87b9-f2f1fcb0e237",
       "storage_num": 1087,
-      "source_image": "087_농투산이Ⅱ_1985_24.7x20.5.png"
+      "source_image": "087_농투산이Ⅱ_1985_24.7x20.5.png",
+      "title_en": "Peasant II"
     },
     {
       "gana": 88,
@@ -1387,7 +1473,8 @@
       "action": "insert",
       "artwork_id": "6abb9895-01e4-4f43-9208-2ed7d20f67bc",
       "storage_num": 1088,
-      "source_image": "088_智異山Ⅰ_1984_22.5x32.png"
+      "source_image": "088_智異山Ⅰ_1984_22.5x32.png",
+      "title_en": "Mt. Jirisan I"
     },
     {
       "gana": 89,
@@ -1403,7 +1490,8 @@
       "action": "insert",
       "artwork_id": "f521eda2-53a7-40d9-b90e-28c684df1ac3",
       "storage_num": 1089,
-      "source_image": "089_춤Ⅰ_1984_29.5x24.5.png"
+      "source_image": "089_춤Ⅰ_1984_29.5x24.5.png",
+      "title_en": "Dance I"
     },
     {
       "gana": 90,
@@ -1419,7 +1507,8 @@
       "action": "insert",
       "artwork_id": "b3187929-26dd-46c9-bf5a-a181ee2ed03f",
       "storage_num": 1090,
-      "source_image": "090_유신신촌(維新新村)_1985_34.5x25.5.png"
+      "source_image": "090_유신신촌(維新新村)_1985_34.5x25.5.png",
+      "title_en": "Yusin New Village (Saemaul)"
     },
     {
       "gana": 91,
@@ -1435,7 +1524,8 @@
       "action": "insert",
       "artwork_id": "7bdf89ad-c685-4d3a-bab3-e7a9213dcf2c",
       "storage_num": 1091,
-      "source_image": "091_한_1985_26x35.png"
+      "source_image": "091_한_1985_26x35.png",
+      "title_en": "Han (Sorrow)"
     },
     {
       "gana": 92,
@@ -1451,7 +1541,8 @@
       "action": "insert",
       "artwork_id": "60919ed9-9a29-44ef-8bd2-786f19f2adde",
       "storage_num": 1092,
-      "source_image": "092_겨울노래_1982-83_25.5x35.png"
+      "source_image": "092_겨울노래_1982-83_25.5x35.png",
+      "title_en": "Winter Song"
     },
     {
       "gana": 93,
@@ -1467,7 +1558,8 @@
       "action": "insert",
       "artwork_id": "aaf36bc4-376e-449c-acfc-b820b7360283",
       "storage_num": 1093,
-      "source_image": "093_세월_1985_25x17.png"
+      "source_image": "093_세월_1985_25x17.png",
+      "title_en": "The Passing Years"
     },
     {
       "gana": 94,
@@ -1483,7 +1575,8 @@
       "action": "insert",
       "artwork_id": "db6064a3-46c2-461c-8cfc-3e91f61621ea",
       "storage_num": 1094,
-      "source_image": "094_진도_고모_1984_22.5x17.6.png"
+      "source_image": "094_진도_고모_1984_22.5x17.6.png",
+      "title_en": "Aunt from Jindo"
     },
     {
       "gana": 95,
@@ -1499,7 +1592,8 @@
       "action": "insert",
       "artwork_id": "00d84213-fa55-4e7e-ba1b-881f1f9ebbdd",
       "storage_num": 1095,
-      "source_image": "095_똥_1984_22x15.5.png"
+      "source_image": "095_똥_1984_22x15.5.png",
+      "title_en": "Excrement"
     },
     {
       "gana": 96,
@@ -1515,7 +1609,8 @@
       "action": "insert",
       "artwork_id": "626986a8-58d8-48e2-97bc-e57b5312d6be",
       "storage_num": 1096,
-      "source_image": "096_새재에서_1983_18.3x19.5.png"
+      "source_image": "096_새재에서_1983_18.3x19.5.png",
+      "title_en": "At Saejae Pass"
     },
     {
       "gana": 97,
@@ -1531,7 +1626,8 @@
       "action": "insert",
       "artwork_id": "6564098a-434b-48c1-82dc-cd9082940681",
       "storage_num": 1097,
-      "source_image": "097_짊어진_사람_1976-77_25.5x18.5.png"
+      "source_image": "097_짊어진_사람_1976-77_25.5x18.5.png",
+      "title_en": "The Burdened Man"
     },
     {
       "gana": 98,
@@ -1547,7 +1643,8 @@
       "action": "insert",
       "artwork_id": "c8ba8100-1e5e-493a-aa40-1035abbc0c4e",
       "storage_num": 1098,
-      "source_image": "098_어디로_1984_21x17.png"
+      "source_image": "098_어디로_1984_21x17.png",
+      "title_en": "Where To"
     },
     {
       "gana": 99,
@@ -1563,7 +1660,8 @@
       "action": "insert",
       "artwork_id": "e0510504-1b90-4927-a58a-72337fa21368",
       "storage_num": 1099,
-      "source_image": "099_낙화Ⅰ_1983_27x21.5.png"
+      "source_image": "099_낙화Ⅰ_1983_27x21.5.png",
+      "title_en": "Falling Blossoms I"
     },
     {
       "gana": 100,
@@ -1579,7 +1677,8 @@
       "action": "insert",
       "artwork_id": "23e02583-d825-422d-be73-432ee907714d",
       "storage_num": 1100,
-      "source_image": "100_보리_1978_14.6x12.3.png"
+      "source_image": "100_보리_1978_14.6x12.3.png",
+      "title_en": "Barley"
     },
     {
       "gana": 101,
@@ -1595,7 +1694,8 @@
       "action": "insert",
       "artwork_id": "358648c7-a254-45f4-bba8-8ffeda802a05",
       "storage_num": 1101,
-      "source_image": "101_무녀(巫女)_1985_20.5x18.png"
+      "source_image": "101_무녀(巫女)_1985_20.5x18.png",
+      "title_en": "Shamaness"
     },
     {
       "gana": 102,
@@ -1611,7 +1711,8 @@
       "action": "insert",
       "artwork_id": "d321df63-3cac-4526-b5f8-c89a56550e86",
       "storage_num": 1102,
-      "source_image": "102_투계(鬪鷄)_1984_21.5x17.7.png"
+      "source_image": "102_투계(鬪鷄)_1984_21.5x17.7.png",
+      "title_en": "Cockfight"
     },
     {
       "gana": 103,
@@ -1627,7 +1728,8 @@
       "action": "insert",
       "artwork_id": "8109f5a1-5f6b-44de-bdb7-f91bf62c70bd",
       "storage_num": 1103,
-      "source_image": "103_그믐밤_1980_15.1x17.png"
+      "source_image": "103_그믐밤_1980_15.1x17.png",
+      "title_en": "Moonless Night"
     },
     {
       "gana": 104,
@@ -1643,7 +1745,8 @@
       "action": "insert",
       "artwork_id": "7ea1811e-434e-40c2-a397-a9a21a90367f",
       "storage_num": 1104,
-      "source_image": "104_농투산이Ⅰ_1983_16.5x16.7.png"
+      "source_image": "104_농투산이Ⅰ_1983_16.5x16.7.png",
+      "title_en": "Peasant I"
     },
     {
       "gana": 105,
@@ -1659,7 +1762,8 @@
       "action": "insert",
       "artwork_id": "c23d1952-7cf9-48f2-b163-fe7d00a85f99",
       "storage_num": 1105,
-      "source_image": "105_황토_1985_21x14.5.png"
+      "source_image": "105_황토_1985_21x14.5.png",
+      "title_en": "Hwangto (Yellow Loess Soil)"
     },
     {
       "gana": 106,
@@ -1675,7 +1779,8 @@
       "action": "insert",
       "artwork_id": "7729f8ee-a38a-4c3b-8d8c-b0487e9103e6",
       "storage_num": 1106,
-      "source_image": "106_우리도_크면_농부가_되겠지_1979_15.2x11.7.png"
+      "source_image": "106_우리도_크면_농부가_되겠지_1979_15.2x11.7.png",
+      "title_en": "We Too Will Become Farmers When We Grow Up"
     },
     {
       "gana": 107,
@@ -1691,7 +1796,8 @@
       "action": "insert",
       "artwork_id": "db36d189-1b1c-4780-8055-993c09f0ccb5",
       "storage_num": 1107,
-      "source_image": "107_인물_1974_27.3x18.4.png"
+      "source_image": "107_인물_1974_27.3x18.4.png",
+      "title_en": "Figure (Boat)"
     },
     {
       "gana": 108,
@@ -1707,7 +1813,8 @@
       "action": "insert",
       "artwork_id": "8c248aa8-9fc5-4f6f-abb0-da0cc5669897",
       "storage_num": 1108,
-      "source_image": "108_하늘을_우러러_1978_20x14.png"
+      "source_image": "108_하늘을_우러러_1978_20x14.png",
+      "title_en": "Looking Up to the Sky"
     },
     {
       "gana": 110,
@@ -1723,7 +1830,8 @@
       "action": "insert",
       "artwork_id": "13fc7232-d1d4-4c7c-b3d9-16e378041bbe",
       "storage_num": 1110,
-      "source_image": "110_일하는_아이들_1978_36.8x27.png"
+      "source_image": "110_일하는_아이들_1978_36.8x27.png",
+      "title_en": "Working Children"
     },
     {
       "gana": 111,
@@ -1739,7 +1847,8 @@
       "action": "insert",
       "artwork_id": "10e5a874-76da-4c17-8c13-98682fe8e3ab",
       "storage_num": 1111,
-      "source_image": "111_탈춤_1973_27x36.8.png"
+      "source_image": "111_탈춤_1973_27x36.8.png",
+      "title_en": "Mask Dance"
     },
     {
       "gana": 112,
@@ -1755,7 +1864,8 @@
       "action": "insert",
       "artwork_id": "d3ccfdac-9865-4db2-ad17-07d94a1f900c",
       "storage_num": 1112,
-      "source_image": "112_붉은_강_1984_24.8x18.png"
+      "source_image": "112_붉은_강_1984_24.8x18.png",
+      "title_en": "Red River"
     },
     {
       "gana": 113,
@@ -1771,7 +1881,8 @@
       "action": "insert",
       "artwork_id": "526433f4-6faf-4bdf-9d17-c70295e14cbe",
       "storage_num": 1113,
-      "source_image": "113_김지하_상_1984_17x12.3.png"
+      "source_image": "113_김지하_상_1984_17x12.3.png",
+      "title_en": "Portrait of Kim Chi-ha"
     },
     {
       "gana": 114,
@@ -1787,7 +1898,8 @@
       "action": "insert",
       "artwork_id": "1f781136-8320-4430-ad7c-c88a7f63cdd7",
       "storage_num": 1114,
-      "source_image": "114_인동문_1979_4.7x25.5.png"
+      "source_image": "114_인동문_1979_4.7x25.5.png",
+      "title_en": "Indangmun (Honeysuckle Pattern)"
     },
     {
       "gana": 115,
@@ -1803,7 +1915,8 @@
       "action": "insert",
       "artwork_id": "45a2d594-a120-4e5c-a227-5892a21bc7a0",
       "storage_num": 1115,
-      "source_image": "115_소나무_1979_12.3x11.png"
+      "source_image": "115_소나무_1979_12.3x11.png",
+      "title_en": "Pine Tree"
     },
     {
       "gana": 116,
@@ -1819,7 +1932,8 @@
       "action": "insert",
       "artwork_id": "ab94a1ab-f922-4641-9f31-30f49ee3aa36",
       "storage_num": 1116,
-      "source_image": "116_대지_습작Ⅱ_1973_39.5x20.png"
+      "source_image": "116_대지_습작Ⅱ_1973_39.5x20.png",
+      "title_en": "The Land, Study II"
     },
     {
       "gana": 117,
@@ -1835,7 +1949,8 @@
       "action": "insert",
       "artwork_id": "942e7280-cf5a-43a5-8a82-68c430b7e89c",
       "storage_num": 1117,
-      "source_image": "117_기마전_1974_36x26.5.png"
+      "source_image": "117_기마전_1974_36x26.5.png",
+      "title_en": "Cavalry Battle"
     },
     {
       "gana": 118,
@@ -1851,7 +1966,8 @@
       "action": "insert",
       "artwork_id": "9b320728-0d15-47ad-b48d-289b83323cbb",
       "storage_num": 1118,
-      "source_image": "118_천렵_1984_25.5x31.png"
+      "source_image": "118_천렵_1984_25.5x31.png",
+      "title_en": "Stream Fishing"
     },
     {
       "gana": 119,
@@ -1867,7 +1983,8 @@
       "action": "insert",
       "artwork_id": "8b0c2277-9049-4517-b0e8-18574a4cb17f",
       "storage_num": 1119,
-      "source_image": "119_나귀_1980_13.2x18.png"
+      "source_image": "119_나귀_1980_13.2x18.png",
+      "title_en": "Donkey"
     },
     {
       "gana": 121,
@@ -1883,7 +2000,8 @@
       "action": "insert",
       "artwork_id": "6dbe7903-d9fc-465a-8e19-eff10d9ad9e7",
       "storage_num": 1121,
-      "source_image": "121_일하는_손_1979_21x25.3.png"
+      "source_image": "121_일하는_손_1979_21x25.3.png",
+      "title_en": "Working Hands"
     },
     {
       "gana": 123,
@@ -1899,7 +2017,8 @@
       "action": "insert",
       "artwork_id": "ebffddde-5996-409d-b386-d489b77a0948",
       "storage_num": 1123,
-      "source_image": "123_박꽃누나_02_난이와 코스모스_1983_23.8x17.8.png"
+      "source_image": "123_박꽃누나_02_난이와 코스모스_1983_23.8x17.8.png",
+      "title_en": "Bakkot Nuna 02: Nan-i and the Cosmos"
     },
     {
       "gana": 124,
@@ -1915,7 +2034,8 @@
       "action": "insert",
       "artwork_id": "0a9075bc-1f01-4480-8b32-98bc4050edc4",
       "storage_num": 1124,
-      "source_image": "124_박꽃누나_17_곡마단 구경2_1983_23.8x17.8.png"
+      "source_image": "124_박꽃누나_17_곡마단 구경2_1983_23.8x17.8.png",
+      "title_en": "Bakkot Nuna 17: Watching the Circus 2"
     },
     {
       "gana": 125,
@@ -1931,7 +2051,8 @@
       "action": "insert",
       "artwork_id": "bfc9bb86-2200-4028-9990-5ed9b200573c",
       "storage_num": 1125,
-      "source_image": "125_박꽃누나_28_독서_1983_18x13.png"
+      "source_image": "125_박꽃누나_28_독서_1983_18x13.png",
+      "title_en": "Bakkot Nuna 28: Reading"
     },
     {
       "gana": 126,
@@ -1947,7 +2068,8 @@
       "action": "insert",
       "artwork_id": "9868e1aa-0486-4933-a107-2bb6166c50e9",
       "storage_num": 1126,
-      "source_image": "126_박꽃누나_23_군밤 장수와 소년_1983_18x13.5.png"
+      "source_image": "126_박꽃누나_23_군밤 장수와 소년_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 23: The Roasted-Chestnut Seller and the Boy"
     },
     {
       "gana": 127,
@@ -1963,7 +2085,8 @@
       "action": "insert",
       "artwork_id": "21067b20-c900-4334-887a-e977dad1f3a2",
       "storage_num": 1127,
-      "source_image": "127_박꽃누나_16_곡마단 구경1_1983_18x13.7.png"
+      "source_image": "127_박꽃누나_16_곡마단 구경1_1983_18x13.7.png",
+      "title_en": "Bakkot Nuna 16: Watching the Circus 1"
     },
     {
       "gana": 128,
@@ -1979,7 +2102,8 @@
       "action": "insert",
       "artwork_id": "8d6c185b-a993-4252-a4e6-6cd8f0ca41ae",
       "storage_num": 1128,
-      "source_image": "128_박꽃누나_05_얼음 눈▪꽃 눈_1983_18x13.3.png"
+      "source_image": "128_박꽃누나_05_얼음 눈▪꽃 눈_1983_18x13.3.png",
+      "title_en": "Bakkot Nuna 05: Ice Snow, Flower Snow"
     },
     {
       "gana": 129,
@@ -1995,7 +2119,8 @@
       "action": "insert",
       "artwork_id": "a5f23ce2-23c9-4b6c-bb68-d8c64065d583",
       "storage_num": 1129,
-      "source_image": "129_박꽃누나_12_유령과의 대결_1983_18x13.5.png"
+      "source_image": "129_박꽃누나_12_유령과의 대결_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 12: Confrontation with the Ghost"
     },
     {
       "gana": 130,
@@ -2011,7 +2136,8 @@
       "action": "insert",
       "artwork_id": "67444d87-c1d0-45f7-bf0a-c5493d8978e5",
       "storage_num": 1130,
-      "source_image": "130_박꽃누나_06_박꽃누나_1983_18x13.5.png"
+      "source_image": "130_박꽃누나_06_박꽃누나_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 06: Bakkot Nuna"
     },
     {
       "gana": 131,
@@ -2027,7 +2153,8 @@
       "action": "insert",
       "artwork_id": "cdff035a-5a21-4f19-a50c-323efeab8405",
       "storage_num": 1131,
-      "source_image": "131_박꽃누나_25_초록 언덕을 가는 전차_1983_18x13.5.png"
+      "source_image": "131_박꽃누나_25_초록 언덕을 가는 전차_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 25: The Tram Crossing the Green Hill"
     },
     {
       "gana": 132,
@@ -2043,7 +2170,8 @@
       "action": "insert",
       "artwork_id": "bada8bc7-95eb-4c1b-adce-a2149eb33997",
       "storage_num": 1132,
-      "source_image": "132_박꽃누나_04_눈 속의 꽃_1983_18x13.5.png"
+      "source_image": "132_박꽃누나_04_눈 속의 꽃_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 04: Flower in the Snow"
     },
     {
       "gana": 133,
@@ -2059,7 +2187,8 @@
       "action": "insert",
       "artwork_id": "48ce6257-8c8d-4b9a-8d96-88b0bb2ea7bd",
       "storage_num": 1133,
-      "source_image": "133_박꽃누나_15_노래의 선물_1983_18x13.5.png"
+      "source_image": "133_박꽃누나_15_노래의 선물_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 15: A Gift of Song"
     },
     {
       "gana": 134,
@@ -2075,7 +2204,8 @@
       "action": "insert",
       "artwork_id": "2c1ea376-7537-4538-8dd8-beae5d791a19",
       "storage_num": 1134,
-      "source_image": "134_박꽃누나_19_곡마단_1983_18x13.5.png"
+      "source_image": "134_박꽃누나_19_곡마단_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 19: The Circus"
     },
     {
       "gana": 135,
@@ -2091,7 +2221,8 @@
       "action": "insert",
       "artwork_id": "eb6aa096-3bab-4cff-92e0-f0003bb6b5f8",
       "storage_num": 1135,
-      "source_image": "135_박꽃누나_11_유령을 찾는 일_1983_18x13.5.png"
+      "source_image": "135_박꽃누나_11_유령을 찾는 일_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 11: The Search for the Ghost"
     },
     {
       "gana": 136,
@@ -2107,7 +2238,8 @@
       "action": "insert",
       "artwork_id": "74a3e222-89b3-457e-bacc-7bd8d1c3a39f",
       "storage_num": 1136,
-      "source_image": "136_박꽃누나_14_코스모스 핀 철둑_1983_18x13.5.png"
+      "source_image": "136_박꽃누나_14_코스모스 핀 철둑_1983_18x13.5.png",
+      "title_en": "Bakkot Nuna 14: The Railway Embankment Where Cosmos Bloomed"
     },
     {
       "gana": 137,
@@ -2123,7 +2255,8 @@
       "action": "insert",
       "artwork_id": "ea236458-81fc-4038-ab04-c781ac9509d5",
       "storage_num": 1137,
-      "source_image": "137_박꽃누나_22_시집_진눈깨비_출판_기념회_1983_18.0×13.5.png"
+      "source_image": "137_박꽃누나_22_시집_진눈깨비_출판_기념회_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 22: Poetry Collection Sleet — Publication Party"
     },
     {
       "gana": 138,
@@ -2139,7 +2272,8 @@
       "action": "insert",
       "artwork_id": "d4c844e5-3588-4e60-b17d-ce2f69a2ed78",
       "storage_num": 1138,
-      "source_image": "138_박꽃누나_10_유령가의_비밀_1983_18.0×13.5.png"
+      "source_image": "138_박꽃누나_10_유령가의_비밀_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 10: The Secret of the Haunted House"
     },
     {
       "gana": 139,
@@ -2155,7 +2289,8 @@
       "action": "insert",
       "artwork_id": "ab28af4e-2ab0-4e95-87d8-1f3b177469eb",
       "storage_num": 1139,
-      "source_image": "139_박꽃누나_08_아카시아_이야기_1983_18.0×13.3.png"
+      "source_image": "139_박꽃누나_08_아카시아_이야기_1983_18.0×13.3.png",
+      "title_en": "Bakkot Nuna 08: The Acacia Story"
     },
     {
       "gana": 140,
@@ -2171,7 +2306,8 @@
       "action": "insert",
       "artwork_id": "b4b7ec0b-e2c7-4348-923b-b733d63605bf",
       "storage_num": 1140,
-      "source_image": "140_박꽃누나_20_진눈깨비_1983_18.0×13.5.png"
+      "source_image": "140_박꽃누나_20_진눈깨비_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 20: Sleet"
     },
     {
       "gana": 141,
@@ -2187,7 +2323,8 @@
       "action": "insert",
       "artwork_id": "6ad78faf-dba9-40b0-a92a-96caa5cd43d4",
       "storage_num": 1141,
-      "source_image": "141_박꽃누나_24_진눈깨비_오는_날_1983_18.0×13.5.png"
+      "source_image": "141_박꽃누나_24_진눈깨비_오는_날_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 24: The Day Sleet Falls"
     },
     {
       "gana": 142,
@@ -2203,7 +2340,8 @@
       "action": "insert",
       "artwork_id": "0889d12f-bdb7-4cff-9515-63956182e5f5",
       "storage_num": 1142,
-      "source_image": "142_박꽃누나_21_시와_집세_1983_18.0×13.5.png"
+      "source_image": "142_박꽃누나_21_시와_집세_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 21: Poetry and Rent"
     },
     {
       "gana": 143,
@@ -2219,7 +2357,8 @@
       "action": "insert",
       "artwork_id": "88db29d4-5fba-4afc-bc30-cf80ddd64bff",
       "storage_num": 1143,
-      "source_image": "143_박꽃누나_18_아버지와_어머니_1983_18.0×13.5.png"
+      "source_image": "143_박꽃누나_18_아버지와_어머니_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 18: Father and Mother"
     },
     {
       "gana": 144,
@@ -2235,7 +2374,8 @@
       "action": "insert",
       "artwork_id": "53f4edf2-e63e-4d91-a3be-43adbe751422",
       "storage_num": 1144,
-      "source_image": "144_박꽃누나_03_꽃불_1983_18.0×13.5.png"
+      "source_image": "144_박꽃누나_03_꽃불_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 03: Fireworks"
     },
     {
       "gana": 145,
@@ -2251,7 +2391,8 @@
       "action": "insert",
       "artwork_id": "b64e96b5-81b8-43e4-8fe0-b59d955f6527",
       "storage_num": 1145,
-      "source_image": "145_박꽃누나_13_목련_피는_날_1983_18.0×13.5.png"
+      "source_image": "145_박꽃누나_13_목련_피는_날_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 13: The Day the Magnolia Blooms"
     },
     {
       "gana": 146,
@@ -2267,7 +2408,8 @@
       "action": "insert",
       "artwork_id": "8e283a93-eccf-495a-bfa4-b2ad79548713",
       "storage_num": 1146,
-      "source_image": "146_박꽃누나_09_약수터의_바둑이_1983_18.0×13.5.png"
+      "source_image": "146_박꽃누나_09_약수터의_바둑이_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 09: The Spotted Dog at the Mineral Spring"
     },
     {
       "gana": 147,
@@ -2283,7 +2425,8 @@
       "action": "insert",
       "artwork_id": "5f68725a-d366-4828-960c-1b8115fb2105",
       "storage_num": 1147,
-      "source_image": "147_박꽃누나_07_밤골로_가는_길_1983_18.0×13.5.png"
+      "source_image": "147_박꽃누나_07_밤골로_가는_길_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 07: The Road to Bamgol"
     },
     {
       "gana": 148,
@@ -2299,7 +2442,8 @@
       "action": "insert",
       "artwork_id": "85f827c4-5a97-472f-8756-e4b588da1ad1",
       "storage_num": 1148,
-      "source_image": "148_박꽃누나_01_귀여운_아가씨_1983_19.3×17.8.png"
+      "source_image": "148_박꽃누나_01_귀여운_아가씨_1983_19.3×17.8.png",
+      "title_en": "Bakkot Nuna 01: The Lovely Young Lady"
     },
     {
       "gana": 149,
@@ -2315,7 +2459,8 @@
       "action": "insert",
       "artwork_id": "f9357bed-8d2a-4bc2-a003-86c1fed67879",
       "storage_num": 1149,
-      "source_image": "149_박꽃누나_27_외사촌누나_1983_18.0×13.7.png"
+      "source_image": "149_박꽃누나_27_외사촌누나_1983_18.0×13.7.png",
+      "title_en": "Bakkot Nuna 27: The Cousin Elder Sister"
     },
     {
       "gana": 150,
@@ -2331,7 +2476,8 @@
       "action": "insert",
       "artwork_id": "4b368ef7-d6b6-4a25-a0f3-468f539f5fb2",
       "storage_num": 1150,
-      "source_image": "150_박꽃누나_26_방랑의_소년_1983_18.0×13.5.png"
+      "source_image": "150_박꽃누나_26_방랑의_소년_1983_18.0×13.5.png",
+      "title_en": "Bakkot Nuna 26: The Wandering Boy"
     },
     {
       "gana": 151,
@@ -2347,7 +2493,8 @@
       "action": "insert",
       "artwork_id": "a743abcd-0f52-4d36-9cd4-ea7b6cc4aba8",
       "storage_num": 1151,
-      "source_image": "151_메아리소년_10_발가숭이_여자_1984_17.8x12.5.png"
+      "source_image": "151_메아리소년_10_발가숭이_여자_1984_17.8x12.5.png",
+      "title_en": "Echo Boy 10: The Naked Woman"
     },
     {
       "gana": 152,
@@ -2363,7 +2510,8 @@
       "action": "insert",
       "artwork_id": "cfdf9d9f-0fdf-4b42-a789-433fc155ce3d",
       "storage_num": 1152,
-      "source_image": "152_메아리소년_18_그리움은_메아리_되어_1984_17.8x12.0.png"
+      "source_image": "152_메아리소년_18_그리움은_메아리_되어_1984_17.8x12.0.png",
+      "title_en": "Echo Boy 18: Longing Becomes an Echo"
     },
     {
       "gana": 153,
@@ -2379,7 +2527,8 @@
       "action": "insert",
       "artwork_id": "87ca8674-f49c-471d-b07d-92f3a706d75b",
       "storage_num": 1153,
-      "source_image": "153_메아리소년_07_애국자_비애국자_1984_18.0x13.5.png"
+      "source_image": "153_메아리소년_07_애국자_비애국자_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 07: Patriot? Traitor?"
     },
     {
       "gana": 154,
@@ -2395,7 +2544,8 @@
       "action": "insert",
       "artwork_id": "23fda403-3b07-47c3-bfde-db35b94e5eaa",
       "storage_num": 1154,
-      "source_image": "154_메아리소년_09_민이가_찾는_것_1984_18.0x13.5.png"
+      "source_image": "154_메아리소년_09_민이가_찾는_것_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 09: What Min-i Is Looking For"
     },
     {
       "gana": 155,
@@ -2411,7 +2561,8 @@
       "action": "insert",
       "artwork_id": "0e2d3434-a880-40dd-bce5-182c527fbafc",
       "storage_num": 1155,
-      "source_image": "155_메아리소년_02_전쟁_동생나_1984_18.0x12.0.png"
+      "source_image": "155_메아리소년_02_전쟁_동생나_1984_18.0x12.0.png",
+      "title_en": "Echo Boy 02: War — Younger Sibling, Me"
     },
     {
       "gana": 156,
@@ -2427,7 +2578,8 @@
       "action": "insert",
       "artwork_id": "a59d6012-0ca2-4ca3-a910-d5eb473bdfe5",
       "storage_num": 1156,
-      "source_image": "156_메아리소년_11_민이_엄마_1984_17.8x12.8.png"
+      "source_image": "156_메아리소년_11_민이_엄마_1984_17.8x12.8.png",
+      "title_en": "Echo Boy 11: Min-i's Mother"
     },
     {
       "gana": 157,
@@ -2443,7 +2595,8 @@
       "action": "insert",
       "artwork_id": "4f081ef3-3797-449e-8db9-345ecdd0cf3c",
       "storage_num": 1157,
-      "source_image": "157_메아리소년_03_수상한_아버지_1984_18.0x13.5.png"
+      "source_image": "157_메아리소년_03_수상한_아버지_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 03: The Suspicious Father"
     },
     {
       "gana": 158,
@@ -2459,7 +2612,8 @@
       "action": "insert",
       "artwork_id": "82a5ff9e-c059-4ee4-bc8c-50daba2939ce",
       "storage_num": 1158,
-      "source_image": "158_메아리소년_23_가슴에_해를_안고_수복_어머니와_박_선생_1984_18.0x13.5.png"
+      "source_image": "158_메아리소년_23_가슴에_해를_안고_수복_어머니와_박_선생_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 23: Holding the Sun to the Chest — Subok's Mother and Teacher Park"
     },
     {
       "gana": 159,
@@ -2475,7 +2629,8 @@
       "action": "insert",
       "artwork_id": "b875d9db-0fa4-48e1-98d0-557e10b9508b",
       "storage_num": 1159,
-      "source_image": "159_메아리소년_12_불길한_날_1984_18.0x13.5.png"
+      "source_image": "159_메아리소년_12_불길한_날_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 12: An Ominous Day"
     },
     {
       "gana": 160,
@@ -2491,7 +2646,8 @@
       "action": "insert",
       "artwork_id": "5575a721-3e5a-4791-a630-65433076408f",
       "storage_num": 1160,
-      "source_image": "160_메아리소년_13_정님의_외삼촌_1984_18.0x13.5.png"
+      "source_image": "160_메아리소년_13_정님의_외삼촌_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 13: Jeong-nim's Uncle"
     },
     {
       "gana": 161,
@@ -2507,7 +2663,8 @@
       "action": "insert",
       "artwork_id": "74f504b5-ac20-4e86-ab2d-1b7905cd8d2d",
       "storage_num": 1161,
-      "source_image": "161_메아리소년_17_희미한_희망_1984_18.0x13.5.png"
+      "source_image": "161_메아리소년_17_희미한_희망_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 17: A Faint Hope"
     },
     {
       "gana": 162,
@@ -2523,7 +2680,8 @@
       "action": "insert",
       "artwork_id": "08262e9d-c761-44fa-8cc8-e958230b6bba",
       "storage_num": 1162,
-      "source_image": "162_메아리소년_24_가슴에_해를_안고_자전거_상회_1984_18.0x13.5.png"
+      "source_image": "162_메아리소년_24_가슴에_해를_안고_자전거_상회_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 24: Holding the Sun to the Chest — The Bicycle Shop"
     },
     {
       "gana": 163,
@@ -2539,7 +2697,8 @@
       "action": "insert",
       "artwork_id": "e729300f-2678-40c6-b409-96be4f98596e",
       "storage_num": 1163,
-      "source_image": "163_메아리소년_20_가슴에_해를_안고_낮이_아니면_밤에라도_1984_18.0x13.5.png"
+      "source_image": "163_메아리소년_20_가슴에_해를_안고_낮이_아니면_밤에라도_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 20: Holding the Sun to the Chest — If Not by Day, Then by Night"
     },
     {
       "gana": 164,
@@ -2555,7 +2714,8 @@
       "action": "insert",
       "artwork_id": "feddba0d-fd42-41e8-a9bb-b896206f281d",
       "storage_num": 1164,
-      "source_image": "164_메아리소년_08_산길_1984_18.0x13.5.png"
+      "source_image": "164_메아리소년_08_산길_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 08: Mountain Path"
     },
     {
       "gana": 165,
@@ -2571,7 +2731,8 @@
       "action": "insert",
       "artwork_id": "88b62d8d-e835-47cf-99b7-e7135e9fcb0e",
       "storage_num": 1165,
-      "source_image": "165_메아리소년_16_고아는_씩씩하다_1984_18.0x13.5.png"
+      "source_image": "165_메아리소년_16_고아는_씩씩하다_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 16: The Orphan Is Brave"
     },
     {
       "gana": 166,
@@ -2587,7 +2748,8 @@
       "action": "insert",
       "artwork_id": "798f56ea-e51d-4f41-9f6f-8c0513596813",
       "storage_num": 1166,
-      "source_image": "166_메아리소년_14_매_맞은_소년_1984_18.0x13.5.png"
+      "source_image": "166_메아리소년_14_매_맞은_소년_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 14: The Beaten Boy"
     },
     {
       "gana": 167,
@@ -2603,7 +2765,8 @@
       "action": "insert",
       "artwork_id": "9404b8d8-3b94-4d5b-ac0f-d6062498bd39",
       "storage_num": 1167,
-      "source_image": "167_메아리소년_19_가슴에_해를_안고_열차_사고_1984_18.0x13.5.png"
+      "source_image": "167_메아리소년_19_가슴에_해를_안고_열차_사고_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 19: Holding the Sun to the Chest — The Train Accident"
     },
     {
       "gana": 168,
@@ -2619,7 +2782,8 @@
       "action": "insert",
       "artwork_id": "10d5aecb-722c-47e2-8e24-92dcff2d5bf5",
       "storage_num": 1168,
-      "source_image": "168_메아리소년_21_가슴에_해를_안고_국화빵과_박_선생_1984_18.0x13.5.png"
+      "source_image": "168_메아리소년_21_가슴에_해를_안고_국화빵과_박_선생_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 21: Holding the Sun to the Chest — Chrysanthemum Bread and Teacher Park"
     },
     {
       "gana": 169,
@@ -2635,7 +2799,8 @@
       "action": "insert",
       "artwork_id": "a64594a7-cccb-4b73-b444-8a241ac619ad",
       "storage_num": 1169,
-      "source_image": "169_메아리소년_21_가슴에_해를_안고_착하고_바르게_1984_18.0x13.5.png"
+      "source_image": "169_메아리소년_21_가슴에_해를_안고_착하고_바르게_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 21: Holding the Sun to the Chest — Kind and Upright"
     },
     {
       "gana": 170,
@@ -2651,7 +2816,8 @@
       "action": "insert",
       "artwork_id": "440f3b9a-9f7a-4c01-bb22-c4c9459102de",
       "storage_num": 1170,
-      "source_image": "170_메아리소년_22_가슴에_해를_안고_청소_당번_1984_18.0x13.5.png"
+      "source_image": "170_메아리소년_22_가슴에_해를_안고_청소_당번_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 22: Holding the Sun to the Chest — Cleaning Duty"
     },
     {
       "gana": 171,
@@ -2667,7 +2833,8 @@
       "action": "insert",
       "artwork_id": "8bc7041b-aa5e-4a04-8b3d-485611d2f700",
       "storage_num": 1171,
-      "source_image": "171_메아리소년_05_소영이도_가고_1984_18.0x13.5.png"
+      "source_image": "171_메아리소년_05_소영이도_가고_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 05: So-yeong Is Gone Too"
     },
     {
       "gana": 172,
@@ -2683,7 +2850,8 @@
       "action": "insert",
       "artwork_id": "9f864ad2-1e54-4bcc-9ffc-04177ea439f0",
       "storage_num": 1172,
-      "source_image": "172_메아리소년_01_민이와_소영이_1984_21.0x17.8.png"
+      "source_image": "172_메아리소년_01_민이와_소영이_1984_21.0x17.8.png",
+      "title_en": "Echo Boy 01: Min-i and So-yeong"
     },
     {
       "gana": 173,
@@ -2699,7 +2867,8 @@
       "action": "insert",
       "artwork_id": "268d97bf-bd31-43fb-bdd3-fd7bb9167998",
       "storage_num": 1173,
-      "source_image": "173_메아리소년_25_생각_1984_20.3x17.2.png"
+      "source_image": "173_메아리소년_25_생각_1984_20.3x17.2.png",
+      "title_en": "Echo Boy 25: Thought"
     },
     {
       "gana": 174,
@@ -2715,7 +2884,8 @@
       "action": "insert",
       "artwork_id": "21d52d81-84bd-4283-8f32-ee0bf3b2d841",
       "storage_num": 1174,
-      "source_image": "174_메아리소년_15_가는_어머니_가는_아버지_1984_18.0x13.5.png"
+      "source_image": "174_메아리소년_15_가는_어머니_가는_아버지_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 15: Mother Departing, Father Departing"
     },
     {
       "gana": 175,
@@ -2731,7 +2901,8 @@
       "action": "insert",
       "artwork_id": "95cd5243-87f4-4e0a-9208-4fa558c60213",
       "storage_num": 1175,
-      "source_image": "175_메아리소년_04_새어머니_품속에_1984_18.0x13.5.png"
+      "source_image": "175_메아리소년_04_새어머니_품속에_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 04: In the Stepmother's Embrace"
     },
     {
       "gana": 176,
@@ -2747,7 +2918,8 @@
       "action": "insert",
       "artwork_id": "eb04e22e-43e3-4d86-859d-2e24ebf1f80f",
       "storage_num": 1176,
-      "source_image": "176_메아리소년_06_적을_쏜_아버지_1984_18.0x13.5.png"
+      "source_image": "176_메아리소년_06_적을_쏜_아버지_1984_18.0x13.5.png",
+      "title_en": "Echo Boy 06: The Father Who Shot the Enemy"
     },
     {
       "gana": 179,
@@ -2763,7 +2935,8 @@
       "action": "insert",
       "artwork_id": "7c6563b8-63aa-4678-a21c-58d25e99ec70",
       "storage_num": 1179,
-      "source_image": "179_박꽃누나_29_시집_진눈깨비_출판_기념회_1983_18.0x13.5.png"
+      "source_image": "179_박꽃누나_29_시집_진눈깨비_출판_기념회_1983_18.0x13.5.png",
+      "title_en": "Bakkot Nuna 29: Poetry Collection Sleet — Publication Party"
     },
     {
       "gana": 181,
@@ -2779,7 +2952,8 @@
       "action": "insert",
       "artwork_id": "4ecc7c3c-f13b-4e3a-92c0-0819982c9bd2",
       "storage_num": 1181,
-      "source_image": "181_박꽃누나_30_방랑의_소년_1983_18.0x13.5.png"
+      "source_image": "181_박꽃누나_30_방랑의_소년_1983_18.0x13.5.png",
+      "title_en": "Bakkot Nuna 30: The Wandering Boy"
     },
     {
       "gana": 182,
@@ -2795,7 +2969,8 @@
       "action": "insert",
       "artwork_id": "a14f398d-d79d-4822-a3a1-1f610528d6d9",
       "storage_num": 1182,
-      "source_image": "182_새재_1979_12.3x12.7.png"
+      "source_image": "182_새재_1979_12.3x12.7.png",
+      "title_en": "Saejae Pass"
     },
     {
       "gana": 184,
@@ -2811,7 +2986,8 @@
       "action": "insert",
       "artwork_id": "f57bb25d-f281-443f-ba1a-f928f473e08a",
       "storage_num": 1184,
-      "source_image": "184_대지_습작Ⅲ_1981_25.5x21.2.png"
+      "source_image": "184_대지_습작Ⅲ_1981_25.5x21.2.png",
+      "title_en": "The Land, Study III"
     }
   ]
 }

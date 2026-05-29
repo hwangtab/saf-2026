@@ -28,7 +28,7 @@ import {
 } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { formatArtistName, resolveArtworkImageUrl } from '@/lib/utils';
-import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
+import { parseArtworkPrice } from '@/lib/schemas/utils';
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
@@ -123,11 +123,7 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // Use the first artwork's image as the representative image for the artist
-  const representativeArtwork = artistArtworks[0];
-  // OG 이미지는 1200px 최적화 URL 사용 (resolveSeoArtworkImageUrl)
-  const seoImageUrl = resolveSeoArtworkImageUrl(representativeArtwork.images[0] ?? '');
-  const imageUrl = seoImageUrl.startsWith('http') ? seoImageUrl : `${SITE_URL}${seoImageUrl}`;
+  // Sprint 71: representativeArtwork·seoImageUrl·imageUrl 변수 제거 — Next.js 컨벤션 파일이 자동 emit.
   const artistPath = `/artworks/artist/${encodeURIComponent(artistName)}`;
   const pageUrl = buildLocaleUrl(artistPath, locale);
 
@@ -212,37 +208,17 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
       type: 'website',
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: t('metaImageAlt', {
-            artist: formattedName,
-            title:
-              locale === 'en' && representativeArtwork.title_en
-                ? representativeArtwork.title_en
-                : representativeArtwork.title,
-          }),
-        },
-      ],
+      // images 미명시 — Next.js 컨벤션 파일(opengraph-image.tsx)이 자동 emit.
+      // 작가 이름 + 작품 수 + 가격 범위 + 대표 카테고리 + 대표 작품 이미지 + SAF 브랜딩이 그려진
+      // 1200x630 ImageResponse가 raw 작품 thumbnail보다 SNS 공유에서 작가 entity 명확히 노출.
+      images: undefined,
     },
     twitter: {
       card: 'summary_large_image',
       title: metaTitle,
       description: seoDescription.substring(0, 200),
-      images: [
-        {
-          url: imageUrl,
-          alt: t('metaImageAlt', {
-            artist: formattedName,
-            title:
-              locale === 'en' && representativeArtwork.title_en
-                ? representativeArtwork.title_en
-                : representativeArtwork.title,
-          }),
-        },
-      ],
+      // twitter-image.tsx 컨벤션 부재 시 Next.js가 opengraph-image.tsx로 자동 fallback.
+      images: undefined,
     },
     // 영어 아티스트 페이지는 한국어 콘텐츠만 있어 thin content — 색인 제외
     ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),
