@@ -27,6 +27,13 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const cookieRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
 
+  // [locale]/* 경로(/mypage 등)는 next-intl이 /ko/* 또는 /en/*로 redirect 처리.
+  // callback이 bare /mypage로 보내면 intlProxy redirect chain이 한 단계 추가되어
+  // supabase session cookie 전파에 부정적. NEXT_LOCALE cookie로 locale 결정해서
+  // 명시 prefix 부여. portal 경로(/dashboard, /exhibitor 등)는 locale 없음.
+  const localeCookie = request.cookies.get('NEXT_LOCALE')?.value;
+  const localePrefix = localeCookie === 'en' ? '/en' : '/ko';
+
   // supabase-ssr setAll 콜백이 알려주는 모든 session cookie(httpOnly·secure·sameSite·path·maxAge 옵션 포함)를
   // capture해서 모든 redirect 응답에 명시 적용. 이게 누락되면 브라우저에 세션 cookie 미세팅 →
   // /mypage 등 후속 페이지가 user를 못 찾아 /login 무한 루프.
@@ -293,7 +300,7 @@ export async function GET(request: NextRequest) {
               ? `${origin}/onboarding?role=artist`
               : intendedRole === 'exhibitor'
                 ? `${origin}/exhibitor/onboarding`
-                : `${origin}/mypage`;
+                : `${origin}${localePrefix}/mypage`;
           return redirectWithOAuthStateCleared(noAppDestination);
         }
       }
