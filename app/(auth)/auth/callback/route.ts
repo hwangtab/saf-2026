@@ -40,10 +40,24 @@ export async function GET(request: NextRequest) {
     const supabase = await createSupabaseServerClient();
     const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!sessionError) {
+    if (sessionError) {
+      console.error('[auth/callback] exchangeCodeForSession failed', {
+        code: sessionError.code,
+        message: sessionError.message,
+        status: sessionError.status,
+      });
+      return redirectWithOAuthStateCleared(`${origin}/login?error=session_exchange`);
+    }
+
+    {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+
+      if (!user) {
+        console.error('[auth/callback] session exchange ok but getUser returned null');
+        return redirectWithOAuthStateCleared(`${origin}/login?error=session_missing`);
+      }
 
       if (user) {
         // Fetch profile to determine where to redirect
@@ -54,7 +68,12 @@ export async function GET(request: NextRequest) {
           .maybeSingle();
 
         if (profileError) {
-          return redirectWithOAuthStateCleared(`${origin}/login`);
+          console.error('[auth/callback] profile lookup failed', {
+            userId: user.id,
+            code: profileError.code,
+            message: profileError.message,
+          });
+          return redirectWithOAuthStateCleared(`${origin}/login?error=profile_lookup`);
         }
 
         if (profile?.role === 'admin') {
@@ -250,6 +269,10 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // 최후 fallback: 신원 정보 불완전. 콜렉터로 가정해 마이페이지로.
-  return redirectWithOAuthStateCleared(`${origin}/mypage`);
+  // 최후 fallback: code 자체 없는 경우. /login으로 보내고 명시.
+  console.error('[auth/callback] reached final fallback', {
+    hasCode: Boolean(code),
+    url: request.url,
+  });
+  return redirectWithOAuthStateCleared(`${origin}/login?error=callback_fallback`);
 }

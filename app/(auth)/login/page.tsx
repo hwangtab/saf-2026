@@ -36,6 +36,12 @@ const LOGIN_COPY = {
     accountLoadError: '계정 정보를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.',
     oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
     oauthStateError: '인증 세션이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.',
+    sessionExchangeError:
+      '소셜 로그인 세션 생성에 실패했습니다. 잠시 후 다시 시도해주세요. (지속되면 관리자에게 문의)',
+    sessionMissingError:
+      '로그인은 처리되었으나 세션이 유실되었습니다. 쿠키 차단 설정을 확인하고 다시 시도해주세요.',
+    profileLookupError: '계정 정보 조회에 실패했습니다. 잠시 후 다시 시도해주세요.',
+    callbackFallbackError: '인증 처리가 완료되지 않았습니다. 다시 로그인해주세요.',
     forgotPassword: '비밀번호를 잊으셨나요?',
     resetSuccess: '비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.',
   },
@@ -53,6 +59,12 @@ const LOGIN_COPY = {
     accountLoadError: 'We could not load your account info. Please refresh and try again.',
     oauthError: 'An error occurred during social sign-in. Please try again shortly.',
     oauthStateError: 'Your sign-in session expired or was invalid. Please sign in again.',
+    sessionExchangeError:
+      'Failed to create a session from the social login. Please try again shortly.',
+    sessionMissingError:
+      'Sign-in succeeded but the session was lost. Check your cookie blocking settings and try again.',
+    profileLookupError: 'Failed to look up your account info. Please try again shortly.',
+    callbackFallbackError: 'Authentication did not complete. Please sign in again.',
     forgotPassword: 'Forgot your password?',
     resetSuccess: 'Password changed. Please sign in with your new password.',
   },
@@ -86,7 +98,18 @@ export default function LoginPage() {
     };
   }, [supabase, router, oauthErrorParam, redirectAfterLogin]);
 
-  const initialError = oauthErrorParam === 'oauth_state' ? copy.oauthStateError : null;
+  const initialError =
+    oauthErrorParam === 'oauth_state'
+      ? copy.oauthStateError
+      : oauthErrorParam === 'session_exchange'
+        ? copy.sessionExchangeError
+        : oauthErrorParam === 'session_missing'
+          ? copy.sessionMissingError
+          : oauthErrorParam === 'profile_lookup'
+            ? copy.profileLookupError
+            : oauthErrorParam === 'callback_fallback'
+              ? copy.callbackFallbackError
+              : null;
   const [error, setError] = useState<string | null>(initialError);
 
   const resetParam = searchParams.get('reset');
