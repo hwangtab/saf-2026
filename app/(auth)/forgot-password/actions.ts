@@ -26,12 +26,18 @@ export async function requestPasswordReset(input: {
   const rl = await rateLimit(`forgot-password:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) return { status: 'rate_limited' };
 
-  const admin = createSupabaseAdminClient();
-  const rpc = admin.rpc as unknown as (
-    fn: string,
-    args: { p_email: string }
-  ) => Promise<{ data: unknown; error: { message?: string } | null }>;
-  const { data, error } = await rpc('check_reset_eligibility', {
+  // NOTE: do NOT alias `admin.rpc` to a bare variable — Supabase client methods
+  // depend on `this` binding (`SupabaseClient.rpc` calls `this.rest.rpc(...)`).
+  // Extracting the method drops `this` and throws
+  // `TypeError: Cannot read properties of undefined (reading 'rest')` at runtime.
+  // Always call as `client.rpc(...)`.
+  const admin = createSupabaseAdminClient() as unknown as {
+    rpc: (
+      fn: string,
+      args: { p_email: string }
+    ) => Promise<{ data: unknown; error: { message?: string } | null }>;
+  };
+  const { data, error } = await admin.rpc('check_reset_eligibility', {
     p_email: parsed.data.email,
   });
   if (error) {
