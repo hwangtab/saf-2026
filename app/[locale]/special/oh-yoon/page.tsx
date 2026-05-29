@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import MasterArtistMediumSections from '@/components/special/MasterArtistMediumSections';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import PaperGrain from '@/components/common/PaperGrain';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import {
   createBreadcrumbSchema,
@@ -218,7 +219,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
       <JsonLdScript data={[breadcrumbSchema, exhibitionEventSchema, itemListSchema]} />
       {aggregateOfferSchema && <JsonLdScript data={aggregateOfferSchema} />}
       <PaperGrain />
-      <div className="w-full bg-canvas-soft min-h-screen font-sans">
+      <div className={`w-full bg-canvas-soft min-h-screen font-sans ${SAWTOOTH_TOP_SAFE_PADDING}`}>
         {/* Hero Section */}
         <section className="relative w-full py-20 md:py-32 px-4 overflow-hidden border-b-8 border-double border-white/10 bg-charcoal">
           <div

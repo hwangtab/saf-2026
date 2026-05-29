@@ -2,6 +2,7 @@
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import OrdersTab from './OrdersTab';
 import WishlistTab from './WishlistTab';
 import ProfileTab from './ProfileTab';
@@ -96,7 +97,7 @@ export default function MypageTabs({
   ];
 
   return (
-    <div className="min-h-screen bg-canvas-soft pt-20 pb-16">
+    <div className={`min-h-screen bg-canvas-soft pt-24 md:pt-28 ${SAWTOOTH_TOP_SAFE_PADDING}`}>
       <div className="container-max px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto">
         <h1 className="text-2xl font-black text-charcoal-deep mb-6">{messages.title}</h1>
 
