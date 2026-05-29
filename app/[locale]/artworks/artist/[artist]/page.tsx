@@ -491,6 +491,27 @@ async function renderArtistPage({ params }: Props) {
       })),
       // 작가의 dominant medium — Person.knowsAbout에 매체 hub CreativeWork entity 추가.
       dominantCategory,
+      // 같은 매체의 정전 작가(ARTIST_PRIMARY_STORY 등재) sister — Person.colleague entity.
+      // dominantCategory가 같은 작가 중 자기 자신 제외, 정전 등재만, 최대 5명.
+      sisterCanonicalArtists: dominantCategory
+        ? [
+            ...new Set(
+              allArtworks
+                .filter(
+                  (a) =>
+                    a.category === dominantCategory &&
+                    a.artist !== artistName &&
+                    getPrimaryStorySlug(a.artist)
+                )
+                .map((a) => a.artist)
+            ),
+          ]
+            .slice(0, 5)
+            .map((name) => ({
+              name,
+              url: buildLocaleUrl(`/artworks/artist/${encodeURIComponent(name)}`, locale),
+            }))
+        : [],
     })
   );
 

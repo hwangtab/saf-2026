@@ -36,6 +36,12 @@ export interface EnhancedArtistSchemaInput extends ArtistSchemaInput {
    * CreativeWork entity 추가에 사용 — Person ↔ 매체 hub 양방향 KG association.
    */
   dominantCategory?: string | null;
+  /**
+   * 같은 매체의 정전(ARTIST_PRIMARY_STORY 등재) 작가 name 배열.
+   * Person.colleague로 발행 — Knowledge Graph 작가 cluster 형성.
+   * URL은 호출자에서 buildLocaleUrl로 미리 절대 URL 변환.
+   */
+  sisterCanonicalArtists?: ReadonlyArray<{ name: string; url: string }>;
 }
 
 /** sameAs URL 정규화 + 중복 제거. 빈 문자열 / null / undefined 제거. */
@@ -241,6 +247,16 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
       const merged: Array<string | object> = [...knowsAbout, ...hubEntity];
       return merged.length > 0 ? { knowsAbout: merged } : {};
     })(),
+    // 같은 매체의 정전 작가 — Person.colleague entity. KG에서 작가 cluster 형성.
+    ...(artist.sisterCanonicalArtists &&
+      artist.sisterCanonicalArtists.length > 0 && {
+        colleague: artist.sisterCanonicalArtists.map((c) => ({
+          '@type': 'Person',
+          '@id': c.url,
+          name: c.name,
+          url: c.url,
+        })),
+      }),
     // Education and awards
     ...(credentials.length > 0 && {
       hasCredential: credentials.map((cred) => ({
