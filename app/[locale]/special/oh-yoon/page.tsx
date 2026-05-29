@@ -734,7 +734,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
             <div className="flex justify-center">
               <Link
                 href="/artworks/artist/오윤"
-                className="inline-flex items-center gap-2 rounded bg-primary px-8 py-4 text-sm font-bold tracking-wide text-white transition-colors duration-300 hover:bg-primary-strong"
+                className="inline-flex items-center gap-2 rounded bg-primary-strong px-8 py-4 text-sm font-bold tracking-wide text-white transition-colors duration-300 hover:bg-primary"
               >
                 {isEnglish ? 'View all works by Oh Yoon' : '오윤 작품 전체 보기'}
                 <span aria-hidden="true" className="text-base">
