@@ -145,7 +145,17 @@ function sendToGA(metric: Metric, pagePath: string) {
 
 // CLS는 SPA 환경에서 onCLS(cb)의 단일 누적 방식 대신 per-path 격리 전송.
 // sendClsForPath: 특정 path에서 발생한 CLS 값을 GA4 + Vercel track으로 직접 전송.
+//
+// dedup: visibilitychange는 hidden→visible 토글마다 fire하고 SPA navigation도 같은
+// path로 재진입하면 같은 누적값을 다시 보낼 수 있어, 동일 (path, rounded value) 조합은
+// 1회만 전송. 2026-05-27 회귀 사고 — 단일 desktop Chrome이 56분 동안 같은 CLS=0.7818
+// 값을 10번 적재해 Web Vitals 회귀 false-positive 발생. dedup 키는 값×1000 정수 변환
+// (GA4 event_value 단위 동일), 부동소수 비교 노이즈 회피.
+const lastSentClsKeyRef: { current: string | null } = { current: null };
 function sendClsForPath(path: string, value: number, debugTarget?: string) {
+  const dedupKey = `${path}|${Math.round(value * 1000)}`;
+  if (lastSentClsKeyRef.current === dedupKey) return;
+  lastSentClsKeyRef.current = dedupKey;
   const rating: Metric['rating'] =
     value <= 0.1 ? 'good' : value <= 0.25 ? 'needs-improvement' : 'poor';
   const eventValue = Math.round(value * 1000);

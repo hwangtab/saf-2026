@@ -223,13 +223,16 @@ async function fetchAnalytics(supabase: SupabaseClient): Promise<AdminNotificati
     });
   }
 
-  // GSC 동기화 중단 (3일 초과)
+  // GSC 동기화 중단 (4일 초과)
+  // 기준이 > 3이었으나 GSC publish lag가 주말·공휴일 끼면 3~4일까지 정상 — 2026-05-29
+  // false-positive 사고(last_fetched 정상, latest_date=5/26) 후 4일로 완화.
+  // 실제 동기화 장애(cron 실패·OAuth 만료)는 last_fetched도 함께 stale해져 별도 신호.
   if (!syncRes.error && syncRes.data?.length) {
     const status = syncRes.data[0];
     if (status.latest_date) {
       const latestDate = new Date(status.latest_date);
       const staleDays = (Date.now() - latestDate.getTime()) / 86_400_000;
-      if (staleDays > 3) {
+      if (staleDays > 4) {
         notifications.push({
           id: 'alert:gsc-sync-stale',
           category: 'analytics',
