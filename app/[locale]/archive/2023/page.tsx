@@ -16,6 +16,7 @@ import { SITE_URL, CONTACT } from '@/lib/constants';
 import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { generateVideoSchema } from '@/lib/schemas/content';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import Card from '@/components/ui/Card';
@@ -157,9 +158,40 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
+  // VideoObject ItemList — /archive/2023 영상 목록을 video carousel rich result 자격으로 발행.
+  // Google 'Videos' 탭 + AI Overview '씨앗페 2023 영상' 쿼리 citation 시그널.
+  const videoListSchema =
+    videos.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          '@id': `${pageUrl}#video-list`,
+          name: isEnglish ? 'SAF 2023 Archive Videos' : '씨앗페 2023 아카이브 영상',
+          numberOfItems: videos.length,
+          itemListElement: videos.map((video, idx) => ({
+            '@type': 'ListItem',
+            position: idx + 1,
+            item: generateVideoSchema({
+              title: localizeVideoTitle(video.title, idx, video.title_en),
+              description:
+                isEnglish && video.description_en?.trim()
+                  ? video.description_en
+                  : video.description,
+              youtubeId: video.youtubeId,
+              uploadDate: '2023-12-31',
+              transcript: video.transcript,
+              locale: isEnglish ? 'en' : 'ko',
+              watchPageUrl: `${SITE_URL}/archive/2023/videos/${video.youtubeId}`,
+            }),
+          })),
+        }
+      : null;
+
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, collectionSchema]} />
+      <JsonLdScript
+        data={[breadcrumbSchema, collectionSchema, ...(videoListSchema ? [videoListSchema] : [])]}
+      />
       <PageHero
         customBackgroundImage={getHeroOverride('archive/2023')}
         title={isEnglish ? 'SAF 2023 Offline Exhibition' : '2023 오프라인 전시'}
