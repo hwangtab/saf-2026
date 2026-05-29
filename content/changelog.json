@@ -1,5 +1,235 @@
 [
   {
+    "hash": "d2f0cfa4",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "OAuth state 가드 제거 + login useEffect 무한 루프 차단 — 실제 OAuth 가입이 안 되던 회귀 hotfix",
+    "summary": "직전 fix들이 Google OAuth 정상 흐름을 깨뜨려 로그인 → 로그인 페이지 무한 로딩 회귀 발생. 두 부작용 모두 즉시 차단",
+    "body": "회귀 시나리오:\n1. callback 자체 OAuth state 가드가 정상 OAuth 흐름에서 false positive로 발동\n   → /login?error=oauth_state로 redirect\n2. login useEffect 가드가 client에서 session 있다고 판단 → /mypage로 replace\n3. /mypage server는 session 미확정 → /login으로 redirect\n4. /login → /mypage → /login 무한 루프\n\n수정:\n- callback의 자체 oauth_state 가드 제거 — Supabase PKCE flow가 이미 CSRF 자체 방어 (RFC 7636).\n  우리 가드는 supabase의 query 보존 동작에 의존해서 false positive 발생 가능했음.\n  cookieRole은 의도 보존 위해 계속 읽고, requestState/cookieState/isValidOAuthState 미사용분 정리\n- login useEffect: oauthErrorParam 또는 redirectAfterLogin 파라미터 있으면 redirect skip.\n  무한 루프 진입 가능성 차단 (defense in depth)\n\n보안:\n- Supabase가 PKCE verifier·challenge를 자체 관리하므로 OAuth CSRF는 방어됨\n- 우리 자체 nonce 가드는 중복 + 깨지기 쉬워 제거가 옳음",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "59cdbaf5",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Sprint 69 — artwork detail openGraph.images / twitter.images override 제거 (Dynamic OG route 활성화)",
+    "summary": "generateArtworkMetadata의 openGraph.images + twitter.images 명시 override를 제거해 Next.js 컨벤션 파일 app/[locale]/artworks/[id]/opengraph-image.tsx가 자동 emit되도록 복구 — SNS/카카오/Discover에 가격+SOLD 배지+SAF 브랜딩 디자인 카드 노출",
+    "body": "배경:\n- app/[locale]/artworks/[id]/opengraph-image.tsx에 동적 OG 라우트 존재 (1200x630 ImageResponse, 작품 이미지 + 가격 + SOLD 배지 + SAF 브랜딩)\n- generateArtworkMetadata(lib/schemas/artwork.ts L141-203)가 openGraph.images 명시 override로 raw Supabase 썸네일을 박음\n- Next.js metadata 머지 룰: 명시 images 필드가 컨벤션 파일을 이긴다 → 디자인 카드 한 번도 노출 안 됨\n- 코드 코멘트(artwork.ts L109)에 GSC 8,883 노출 / 1.8% CTR 명시 — 최대 개선 레버\n\nProduction 검증 (curl 2026-05-29):\n- https://www.saf2026.com/artworks/aa0c1482-c1fc-4646-97d6-849dadbb59bf\n- og:image content=\"https://khtunrybrzntlnowlahb.supabase.co/storage/v1/render/image/.../288__original.jpg\" (raw URL)\n- 컨벤션 파일 /opengraph-image* 경로 미노출 — override 사고 확정\n\n변경:\n- lib/schemas/artwork.ts L141-203:\n  - openGraph.images / twitter.images 50줄 override 제거\n  - images: undefined 명시로 baseMetadata.openGraph.images의 generic OG_IMAGE도 컨벤션 우선 적용 유도\n  - openGraph 다른 필드(type, locale, siteName) 보존\n  - twitter card='summary_large_image' 보존\n  - 위 변경 의도 코멘트로 명시: '명시 override 시 디자인 카드 미노출 회귀'\n\n효과:\n- 348개 작품 detail SNS 공유 시 가격 + SOLD 배지 + SAF 브랜딩 디자인 카드 노출\n- 카카오톡 미리보기 / Twitter Card / Facebook Sharing Debugger에 동적 카드 emit\n- /opengraph-image route가 ImageResponse로 1200x630 emit (revalidate 적용)\n- 한국어 작품 detail 검색 트래픽(GSC 1.8% CTR)의 SNS dwell + share 향상 기대\n- 코드 50라인 reduction (alt 합성 로직이 컨벤션 파일로 이동)\n\n회귀 방지:\n- scope 한정: artwork detail (lib/schemas/artwork.ts)만 변경\n- stories detail / artist gallery / petition oh-yoon은 narrative anchor 사진 회귀 위험으로 별도 sprint\n- twitter-image.tsx 별도 컨벤션 파일이 없어도 Next.js가 opengraph-image.tsx로 자동 fallback\n- baseMetadata.openGraph 다른 필드는 spread로 보존\n\nPR 머지 후 검증 권장:\n1. Vercel preview 배포 후 curl로 og:image 경로가 /opengraph-image*로 변경됐는지 확인\n2. Twitter Card Validator(https://cards-dev.twitter.com/validator)로 작품 5건 미리보기\n3. Facebook Sharing Debugger에서 'Scrape Again' 후 og:image 경로 확인\n4. 카카오톡 모바일 공유 시 디자인 카드 노출 확인\n\n워크플로우 발견 경로:\n- Ultracode Sprint 65 multi-modal audit 'open-graph-twitter' dimension에서 발견\n- adversarial verify confirmed (leverage 5→3, complexity 2)\n- scope narrow 권장: artwork detail만 적용, 다른 페이지는 narrative 회귀 위험",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "6d87c153",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "forgot-password server action 500 + GTM CSP 위반 콘솔 에러 회귀 fix",
+    "summary": "'use server' 파일은 async function만 export 가능 — RequestPasswordResetResult type export로 인해 RSC 직렬화 단계에서 500 throw. type을 별도 파일로 분리. 추가로 GlobalAnalyticsGate의 ANALYTICS_DISABLED_PREFIXES에 신규 (auth) 페이지 누락으로 GTM 로드 시도 → portal strict CSP 위반 → 콘솔 에러",
+    "body": "원인 (사용자 보고 콘솔 에러):\n1. 'forgot-password:1 Failed to load resource 500' — server action endpoint 500\n   → 'use server' 파일은 모든 export가 async function이어야 함 (Next.js 16 invariant)\n   → export type RequestPasswordResetResult가 그 invariant 위반 → RSC payload 직렬화 시 throw\n2. 'Loading the script gtag/js?id=... violates CSP \"script-src 'self' 'unsafe-inline'\"' — strict portal CSP가 GTM 차단\n   → GlobalAnalyticsGate가 (auth) 페이지에서 analytics를 disabled 처리해야 하는데 forgot/reset 누락 → GTM 로드 시도 → CSP 차단 → console error\n3. 'Server Components render' 에러 — 위 (1)의 server action 500 결과\n\n수정:\n- app/(auth)/forgot-password/actions.ts: type export 제거, import type from './types'\n- app/(auth)/forgot-password/types.ts: 신규, RequestPasswordResetResult type 분리\n- components/common/GlobalAnalyticsGate.tsx: ANALYTICS_DISABLED_PREFIXES에 '/forgot-password', '/reset-password' 추가\n\n회귀 방지:\n- type-check 통과\n- forgot-password tests 17/17 pass (action 10 + page 7)\n- (auth) 페이지에 analytics 미로드 정책 일관",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "ba528b82",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 68 — Artwork alt text 4토큰 확장 + lib/artwork-alt.ts util 통합",
+    "summary": "작품 이미지 alt text 6 호출처에 lib/artwork-alt.ts 공유 util 적용 — 4토큰 형식(title, material year - artist)으로 통일. detail page LCP alt가 2토큰('${title} - ${artist}')에서 4토큰으로 확장. Google Images long-tail query 매칭 + alt 일관성 동시 확보",
+    "body": "배경:\n- ArtworkImage.tsx detail page LCP alt는 2토큰 '${title} - ${artist}' (line 141)\n- ArtworkGridCard / ArtworkCategoryGrid / ArtworkCard는 3토큰('${title}, ${material} - ${artist}')\n- RelatedArtworkCard alt={artTitle} 단일 토큰\n- SearchResultItem inline 2토큰\n- alt builder 코드 중복 + 형식 불일치 → 일관성 갭\n\n변경:\n- lib/artwork-alt.ts (신규):\n  buildArtworkAlt({ title, artist, material, year }, locale)\n  - KO: `${title}, ${material} ${year} - ${artist}`\n  - EN: `${title}, ${material} ${year} by ${artist}`\n  - 가드레일: keyword stuffing 회피(category·size·edition 제외), '확인 중'/'Pending' material 제외, EN locale에서 한글 material/year 자동 제외\n- 6 호출처 통합:\n  - components/features/ArtworkImage.tsx (detail LCP)\n    - props에 material, year 추가\n    - app/[locale]/artworks/[id]/page.tsx에서 artwork.material, artwork.year 전달\n  - components/features/ArtworkGridCard.tsx\n  - components/features/ArtworkCategoryGrid.tsx\n  - components/ui/ArtworkCard.tsx getImageAlt 함수\n  - components/features/RelatedArtworkCard.tsx (alt={artTitle} → buildArtworkAlt)\n  - components/features/search/SearchResultItem.tsx\n- types/index.ts: ArtworkCardData에 year?: string 추가 (alt util 호환)\n\n효과:\n- detail page LCP alt 4토큰 확장 (가장 큰 GSC 노출 페이지)\n- 6 호출처 동일 형식 — Google Images alt + 주변 텍스트 일관성\n- schema imageObject.alternateName(year, material 순서) 형식과 정렬\n- long-tail keyword matching: '오윤 목판화 1985 안는다' 같은 query\n- alt builder 중복 코드 4곳 → 단일 util\n\n가드레일 (keyword stuffing 회피):\n- 최대 4 lexical token (title, material, year, artist)\n- category·size·edition·tone은 schema/주변 visible text로 위임\n- alt 총 길이는 자연스러운 한 줄(<100자)\n\n회귀 방지:\n- material/year null/undefined 시 fallback 2토큰\n- EN locale 한글 material 필터 (기존 정책 보존)\n- npm run type-check 통과\n- 기존 호출처 외 작품 이미지 alt는 무변동(SafeImage 직접 alt prop 사용처)\n\n워크플로우 발견 경로:\n- Ultracode Sprint 65 multi-modal audit 'image-seo' dimension에서 발견\n- adversarial verify confirmed (leverage 5→3, complexity 2)\n- 코드 주석(artwork.ts:109)에서 GSC 8,883 노출 1.8% CTR — 가장 큰 개선 레버 명시",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "ae2ae73f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 67 — /our-proof + /transparency에 3-hub trust cluster chip cross-link 추가",
+    "summary": "신뢰 hub 페이지(/our-proof, /transparency)에 다른 trust hub 3개 chip link section 추가 — 거의 orphan 상태였던 /petition/oh-yoon을 trust cluster에 통합",
+    "body": "배경:\n- /our-proof body는 /our-reality 1건만 본문 link\n- /transparency body는 hub link 0건\n- /petition/oh-yoon은 inbound이 사실상 OG self-ref + article md만 — 거의 orphan\n- /our-proof ↔ /transparency 본문 mesh 부재 — entity cluster site-architecture 미명시\n\n변경:\n- app/[locale]/our-proof/page.tsx:\n  - EN return: RelatedStoriesGrid 뒤 + CTA 앞 chip Section 추가\n  - KO return: 동일 위치 chip Section 추가\n  - chips: [Operating Reports / Our Reality / Oh Yoon Petition] = [/transparency, /our-reality, /petition/oh-yoon]\n  - Section variant=white prevVariant=canvas → CTA primary-soft prevVariant=white로 sawtooth 흐름 보존\n- app/[locale]/transparency/page.tsx:\n  - { Link } from '@/i18n/navigation' import 추가\n  - EN/KO return: RelatedStoriesGrid 뒤 chip Section 추가\n  - chips: [Our Proof / Our Reality / Oh Yoon Petition] = [/our-proof, /our-reality, /petition/oh-yoon]\n  - eyebrow: 'Related trust hubs' / '신뢰의 다른 기록'\n\n효과:\n- /petition/oh-yoon inbound 0 → 2 (most impactful, 거의 orphan 상태 해소)\n- /our-proof ↔ /transparency 양방향 hub mesh 형성 (entity cluster site-architecture 명시)\n- 신규 internal link 총 6건 (2 페이지 × 3 chip × 1 locale 분기)\n- Sprint 29~45 entity cluster signals(schema)와 본문 link mesh 동시 일관성\n\n회귀 방지:\n- Section sawtooth 흐름 prevVariant 정확히 (canvas → white → primary-soft)\n- 기존 Section/Grid/Card 무변동\n- e2e-a11y 위반 없음 (neutral chrome chip, bg-primary 미사용)\n- /petition/oh-yoon은 KO only 페이지 — locale 분기 chip만 추가 (해당 페이지 자체 변경은 별도 sprint)\n- npm run type-check 통과\n\n워크플로우 발견 경로:\n- Ultracode Sprint 65 multi-modal audit 'orphan-thin-pages' dimension에서 발견\n- adversarial verify confirmed (leverage 4→3, complexity 2)\n- /changelog는 EN noindex + admin-facing이라 cluster 제외\n- /petition/oh-yoon은 KO only이므로 chip만 양방향 추가, page 자체는 별도 작업",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "c9c343ab",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 66 — /archive/2023 페이지에 VideoObject ItemList schema 발행",
+    "summary": "씨앗페 2023 아카이브 페이지의 9개 영상 listing에 ItemList<VideoObject> JSON-LD 추가 — Google 'Videos' 탭 + AI Overview video citation 자격 확보",
+    "body": "배경:\n- /archive/2023은 9개 SAF 2023 영상 카드 그리드 렌더 (line 380~)\n- 기존 JsonLdScript는 [breadcrumbSchema, collectionSchema]만 — 영상 schema 0건\n- 개별 영상 watch page(/archive/2023/videos/[id])에는 이미 VideoObject 있음\n- listing 페이지에서 ItemList<VideoObject> 누락 → Google이 listing을 video page로 인식 못 함\n- lib/schemas/content.ts:84의 generateVideoSchema는 이미 구현 (재사용)\n- /news ItemList<NewsArticle> 패턴(news/page.tsx)과 동일 구조\n\n변경:\n- app/[locale]/archive/2023/page.tsx:\n  - generateVideoSchema import 추가\n  - videoListSchema: ItemList @id, name, numberOfItems, itemListElement\n  - itemListElement.item: generateVideoSchema 호출 (title, description, youtubeId, uploadDate, transcript, locale, watchPageUrl)\n  - JsonLdScript data 배열에 conditional spread (videos 빈 케이스 회피)\n  - title/description은 EN locale에서 title_en/description_en fallback\n\nSchema 출력 예시:\n{\n  \"@type\": \"ItemList\",\n  \"@id\": \"...archive/2023#video-list\",\n  \"name\": \"씨앗페 2023 아카이브 영상\",\n  \"numberOfItems\": 9,\n  \"itemListElement\": [\n    {\n      \"@type\": \"ListItem\",\n      \"position\": 1,\n      \"item\": {\n        \"@type\": \"VideoObject\",\n        \"name\": \"...\",\n        \"thumbnailUrl\": \"https://img.youtube.com/vi/<id>/maxresdefault.jpg\",\n        \"uploadDate\": \"2023-12-31\",\n        \"contentUrl\": \"https://www.youtube.com/watch?v=<id>\",\n        \"embedUrl\": \"https://www.youtube.com/embed/<id>\"\n      }\n    },\n    ...\n  ]\n}\n\n효과:\n- 9개 영상 통합 ItemList schema 발행 → Google Videos 탭 + carousel rich result 자격\n- AI Overview '씨앗페 2023 영상' query → /archive/2023 directly cite 가능\n- Sprint 29~45 schema 시리즈에서 명백한 video listing 갭 메움\n- @id로 watch page canonical 매칭 (개별 VideoObject와 충돌 없음)\n\n회귀 방지:\n- videos.length === 0 → videoListSchema null → JsonLdScript에서 자동 제외\n- 기존 [breadcrumbSchema, collectionSchema] 무변동\n- @id가 watch page URL을 가리켜 individual VideoObject와 dedupe\n- npm run type-check 통과\n\n워크플로우 발견 경로:\n- Ultracode Sprint 65 multi-modal audit 'video-seo' dimension에서 발견\n- adversarial verify confirmed (leverage 3, complexity 2)\n- Sprint 65 다음 우선순위로 채택",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "e293ebbd",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "OAuth state CSRF 가드를 클라이언트 쿼리가 아닌 서버 쿠키로 분기",
+    "summary": "직전 커밋(8133b8fe)이 oauth_nonce 쿼리 부재만으로 가드를 우회 가능하게 만든 회귀를 보안 리뷰가 잡아냄. 공격자 제거 불가능한 서버 측 신호로 교체",
+    "body": "- 이전 가드: `requestState && !isValidOAuthState(...)`\n  → 공격자가 가짜 code를 사용자에게 던지며 oauth_nonce만 빼면 가드 skip\n- 새 가드: `isOAuthFlow && !isValidOAuthState(...)`\n  isOAuthFlow = Boolean(cookieState) || Boolean(cookieRole)\n  → OAuth state API가 세팅한 쿠키 존재 여부로 흐름 판정\n  → 이메일 가입 확인·비번 재설정은 해당 쿠키 없으므로 가드 skip 유지\n\n회귀 케이스:\n- OAuth 정상: state API → 쿠키 set → callback에서 둘 다 매칭 → 통과\n- OAuth CSRF 시도: 공격자가 oauth_nonce 빼도 사용자 브라우저에 쿠키 살아있으면 가드 발동\n- 이메일 confirm: 쿠키 없음 (signup으로만 가입) → 가드 skip → 정상 confirm\n- Edge case: OAuth abandon 후 10분 안에 email confirm 클릭하면 false positive로\n  /login?error=oauth_state — OAUTH_STATE_MAX_AGE=600s, 매우 드문 시나리오",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "1fa12c13",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Sprint 65 — Header 매거진 dropdown 카테고리 link을 정적 SSG 라우트로 교체",
+    "summary": "Header 매거진 dropdown 3개 sub-link이 /stories?category=... query URL로 가던 것을 /stories/category/[slug] 정적 SSG 라우트로 교체. query param은 Sprint 23 이후 미지원이라 /stories 전체 listing(canonical=/stories) thin duplicate로 fallback되던 상태",
+    "body": "배경:\n- lib/hooks/useLocalizedNavigation.ts L84/89/94: '/stories?category=artist-story|buying-guide|art-knowledge'\n- /stories page는 searchParams.category를 소비하지 않음(L152 코멘트: '/stories는 항상 전체 매거진 노출, 카테고리 필터는 정적 라우트 /stories/category/[category]가 별도 담당')\n- StoriesCategoryFilter.tsx L24 코멘트도 query param 미지원 확인\n- 결과: Header(site-wide chrome) PageRank 4개가 (1) query URL — canonical 다르고 noindex/redirect 없어 dup-thin variant 위험, (2) /stories/category/[slug] 정적 SSG 페이지는 inbound이 stories listing chip 외 거의 없음 — Sprint 23~26에서 hub-first 정렬·long-tail editorial intro·FAQ·CollectionPage schema·about CreativeWork entity까지 모두 갖췄지만 link equity 결핍\n\n변경:\n- lib/hooks/useLocalizedNavigation.ts:\n  - artistStories href: /stories?category=artist-story → /stories/category/artist-story\n  - buyingGuide href: /stories?category=buying-guide → /stories/category/buying-guide\n  - artKnowledge href: /stories?category=art-knowledge → /stories/category/art-knowledge\n\n효과:\n- Header는 site-wide chrome — 모든 페이지에서 canonical 카테고리 SSG 페이지로 PageRank 즉시 흐름\n- /stories/category/[category] Sprint 23~26 자산 회수:\n  - hub-first 정렬 (Sprint 23)\n  - CollectionPage.about CreativeWork entity (Sprint 36, 37)\n  - editorial intro + FAQ\n  - ItemList JSON-LD\n- query URL의 thin duplicate variant 발생 위험 차단\n- StoriesCategoryFilter chip 외 inbound 0건 상태 해소\n\n회귀 방지:\n- Footer·Sidebar 등 다른 chrome surface는 grep으로 검증, /stories?category= 패턴 미발견\n- StoriesCategoryFilter.tsx L24 기존 코멘트가 query param 미지원 명시 — 이미 truth\n- npm run type-check 통과\n\n워크플로우 발견 경로:\n- Ultracode multi-modal audit(8 dimension agents) + adversarial verify(15 verdicts)\n- 'orphan-thin-pages' dimension에서 발견, leverage 4/5 verified, complexity 1/5\n- 24 findings 중 9 confirmed, 최고 leverage/complexity 비율로 선정",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8133b8fe",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "가입 흐름 5종 UX 회귀 정리 + 비번 재설정 경로 보안 정합화",
+    "summary": "콜렉터 입장에서 가입 흐름을 7개 lens로 trace한 결과 발견한 버그 5건과 누락된 portal 경로 보안 설정 정리",
+    "body": "[CRITICAL] 이메일 가입 확인 메일 클릭이 OAuth state 가드에 의해 차단되던 회귀:\n- callback line 38이 oauth_nonce 없는 확인 메일까지 무차별 차단 → /login?error=oauth_state로 튕김\n- → oauth_nonce 쿼리가 있을 때만 CSRF 가드 발동 (OAuth 흐름만 적용)\n- 60일간 OAuth 가입자만 confirmed였던 진짜 원인 (SMTP 미설정과 별개)\n\n[HIGH] 작가가 /exhibitor/onboarding 직접 진입 시 이중 신청 가능:\n- 기존엔 artist active만 차단, pending·suspended는 신청 폼 노출\n- → role==='artist' 전 status를 적절한 dashboard 경로로 차단\n\n[HIGH] 콜렉터 → 갤러리·큐레이터 전환 진입로 부재:\n- mypage에 작가 신청 탭만 있고 갤러리·큐레이터 신청 진입로 없었음\n- → ExhibitorApplyTab 컴포넌트 + showExhibitorApply prop + ko/en 메시지 추가\n- 가입 후에도 정상 경로로 갤러리·큐레이터 신청 가능\n\n[MEDIUM] 이미 로그인된 사용자가 /signup, /login 진입 가능:\n- useEffect로 supabase.auth.getUser() 체크 → 세션 있으면 router.replace('/mypage')\n- 폼 노출 / 의도 안 한 새 가입 시도 방지\n\n[MEDIUM] /onboarding의 dead chooseType 화면 제거:\n- role='user' 가드 추가로 도달 거의 불가능했던 fallback 화면이 i18n 키 누락으로 빈 라벨 표시\n- → fallback을 /mypage redirect 한 줄로 단축, Link/SafeImage/FeedbackButton dead import 정리\n\n[부수] forgot-password / reset-password portal 경로 보안 정합화:\n- next.config.js CSP / proxy.ts PORTAL_AUTH_ROOTS에 두 경로 추가\n- 다른 인증 경로(/login, /signup 등)와 동일한 strict CSP 및 캐시 면제 적용",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "4afaabbf",
+    "type": "fix",
+    "scope": "proxy",
+    "subject": "/forgot-password, /reset-password를 PORTAL_AUTH_ROOTS에 추가 — production 404 회귀",
+    "summary": "proxy.ts의 PORTAL_AUTH_ROOTS 배열에 신규 (auth) 페이지 2개 누락 → intlProxy fallthrough로 next-intl이 [locale]/* 트리에서 찾아 /404로 매칭. routing 자체 원인",
+    "body": "배경:\n- /forgot-password, /reset-password 빌드는 정상(ƒ /forgot-password 등록), local manifest 완벽\n- production curl x-matched-path: /404 — proxy.ts에서 routing 단에서 차단\n- /login, /signup, /auth 등은 PORTAL_AUTH_ROOTS 매칭으로 updateSession() → NextResponse.next() 정상 처리\n- workflow 다중 가설 검증 결과 (proxy.ts 누락 confidence 0.96 confirmed)\n\n수정 (5건):\n1. proxy.ts:33 — PORTAL_AUTH_ROOTS에 '/forgot-password', '/reset-password' 추가 (routing fix, 본 회귀)\n2. next.config.js cache-control negative-lookahead exclusion에 두 경로 추가 (auth 페이지에 public 페이지용 헤더 부여되던 부수 회귀)\n3. next.config.js strict portal CSP source 패턴 :path* 변형에 추가 (보안 약화 fix)\n4. next.config.js strict portal CSP source 패턴 exact match 변형에 추가 (보안 약화 fix)\n5. next.config.js public CSP exclusion에 추가 (비번 입력 폼에 'unsafe-eval'+Kakao SDK CSP 부여되던 회귀)\n\n회귀 방지:\n- 향후 (auth) route group에 새 page 추가 시 위 5곳 동시 update 필요 — proxy.ts의 PORTAL_AUTH_ROOTS가 single source of truth면 좋겠지만 next.config.js source는 string literal이라 자동 동기화 불가\n- type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "5803f0d6",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 64 — Artist Person schema에 colleague entity (같은 매체 정전 작가 cluster)",
+    "summary": "49 작가 갤러리 Enhanced Artist Person schema에 같은 매체의 ARTIST_PRIMARY_STORY 등재 정전 작가 5명을 Person.colleague entity로 추가 — Knowledge Graph 작가 cluster 시그널 site-wide 완성",
+    "body": "배경:\n- Person.knowsAbout(Sprint 31) → 작가-매체 hub entity\n- Person.colleague는 같은 분야 동료 작가 entity — KG 작가-작가 cluster 직접 형성\n- 같은 매체 거장 작가들이 schema-level entity cluster로 묶이면 'Korean printmaker' 같은 query에 다중 entity 매칭\n- Sprint 60+61+62+63 정전 작가 시그널 7 시리즈에 이어 schema 시그널 보완\n\n변경:\n- lib/schemas/artist.ts:\n  - EnhancedArtistSchemaInput에 sisterCanonicalArtists?: ReadonlyArray<{name, url}> 필드 추가\n  - schema 출력에 colleague Person[] 매핑 (조건부 spread)\n- app/[locale]/artworks/artist/[artist]/page.tsx:\n  - dominantCategory 같고 + 자기 제외 + ARTIST_PRIMARY_STORY 등재 작가 추출 (최대 5명)\n  - buildLocaleUrl로 절대 URL 변환 후 schema에 전달\n\n예시 (이철수 작가 Person schema, 판화 매체):\n{\n  \"@type\": \"Person\",\n  \"name\": \"이철수\",\n  \"knowsAbout\": [..., { \"url\": \"...stories/korean-contemporary-printmaking-saf\" }],\n  \"colleague\": [\n    { \"@type\": \"Person\", \"@id\": \"...artworks/artist/오윤\", \"name\": \"오윤\" },\n    { \"@type\": \"Person\", \"@id\": \"...artworks/artist/김준권\", \"name\": \"김준권\" },\n    { \"@type\": \"Person\", \"@id\": \"...artworks/artist/이윤엽\", \"name\": \"이윤엽\" },\n    ...\n  ]\n}\n\n효과:\n- 49 작가 Person → 같은 매체 정전 작가 5명 schema-level entity cluster\n- Knowledge Graph: '이철수 콜라보' 또는 'Korean woodcut artists' query에 작가-작가 cluster 직접 매칭\n- AI Overview: 작가 추천 시 같은 매체 정전 작가 list 자동 생성 가능\n- Sprint 29~64 schema entity 시그널 12+ types 완성형 마무리\n\n회귀 방지:\n- sisterCanonicalArtists 빈 배열 → colleague 필드 자체 생략\n- dominantCategory null → sister 추출 자체 skip\n- Set으로 중복 제거 + slice(0,5)로 noise 제한\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "e923b65b",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "exhibitor 카드 설명 카피 수정 — 작가가 아닌 작품을 출품",
+    "summary": "\"작가들을 출품해요\"는 작가를 작품처럼 출품한다는 비문 → \"소속 작가의 작품을 출품해요\"로 정정",
+    "body": "- ko: \"갤러리·큐레이터로 작가들을 출품해요\" → \"소속 작가의 작품을 출품해요\"\n- en: \"Submit artists' works as a gallery or curator\" →\n       \"Submit works on behalf of your artists\"",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "285b2769",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 63 — /artworks 기본 정렬 'artist-asc'에 정전 작가 우선화",
+    "summary": "/artworks 메인 갤러리의 기본 sort option 'artist-asc' (작가 사전순)에 ARTIST_PRIMARY_STORY 등재 26명 거장 작가 우선화 — 사전순 안에서 거장 작가 작품이 fold 위 결정론 노출",
+    "body": "배경:\n- /artworks 메인 기본 정렬: artist-asc (ko-KR 사전순)\n- 정전 작가 'ㅈ·ㅊ·ㅍ·ㅎ' 이름은 그리드 끝에 위치 → fold 아래\n- Sprint 60(작품 detail sameCategoryWorks) + 61(매거진 fallback) + 62(작가 인덱스)와 일관 적용\n- sortArtworks는 ArtworkGalleryWithSort의 기본 정렬 함수 — /artworks·/artworks/category 모두 영향\n\n변경:\n- lib/artworkUtils.ts:\n  - getPrimaryStorySlug import 추가\n  - 'artist-asc' case 우선순위 재구성:\n    1. 정전 작가 (ARTIST_PRIMARY_STORY 등재)\n    2. ko-KR 사전순\n  - 다른 sort option(title-asc, price-desc 등)은 무영향\n\n효과:\n- /artworks 메인 + /artworks/category 모든 매체별 갤러리에서 거장 작가 작품 결정론 fold 위\n- 사용자 첫 화면에 정전 작가 작품 우선 → 거장 작가 페이지(Sprint 18+22+62 강화) 자연 진입\n- 작품 정렬 정전 작가 시그널 시리즈 마감\n\n회귀 방지:\n- 정전 작가 부재 시 모든 row sortKey=1 → 기존 ko-KR 사전순 그대로\n- 다른 sort option(title·price·sold) 무영향\n- 사용자가 sort 변경 시 정전 우선화 자동 해제 (UX 자유)\n- npm run type-check 통과\n\n정전 작가 시그널 시리즈 7 sprint 완성:\n  - Sprint 18: artwork detail magazine slot pinPrimaryStory\n  - Sprint 22: artist gallery related stories 매체 hub 끼움\n  - Sprint 33: 작가 인덱스 매체 매거진 hub 카드\n  - Sprint 60: artwork detail sameCategoryWorks 정전 작가 1순위\n  - Sprint 61: 매거진 tier 3 fallback 정전 작가 우선\n  - Sprint 62: 작가 인덱스 grid 정전 작가 우선\n  - Sprint 63: /artworks 기본 정렬 'artist-asc' 정전 작가 우선 ← 신규",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d82c4e3a",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "회원가입 역할 카드 시각 균형 정렬",
+    "summary": "\"갤러리·큐레이터\" 라벨이 2줄로 wrap되면서 카드 간 정렬이 깨지던 문제 수정",
+    "body": "- grid 레이아웃 도입: grid-rows-[2.5rem_1fr]로 라벨 영역 높이 고정\n- 모든 카드의 라벨 영역이 동일한 높이를 확보해 1줄·2줄 라벨 혼재해도\n  설명 영역 시작점이 일정하게 정렬됨\n- 카드 자체에 h-full 부여해 grid items-stretch 활용, 카드 높이 균일\n- padding p-4 → p-3로 inner 영역 약간 확보\n- 라벨에 flex items-center로 수직 중앙 정렬",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "be06b3e4",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 62 — 작가 인덱스 grid에 정전 작가 우선화 정렬 (Sprint 60+61 일관)",
+    "summary": "/artworks/artist (전체 작가 인덱스) 작가 grid 정렬에 ARTIST_PRIMARY_STORY 등재 26명 거장 작가 우선화 — 사전순 정렬 안에서 정전 작가가 fold 아래 내려가는 회귀 차단",
+    "body": "배경:\n- 작가 인덱스 기본 정렬: ko-KR 사전순\n- 정전 작가 26명이 가나다순 분포로 'ㅈ·ㅊ·ㅍ·ㅎ' 이름은 fold 아래에 묶임\n- ARTIST_PRIMARY_STORY 등재 작가는 GSC navigational query 가장 강한 entity\n- Sprint 18+22+60+61 정전 작가 시그널 시리즈 연속 적용\n\n변경:\n- app/[locale]/artworks/artist/page.tsx:\n  - getPrimaryStorySlug import 추가\n  - groupArtistsByName 정렬 우선순위 재구성:\n    1. 정전 작가 (ARTIST_PRIMARY_STORY 등재)\n    2. ko-KR 사전순\n  - stable sort로 정전 작가 내부 + 일반 작가 내부 모두 사전순 보존\n\n효과:\n- 작가 인덱스 1st screen에 거장 작가 26명 결정론 노출\n- 사용자가 거장 작가 페이지로 자연스럽게 진입 → 정전 스토리 + 매체 hub link equity flow\n- ItemList JSON-LD position 1~26이 거장 작가로 채워짐 → Google sitelink rich snippet 거장 작가 우선\n- Sprint 18+22+33+60+61+62 정전 작가 시그널 시리즈 6 sprint 완성\n\n회귀 방지:\n- 정전 미등재 작가도 사전순 유지 (단지 grid 후반부로 이동)\n- ItemList JSON-LD numberOfItems 무변동\n- npm run type-check 통과\n\n정전 작가 시그널 시리즈 (Sprint 18+22+33+60+61+62) 완성:\n  - Sprint 18: artwork detail magazine slot pinPrimaryStory\n  - Sprint 22: artist gallery related stories 매체 hub 끼움\n  - Sprint 33: 작가 인덱스 매체 매거진 hub 카드\n  - Sprint 60: artwork detail sameCategoryWorks 정전 작가 1순위\n  - Sprint 61: 매거진 tier 3 fallback 정전 작가 우선\n  - Sprint 62: 작가 인덱스 grid 정전 작가 우선 ← 신규",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "e1f788c5",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 61 — 매거진 글 tier 3 fallback에 정전 작가 작품 우선화",
+    "summary": "/stories/[slug] 매거진 글의 '관련 작품' 슬롯 tier 3 fallback(본문 인용·작가 매칭 모두 없을 때)에서 ARTIST_PRIMARY_STORY 등재 거장 작가 작품 결정론 우선 노출",
+    "body": "배경:\n- 매거진 글 relatedArtworks 3 tier 정렬:\n  - tier 1: 본문에 인용된 작품 (결정론, 정렬 무영향)\n  - tier 2: 작가 태그 fallback (작가 본인 작품)\n  - tier 3: 최신 판매중 작품 fallback (정렬 없음 — Sprint 60 패턴 미적용)\n- Sprint 60(작품 detail sameCategoryWorks) + Sprint 18+22(정전 작가 시그널)와 일관 적용\n\n변경:\n- app/[locale]/stories/[slug]/page.tsx:\n  - getPrimaryStorySlug import 추가\n  - tier 3 fallback: 12개 over-fetch → 정전 작가 우선 정렬 → top 3\n  - 정전 작가 추출 결정: getPrimaryStorySlug(artist) → ARTIST_PRIMARY_STORY 등재 여부\n\n효과:\n- 일반 큐레이션·금융 주제 매거진 글(본문에 작품 인용 없는 ~10편)의 관련 작품 슬롯에 거장 작가 작품 결정론 노출\n- 매거진 글 → 거장 작가 작품 detail → 거장 작가 갤러리 → 정전 스토리 link equity flow 일관\n- artworksSource='recent-fallback'으로 GA 추적 가능 (어느 tier의 fallback이 어떤 conversion 생성하는지 측정 시그널 유지)\n\n회귀 방지:\n- 정전 작가 작품 없을 경우 모든 row sortKey=1 → 기존 동작 (homepage 추천 순)\n- over-fetch 12개로 정전 후보 충분 확보 (등재 26명 중 active 작가 보유)\n- npm run type-check 통과\n\nSprint 18+22+60+61 정전 작가 시그널 시리즈 완성:\n  - Sprint 18: 작품 detail magazine slot pinPrimaryStory\n  - Sprint 22: 작가 갤러리 related stories 매체 hub 끼움\n  - Sprint 60: 작품 detail sameCategoryWorks 정전 작가 1순위\n  - Sprint 61: 매거진 글 tier 3 fallback 정전 작가 우선 ← 신규",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "cc997dc7",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 60 — 작품 detail의 sameCategoryWorks 슬롯에 정전 작가 우선화",
+    "summary": "작품 detail의 '같은 매체 다른 작가 작품' 슬롯(최대 6점)에서 ARTIST_PRIMARY_STORY 등재 26명 거장 작가의 작품을 결정론적으로 1순위 정렬",
+    "body": "배경:\n- sameCategoryWorks 현재 정렬: 톤 겹침 → 가격 근접\n- ARTIST_PRIMARY_STORY 등재 작가(GSC navigational query 가장 강한 26명)의 작품이 일반 작가에 밀려 fold 아래로 내려가는 경우 발생\n- Sprint 18(artwork detail magazine slot pinPrimaryStory) + Sprint 22(작가 갤러리 dominant medium hub)와 일관 적용\n\n변경:\n- app/[locale]/artworks/[id]/page.tsx:\n  - getPrimaryStorySlug import 추가\n  - sameCategoryWorks 정렬 우선순위 재구성:\n    1. 정전 작가 (ARTIST_PRIMARY_STORY 등재 여부)\n    2. 톤 겹침\n    3. 가격 근접\n  - isCanonicalArtist(name) 헬퍼 함수로 등재 여부 결정\n  - shuffleArray로 동일 우선순위 내 tie-break 무작위화 유지\n\n효과:\n- 작품 detail 415개에서 sameCategoryWorks 슬롯에 거장 작가 작품 결정론 노출\n- 작품 detail → 거장 작가 페이지(Sprint 18+22 강화)로 link equity 일관 흐름\n- GSC navigational 트래픽이 작품 detail에서 거장 entity로 직접 회수\n- Internal PageRank: 작품 detail (가장 많은 페이지) → 정전 작가 (가장 트래픽 강함)\n\n회귀 방지:\n- 정전 작가 후보 없으면 모든 row sortKey=1 → 기존 톤·가격 정렬 그대로\n- 정전 등재 변경 시 자동 반영 (ARTIST_PRIMARY_STORY 단일 출처)\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "5b973385",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "회원가입 흐름 정리 — collector 가드 + exhibitor 옵션 추가 + OAuth fallback",
+    "summary": "콜렉터로 가입했는데 \"작가/출품자 선택\" 화면 강제 노출되던 회귀 + 출품자 가입 진입로 부재 해결",
+    "body": "회귀 픽스:\n- /onboarding 페이지에서 profile.role='user' + role 쿼리 없음 + 복구 아님\n  → /mypage로 redirect. 일반 콜렉터가 신청 유형 선택 화면을 더 이상 보지 않음\n- OAuth callback fallback이 무조건 /onboarding으로 보내던 동작 →\n  intended_role 미상이면 /mypage로 (콜렉터 기본 가정), 최후 fallback도 동일\n\n출품자 옵션 신규:\n- RoleChoice / isValidIntendedRole에 'exhibitor' 추가\n- 회원가입 카드 2개 → 3개 (콜렉터 / 아티스트 / 갤러리·큐레이터)\n  · sm 이상 3열 grid (mobile 1열)\n  · exhibitor 선택 시 승인 안내 노트 노출\n- ko/en SIGNUP_COPY에 exhibitor 라벨·설명·승인 안내 추가\n- 가입 success 후 redirect: exhibitor → /exhibitor/onboarding (신청서)\n- OAuth callback: intendedRole='exhibitor' → /exhibitor/onboarding 분기\n\nDB 흐름 검증:\n- handle_new_user trigger는 role을 기본값('user')으로 INSERT (변경 없음)\n- exhibitor 가입자도 일단 role='user' → /exhibitor/onboarding에서 신청서 제출\n  → admin이 승인하면 role='exhibitor'로 업그레이드 (기존 artist 흐름과 동일 패턴)",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "dedb6bcc",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 59 — 작은 commerce hub 3종 anchor text 다양화 (Sprint 55~58 마감)",
+    "summary": "Sprint 55~58에 이어 작은 commerce hub 3종(print-vs-original 9 + art-pricing-factors 3 + first-art-buyer-price-guide 10) = 22편 anchor를 3 variants에 분산. 매체+commerce hub anchor diversification 시리즈 마감 (총 200편)",
+    "body": "배경:\n- Sprint 55~58: 매체 hub 5종 87편 + commerce hub 2종 91편 = 178편\n- Sprint 59: 작은 commerce hub 3종 마감\n  - print-vs-original-price-economics (9편)\n  - art-pricing-factors (3편)\n  - first-art-buyer-price-guide (10편)\n\n변경:\n- Supabase stories DML (project khtunrybrzntlnowlahb 서울):\n\n  print-vs-original-price-economics:\n  - O: '같은 작가, 판화와 원화의 가격이 10배 차이 나는 이유 — 공급·희소·시그니처 프리미엄의 경제학'\n  - A: '판화와 원화 가격차 10배 — 공급·희소·시그니처의 경제학'\n  - B: '판화 가격 vs 원화 가격 — 미술시장 가격 경제학'\n\n  art-pricing-factors:\n  - O: '현대미술 작품 가격, 무엇이 결정하는가 — 작가·매체·크기·연도의 4요소'\n  - A: '현대미술 작품 가격 결정 4요소 — 작가·매체·크기·연도'\n  - B: '미술 작품 가격은 어떻게 정해지는가 — 4가지 결정 요소'\n\n  first-art-buyer-price-guide:\n  - O: '처음 그림을 사는 사람을 위한 가격대별 가이드 — 30만원부터 1000만원까지'\n  - A: '첫 그림 구매 가격대별 가이드 — 30만원부터 1000만원까지'\n  - B: '예산별 첫 그림 가이드 — 30만원~1000만원 가격대'\n\n결과 (검증):\n  pvo: O 2 / A 3 / B 4 = 9편\n  apf: O 1 / A 0 / B 2 = 3편\n  fab: O 7 / A 1 / B 2 = 10편\n\nAnchor diversification 시리즈 누적 (Sprint 55~59):\n  매체 hub 5종 (회화·판화·민중미술·한지·한국화): 87편\n  Commerce hub 5종 (saf-1m·first-time·pvo·apf·fab): 113편\n  ===\n  총합: 200편 7+1 = 10 hub 마감\n\nIdempotency: replace() string 매칭 기반, 회귀 0.\n\nDB-only 변경, 코드 변경 0.\n\nAnchor diversification SEO 시리즈 마감. 매체·commerce 모든 주요 hub 처리.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "2ad0733f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 58 — commerce hub anchor text 다양화 (saf-under-1m + first-time-buying)",
+    "summary": "Sprint 55~57 매체 hub 패턴을 commerce hub로 확장 — Sprint 15 universal fallback 부착된 saf-under-one-million(48편) + first-time-buying-art(43편) = 91편 stories anchor를 3 variants에 균등 분산",
+    "body": "배경:\n- Sprint 15에서 80편 artist-story에 commerce funnel link 부착\n- universal fallback으로 saf-under-one-million + first-time-buying-art 두 hub가 가장 많이 반복(91편)\n- 동일 anchor 91회 반복 → over-optimization 위험 + SEO 키워드 다양성 부족\n\n변경:\n- Supabase stories DML (project khtunrybrzntlnowlahb 서울):\n\n  saf-under-one-million (100만원 이하 작품 hub):\n  - hash % 3 = 0: 원본 '씨앗페에서 100만원 이하로 살 수 있는 작품 TOP 20'\n  - hash % 3 = 1: 변형 A '100만원 이하 작품 TOP 20 — 씨앗페 추천'\n  - hash % 3 = 2: 변형 B '씨앗페 100만원대 작품 큐레이션 20선'\n\n  first-time-buying-art (첫 그림 구매 hub):\n  - hash % 3 = 0: 원본 '처음 그림을 사는 사람을 위한 완벽 가이드'\n  - hash % 3 = 1: 변형 A '첫 그림 구매 완벽 가이드 — 컬렉팅 입문'\n  - hash % 3 = 2: 변형 B '그림 처음 사는 법 — 첫 컬렉터를 위한 완벽 안내'\n\n결과 (검증 SELECT):\n  saf-under-1m: O 17 / A 17 / B 14 = 48편 (균등)\n  first-time: O 13 / A 15 / B 15 = 43편 (균등)\n\n효과:\n- '100만원 이하 작품', '씨앗페 추천', '100만원대 큐레이션' query 매칭\n- '첫 그림 구매', '컬렉팅 입문', '그림 처음 사는 법' query 매칭\n- Commerce funnel hub anchor 91편 diversity 확보\n\nAnchor diversification 누적 (Sprint 55+56+57+58 = 178편):\n  매체 hub: 회화 33 + 판화 20 + 민중미술 15 + 한지 10 + 한국화 9 = 87편\n  Commerce hub: saf-under-1m 48 + first-time 43 = 91편\n\nIdempotency: replace() string 매칭 기반, 회귀 0.\n\nDB-only 변경, 코드 변경 0.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "802bbd64",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 57 — 한지·한국화 hub anchor text 다양화 (Sprint 55~56 패턴 확장)",
+    "summary": "Sprint 55(회화) + 56(판화·민중미술)에 이어 한지(10편) + 한국화(9편) hub anchor를 3 variants에 분산. 매체 hub 5종 anchor diversification 시리즈 마감 (총 87편)",
+    "body": "배경:\n- Sprint 55: saf-2026-painters 33편\n- Sprint 56: korean-contemporary-printmaking-saf 20편 + minjung-art-intro 15편\n- Sprint 57: hanji-aesthetics-in-contemporary-art 10편 + korean-painting-tradition-meets-modern 9편\n- 매체 hub 5종 모두 hash(slug) % 3 기반 결정론 다양화 완성\n\n변경:\n- Supabase stories DML (project khtunrybrzntlnowlahb 서울):\n\n  hanji (한지 hub):\n  - hash % 3 = 0: 원본 '한지의 미학 — 이철수·강레아·신예리로 읽는 한국 종이의 재료학'\n  - hash % 3 = 1: 변형 A '한지 미학 — 이철수·강레아·신예리 세 작가로 읽는 한국 종이'\n  - hash % 3 = 2: 변형 B '한국 종이 한지의 재료학 — 현대 미술 작가 3인이 다루는 한지'\n\n  korean-painting (한국화 hub):\n  - hash % 3 = 0: 원본 '한국화, 전통과 현대 사이에서: 먹과 분채로 그리는 지금'\n  - hash % 3 = 1: 변형 A '먹과 분채 — 한국화 전통이 현대를 그리다'\n  - hash % 3 = 2: 변형 B '한국화 입문 — 전통과 현대 사이, 먹과 분채의 지금'\n\n  replace() guard 동일 (idempotent)\n\n결과 (검증 SELECT):\n  hanji: O 1 / A 3 / B 6 = 10편\n  korean_painting: O 3 / A 1 / B 5 = 9편\n\n효과:\n- '한지 미학', '한국 종이 재료학', '한지 작가 3인' 등 long-tail keyword 매칭\n- '한국화 입문', '먹과 분채', '한국화 현대' 등 다양한 phrase 매칭\n- Sprint 55+56+57: 매체 hub 5종 87편 anchor 다양화 완성\n  - 회화 33 + 판화 20 + 민중미술 15 + 한지 10 + 한국화 9 = 87편\n\n매체 hub anchor diversification 시리즈 마감.\n\nIdempotency 동일 보장 (replace() string 매칭 기반).\n\n다음 leverage:\n- 사진 hub (korean-documentary-landscape-photography) — Sprint 56 검증 시 0편 — 실제 anchor format 별도 확인 필요\n- 또는 commerce hub (print-vs-original-price-economics, art-pricing-factors) 다양화\n\nDB-only 변경, 코드 변경 0.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b3fd6ffe",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 56 — 판화·민중미술 hub anchor text 다양화 (Sprint 55 패턴 확장)",
+    "summary": "Sprint 55에서 saf-2026-painters에 적용한 hash 기반 anchor 다양화 패턴을 판화 hub(20편) + 민중미술 hub(15편) = 35편 stories에 확장 적용",
+    "body": "배경:\n- Sprint 55: saf-2026-painters 33편 anchor 3 variants 분산\n- 다른 매체 hub에도 동일 over-optimization 위험 (모든 인링크 동일 anchor)\n- Sprint 7~17 mesh 부착된 hub 인링크 분포 점검 결과:\n  - printmaking 20편 (가장 많음)\n  - minjung 15편\n  - hanji 10편 (Sprint 57 후보)\n  - korean-painting 9편\n\n변경:\n- Supabase stories DML (project khtunrybrzntlnowlahb 서울):\n\n  printmaking (한국 현대 판화 hub):\n  - hash % 3 = 0: 원본 유지 ('한국 현대 판화의 지형 — 씨앗페에서 만나는 다섯 계보')\n  - hash % 3 = 1: 변형 A ('한국 현대 판화 — 다섯 계보 큐레이션')\n  - hash % 3 = 2: 변형 B ('씨앗페 판화 작가들 — 한국 현대 판화 5인의 지형')\n\n  minjung (민중미술 hub):\n  - hash % 3 = 0: 원본 유지 ('민중미술이란 무엇인가 — 신학철로 읽는 한 계보')\n  - hash % 3 = 1: 변형 A ('민중미술의 한 계보 — 신학철로 읽기')\n  - hash % 3 = 2: 변형 B ('한국 민중미술 입문 — 신학철로 보는 시작점')\n\n  replace() guard로 원본 string 부재 시 자동 skip (idempotent)\n\n결과 (검증 SELECT):\n  printmaking: O 2 / A 12 / B 6 = 20편\n  minjung: O 2 / A 7 / B 6 = 15편\n\n효과:\n- 판화·민중미술 hub로의 인링크 35편 anchor diversity 확보\n- '한국 현대 판화 다섯 계보', '씨앗페 판화 작가', '판화 5인의 지형' 등 long-tail keyword 다중 매칭\n- '민중미술 신학철', '민중미술 한 계보', '한국 민중미술 입문' query에 다양한 anchor 매칭\n- Sprint 55+56: 67편 anchor diversified (33 painting + 20 print + 15 minjung)\n\nIdempotency:\n- replace() string 매칭 기반 — 재실행 시 변형된 row 자동 skip\n- hash(slug)는 deterministic\n- 회귀 0\n\n다음 leverage:\n- hanji-aesthetics (10편), korean-painting-tradition-meets-modern (9편) 동일 패턴 적용 가능\n\nDB-only 변경, 코드 변경 0.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "6d969782",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 55 — saf-2026-painters anchor text 다양화 (3 variants cycle)",
+    "summary": "Sprint 7~17에서 부착된 saf-2026-painters hub 인링크 33편의 anchor text를 hash(slug) % 3 기반 결정론으로 3 variants에 분산 — 검색엔진이 hub와 다양한 키워드 phrase 매칭 가능",
+    "body": "배경:\n- Sprint 7~17 결과 33편 stories에 모두 동일 anchor text '씨앗페의 회화 — 한국화에서 추상까지, 한 자리에 모인 40명' 부착\n- 동일 anchor 33회 반복 → over-optimization 시그널 위험 + SEO 키워드 다양성 부족\n- LSI(Latent Semantic Indexing)/RankBrain은 동일 hub로의 다양한 anchor를 자연스러운 link로 인식\n\n변경:\n- Supabase stories 테이블 DML (project khtunrybrzntlnowlahb 서울):\n  - hash(slug) % 3 결정론 cycle:\n    - 0 (~33%): 원본 anchor 유지 ('한국화에서 추상까지, 한 자리에 모인 40명')\n    - 1 (~33%): 변형 A '한국 회화 작가 40명 — 씨앗페 큐레이션'\n    - 2 (~33%): 변형 B '씨앗페의 회화 작가 — 40명 한자리 큐레이션'\n  - replace() guard: 원본 string 부재 시 자동 skip (이미 변형된 row 회귀 0)\n\n결과 (검증 SELECT):\n  - original: 8편 / variant_a: 9편 / variant_b: 12편 = 29 artist-story (+4 art-knowledge)\n  - URL은 saf-2026-painters로 동일 (link target 무변동)\n\n효과:\n- saf-2026-painters hub로의 인링크 33편이 3 variants로 분산\n- '한국 회화 40인', '씨앗페 회화 작가', '한 자리 큐레이션' 등 long-tail keyword 동시 매칭\n- 검색엔진 over-optimization 시그널 회피 + 자연스러운 link diversity\n\nIdempotency:\n- replace() 매칭 string이 원본일 때만 동작 — 재실행 시 변형된 row는 자동 skip\n- hash(slug)는 deterministic → 같은 slug는 항상 같은 variant 받음\n- 회귀 0 보장\n\n다음 leverage 시 다른 매체 hub에도 동일 패턴 적용 가능:\n- korean-contemporary-printmaking-saf (Sprint 7 판화 hub)\n- korean-documentary-landscape-photography\n- minjung-art-intro\n- ...\n\nDB-only 변경, 코드 변경 0.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
     "hash": "5a376c37",
     "type": "feat",
     "scope": "seo",
