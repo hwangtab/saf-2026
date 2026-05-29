@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import type { Database } from '@/types/supabase';
 import {
   getOAuthRoleCookieOptions,
   getOAuthStateCookieOptions,
@@ -20,33 +20,55 @@ import {
   resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
 
-async function redirectWithOAuthStateCleared(url: string) {
-  // Next.js 15 Route Handler: NextResponse.redirect 명시 반환 시 next/headers cookies()로 set한
-  // cookie가 자동 머지되지 않음. supabase가 exchangeCodeForSession 중 set한 session cookie를
-  // 응답에 명시 복사해야 클라이언트로 전달됨. 이게 빠지면 사용자 브라우저에 세션 cookie 미세팅
-  // → /mypage 등 후속 페이지가 user를 못 찾아 /login 무한 루프.
-  const cookieStore = await cookies();
-  const response = NextResponse.redirect(url);
-  for (const c of cookieStore.getAll()) {
-    response.cookies.set(c.name, c.value);
-  }
-  response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
-  response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
-  return response;
-}
+type PendingCookie = { name: string; value: string; options: CookieOptions };
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const cookieRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
 
-  // CSRF 방어는 Supabase PKCE flow가 자체 처리 (RFC 7636).
-  // 우리 자체 state nonce 가드는 supabase의 query 보존 동작에 의존해서 false positive
-  // 발생 가능 (OAuth 정상 흐름이 oauth_state 에러로 튕기는 회귀). 가드 제거 + PKCE 위임.
-  // cookieRole만은 의도 보존 위해 계속 읽음 (signup에서 collector/artist/exhibitor 선택분).
+  // supabase-ssr setAll 콜백이 알려주는 모든 session cookie(httpOnly·secure·sameSite·path·maxAge 옵션 포함)를
+  // capture해서 모든 redirect 응답에 명시 적용. 이게 누락되면 브라우저에 세션 cookie 미세팅 →
+  // /mypage 등 후속 페이지가 user를 못 찾아 /login 무한 루프.
+  const cookiesToPropagate: PendingCookie[] = [];
+
+  const redirectWithOAuthStateCleared = (url: string) => {
+    const response = NextResponse.redirect(url);
+    for (const c of cookiesToPropagate) {
+      response.cookies.set(c.name, c.value, c.options);
+    }
+    response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
+    response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
+    return response;
+  };
+
+  // CSRF 방어는 Supabase PKCE flow가 자체 처리 (RFC 7636). 우리 자체 state nonce 가드는 제거.
 
   if (code) {
-    const supabase = await createSupabaseServerClient();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('[auth/callback] missing supabase env');
+      return redirectWithOAuthStateCleared(`${origin}/login?error=config`);
+    }
+
+    const supabase = createServerClient<Database>(supabaseUrl, supabaseKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(setCookies) {
+          for (const c of setCookies) {
+            cookiesToPropagate.push({
+              name: c.name,
+              value: c.value,
+              options: c.options ?? {},
+            });
+          }
+        },
+      },
+    });
+
     const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (sessionError) {
@@ -55,7 +77,7 @@ export async function GET(request: NextRequest) {
         message: sessionError.message,
         status: sessionError.status,
       });
-      return await redirectWithOAuthStateCleared(`${origin}/login?error=session_exchange`);
+      return redirectWithOAuthStateCleared(`${origin}/login?error=session_exchange`);
     }
 
     {
@@ -65,7 +87,7 @@ export async function GET(request: NextRequest) {
 
       if (!user) {
         console.error('[auth/callback] session exchange ok but getUser returned null');
-        return await redirectWithOAuthStateCleared(`${origin}/login?error=session_missing`);
+        return redirectWithOAuthStateCleared(`${origin}/login?error=session_missing`);
       }
 
       if (user) {
@@ -82,11 +104,11 @@ export async function GET(request: NextRequest) {
             code: profileError.code,
             message: profileError.message,
           });
-          return await redirectWithOAuthStateCleared(`${origin}/login?error=profile_lookup`);
+          return redirectWithOAuthStateCleared(`${origin}/login?error=profile_lookup`);
         }
 
         if (profile?.role === 'admin') {
-          return await redirectWithOAuthStateCleared(`${origin}/admin/dashboard`);
+          return redirectWithOAuthStateCleared(`${origin}/admin/dashboard`);
         }
 
         if (profile?.role === 'exhibitor') {
@@ -97,7 +119,7 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           if (applicationError) {
-            return await redirectWithOAuthStateCleared(`${origin}/login`);
+            return redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const hasApplication = hasExhibitorApplication(application);
@@ -106,11 +128,11 @@ export async function GET(request: NextRequest) {
           const needsTos = needsTosConsent(application);
 
           if (profile.status === 'suspended') {
-            return await redirectWithOAuthStateCleared(`${origin}/exhibitor/suspended`);
+            return redirectWithOAuthStateCleared(`${origin}/exhibitor/suspended`);
           }
 
           if (profile.status === 'active') {
-            return await redirectWithOAuthStateCleared(
+            return redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     needsTermsConsent || needsPrivacy || needsTos
@@ -126,7 +148,7 @@ export async function GET(request: NextRequest) {
             );
           }
 
-          return await redirectWithOAuthStateCleared(
+          return redirectWithOAuthStateCleared(
             hasApplication
               ? `${origin}${
                   needsTermsConsent || needsPrivacy || needsTos
@@ -150,14 +172,14 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           if (applicationError) {
-            return await redirectWithOAuthStateCleared(`${origin}/login`);
+            return redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const hasApplication = hasArtistApplication(application);
           const artistReconsent = resolveArtistReconsentRequirements(application);
 
           if (profile.status === 'active') {
-            return await redirectWithOAuthStateCleared(
+            return redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     artistReconsent.needsArtistConsent ||
@@ -176,7 +198,7 @@ export async function GET(request: NextRequest) {
           }
 
           if (profile.status === 'pending') {
-            return await redirectWithOAuthStateCleared(
+            return redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     artistReconsent.needsArtistConsent ||
@@ -194,7 +216,7 @@ export async function GET(request: NextRequest) {
             );
           }
           if (profile.status === 'suspended') {
-            return await redirectWithOAuthStateCleared(`${origin}/dashboard/suspended`);
+            return redirectWithOAuthStateCleared(`${origin}/dashboard/suspended`);
           }
         }
 
@@ -213,7 +235,7 @@ export async function GET(request: NextRequest) {
           ]);
 
           if (exhibitorResult.error || artistResult.error) {
-            return await redirectWithOAuthStateCleared(`${origin}/login`);
+            return redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const exhibitorApplication = exhibitorResult.data;
@@ -245,7 +267,7 @@ export async function GET(request: NextRequest) {
                 ? '/exhibitor/pending'
                 : '/dashboard/pending';
 
-            return await redirectWithOAuthStateCleared(
+            return redirectWithOAuthStateCleared(
               `${origin}${
                 needsArtistConsent || needsExhibitorConsent || needsPrivacy || needsTos
                   ? buildTermsConsentPath({
@@ -272,7 +294,7 @@ export async function GET(request: NextRequest) {
               : intendedRole === 'exhibitor'
                 ? `${origin}/exhibitor/onboarding`
                 : `${origin}/mypage`;
-          return await redirectWithOAuthStateCleared(noAppDestination);
+          return redirectWithOAuthStateCleared(noAppDestination);
         }
       }
     }
@@ -283,5 +305,5 @@ export async function GET(request: NextRequest) {
     hasCode: Boolean(code),
     url: request.url,
   });
-  return await redirectWithOAuthStateCleared(`${origin}/login?error=callback_fallback`);
+  return redirectWithOAuthStateCleared(`${origin}/login?error=callback_fallback`);
 }
