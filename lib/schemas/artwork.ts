@@ -523,6 +523,17 @@ export function generateArtworkJsonLd(
           url: storyUrl,
         };
       }),
+      // mentions — schema.org CreativeWork 표준 필드, 작품이 매거진에서 언급된 관계.
+      // subjectOf(작품이 매거진의 주제)와 분리해 양방향 entity 시그널 강화. AI Overview/KG 매칭 두 슬롯 모두 cite 가능.
+      mentions: options.mentionedInStories.map((s) => {
+        const storyUrl = buildLocaleUrl(`/stories/${s.slug}`, locale);
+        return {
+          '@type': 'CreativeWork',
+          '@id': `${storyUrl}#mention`,
+          name: isEnglish && s.titleEn ? s.titleEn : s.title,
+          url: storyUrl,
+        };
+      }),
     }),
     potentialAction: [
       {
