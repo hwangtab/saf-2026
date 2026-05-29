@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { rateLimit } from '@/lib/rate-limit';
 import { getClientIp } from '@/lib/security/get-client-ip';
+import type { RequestPasswordResetResult } from './types';
 
 const SCHEMA = z.object({
   email: z
@@ -12,13 +13,6 @@ const SCHEMA = z.object({
     .email()
     .transform((v) => v.toLowerCase()),
 });
-
-export type RequestPasswordResetResult =
-  | { status: 'sent' }
-  | { status: 'not_found' }
-  | { status: 'social_only'; provider: string }
-  | { status: 'rate_limited' }
-  | { status: 'error' };
 
 export async function requestPasswordReset(input: {
   email: string;

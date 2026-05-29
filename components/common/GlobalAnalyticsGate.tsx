@@ -14,6 +14,8 @@ const ANALYTICS_DISABLED_PREFIXES = [
   '/login',
   '/signup',
   '/terms-consent',
+  '/forgot-password',
+  '/reset-password',
 ];
 
 function isAnalyticsDisabledPath(pathname: string): boolean {
