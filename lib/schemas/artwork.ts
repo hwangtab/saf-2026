@@ -143,64 +143,17 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
       siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
-      // 작품별 alt로 덮어씀 — createPageMetadata의 제네릭 alt 대신 작품명 사용
-      images: [
-        {
-          url: imageUrl,
-          secureUrl: imageUrl.startsWith('https') ? imageUrl : undefined,
-          width: 1200,
-          height: 630,
-          alt: isEnglish
-            ? [
-                `"${titleForLocale}" by ${artistForLocale}`,
-                artwork.year ? `(${artwork.year})` : '',
-                materialForLocale ? `— ${materialForLocale}` : '',
-                categoryForLocale ? `— ${categoryForLocale}` : '',
-                '| SAF Online',
-              ]
-                .filter(Boolean)
-                .join(' ')
-            : [
-                `${artwork.artist} 작가의 작품 "${artwork.title}"`,
-                artwork.year ? `(${artwork.year})` : '',
-                materialForLocale ? `— ${materialForLocale}` : '',
-                artwork.category ? `— ${artwork.category}` : '',
-                '— 씨앗페 온라인',
-              ]
-                .filter(Boolean)
-                .join(' '),
-          type: 'image/jpeg',
-        },
-      ],
+      // images 필드 미명시 — Next.js 컨벤션 파일(app/[locale]/artworks/[id]/opengraph-image.tsx)이
+      // 자동 emit. 명시 override 시 ImageResponse(가격+SOLD 배지+SAF 브랜딩 디자인 카드)가 raw
+      // Supabase URL에 덮어쓰여져 SNS/카카오/Discover 미리보기에서 디자인 카드 미노출 회귀가 발생.
+      // baseMetadata.openGraph.images에 generic OG_IMAGE가 들어가 있더라도 컨벤션 파일이 우선 적용됨.
+      images: undefined,
     },
     twitter: {
       ...baseMetadata.twitter,
       card: 'summary_large_image',
-      // 작품별 alt로 덮어씀 — baseMetadata.twitter의 제네릭 alt 대신 작품명 사용
-      images: [
-        {
-          url: imageUrl,
-          alt: isEnglish
-            ? [
-                `"${titleForLocale}" by ${artistForLocale}`,
-                artwork.year ? `(${artwork.year})` : '',
-                materialForLocale ? `— ${materialForLocale}` : '',
-                categoryForLocale ? `— ${categoryForLocale}` : '',
-                '| SAF Online',
-              ]
-                .filter(Boolean)
-                .join(' ')
-            : [
-                `${artwork.artist} 작가의 작품 "${artwork.title}"`,
-                artwork.year ? `(${artwork.year})` : '',
-                materialForLocale ? `— ${materialForLocale}` : '',
-                artwork.category ? `— ${artwork.category}` : '',
-                '— 씨앗페 온라인',
-              ]
-                .filter(Boolean)
-                .join(' '),
-        },
-      ],
+      // twitter-image.tsx 컨벤션 파일이 없으면 Next.js가 opengraph-image.tsx로 자동 fallback.
+      images: undefined,
     },
     // Facebook/Instagram/Pinterest 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
     // og:type은 openGraph.type의 'website'를 유지 — 'product'로 override하면 중복 송출되어 파서 혼란
