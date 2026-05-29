@@ -13,6 +13,7 @@ import { CONTACT, SITE_URL } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import RelatedStoriesGrid from '@/components/features/RelatedStoriesGrid';
+import { Link } from '@/i18n/navigation';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
@@ -369,6 +370,33 @@ export default async function TransparencyPage({
             en: 'Understand the Mutual-Aid Mechanics Deeper',
           }}
         />
+
+        {/* 3-hub cross-link chips (EN) — Sprint 67: trust cluster cross-link */}
+        <Section variant="white" prevVariant="canvas-soft" className="pb-16">
+          <div className="container-max max-w-4xl">
+            <p className="text-sm font-medium text-charcoal-muted mb-3">Related trust hubs</p>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/our-proof"
+                className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+              >
+                Our Proof
+              </Link>
+              <Link
+                href="/our-reality"
+                className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+              >
+                Our Reality
+              </Link>
+              <Link
+                href="/petition/oh-yoon"
+                className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+              >
+                Oh Yoon Petition
+              </Link>
+            </div>
+          </div>
+        </Section>
       </>
     );
   }
@@ -565,6 +593,33 @@ export default async function TransparencyPage({
           en: 'Understand the Mutual-Aid Mechanics Deeper',
         }}
       />
+
+      {/* 3-hub cross-link chips (KO) — Sprint 67: trust cluster cross-link */}
+      <Section variant="white" prevVariant="canvas-soft" className="pb-16">
+        <div className="container-max max-w-4xl">
+          <p className="text-sm font-medium text-charcoal-muted mb-3">신뢰의 다른 기록</p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/our-proof"
+              className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+            >
+              우리의 증명
+            </Link>
+            <Link
+              href="/our-reality"
+              className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+            >
+              우리의 현실
+            </Link>
+            <Link
+              href="/petition/oh-yoon"
+              className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+            >
+              오윤 청원
+            </Link>
+          </div>
+        </div>
+      </Section>
     </>
   );
 }

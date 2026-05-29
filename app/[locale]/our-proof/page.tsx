@@ -531,7 +531,34 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           ]}
         />
 
-        <Section variant="primary-soft" prevVariant="canvas" className="pb-24 md:pb-32">
+        {/* 3-hub cross-link chips (EN) — Sprint 67: trust cluster cross-link */}
+        <Section variant="white" prevVariant="canvas" className="pb-10">
+          <div className="container-max max-w-4xl">
+            <p className="text-sm font-medium text-charcoal-muted mb-3">Related trust hubs</p>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/transparency"
+                className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+              >
+                Operating Reports
+              </Link>
+              <Link
+                href="/our-reality"
+                className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+              >
+                Our Reality
+              </Link>
+              <Link
+                href="/petition/oh-yoon"
+                className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+              >
+                Oh Yoon Petition
+              </Link>
+            </div>
+          </div>
+        </Section>
+
+        <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
           <div className="container-max text-center">
             <SectionTitle className="mb-8">You can join this trust network</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
@@ -872,8 +899,35 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
         ]}
       />
 
+      {/* 3-hub cross-link chips (KO) — Sprint 67: trust cluster cross-link */}
+      <Section variant="white" prevVariant="canvas" className="pb-10">
+        <div className="container-max max-w-4xl">
+          <p className="text-sm font-medium text-charcoal-muted mb-3">신뢰의 다른 기록</p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/transparency"
+              className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+            >
+              운용 보고서
+            </Link>
+            <Link
+              href="/our-reality"
+              className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+            >
+              우리의 현실
+            </Link>
+            <Link
+              href="/petition/oh-yoon"
+              className="px-3 md:px-4 py-1.5 text-xs font-medium rounded-full border border-gallery-hairline bg-white text-charcoal hover:bg-canvas-strong transition-colors"
+            >
+              오윤 청원
+            </Link>
+          </div>
+        </div>
+      </Section>
+
       {/* Call to Action */}
-      <Section variant="primary-soft" prevVariant="canvas" className="pb-24 md:pb-32">
+      <Section variant="primary-soft" prevVariant="white" className="pb-24 md:pb-32">
         <div className="container-max text-center">
           <SectionTitle className="mb-8">당신도 이 신뢰의 체계에 참여할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
