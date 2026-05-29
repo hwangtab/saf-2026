@@ -12,6 +12,7 @@ import StatCard from '@/components/ui/StatCard';
 import { CONTACT, SITE_URL } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import RelatedStoriesGrid from '@/components/features/RelatedStoriesGrid';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
@@ -353,6 +354,21 @@ export default async function TransparencyPage({
             </div>
           </div>
         </Section>
+
+        <RelatedStoriesGrid
+          slugs={[
+            'how-mutual-aid-fund-works',
+            'what-95-percent-repayment-rate-means',
+            'saf-three-year-journey',
+            'bank-vs-mutual-aid-comparison',
+          ]}
+          locale={locale}
+          eyebrow={{ ko: '깊이 읽기', en: 'Deeper Reading' }}
+          title={{
+            ko: '상호부조 운영을 더 깊이 이해하기',
+            en: 'Understand the Mutual-Aid Mechanics Deeper',
+          }}
+        />
       </>
     );
   }
@@ -534,6 +550,21 @@ export default async function TransparencyPage({
           </div>
         </div>
       </Section>
+
+      <RelatedStoriesGrid
+        slugs={[
+          'how-mutual-aid-fund-works',
+          'what-95-percent-repayment-rate-means',
+          'saf-three-year-journey',
+          'bank-vs-mutual-aid-comparison',
+        ]}
+        locale={locale}
+        eyebrow={{ ko: '깊이 읽기', en: 'Deeper Reading' }}
+        title={{
+          ko: '상호부조 운영을 더 깊이 이해하기',
+          en: 'Understand the Mutual-Aid Mechanics Deeper',
+        }}
+      />
     </>
   );
 }
