@@ -239,17 +239,20 @@ export async function GET(request: NextRequest) {
           const intendedRole =
             cookieRole ?? (isValidIntendedRole(metadataRole) ? metadataRole : null);
 
+          // intendedRole: 'artist' | 'collector' | 'exhibitor' (isValidIntendedRole).
+          // collector·미상 → 마이페이지. artist/exhibitor → 각자 신청 폼.
           const noAppDestination =
             intendedRole === 'artist'
               ? `${origin}/onboarding?role=artist`
-              : intendedRole === 'collector'
-                ? `${origin}/mypage`
-                : `${origin}/onboarding`;
+              : intendedRole === 'exhibitor'
+                ? `${origin}/exhibitor/onboarding`
+                : `${origin}/mypage`;
           return redirectWithOAuthStateCleared(noAppDestination);
         }
       }
     }
   }
 
-  return redirectWithOAuthStateCleared(`${origin}/onboarding`);
+  // 최후 fallback: 신원 정보 불완전. 콜렉터로 가정해 마이페이지로.
+  return redirectWithOAuthStateCleared(`${origin}/mypage`);
 }

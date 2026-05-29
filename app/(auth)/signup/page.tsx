@@ -15,7 +15,7 @@ import Button from '@/components/ui/Button';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import SafeImage from '@/components/common/SafeImage';
 
-type RoleChoice = 'collector' | 'artist';
+type RoleChoice = 'collector' | 'artist' | 'exhibitor';
 
 const SIGNUP_COPY = {
   ko: {
@@ -27,6 +27,10 @@ const SIGNUP_COPY = {
     artistDesc: '작품을 출품하고 씨앗페에 참여해요',
     artistApprovalNote:
       '아티스트는 가입 후 작품·프로필 심사와 관리자 승인을 거쳐 활동이 시작됩니다.',
+    exhibitorLabel: '갤러리·큐레이터',
+    exhibitorDesc: '갤러리·큐레이터로 작가들을 출품해요',
+    exhibitorApprovalNote:
+      '갤러리·큐레이터는 가입 후 출품자 신청서 제출과 관리자 승인을 거쳐 활동이 시작됩니다.',
     continueWithGoogle: '구글로 계속하기',
     orEmailSignup: '또는 이메일 가입',
     nameLabel: '이름 (실명)',
@@ -64,6 +68,10 @@ const SIGNUP_COPY = {
     artistDesc: 'Submit your works and join the SAF campaign',
     artistApprovalNote:
       'Artists become active after submitting works and receiving admin approval.',
+    exhibitorLabel: 'Gallery / Curator',
+    exhibitorDesc: 'Submit artists’ works as a gallery or curator',
+    exhibitorApprovalNote:
+      'Galleries and curators become active after submitting the exhibitor application and receiving admin approval.',
     continueWithGoogle: 'Continue with Google',
     orEmailSignup: 'Or sign up with email',
     nameLabel: 'Name (legal name)',
@@ -202,7 +210,13 @@ export default function SignUpPage() {
     setLoading(false);
 
     if (data?.session) {
-      router.push(roleChoice === 'artist' ? '/onboarding' : '/mypage');
+      router.push(
+        roleChoice === 'artist'
+          ? '/onboarding'
+          : roleChoice === 'exhibitor'
+            ? '/exhibitor/onboarding'
+            : '/mypage'
+      );
       router.refresh();
       return;
     }
@@ -316,11 +330,12 @@ export default function SignUpPage() {
           {/* 역할 선택 */}
           <div className="mb-6">
             <p className="text-sm font-medium text-charcoal mb-3">{copy.roleTitle}</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {(
                 [
                   { value: 'collector', label: copy.collectorLabel, desc: copy.collectorDesc },
                   { value: 'artist', label: copy.artistLabel, desc: copy.artistDesc },
+                  { value: 'exhibitor', label: copy.exhibitorLabel, desc: copy.exhibitorDesc },
                 ] as const
               ).map(({ value, label, desc }) => (
                 <button
@@ -341,9 +356,9 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {roleChoice === 'artist' && (
+          {(roleChoice === 'artist' || roleChoice === 'exhibitor') && (
             <p className="mb-4 text-xs text-charcoal-muted bg-canvas-strong rounded-lg px-3 py-2">
-              {copy.artistApprovalNote}
+              {roleChoice === 'artist' ? copy.artistApprovalNote : copy.exhibitorApprovalNote}
             </p>
           )}
 

@@ -87,6 +87,12 @@ export default async function OnboardingPage({
     redirect('/exhibitor/pending');
   }
 
+  // 일반 collector(role='user')는 신청 유형 선택 화면을 보면 안 됨.
+  // 명시적으로 ?role=artist/exhibitor로 진입한 경우만 신청 폼 노출.
+  if (profile?.role === 'user' && !role && !isRecoveryFlow) {
+    redirect('/mypage');
+  }
+
   const isArtistRecovery =
     isRecoveryFlow && profile?.role === 'artist' && profile?.status === 'active';
 

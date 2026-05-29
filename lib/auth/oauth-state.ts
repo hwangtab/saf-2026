@@ -23,8 +23,8 @@ export function isValidOAuthState(
   );
 }
 
-export function isValidIntendedRole(v: unknown): v is 'artist' | 'collector' {
-  return v === 'artist' || v === 'collector';
+export function isValidIntendedRole(v: unknown): v is 'artist' | 'collector' | 'exhibitor' {
+  return v === 'artist' || v === 'collector' || v === 'exhibitor';
 }
 
 export function getOAuthStateCookieOptions(maxAge = OAUTH_STATE_MAX_AGE_SECONDS) {

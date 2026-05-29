@@ -1,5 +1,155 @@
 [
   {
+    "hash": "5a376c37",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 54 — /archive·/news에 RelatedStoriesGrid UI 추가 (Sprint 45 schema와 짝맞춤)",
+    "summary": "/archive, /news 두 페이지에 RelatedStoriesGrid 추가 — Sprint 45에서 추가한 SAF narrative hub schema entity를 UI 그리드 카드로 노출. 캠페인 narrative 페이지 UI/schema 매핑 완성",
+    "body": "배경:\n- Sprint 45에서 /archive + /news CollectionPage.about에 SAF narrative hub schema 시그널 추가\n- UI에는 매거진 link 부재 — schema와 UI 불일치\n- Sprint 52(/transparency) + 53(/about)에 이어 narrative 페이지 보완\n\n변경:\n- app/[locale]/archive/page.tsx:\n  - RelatedStoriesGrid import 추가\n  - return 마지막 Section 직후 그리드 카드 2편 추가\n  - 큐레이션 slugs: saf-three-year-journey, how-mutual-aid-fund-works (Sprint 45 동일)\n  - eyebrow: '시리즈 읽기' / 'Series Reading'\n  - title: '씨앗페 행사의 흐름을 따라가기' / \"Follow the SAF's Journey\"\n- app/[locale]/news/page.tsx:\n  - RelatedStoriesGrid import 추가\n  - return 마지막 Section 직후 그리드 카드 2편 추가\n  - 큐레이션 slugs: saf-three-year-journey, what-is-an-artist-profession (Sprint 45 동일)\n  - eyebrow: '더 읽기' / 'More Reading'\n  - title: '씨앗페와 한국 예술인의 맥락' / 'The SAF Context and Korean Artists'\n\n효과:\n- Sprint 45 schema entity + Sprint 54 UI 그리드 양방향 매핑 완성\n- 캠페인·narrative 6 페이지 모두 UI + schema entity 일관 완성:\n  - /our-reality, /our-proof, /transparency, /about (campaign identity, Sprint 41~44+52~53)\n  - /archive, /news (narrative, Sprint 45+54)\n\n회귀 방지:\n- 기존 모든 Section 무변동\n- slug 모두 DB 등재 확인 (Sprint 45 검증분)\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "3b1dc9c2",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 53 — /about에 RelatedStoriesGrid UI 추가 (Sprint 43 schema와 짝맞춤)",
+    "summary": "/about 페이지 EN/KO return 양쪽에 RelatedStoriesGrid 추가 — Sprint 43에서 추가한 캠페인 hub 3편을 UI 그리드 카드로 노출. 캠페인 정체성 4 페이지 UI 일관 완성",
+    "body": "배경:\n- Sprint 43에서 /about AboutPage.about에 Organization + 캠페인 hub 3편 schema 시그널 추가\n- UI에는 매거진 link 부재 — schema와 UI 불일치\n- Sprint 52(/transparency)와 동일 패턴 적용해 캠페인 페이지 4종 UI 일관\n\n변경:\n- app/[locale]/about/page.tsx:\n  - RelatedStoriesGrid import 추가\n  - EN return 마지막 Section 직후 그리드 카드 3편 추가\n  - KO return 마지막 Section 직후 동일 그리드 추가\n  - 큐레이션 slugs: saf-three-year-journey · how-mutual-aid-fund-works\n    · what-is-an-artist-profession (Sprint 43 schema entity 동일)\n  - eyebrow: '더 깊이 읽기' / 'Read More'\n  - title: '씨앗페를 더 깊이 알아가기' / 'Understand SAF Deeper'\n\n효과:\n- Sprint 43 schema entity + Sprint 53 UI 그리드 양방향 매핑 완성\n- 캠페인 정체성 4 페이지 모두 UI + schema entity 일관 (Sprint 41~44 + 52~53):\n  - /our-reality: UI ✓ + schema ✓\n  - /our-proof: UI ✓ + schema ✓\n  - /transparency: UI ✓(Sprint 52) + schema ✓(Sprint 42)\n  - /about: UI ✓(Sprint 53) + schema ✓(Sprint 43)\n\n회귀 방지:\n- 기존 모든 Section 무변동\n- slug 3편 모두 DB 등재 확인\n- RelatedStoriesGrid는 graceful degradation\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "65b59636",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "admin 포털 bg-primary+text-white small-text WCAG AA 위반 픽스",
+    "summary": "admin 잔존 부채 2곳 픽스 — tone/sort pill 색 대비 4.11→6.98:1",
+    "body": "- artwork-edit-form: tone pill (text-sm regular, 14px). bg+border 모두 primary-strong\n- PageReportTable: sort pill (text-xs medium, 12px). bg+border 모두 primary-strong\n\nadmin은 i18n 스코프 밖이고 e2e-a11y 자동 차단도 없지만 contrast 부채는 별개.\n지난 커밋(d9f212f3)에서 부채로 남겼던 항목 정리 — 이제 raw bg-primary+text-white\nsmall-text 사용처 0건. text-3xl font-black 큰 숫자 뱃지 2곳만 large text 예외로 잔존.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8fd61829",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "signup UX 3종 — 고객 관리 h1, enumeration 분기, 비번 확인 필드",
+    "summary": "회원가입·관리자 페이지 UX 버그 3건 수정",
+    "body": "- /admin/users?role=user 진입 시 h1이 \"사용자 관리\"로 잘못 표시되던 문제\n  → isCustomerMode 분기 추가 (\"고객 관리\" / 설명문 분리)\n- Supabase Email Enumeration Protection으로 이미 가입된 이메일에도\n  signUp이 success를 돌려주는 동작 미처리 → \"가입 신청 완료\" 잘못된 안내\n  → data.user.identities.length === 0 가드로 차단, userExists 에러 표시\n- 비밀번호 확인 필드 부재 → 가입 시 오타 무방비\n  → password-confirm 입력 + 실시간 mismatch hint + 제출 검증 추가",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "883159a1",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "로그인 페이지에 비밀번호 찾기 링크 + reset=success 메시지 추가",
+    "summary": "비번 input 아래 \"비밀번호를 잊으셨나요?\" 링크와 /reset-password 완료 시 success 메시지 표시",
+    "body": "배경:\n- spec §3 reset-password 완료 후 /login?reset=success로 redirect\n- 사용자가 비번 변경 완료 시각 인지 가능\n- ko/en LOGIN_COPY 양쪽에 forgotPassword·resetSuccess 키 추가",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8610ef36",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "/reset-password 페이지 — 새 비번 입력 + recovery 세션 가드",
+    "summary": "recovery 세션 확인 후 새 비번 입력 폼 노출. password-policy(8자 이상) + 일치 검증. 성공 시 signOut → /login?reset=success",
+    "body": "배경:\n- spec §3 흐름의 마지막 단계\n- session 없으면 /forgot-password?error=session_expired로 redirect\n- updateUser 후 signOut으로 recovery 임시 세션 정리, 정식 로그인 유도",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "f3509928",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "/auth/reset recovery 콜백 route — OAuth callback과 분리",
+    "summary": "비번 재설정 이메일 링크 콜백 전용 minimal route. exchangeCodeForSession 후 /reset-password로 redirect, 실패 시 invalid_link 에러로 forgot-password 리턴",
+    "body": "배경:\n- 기존 /auth/callback은 OAuth state cookie 검증을 강제 — recovery 링크에 state cookie 없어 무조건 실패\n- 별도 route 분리로 기존 OAuth state/role-based redirect 로직 0줄 수정",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "b5d6788a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 52 — /transparency에 RelatedStoriesGrid UI 추가 (Sprint 42 schema와 짝맞춤)",
+    "summary": "/transparency 페이지 EN/KO return 양쪽 마지막 Section 직후 RelatedStoriesGrid 추가 — Sprint 42에서 추가한 schema entity 4편을 UI에서도 그리드 카드로 노출",
+    "body": "배경:\n- Sprint 42에서 /transparency WebPage.about에 운영 hub 4편 schema 시그널 추가\n- 실제 UI에서는 매거진 link 부재 — schema와 UI 불일치\n- /our-reality + /our-proof에는 이미 RelatedStoriesGrid 사용 중 (user 추가 라인 21)\n- /transparency도 같은 패턴 적용해 캠페인 페이지 3종 UI 일관 완성\n\n변경:\n- app/[locale]/transparency/page.tsx:\n  - RelatedStoriesGrid import 추가\n  - EN return 마지막 Section 직후 그리드 카드 4편 추가\n  - KO return 마지막 Section 직후 동일 그리드 추가\n  - 큐레이션 slugs: how-mutual-aid-fund-works · what-95-percent-repayment-rate-means\n    · saf-three-year-journey · bank-vs-mutual-aid-comparison (Sprint 42 schema entity와 동일)\n  - eyebrow: '깊이 읽기' / 'Deeper Reading'\n  - title: '상호부조 운영을 더 깊이 이해하기' / 'Understand the Mutual-Aid Mechanics Deeper'\n\n효과:\n- Sprint 42 schema entity + Sprint 52 UI 그리드 양방향 매핑 일관\n- 사용자가 운용 보고서 읽은 후 자연스럽게 hub stories로 진입\n- 캠페인 정체성 3 페이지(/our-reality, /our-proof, /transparency) UI 일관 완성\n- transparency의 link equity가 4 운영 hub로 명시 전달\n\n회귀 방지:\n- 기존 모든 Section 무변동\n- slug 4편 모두 DB 등재 확인 (Sprint 42 검증분)\n- RelatedStoriesGrid 자체가 graceful degradation (미존재 slug 자동 제외)\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "7e72a65e",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "/forgot-password 페이지 — 이메일 입력 + 자격 결과 표시",
+    "summary": "비밀번호 찾기 진입 페이지. ko/en inline COPY, 로그인 페이지와 동일 chrome. 5가지 status별 메시지 분기",
+    "body": "배경:\n- spec docs/superpowers/specs/2026-05-29-password-reset-design.md\n- (auth) route group은 [locale] 밖이라 inline COPY 패턴 사용 (login/signup 일관)\n- ?error=invalid_link / session_expired 쿼리로 /auth/reset 실패 케이스 표시",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d9f212f3",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "bg-primary+text-white small-text WCAG AA 위반 일괄 + 재발 방지",
+    "summary": "oh-yoon CTA와 동일 패턴 위반 3건 픽스, e2e-a11y 커버리지 확장, DESIGN.md/CLAUDE.md에 raw bg-primary 금지 규칙 명문화",
+    "body": "위반 픽스 (모두 bg-primary → bg-primary-strong):\n- WishlistNavButton: count 배지 (10px bold, 4.11→6.98:1)\n- changelog filter pill (14px medium, 4.11→6.98:1)\n- our-proof \"예술인 대출\" highlight 박스 + eyebrow text-white/70 → /90\n\n회귀 방지:\n- e2e/a11y/static-pages.spec.ts 추가 (/our-proof, /changelog ×ko/en)\n- docs/DESIGN.md §2 Primary 표 아래 경고 박스: WCAG 기준·금지·권장·예외 명시\n- CLAUDE.md Color Usage Rules에 한 줄 규칙 추가\n\n근본 원인: Button 컴포넌트는 button-base에서 bg-primary-strong 강제하지만,\nraw <Link className=\"bg-primary ... text-white\">로 우회 가능. 정적 lint로는\nclsx/조건부까지 못 잡음 → e2e-a11y + DESIGN.md 규칙으로 양면 차단.\n\n부채 (별도 cycle): admin 포털 2곳(artwork-edit-form, PageReportTable)도 동일 위반.\nadmin은 i18n 스코프 밖이지만 contrast는 별개라 후속 cleanup 필요.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "c2e2c470",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "forgot-password — getClientIp + RPC array tolerance + 로깅",
+    "summary": "코드 리뷰 회귀 fix. spec의 inline x-forwarded-for[0] 파싱은 Vercel에서 spoofable — 기존 lib/security/get-client-ip.ts(petition/checkout/order-lookup이 사용)로 교체",
+    "body": "수정:\n- getClientIp 사용으로 IP spoofing 차단 (Vercel Edge가 x-forwarded-for 끝에 append하는 검증값 사용)\n- RPC 응답 Array.isArray 가드 추가 (lib/rate-limit.ts 패턴 일치)\n- console.error 로깅 3건 추가 (RPC error / unexpected payload / mail error)\n- 테스트: last-segment 키 검증으로 수정, x-vercel-forwarded-for 우선순위 테스트 추가, result 값 assert 강화\n\n배경:\n- 코드 리뷰가 lib/security/get-client-ip.ts의 docstring을 인용한 critical 지적\n- spec docs/superpowers/specs/2026-05-29-password-reset-design.md §6 의사 코드가 helper 미인지\n- 다른 server action들은 모두 getClientIp 일관 사용 중\n\n회귀 영향:\n- rate limit이 클라이언트 위조 불가능한 IP에 묶임 → 자동화 enumeration 공격 차단\n- 함수 동작 자체는 동일, IP 추출 경로만 안전한 것으로 교체",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "9af6878e",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "success page query 누락 시 404 대신 작품 상세로 graceful redirect",
+    "summary": "사용자가 계좌이체 주문 후 success 페이지에서 \"페이지를 찾을 수 없다\" 404 화면을 본 사고. 첫 SSR은 200으로 정상이지만 직후(0.37s) 두 번째 GET이 query 없이 호출되어 notFound() 발화 (vercel logs로 두 hit 패턴 확인). 두 번째 호출 원인은 RSC re-fetch/router refresh 추정이지만 root cause 추적 무관하게 사용자 UX 보호 우선",
+    "body": "수정:\n- app/[locale]/checkout/[artworkId]/success/page.tsx:\n  - orderId/amount/paymentKey 누락 → notFound() 대신 작품 상세로 redirect (사용자에게 404 노출 차단)\n  - 무통장 검증 status 조건을 'awaiting_deposit' 단일에서 ['awaiting_deposit', 'paid', 'preparing']로 확대 (입금 완료 후 사용자가 success URL 재방문해도 정상 노출)\n  - DB 매칭 실패 시도 404 대신 작품 상세로 redirect (피싱 시도 방지는 status 화이트리스트로 유지)\n\n검증: type-check ✓ / build ✓ / verify-i18n-placeholders ✓\n\n후속 추적 항목:\n- 첫 200 직후 두 번째 GET이 query 없이 호출되는 원인 (RSC prefetch / router auto-refresh / Vercel rolling deploy 후보). 본 fix로 사용자 영향은 차단됨",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "f34b005c",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "requestPasswordReset server action + 단위 테스트",
+    "summary": "이메일 자격 판정(not_found/social_only/eligible) + rate limit + 메일 발송 로직. 9 케이스 jest 커버",
+    "body": "배경:\n- spec docs/superpowers/specs/2026-05-29-password-reset-design.md §6 구현\n- createSupabaseAdminClient + check_reset_eligibility RPC + supabase.auth.resetPasswordForEmail 조합\n- IP별 1분 5회 rate limit (기존 lib/rate-limit.ts 재사용)\n\n회귀 방지:\n- check_reset_eligibility는 service_role 전용 grant — admin client에서만 호출 가능\n- 이메일 lower-case 정규화로 대소문자 차이 흡수\n- x-forwarded-for 첫 IP만 사용 (proxy chain 첫 클라이언트)\n- TS rpc 타입 캐스팅으로 generate_typescript_types 의존성 회피",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d0b433d0",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "oh-yoon CTA WCAG AA color contrast 위반 해결",
+    "summary": "/special/oh-yoon \"오윤 작품 전체 보기\" CTA 버튼 색 대비 4.11→6.98:1 (bg-primary → bg-primary-strong)",
+    "body": "- bg-primary(#2176FF) + text-white + 14px bold = 4.11:1 (AA 미달, 4.5:1 필요)\n- bg-primary-strong(#0E4ECF)로 교체 → 6.98:1 통과\n- hover는 기존 위계 유지 위해 bg-primary로 살짝 밝아지는 형태\n- CI e2e-a11y 회귀 픽스 (campaign-pages.spec.ts /ko, /en 양쪽)",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "3b39c361",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 51 — VisualArtwork에 mentions 추가 발행 (subjectOf 보존)",
+    "summary": "415 작품 detail의 VisualArtwork Product schema에 매거진 슬롯 3편을 subjectOf + mentions 양쪽 발행 — schema entity 양방향 시그널 강화",
+    "body": "배경:\n- subjectOf는 schema.org에서 'X의 주제로 다뤄짐' 관계\n- mentions는 'X에서 언급됨' 일반 관계\n- 매거진 슬롯 3편(작가 정전 + 매체 hub + commerce hub) 중 매체 hub들은 작품을 '예시'로 언급\n- subjectOf만 발행 시 entity 시그널이 일부 매거진 관계에 정확하지 않음\n\n변경:\n- lib/schemas/artwork.ts:\n  - subjectOf 유지(Article type, 작품이 주제인 매거진)\n  - mentions 추가(CreativeWork type, 작품이 언급된 매거진)\n  - 같은 슬롯 3편을 양쪽 모두 발행\n  - @id에 #mention fragment로 두 entity 시그널 분리\n\nSchema 출력 예시:\n{\n  \"@type\": \"VisualArtwork\",\n  \"subjectOf\": [\n    { \"@type\": \"Article\", \"@id\": \"...\", \"headline\": \"...\" }\n  ],\n  \"mentions\": [\n    { \"@type\": \"CreativeWork\", \"@id\": \"...#mention\", \"name\": \"...\", \"url\": \"...\" }\n  ]\n}\n\n효과:\n- 작품과 매거진 hub 양방향 entity 두 시그널 노출\n- AI Overview/Knowledge Graph 매칭 시 작품이 매거진의 'subject'이자 'mention' 양쪽 인식\n- Sprint 30 about + 40 ItemPage about + 51 mentions = 다층 schema entity cluster\n\n회귀 방지:\n- subjectOf 그대로 보존 (기존 Article entity 시그널 무손실)\n- mentions는 같은 데이터에서 다른 entity 타입 발행 (중복 schema validation 통과)\n- @id 분리로 중복 entity 충돌 방지\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
     "hash": "728c68d4",
     "type": "feat",
     "scope": "auth",
