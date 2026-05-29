@@ -294,9 +294,138 @@ export async function GET(request: NextRequest) {
    - Resend Dashboard에서 `saf2026.com` 도메인 SPF/DKIM verify 상태 + 일일 quota(결제/청원/auth 메일 합산) 확인
 
 3. **Auth → Email Templates → Reset Password**:
-   - 한국어 본문 확인. 이미 한국어면 그대로 두고, 영문이면 ko 본문 추가 (Supabase는 단일 템플릿이므로 이중 언어 본문 권장)
+   - **Subject**: `[씨앗페] 비밀번호 재설정 안내 / Password reset for SAF 2026`
+   - **HTML 본문**: 아래 §9.1 참조. `emails/_components/saf-email-layout.tsx` 디자인 토큰(Gallery Pearl 배경 #FAFAFC, 흰 컨테이너, charcoal-deep #1F2428 헤더, primary-strong #0E4ECF CTA, 시스템 폰트 fallback)을 inline style로 옮긴 형태. 이중 언어(ko + en) 본문 권장 (Supabase는 단일 템플릿).
+   - **변수**: `{{ .ConfirmationURL }}`이 `/auth/reset?code=...` URL로 치환됨
+   - React Email 컴포넌트(`emails/*`)는 우리 코드가 Resend API 직접 호출할 때만 적용 — Supabase Auth 메일은 별도 system이라 동일 톤을 위해 HTML을 손으로 박아야 함
 
 체크리스트는 PR description에 포함.
+
+### 9.1 Reset Password 이메일 HTML 본문
+
+Supabase Dashboard → Auth → Email Templates → Reset Password의 Message (Source) 입력란에 그대로 paste. 모든 CSS는 inline (이메일 클라이언트의 `<style>` 차단 대응). table 기반 레이아웃 (Outlook 호환).
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>비밀번호 재설정</title>
+  </head>
+  <body
+    style="margin:0;padding:0;background:#FAFAFC;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;"
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="background:#FAFAFC;padding:32px 0;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="560"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="max-width:560px;width:100%;background:#FFFFFF;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);"
+          >
+            <tr>
+              <td style="background:#1F2428;padding:20px 28px;">
+                <p style="margin:0;font-size:20px;font-weight:700;color:#FFFFFF;">
+                  [씨앗페] 비밀번호 재설정 / Password reset
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:28px;color:#1F2428;font-size:15px;line-height:1.6;">
+                <p style="margin:0 0 12px 0;">안녕하세요,</p>
+                <p style="margin:0 0 16px 0;">
+                  씨앗페(Seed Art Festival) 계정의 비밀번호 재설정을 요청하셨습니다. 아래 버튼을
+                  눌러 새 비밀번호를 설정해주세요.
+                </p>
+                <table
+                  role="presentation"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="margin:20px 0 24px 0;"
+                >
+                  <tr>
+                    <td style="border-radius:6px;background:#0E4ECF;">
+                      <a
+                        href="{{ .ConfirmationURL }}"
+                        style="display:inline-block;padding:12px 28px;font-size:15px;font-weight:600;color:#FFFFFF;text-decoration:none;border-radius:6px;"
+                        >비밀번호 재설정하기 / Reset password</a
+                      >
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:0 0 8px 0;font-size:13px;color:#6B7280;">
+                  버튼이 작동하지 않으면 아래 URL을 복사해 브라우저에 붙여넣어주세요:
+                </p>
+                <p style="margin:0 0 24px 0;font-size:12px;word-break:break-all;">
+                  <a href="{{ .ConfirmationURL }}" style="color:#0E4ECF;text-decoration:underline;"
+                    >{{ .ConfirmationURL }}</a
+                  >
+                </p>
+                <hr style="border:none;border-top:1px solid #E0E0E0;margin:24px 0;" />
+                <p style="margin:0 0 12px 0;font-size:14px;color:#1F2428;">Hello,</p>
+                <p style="margin:0;font-size:14px;color:#1F2428;line-height:1.6;">
+                  You requested to reset your password for Seed Art Festival. Click the button above
+                  to set a new password.
+                </p>
+                <hr style="border:none;border-top:1px solid #E0E0E0;margin:24px 0;" />
+                <p style="margin:0 0 6px 0;font-size:13px;color:#6B7280;line-height:1.5;">
+                  이 요청을 직접 하지 않으셨다면 이 이메일을 무시해주세요. 비밀번호는 변경되지
+                  않습니다.
+                </p>
+                <p style="margin:0;font-size:13px;color:#6B7280;line-height:1.5;">
+                  If you didn't request this, please ignore this email. Your password will not be
+                  changed.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="background:#FAFAFC;border-top:1px solid #E0E0E0;padding:16px 28px;">
+                <p style="margin:0;font-size:12px;color:#8F98A5;">
+                  씨앗페 2026 (Seed Art Festival)
+                </p>
+                <p style="margin:4px 0 0 0;font-size:12px;color:#8F98A5;">
+                  문의 / Contact: contact@kosmart.org
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+```
+
+**디자인 토큰 매핑 (`emails/_components/saf-email-layout.tsx` 일관):**
+
+| 요소               | 값                                                              | 출처                             |
+| ------------------ | --------------------------------------------------------------- | -------------------------------- |
+| Body 배경          | `#FAFAFC`                                                       | `canvas.DEFAULT` (Gallery Pearl) |
+| 컨테이너 배경      | `#FFFFFF`                                                       | `canvas.soft`                    |
+| 컨테이너 max-width | `560px`                                                         | layout 일관                      |
+| 컨테이너 radius    | `8px`                                                           | layout 일관                      |
+| Header 배경        | `#1F2428`                                                       | `gallery.tile` / `charcoal.deep` |
+| Header 텍스트      | `#FFFFFF` `20px` `700`                                          | layout 일관                      |
+| Body 텍스트        | `#1F2428` `15px` `line-height:1.6`                              | `charcoal.deep` 본문             |
+| CTA 배경           | `#0E4ECF`                                                       | `primary.strong` (6.98:1 AA)     |
+| CTA 텍스트         | `#FFFFFF` `15px` `600`                                          | brand CTA 규약                   |
+| 보조 텍스트        | `#6B7280`                                                       | `gray.500`                       |
+| 푸터 배경          | `#FAFAFC`                                                       | layout 일관                      |
+| 푸터 border-top    | `1px solid #E0E0E0`                                             | `gallery.hairline`               |
+| 푸터 텍스트        | `#8F98A5` `12px`                                                | layout 일관                      |
+| 폰트 fallback      | `-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', ...` | layout 일관                      |
 
 ## 10. 보안 모델
 
