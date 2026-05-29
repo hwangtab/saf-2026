@@ -43,7 +43,10 @@ export default async function ExhibitorOnboardingPage({
     redirect('/admin/dashboard');
   }
 
-  if (profile?.role === 'artist' && profile?.status === 'active') {
+  // 작가는 어떤 status여도 exhibitor 신청 폼 진입 차단 — 이중 신청 방지.
+  if (profile?.role === 'artist') {
+    if (profile.status === 'suspended') redirect('/dashboard/suspended');
+    if (profile.status === 'pending') redirect('/dashboard/pending');
     redirect('/onboarding?recover=1');
   }
 

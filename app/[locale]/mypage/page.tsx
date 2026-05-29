@@ -56,6 +56,7 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
     (profileResult.data as { role: string; marketing_consent: boolean } | null)
       ?.marketing_consent ?? false;
   const showArtistApply = role === 'user';
+  const showExhibitorApply = role === 'user';
 
   const t = await getTranslations({ locale, namespace: 'mypage' });
 
@@ -65,6 +66,7 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
       initialOrders={orders}
       initialWishlistIds={wishlistIds}
       showArtistApply={showArtistApply}
+      showExhibitorApply={showExhibitorApply}
       initialMarketingConsent={marketingConsent}
       messages={{
         title: t('title'),
@@ -72,6 +74,7 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
         tabWishlist: t('tabs.wishlist'),
         tabProfile: t('tabs.profile'),
         tabArtistApply: t('tabs.artistApply'),
+        tabExhibitorApply: t('tabs.exhibitorApply'),
         ordersEmpty: t('orders.empty'),
         ordersViewDetail: t('orders.viewDetail'),
         wishlistEmpty: t('wishlist.empty'),
@@ -86,6 +89,9 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
         artistApplyHeading: t('artistApply.heading'),
         artistApplyBody: t('artistApply.body'),
         artistApplyCta: t('artistApply.cta'),
+        exhibitorApplyHeading: t('exhibitorApply.heading'),
+        exhibitorApplyBody: t('exhibitorApply.body'),
+        exhibitorApplyCta: t('exhibitorApply.cta'),
       }}
     />
   );

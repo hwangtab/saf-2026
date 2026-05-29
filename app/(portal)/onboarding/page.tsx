@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import { OnboardingForm } from './onboarding-form';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 
@@ -96,49 +95,10 @@ export default async function OnboardingPage({
   const isArtistRecovery =
     isRecoveryFlow && profile?.role === 'artist' && profile?.status === 'active';
 
+  // 신청 의도(?role=artist) 없이 도달했고 복구 흐름도 아니면 마이페이지로.
+  // 위 가드들로 admin/artist/exhibitor + 신청 데이터 있는 user는 이미 분기 처리됨.
   if (!isRecoveryFlow && role !== 'artist') {
-    return (
-      <div className="relative min-h-screen bg-canvas-soft flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="absolute top-4 right-4">
-          <SignOutButton />
-        </div>
-        <div className="sm:mx-auto sm:w-full sm:max-w-xl">
-          <div className="mt-6 flex flex-col items-center gap-3">
-            <SafeImage
-              src="/images/logo/320pxX90px.webp"
-              alt="씨앗페"
-              width={160}
-              height={45}
-              className="h-10 w-auto object-contain"
-              priority
-            />
-            <p className="text-lg font-medium text-gray-600">{t('chooseType')}</p>
-          </div>
-          <p className="mt-3 text-center text-sm text-gray-500">{t('chooseDescription')}</p>
-        </div>
-
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 px-4 sm:px-0">
-            <Link
-              href="/onboarding?role=artist"
-              className="flex flex-col rounded-2xl border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-gallery-hover transition-[box-shadow,border-color]"
-            >
-              <span className="text-lg font-semibold text-gray-900">{t('applyArtist')}</span>
-              <span className="mt-2 text-sm text-gray-500">{t('applyArtistDescription')}</span>
-            </Link>
-
-            <Link
-              href="/exhibitor/onboarding"
-              className="flex flex-col rounded-2xl border-2 border-gray-200 bg-white p-6 shadow-sm hover:border-gray-900 hover:shadow-gallery-hover transition-[box-shadow,border-color]"
-            >
-              <span className="text-lg font-semibold text-gray-900">{t('applyExhibitor')}</span>
-              <span className="mt-2 text-sm text-gray-500">{t('applyExhibitorDescription')}</span>
-            </Link>
-          </div>
-        </div>
-        <FeedbackButton />
-      </div>
-    );
+    redirect('/mypage');
   }
 
   return (

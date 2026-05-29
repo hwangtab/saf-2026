@@ -35,7 +35,9 @@ export async function GET(request: NextRequest) {
   const cookieState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
   const cookieRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
 
-  if (code && !isValidOAuthState(requestState, cookieState)) {
+  // OAuth state CSRF 가드는 OAuth 흐름(oauth_nonce 쿼리 존재)에만 적용.
+  // 이메일 가입 확인·매직링크는 oauth_nonce 없이 도착하므로 이 가드를 통과해야 함.
+  if (code && requestState && !isValidOAuthState(requestState, cookieState)) {
     return redirectWithOAuthStateCleared(`${origin}/login?error=oauth_state`);
   }
 

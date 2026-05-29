@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import {
   isWeakPasswordError,
@@ -120,6 +120,19 @@ export default function SignUpPage() {
 
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+
+  // 이미 로그인된 사용자가 /signup에 도달하면 마이페이지로 보냄 — 폼 노출 방지.
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (mounted && user) {
+        router.replace('/mypage');
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [supabase, router]);
 
   const requestOAuthState = async () => {
     const response = await fetch('/api/auth/oauth/state', {

@@ -6,8 +6,9 @@ import OrdersTab from './OrdersTab';
 import WishlistTab from './WishlistTab';
 import ProfileTab from './ProfileTab';
 import ArtistApplyTab from './ArtistApplyTab';
+import ExhibitorApplyTab from './ExhibitorApplyTab';
 
-type Tab = 'orders' | 'wishlist' | 'profile' | 'artist-apply';
+type Tab = 'orders' | 'wishlist' | 'profile' | 'artist-apply' | 'exhibitor-apply';
 
 type Order = {
   id: string;
@@ -25,6 +26,7 @@ type Messages = {
   tabWishlist: string;
   tabProfile: string;
   tabArtistApply: string;
+  tabExhibitorApply: string;
   ordersEmpty: string;
   ordersViewDetail: string;
   wishlistEmpty: string;
@@ -39,6 +41,9 @@ type Messages = {
   artistApplyHeading: string;
   artistApplyBody: string;
   artistApplyCta: string;
+  exhibitorApplyHeading: string;
+  exhibitorApplyBody: string;
+  exhibitorApplyCta: string;
 };
 
 interface MypageTabsProps {
@@ -46,6 +51,7 @@ interface MypageTabsProps {
   initialOrders: Order[];
   initialWishlistIds: string[];
   showArtistApply: boolean;
+  showExhibitorApply: boolean;
   initialMarketingConsent: boolean;
   messages: Messages;
 }
@@ -55,6 +61,7 @@ export default function MypageTabs({
   initialOrders,
   initialWishlistIds,
   showArtistApply,
+  showExhibitorApply,
   initialMarketingConsent,
   messages,
 }: MypageTabsProps) {
@@ -68,7 +75,9 @@ export default function MypageTabs({
       ? rawTab
       : rawTab === 'artist-apply' && showArtistApply
         ? 'artist-apply'
-        : 'orders';
+        : rawTab === 'exhibitor-apply' && showExhibitorApply
+          ? 'exhibitor-apply'
+          : 'orders';
 
   const setTab = (tab: Tab) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -81,6 +90,9 @@ export default function MypageTabs({
     { id: 'wishlist', label: messages.tabWishlist },
     { id: 'profile', label: messages.tabProfile },
     ...(showArtistApply ? [{ id: 'artist-apply' as const, label: messages.tabArtistApply }] : []),
+    ...(showExhibitorApply
+      ? [{ id: 'exhibitor-apply' as const, label: messages.tabExhibitorApply }]
+      : []),
   ];
 
   return (
@@ -141,6 +153,13 @@ export default function MypageTabs({
             heading={messages.artistApplyHeading}
             body={messages.artistApplyBody}
             ctaLabel={messages.artistApplyCta}
+          />
+        )}
+        {activeTab === 'exhibitor-apply' && (
+          <ExhibitorApplyTab
+            heading={messages.exhibitorApplyHeading}
+            body={messages.exhibitorApplyBody}
+            ctaLabel={messages.exhibitorApplyCta}
           />
         )}
       </div>

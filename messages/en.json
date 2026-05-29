@@ -1222,7 +1222,8 @@
       "orders": "Orders",
       "wishlist": "Wishlist",
       "profile": "Profile",
-      "artistApply": "Artist Registration"
+      "artistApply": "Artist Registration",
+      "exhibitorApply": "Gallery / Curator Registration"
     },
     "orders": {
       "empty": "No orders yet.",
@@ -1258,6 +1259,11 @@
       "heading": "Want to participate as an artist?",
       "body": "Register as an artist to submit your works and join the SAF campaign.",
       "cta": "Apply as Artist"
+    },
+    "exhibitorApply": {
+      "heading": "Want to participate as a gallery or curator?",
+      "body": "Register as a gallery or curator to submit works on behalf of your artists.",
+      "cta": "Apply as Gallery / Curator"
     }
   },
   "changelog": {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import {
   ARTIST_APPLICATION_CONSENT_SELECT,
@@ -70,6 +70,19 @@ export default function LoginPage() {
   const redirectAfterLogin = searchParams.get('redirectTo');
   const oauthErrorParam = searchParams.get('error');
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+
+  // 이미 로그인된 사용자가 /login에 도달하면 마이페이지로 보냄 — 폼 노출 방지.
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (mounted && user) {
+        router.replace('/mypage');
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [supabase, router]);
 
   const initialError = oauthErrorParam === 'oauth_state' ? copy.oauthStateError : null;
   const [error, setError] = useState<string | null>(initialError);
