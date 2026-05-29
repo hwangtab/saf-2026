@@ -75,6 +75,21 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
         : '2023년부터 2026년까지의 씨앗페 행사 기록 모음.',
     url: pageUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
+    // SAF 3년 여정 hub entity — /archive 페이지의 시계열 narrative와 같은 entity cluster.
+    about: [
+      {
+        '@type': 'CreativeWork' as const,
+        '@id': `${SITE_URL}/stories/saf-three-year-journey#about`,
+        url: `${SITE_URL}/stories/saf-three-year-journey`,
+        name: locale === 'en' ? "SAF's Three-Year Journey" : 'SAF 3년 여정',
+      },
+      {
+        '@type': 'CreativeWork' as const,
+        '@id': `${SITE_URL}/stories/how-mutual-aid-fund-works#about`,
+        url: `${SITE_URL}/stories/how-mutual-aid-fund-works`,
+        name: locale === 'en' ? 'How the Mutual Aid Fund Works' : '상호부조 기금 작동 원리',
+      },
+    ],
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     author: {
       '@type': 'Organization',

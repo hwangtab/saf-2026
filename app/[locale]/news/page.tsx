@@ -393,6 +393,21 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
     },
     ...(latestNewsDate && { dateModified: latestNewsDate }),
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
+    // SAF 캠페인 hub entity — /news가 caf 활동 narrative와 같은 entity cluster.
+    about: [
+      {
+        '@type': 'CreativeWork' as const,
+        '@id': `${SITE_URL}/stories/saf-three-year-journey#about`,
+        url: `${SITE_URL}/stories/saf-three-year-journey`,
+        name: locale === 'en' ? "SAF's Three-Year Journey" : 'SAF 3년 여정',
+      },
+      {
+        '@type': 'CreativeWork' as const,
+        '@id': `${SITE_URL}/stories/what-is-an-artist-profession#about`,
+        url: `${SITE_URL}/stories/what-is-an-artist-profession`,
+        name: locale === 'en' ? 'The Artist as a Profession' : '예술인이라는 직업',
+      },
+    ],
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['#news-hero-description', '#press-highlights-title', '#press-highlights-desc'],

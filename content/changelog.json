@@ -1,5 +1,35 @@
 [
   {
+    "hash": "11e4a8dc",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 44 — /our-proof AboutPage.about에 운영 hub 4편 entity 추가",
+    "summary": "/our-proof (우리의 증명·SAF 대출 실적) AboutPage JSON-LD의 about 필드를 Thing 단일에서 배열로 확장 — Thing(프로그램 명) + 운영 hub 4편 CreativeWork entity 추가",
+    "body": "배경:\n- /our-proof는 SAF 상호부조 대출 실적·증명 페이지 (Dataset schema 별도)\n- 현재 AboutPage.about: Thing 단일 (프로그램 명만)\n- Sprint 41(/our-reality) + 42(/transparency) + 43(/about) 캠페인 페이지 시리즈에 이어 마지막 보완\n\n변경:\n- app/[locale]/our-proof/page.tsx:\n  - about 필드를 단일 Thing → [Thing + 4 CreativeWork] 배열로 확장\n  - Thing(프로그램 명) 보존 + 4 운영 hub 추가\n    - how-mutual-aid-fund-works\n    - what-95-percent-repayment-rate-means\n    - bank-vs-mutual-aid-comparison\n    - saf-three-year-journey\n  - locale별 짧은 anchor label hardcoded\n\n효과:\n- 캠페인 정체성 4 페이지(/about, /our-reality, /our-proof, /transparency) 모두 entity 배열 확장 완성\n- Sprint 41~44: 캠페인 페이지 entity 시그널 시리즈 종료\n- Knowledge Graph: '상호부조 대출 프로그램' Thing entity + 4 운영 hub stories cluster\n\n회귀 방지:\n- Thing entity 그대로 보존 (기존 프로그램 명 시그널 무손실)\n- Dataset schema(line 116~) 무변동\n- 4 hub story 모두 DB 등재 확인 (Sprint 42 검증분)\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "169ff2e2",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 43 — /about AboutPage.about에 캠페인 hub stories entity 추가",
+    "summary": "/about (캠페인 소개) AboutPage JSON-LD의 about 필드를 Organization @id 단일에서 배열로 확장 — 캠페인 핵심 hub 3편을 CreativeWork entity로 추가",
+    "body": "배경:\n- /about는 SAF 캠페인 소개·정체성 페이지\n- 현재 AboutPage.about: Organization @id 단일 → Schema 시그널 organization 외 부재\n- Sprint 41(/our-reality) + 42(/transparency) 캠페인 페이지 entity 확장 시리즈 마무리\n\n변경:\n- app/[locale]/about/page.tsx:\n  - aboutEntities 배열로 정의 (Organization @id 보존 + CreativeWork 3편 추가)\n    - saf-three-year-journey (SAF 3년 여정)\n    - how-mutual-aid-fund-works (상호부조 기금 작동 원리)\n    - what-is-an-artist-profession (예술인이라는 직업)\n  - AboutPage.about 필드를 단일 객체 → 배열로 변경\n  - locale별 짧은 anchor label hardcoded\n\n효과:\n- /about와 3 캠페인 hub schema-level entity cluster\n- 캠페인 정체성 페이지 3종(/about + /our-reality + /transparency) 모두 about array 확장 완성\n- Sprint 41~43: 캠페인 페이지 entity 시그널 시리즈 완료\n\n회귀 방지:\n- Organization @id 시그널 그대로 보존\n- 미존재 hub story slug 없음 (3편 모두 DB 등재 확인 완료, Sprint 41/42 검증분)\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8c386678",
+    "type": "fix",
+    "scope": null,
+    "subject": "회귀 점검 cycle 1 — 5 cycle 변경분의 회귀 위험 3건 해소",
+    "summary": "72건 누적 변경분 정밀 회귀 점검. P0 회귀 2건 즉시 차단, 1건은 안전 패턴으로 복귀",
+    "body": "P0 회귀 2건:\n- next.config.js: 직전 cycle 3에서 *.supabase.co → khtunrybrzntlnowlahb.supabase.co로 좁히면서 deprecated 뭄바이 호스트가 차단됨. production DB stories 171건이 본문에 뭄바이 supabase URL을 잔존 보유한 상태(execute_sql 확인)라 image optimization 실패로 매거진 작품 이미지가 깨질 위기. 뭄바이 host 한시 허용 + 본문 backfill 필요 사항 명시\n- app/api/webhooks/toss/route.ts: 직전 cycle 4에서 PAYMENT_STATUS_CHANGED DONE 분기 추가 시 source_detail을 'toss_api' 하드코딩. provider가 'widget'인 결제도 'toss_api'로 잘못 분류되어 보고서 부정확. 기존 패턴(line 186)과 동일하게 provider 기반 분기로 교정\n\n회귀 차단 (안전 패턴 복귀):\n- app/global-error.tsx: cycle 3에서 usePathname 도입했으나 root layout이 throw한 상태에서 navigation context 부재 위험. useEffect+setState로 복귀하되 react-hooks/set-state-in-effect는 mount-only 1회 분기로 ESLint disable 명시 + suppressHydrationWarning\n\n회귀 없음 확인:\n- requireArtistActive → /exhibitor → requireExhibitor 통과 (무한 루프 없음)\n- SortControls 키보드 사이클은 outer div onKeyDown이 처리\n- DB GRANT 회수 — 일반 사용자 경로에 DELETE/UPDATE 없음\n- revalidatePath('/api/artworks') 제거 — tags:['artworks'] 캐시라 revalidateTag로 무효화됨\n- layout force-static + force-dynamic 자식 — 자식 우선 (build 결과 ƒ Dynamic 확인)\n- update_artwork_status_on_sale void→available — admin manual sold는 sale row 없어 트리거 fire 안 함\n- SafeImage src 동적 변경 — 모든 호출처 정적\n- broadcast recipient_count > 0 — enqueue가 빈 recipients면 broadcast 자체 안 만듦\n- Toss webhook DEPOSIT_CALLBACK source_detail은 기존 provider 기반 분기 유지\n\n검증: type-check ✓ / build ✓ / verify-i18n-placeholders ✓\n\n후속 (별도 cycle):\n- stories.body 뭄바이 URL → Seoul URL 일괄 치환 backfill (171건)",
+    "date": "2026-05-28",
+    "author": "황경하"
+  },
+  {
     "hash": "d6ad2f73",
     "type": "feat",
     "scope": "seo",
