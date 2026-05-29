@@ -14,6 +14,7 @@ import { CONTACT, OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema, generateNewsArticleSchema } from '@/lib/seo-utils';
 import { containsHangul } from '@/lib/search-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import RelatedStoriesGrid from '@/components/features/RelatedStoriesGrid';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { Link } from '@/i18n/navigation';
@@ -567,6 +568,16 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
       </Section>
+
+      <RelatedStoriesGrid
+        slugs={['saf-three-year-journey', 'what-is-an-artist-profession']}
+        locale={locale}
+        eyebrow={{ ko: '더 읽기', en: 'More Reading' }}
+        title={{
+          ko: '씨앗페와 한국 예술인의 맥락',
+          en: 'The SAF Context and Korean Artists',
+        }}
+      />
     </>
   );
 }

@@ -8,6 +8,7 @@ import PageHero from '@/components/ui/PageHero';
 import { getHeroOverride } from '@/lib/hero-curation';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import RelatedStoriesGrid from '@/components/features/RelatedStoriesGrid';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
@@ -225,6 +226,16 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
           </div>
         </div>
       </Section>
+
+      <RelatedStoriesGrid
+        slugs={['saf-three-year-journey', 'how-mutual-aid-fund-works']}
+        locale={locale}
+        eyebrow={{ ko: '시리즈 읽기', en: 'Series Reading' }}
+        title={{
+          ko: '씨앗페 행사의 흐름을 따라가기',
+          en: "Follow the SAF's Journey",
+        }}
+      />
     </>
   );
 }
