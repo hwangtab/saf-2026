@@ -32,6 +32,8 @@ const SIGNUP_COPY = {
     nameLabel: '이름 (실명)',
     emailLabel: '이메일 주소',
     passwordLabel: '비밀번호',
+    passwordConfirmLabel: '비밀번호 확인',
+    passwordMismatch: '비밀번호가 일치하지 않습니다.',
     marketingConsentLabel: '(선택) 마케팅 이메일 수신 동의 — 신작·전시·캠페인 소식',
     submit: '가입하기',
     alreadyHaveAccount: '이미 계정이 있으신가요?',
@@ -67,6 +69,8 @@ const SIGNUP_COPY = {
     nameLabel: 'Name (legal name)',
     emailLabel: 'Email address',
     passwordLabel: 'Password',
+    passwordConfirmLabel: 'Confirm password',
+    passwordMismatch: 'Passwords do not match.',
     marketingConsentLabel: '(Optional) Marketing emails — new works, exhibitions, campaigns',
     submit: 'Create account',
     alreadyHaveAccount: 'Already have an account?',
@@ -96,6 +100,7 @@ export default function SignUpPage() {
   const [roleChoice, setRoleChoice] = useState<RoleChoice>('collector');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -139,6 +144,12 @@ export default function SignUpPage() {
       return;
     }
 
+    if (password !== passwordConfirm) {
+      setError(copy.passwordMismatch);
+      setLoading(false);
+      return;
+    }
+
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -164,6 +175,15 @@ export default function SignUpPage() {
             ? copy.userExists
             : copy.signupError
       );
+      setLoading(false);
+      return;
+    }
+
+    // Supabase Email Enumeration Protection:
+    // 이미 가입된 이메일이어도 signUp이 에러 없이 user를 돌려주지만 identities가 빈 배열로 옴.
+    // 이걸 분기하지 않으면 "가입 신청 완료" 화면이 잘못 뜨고 메일도 안 옴.
+    if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      setError(copy.userExists);
       setLoading(false);
       return;
     }
@@ -400,6 +420,31 @@ export default function SignUpPage() {
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary"
                 />
                 <p className="mt-1 text-xs text-charcoal-soft">{copy.passwordMinLengthHint}</p>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password-confirm" className="block text-sm font-medium text-charcoal">
+                {copy.passwordConfirmLabel}
+              </label>
+              <div className="mt-1">
+                <input
+                  id="password-confirm"
+                  name="password-confirm"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={MIN_PASSWORD_LENGTH}
+                  value={passwordConfirm}
+                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                  aria-invalid={
+                    passwordConfirm.length > 0 && passwordConfirm !== password ? true : undefined
+                  }
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary"
+                />
+                {passwordConfirm.length > 0 && passwordConfirm !== password && (
+                  <p className="mt-1 text-xs text-danger-a11y">{copy.passwordMismatch}</p>
+                )}
               </div>
             </div>
 

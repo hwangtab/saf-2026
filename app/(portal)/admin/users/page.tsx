@@ -31,6 +31,7 @@ export default async function UsersPage({ searchParams }: Props) {
       ? params.applicant
       : undefined;
   const isReviewQueueMode = params.status === 'pending';
+  const isCustomerMode = params.role === 'user' && !isReviewQueueMode;
 
   // 기본 쿼리 빌더
   let query = supabase
@@ -123,11 +124,15 @@ export default async function UsersPage({ searchParams }: Props) {
     <div className="space-y-6">
       <div>
         <AdminPageHeader>
-          <AdminPageTitle>{isReviewQueueMode ? '심사 큐' : '사용자 관리'}</AdminPageTitle>
+          <AdminPageTitle>
+            {isReviewQueueMode ? '심사 큐' : isCustomerMode ? '고객 관리' : '사용자 관리'}
+          </AdminPageTitle>
           <AdminPageDescription>
             {isReviewQueueMode
               ? '작가·출품자 신청 심사와 사용자 상태 관리를 통합합니다.'
-              : '가입된 사용자 권한과 계정 상태를 관리합니다.'}
+              : isCustomerMode
+                ? '일반 고객(구매자) 계정 상태와 권한을 관리합니다.'
+                : '가입된 사용자 권한과 계정 상태를 관리합니다.'}
           </AdminPageDescription>
         </AdminPageHeader>
       </div>
