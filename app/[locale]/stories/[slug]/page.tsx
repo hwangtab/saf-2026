@@ -10,6 +10,7 @@ import {
   getSupabaseHomepageArtworks,
 } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { getPrimaryStorySlug } from '@/lib/artist-story-map';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import { generateBlogPostingSchema } from '@/lib/schemas/content';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -235,7 +236,16 @@ export default async function StoryDetailPage({ params }: Props) {
   }
 
   if (relatedArtworks.length === 0) {
-    relatedArtworks = (await getSupabaseHomepageArtworks(3)).filter((a) => !a.sold).slice(0, 3);
+    // tier 3 fallback: over-fetch 12개 후 정전 작가(26명) 작품 우선 정렬 → top 3.
+    // 매거진 글에서 작품으로 가는 link equity가 거장 작가에 집중.
+    relatedArtworks = (await getSupabaseHomepageArtworks(12))
+      .filter((a) => !a.sold)
+      .sort((a, b) => {
+        const pa = getPrimaryStorySlug(a.artist) ? 0 : 1;
+        const pb = getPrimaryStorySlug(b.artist) ? 0 : 1;
+        return pa - pb;
+      })
+      .slice(0, 3);
     artworksSource = 'recent-fallback';
   }
 
