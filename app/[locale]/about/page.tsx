@@ -95,6 +95,25 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
   const isEnglish = locale === 'en';
 
+  // about — Organization entity + 캠페인·운영 hub stories entity cluster.
+  // /about(캠페인 소개)는 organization과 가장 강하게 연결되지만, 캠페인 핵심 hub들과도
+  // schema-level entity로 묶이면 KG entity 매칭 정확도 상승.
+  const aboutEntities: Array<
+    { '@id': string } | { '@type': 'CreativeWork'; '@id': string; url: string; name: string }
+  > = [{ '@id': `${SITE_URL}#organization` }];
+  for (const [slug, koName, enName] of [
+    ['saf-three-year-journey', 'SAF 3년 여정', "SAF's Three-Year Journey"],
+    ['how-mutual-aid-fund-works', '상호부조 기금 작동 원리', 'How the Mutual Aid Fund Works'],
+    ['what-is-an-artist-profession', '예술인이라는 직업', 'The Artist as a Profession'],
+  ] as const) {
+    aboutEntities.push({
+      '@type': 'CreativeWork',
+      '@id': `${SITE_URL}/stories/${slug}#about`,
+      url: `${SITE_URL}/stories/${slug}`,
+      name: isEnglish ? enName : koName,
+    });
+  }
+
   const aboutPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
@@ -104,7 +123,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     url: pageUrl,
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     isPartOf: { '@id': `${SITE_URL}#website` },
-    about: { '@id': `${SITE_URL}#organization` },
+    about: aboutEntities,
     primaryImageOfPage: { '@type': 'ImageObject', url: OG_IMAGE.url },
   };
 
