@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { updateMyProfile, updateMarketingConsent } from '@/app/actions/mypage';
 import Button from '@/components/ui/Button';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface ProfileTabProps {
   user: { id: string; email: string; name: string };
@@ -117,6 +118,9 @@ export default function ProfileTab({
         {consentSaved && (
           <p className="mt-2 text-sm text-success-a11y">{marketingConsentSavedLabel}</p>
         )}
+      </div>
+      <div className="mt-4 flex justify-end rounded-xl border border-gray-200 bg-white p-6">
+        <SignOutButton />
       </div>
     </>
   );
