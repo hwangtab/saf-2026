@@ -343,14 +343,16 @@ export default function SignUpPage() {
                   type="button"
                   onClick={() => setRoleChoice(value)}
                   className={clsx(
-                    'flex flex-col items-center text-center p-4 rounded-xl border-2 transition-colors cursor-pointer',
+                    'grid grid-rows-[2.5rem_1fr] items-start gap-1 p-3 text-center rounded-xl border-2 transition-colors cursor-pointer h-full',
                     roleChoice === value
                       ? 'border-primary bg-primary/5 text-primary-strong'
                       : 'border-gray-200 bg-gray-50 text-charcoal-muted hover:border-gray-300 hover:bg-gray-100'
                   )}
                 >
-                  <span className="font-semibold text-sm">{label}</span>
-                  <span className="text-xs mt-1 leading-snug opacity-80">{desc}</span>
+                  <span className="flex items-center justify-center font-semibold text-sm leading-tight">
+                    {label}
+                  </span>
+                  <span className="text-xs leading-snug opacity-80">{desc}</span>
                 </button>
               ))}
             </div>
