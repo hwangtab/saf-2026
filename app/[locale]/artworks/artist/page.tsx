@@ -14,6 +14,7 @@ import { createLocaleAlternates, buildLocaleUrl } from '@/lib/locale-alternates'
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { getSupabaseArtworks, getSupabaseStoriesLight } from '@/lib/supabase-data';
 import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
+import { getPrimaryStorySlug } from '@/lib/artist-story-map';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import type { Artwork } from '@/types';
@@ -42,9 +43,16 @@ function groupArtistsByName(artworks: Artwork[]): ArtistEntry[] {
     if (!e.cover && aw.images?.[0]) e.cover = aw;
     byArtist.set(aw.artist, e);
   }
+  // ARTIST_PRIMARY_STORY 등재 작가(GSC navigational query 강한 26명)를 사전순 grid 앞에 배치.
+  // 사전순 정렬 안에서 정전 작가가 fold 아래 내려가는 회귀 차단 + link equity 결정론 우선화.
   return [...byArtist.values()]
     .filter((a): a is ArtistEntry => !!a.cover)
-    .sort((a, b) => a.name.localeCompare(b.name, 'ko-KR'));
+    .sort((a, b) => {
+      const pa = getPrimaryStorySlug(a.name) ? 0 : 1;
+      const pb = getPrimaryStorySlug(b.name) ? 0 : 1;
+      if (pa !== pb) return pa - pb;
+      return a.name.localeCompare(b.name, 'ko-KR');
+    });
 }
 
 export async function generateMetadata({
