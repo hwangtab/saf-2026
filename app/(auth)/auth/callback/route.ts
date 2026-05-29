@@ -43,22 +43,26 @@ export async function GET(request: NextRequest) {
   const cookiesToPropagate: PendingCookie[] = [];
 
   const redirectWithOAuthStateCleared = (url: string) => {
-    const response = NextResponse.redirect(url);
+    // NextResponse.redirect 대신 manual NextResponse 생성 — set-cookie 헤더 처리를 명시 제어.
+    const response = new NextResponse(null, {
+      status: 307,
+      headers: { Location: url },
+    });
     for (const c of cookiesToPropagate) {
-      // path '/' 강제 — supabase가 보낸 path가 무엇이든 root로 통일해 어디서든 보이게.
       const options: CookieOptions = { ...c.options, path: '/' };
       response.cookies.set(c.name, c.value, options);
     }
     response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
     response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
-    // 실제 응답에 들어간 set-cookie 헤더 직접 검증 — cookie 이름·길이·path 정확히 확인.
     const setCookieHeaders = response.headers.getSetCookie();
+    const totalHeaderBytes = setCookieHeaders.reduce((acc, h) => acc + h.length, 0);
     console.log('[auth/callback] redirect', {
       url,
       cookieCount: cookiesToPropagate.length,
       cookieNames: cookiesToPropagate.map((c) => c.name),
       setCookieHeaderCount: setCookieHeaders.length,
-      setCookiePreviews: setCookieHeaders.map((h) => h.slice(0, 80)),
+      totalSetCookieBytes: totalHeaderBytes,
+      perCookieBytes: setCookieHeaders.map((h) => h.length),
     });
     return response;
   };
