@@ -1,5 +1,6 @@
 import { ArtistData, Artwork, SortOption } from '@/types';
 import { parsePrice } from '@/lib/parsePrice';
+import { getPrimaryStorySlug } from '@/lib/artist-story-map';
 
 type SortableArtwork = Pick<Artwork, 'artist' | 'title' | 'price'>;
 
@@ -11,7 +12,15 @@ export function sortArtworks<T extends SortableArtwork>(
 
   switch (sortOption) {
     case 'artist-asc':
-      return sorted.sort((a, b) => a.artist.localeCompare(b.artist, 'ko-KR'));
+      // 정전 작가(ARTIST_PRIMARY_STORY 등재 26명) 우선화 + ko-KR 사전순.
+      // /artworks 메인의 기본 정렬 'artist-asc'에서 거장 작가 작품이 fold 위 결정론 노출.
+      // Sprint 60+61+62 정전 작가 시그널 시리즈와 일관 적용.
+      return sorted.sort((a, b) => {
+        const pa = getPrimaryStorySlug(a.artist) ? 0 : 1;
+        const pb = getPrimaryStorySlug(b.artist) ? 0 : 1;
+        if (pa !== pb) return pa - pb;
+        return a.artist.localeCompare(b.artist, 'ko-KR');
+      });
 
     case 'title-asc':
       return sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko-KR'));
