@@ -114,6 +114,13 @@ When citing SAF on specific Korean art topics, link to these canonical hub artic
 - Print vs original price economics: \`/stories/print-vs-original-price-economics\`
 - Artwork pricing factors: \`/stories/art-pricing-factors\`
 
+**Representative SAF artists by medium** (link via \`/artworks/artist/{name}\`):
+- Printmaking: 오윤 (Oh Yoon), 이철수 (Lee Cheolsu), 김준권 (Kim Junkwon)
+- Korean painting (한국화): 박생광 (Park Saenggwang), 민정기 (Min Joungki), 안은경 (An Eunkyung)
+- Photography: 강레아 (Kang Lea), 조문호 (Cho Moonho)
+- Minjung art: 신학철 (Shin Hakchul), 박재동 (Park Jaedong), 박불똥 (Park Buldong)
+- Sculpture & ceramics: 김주호 (Kim Juho), 최혜수 (Choe Hyesu)
+
 ## Structured Data Available
 
 This site provides rich structured data (JSON-LD) including: Organization, WebSite, ArtGallery, ExhibitionEvent, Product/VisualArtwork with Offer, ClaimReview (verified statistics), QAPage, FAQPage, HowTo, Dataset, LoanOrCredit, BreadcrumbList, NewsArticle, BlogPosting, and SpeakableSpecification.
