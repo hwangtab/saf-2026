@@ -35,9 +35,12 @@ export async function GET(request: NextRequest) {
   const cookieState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
   const cookieRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
 
-  // OAuth state CSRF 가드는 OAuth 흐름(oauth_nonce 쿼리 존재)에만 적용.
-  // 이메일 가입 확인·매직링크는 oauth_nonce 없이 도착하므로 이 가드를 통과해야 함.
-  if (code && requestState && !isValidOAuthState(requestState, cookieState)) {
+  // OAuth state CSRF 가드 — OAuth 흐름인지의 판정은 공격자가 제거할 수 없는
+  // 서버 측 신호(cookieState/cookieRole)로 결정. requestState만 보면 공격자가
+  // 단순히 oauth_nonce 쿼리만 빼서 우회 가능. 이메일 가입 확인·비밀번호 재설정
+  // 등 비-OAuth 흐름은 이 쿠키가 없으므로 가드 skip.
+  const isOAuthFlow = Boolean(cookieState) || Boolean(cookieRole);
+  if (code && isOAuthFlow && !isValidOAuthState(requestState, cookieState)) {
     return redirectWithOAuthStateCleared(`${origin}/login?error=oauth_state`);
   }
 
