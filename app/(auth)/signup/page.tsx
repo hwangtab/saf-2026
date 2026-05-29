@@ -28,7 +28,7 @@ const SIGNUP_COPY = {
     artistApprovalNote:
       '아티스트는 가입 후 작품·프로필 심사와 관리자 승인을 거쳐 활동이 시작됩니다.',
     exhibitorLabel: '갤러리·큐레이터',
-    exhibitorDesc: '갤러리·큐레이터로 작가들을 출품해요',
+    exhibitorDesc: '소속 작가의 작품을 출품해요',
     exhibitorApprovalNote:
       '갤러리·큐레이터는 가입 후 출품자 신청서 제출과 관리자 승인을 거쳐 활동이 시작됩니다.',
     continueWithGoogle: '구글로 계속하기',
@@ -69,7 +69,7 @@ const SIGNUP_COPY = {
     artistApprovalNote:
       'Artists become active after submitting works and receiving admin approval.',
     exhibitorLabel: 'Gallery / Curator',
-    exhibitorDesc: 'Submit artists’ works as a gallery or curator',
+    exhibitorDesc: 'Submit works on behalf of your artists',
     exhibitorApprovalNote:
       'Galleries and curators become active after submitting the exhibitor application and receiving admin approval.',
     continueWithGoogle: 'Continue with Google',
