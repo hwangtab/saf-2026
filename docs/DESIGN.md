@@ -37,6 +37,16 @@
 | `primary.surface` | `#EDF3FF` | 가장 옅은 면 — 정보 섹션 배경            |
 | `primary.a11y`    | `#1565D8` | 본문 텍스트 (4.63:1, AA)                 |
 
+> ⚠ **`bg-primary` + `text-white` 조합 — 작은 텍스트 금지.** WCAG AA는 18px(14pt bold) 미만 텍스트에 4.5:1 필요. `primary.DEFAULT` 위 white는 4.11:1 → **버튼/배지/필터 칩(=거의 모든 small bold text)에서 실패**.
+>
+> - ❌ 금지: `<a className="bg-primary text-white text-sm font-bold">` ← 4.11:1 실패
+> - ✅ 권장: `<Button variant="primary">` (button-base에서 `bg-primary-strong` 강제) — 가능하면 항상 이 패턴
+> - ✅ 차선: 굳이 raw 태그가 필요하면 `bg-primary-strong` (6.98:1, AAA)
+> - ✅ 예외: `text-3xl` 이상 또는 `text-xl font-bold` 이상의 **large text**(WCAG 기준 24px 또는 18.66px bold)는 3:1만 충족하면 됨 — `bg-primary` 사용 OK
+> - ✅ 예외: 텍스트 없는 장식 요소(점, 회전 사각형, divider)는 contrast 무관
+>
+> 회귀 사고: 2026-05-29 `/special/oh-yoon` CTA, WishlistNavButton 배지, `/changelog` 필터 pill, `/our-proof` highlight 박스 — 같은 패턴으로 4건 동시 발견. e2e-a11y(`__tests__/e2e/a11y/`)가 머지 전 차단하지만 새 페이지 추가 시 spec 같이 갱신 필수.
+
 ### Accent (테라코타 오렌지 — Carrot) — `@deprecated`
 
 > **신규 코드에서 사용 금지.** Gallery White Cube 모델에서는 단일 액센트 = `primary` 블루로 통일. 기존 `Button variant="accent"` 사용처는 단계적으로 `variant="primary"`로 이전 중이다. 제출이나 기부 CTA처럼 강한 시각적 우선순위가 필요한 곳도 primary로 처리.

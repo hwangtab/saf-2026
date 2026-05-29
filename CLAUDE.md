@@ -164,6 +164,7 @@ types/
 - **`canvas` 토큰 = Gallery White Scale** (DESIGN.md §2): `canvas.DEFAULT #FAFAFC` (Gallery Pearl, 미세 농담 챕터) / `canvas.soft #FFFFFF` (body 기본 배경, 순백 갤러리 벽) / `canvas.strong #F5F5F7` (Gallery Parchment, 대안 챕터)
 - **`gallery.*` 토큰** (신규 코드 권장 — 의미 명확): `gallery.canvas #FFFFFF`, `gallery.pearl #FAFAFC`, `gallery.parchment #F5F5F7`, `gallery.hairline #E0E0E0` (작품 카드 1px border), `gallery.divider #F0F0F0`, `gallery.tile #1F2428` (다크 챕터)
 - **CTA·링크·강조 = `primary` 블루로 통일.** 신규 코드는 `Button variant="primary"`. `primary.strong #0E4ECF` (6.98:1 AA, 링크/호버), `primary.DEFAULT #2176FF` (4.12:1, 큰 UI)
+- **`bg-primary` + `text-white` + small text(<18.66px bold) 금지** — 4.11:1로 WCAG AA(4.5:1) 실패. 버튼/배지/필터 칩은 반드시 `<Button variant="primary">` (button-base에서 `bg-primary-strong` 강제) 또는 raw 태그면 `bg-primary-strong` 직접 사용. `text-3xl` 이상 large text와 텍스트 없는 장식 요소만 `bg-primary` 허용. e2e-a11y가 머지 전 차단함 — 신규 페이지는 `e2e/a11y/`에 spec 추가 필수. (회귀 사고: 2026-05-29 oh-yoon CTA + 동일 패턴 4건)
 - **`accent` (테라코타) 토큰 `@deprecated`** — Gallery White Cube 모델에서 사용 금지. 기존 `Button variant="accent"`는 단계적으로 `variant="primary"`로 이전 중. 신규 코드 추가 사용 금지
 - **`sun-*` 토큰**: `sun.DEFAULT` (#FDCA40)는 **숫자·통계·가격 강조 텍스트 전용**. 배경/CTA 사용 금지(작품 색과 충돌). `sun.soft` (#FEE9A3)는 highlight 섹션 배경 한정 허용. `sun.strong`은 텍스트
 - 중성 색상은 반드시 `gray-*` 브랜드 토큰 사용 (`lib/colors.ts`의 `BRAND_COLORS.gray`)

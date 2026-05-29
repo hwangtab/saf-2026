@@ -74,7 +74,7 @@ export default function ChangelogFeed({ entries, locale: _locale }: ChangelogFee
                 onClick={() => handleFilterChange(f.value)}
                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition-[background-color,color,box-shadow] duration-200 ${
                   filter === f.value
-                    ? 'bg-primary text-white shadow-sm'
+                    ? 'bg-primary-strong text-white shadow-sm'
                     : 'bg-gray-100 text-charcoal-muted hover:bg-gray-200'
                 }`}
               >

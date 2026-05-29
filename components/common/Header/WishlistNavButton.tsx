@@ -35,7 +35,7 @@ export default function WishlistNavButton({
       {mounted && (
         <span
           className={cn(
-            'absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-primary text-white text-[10px] font-bold leading-none',
+            'absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 flex items-center justify-center rounded-full bg-primary-strong text-white text-[10px] font-bold leading-none',
             'transition-[opacity,transform] duration-200 motion-reduce:transition-none',
             count > 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-0 pointer-events-none'
           )}

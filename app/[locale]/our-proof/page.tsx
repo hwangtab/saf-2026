@@ -832,11 +832,11 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
               <div key={s.step} className="flex md:flex-row flex-col items-center gap-2">
                 <div
                   className={`flex flex-col items-center rounded-2xl px-6 py-4 shadow-sm w-44 md:w-auto ${
-                    s.highlight ? 'bg-primary text-white' : 'bg-white border border-gray-100'
+                    s.highlight ? 'bg-primary-strong text-white' : 'bg-white border border-gray-100'
                   }`}
                 >
                   <span
-                    className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/70' : 'text-primary-strong'}`}
+                    className={`text-xs font-semibold tracking-wider uppercase mb-1 ${s.highlight ? 'text-white/90' : 'text-primary-strong'}`}
                   >
                     {s.note}
                   </span>
