@@ -505,15 +505,16 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     return { success: false, error: apiError('order_state_update_failed', buyerLocale) };
   }
 
-  const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
+  // reserved 잠금은 unique edition에서만 의미 있음. limited/open은 여러 구매자가 동시에
+  // 구매 가능하므로 입금 대기 중에도 다른 고객의 구매를 차단하면 안 됨.
+  // edition_type 조회 후 unique일 때만 reserved 처리.
+  const { data: artworkRow, error: editionFetchError } = await adminClient
     .from('artworks')
-    .update({ status: 'reserved' })
+    .select('edition_type, status')
     .eq('id', input.artworkId)
-    .eq('status', 'available')
-    .select('id');
+    .maybeSingle();
 
-  // error이거나 0건 matched(동시 구매로 이미 상태 변경됨) → 주문 취소
-  if (artworkUpdateError || !reservedArtwork || reservedArtwork.length === 0) {
+  if (editionFetchError || !artworkRow) {
     await adminClient
       .from('orders')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
@@ -521,10 +522,35 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
   }
 
-  // artwork available → reserved 반영하여 다른 사용자 구매 차단
-  revalidatePublicArtworkSurfaces();
-  revalidatePath(`/artworks/${input.artworkId}`);
-  revalidatePath(`/en/artworks/${input.artworkId}`);
+  if (artworkRow.edition_type === 'unique') {
+    const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
+      .from('artworks')
+      .update({ status: 'reserved' })
+      .eq('id', input.artworkId)
+      .eq('status', 'available')
+      .select('id');
+
+    // error이거나 0건 matched(동시 구매로 이미 상태 변경됨) → 주문 취소
+    if (artworkUpdateError || !reservedArtwork || reservedArtwork.length === 0) {
+      await adminClient
+        .from('orders')
+        .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+        .eq('order_no', result.orderNo);
+      return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
+    }
+
+    // artwork available → reserved 반영하여 다른 사용자 구매 차단
+    revalidatePublicArtworkSurfaces();
+    revalidatePath(`/artworks/${input.artworkId}`);
+    revalidatePath(`/en/artworks/${input.artworkId}`);
+  } else if (artworkRow.status !== 'available') {
+    // limited/open인데 이미 sold_out(전량 판매) 상태면 구매 차단
+    await adminClient
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+      .eq('order_no', result.orderNo);
+    return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
+  }
 
   // 이메일 발송 (fire-and-forget — 결제 흐름 차단 X)
   // - 구매자: virtual_account_issued 템플릿 재사용 (bankName/accountNumber/dueDate 동일 구조)

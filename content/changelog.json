@@ -1,5 +1,55 @@
 [
   {
+    "hash": "2f33762f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 48 — ItemPage about에 commerce hub 추가 (Sprint 40 확장)",
+    "summary": "415 작품 detail의 ItemPage(WebPage) JSON-LD about 필드에 매체 knowledge hub와 commerce hub 둘 다 entity로 명시 — Sprint 40에서 knowledge hub만 추가했던 것을 commerce도 보완",
+    "body": "배경:\n- Sprint 40에서 ItemPage.about에 매체 knowledge hub 1편 추가\n- VisualArtwork(Sprint 30)는 knowledge만 단일 entity로 추가됨\n- 매거진 슬롯 UI(Sprint 19+20)는 knowledge + commerce 양쪽 노출인데 schema는 knowledge만\n- ItemPage는 WebPage 일반 SERP 시그널이라 commerce intent도 schema-level 명시 필요\n\n변경:\n- lib/schemas/artwork.ts:\n  - getMediumCommerceHubSlug import 추가 (Sprint 20 lib)\n  - itemPageAboutHubs를 single → entries 배열로 확장\n  - knowledge hub + commerce hub 둘 다 entries에 push\n  - 중복 방지(commerce === knowledge 시 미적용)\n  - locale별 label ('회화 가이드' + '회화 가격·구매 가이드')\n\nSchema 출력 (판화 작품 detail ItemPage):\n{\n  \"@type\": \"ItemPage\",\n  \"about\": [\n    { \"url\": \"...stories/korean-contemporary-printmaking-saf\", \"name\": \"판화 가이드\" },\n    { \"url\": \"...stories/print-vs-original-price-economics\", \"name\": \"판화 가격·구매 가이드\" }\n  ]\n}\n\n효과:\n- 415 작품 detail ItemPage → knowledge + commerce 두 hub와 schema-level entity 연결\n- 매거진 슬롯 UI(Sprint 19/20)와 schema mentions(Sprint 30/40)가 일관:\n  - VisualArtwork.about(knowledge)\n  - ItemPage.about(knowledge + commerce) ← Sprint 48\n  - subjectOf(매거진 슬롯 3편)\n- AI Overview: 작품과 가격·구매 가이드의 commerce-intent entity cluster\n\n회귀 방지:\n- knowledge/commerce 모두 미매핑 시 about 필드 자체 생략 (회귀 0)\n- knowledge === commerce 시 commerce 자동 제외\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "61a8f170",
+    "type": "fix",
+    "scope": "analytics",
+    "subject": "admin 알림 false-positive 2건 — Web Vitals device-dedup + GSC threshold 완화",
+    "summary": "5/29 오전 어드민 알림의 'Web Vitals 회귀 1건(/stories CLS)'·'GSC 동기화 중단' 모두 실제 회귀·장애 아닌 false-positive로 확인, dedup·threshold 보정",
+    "body": "배경:\n- /stories CLS 회귀: 단일 desktop Chrome(device_id=1310376650)이 5/27 56분 동안 같은 값\n  0.781832298136646을 10번 적재 → min_sample_size=10 임계 정확히 충족하며 트리거.\n  10/10 샘플 부동소수까지 완벽 동일·session_id NULL.\n- GSC 동기화 중단: GH Actions cron 정상(last_fetched=5/28 21:51 UTC) but Google이\n  5/27·5/28 데이터 publish 안 함(주말 끼면 정상). 알림 threshold `>3일`이 GSC publish\n  lag 정상 범위를 포함.\n\n변경:\n- WebVitalsTracker.tsx: sendClsForPath에 (path, value×1000) 단위 module-scoped dedup ref.\n  visibilitychange 토글·SPA 재진입으로 같은 누적값 반복 전송되는 케이스 1회만 ingest.\n- admin-notifications.ts: GSC staleDays 임계 `> 3` → `> 4`. cron 실패 시 last_fetched도\n  함께 stale해지므로 진짜 장애 신호는 별도 확보됨.\n- supabase migration 20260529190000_web_vitals_device_dedup.sql:\n  get_web_vitals_regressions를 (path, metric, device_id) 단위 dedup 후 통계 산출.\n  device 단위 MAX value·poor 여부로 집계 → sample_size = 고유 device 수 의미로 변경.\n  이미 적재된 false-positive 데이터도 자동 무력화.\n\n검증:\n- 본 migration MCP apply_migration로 적용 (Seoul project khtunrybrzntlnowlahb)\n- 적용 후 get_web_vitals_regression_count(7d, 10) = 0 (이전 1건 → 0건)\n- npm run build ✓ / npx tsc --noEmit ✓ / prettier ✓",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "9240c085",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 47 — llms-full.txt에 매거진 hub 가이드 섹션 추가 (Section 5b)",
+    "summary": "/llms-full.txt에 'Canonical Magazine Hub Articles' 섹션 5b 추가 — Sprint 46(llms.txt) 보강에 이은 long-form LLM 가이드 강화. 16 hub URL을 medium/campaign/buyer 3 그룹으로 상세 분류 + 각 hub coverage 설명",
+    "body": "배경:\n- /llms-full.txt는 LLM agent용 long-form 가이드 (vs /llms.txt 짧은 요약)\n- Sprint 46에서 llms.txt에 hub 가이드 추가했지만 full 버전은 미보강\n- LLM이 deep query(\"Korean printmaking artists list\")에 더 풍부한 context로 응답하려면 hub별 coverage 명시 필요\n\n변경:\n- lib/llms-content.ts buildLlmsFullTxt:\n  - Section 5(Site Structure) 직후 Section 5b 'Canonical Magazine Hub Articles' 신설\n  - 3 카테고리(By medium·By campaign topic·For first-time art buyers)로 16 hub 분류\n  - 각 medium hub에 coverage 설명 추가 (예: '40+ painters', '5 lineages')\n  - 마크다운 table 형식으로 LLM 파싱 친화적\n\n효과:\n- LLM(Claude·ChatGPT·Perplexity·Gemini) 학습 시 SAF의 hub topology 명시 인지\n- AI Overview 답변에 hub URL이 individual story URL보다 우선 노출\n- \"Korean printmaking 5 lineages\" 같은 specific query 시 korean-contemporary-printmaking-saf 우선 인용\n- Sprint 46(/llms.txt) + 47(/llms-full.txt) 두 LLM 가이드 일관 보강 완성\n\n회귀 방지:\n- Section 6 이하 모든 섹션 무변동\n- 새 section은 number 5b로 chronological 정렬 보존\n- 16 hub URL 모두 DB 등재 확인\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d450611b",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 46 — llms.txt에 매거진 hub stories 가이드 섹션 추가 (AI citation)",
+    "summary": "/llms.txt 콘텐츠에 'Key Magazine Hub Articles' 섹션을 추가하여 LLM(ChatGPT·Claude·Perplexity·Gemini)이 SAF site 학습 시 매체·캠페인·구매 가이드별 canonical hub URL을 명시적으로 참조할 수 있게 함",
+    "body": "배경:\n- /llms.txt는 LLM/AI agent가 site 이해할 때 참고하는 가이드 파일\n- 기존 llms.txt는 site structure(/, /artworks, /stories 등) 일반 listing만 보유\n- 매체별·주제별 hub URL 명시 부재 → AI Overview·Perplexity 답변에 hub URL 직접 인용 어려움\n- Sprint 29~45에서 schema entity 시그널은 완성, LLM citation 가이드 미보강\n\n변경:\n- lib/llms-content.ts buildLlmsTxt:\n  - 'Key Magazine Hub Articles' 섹션 신설\n  - By medium: 8 매체 hub (회화·판화·사진·한국화·조각·한지·민중미술·단색화)\n  - By campaign topic: 5 캠페인 hub (3년 여정·상호부조·예술인 직업·95%·은행 비교)\n  - For buyers: 3 commerce hub (first-time·print-vs-original·art-pricing)\n\n효과:\n- LLM 학습 시 SAF의 16 canonical hub URL을 주제별로 명시 인지\n- \"Korean printmaking\" 같은 LLM query에 SAF korean-contemporary-printmaking-saf URL 우선 인용 가능\n- AI Overview/Perplexity citation에서 hub URL이 raw artwork URL보다 우선 노출\n- Sprint 29~45 schema entity 시그널 + Sprint 46 LLM 명시 가이드 = AI search SEO 다층 강화\n\n회귀 방지:\n- 기존 sections(What is SAF·Key Facts·Site Structure 등) 무변동\n- 새 섹션은 Citation 섹션 위에 추가\n- 16 hub URL 모두 DB 등재 확인 (Sprint 21~28 활용 기존 매핑)\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "83dc3267",
+    "type": "fix",
+    "scope": "stories",
+    "subject": "body_en 뭄바이 supabase URL 171건 → Seoul URL 일괄 backfill",
+    "summary": "stories.body_en에 잔존하던 deprecated 뭄바이 호스트(vqejnuntjnxzpgwfndtv) 171건을 Seoul 호스트(khtunrybrzntlnowlahb)로 단순 host 치환. path 구조 동일이라 무손실. next.config 뭄바이 host 한시 허용도 제거 완료",
+    "body": "배경: 2026-05-22 Supabase 프로젝트 이전 후 body(한국어)는 Seoul URL이지만 body_en은 작성 당시의 뭄바이 URL 잔존. 직전 회귀 점검(cycle 1)에서 next.config가 *.supabase.co → seoul host로 좁히면서 매거진 영문판 작품 이미지 깨질 위기 발견, 한시 허용으로 차단\n\n처리:\n- supabase migration 20260529180000: UPDATE stories SET body_en = REPLACE(...) WHERE LIKE '%vqejnuntjnxzpgwfndtv%' — MCP apply 성공, 171건 영향, 뭄바이 잔존 0\n- next.config.js: 뭄바이 호스트 remotePatterns 제거 (Seoul만 명시 — security/cache 일관성)\n\n검증:\n- dry-run: affected 171 / mumbai_after 0 / seoul_after 171\n- 적용 후: mumbai_remaining 0 / seoul_total 171\n- type-check ✓ / build ✓ / verify-i18n-placeholders ✓",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
     "hash": "11e4a8dc",
     "type": "feat",
     "scope": "seo",

@@ -248,16 +248,25 @@ export async function GET(request: NextRequest) {
           continue;
         }
 
-        // awaiting_deposit 전환 후 artwork 예약 처리
+        // awaiting_deposit 전환 후 artwork 예약 처리 — unique edition만 잠금.
+        // limited/open은 여러 구매자가 동시에 진행 가능하므로 입금 대기 중 잠그면 안 됨.
         if (order.artwork_id) {
-          await supabase
+          const { data: artworkEdition } = await supabase
             .from('artworks')
-            .update({ status: 'reserved' })
+            .select('edition_type')
             .eq('id', order.artwork_id)
-            .eq('status', 'available');
-          revalidatePublicArtworkSurfaces();
-          revalidatePath(`/artworks/${order.artwork_id}`);
-          revalidatePath(`/en/artworks/${order.artwork_id}`);
+            .maybeSingle();
+
+          if (artworkEdition?.edition_type === 'unique') {
+            await supabase
+              .from('artworks')
+              .update({ status: 'reserved' })
+              .eq('id', order.artwork_id)
+              .eq('status', 'available');
+            revalidatePublicArtworkSurfaces();
+            revalidatePath(`/artworks/${order.artwork_id}`);
+            revalidatePath(`/en/artworks/${order.artwork_id}`);
+          }
         }
 
         reconciled++;

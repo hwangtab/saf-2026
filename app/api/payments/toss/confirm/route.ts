@@ -196,16 +196,25 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // 가상계좌 발급 시 artwork 예약 처리 — available → reserved (race condition 방지)
+  // 가상계좌 발급 시 artwork 예약 처리 — unique edition만 reserved 잠금.
+  // limited/open은 여러 구매자가 동시 진행 가능하므로 입금 대기 중 잠그면 안 됨.
   if (isVirtualAccount && updatedOrders && updatedOrders.length > 0 && order.artwork_id) {
-    await supabase
+    const { data: artworkEdition } = await supabase
       .from('artworks')
-      .update({ status: 'reserved' })
+      .select('edition_type')
       .eq('id', order.artwork_id)
-      .eq('status', 'available');
-    revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${order.artwork_id}`);
-    revalidatePath(`/en/artworks/${order.artwork_id}`);
+      .maybeSingle();
+
+    if (artworkEdition?.edition_type === 'unique') {
+      await supabase
+        .from('artworks')
+        .update({ status: 'reserved' })
+        .eq('id', order.artwork_id)
+        .eq('status', 'available');
+      revalidatePublicArtworkSurfaces();
+      revalidatePath(`/artworks/${order.artwork_id}`);
+      revalidatePath(`/en/artworks/${order.artwork_id}`);
+    }
   }
 
   // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불
