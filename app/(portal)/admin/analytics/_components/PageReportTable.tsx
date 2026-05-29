@@ -90,7 +90,7 @@ export default function PageReportTable({ data, labels, intlLocale }: Props) {
             onClick={() => setSortKey(opt.key)}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
               sortKey === opt.key
-                ? 'border-primary bg-primary text-white'
+                ? 'border-primary-strong bg-primary-strong text-white'
                 : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
             }`}
           >

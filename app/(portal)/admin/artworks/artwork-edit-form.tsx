@@ -567,7 +567,7 @@ export function ArtworkEditForm({
                   className={cn(
                     'rounded-full px-3 py-1 text-sm border transition-colors',
                     active
-                      ? 'bg-primary text-white border-primary'
+                      ? 'bg-primary-strong text-white border-primary-strong'
                       : 'bg-white text-gray-700 border-gray-300 hover:border-primary/60'
                   )}
                 >
