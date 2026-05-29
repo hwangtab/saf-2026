@@ -72,6 +72,13 @@ const MATERIAL_EN_MAP: Record<string, string> = {
 
   // Woodblock prints
   '(사후판화)목판': 'Posthumous woodblock print',
+  // 오윤 사후판화 — CSV 판법 4종 (저피지 = 닥나무 껍질 한지)
+  '저피지(한지)에 목판화': 'Woodcut on mulberry-bark hanji',
+  '저피지(한지)에 목판화, 수채 채색':
+    'Woodcut on mulberry-bark hanji, hand-colored with watercolor',
+  '저피지(한지)에 고무판화': 'Linocut on mulberry-bark hanji',
+  '저피지(한지)에 고무판화, 수채 채색':
+    'Linocut on mulberry-bark hanji, hand-colored with watercolor',
   '목판, 한지': 'Woodblock print on hanji',
   유성목판: 'Oil-based woodblock print',
   목판채색: 'Color woodblock print',
