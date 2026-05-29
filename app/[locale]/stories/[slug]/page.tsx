@@ -107,6 +107,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: story.updated_at ?? story.published_at,
       authors: [localizeStoryAuthor(story.author, locale)],
       section: isEn ? 'Magazine' : '매거진',
+      // article:tag — story.tags(매체·작가·주제 키워드)를 Open Graph article tag로 노출.
+      // SNS/Facebook Article schema 매칭 + Knowledge Graph entity 보강. KO tags는 EN locale에서도 노출
+      // (Facebook은 entity name 정규화 처리).
+      tags: story.tags && story.tags.length > 0 ? story.tags.slice(0, 6) : undefined,
       // images 미명시 — Next.js 컨벤션 파일(opengraph-image.tsx)이 자동 emit.
       // 카테고리별 색상 + SAF Magazine 브랜딩 + title이 그려진 1200x630 ImageResponse가
       // raw story thumbnail(작품 도판 이미지)보다 SNS/카카오 미리보기에서 매거진 entity를 명확히 노출.
