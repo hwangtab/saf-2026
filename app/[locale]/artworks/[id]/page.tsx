@@ -23,7 +23,7 @@ import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import RecentlySoldSection from '@/components/features/RecentlySoldSection';
 import Section from '@/components/ui/Section';
 import { getArticlesByArtist } from '@/content/artist-articles';
-import { pinPrimaryStory } from '@/lib/artist-story-map';
+import { pinPrimaryStory, getPrimaryStorySlug } from '@/lib/artist-story-map';
 import { getMediumHubSlug, getMediumCommerceHubSlug } from '@/lib/artwork-medium-hub';
 import ArtworkImage from '@/components/features/ArtworkImage';
 import ArtworkDetailNav from '@/components/features/ArtworkDetailNav';
@@ -179,12 +179,20 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const currentTones = new Set(artwork.tone ?? []);
   const toneOverlap = (a: (typeof categoryCandidates)[number]) =>
     (a.tone ?? []).filter((t) => currentTones.has(t)).length;
+  // 정전 작가(ARTIST_PRIMARY_STORY 등재 26명) 작품을 sameCategoryWorks 슬롯 결정론 우선.
+  // GSC navigational query 강한 거장 작가들이 작품 detail에서 결정론적으로 노출 → 작가 entity authority + page authority 동시 boost.
+  const isCanonicalArtist = (name: string) => Boolean(getPrimaryStorySlug(name));
   const sameCategoryWorks = shuffleArray(categoryCandidates)
     .sort((a, b) => {
+      // 1순위: 정전 작가
+      const pa = isCanonicalArtist(a.artist) ? 0 : 1;
+      const pb = isCanonicalArtist(b.artist) ? 0 : 1;
+      if (pa !== pb) return pa - pb;
+      // 2순위: 톤 겹침
       const ta = toneOverlap(a);
       const tb = toneOverlap(b);
-      if (ta !== tb) return tb - ta; // 톤 겹침 많은 후보 우선
-      // 톤 동률 → 가격 근접 보조 (문의가면 shuffle 순서 유지)
+      if (ta !== tb) return tb - ta;
+      // 3순위: 가격 근접 (문의가면 shuffle 순서 유지)
       if (parsedPrice === Infinity) return 0;
       const da = Math.abs(parsePrice(a.price) - parsedPrice);
       const db = Math.abs(parsePrice(b.price) - parsedPrice);
