@@ -89,10 +89,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : (seoOverride?.descriptionKo ?? baseDescription);
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
-  // Discover/SNS는 1200px+ 이미지 필수. thumbnail이 없으면 body 마크다운 첫 이미지로 fallback.
-  const bodyForImage = isEn && story.body_en ? story.body_en : story.body;
-  const heroImage = story.thumbnail || extractFirstImage(bodyForImage) || OG_IMAGE.url;
-  const isCustomImage = heroImage !== OG_IMAGE.url;
+  // Sprint 70: heroImage 변수 제거 — Next.js 컨벤션 파일 opengraph-image.tsx가 자동 emit.
   const isEnIndexable = Boolean(story.body_en) && EN_INDEXABLE_STORY_SLUGS.has(story.slug);
 
   return {
@@ -110,25 +107,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: story.updated_at ?? story.published_at,
       authors: [localizeStoryAuthor(story.author, locale)],
       section: isEn ? 'Magazine' : '매거진',
-      images: [
-        {
-          url: heroImage,
-          width: OG_IMAGE.width,
-          height: OG_IMAGE.height,
-          alt: isCustomImage ? title : isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
-        },
-      ],
+      // images 미명시 — Next.js 컨벤션 파일(opengraph-image.tsx)이 자동 emit.
+      // 카테고리별 색상 + SAF Magazine 브랜딩 + title이 그려진 1200x630 ImageResponse가
+      // raw story thumbnail(작품 도판 이미지)보다 SNS/카카오 미리보기에서 매거진 entity를 명확히 노출.
+      images: undefined,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [
-        {
-          url: heroImage,
-          alt: isCustomImage ? title : isEn ? OG_IMAGE.altEn : OG_IMAGE.alt,
-        },
-      ],
+      // twitter-image.tsx 컨벤션 부재 시 Next.js가 opengraph-image.tsx로 자동 fallback.
+      images: undefined,
     },
     ...(() => {
       const enRobots = resolveEnRobots(locale, isEnIndexable);
