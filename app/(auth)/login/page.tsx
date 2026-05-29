@@ -72,7 +72,9 @@ export default function LoginPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   // 이미 로그인된 사용자가 /login에 도달하면 마이페이지로 보냄 — 폼 노출 방지.
+  // 단, error/redirectTo 파라미터가 있으면 무한 redirect 가능성이 있어 skip.
   useEffect(() => {
+    if (oauthErrorParam || redirectAfterLogin) return;
     let mounted = true;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (mounted && user) {
@@ -82,7 +84,7 @@ export default function LoginPage() {
     return () => {
       mounted = false;
     };
-  }, [supabase, router]);
+  }, [supabase, router, oauthErrorParam, redirectAfterLogin]);
 
   const initialError = oauthErrorParam === 'oauth_state' ? copy.oauthStateError : null;
   const [error, setError] = useState<string | null>(initialError);

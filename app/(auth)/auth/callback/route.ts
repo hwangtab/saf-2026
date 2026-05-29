@@ -4,10 +4,8 @@ import {
   getOAuthRoleCookieOptions,
   getOAuthStateCookieOptions,
   isValidIntendedRole,
-  isValidOAuthState,
   OAUTH_ROLE_COOKIE_NAME,
   OAUTH_STATE_COOKIE_NAME,
-  OAUTH_STATE_QUERY_PARAM,
 } from '@/lib/auth/oauth-state';
 import {
   ARTIST_APPLICATION_CONSENT_SELECT,
@@ -31,18 +29,12 @@ function redirectWithOAuthStateCleared(url: string) {
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const requestState = searchParams.get(OAUTH_STATE_QUERY_PARAM);
-  const cookieState = request.cookies.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
   const cookieRole = request.cookies.get(OAUTH_ROLE_COOKIE_NAME)?.value ?? null;
 
-  // OAuth state CSRF 가드 — OAuth 흐름인지의 판정은 공격자가 제거할 수 없는
-  // 서버 측 신호(cookieState/cookieRole)로 결정. requestState만 보면 공격자가
-  // 단순히 oauth_nonce 쿼리만 빼서 우회 가능. 이메일 가입 확인·비밀번호 재설정
-  // 등 비-OAuth 흐름은 이 쿠키가 없으므로 가드 skip.
-  const isOAuthFlow = Boolean(cookieState) || Boolean(cookieRole);
-  if (code && isOAuthFlow && !isValidOAuthState(requestState, cookieState)) {
-    return redirectWithOAuthStateCleared(`${origin}/login?error=oauth_state`);
-  }
+  // CSRF 방어는 Supabase PKCE flow가 자체 처리 (RFC 7636).
+  // 우리 자체 state nonce 가드는 supabase의 query 보존 동작에 의존해서 false positive
+  // 발생 가능 (OAuth 정상 흐름이 oauth_state 에러로 튕기는 회귀). 가드 제거 + PKCE 위임.
+  // cookieRole만은 의도 보존 위해 계속 읽음 (signup에서 collector/artist/exhibitor 선택분).
 
   if (code) {
     const supabase = await createSupabaseServerClient();
