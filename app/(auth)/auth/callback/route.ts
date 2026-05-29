@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import {
   getOAuthRoleCookieOptions,
@@ -19,8 +20,16 @@ import {
   resolveArtistReconsentRequirements,
 } from '@/lib/auth/terms-consent';
 
-function redirectWithOAuthStateCleared(url: string) {
+async function redirectWithOAuthStateCleared(url: string) {
+  // Next.js 15 Route Handler: NextResponse.redirect 명시 반환 시 next/headers cookies()로 set한
+  // cookie가 자동 머지되지 않음. supabase가 exchangeCodeForSession 중 set한 session cookie를
+  // 응답에 명시 복사해야 클라이언트로 전달됨. 이게 빠지면 사용자 브라우저에 세션 cookie 미세팅
+  // → /mypage 등 후속 페이지가 user를 못 찾아 /login 무한 루프.
+  const cookieStore = await cookies();
   const response = NextResponse.redirect(url);
+  for (const c of cookieStore.getAll()) {
+    response.cookies.set(c.name, c.value);
+  }
   response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
   response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
   return response;
@@ -46,7 +55,7 @@ export async function GET(request: NextRequest) {
         message: sessionError.message,
         status: sessionError.status,
       });
-      return redirectWithOAuthStateCleared(`${origin}/login?error=session_exchange`);
+      return await redirectWithOAuthStateCleared(`${origin}/login?error=session_exchange`);
     }
 
     {
@@ -56,7 +65,7 @@ export async function GET(request: NextRequest) {
 
       if (!user) {
         console.error('[auth/callback] session exchange ok but getUser returned null');
-        return redirectWithOAuthStateCleared(`${origin}/login?error=session_missing`);
+        return await redirectWithOAuthStateCleared(`${origin}/login?error=session_missing`);
       }
 
       if (user) {
@@ -73,11 +82,11 @@ export async function GET(request: NextRequest) {
             code: profileError.code,
             message: profileError.message,
           });
-          return redirectWithOAuthStateCleared(`${origin}/login?error=profile_lookup`);
+          return await redirectWithOAuthStateCleared(`${origin}/login?error=profile_lookup`);
         }
 
         if (profile?.role === 'admin') {
-          return redirectWithOAuthStateCleared(`${origin}/admin/dashboard`);
+          return await redirectWithOAuthStateCleared(`${origin}/admin/dashboard`);
         }
 
         if (profile?.role === 'exhibitor') {
@@ -88,7 +97,7 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           if (applicationError) {
-            return redirectWithOAuthStateCleared(`${origin}/login`);
+            return await redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const hasApplication = hasExhibitorApplication(application);
@@ -97,11 +106,11 @@ export async function GET(request: NextRequest) {
           const needsTos = needsTosConsent(application);
 
           if (profile.status === 'suspended') {
-            return redirectWithOAuthStateCleared(`${origin}/exhibitor/suspended`);
+            return await redirectWithOAuthStateCleared(`${origin}/exhibitor/suspended`);
           }
 
           if (profile.status === 'active') {
-            return redirectWithOAuthStateCleared(
+            return await redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     needsTermsConsent || needsPrivacy || needsTos
@@ -117,7 +126,7 @@ export async function GET(request: NextRequest) {
             );
           }
 
-          return redirectWithOAuthStateCleared(
+          return await redirectWithOAuthStateCleared(
             hasApplication
               ? `${origin}${
                   needsTermsConsent || needsPrivacy || needsTos
@@ -141,14 +150,14 @@ export async function GET(request: NextRequest) {
             .maybeSingle();
 
           if (applicationError) {
-            return redirectWithOAuthStateCleared(`${origin}/login`);
+            return await redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const hasApplication = hasArtistApplication(application);
           const artistReconsent = resolveArtistReconsentRequirements(application);
 
           if (profile.status === 'active') {
-            return redirectWithOAuthStateCleared(
+            return await redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     artistReconsent.needsArtistConsent ||
@@ -167,7 +176,7 @@ export async function GET(request: NextRequest) {
           }
 
           if (profile.status === 'pending') {
-            return redirectWithOAuthStateCleared(
+            return await redirectWithOAuthStateCleared(
               hasApplication
                 ? `${origin}${
                     artistReconsent.needsArtistConsent ||
@@ -185,7 +194,7 @@ export async function GET(request: NextRequest) {
             );
           }
           if (profile.status === 'suspended') {
-            return redirectWithOAuthStateCleared(`${origin}/dashboard/suspended`);
+            return await redirectWithOAuthStateCleared(`${origin}/dashboard/suspended`);
           }
         }
 
@@ -204,7 +213,7 @@ export async function GET(request: NextRequest) {
           ]);
 
           if (exhibitorResult.error || artistResult.error) {
-            return redirectWithOAuthStateCleared(`${origin}/login`);
+            return await redirectWithOAuthStateCleared(`${origin}/login`);
           }
 
           const exhibitorApplication = exhibitorResult.data;
@@ -236,7 +245,7 @@ export async function GET(request: NextRequest) {
                 ? '/exhibitor/pending'
                 : '/dashboard/pending';
 
-            return redirectWithOAuthStateCleared(
+            return await redirectWithOAuthStateCleared(
               `${origin}${
                 needsArtistConsent || needsExhibitorConsent || needsPrivacy || needsTos
                   ? buildTermsConsentPath({
@@ -263,7 +272,7 @@ export async function GET(request: NextRequest) {
               : intendedRole === 'exhibitor'
                 ? `${origin}/exhibitor/onboarding`
                 : `${origin}/mypage`;
-          return redirectWithOAuthStateCleared(noAppDestination);
+          return await redirectWithOAuthStateCleared(noAppDestination);
         }
       }
     }
@@ -274,5 +283,5 @@ export async function GET(request: NextRequest) {
     hasCode: Boolean(code),
     url: request.url,
   });
-  return redirectWithOAuthStateCleared(`${origin}/login?error=callback_fallback`);
+  return await redirectWithOAuthStateCleared(`${origin}/login?error=callback_fallback`);
 }
