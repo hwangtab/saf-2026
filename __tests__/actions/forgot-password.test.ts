@@ -37,10 +37,19 @@ jest.mock('@/lib/auth/server', () => ({
 process.env.NEXT_PUBLIC_SITE_URL = 'https://test.example.com';
 
 describe('requestPasswordReset', () => {
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockHeadersGet.mockReturnValue('203.0.113.42');
+    mockHeadersGet.mockImplementation((name: string) =>
+      name === 'x-forwarded-for' ? '203.0.113.42' : null
+    );
     mockRateLimitResult = { success: true, remaining: 4 };
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it('returns "error" for invalid email', async () => {
@@ -105,13 +114,32 @@ describe('requestPasswordReset', () => {
     });
   });
 
-  it('uses first ip from x-forwarded-for for rateLimit key', async () => {
-    mockHeadersGet.mockReturnValue('1.2.3.4, 5.6.7.8');
+  it('uses last (trusted) IP segment from x-forwarded-for for rateLimit key', async () => {
+    mockHeadersGet.mockImplementation((name: string) =>
+      name === 'x-forwarded-for' ? '1.2.3.4, 5.6.7.8' : null
+    );
+    mockAdminRpc.mockResolvedValue({ data: { status: 'eligible' }, error: null });
+    mockResetPasswordForEmail.mockResolvedValue({ error: null });
+    const { rateLimit } = await import('@/lib/rate-limit');
+    const result = await requestPasswordReset({ email: 'a@b.com' });
+    expect(rateLimit).toHaveBeenCalledWith('forgot-password:5.6.7.8', {
+      limit: 5,
+      windowMs: 60_000,
+    });
+    expect(result).toEqual({ status: 'sent' });
+  });
+
+  it('prefers x-vercel-forwarded-for over x-forwarded-for', async () => {
+    mockHeadersGet.mockImplementation((name: string) => {
+      if (name === 'x-vercel-forwarded-for') return '198.51.100.7';
+      if (name === 'x-forwarded-for') return 'spoofed-1.2.3.4, 5.6.7.8';
+      return null;
+    });
     mockAdminRpc.mockResolvedValue({ data: { status: 'eligible' }, error: null });
     mockResetPasswordForEmail.mockResolvedValue({ error: null });
     const { rateLimit } = await import('@/lib/rate-limit');
     await requestPasswordReset({ email: 'a@b.com' });
-    expect(rateLimit).toHaveBeenCalledWith('forgot-password:1.2.3.4', {
+    expect(rateLimit).toHaveBeenCalledWith('forgot-password:198.51.100.7', {
       limit: 5,
       windowMs: 60_000,
     });

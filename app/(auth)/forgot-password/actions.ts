@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { headers } from 'next/headers';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { rateLimit } from '@/lib/rate-limit';
+import { getClientIp } from '@/lib/security/get-client-ip';
 
 const SCHEMA = z.object({
   email: z
@@ -26,8 +27,7 @@ export async function requestPasswordReset(input: {
   if (!parsed.success) return { status: 'error' };
 
   const headerStore = await headers();
-  const xff = headerStore.get('x-forwarded-for') ?? '';
-  const ip = xff.split(',')[0]?.trim() || 'unknown';
+  const ip = getClientIp(headerStore);
 
   const rl = await rateLimit(`forgot-password:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) return { status: 'rate_limited' };
@@ -40,10 +40,17 @@ export async function requestPasswordReset(input: {
   const { data, error } = await rpc('check_reset_eligibility', {
     p_email: parsed.data.email,
   });
-  if (error) return { status: 'error' };
+  if (error) {
+    console.error('[forgot-password] RPC error:', error);
+    return { status: 'error' };
+  }
 
-  const payload = data as { status: string; provider?: string } | null;
-  if (!payload || typeof payload.status !== 'string') return { status: 'error' };
+  const row = Array.isArray(data) ? data[0] : data;
+  const payload = row as { status?: string; provider?: string } | null;
+  if (!payload || typeof payload.status !== 'string') {
+    console.error('[forgot-password] unexpected RPC payload:', data);
+    return { status: 'error' };
+  }
 
   if (payload.status === 'not_found') return { status: 'not_found' };
   if (payload.status === 'social_only') {
@@ -55,7 +62,10 @@ export async function requestPasswordReset(input: {
   const { error: mailError } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${siteUrl}/auth/reset`,
   });
-  if (mailError) return { status: 'error' };
+  if (mailError) {
+    console.error('[forgot-password] resetPasswordForEmail error:', mailError);
+    return { status: 'error' };
+  }
 
   return { status: 'sent' };
 }
