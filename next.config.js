@@ -187,7 +187,7 @@ const nextConfig = {
       // s-maxage 모두 무효화됨. 4개 경로는 negative lookahead로 명시 제외.
       {
         source:
-          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|api|_next|llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|feed\\.xml|en/llms\\.txt|en/llms-full\\.txt).*)',
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|forgot-password|reset-password|api|_next|llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|feed\\.xml|en/llms\\.txt|en/llms-full\\.txt).*)',
         headers: [
           {
             key: 'Cache-Control',
@@ -207,7 +207,7 @@ const nextConfig = {
       // 보안 가치: portal에서 XSS 발생해도 동적 코드 실행 차단 + 외부 도메인 호출
       // 차단으로 관리자·결제 진입·회원가입 영역 공격 표면 축소.
       {
-        source: '/:portal(admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth)/:path*',
+        source: '/:portal(admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth|forgot-password|reset-password)/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
@@ -234,7 +234,7 @@ const nextConfig = {
       // 위 `:path*` 패턴이 nested만 매칭하는 경우 대비 — Next.js path-to-regexp 동작상
       // 둘 다 매칭되어도 같은 값이라 browser intersect 결과 동일.
       {
-        source: '/:portal(admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth)',
+        source: '/:portal(admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth|forgot-password|reset-password)',
         headers: [
           {
             key: 'Content-Security-Policy',
@@ -298,7 +298,7 @@ const nextConfig = {
       // 공개 페이지용 CSP — portal/api/_next/mypage locale 경로 제외. Kakao Share/Map + 분석 SDK 허용.
       {
         source:
-          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth|api|_next|ko/mypage|en/mypage).*)',
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|terms-consent|auth|forgot-password|reset-password|api|_next|ko/mypage|en/mypage).*)',
         headers: [
           {
             key: 'Content-Security-Policy',

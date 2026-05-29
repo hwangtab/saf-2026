@@ -30,6 +30,8 @@ const PORTAL_AUTH_ROOTS = [
   '/login',
   '/signup',
   '/terms-consent',
+  '/forgot-password',
+  '/reset-password',
 ] as const;
 
 // i18n·인증 미들웨어를 건너뛸 정적·API 루트.
