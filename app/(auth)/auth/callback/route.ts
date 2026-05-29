@@ -42,10 +42,17 @@ export async function GET(request: NextRequest) {
   const redirectWithOAuthStateCleared = (url: string) => {
     const response = NextResponse.redirect(url);
     for (const c of cookiesToPropagate) {
-      response.cookies.set(c.name, c.value, c.options);
+      // path가 명시 안 되면 '/' 강제 — 일부 경로에서만 cookie 보이는 사고 방지.
+      const options = { ...c.options, path: c.options.path ?? '/' };
+      response.cookies.set(c.name, c.value, options);
     }
     response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
     response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
+    console.log('[auth/callback] redirect', {
+      url,
+      cookieCount: cookiesToPropagate.length,
+      cookieNames: cookiesToPropagate.map((c) => c.name),
+    });
     return response;
   };
 

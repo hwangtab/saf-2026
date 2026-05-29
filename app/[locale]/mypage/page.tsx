@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { createSupabaseServerClient } from '@/lib/auth/server';
@@ -26,9 +27,19 @@ export default async function MypagePage({ params }: { params: Promise<{ locale:
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
   if (!user) {
+    const cookieStore = await cookies();
+    const cookieNames = cookieStore.getAll().map((c) => c.name);
+    console.error('[mypage] user null — redirecting to /login', {
+      authError: authError?.message ?? null,
+      authErrorCode: (authError as { code?: string } | null)?.code ?? null,
+      cookieCount: cookieNames.length,
+      cookieNames,
+      hasSupabaseAuthToken: cookieNames.some((n) => n.startsWith('sb-')),
+    });
     redirect('/login?redirectTo=/mypage');
   }
 
