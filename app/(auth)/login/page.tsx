@@ -36,6 +36,8 @@ const LOGIN_COPY = {
     accountLoadError: '계정 정보를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.',
     oauthError: '소셜 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
     oauthStateError: '인증 세션이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.',
+    forgotPassword: '비밀번호를 잊으셨나요?',
+    resetSuccess: '비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.',
   },
   en: {
     subtitle: 'Sign in',
@@ -51,6 +53,8 @@ const LOGIN_COPY = {
     accountLoadError: 'We could not load your account info. Please refresh and try again.',
     oauthError: 'An error occurred during social sign-in. Please try again shortly.',
     oauthStateError: 'Your sign-in session expired or was invalid. Please sign in again.',
+    forgotPassword: 'Forgot your password?',
+    resetSuccess: 'Password changed. Please sign in with your new password.',
   },
 } as const;
 
@@ -69,6 +73,10 @@ export default function LoginPage() {
 
   const initialError = oauthErrorParam === 'oauth_state' ? copy.oauthStateError : null;
   const [error, setError] = useState<string | null>(initialError);
+
+  const resetParam = searchParams.get('reset');
+  const initialSuccess = resetParam === 'success' ? copy.resetSuccess : null;
+  const [successMessage, setSuccessMessage] = useState<string | null>(initialSuccess);
 
   const requestOAuthState = async () => {
     const response = await fetch('/api/auth/oauth/state', {
@@ -92,6 +100,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -385,6 +394,21 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+
+            <div className="mt-2 text-right">
+              <Link
+                href="/forgot-password"
+                className="text-xs font-medium text-primary-a11y hover:text-primary"
+              >
+                {copy.forgotPassword}
+              </Link>
+            </div>
+
+            {successMessage && (
+              <div role="status" className="text-sm text-success-a11y">
+                {successMessage}
+              </div>
+            )}
 
             {error && (
               <div role="alert" className="text-danger-a11y text-sm">
