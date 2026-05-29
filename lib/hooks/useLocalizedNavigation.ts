@@ -81,17 +81,17 @@ export function useLocalizedNavigation(): NavigationItem[] {
         },
         {
           name: t('artistStories'),
-          href: '/stories?category=artist-story',
+          href: '/stories/category/artist-story',
           description: t('artistStoriesDesc'),
         },
         {
           name: t('buyingGuide'),
-          href: '/stories?category=buying-guide',
+          href: '/stories/category/buying-guide',
           description: t('buyingGuideDesc'),
         },
         {
           name: t('artKnowledge'),
-          href: '/stories?category=art-knowledge',
+          href: '/stories/category/art-knowledge',
           description: t('artKnowledgeDesc'),
         },
       ],
