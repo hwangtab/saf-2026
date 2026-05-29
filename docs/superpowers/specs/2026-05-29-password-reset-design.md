@@ -163,6 +163,7 @@ import { z } from 'zod';
 import { headers } from 'next/headers';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import { rateLimit } from '@/lib/rate-limit';
+import { getClientIp } from '@/lib/security/get-client-ip';
 
 const SCHEMA = z.object({ email: z.string().email().toLowerCase() });
 
@@ -177,7 +178,7 @@ export async function requestPasswordReset(input: { email: string }): Promise<Re
   const parsed = SCHEMA.safeParse(input);
   if (!parsed.success) return { status: 'error' };
 
-  const ip = (await headers()).get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const ip = getClientIp(await headers());
   const rl = await rateLimit(`forgot-password:${ip}`, { limit: 5, windowMs: 60_000 });
   if (!rl.success) return { status: 'rate_limited' };
 
@@ -290,14 +291,16 @@ export async function GET(request: NextRequest) {
 
 ## 10. 보안 모델
 
-| 위협                      | 대응                                                               |
-| ------------------------- | ------------------------------------------------------------------ |
-| 이메일 enumeration 자동화 | `rateLimit("forgot-password:" + ip, {limit: 5, windowMs: 60_000})` |
-| RPC 외부 직접 호출        | `grant execute to service_role` 전용                               |
-| search_path injection     | `set search_path = public, auth` 고정                              |
-| recovery 링크 재사용      | Supabase 자체 OTP 만료 (기본 1시간)                                |
-| OAuth callback 우회 시도  | recovery route 분리로 OAuth state 검증 영향 없음                   |
-| 약한 비밀번호             | `lib/auth/password-policy.ts` 재사용, `isWeakPasswordError` 분기   |
+| 위협                      | 대응                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 이메일 enumeration 자동화 | `getClientIp()` 기반 IP + `rateLimit("forgot-password:" + ip, {limit: 5, windowMs: 60_000})` — IP-rotation spoofing 차단 |
+| RPC 외부 직접 호출        | `grant execute to service_role` 전용                                                                                     |
+| search_path injection     | `set search_path = public, auth` 고정                                                                                    |
+| recovery 링크 재사용      | Supabase 자체 OTP 만료 (기본 1시간)                                                                                      |
+| OAuth callback 우회 시도  | recovery route 분리로 OAuth state 검증 영향 없음                                                                         |
+| 약한 비밀번호             | `lib/auth/password-policy.ts` 재사용, `isWeakPasswordError` 분기                                                         |
+
+**IP 추출**: `lib/security/get-client-ip.ts` 사용 (Vercel x-forwarded-for의 **마지막** segment가 Edge-detected 신뢰값. 첫 segment는 클라이언트 위조 가능). 기존 server actions(petition, checkout, order-lookup) 일관 패턴.
 
 ## 11. 테스트
 
