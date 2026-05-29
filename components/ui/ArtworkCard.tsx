@@ -10,6 +10,7 @@ import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { containsHangul } from '@/lib/search-utils';
 import { getMaterialLabel } from '@/lib/artwork-material';
 import { getMediumLabel } from '@/lib/medium-labels';
+import { buildArtworkAlt } from '@/lib/artwork-alt';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 type ArtworkCardTheme = 'light' | 'dark';
@@ -66,16 +67,16 @@ const getImageAlt = (
   unknownArtistLabel: string,
   locale?: string
 ) => {
-  const title = getSafeTitle(artwork, untitledLabel, locale);
-  const artist = getSafeArtist(artwork, unknownArtistLabel, locale);
-  // 재료 정보가 있고 미확인이 아닌 경우 alt에 포함 (영어 locale에서 한글 재료는 제외)
-  const rawMaterial = artwork.material;
-  const hasMaterial =
-    rawMaterial &&
-    rawMaterial !== '확인 중' &&
-    rawMaterial !== 'Pending' &&
-    !(locale === 'en' && containsHangul(rawMaterial));
-  return hasMaterial ? `${title}, ${rawMaterial} - ${artist}` : `${title} - ${artist}`;
+  // lib/artwork-alt.ts util로 통합 (year + material 4토큰, EN-locale 한글 데이터 제외)
+  return buildArtworkAlt(
+    {
+      title: getSafeTitle(artwork, untitledLabel, locale),
+      artist: getSafeArtist(artwork, unknownArtistLabel, locale),
+      material: artwork.material,
+      year: artwork.year,
+    },
+    locale === 'en' ? 'en' : 'ko'
+  );
 };
 
 function SoldBadge({ variant, label }: { variant: ArtworkCardVariant; label: string }) {

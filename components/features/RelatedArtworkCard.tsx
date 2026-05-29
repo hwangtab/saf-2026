@@ -5,6 +5,7 @@ import { trackEvent } from '@/lib/analytics/track';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
+import { buildArtworkAlt } from '@/lib/artwork-alt';
 import type { Artwork } from '@/types';
 
 type ArtworkSource = 'inline' | 'artist-fallback' | 'recent-fallback';
@@ -41,6 +42,10 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position,
   const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
   const artArtist = isEn && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const imgUrl = resolveArtworkImageUrl(artwork.images[0] ?? '');
+  const altText = buildArtworkAlt(
+    { title: artTitle, artist: artArtist, material: artwork.material, year: artwork.year },
+    isEn ? 'en' : 'ko'
+  );
 
   function handleClick() {
     // trackEvent는 내부에서 try/catch — navigation 막지 않음 + Vercel/GA4 이중 송신.
@@ -67,7 +72,7 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position,
         {imgUrl ? (
           <SafeImage
             src={imgUrl}
-            alt={artTitle}
+            alt={altText}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />

@@ -1,9 +1,10 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import type { SearchResultArtwork } from '@/app/api/search/route';
+import { buildArtworkAlt } from '@/lib/artwork-alt';
 
 interface SearchResultItemProps {
   artwork: SearchResultArtwork;
@@ -12,6 +13,11 @@ interface SearchResultItemProps {
 
 export default function SearchResultItem({ artwork, onSelect }: SearchResultItemProps) {
   const tFilters = useTranslations('filters');
+  const locale = useLocale();
+  const altText = buildArtworkAlt(
+    { title: artwork.title, artist: artwork.artist },
+    locale === 'en' ? 'en' : 'ko'
+  );
 
   return (
     <Link
@@ -25,7 +31,7 @@ export default function SearchResultItem({ artwork, onSelect }: SearchResultItem
           <div className="absolute inset-1">
             <SafeImage
               src={artwork.image}
-              alt={`${artwork.title} - ${artwork.artist}`}
+              alt={altText}
               fill
               className="object-contain"
               sizes="48px"

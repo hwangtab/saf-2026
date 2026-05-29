@@ -11,6 +11,7 @@ import {
   resolveOptimizedArtworkImageUrl,
 } from '@/lib/utils';
 import { parseArtworkSize } from '@/lib/utils/parseArtworkSize';
+import { buildArtworkAlt } from '@/lib/artwork-alt';
 
 const NON_WALL_CATEGORIES = ['조각', '도자/공예'];
 
@@ -31,6 +32,8 @@ interface ArtworkImageProps {
   reserved?: boolean;
   size?: string;
   category?: string;
+  material?: string | null;
+  year?: string | number | null;
 }
 
 const SWIPE_THRESHOLD = 50;
@@ -43,6 +46,8 @@ export default function ArtworkImage({
   reserved,
   size,
   category,
+  material,
+  year,
 }: ArtworkImageProps) {
   const locale = useLocale();
   const isNonWall = NON_WALL_CATEGORIES.includes(category || '');
@@ -138,7 +143,7 @@ export default function ArtworkImage({
   }, []);
   const canPreview = !isNonWall && !parseArtworkSize(size || '').isDefault;
 
-  const alt = `${title} - ${artist}`;
+  const alt = buildArtworkAlt({ title, artist, material, year }, locale === 'en' ? 'en' : 'ko');
   const currentImage = safeImages[currentIndex] || '';
   const src = resolveArtworkImageUrlForPreset(currentImage, 'detail');
   const mobileSrc = resolveArtworkImageUrlForPreset(currentImage, 'slider');

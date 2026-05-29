@@ -421,6 +421,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 reserved={artwork.reserved}
                 size={artwork.size}
                 category={artwork.category}
+                material={artwork.material}
+                year={artwork.year}
               />
 
               {/* Mobile Header: Title, Artist, Price (Visible only on mobile, hidden from screen readers to avoid duplication with sr-only header) */}

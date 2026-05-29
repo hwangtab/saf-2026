@@ -196,6 +196,8 @@ export interface ArtworkCardData {
   // 매뉴얼 5.8 매체별 진품 라벨용. category(회화·판화·사후판화·…) + edition(N/M 패턴) 노출.
   category?: string;
   edition?: string;
+  // alt text 4토큰(Sprint 68 lib/artwork-alt.ts)에 사용 — 누락 시 자동 제외.
+  year?: string;
 }
 
 export interface Video {

@@ -5,6 +5,7 @@ import { getMaterialLabel } from '@/lib/artwork-material';
 import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import { buildArtworkAlt } from '@/lib/artwork-alt';
 import type { Artwork } from '@/types';
 
 const ARTWORK_PLACEHOLDER_IMAGE = '/images/og-image.jpg';
@@ -69,15 +70,15 @@ export default function ArtworkGridCard({
   });
   const showMediumLabel = mediumLabel && !artwork.sold;
   const mediumLabelText = locale === 'en' ? mediumLabel?.en : mediumLabel?.ko;
-  const rawMaterial = artwork.material;
-  const hasMaterialForAlt =
-    rawMaterial &&
-    rawMaterial !== '확인 중' &&
-    rawMaterial !== 'Pending' &&
-    !(locale === 'en' && containsHangul(rawMaterial));
-  const altText = hasMaterialForAlt
-    ? `${safeTitle}, ${rawMaterial} - ${safeArtist}`
-    : `${safeTitle} - ${safeArtist}`;
+  const altText = buildArtworkAlt(
+    {
+      title: safeTitle,
+      artist: safeArtist,
+      material: artwork.material,
+      year: artwork.year,
+    },
+    locale === 'en' ? 'en' : 'ko'
+  );
   const imageSrc = resolveArtworkImageUrlForPreset(
     artwork.images?.[0] || ARTWORK_PLACEHOLDER_IMAGE,
     'card'
