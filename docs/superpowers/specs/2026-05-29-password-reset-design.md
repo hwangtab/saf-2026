@@ -279,12 +279,21 @@ export async function GET(request: NextRequest) {
 
 ## 9. 운영 작업 (Supabase Dashboard)
 
-**Supabase는 MCP 우선 정책이지만 이 두 항목은 dashboard 작업이 필요** (MCP 미지원 영역):
+**Supabase는 MCP 우선 정책이지만 다음 항목들은 dashboard 작업이 필요** (MCP 미지원 영역):
 
 1. **Auth → URL Configuration → Redirect URLs**:
    - prod: `https://www.saf2026.com/auth/reset`
    - preview: Vercel preview 도메인 패턴이 이미 등록되어 있다면 `*/auth/reset`도 포함되는지 확인
-2. **Auth → Email Templates → Reset Password**:
+
+2. **Auth → Emails → SMTP Settings (Custom SMTP — Resend)**:
+   - SAF는 이미 `RESEND_API_KEY` + `RESEND_FROM_EMAIL=씨앗페 <noreply@saf2026.com>`로 결제·청원·구매자 알림 메일 발송 중 (`lib/notify.ts`, `lib/email/resend-batch.ts`). 동일 인프라를 Supabase Auth 메일에도 확장
+   - Host: `smtp.resend.com` / Port: `465` (SSL) 또는 `587` (STARTTLS)
+   - Username: `resend` / Password: `RESEND_API_KEY` 값
+   - Sender email: `noreply@saf2026.com` / Sender name: `씨앗페`
+   - ⚠️ Custom SMTP 활성화 시 Supabase 기본 auth 메일 rate limit(시간당 2회/사용자, 30회/IP)이 해제됨 → server action의 `rateLimit('forgot-password:' + ip, limit:5, windowMs:60_000)`이 **유일한 안전망**. 이미 구현되어 있음
+   - Resend Dashboard에서 `saf2026.com` 도메인 SPF/DKIM verify 상태 + 일일 quota(결제/청원/auth 메일 합산) 확인
+
+3. **Auth → Email Templates → Reset Password**:
    - 한국어 본문 확인. 이미 한국어면 그대로 두고, 영문이면 ko 본문 추가 (Supabase는 단일 템플릿이므로 이중 언어 본문 권장)
 
 체크리스트는 PR description에 포함.
