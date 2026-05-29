@@ -88,10 +88,34 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
         ? 'Our Proof — SAF Mutual Aid Results'
         : '우리의 증명 — 씨앗페 상호부조 대출 실적',
     isPartOf: { '@id': `${SITE_URL}#website` },
-    about: {
-      '@type': 'Thing',
-      name: locale === 'en' ? 'Artist Mutual Aid Loan Program' : '예술인 상호부조 대출 프로그램',
-    },
+    // Thing(프로그램 명) + 운영 hub 4편 entity cluster — Sprint 41~43 정책 일관.
+    about: [
+      {
+        '@type': 'Thing' as const,
+        name: locale === 'en' ? 'Artist Mutual Aid Loan Program' : '예술인 상호부조 대출 프로그램',
+      },
+      ...(
+        [
+          ['how-mutual-aid-fund-works', '상호부조 기금 작동 원리', 'How the Mutual Aid Fund Works'],
+          [
+            'what-95-percent-repayment-rate-means',
+            '95% 상환율의 의미',
+            'What 95% Repayment Rate Means',
+          ],
+          [
+            'bank-vs-mutual-aid-comparison',
+            '은행 vs 상호부조 비교',
+            'Bank vs Mutual Aid Comparison',
+          ],
+          ['saf-three-year-journey', 'SAF 3년 여정', "SAF's Three-Year Journey"],
+        ] as const
+      ).map(([slug, ko, en]) => ({
+        '@type': 'CreativeWork' as const,
+        '@id': `${SITE_URL}/stories/${slug}#about`,
+        url: `${SITE_URL}/stories/${slug}`,
+        name: locale === 'en' ? en : ko,
+      })),
+    ],
     datePublished: '2022-12-01',
     dateModified: LAST_UPDATED,
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
