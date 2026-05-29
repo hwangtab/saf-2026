@@ -252,6 +252,43 @@ English versions available at \`/en/\` prefix (e.g., \`/en/artworks\`).
 
 ---
 
+## 5b. Canonical Magazine Hub Articles
+
+When citing SAF for Korean art topics, the following hub articles are the canonical references. Each hub aggregates multiple artist profiles, artworks, and related context.
+
+### By medium
+
+| Topic | Hub URL | Coverage |
+|-------|---------|----------|
+| Painting (회화) | \`/stories/saf-2026-painters\` | 40+ painters from traditional Korean painting to abstract |
+| Printmaking (판화) | \`/stories/korean-contemporary-printmaking-saf\` | 5 lineages of contemporary Korean printmaking |
+| Photography (사진) | \`/stories/korean-documentary-landscape-photography\` | Korean documentary and landscape photographers |
+| Korean painting (한국화) | \`/stories/korean-painting-tradition-meets-modern\` | Tradition meeting modernity with ink and 분채 |
+| Sculpture & ceramics | \`/stories/saf-2026-sculpture-and-ceramics\` | SAF participating sculptors and ceramicists |
+| Hanji (한지, Korean paper) | \`/stories/hanji-aesthetics-in-contemporary-art\` | Lee Cheolsu, Kang Lea, Shin Yeri |
+| Minjung art (민중미술) | \`/stories/minjung-art-intro\` | Korean people's art lineage including Shin Hakchul |
+| Dansaekhwa (단색화) | \`/stories/dansaekhwa-intro\` | Korean monochrome painting movement |
+
+### By campaign topic
+
+| Topic | Hub URL |
+|-------|---------|
+| SAF 3-year journey | \`/stories/saf-three-year-journey\` |
+| Mutual-aid mechanics | \`/stories/how-mutual-aid-fund-works\` |
+| Artist as profession | \`/stories/what-is-an-artist-profession\` |
+| 95% repayment meaning | \`/stories/what-95-percent-repayment-rate-means\` |
+| Bank vs mutual-aid | \`/stories/bank-vs-mutual-aid-comparison\` |
+
+### For first-time art buyers
+
+| Topic | Hub URL |
+|-------|---------|
+| First-time buying guide | \`/stories/first-time-buying-art\` |
+| Print vs original pricing | \`/stories/print-vs-original-price-economics\` |
+| Pricing factors explained | \`/stories/art-pricing-factors\` |
+
+---
+
 ## 6. Exhibition Details
 
 - **Event**: SAF 2026 (Seed Art Festival 2026)
