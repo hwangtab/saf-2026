@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import type { Database } from '@/types/supabase';
 import {
@@ -34,24 +35,30 @@ export async function GET(request: NextRequest) {
   const localeCookie = request.cookies.get('NEXT_LOCALE')?.value;
   const localePrefix = localeCookie === 'en' ? '/en' : '/ko';
 
-  // supabase-ssr setAll 콜백이 알려주는 모든 session cookie(httpOnly·secure·sameSite·path·maxAge 옵션 포함)를
-  // capture해서 모든 redirect 응답에 명시 적용. 이게 누락되면 브라우저에 세션 cookie 미세팅 →
-  // /mypage 등 후속 페이지가 user를 못 찾아 /login 무한 루프.
+  // supabase-ssr setAll 콜백이 알려주는 모든 session cookie를 양쪽에 set:
+  // (1) NextResponse.cookies — redirect 응답에 명시 (브라우저로 전달)
+  // (2) next/headers cookies() — 같은 요청 내 다른 server-side 코드가 봐야 할 때 대비 (안전망)
+  // path는 '/'로 강제 — supabase가 '/auth/callback' 같은 wrong scope path를 보내도 root에서 보이게.
+  const cookieStore = await cookies();
   const cookiesToPropagate: PendingCookie[] = [];
 
   const redirectWithOAuthStateCleared = (url: string) => {
     const response = NextResponse.redirect(url);
     for (const c of cookiesToPropagate) {
-      // path가 명시 안 되면 '/' 강제 — 일부 경로에서만 cookie 보이는 사고 방지.
-      const options = { ...c.options, path: c.options.path ?? '/' };
+      // path '/' 강제 — supabase가 보낸 path가 무엇이든 root로 통일해 어디서든 보이게.
+      const options: CookieOptions = { ...c.options, path: '/' };
       response.cookies.set(c.name, c.value, options);
     }
     response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
     response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
+    // 실제 응답에 들어간 set-cookie 헤더 직접 검증 — cookie 이름·길이·path 정확히 확인.
+    const setCookieHeaders = response.headers.getSetCookie();
     console.log('[auth/callback] redirect', {
       url,
       cookieCount: cookiesToPropagate.length,
       cookieNames: cookiesToPropagate.map((c) => c.name),
+      setCookieHeaderCount: setCookieHeaders.length,
+      setCookiePreviews: setCookieHeaders.map((h) => h.slice(0, 80)),
     });
     return response;
   };
@@ -73,11 +80,14 @@ export async function GET(request: NextRequest) {
         },
         setAll(setCookies) {
           for (const c of setCookies) {
-            cookiesToPropagate.push({
-              name: c.name,
-              value: c.value,
-              options: c.options ?? {},
-            });
+            // path '/' 강제 + 두 store에 모두 적용
+            const options: CookieOptions = { ...(c.options ?? {}), path: '/' };
+            cookiesToPropagate.push({ name: c.name, value: c.value, options });
+            try {
+              cookieStore.set(c.name, c.value, options);
+            } catch (e) {
+              console.error('[auth/callback] cookieStore.set failed', c.name, e);
+            }
           }
         },
       },
