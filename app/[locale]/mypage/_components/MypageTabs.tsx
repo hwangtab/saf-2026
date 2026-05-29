@@ -8,6 +8,7 @@ import WishlistTab from './WishlistTab';
 import ProfileTab from './ProfileTab';
 import ArtistApplyTab from './ArtistApplyTab';
 import ExhibitorApplyTab from './ExhibitorApplyTab';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 
 type Tab = 'orders' | 'wishlist' | 'profile' | 'artist-apply' | 'exhibitor-apply';
 
@@ -99,7 +100,10 @@ export default function MypageTabs({
   return (
     <div className={`min-h-screen bg-canvas-soft pt-24 md:pt-28 ${SAWTOOTH_TOP_SAFE_PADDING}`}>
       <div className="container-max px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-black text-charcoal-deep mb-6">{messages.title}</h1>
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-black text-charcoal-deep">{messages.title}</h1>
+          <SignOutButton />
+        </div>
 
         {/* 탭 네비게이션 */}
         <div className="flex gap-1 p-1 bg-gray-100 rounded-xl mb-8 overflow-x-auto">
