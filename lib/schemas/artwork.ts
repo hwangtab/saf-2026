@@ -8,7 +8,7 @@ import { getCategoryLabel } from '@/lib/artwork-category';
 import { Artwork } from '@/types';
 import { resolveSeoArtworkImageUrl, sanitizeForLocale, parseArtworkPrice } from './utils';
 import { getMaterialLabel, getSizeLabel, getEditionLabel } from '@/lib/artwork-material';
-import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
+import { getMediumHubSlug, getMediumCommerceHubSlug } from '@/lib/artwork-medium-hub';
 import { createBreadcrumbSchema } from './breadcrumb';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { getArtworkSeoOverride } from '@/lib/artwork-seo-overrides';
@@ -574,11 +574,18 @@ export function generateArtworkJsonLd(
   // VisualArtwork.about(Sprint 30)과 별개로 WebPage 레벨에서도 동일 시그널 발행 → 양쪽 schema 모두 KG entity.
   const itemPageAboutHubs = (() => {
     const hubSlug = getMediumHubSlug(artwork.category);
-    if (!hubSlug) return null;
+    const commerceSlug = getMediumCommerceHubSlug(artwork.category);
+    if (!hubSlug && !commerceSlug) return null;
     const catLabel = artwork.category ? getCategoryLabel(artwork.category, locale) : null;
-    return [
-      {
-        '@type': 'CreativeWork' as const,
+    const entries: Array<{
+      '@type': 'CreativeWork';
+      '@id': string;
+      url: string;
+      name: string;
+    }> = [];
+    if (hubSlug) {
+      entries.push({
+        '@type': 'CreativeWork',
         '@id': `${SITE_URL}/stories/${hubSlug}#about`,
         url: `${SITE_URL}/stories/${hubSlug}`,
         name: catLabel
@@ -588,8 +595,23 @@ export function generateArtworkJsonLd(
           : isEnglish
             ? 'Medium guide'
             : '매체 가이드',
-      },
-    ];
+      });
+    }
+    if (commerceSlug && commerceSlug !== hubSlug) {
+      entries.push({
+        '@type': 'CreativeWork',
+        '@id': `${SITE_URL}/stories/${commerceSlug}#about`,
+        url: `${SITE_URL}/stories/${commerceSlug}`,
+        name: catLabel
+          ? isEnglish
+            ? `${catLabel} pricing & buying`
+            : `${catLabel} 가격·구매 가이드`
+          : isEnglish
+            ? 'Pricing guide'
+            : '가격 가이드',
+      });
+    }
+    return entries;
   })();
   const webPageSchema = {
     '@context': 'https://schema.org',
