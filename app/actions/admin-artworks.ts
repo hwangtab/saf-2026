@@ -7,6 +7,28 @@ import { logAdminAction } from './activity-log-writer';
 import { getString, getStoragePathsForRemoval, validateBatchSize } from '@/lib/utils/form-helpers';
 import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { classifyBucket } from '@/lib/artwork-size';
+
+// 가로/세로/깊이(cm) 폼 입력 → size 텍스트 자동 합성 + 구조화 컬럼.
+// 가로·세로 누락 시 '확인 중' + 컬럼 NULL. 깊이 입력 시 3D(WxHxDcm).
+function buildSizeFields(formData: FormData) {
+  const num = (k: string) => {
+    const v = getString(formData, k);
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  };
+  const width_cm = num('width_cm');
+  const height_cm = num('height_cm');
+  const depth_cm = num('depth_cm');
+  if (width_cm == null || height_cm == null) {
+    return { size: '확인 중', width_cm: null, height_cm: null, depth_cm: null, size_bucket: null };
+  }
+  const size =
+    depth_cm != null ? `${width_cm}x${height_cm}x${depth_cm}cm` : `${width_cm}x${height_cm}cm`;
+  const size_bucket = classifyBucket({ width: width_cm, height: height_cm, depth: depth_cm });
+  return { size, width_cm, height_cm, depth_cm, size_bucket };
+}
 
 type EditionType = Database['public']['Enums']['edition_type'];
 type ArtworkStatus = Database['public']['Enums']['artwork_status'];
@@ -196,7 +218,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
   const title_en = getString(formData, 'title_en') || null;
   const admin_product_name = getString(formData, 'admin_product_name') || null;
   const description = getString(formData, 'description');
-  const size = getString(formData, 'size');
+  const sizeFields = buildSizeFields(formData);
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
@@ -234,7 +256,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
       title_en,
       admin_product_name,
       description,
-      size,
+      ...sizeFields,
       material,
       year,
       edition,
@@ -305,7 +327,7 @@ export async function createAdminArtwork(formData: FormData) {
   const title_en = getString(formData, 'title_en') || null;
   const admin_product_name = getString(formData, 'admin_product_name') || null;
   const description = getString(formData, 'description');
-  const size = getString(formData, 'size');
+  const sizeFields = buildSizeFields(formData);
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
@@ -337,7 +359,7 @@ export async function createAdminArtwork(formData: FormData) {
       title_en,
       admin_product_name,
       description,
-      size,
+      ...sizeFields,
       material,
       year,
       edition,

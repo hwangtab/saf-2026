@@ -30,6 +30,9 @@ type Artwork = {
   quote: string | null;
   quote_en: string | null;
   size: string | null;
+  width_cm: number | null;
+  height_cm: number | null;
+  depth_cm: number | null;
   material: string | null;
   year: string | null;
   edition: string | null;
@@ -348,16 +351,44 @@ export function ArtworkEditForm({
           </div>
 
           <div>
-            <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
-              크기
+            <label htmlFor="width_cm" className="block text-sm font-medium text-gray-700 mb-2">
+              크기 (cm)
             </label>
-            <input
-              id="size"
-              name="size"
-              defaultValue={artwork.size || ''}
-              placeholder="60x45cm"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
-            />
+            <div className="grid grid-cols-3 gap-2">
+              <input
+                id="width_cm"
+                name="width_cm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={artwork.width_cm ?? ''}
+                placeholder="가로"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+              />
+              <input
+                id="height_cm"
+                name="height_cm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={artwork.height_cm ?? ''}
+                placeholder="세로"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+              />
+              <input
+                id="depth_cm"
+                name="depth_cm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={artwork.depth_cm ?? ''}
+                placeholder="깊이(3D만)"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              비우면 &quot;확인 중&quot;으로 저장됩니다. 깊이는 입체 작품만 입력.
+            </p>
           </div>
 
           <div>
