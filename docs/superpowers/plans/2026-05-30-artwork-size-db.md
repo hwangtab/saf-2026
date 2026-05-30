@@ -196,9 +196,9 @@ const HO_TABLE: ReadonlyArray<{ ho: number; area: number }> = [
 const HO_RATIO_MAX = 2.2;
 
 // 구간 경계(면적 cm²) — 호수 통념 매핑. spec §4.4. 백필 SQL과 동일 유지.
-const BUCKET_SMALL_MAX = 2412; // ~10호
-const BUCKET_MEDIUM_MAX = 6608; // 10–30호
-const BUCKET_LARGE_MAX = 21135; // 30–100호
+const BUCKET_SMALL_MAX = 2721; // ~10호 (10호 2412 ~ 12호 3030 중간)
+const BUCKET_MEDIUM_MAX = 7319; // 10–30호 (30호 6608 ~ 40호 8030 중간)
+const BUCKET_LARGE_MAX = 23200; // 30–100호 (100호 21135 ~ 120호 25265 중간)
 
 const SIZE_RE = /^(\d+(?:\.\d+)?)\s*[x×X]\s*(\d+(?:\.\d+)?)(?:\s*[x×X]\s*(\d+(?:\.\d+)?))?\s*cm$/;
 
@@ -384,9 +384,9 @@ where size ~ '^[0-9]+(\.[0-9]+)?x[0-9]+(\.[0-9]+)?x[0-9]+(\.[0-9]+)?cm$';
 -- 구간 분류 (lib/artwork-size.ts 경계와 동일 유지)
 update artworks set size_bucket = 'object' where depth_cm is not null;
 update artworks set size_bucket = case
-    when width_cm*height_cm <= 2412  then 'small'
-    when width_cm*height_cm <= 6608  then 'medium'
-    when width_cm*height_cm <= 21135 then 'large'
+    when width_cm*height_cm <= 2721  then 'small'
+    when width_cm*height_cm <= 7319  then 'medium'
+    when width_cm*height_cm <= 23200 then 'large'
     else 'xlarge'
   end
 where depth_cm is null and width_cm is not null;
@@ -405,7 +405,7 @@ select id, size from artworks
 where width_cm is null and size not in ('확인 중','미정');
 ```
 
-Expected: bucket 분포가 small 366 / medium 136 / large 37 / object 10 / null 22(placeholder 20+오타 2). 오타 2건(`23.9x,35.2cm`, `24.918.5cm`) 목록 출력 → **사용자에게 보고**(자동 수정 안 함).
+Expected: bucket 분포가 small 389 / medium 128 / large 22 / object 10 / null 22(placeholder 20+오타 2). 오타 2건(`23.9x,35.2cm`, `24.918.5cm`) 목록 출력 → **사용자에게 보고**(자동 수정 안 함).
 
 - [ ] **Step 6: 커밋**
 
@@ -862,4 +862,4 @@ git push origin main
 
 - **Spec 커버리지**: §3 데이터모델→Task2, §4 도메인로직→Task1, §5 백필→Task3, §6 admin→Task6, §7 표시→Task5, §8 필터정렬→Task7, §9 연동→Task4/5, §10 테스트→Task1/8. 누락 없음.
 - **타입 일관성**: `describeSize`/`classifyBucket`/`parseSizeText`/`area` 시그니처가 Task1 정의와 Task5~7 사용처에서 일치. `SizeBucket` 유니온 동일.
-- **경계 중복 주의**: 구간 경계(2412/6608/21135)가 `lib/artwork-size.ts`와 백필 SQL 양쪽에 존재 — spec §3에 "코드가 단일 출처, SQL은 초기 적재용, 변경 시 재백필" 명시됨. 의도된 중복.
+- **경계 중복 주의**: 구간 경계(2721/7319/23200, 호수 사이 중간값)가 `lib/artwork-size.ts`와 백필 SQL 양쪽에 존재 — spec §3에 "코드가 단일 출처, SQL은 초기 적재용, 변경 시 재백필" 명시됨. 의도된 중복.
