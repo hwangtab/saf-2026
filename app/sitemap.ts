@@ -304,9 +304,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return {
       url: koUrl(baseUrl, artistPath),
-      lastModified: exhibitionEndDate,
-      changeFrequency: 'monthly' as const,
-      priority: 0.65,
+      // Cycle 15: artist 페이지 SEO override 30개 보강 효과 빠른 반영을 위해
+      // lastModified 'now' 갱신, priority 0.65→0.75 상향. Googlebot recrawl 우선순위.
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
       alternates: koAlternates(baseUrl, artistPath),
       ...(safeSitemapImageUrl(absoluteArtistImg)
         ? { images: [safeSitemapImageUrl(absoluteArtistImg)!] }
@@ -343,9 +345,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return {
       url: koUrl(baseUrl, categoryPath),
-      lastModified: exhibitionEndDate,
-      changeFrequency: 'monthly' as const,
-      priority: 0.75,
+      // Cycle 15: categoryPage title i18n 강화(Cycle 5) 효과 빠른 반영 위해 lastModified now.
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
       alternates: koAlternates(baseUrl, categoryPath),
       ...(safeSitemapImageUrl(absoluteCatImg)
         ? { images: [safeSitemapImageUrl(absoluteCatImg)!] }
