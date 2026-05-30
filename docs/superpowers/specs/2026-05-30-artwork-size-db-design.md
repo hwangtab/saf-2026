@@ -86,6 +86,8 @@ Supabase `artworks` (운영, `khtunrybrzntlnowlahb`), 총 **572개**:
 
 순수 함수 모듈. size 관련 모든 파싱·환산·분류·표시는 여기 한 곳을 import. 기존 `lib/artwork-material.ts`의 `getSizeLabel`/`SIZE_EN_MAP`은 이 모듈로 흡수·대체.
 
+> **기존 `lib/utils/parseArtworkSize.ts`와의 관계**: 해당 파일은 **3D 가상 갤러리 전용**(size→미터 단위 `ArtworkDimensions`, 파싱 실패 시 기본값 0.5×0.6m 반환)으로, ArtworkImage·virtual-gallery 4개 컴포넌트가 의존한다. 관심사(3D 월드 좌표 vs cm 표시·호수 분류)·단위(m vs cm)·실패 처리(default vs null)가 달라 **통합하지 않고 그대로 유지**(회귀 방지). 새 `lib/artwork-size.ts`는 독립 모듈. cm 파싱 정규식·호수표가 부분 중복되나, 두 모듈의 목적이 분리돼 결합하지 않는 편이 낫다(YAGNI).
+
 ### 4.1 표준 호수표 (F형 기준)
 
 면적 환산 기준표 — 코드 상수 `HO_TABLE`:
@@ -129,16 +131,20 @@ export function classifyBucket(d: Dimensions): SizeBucket;
 // 면적(cm²) — 2D 한정.
 export function area(d: Pick<Dimensions, 'width' | 'height'>): number;
 
-// 표시 라벨 (i18n). 예: "72.7×60.6cm · 약 20호 · 중형" / "72.7×60.6cm · Size 20 · Medium"
-export function formatSizeLabel(
-  input: {
-    size: string;
-    width_cm?: number | null;
-    height_cm?: number | null;
-    depth_cm?: number | null;
-  },
-  locale: 'ko' | 'en'
-): string;
+// 구조화 표시 정보 (순수, locale 무관). null이면 치수 미상(확인 중/파싱 실패) → 컴포넌트 폴백.
+// 컴포넌트가 i18n t()로 라벨 조합: cm은 그대로, ho는 `약 {n}호`/`Size {n}`, bucket은 구간 라벨.
+export interface SizeInfo {
+  cm: string;
+  ho: number | null;
+  bucket: SizeBucket | null;
+  is3d: boolean;
+}
+export function describeSize(input: {
+  size: string;
+  width_cm?: number | null;
+  height_cm?: number | null;
+  depth_cm?: number | null;
+}): SizeInfo | null;
 ```
 
 ### 4.3 호수 환산 알고리즘 + 신뢰도 가드
@@ -199,7 +205,7 @@ placeholder/치수 미상 → bucket `null` (필터에서 제외).
 
 ## 7. 공개 표시 (i18n 필수)
 
-작품 상세·갤러리 카드에서 `formatSizeLabel` 사용:
+작품 상세·갤러리 카드에서 `describeSize` + 컴포넌트 i18n 조합:
 
 - 형태: `72.7×60.6cm · 약 20호 · 중형` (KO) / `72.7×60.6cm · Size 20 · Medium` (EN)
 - 호수 `confident=false`면 `약 N호` 생략 → `180×30cm · 대형`.
@@ -218,9 +224,9 @@ placeholder/치수 미상 → bucket `null` (필터에서 제외).
 
 - **크기 구간 필터 칩**: 소품/중형/대형/특대/입체. **0건 구간 칩은 동적 숨김.**
 - **크기순 정렬** 옵션 추가(`SortOption`에 `size-asc`/`size-desc`). 면적(2D)·긴변 기준.
-- 서버 쿼리: `WHERE size_bucket = ?`, `ORDER BY width_cm * height_cm`. (갤러리 렌더링 아키텍처 단일 출처 준수 — `lib/supabase-data.ts`).
-- 신규 UI → `e2e/a11y/`에 spec 추가 (CLAUDE.md 차단 규칙).
-- 필터 칩·정렬 라벨 i18n.
+- **클라이언트 필터** — 기존 아키텍처 준수: 갤러리는 `getSupabaseArtworks()`로 전량 SSR 후 `lib/hooks/useArtworkFilter.ts`에서 클라이언트 필터/정렬(URL searchParams 동기화). 크기 필터/정렬도 이 훅을 확장해 추가. `size_bucket`/`width_cm`은 `LIGHT_ARTWORK_COLUMNS`에 실어 보내되, 누락 시 `classifyBucket(parseSizeText(size))`로 폴백 → DB 컬럼 없이도 동작 보장.
+- 기존 `/artworks` a11y spec(`e2e/a11y/artworks.spec.ts`)이 필터 칩 추가 후에도 통과하는지 확인(신규 페이지 아님 → 새 spec 불필요).
+- 필터 칩·정렬 라벨 i18n (`filters`/`sort` 네임스페이스).
 
 ---
 
