@@ -103,16 +103,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
     },
     {
+      // Cycle 13: retention slot 추가 — lastModified 갱신으로 Googlebot recrawl 가속.
       path: '/special/oh-yoon',
-      changeFrequency: 'monthly',
-      priority: 0.85,
-      lastModified: new Date('2026-05-19'),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+      lastModified: new Date('2026-05-30'),
     },
     {
+      // Cycle 13: retention slot 4 cards 추가 — lastModified 갱신.
       path: '/special/park-saenggwang',
-      changeFrequency: 'monthly',
-      priority: 0.85,
-      lastModified: new Date('2026-05-20'),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+      lastModified: new Date('2026-05-30'),
     },
     {
       path: '/faq',
@@ -121,10 +123,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date('2026-05-18'),
     },
     {
+      // GA4 89% traffic 페이지. Cycle 12: retention slot 6 cards 확장 — lastModified 갱신.
       path: '/petition/oh-yoon',
-      changeFrequency: 'monthly',
-      priority: 0.8,
-      lastModified: new Date('2026-01-01'),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+      lastModified: new Date('2026-05-30'),
     },
     {
       path: '/archive/2026',
