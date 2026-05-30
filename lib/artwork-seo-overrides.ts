@@ -113,6 +113,62 @@ export const ARTWORK_SEO_OVERRIDES: Record<string, ArtworkSeoOverride> = {
     titleKo: '속리산 돌거북 — 민정기 유화 2025, 한국 민중미술 1세대 거장의 풍경',
     titleEn: 'Stone Turtle of Songnisan — Min Joung-Ki, Oil on Canvas 2025, Minjung Art Master',
   },
+  // Cycle 9 — long-tail 3-9imp page 1 0-click 작품 11건 보강.
+  // 칼노래 — 오윤 (1985, 한지 목판화·수채). pos 4.0 / 5imp / 0 click.
+  '4c920878-32dd-4727-ab03-6eda996597d5': {
+    titleKo: '칼노래 — 오윤 한지 목판화·수채 1985, 한국 민중미술 사후판화',
+    titleEn: 'Song of the Blade — Oh Yoon, Hand-Colored Woodcut on Hanji 1985, Minjung Art',
+  },
+  // 봄의소리1 — 오윤 (1983). pos 1.0 / 4imp / 0 click.
+  '7f154b6f-a158-49ef-877f-618f9da166c1': {
+    titleKo: '봄의소리1 — 오윤 한지 목판화·수채 1983, 한국 민중미술 사후판화',
+    titleEn: 'Sound of Spring 1 — Oh Yoon, Hand-Colored Woodcut on Hanji 1983, Minjung Art',
+  },
+  // 팔엽일화 — 오윤 (1985). pos 1.0 / 4imp / 0 click.
+  '1350256c-5137-4a99-afcc-043e4c72287b': {
+    titleKo: '팔엽일화 — 오윤 한지 목판화·수채 1985, 한국 민중미술 사후판화',
+    titleEn: 'Lotus of Eight Petals — Oh Yoon, Hand-Colored Woodcut on Hanji 1985, Minjung Art',
+  },
+  // Ottogi Earthy Rainbow Matte — 양순열 (2021, car paint on resin). pos 4.4 / 6imp / 0 click.
+  '760c97d0-b2c9-4382-b21c-def0baa0ec5a': {
+    titleKo: 'Ottogi Earthy Rainbow Matte — 양순열 카페인트·레진 조각 2021, 오뚝이의 모성',
+    titleEn: 'Ottogi Earthy Rainbow Matte — Yang Sunyeol, Car Paint on Resin 2021, Motherhood',
+  },
+  // Ottogi_Mother Ya-ho — 양순열 (2014, car paint on resin). pos 8.0 / 3imp / 0 click.
+  '91a78fd6-ed6d-4c36-856c-e5f3c00f691c': {
+    titleKo: 'Ottogi Mother Ya-ho — 양순열 카페인트·레진 조각 2014, 확장된 모성',
+    titleEn: 'Ottogi Mother Ya-ho — Yang Sunyeol, Car Paint on Resin 2014, Extended Motherhood',
+  },
+  // GreenForest — 윤겸 (2016). pos 7.6 / 8imp / 0 click.
+  '5d7b6368-f4a7-4ddb-a733-68c78278db0b': {
+    titleKo: 'GreenForest — 윤겸 작가 회화 2016, 평온과 반복의 숲',
+    titleEn: 'GreenForest — Yoon Gyeom, 2016, Serenity in Repetition',
+  },
+  // 야형화접도 — 신예리 (2023, 먹 한지에 분채). pos 8.1 / 7imp / 0 click. "야형" 검색.
+  '3f992cc3-41d7-477c-b70f-eb298df20a1a': {
+    titleKo: '야형화접도(夜螢花蝶圖) — 신예리 한지 분채 2023, 한국화 전통 채색화',
+    titleEn: 'Night Fireflies and Butterflies — Shin Yeri, Korean Mineral Color on Hanji 2023',
+  },
+  // 놀이터 n'2 — 최혜수 (2023, 시멘트·금박·왁스·아크릴). pos 2.7 / 7imp / 0 click. EN 페이지.
+  'ab859f7f-bab1-480c-a5dd-975ca179d6bb': {
+    titleKo: '놀이터 n°2 — 최혜수 시멘트·금박·왁스 조각 2023, 벨기에 왕립 미술대 출신',
+    titleEn: 'Playground n°2 — Choe Hyesu, Cement·Gold Leaf·Wax 2023, Royal Academy Brussels',
+  },
+  // 놀이터 n'3 — 최혜수 (2023). pos 1.0 / 5imp / 0 click.
+  '7b724018-6f43-4830-a13b-d00a255e54c9': {
+    titleKo: '놀이터 n°3 — 최혜수 시멘트·금박·왁스 조각 2023, 벨기에 왕립 미술대 출신',
+    titleEn: 'Playground n°3 — Choe Hyesu, Cement·Gold Leaf·Wax 2023, Royal Academy Brussels',
+  },
+  // 시지프스의 연인 — 이익태 (2025, acrylic·알루미늄). pos 4.3 / 5imp / 0 click. "시지프스 갤러리" 검색.
+  'e0fac99d-26b6-46a2-8098-c3e9382ab9e8': {
+    titleKo: '시지프스의 연인 — 이익태 아크릴·알루미늄 2025, 한국 1세대 다큐 사진가의 회화',
+    titleEn: 'Lover of Sisyphus — Lee Iktae, Acrylic and Aluminum 2025',
+  },
+  // #01_S1707SP — 강레아 (2017, 한지 피그먼트 프린트). pos 5.3 / 3imp / 0 click.
+  '56c2c3f3-d237-4556-aca7-b64b3d4fcea3': {
+    titleKo: '#01 S1707SP — 강레아 한지 피그먼트 프린트 2017, 사진과 한지의 만남',
+    titleEn: '#01 S1707SP — Kang Lea, Pigment Print on Hanji 2017, Photography Meets Korean Paper',
+  },
 };
 
 export function getArtworkSeoOverride(id: string): ArtworkSeoOverride | undefined {
