@@ -30,6 +30,28 @@ export const ARTWORK_SEO_OVERRIDES: Record<string, ArtworkSeoOverride> = {
     titleKo: '나를 안는다 — 이윤엽 작가 다색 목판화, 자기 위로의 회화',
     titleEn: 'I Embrace Myself — Multicolor Woodcut by Lee Yoonyeop, Self-Compassion in Art',
   },
+  // 눈밭01 — 홍진희 (2024, 한지에 면사 자수). "눈밭" 쿼리 pos 1.0 / 18노출 / 0클릭.
+  // 1위인데 click 0%는 검색자가 작품을 인식하지 못한다는 결정적 신호. 매체+계절+감성 명시.
+  'f5c45d1a-e192-4dfd-81fb-5f62a12930f8': {
+    titleKo: '눈밭01 — 홍진희 한지·면사 자수 2024, 겨울 풍경의 침묵',
+    titleEn: 'Snowfield 01 — Hong Jinhee, Cotton Thread on Hanji 2024, Silence of Winter',
+  },
+  '6b224b3d-2768-4c04-bd6c-6a2588c4e52d': {
+    titleKo: '눈밭02 — 홍진희 한지·면사 자수 2024, 겨울 풍경의 침묵',
+    titleEn: 'Snowfield 02 — Hong Jinhee, Cotton Thread on Hanji 2024, Silence of Winter',
+  },
+  // 정글 도서관의 카바리 — 천지수 (2025). "카바리" 쿼리 pos 7.9 / 14노출 / 0클릭.
+  // 작가 이력(이태리 미술대전 대상) 강조로 SERP CTR 회복.
+  '1797d8a7-e641-4690-a255-39d5afd1f323': {
+    titleKo: '정글 도서관의 카바리 — 천지수 유화 2025, 이태리 미술대전 대상 작가',
+    titleEn: 'Cabari of the Jungle Library — Cheon Jisu, Oil on Canvas 2025 (Italian Art Prize)',
+  },
+  // 인생, 그 헛헛함에 대하여 — 남진현 (2026). "헛헛함" 쿼리 pos 3.9 / 13노출 / 0클릭.
+  // 작품의 정서적 주제를 title에 즉시 노출.
+  '3b89272e-18aa-4c18-844c-0245bc97b5e9': {
+    titleKo: '인생, 그 헛헛함에 대하여 — 남진현 작가 아크릴 회화 2026, 존재의 무게',
+    titleEn: 'On the Hollow of Life — Nam Jinhyun, Acrylic on Canvas 2026',
+  },
 };
 
 export function getArtworkSeoOverride(id: string): ArtworkSeoOverride | undefined {

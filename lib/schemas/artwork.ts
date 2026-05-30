@@ -114,11 +114,13 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
   const seoDescription = (seoDescriptionBase.substring(0, 140) + priceSnippet).substring(0, 160);
 
-  // Title에 가격/판매상태를 포함해 CTR 개선 — GSC 실측상 작품 상세가 8,883노출/1.8% CTR로 가장 큰 개선 레버
+  // Title에 가격/판매상태를 포함해 CTR 개선 — GSC 실측상 작품 상세가 8,883노출/1.8% CTR로 가장 큰 개선 레버.
+  // SOLD 작품은 'Sold'/'판매 완료'가 SERP에서 desperate 인상으로 click 떨어뜨림 — '원본' positive 워딩으로 교체.
+  // (사용자는 'Sold'를 보고 "구매 불가" 인지 → 클릭 회피. '원본 1점 한정'은 작품 unique 가치 강조.)
   const titleStatusSuffix = isSold
     ? isEnglish
-      ? ' · Sold'
-      : ' · 판매 완료'
+      ? ' · Original (1 of 1)'
+      : ' · 원본 1점'
     : numericPriceValue !== null
       ? ` · ₩${numericPriceValue.toLocaleString('ko-KR')}`
       : isEnglish

@@ -1,5 +1,35 @@
 [
   {
+    "hash": "d42a1073",
+    "type": "feat",
+    "scope": "db",
+    "subject": "artworks 치수 컬럼 마이그레이션·백필 SQL 추가, 구간 경계 정정",
+    "summary": "작품 크기 구조화 컬럼(width/height/depth/bucket) 마이그레이션과 백필 SQL 파일 추가, 구간 경계를 호수 사이 중간값으로 정정",
+    "body": "- supabase/migrations: width_cm/height_cm/depth_cm/size_bucket + 인덱스·CHECK\n- scripts/backfill-artwork-sizes.sql: 기존 행 백필 DML (1회성, 재현용)\n- spec/plan 구간 경계 2412/6608/21135 → 2721/7319/23200 (30호=중형 라벨 정합)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "06013e0d",
+    "type": "feat",
+    "scope": "artwork",
+    "subject": "사이즈 도메인 로직 lib/artwork-size.ts 추가",
+    "summary": "cm 파싱·호수 근사 환산·구간 분류 단일 출처 모듈 + 단위 테스트 29건",
+    "body": "- parseSizeText: 2D/3D cm 파싱, placeholder·오타 → null\n- estimateHo: 면적 최근접 호수 + 종횡비 신뢰도 가드(>2.2 부적합)\n- classifyBucket: 구간 경계를 호수 사이 중간값으로 두어 라벨 정합(30호=중형)\n- describeSize: DB 컬럼 우선, size text 폴백, i18n은 컴포넌트가 조합",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "bc76cc87",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC 28일 분석 기반 CTR 폭발 회복 — 작가/스토리/작품 title 일괄 재작성 + petition retention 슬롯",
+    "summary": "GSC 5/2~5/27 데이터 분석 결과 노출 4,129 / 클릭 82 / CTR 1.99% / 평균 7.8위 — TOP 10 안인데 CTR 0%가 광범위함. 작가 페이지 + 입문 매거진 + petition retention 일괄 강화",
+    "body": "## GSC 진단 (28일)\n- 총 노출 4,129 / 클릭 82 / CTR 1.99% (정상 6~10%의 1/3 수준)\n- 평균 순위 7.8 — 순위는 양호, **병목은 CTR**\n- TOP 3 click=0: cm-1 읽는법(1.9위), 이익태(2.3위)\n- TOP 10 click=0: 에디션 뜻(438imp), 안는다(114), 이은화(73), 넘버링 뜻(75), 10호 사이즈(62), 민정기(61), 조문호(56), 신연진(46), 김주호 작품(46), 손은영(44), 30호 사이즈(44), 10호 크기(42), 이홍원(35), 30호 크기(31), 한정판 뜻(32)\n\n## GA4 진단 (7일)\n- 페이지뷰 12,831 — /petition/oh-yoon 11,477뷰 (전체 89% viral 캠페인)\n- 청원 페이지 dead-end: 다른 페이지 retention 거의 0%\n\n## 변경\n\n### 1. lib/artist-seo-overrides.ts — 작가 페이지 title 6명 추가\nGSC TOP 10 안인데 click=0인 작가를 정체성 forward title로 교체:\n- 이익태: '한국 1세대 다큐멘터리 사진가, 50년 한국 풍경의 기록자' (1.9위 / 0 click → CTR 회복)\n- 김주희: '자전적 일기 회화, 매일의 풍경을 그리는 화가'\n- 김영서: '한국 신예 화가, 씨앗페에서 만나는 동시대 회화'\n- 아트만두: '시사만화·캐리커처 작가, 방구防口 시리즈'\n- 이광수: '사진비평가 출신 회화 작가, 여섯 개의 회화 \\\\\\'돌아올 回\\\\\\' 시리즈'\n- 김호성: '색면추상 화가, 빛과 평면의 회화'\n\n### 2. lib/artwork-seo-overrides.ts — 작품 title 1점 추가\n- 4ad4b66b 나를 안는다 (이윤엽): 'pos 4.5 / 114imp / 0 click' →\n  '나를 안는다 — 이윤엽 작가 다색 목판화, 자기 위로의 회화'\n\n### 3. stories DB UPDATE — title CTR 강화 (Supabase 서울)\n- editions-explained:\n  - 기존: '에디션 뜻: 미술 작품의 5/10이 의미하는 것 · 원화·한정판 차이' (438imp / 9.3위 / 0 click)\n  - 신규: '에디션 뜻 한 줄 정리 — 5/10·넘버링·한정판·edition 의미 (미술 작품 가격에 미치는 영향)'\n  - title에 '에디션 뜻'+'넘버링'+'한정판'+'edition' 다중 키워드 결합\n- reading-art-sizes-ho-vs-cm:\n  - 기존: '10호, 30호는 몇 cm? — 호수와 센티미터, 작품 크기 읽는 법' (280imp / 4.8위 / 0 click)\n  - 신규: '10호 = 53×45.5cm, 30호 = 90×72cm — 호수 cm 환산표 (1~100호) | 작품 크기 읽는 법'\n  - title에 정답을 직접 노출 — '10호 사이즈/크기', '30호 사이즈/크기', 'cm 환산' 동시 매칭\n\n### 4. /petition/oh-yoon — Retention 슬롯 추가\n청원 페이지 GA4 11,477뷰(전체 89%)가 dead-end였음. closing CTA 직전에 4-card 추천 grid 추가:\n- /artworks/artist/오윤 (씨앗페에서 작품 보기)\n- /stories/oh-yun-40th-anniversary (40주기 매거진)\n- /stories/minjung-art-intro (민중미술 hub)\n- /stories/korean-contemporary-printmaking-saf (판화 hub)\n\n예상 효과: 청원 11,477뷰 중 retention 1% = +110 dwell/페이지뷰 + 작품 페이지 노출 확장\n\n## 검증\n- npm run type-check: ✅\n- npm run build: ✅ (456 HTML, 0 i18n violations)\n- DB UPDATE 영향: stories 2 rows updated_at touch\n- 회귀: title override 패턴은 기존 override(오윤·박불똥 등) 패턴 동일\n\n## 후속 측정 (12주 GSC 추적)\n- 작가 페이지 CTR 0% → 1~3% 진입 시 추가 클릭 ~10~30/주\n- editions-explained CTR 0.31% → 3~5% 진입 시 추가 클릭 ~15~25/주\n- reading-art-sizes CTR 0% → 3~5% 진입 시 추가 클릭 ~10~15/주\n- petition retention 1~3% → +110~330 페이지뷰/주",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
     "hash": "35da6925",
     "type": "feat",
     "scope": "seo",
