@@ -165,6 +165,9 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         'product:availability': isSold ? 'out of stock' : 'in stock',
         'product:condition': 'new',
         'product:retailer_item_id': `SAF2026-${artwork.id}`,
+        // Facebook Merchant Catalog 추가 필드 — 카탈로그 매칭 정확도 강화
+        'product:brand': isEnglish ? 'SAF Online' : '씨앗페 온라인',
+        ...(categoryForLocale && { 'product:category': categoryForLocale }),
       }),
       // 작가 크레딧 메타 — 이미지 검색·Pinterest에서 작가 귀속 지원
       author: artistForLocale,
