@@ -9,6 +9,7 @@ import SearchBar from './SearchBar';
 import FilterBar from './gallery/FilterBar';
 import CategoryFilter from './gallery/CategoryFilter';
 import PriceRangeFilter from './gallery/PriceRangeFilter';
+import SizeBucketFilter from './gallery/SizeBucketFilter';
 import ArtistNavigation from './gallery/ArtistNavigation';
 import GalleryEmptyState from './gallery/GalleryEmptyState';
 import { ArtworkListItem } from '@/types';
@@ -37,15 +38,19 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
     setCategoryFilter,
     priceBucket,
     setPriceBucket,
+    sizeBucket,
+    setSizeBucket,
     selectedArtist,
     filteredArtworks,
     sortedArtworks,
     uniqueArtists,
     categoryCounts,
     priceBucketCounts,
+    sizeBucketCounts,
   } = useArtworkFilter(artworks, initialArtist);
 
   const totalPricedCount = priceBucketCounts.reduce((acc, b) => acc + b.count, 0);
+  const totalSizedCount = sizeBucketCounts.reduce((acc, b) => acc + b.count, 0);
 
   // Handler for artist button click - navigate to artist page (다른 페이지로 navigate라 기본 scroll-to-top 유지)
   const handleArtistClick = useCallback(
@@ -109,6 +114,18 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               />
             </div>
           )}
+
+          {/* Size Bucket Filter — 모바일에선 숨김. 0건 구간은 동적 숨김 */}
+          {sizeBucketCounts.length > 0 && (
+            <div className="hidden md:block pb-3">
+              <SizeBucketFilter
+                buckets={sizeBucketCounts}
+                selected={sizeBucket}
+                onSelect={setSizeBucket}
+                totalCount={totalSizedCount}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -145,6 +162,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               setSearchQuery('');
               setCategoryFilter(null);
               setPriceBucket(null);
+              setSizeBucket(null);
             }}
           />
         ) : (

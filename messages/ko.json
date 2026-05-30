@@ -73,13 +73,21 @@
     "sold": "판매완료",
     "reserved": "예약중",
     "categoryAll": "전체 분류",
-    "priceAll": "전체 가격대"
+    "priceAll": "전체 가격대",
+    "sizeAll": "전체 크기",
+    "sizeSmall": "소품",
+    "sizeMedium": "중형",
+    "sizeLarge": "대형",
+    "sizeXlarge": "특대",
+    "sizeObject": "입체"
   },
   "sort": {
     "artistAsc": "작가명순",
     "titleAsc": "작품명순",
     "priceDesc": "가격 높은순",
-    "priceAsc": "가격 낮은순"
+    "priceAsc": "가격 낮은순",
+    "sizeDesc": "크기 큰순",
+    "sizeAsc": "크기 작은순"
   },
   "search": {
     "placeholderArtworks": "작가명, 작품명으로 검색해보세요",
@@ -121,6 +129,7 @@
     "filterStatus": "판매 상태 필터",
     "filterCategory": "작품 분류 필터",
     "filterPrice": "가격대 필터",
+    "filterSize": "작품 크기 필터",
     "searchLabel": "작품 검색",
     "clearSearch": "검색어 지우기",
     "viewArtist": "작가 작품 보기",

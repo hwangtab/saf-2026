@@ -1,8 +1,19 @@
 import { ArtistData, Artwork, SortOption } from '@/types';
 import { parsePrice } from '@/lib/parsePrice';
 import { getPrimaryStorySlug } from '@/lib/artist-story-map';
+import { area, parseSizeText } from '@/lib/artwork-size';
 
-type SortableArtwork = Pick<Artwork, 'artist' | 'title' | 'price'>;
+type SortableArtwork = Pick<
+  Artwork,
+  'artist' | 'title' | 'price' | 'size' | 'width_cm' | 'height_cm'
+>;
+
+// 면적(cm²) — DB 컬럼 우선, 없으면 size 텍스트 파싱. 미상은 -1(정렬 시 끝으로).
+function sizeAreaOf(a: SortableArtwork): number {
+  if (a.width_cm != null && a.height_cm != null) return a.width_cm * a.height_cm;
+  const d = parseSizeText(a.size);
+  return d ? area(d) : -1;
+}
 
 export function sortArtworks<T extends SortableArtwork>(
   artworks: T[],
@@ -47,6 +58,27 @@ export function sortArtworks<T extends SortableArtwork>(
         if (priceA === Infinity) return 1;
         if (priceB === Infinity) return -1;
         return priceA - priceB;
+      });
+
+    case 'size-desc':
+      return sorted.sort((a, b) => {
+        const aa = sizeAreaOf(a);
+        const bb = sizeAreaOf(b);
+        // 미상(-1)은 항상 끝으로
+        if (aa < 0 && bb < 0) return 0;
+        if (aa < 0) return 1;
+        if (bb < 0) return -1;
+        return bb - aa;
+      });
+
+    case 'size-asc':
+      return sorted.sort((a, b) => {
+        const aa = sizeAreaOf(a);
+        const bb = sizeAreaOf(b);
+        if (aa < 0 && bb < 0) return 0;
+        if (aa < 0) return 1;
+        if (bb < 0) return -1;
+        return aa - bb;
       });
 
     default:

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { ArrowDown, ArrowUp, Coins, ImageIcon, UserRound } from 'lucide-react';
+import { ArrowDown, ArrowUp, Coins, ImageIcon, Ruler, UserRound } from 'lucide-react';
 import { SortOption } from '@/types';
 import { ChevronDownIcon, CheckMarkIcon } from '@/components/ui/Icons';
 import { useTranslations } from 'next-intl';
@@ -44,6 +44,26 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         icon: (
           <span className="inline-flex items-center" aria-hidden="true">
             <Coins className="h-4 w-4" />
+            <ArrowUp className="h-3 w-3" />
+          </span>
+        ),
+      },
+      {
+        value: 'size-desc',
+        label: tSort('sizeDesc'),
+        icon: (
+          <span className="inline-flex items-center" aria-hidden="true">
+            <Ruler className="h-4 w-4" />
+            <ArrowDown className="h-3 w-3" />
+          </span>
+        ),
+      },
+      {
+        value: 'size-asc',
+        label: tSort('sizeAsc'),
+        icon: (
+          <span className="inline-flex items-center" aria-hidden="true">
+            <Ruler className="h-4 w-4" />
             <ArrowUp className="h-3 w-3" />
           </span>
         ),

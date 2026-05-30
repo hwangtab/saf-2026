@@ -297,7 +297,13 @@ export interface PageMetadata {
   keywords?: string[];
 }
 
-export type SortOption = 'artist-asc' | 'title-asc' | 'price-desc' | 'price-asc';
+export type SortOption =
+  | 'artist-asc'
+  | 'title-asc'
+  | 'price-desc'
+  | 'price-asc'
+  | 'size-desc'
+  | 'size-asc';
 
 export interface NavigationItem {
   name: string;

@@ -13,6 +13,7 @@ import {
   type PriceBucketId,
 } from '@/lib/artwork-price-buckets';
 import { parseArtworkPrice } from '@/lib/schemas/utils';
+import { describeSize } from '@/lib/artwork-size';
 
 /** Status filter options for artwork gallery */
 export type StatusFilter = 'all' | 'selling' | 'sold';
@@ -29,15 +30,29 @@ export interface PriceBucketCount {
   count: number;
 }
 
+/** Size bucket with artwork count */
+export interface SizeBucketCount {
+  id: string;
+  count: number;
+}
+
+/** 크기 구간 표시 순서 (작은 것 → 큰 것 → 입체) */
+const SIZE_BUCKET_ORDER = ['small', 'medium', 'large', 'xlarge', 'object'] as const;
+
+/** 작품의 크기 구간 — DB 컬럼 우선, 없으면 size 텍스트로 계산 */
+const bucketOf = (a: ArtworkListItem): string | null =>
+  a.size_bucket ?? describeSize(a)?.bucket ?? null;
+
 /**
  * Custom hook for artwork filtering, sorting, and URL synchronization.
  *
  * @description
  * This hook manages the complete state for artwork gallery filtering:
- * - **Sorting**: By artist name, price, or year (ascending/descending)
+ * - **Sorting**: By artist name, title, price, or size (ascending/descending)
  * - **Search**: Full-text search with debouncing (300ms)
  * - **Status Filter**: Show all, selling only, or sold only
  * - **Category Filter**: Filter by artwork category
+ * - **Price/Size Bucket**: Filter by price range or size bucket
  * - **Artist Selection**: Filter by specific artist
  *
  * The hook also handles **bidirectional URL synchronization**:
@@ -46,25 +61,6 @@ export interface PriceBucketCount {
  *
  * @param artworks - Array of artwork data to filter
  * @param initialArtist - Optional initial artist filter (e.g., from dynamic route)
- *
- * @returns Object containing:
- * - `filteredArtworks` - Sorted and filtered artworks array
- * - `uniqueArtists` - List of unique artist names for navigation
- * - `categoryCounts` - Categories with artwork counts
- * - State values and setters for sort, search, status, category, and artist
- *
- * @example
- * ```tsx
- * const {
- *   filteredArtworks,
- *   searchQuery,
- *   setSearchQuery,
- *   sortOption,
- *   setSortOption,
- *   categoryFilter,
- *   setCategoryFilter,
- * } = useArtworkFilter(artworks);
- * ```
  */
 export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: string) {
   const searchParams = useSearchParams();
@@ -84,6 +80,9 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     const raw = searchParams.get('price');
     return isValidPriceBucketId(raw) ? raw : null;
   });
+  const [sizeBucket, setSizeBucket] = useState<string | null>(
+    searchParams.get('size_bucket') || null
+  );
   const [selectedArtist, setSelectedArtist] = useState<string | null>(
     initialArtist || searchParams.get('artist') || null
   );
@@ -98,6 +97,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     statusFilter,
     categoryFilter,
     priceBucket,
+    sizeBucket,
     selectedArtist,
   });
 
@@ -109,6 +109,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       statusFilter,
       categoryFilter,
       priceBucket,
+      sizeBucket,
       selectedArtist,
     };
   }, [
@@ -118,6 +119,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     statusFilter,
     categoryFilter,
     priceBucket,
+    sizeBucket,
     selectedArtist,
   ]);
 
@@ -139,6 +141,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     if (statusFilter !== 'all') params.set('status', statusFilter);
     if (categoryFilter) params.set('category', categoryFilter);
     if (priceBucket) params.set('price', priceBucket);
+    if (sizeBucket) params.set('size_bucket', sizeBucket);
     if (selectedArtist) params.set('artist', selectedArtist);
 
     const search = params.toString();
@@ -155,6 +158,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     statusFilter,
     categoryFilter,
     priceBucket,
+    sizeBucket,
     selectedArtist,
   ]);
 
@@ -174,6 +178,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     const urlCategory = searchParams.get('category') || null;
     const rawPrice = searchParams.get('price');
     const urlPrice: PriceBucketId | null = isValidPriceBucketId(rawPrice) ? rawPrice : null;
+    const urlSizeBucket = searchParams.get('size_bucket') || null;
     const urlArtist = searchParams.get('artist') || null;
 
     const effectiveArtist = initialArtist || urlArtist;
@@ -185,6 +190,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       statusFilter: currentStatus,
       categoryFilter: currentCategory,
       priceBucket: currentPrice,
+      sizeBucket: currentSizeBucket,
       selectedArtist: currentArtist,
     } = stateRef.current;
 
@@ -195,6 +201,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     if (urlStatus !== currentStatus) setStatusFilter(urlStatus);
     if (urlCategory !== currentCategory) setCategoryFilter(urlCategory);
     if (urlPrice !== currentPrice) setPriceBucket(urlPrice);
+    if (urlSizeBucket !== currentSizeBucket) setSizeBucket(urlSizeBucket);
     if (effectiveArtist !== currentArtist) setSelectedArtist(effectiveArtist);
   }, [searchParams, initialArtist]);
 
@@ -224,6 +231,18 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     }));
   }, [artworks]);
 
+  // Compute size bucket counts from all artworks (before filtering). 0건 구간은 제외 → UI에서 동적 숨김.
+  const sizeBucketCounts = useMemo<SizeBucketCount[]>(() => {
+    const counts = new Map<string, number>();
+    for (const artwork of artworks) {
+      const b = bucketOf(artwork);
+      if (b) counts.set(b, (counts.get(b) || 0) + 1);
+    }
+    return SIZE_BUCKET_ORDER.map((id) => ({ id, count: counts.get(id) || 0 })).filter(
+      (x) => x.count > 0
+    );
+  }, [artworks]);
+
   const filteredArtworks = useMemo(() => {
     let result = artworks;
 
@@ -248,6 +267,10 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       }
     }
 
+    if (sizeBucket) {
+      result = result.filter((a) => bucketOf(a) === sizeBucket);
+    }
+
     if (debouncedSearchQuery.trim()) {
       const query = debouncedSearchQuery.trim();
       result = result.filter((artwork) =>
@@ -266,7 +289,15 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     }
 
     return result;
-  }, [artworks, debouncedSearchQuery, statusFilter, categoryFilter, priceBucket, selectedArtist]);
+  }, [
+    artworks,
+    debouncedSearchQuery,
+    statusFilter,
+    categoryFilter,
+    priceBucket,
+    sizeBucket,
+    selectedArtist,
+  ]);
 
   const sortedArtworks = useMemo(
     () => sortArtworks(filteredArtworks, sortOption),
@@ -295,6 +326,8 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       setCategoryFilter,
       priceBucket,
       setPriceBucket,
+      sizeBucket,
+      setSizeBucket,
       selectedArtist,
       setSelectedArtist,
       filteredArtworks,
@@ -302,6 +335,7 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       uniqueArtists,
       categoryCounts,
       priceBucketCounts,
+      sizeBucketCounts,
     }),
     [
       sortOption,
@@ -310,12 +344,14 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
       statusFilter,
       categoryFilter,
       priceBucket,
+      sizeBucket,
       selectedArtist,
       filteredArtworks,
       sortedArtworks,
       uniqueArtists,
       categoryCounts,
       priceBucketCounts,
+      sizeBucketCounts,
     ]
   );
 }

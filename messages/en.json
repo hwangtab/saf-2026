@@ -73,13 +73,21 @@
     "sold": "Sold",
     "reserved": "Reserved",
     "categoryAll": "All Categories",
-    "priceAll": "All Prices"
+    "priceAll": "All Prices",
+    "sizeAll": "All Sizes",
+    "sizeSmall": "Small",
+    "sizeMedium": "Medium",
+    "sizeLarge": "Large",
+    "sizeXlarge": "Extra large",
+    "sizeObject": "3D"
   },
   "sort": {
     "artistAsc": "Artist Name",
     "titleAsc": "Title",
     "priceDesc": "Price: High to Low",
-    "priceAsc": "Price: Low to High"
+    "priceAsc": "Price: Low to High",
+    "sizeDesc": "Size: Largest",
+    "sizeAsc": "Size: Smallest"
   },
   "search": {
     "placeholderArtworks": "Search by artist or artwork title",
@@ -121,6 +129,7 @@
     "filterStatus": "Filter by sale status",
     "filterCategory": "Filter by category",
     "filterPrice": "Filter by price range",
+    "filterSize": "Filter by size",
     "searchLabel": "Search artworks",
     "clearSearch": "Clear search",
     "viewArtist": "View artist's works",

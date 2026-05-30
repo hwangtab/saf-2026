@@ -28,7 +28,7 @@ describe('ArtworkCard', () => {
 
     expect(screen.getByText('Test Artwork')).toBeInTheDocument();
     expect(screen.getByText('Test Artist')).toBeInTheDocument();
-    expect(screen.getByText('Oil on Canvas · 100x100cm')).toBeInTheDocument();
+    expect(screen.getByText('Oil on Canvas · 100×100cm')).toBeInTheDocument();
     expect(screen.getByText('₩1,000,000')).toBeInTheDocument();
     // Material and size info should be present
   });
