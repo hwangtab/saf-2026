@@ -290,6 +290,35 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
   },
 };
 
+// ─── GSC Cycle 8 (2026-05-30): 추가 발견 0 click 작가 6명 ────────────────
+// 저-impression(3-7) but page 1 ranking, click=0. long-tail 작가 정보탐색 의도 매칭 강화.
+ARTIST_SEO_OVERRIDES.이동구 = {
+  titleKo: '이동구 — 서울과기대 도예과, 이동구 도예공방 운영 한국 도예 중견 작가 | 씨앗페',
+  titleEn: 'Lee Donggu — Korean Ceramics Master, Lee Donggu Pottery Studio | SAF Online',
+};
+ARTIST_SEO_OVERRIDES.한미영 = {
+  titleKo: '한미영 — 단국대 서양화, 일상의 정서를 옮기는 한국 신진 회화 작가 | 씨앗페',
+  titleEn: 'Han Miyoung — Dankook University Painting, Fresh Korean Emerging Painter | SAF Online',
+};
+ARTIST_SEO_OVERRIDES.조이락 = {
+  titleKo:
+    '조이락 — 20년 고려불화 수월관음도 재현, 국립중앙박물관 소장 한국 전통미술 작가 | 씨앗페',
+  titleEn: 'Jo Irak — 20 Years Reviving Goryeo Buddhist Painting, National Museum Collection | SAF',
+};
+ARTIST_SEO_OVERRIDES.신건우 = {
+  titleKo: '신건우 — 도시·건축 풍경의 시각예술 재구성, 인덕대 미디어아트 한국 중견 작가 | 씨앗페',
+  titleEn: 'Shin Geonwoo — Urban Architecture as Visual Art, Korean Media Art Painter | SAF Online',
+};
+ARTIST_SEO_OVERRIDES.신학철 = {
+  // 1943- , 한국 민중미술 1세대 거장. 신군부 비판 포토몽타주, 한국 근현대사 극사실주의.
+  titleKo: '신학철 — 한국 민중미술 1세대 거장 (1943-), 한국 근현대사 포토몽타주 | 씨앗페',
+  titleEn: 'Shin Hak-chul — Korean Minjung Art First-Generation Master (b. 1943) | SAF Online',
+};
+ARTIST_SEO_OVERRIDES.이윤엽 = {
+  titleKo: '이윤엽 — 농부·노동자를 그리는 한국 다색 목판화 작가, 노동의 가치 | 씨앗페',
+  titleEn: 'Lee Yoonyeop — Korean Multicolor Woodcut Artist, Farmers and Workers | SAF Online',
+};
+
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
 export function getArtistSeoOverride(artistName: string): ArtistSeoOverride | undefined {
   return ARTIST_SEO_OVERRIDES[artistName];
