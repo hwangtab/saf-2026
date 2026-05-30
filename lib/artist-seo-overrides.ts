@@ -333,6 +333,18 @@ ARTIST_SEO_OVERRIDES.심모비 = {
   titleEn: 'SIM_Moby — Painter of Purgatory, Korean Emerging Contemporary Artist | SAF Online',
 };
 
+// ─── GSC Cycle 11 (2026-05-30): page 2-3 stuck queries (pos 15-20) ─────────
+ARTIST_SEO_OVERRIDES.박생광 = {
+  // 1904-1985, 마지막 8년 '내고' 화풍 — 오방색·민화·무속·단군 한국화 거장.
+  titleKo: '박생광 — 마지막 8년의 폭발적 변신, 오방색 한국화 거장 (1904-1985) | 씨앗페',
+  titleEn: 'Park Saenggwang — Korean Painting Master, Final 8-Year Transformation | SAF Online',
+};
+ARTIST_SEO_OVERRIDES.최연택 = {
+  // 화가·도예 디자이너·삽화가. 청와대 식기 디자인, 신영복 선생 협업.
+  titleKo: '최연택 — 청와대 식기 디자인·신영복 협업, 한국 다재다능 예술가 | 씨앗페',
+  titleEn: 'Choe Yeontaek — Korean Multidisciplinary Artist, Cheongwadae Designer | SAF Online',
+};
+
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
 export function getArtistSeoOverride(artistName: string): ArtistSeoOverride | undefined {
   return ARTIST_SEO_OVERRIDES[artistName];
