@@ -748,6 +748,24 @@ export default async function PetitionOhYoonPage({
                 한국 현대 판화의 다섯 계보 — 오윤·이철수·김준권·이윤엽·류연복
               </div>
             </Link>
+            <Link
+              href="/stories/oh-yoon-estate-print-guide"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">사후판화 컬렉터 가이드</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                오윤 사후판화 — 진품 인증·에디션·미술관 소장 작품과의 차이
+              </div>
+            </Link>
+            <Link
+              href="/special/oh-yoon"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">스페셜 — 1985년의 오윤</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                구의동 벽화 이전과 이후 — 오윤이 남긴 판화·드로잉·삶의 흔적
+              </div>
+            </Link>
           </div>
         </div>
       </Section>
