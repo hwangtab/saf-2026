@@ -50,7 +50,6 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
   } = useArtworkFilter(artworks, initialArtist);
 
   const totalPricedCount = priceBucketCounts.reduce((acc, b) => acc + b.count, 0);
-  const totalSizedCount = sizeBucketCounts.reduce((acc, b) => acc + b.count, 0);
 
   // Handler for artist button click - navigate to artist page (다른 페이지로 navigate라 기본 scroll-to-top 유지)
   const handleArtistClick = useCallback(
@@ -122,7 +121,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
                 buckets={sizeBucketCounts}
                 selected={sizeBucket}
                 onSelect={setSizeBucket}
-                totalCount={totalSizedCount}
+                totalCount={artworks.length}
               />
             </div>
           )}

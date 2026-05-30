@@ -24,8 +24,12 @@ function buildSizeFields(formData: FormData) {
   if (width_cm == null || height_cm == null) {
     return { size: '확인 중', width_cm: null, height_cm: null, depth_cm: null, size_bucket: null };
   }
+  // number→string 직렬화 시 float 노이즈(0.30000004) 제거 — input step=0.1 대응
+  const fmt = (n: number) => String(parseFloat(n.toFixed(2)));
   const size =
-    depth_cm != null ? `${width_cm}x${height_cm}x${depth_cm}cm` : `${width_cm}x${height_cm}cm`;
+    depth_cm != null
+      ? `${fmt(width_cm)}x${fmt(height_cm)}x${fmt(depth_cm)}cm`
+      : `${fmt(width_cm)}x${fmt(height_cm)}cm`;
   const size_bucket = classifyBucket({ width: width_cm, height: height_cm, depth: depth_cm });
   return { size, width_cm, height_cm, depth_cm, size_bucket };
 }

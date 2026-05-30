@@ -20,6 +20,9 @@ import {
 
 export const dynamic = 'force-static';
 export const revalidate = 600;
+// generateStaticParams의 6개 slug 외 잘못된 경로는 404 — 임의 slug로 ISR 렌더 시도 시
+// 500 박힘 방지 (artworks/category/[category]와 동일 정책).
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return SPACE_COLLECTIONS.map((c) => ({ slug: c.slug }));
@@ -39,7 +42,8 @@ export async function generateMetadata({
   const title = isEn ? collection.titleEn : collection.titleKo;
   const description = isEn ? collection.descriptionEn : collection.descriptionKo;
 
-  const artworks = await getCollectionArtworks(slug, 1);
+  // limit 없이 호출해 본문(page)과 동일 react cache 키 공유 → OG 이미지 = 페이지 첫 작품 일치.
+  const artworks = await getCollectionArtworks(slug);
   const rawImg = artworks[0]?.images?.[0]
     ? resolveSeoArtworkImageUrl(artworks[0].images[0])
     : OG_IMAGE.url;
@@ -52,7 +56,8 @@ export async function generateMetadata({
     imageUrl,
     locale
   );
-  return { ...base, alternates: createLocaleAlternates(`/collections/${slug}`, locale) };
+  // koOnly: 영문 컬렉션은 ko canonical로 통합 — sitemap(ko-only)과 정합, 중복 hreflang 방지.
+  return { ...base, alternates: createLocaleAlternates(`/collections/${slug}`, locale, true) };
 }
 
 export default async function CollectionDetailPage({

@@ -39,6 +39,10 @@ export interface SizeBucketCount {
 /** 크기 구간 표시 순서 (작은 것 → 큰 것 → 입체) */
 const SIZE_BUCKET_ORDER = ['small', 'medium', 'large', 'xlarge', 'object'] as const;
 
+/** URL의 size_bucket 값 유효성 검증 — 잘못된 값으로 전체 0건 필터되는 것 방지 (priceBucket과 동일) */
+const isValidSizeBucket = (v: string | null): v is string =>
+  v != null && (SIZE_BUCKET_ORDER as readonly string[]).includes(v);
+
 /** 작품의 크기 구간 — DB 컬럼 우선, 없으면 size 텍스트로 계산 */
 const bucketOf = (a: ArtworkListItem): string | null =>
   a.size_bucket ?? describeSize(a)?.bucket ?? null;
@@ -80,9 +84,10 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     const raw = searchParams.get('price');
     return isValidPriceBucketId(raw) ? raw : null;
   });
-  const [sizeBucket, setSizeBucket] = useState<string | null>(
-    searchParams.get('size_bucket') || null
-  );
+  const [sizeBucket, setSizeBucket] = useState<string | null>(() => {
+    const raw = searchParams.get('size_bucket');
+    return isValidSizeBucket(raw) ? raw : null;
+  });
   const [selectedArtist, setSelectedArtist] = useState<string | null>(
     initialArtist || searchParams.get('artist') || null
   );
@@ -178,7 +183,8 @@ export function useArtworkFilter(artworks: ArtworkListItem[], initialArtist?: st
     const urlCategory = searchParams.get('category') || null;
     const rawPrice = searchParams.get('price');
     const urlPrice: PriceBucketId | null = isValidPriceBucketId(rawPrice) ? rawPrice : null;
-    const urlSizeBucket = searchParams.get('size_bucket') || null;
+    const rawSizeBucket = searchParams.get('size_bucket');
+    const urlSizeBucket = isValidSizeBucket(rawSizeBucket) ? rawSizeBucket : null;
     const urlArtist = searchParams.get('artist') || null;
 
     const effectiveArtist = initialArtist || urlArtist;

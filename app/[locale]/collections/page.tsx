@@ -31,7 +31,7 @@ export async function generateMetadata({
     OG_IMAGE.url,
     locale
   );
-  return { ...base, alternates: createLocaleAlternates('/collections', locale) };
+  return { ...base, alternates: createLocaleAlternates('/collections', locale, true) };
 }
 
 export default async function CollectionsLandingPage({
@@ -51,7 +51,8 @@ export default async function CollectionsLandingPage({
   const cards = await Promise.all(
     collections.map(async (c) => ({
       collection: c,
-      cover: (await getCollectionArtworks(c.slug, 1))[0] ?? null,
+      // limit 없이 호출 — 개별 페이지와 동일 react cache 키 공유로 썸네일/첫 작품 일치.
+      cover: (await getCollectionArtworks(c.slug))[0] ?? null,
     }))
   );
 

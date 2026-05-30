@@ -518,7 +518,7 @@
   "collections": {
     "landingTitle": "Find Art by Space",
     "landingSubtitle": "Living room, bedroom, entrance, study — find the right piece for your space",
-    "artworkCount": "{count} works",
+    "artworkCount": "{count, plural, =1 {1 work} other {# works}}",
     "exploreOthers": "Explore other spaces",
     "emptyTitle": "Pieces for this space are being prepared",
     "emptyDesc": "We are curating available works that match. Browse all artworks in the meantime.",
