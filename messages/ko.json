@@ -513,6 +513,15 @@
     "sizeBucketXlarge": "특대",
     "sizeBucketObject": "입체"
   },
+  "collections": {
+    "landingTitle": "공간으로 찾는 작품",
+    "landingSubtitle": "거실·침실·현관·서재 — 당신의 공간에 어울리는 한 점을 찾아보세요",
+    "artworkCount": "{count}점의 작품",
+    "exploreOthers": "다른 공간도 둘러보기",
+    "emptyTitle": "지금은 어울리는 작품을 준비 중이에요",
+    "emptyDesc": "조건에 맞는 판매 중 작품을 정리하고 있습니다. 전체 작품에서 먼저 둘러보세요.",
+    "browseAll": "전체 작품 보기"
+  },
   "trustBadges": {
     "authenticity": "100% 진품 보증",
     "safeDelivery": "안전한 포장 배송",

@@ -45,6 +45,7 @@ const HERO_EXACT = new Set<string>([
   '/faq',
   '/wishlist',
   '/changelog',
+  '/collections',
 ]);
 
 /**
@@ -60,6 +61,7 @@ const HERO_PREFIXES = [
   '/news/',
   '/terms/',
   '/archive/2023/',
+  '/collections/',
 ] as const satisfies readonly Slashed[];
 
 /**

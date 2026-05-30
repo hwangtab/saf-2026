@@ -6,6 +6,7 @@ import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { STORY_CATEGORIES } from '@/types';
 import { EN_INDEXABLE_PAGES, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
+import { SPACE_COLLECTIONS } from '@/lib/space-collections';
 import { isCanonicalHub } from '@/lib/story-canonical-hubs';
 
 export const revalidate = 3600;
@@ -147,6 +148,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
       lastModified: now,
     },
+    {
+      // Phase 3: 공간·용도 큐레이션 컬렉션 랜딩 + 개별 (규칙 기반 자동 큐레이션)
+      path: '/collections',
+      changeFrequency: 'weekly',
+      priority: 0.8,
+      lastModified: now,
+    },
+    ...SPACE_COLLECTIONS.map((c) => ({
+      path: `/collections/${c.slug}`,
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
+      lastModified: now,
+    })),
     {
       path: '/artworks/artist',
       changeFrequency: 'weekly',

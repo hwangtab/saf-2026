@@ -94,6 +94,12 @@ describe('isHeroRoute', () => {
       expect(isHeroRoute('/artworks/artist/kim')).toBe(true);
       expect(isHeroRoute('/artworks/category/oil')).toBe(true);
     });
+
+    it('/collections 랜딩과 /collections/[slug]는 hero 경로 (Phase 3)', () => {
+      expect(isHeroRoute('/collections')).toBe(true);
+      expect(isHeroRoute('/collections/living-room')).toBe(true);
+      expect(isHeroRoute('/ko/collections/bedroom')).toBe(true);
+    });
   });
 });
 
