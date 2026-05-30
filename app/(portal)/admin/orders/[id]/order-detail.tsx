@@ -19,6 +19,7 @@ import {
   updateTrackingInfo,
   confirmDeposit,
   cancelAwaitingOrder,
+  setDepositAutoCancelPaused,
   setOrderEscalation,
 } from '@/app/actions/admin-orders';
 import type { OrderDetail as OrderDetailType } from '@/app/actions/admin-orders';
@@ -293,6 +294,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
   const isManualBankTransfer = order.payment_provider === 'manual_bank_transfer';
   const canRefund = ['paid', 'preparing'].includes(order.status);
   const isAwaitingDeposit = order.status === 'awaiting_deposit';
+  const isDepositPaused = order.deposit_auto_cancel_paused;
   const nextOptions = NEXT_STATUS_OPTIONS[order.status as OrderStatus] ?? [];
   const canEditTracking = ['shipped', 'delivered'].includes(order.status);
 
@@ -308,6 +310,22 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         router.refresh();
       } catch (err) {
         toast.error(err instanceof Error ? err.message : '입금 확인에 실패했습니다.');
+      }
+    });
+  }
+
+  function handleToggleDepositPause(paused: boolean) {
+    startTransition(async () => {
+      try {
+        await setDepositAutoCancelPaused(order.id, paused);
+        toast.success(
+          paused
+            ? '자동취소를 보류했습니다. 입금 확인 전까지 주문이 유지됩니다.'
+            : '자동취소 보류를 해제했습니다.'
+        );
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '처리에 실패했습니다.');
       }
     });
   }
@@ -451,6 +469,11 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
                 에스컬레이션
               </span>
             )}
+            {isAwaitingDeposit && isDepositPaused && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary-surface px-2 py-0.5 text-xs font-medium text-primary-strong">
+                자동취소 보류 중
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-500">주문일: {formatDate(order.created_at)}</p>
         </div>
@@ -462,6 +485,15 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
               className="rounded-md border border-success/40 bg-success/10 px-3 py-1.5 text-sm font-medium text-success-a11y hover:bg-success/20 disabled:opacity-50"
             >
               입금 확인
+            </button>
+          )}
+          {isAwaitingDeposit && (
+            <button
+              onClick={() => handleToggleDepositPause(!isDepositPaused)}
+              disabled={isPending}
+              className="rounded-md border border-primary-soft bg-primary-surface px-3 py-1.5 text-sm font-medium text-primary-strong hover:bg-primary-soft disabled:opacity-50"
+            >
+              {isDepositPaused ? '보류 해제' : '취소 연장'}
             </button>
           )}
           {isAwaitingDeposit && (

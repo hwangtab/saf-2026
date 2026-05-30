@@ -864,6 +864,7 @@ export type Database = {
           buyer_user_id: string | null;
           cancelled_at: string | null;
           created_at: string;
+          deposit_auto_cancel_paused: boolean;
           escalated_at: string | null;
           id: string;
           item_amount: number;
@@ -894,6 +895,7 @@ export type Database = {
           buyer_user_id?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
+          deposit_auto_cancel_paused?: boolean;
           escalated_at?: string | null;
           id?: string;
           item_amount: number;
@@ -924,6 +926,7 @@ export type Database = {
           buyer_user_id?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
+          deposit_auto_cancel_paused?: boolean;
           escalated_at?: string | null;
           id?: string;
           item_amount?: number;
@@ -1584,6 +1587,7 @@ export type Database = {
           success: boolean;
         }[];
       };
+      check_reset_eligibility: { Args: { p_email: string }; Returns: Json };
       claim_broadcast_dispatch: {
         Args: { p_broadcast_id: string; p_lease_seconds?: number };
         Returns: string;

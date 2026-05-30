@@ -47,6 +47,8 @@ export type OrderDetail = AdminOrderListItem & {
   payment_method_detail: string | null;
   /** orders.metadata.payment_provider — 'domestic'|'overseas'|'manual_bank_transfer'|'widget'|'api_v1' */
   payment_provider: string | null;
+  /** 관리자가 자동취소를 보류한 입금대기 주문 (입금 기한 무한 연장) */
+  deposit_auto_cancel_paused: boolean;
   approved_at: string | null;
   virtual_account_number: string | null;
   virtual_account_bank: string | null;
@@ -142,7 +144,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, escalated_at, artwork_id, metadata, artworks(title, images, artists(name_ko))'
+      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, escalated_at, artwork_id, metadata, deposit_auto_cancel_paused, artworks(title, images, artists(name_ko))'
     )
     .eq('id', orderId)
     .maybeSingle();
@@ -203,6 +205,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     payment_method_detail: payment?.method ?? null,
     payment_provider:
       (order.metadata as { payment_provider?: string } | null)?.payment_provider ?? null,
+    deposit_auto_cancel_paused: (order.deposit_auto_cancel_paused as boolean | null) ?? false,
     approved_at: payment?.approved_at ?? null,
     virtual_account_number:
       typeof virtualAccount?.accountNumber === 'string' ? virtualAccount.accountNumber : null,
@@ -744,6 +747,65 @@ export async function confirmDeposit(orderId: string) {
 }
 
 // ─── 입금대기 취소 (awaiting_deposit → cancelled) ────────────────────────────
+
+/**
+ * 입금대기 주문의 자동취소 보류 토글 (무한 연장).
+ *
+ * paused=true면 expire-stale-orders cron이 만료 대상에서 제외 — 입금 확인하거나 수동 취소할
+ * 때까지 계속 유지된다. confirmDeposit은 status('awaiting_deposit')만 보므로, 보류 중에 입금
+ * 확인을 눌러도 정상적으로 paid 처리된다. (가상계좌 webhook 취소·수동 취소는 보류와 무관하게 동작)
+ */
+export async function setDepositAutoCancelPaused(orderId: string, paused: boolean) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('id, order_no, status, buyer_name, total_amount')
+    .eq('id', orderId)
+    .single();
+
+  if (error || !order) throw new Error('주문을 찾을 수 없습니다.');
+  if (order.status !== 'awaiting_deposit') {
+    throw new Error(
+      `자동취소 보류는 입금 대기 상태에서만 가능합니다. (현재 상태: ${order.status})`
+    );
+  }
+
+  const now = new Date().toISOString();
+  const { data: updatedRows, error: updateError } = await supabase
+    .from('orders')
+    .update({ deposit_auto_cancel_paused: paused, updated_at: now })
+    .eq('id', orderId)
+    .eq('status', 'awaiting_deposit')
+    .select('id');
+
+  if (updateError) throw updateError;
+  if (!updatedRows || updatedRows.length === 0) {
+    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+  }
+
+  await logAdminAction(
+    paused ? 'order_auto_cancel_paused' : 'order_auto_cancel_resumed',
+    'order',
+    orderId,
+    {
+      order_no: order.order_no,
+      buyer_name: order.buyer_name,
+      total_amount: order.total_amount,
+    },
+    admin.id,
+    {
+      summary: paused
+        ? `자동취소 보류: ${order.order_no} (${order.buyer_name ?? '구매자 미상'}) — 입금 기한 무한 연장`
+        : `자동취소 보류 해제: ${order.order_no} (${order.buyer_name ?? '구매자 미상'})`,
+    }
+  );
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+  return { success: true };
+}
 
 export async function cancelAwaitingOrder(orderId: string, cancelReason: string) {
   const admin = await requireAdmin();

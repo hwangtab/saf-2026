@@ -111,6 +111,7 @@ export async function GET(request: NextRequest) {
     .from('orders')
     .select('id, artwork_id, buyer_email, buyer_name, order_no, total_amount, metadata')
     .eq('status', 'awaiting_deposit')
+    .eq('deposit_auto_cancel_paused', false) // 관리자가 자동취소 보류한 주문은 만료 제외
     .lt('created_at', depositCutoff);
 
   if (depositFetchError) {
