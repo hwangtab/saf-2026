@@ -319,6 +319,20 @@ ARTIST_SEO_OVERRIDES.이윤엽 = {
   titleEn: 'Lee Yoonyeop — Korean Multicolor Woodcut Artist, Farmers and Workers | SAF Online',
 };
 
+// ─── GA4 Cycle 10 (2026-05-30): GA4 traffic 발견 작가 2명 (GSC noise + direct) ─
+// /artworks/artist/류연복 63 PV, /artworks/artist/심모비 16 PV (7일).
+// SEO override로 향후 GSC 상위 진입 시 CTR 회복 사전 대비.
+ARTIST_SEO_OVERRIDES.류연복 = {
+  // 1958년생 한국 현대 목판화 거장. 홍익대 회화과, 민주화 운동 참여, 칼로 새긴 민중의 삶.
+  titleKo: '류연복 — 1958년생 한국 현대 목판화 거장, 칼로 새긴 민중과 국토의 영혼 | 씨앗페',
+  titleEn: 'Ryu Yeonbok — Korean Contemporary Woodcut Master (b. 1958), Minjung Art | SAF Online',
+};
+ARTIST_SEO_OVERRIDES.심모비 = {
+  // SIM_Moby. 연옥(Purgatory) 개념의 신진 작가, 반출생주의·이상향 대안 공간.
+  titleKo: '심모비(SIM_Moby) — 연옥의 작가, 한국 신진 현대미술 | 씨앗페',
+  titleEn: 'SIM_Moby — Painter of Purgatory, Korean Emerging Contemporary Artist | SAF Online',
+};
+
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
 export function getArtistSeoOverride(artistName: string): ArtistSeoOverride | undefined {
   return ARTIST_SEO_OVERRIDES[artistName];

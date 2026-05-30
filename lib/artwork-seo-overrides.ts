@@ -169,6 +169,27 @@ export const ARTWORK_SEO_OVERRIDES: Record<string, ArtworkSeoOverride> = {
     titleKo: '#01 S1707SP — 강레아 한지 피그먼트 프린트 2017, 사진과 한지의 만남',
     titleEn: '#01 S1707SP — Kang Lea, Pigment Print on Hanji 2017, Photography Meets Korean Paper',
   },
+  // Cycle 10 — GA4 traffic top artworks (viral·direct·캠페인). GSC index 도달 시 CTR 사전 강화.
+  // 풀, 꽃! — 림지언 (2025, digital painting). GA4 38 PV/7d.
+  'cfc18307-64b2-42da-9db9-c5a75df233c5': {
+    titleKo: '풀, 꽃! — 림지언 디지털 회화 2025, 디지털 페인팅의 한국 현대미술',
+    titleEn: 'Grass, Flowers! — Rim Jieun, Digital Painting 2025, Korean Contemporary Digital Art',
+  },
+  // 대지 — 오윤 (1983, 한지 목판화). GA4 28 PV/7d.
+  'e637bb45-e888-443b-8f2e-8911c79d9ba7': {
+    titleKo: '대지 — 오윤 한지 목판화 1983, 한국 민중미술 사후판화 정전',
+    titleEn: 'Earth — Oh Yoon, Woodcut on Hanji 1983, Korean Minjung Art Classic',
+  },
+  // 춘무인추무의 — 오윤 (1985, 한지 고무판화·수채). GA4 22 PV/7d.
+  '74824081-63a0-4b76-9de6-a57d865c110e': {
+    titleKo: '춘무인추무의 — 오윤 한지 고무판화·수채 1985, 한국 민중미술 사후판화',
+    titleEn: 'No Spring, No Autumn — Oh Yoon, Rubber Print on Hanji 1985, Minjung Art',
+  },
+  // 공간에 마음을 놓다 — 서금앵 (2024, oil on canvas). GA4 15 PV/7d.
+  '068d38d7-06f6-485e-a93b-4e6541f4bc1a': {
+    titleKo: '공간에 마음을 놓다 — 서금앵 유화 2024, 공간과 마음의 회화',
+    titleEn: 'Letting the Heart Rest — Seo Geumaeng, Oil on Canvas 2024',
+  },
 };
 
 export function getArtworkSeoOverride(id: string): ArtworkSeoOverride | undefined {
