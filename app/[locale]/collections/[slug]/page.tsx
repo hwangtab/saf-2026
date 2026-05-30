@@ -114,7 +114,7 @@ export default async function CollectionDetailPage({
       <PageHero title={title} description={subtitle} breadcrumbItems={breadcrumbItems} />
 
       <Section variant="canvas-soft">
-        <p className="mx-auto mb-12 max-w-3xl text-center text-lg leading-relaxed text-charcoal-muted break-keep">
+        <p className="mx-auto mb-12 max-w-2xl text-center text-lg leading-relaxed text-charcoal-muted text-pretty break-keep">
           {description}
         </p>
 
