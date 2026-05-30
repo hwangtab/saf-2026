@@ -38,6 +38,10 @@ type ArtworkRow = {
   description: string | null;
   description_en: string | null;
   size: string | null;
+  width_cm: number | null;
+  height_cm: number | null;
+  depth_cm: number | null;
+  size_bucket: string | null;
   material: string | null;
   year: string | null;
   edition: string | null;
@@ -107,13 +111,13 @@ type FAQRow = {
 };
 
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, title_en, description, description_en, size, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
+  'id, artist_id, title, title_en, description, description_en, size, width_cm, height_cm, depth_cm, size_bucket, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en, career_tier';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
 // description/description_en 제외 — 카드 렌더에 불필요, 2MB cache 한도 회피
 const LIGHT_ARTWORK_COLUMNS =
-  'id, artist_id, title, title_en, size, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
+  'id, artist_id, title, title_en, size, width_cm, height_cm, depth_cm, size_bucket, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
 // bio/bio_en/history/history_en 제외 — 카드는 작가명·tier만 필요
 const LIGHT_ARTIST_COLUMNS = 'id, name_ko, name_en, career_tier';
 
@@ -152,6 +156,10 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   description: sanitizeTextForRscPayload(item.description || ''),
   description_en: sanitizeNullableTextForRscPayload(item.description_en) || undefined,
   size: sanitizeTextForRscPayload(item.size || ''),
+  width_cm: item.width_cm,
+  height_cm: item.height_cm,
+  depth_cm: item.depth_cm,
+  size_bucket: item.size_bucket,
   material: sanitizeTextForRscPayload(item.material || ''),
   year: sanitizeTextForRscPayload(item.year || ''),
   edition: sanitizeTextForRscPayload(item.edition || ''),

@@ -380,11 +380,13 @@ export type Database = {
           artist_id: string;
           category: string | null;
           created_at: string | null;
+          depth_cm: number | null;
           description: string | null;
           description_en: string | null;
           edition: string | null;
           edition_limit: number | null;
           edition_type: Database['public']['Enums']['edition_type'] | null;
+          height_cm: number | null;
           id: string;
           images: string[] | null;
           is_hidden: boolean | null;
@@ -394,6 +396,7 @@ export type Database = {
           quote_en: string | null;
           shop_url: string | null;
           size: string | null;
+          size_bucket: string | null;
           sold_at: string | null;
           status: Database['public']['Enums']['artwork_status'] | null;
           tax_type: string;
@@ -401,6 +404,7 @@ export type Database = {
           title_en: string | null;
           tone: string[] | null;
           updated_at: string | null;
+          width_cm: number | null;
           year: string | null;
         };
         Insert: {
@@ -408,11 +412,13 @@ export type Database = {
           artist_id: string;
           category?: string | null;
           created_at?: string | null;
+          depth_cm?: number | null;
           description?: string | null;
           description_en?: string | null;
           edition?: string | null;
           edition_limit?: number | null;
           edition_type?: Database['public']['Enums']['edition_type'] | null;
+          height_cm?: number | null;
           id?: string;
           images?: string[] | null;
           is_hidden?: boolean | null;
@@ -422,6 +428,7 @@ export type Database = {
           quote_en?: string | null;
           shop_url?: string | null;
           size?: string | null;
+          size_bucket?: string | null;
           sold_at?: string | null;
           status?: Database['public']['Enums']['artwork_status'] | null;
           tax_type?: string;
@@ -429,6 +436,7 @@ export type Database = {
           title_en?: string | null;
           tone?: string[] | null;
           updated_at?: string | null;
+          width_cm?: number | null;
           year?: string | null;
         };
         Update: {
@@ -436,11 +444,13 @@ export type Database = {
           artist_id?: string;
           category?: string | null;
           created_at?: string | null;
+          depth_cm?: number | null;
           description?: string | null;
           description_en?: string | null;
           edition?: string | null;
           edition_limit?: number | null;
           edition_type?: Database['public']['Enums']['edition_type'] | null;
+          height_cm?: number | null;
           id?: string;
           images?: string[] | null;
           is_hidden?: boolean | null;
@@ -450,6 +460,7 @@ export type Database = {
           quote_en?: string | null;
           shop_url?: string | null;
           size?: string | null;
+          size_bucket?: string | null;
           sold_at?: string | null;
           status?: Database['public']['Enums']['artwork_status'] | null;
           tax_type?: string;
@@ -457,6 +468,7 @@ export type Database = {
           title_en?: string | null;
           tone?: string[] | null;
           updated_at?: string | null;
+          width_cm?: number | null;
           year?: string | null;
         };
         Relationships: [

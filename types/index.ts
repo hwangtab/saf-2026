@@ -71,6 +71,10 @@ export interface BaseArtwork {
   quote?: string;
   quote_en?: string;
   size: string;
+  width_cm?: number | null;
+  height_cm?: number | null;
+  depth_cm?: number | null;
+  size_bucket?: string | null;
   material: string;
   year: string;
   edition: string;
@@ -191,6 +195,10 @@ export interface ArtworkCardData {
   sold_at?: string;
   material?: string;
   size?: string;
+  width_cm?: number | null;
+  height_cm?: number | null;
+  depth_cm?: number | null;
+  size_bucket?: string | null;
   artist_en?: string;
   title_en?: string;
   // 매뉴얼 5.8 매체별 진품 라벨용. category(회화·판화·사후판화·…) + edition(N/M 패턴) 노출.
