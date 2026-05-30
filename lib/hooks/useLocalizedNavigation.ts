@@ -18,6 +18,11 @@ export function useLocalizedNavigation(): NavigationItem[] {
           description: t('allArtworksDesc'),
         },
         {
+          name: t('spaceCollections'),
+          href: '/collections',
+          description: t('spaceCollectionsDesc'),
+        },
+        {
           name: t('ohYoon'),
           href: '/special/oh-yoon',
           description: t('ohYoonDesc'),
