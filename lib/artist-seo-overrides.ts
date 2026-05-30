@@ -201,8 +201,48 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
   },
   정영신: {
     // GSC: 41 imp / 0 click — 1958년생, 40년째 오일장 기록 사진가·소설가. 전국 600여 장터 모두 기록.
-    titleKo: '정영신 — 40년 오일장 기록 사진가·소설가, 전국 600여 장터를 누빈 바람의 여행자 | 씨앗페',
-    titleEn: 'Jeong Yeongsin — Photographer & Novelist, 40 Years Documenting 600+ Rural Markets | SAF Online',
+    titleKo:
+      '정영신 — 40년 오일장 기록 사진가·소설가, 전국 600여 장터를 누빈 바람의 여행자 | 씨앗페',
+    titleEn:
+      'Jeong Yeongsin — Photographer & Novelist, 40 Years Documenting 600+ Rural Markets | SAF Online',
+  },
+
+  // ─── GSC 2026-05-02~05-27: TOP 3 CTR=0 위기 + Page 1 CTR=0 추가 보강 ─────
+  // 'cm-1 읽는법' 1.9위 / 0 click, '이익태' 2.3위 / 0 click — 1~3위인데 click 0%는
+  // title이 search intent를 즉시 만족시키지 못한다는 결정적 신호.
+
+  이익태: {
+    // GSC: 34 imp / 0 click / pos 2.3 — 1936년생, 다큐멘터리 사진가 1세대. '한국 사진의 산증인'.
+    // 1~2위인데 click 0% — generic title('이익태 작가 작품 N점')이 SERP에서 'who is 이익태?'
+    // 검색 의도에 답하지 못함. 작가 정체성을 title 앞에 배치.
+    titleKo: '이익태 — 한국 1세대 다큐멘터리 사진가, 50년 한국 풍경의 기록자 | 씨앗페',
+    titleEn:
+      'Lee Iktae — First-Generation Korean Documentary Photographer, 50 Years of Korean Landscape | SAF Online',
+  },
+  김주희: {
+    // GSC: ~40 imp / 0 click / pos ~6 — 회화·드로잉, 자전적 일기 회화.
+    titleKo: '김주희 — 자전적 일기 회화, 매일의 풍경을 그리는 화가 | 씨앗페',
+    titleEn: 'Kim Juhui — Diary Paintings, Daily Landscapes by a Korean Artist | SAF Online',
+  },
+  김영서: {
+    // GSC: ~30 imp / 0 click — 회화. 신예 작가.
+    titleKo: '김영서 — 한국 신예 화가, 씨앗페에서 만나는 동시대 회화 | 씨앗페',
+    titleEn: 'Kim Yeongseo — Emerging Korean Painter, Contemporary Works at SAF | SAF Online',
+  },
+  아트만두: {
+    // GSC: TOP 10 click 0% — 시사만화·캐리커처. '방구防口' 시리즈로 알려진 작가.
+    titleKo: '아트만두 — 시사만화·캐리커처 작가, 방구防口 시리즈 | 씨앗페',
+    titleEn: "Artmandu — Editorial Cartoonist, 'Banggu' Caricature Series | SAF Online",
+  },
+  이광수: {
+    // GSC: TOP 10 click 0% — 사진비평가·시인 출신 회화 작가, '돌아올 回' 회화 시리즈.
+    titleKo: "이광수 — 사진비평가 출신 회화 작가, 여섯 개의 회화 '돌아올 回' 시리즈 | 씨앗페",
+    titleEn: "Lee Gwangsu — Photography Critic Turned Painter, 'Return' Series | SAF Online",
+  },
+  김호성: {
+    // GSC: TOP 10 click 0% — 회화, 색면추상.
+    titleKo: '김호성 — 색면추상 화가, 빛과 평면의 회화 | 씨앗페',
+    titleEn: 'Kim Hoseong — Color Field Abstract Painter | SAF Online',
   },
 };
 

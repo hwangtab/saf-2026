@@ -23,6 +23,13 @@ export const ARTWORK_SEO_OVERRIDES: Record<string, ArtworkSeoOverride> = {
     titleKo: '무호도 — 오윤의 민중미술 목판화',
     titleEn: 'Tiger Dance — Woodcut by Oh Yoon, Korean Minjung Art',
   },
+  // 나를 안는다 — 이윤엽 (2025). "안는다" 쿼리 pos 4.5 / 114노출 / 0클릭.
+  // TOP 5 안인데 click 0% — generic title('나를 안는다 · 이윤엽 · ₩X')이 검색 의도와 mismatch.
+  // 작품 주제(자기 위로·치유)를 title 앞에 배치해 검색 의도 매칭 강화.
+  '4ad4b66b-21da-45c2-a0ca-36c36cf7714d': {
+    titleKo: '나를 안는다 — 이윤엽 작가 다색 목판화, 자기 위로의 회화',
+    titleEn: 'I Embrace Myself — Multicolor Woodcut by Lee Yoonyeop, Self-Compassion in Art',
+  },
 };
 
 export function getArtworkSeoOverride(id: string): ArtworkSeoOverride | undefined {

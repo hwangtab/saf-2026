@@ -699,6 +699,59 @@ export default async function PetitionOhYoonPage({
         </div>
       </Section>
 
+      {/* Retention 슬롯 — 청원 페이지가 GA4 11,477뷰(전체 89%)의 트래픽 진입로지만 다른
+          페이지로의 retention이 거의 0%. 오윤 작가·민중미술·판화 hub로 link equity flow + 사용자
+          dwell time 회복. 청원 후 자연스러운 다음 행동 유도. */}
+      <Section variant="white" className="py-14 md:py-20">
+        <div className="container-max max-w-4xl">
+          <h2 className="text-2xl md:text-3xl font-section font-bold text-charcoal-deep mb-3 text-center">
+            오윤을 더 깊이 만나기
+          </h2>
+          <p className="text-sm md:text-base text-charcoal-muted mb-8 text-center break-keep">
+            서명에 동참해주셔서 감사합니다. 오윤 작가의 다른 작품과 한국 민중미술의 계보를
+            씨앗페에서 이어볼 수 있습니다.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+              href="/artworks/artist/오윤"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">씨앗페에서 작품 보기</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                오윤 작가 출품작 전체 — 사후판화 컬렉션과 정전 작품들
+              </div>
+            </Link>
+            <Link
+              href="/stories/oh-yun-40th-anniversary"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">매거진 정전 인터뷰</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                오윤 40주기 — 작가의 삶과 작품 세계를 정리한 씨앗페 매거진 헌정
+              </div>
+            </Link>
+            <Link
+              href="/stories/minjung-art-intro"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">민중미술 한 계보</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                민중미술이란 무엇인가 — 신학철·박불똥·박재동까지, 오윤이 속한 흐름
+              </div>
+            </Link>
+            <Link
+              href="/stories/korean-contemporary-printmaking-saf"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">한국 현대 판화 hub</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                한국 현대 판화의 다섯 계보 — 오윤·이철수·김준권·이윤엽·류연복
+              </div>
+            </Link>
+          </div>
+        </div>
+      </Section>
+
       {/* 11부 마지막 결구 + 두 번째 CTA — HERO와 톤 통일(어두운 그라디언트). 페이지 마지막이라 SAWTOOTH_TOP_SAFE_PADDING으로 footer 톱니 안전 여백 흡수 */}
       <section
         aria-labelledby="petition-closing-title"
