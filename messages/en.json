@@ -524,6 +524,11 @@
     "emptyDesc": "We are curating available works that match. Browse all artworks in the meantime.",
     "browseAll": "Browse all artworks"
   },
+  "artworkSizeFields": {
+    "width": "Width",
+    "height": "Height",
+    "depth": "Depth"
+  },
   "trustBadges": {
     "authenticity": "Authentic",
     "safeDelivery": "Safe delivery",

@@ -524,6 +524,11 @@
     "emptyDesc": "조건에 맞는 판매 중 작품을 정리하고 있습니다. 전체 작품에서 먼저 둘러보세요.",
     "browseAll": "전체 작품 보기"
   },
+  "artworkSizeFields": {
+    "width": "가로",
+    "height": "세로",
+    "depth": "깊이"
+  },
   "trustBadges": {
     "authenticity": "100% 진품 보증",
     "safeDelivery": "안전한 포장 배송",

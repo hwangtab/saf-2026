@@ -33,6 +33,9 @@ type Artwork = {
   title_en: string | null;
   description: string | null;
   size: string | null;
+  width_cm: number | null;
+  height_cm: number | null;
+  depth_cm: number | null;
   material: string | null;
   year: string | null;
   edition: string | null;
@@ -59,6 +62,7 @@ export function ExhibitorArtworkForm({
 }: ExhibitorArtworkFormProps) {
   const t = useTranslations('exhibitor.artworkForm');
   const tCommon = useTranslations('exhibitor.formCommon');
+  const tSize = useTranslations('artworkSizeFields');
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
@@ -241,8 +245,33 @@ export function ExhibitorArtworkForm({
           </div>
 
           <div>
-            <AdminFieldLabel>{t('size')}</AdminFieldLabel>
-            <AdminInput name="size" defaultValue={artwork.size || ''} placeholder="60x45cm" />
+            <AdminFieldLabel>{t('size')} (cm)</AdminFieldLabel>
+            <div className="grid grid-cols-3 gap-2">
+              <AdminInput
+                name="width_cm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={artwork.width_cm ?? ''}
+                placeholder={tSize('width')}
+              />
+              <AdminInput
+                name="height_cm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={artwork.height_cm ?? ''}
+                placeholder={tSize('height')}
+              />
+              <AdminInput
+                name="depth_cm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={artwork.depth_cm ?? ''}
+                placeholder={tSize('depth')}
+              />
+            </div>
           </div>
 
           <div>

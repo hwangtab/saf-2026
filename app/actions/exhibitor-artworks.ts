@@ -8,6 +8,7 @@ import {
   getStoragePathFromPublicUrl,
   getString,
   getStoragePathsForRemoval,
+  buildArtworkSizeFields,
 } from '@/lib/utils/form-helpers';
 import { logExhibitorAction } from './activity-log-writer';
 import { validateArtworkData } from '@/lib/actions/artwork-validation';
@@ -110,7 +111,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   const title = getString(formData, 'title');
   const title_en = getString(formData, 'title_en') || null;
   const description = getString(formData, 'description');
-  const size = getString(formData, 'size');
+  const sizeFields = buildArtworkSizeFields(formData);
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
@@ -144,7 +145,7 @@ export async function createExhibitorArtwork(formData: FormData) {
       title,
       title_en,
       description,
-      size,
+      ...sizeFields,
       material,
       year,
       edition,
@@ -198,7 +199,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
   const title = getString(formData, 'title');
   const title_en = getString(formData, 'title_en') || null;
   const description = getString(formData, 'description');
-  const size = getString(formData, 'size');
+  const sizeFields = buildArtworkSizeFields(formData);
   const material = getString(formData, 'material');
   const year = getString(formData, 'year');
   const edition = getString(formData, 'edition');
@@ -247,7 +248,7 @@ export async function updateExhibitorArtwork(id: string, formData: FormData) {
       title,
       title_en,
       description,
-      size,
+      ...sizeFields,
       material,
       year,
       edition,

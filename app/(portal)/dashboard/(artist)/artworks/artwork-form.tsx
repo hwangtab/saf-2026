@@ -22,6 +22,9 @@ type ArtworkData = {
   title_en: string | null;
   description: string | null;
   size: string | null;
+  width_cm: number | null;
+  height_cm: number | null;
+  depth_cm: number | null;
   material: string | null;
   year: string | null;
   edition: string | null;
@@ -57,6 +60,7 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
 
   const locale = useLocale();
   const t = useTranslations('dashboard.artworkForm');
+  const tSize = useTranslations('artworkSizeFields');
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [state, formAction, isPending] = useActionState(action, initialState);
@@ -280,17 +284,39 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
               <p className="mt-1 text-xs text-gray-500">{t('priceHint')}</p>
             </div>
 
-            {/* Size */}
+            {/* Size — cm 3필드 (width/height/depth). 저장 시 size 텍스트 자동 합성 + 구조화 컬럼 */}
             <div className="sm:col-span-2">
-              <AdminFieldLabel htmlFor="size">{t('size')}</AdminFieldLabel>
-              <AdminInput
-                type="text"
-                name="size"
-                id="size"
-                defaultValue={artwork?.size || ''}
-                placeholder="50x50cm"
-                className={inputClassName}
-              />
+              <AdminFieldLabel htmlFor="width_cm">{t('size')} (cm)</AdminFieldLabel>
+              <div className="grid grid-cols-3 gap-2">
+                <AdminInput
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  name="width_cm"
+                  id="width_cm"
+                  defaultValue={artwork?.width_cm ?? ''}
+                  placeholder={tSize('width')}
+                  className={inputClassName}
+                />
+                <AdminInput
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  name="height_cm"
+                  defaultValue={artwork?.height_cm ?? ''}
+                  placeholder={tSize('height')}
+                  className={inputClassName}
+                />
+                <AdminInput
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  name="depth_cm"
+                  defaultValue={artwork?.depth_cm ?? ''}
+                  placeholder={tSize('depth')}
+                  className={inputClassName}
+                />
+              </div>
             </div>
 
             {/* Material */}

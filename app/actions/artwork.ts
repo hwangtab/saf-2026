@@ -14,7 +14,7 @@ import {
   cleanupUploads,
   validateArtworkData,
 } from '@/lib/actions/artwork-validation';
-import { getString } from '@/lib/utils/form-helpers';
+import { getString, buildArtworkSizeFields } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import type { ActionState } from '@/types';
@@ -57,7 +57,7 @@ export async function createArtwork(
     const title = getString(formData, 'title');
     const title_en = getString(formData, 'title_en') || null;
     const description = getString(formData, 'description');
-    const size = getString(formData, 'size');
+    const sizeFields = buildArtworkSizeFields(formData);
     const material = getString(formData, 'material');
     const year = getString(formData, 'year');
     const edition = getString(formData, 'edition');
@@ -128,7 +128,7 @@ export async function createArtwork(
         title,
         title_en,
         description,
-        size,
+        ...sizeFields,
         material,
         year,
         edition,
@@ -206,7 +206,7 @@ export async function updateArtwork(
     const title = getString(formData, 'title');
     const title_en = getString(formData, 'title_en') || null;
     const description = getString(formData, 'description');
-    const size = getString(formData, 'size');
+    const sizeFields = buildArtworkSizeFields(formData);
     const material = getString(formData, 'material');
     const year = getString(formData, 'year');
     const edition = getString(formData, 'edition');
@@ -289,7 +289,7 @@ export async function updateArtwork(
         title,
         title_en,
         description,
-        size,
+        ...sizeFields,
         material,
         year,
         edition,

@@ -2,6 +2,8 @@
  * FormData parsing utilities for server actions
  */
 
+import { classifyBucket, type SizeBucket } from '@/lib/artwork-size';
+
 export const getString = (formData: FormData, key: string): string => {
   const value = formData.get(key);
   return value ? String(value).trim() : '';
@@ -12,6 +14,41 @@ export const getNumber = (formData: FormData, key: string, fallback = 0): number
   if (raw === null || raw === undefined || raw === '') return fallback;
   const num = Number(raw);
   return Number.isFinite(num) ? num : fallback;
+};
+
+export interface ArtworkSizeFields {
+  size: string;
+  width_cm: number | null;
+  height_cm: number | null;
+  depth_cm: number | null;
+  size_bucket: SizeBucket | null;
+}
+
+/**
+ * 작품 크기 cm 폼 입력(width_cm/height_cm/depth_cm) → size 텍스트 자동 합성 + 구조화 컬럼.
+ * admin·exhibitor·artist 작품 폼 공통 헬퍼. 가로·세로 누락 시 '확인 중' + 컬럼 NULL.
+ * 깊이 입력 시 3D(WxHxDcm). number→string float 노이즈는 toFixed로 제거.
+ */
+export const buildArtworkSizeFields = (formData: FormData): ArtworkSizeFields => {
+  const num = (k: string): number | null => {
+    const v = getString(formData, k);
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  };
+  const width_cm = num('width_cm');
+  const height_cm = num('height_cm');
+  const depth_cm = num('depth_cm');
+  if (width_cm == null || height_cm == null) {
+    return { size: '확인 중', width_cm: null, height_cm: null, depth_cm: null, size_bucket: null };
+  }
+  const fmt = (n: number) => String(parseFloat(n.toFixed(2)));
+  const size =
+    depth_cm != null
+      ? `${fmt(width_cm)}x${fmt(height_cm)}x${fmt(depth_cm)}cm`
+      : `${fmt(width_cm)}x${fmt(height_cm)}cm`;
+  const size_bucket = classifyBucket({ width: width_cm, height: height_cm, depth: depth_cm });
+  return { size, width_cm, height_cm, depth_cm, size_bucket };
 };
 
 /**
