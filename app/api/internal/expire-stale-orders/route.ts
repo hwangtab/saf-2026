@@ -2,11 +2,48 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
-import { getOrderNotificationInfo } from '@/lib/utils/get-order-notification-info';
+import {
+  getOrderNotificationInfo,
+  type OrderNotificationInfo,
+} from '@/lib/utils/get-order-notification-info';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export const runtime = 'nodejs';
+
+/**
+ * 알림 카드의 취소 주문 한 항목을 멀티라인으로 만든다 — 작품·작가 / 구매자(연락처·이메일) /
+ * 금액·주문번호 / 관리자 페이지 링크. notify.ts 렌더러가 \n을 <br>로, URL을 클릭 링크로 변환.
+ * info 조회 실패 시 주문번호만 표기.
+ */
+function summarizeCancelledOrder(
+  info: OrderNotificationInfo | null,
+  fallbackOrderNo?: string | null
+): string {
+  if (!info) {
+    return fallbackOrderNo ? `${fallbackOrderNo} (상세 조회 실패)` : '상세 조회 실패';
+  }
+  const title = info.artworkTitle || '작품 미상';
+  const artist = info.artistName || '작가 미상';
+  const buyer = info.buyerName || '구매자 미상';
+  const contact = [info.buyerPhone, info.buyerEmail].filter((s) => !!s && s.length > 0).join(' · ');
+  const amount = `₩${info.totalAmount.toLocaleString('ko-KR')}`;
+  const orderNo = info.orderNo || fallbackOrderNo || '';
+
+  const lines = [
+    `「${title}」 · ${artist}`,
+    `구매자 ${buyer}${contact ? ` (${contact})` : ''}`,
+    `${amount}${orderNo ? ` · ${orderNo}` : ''}`,
+  ];
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (siteUrl) {
+    lines.push(`${siteUrl}/admin/orders/${info.orderId}`);
+  }
+  return lines.join('\n');
+}
+
+/** 알림 이메일에 상세로 나열할 최대 주문 수. 초과분은 "외 N건"으로 요약. */
+const NOTIFY_DETAIL_CAP = 30;
 
 /**
  * 1) Cancels pending_payment orders older than 30 minutes.
@@ -44,6 +81,7 @@ export async function GET(request: NextRequest) {
   }
 
   let pendingCancelled = 0;
+  let pendingInfos: (OrderNotificationInfo | null)[] = [];
   if (expiredPending && expiredPending.length > 0) {
     const ids = expiredPending.map((o: { id: string }) => o.id);
     const { data: updated, error: updateError } = await supabase
@@ -57,6 +95,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
     pendingCancelled = updated?.length ?? 0;
+
+    // 실제 취소된 주문의 상세(작품·작가·구매자)를 알림용으로 수집.
+    if (updated && updated.length > 0) {
+      pendingInfos = await Promise.all(
+        updated.map((o: { id: string }) => getOrderNotificationInfo(supabase, { id: o.id }))
+      );
+    }
   }
 
   // ── 2) awaiting_deposit: 24시간 초과 자동 취소 + artwork reserved→available ──
@@ -73,6 +118,7 @@ export async function GET(request: NextRequest) {
   }
 
   let depositCancelled = 0;
+  let depositInfos: (OrderNotificationInfo | null)[] = [];
   if (expiredDeposit && expiredDeposit.length > 0) {
     const ids = expiredDeposit.map((o: { id: string }) => o.id);
     const { data: updated, error: updateError } = await supabase
@@ -91,29 +137,31 @@ export async function GET(request: NextRequest) {
     const updatedIds = new Set((updated ?? []).map((r: { id: string }) => r.id));
     const actuallyCancelled = expiredDeposit.filter((o) => updatedIds.has(o.id));
 
+    // 취소 주문 상세(작품·작가·구매자)를 한 번에 수집 — 구매자 이메일과 관리자 알림 양쪽에서 재사용.
+    const depositInfoById = new Map<string, OrderNotificationInfo | null>();
+    await Promise.all(
+      actuallyCancelled.map(async (o) => {
+        depositInfoById.set(o.id, await getOrderNotificationInfo(supabase, { id: o.id }));
+      })
+    );
+    depositInfos = actuallyCancelled.map((o) => depositInfoById.get(o.id) ?? null);
+
     for (const expiredOrder of actuallyCancelled) {
       if (expiredOrder.buyer_email && expiredOrder.order_no) {
-        // 안쪽 `void sendBuyerEmail(...)`은 Promise를 즉시 버려서 try/catch가 비동기 throw를
-        // 잡지 못함. await로 묶어야 catch가 실제로 동작.
-        void (async () => {
-          try {
-            const info = await getOrderNotificationInfo(supabase, { id: expiredOrder.id });
-            await sendBuyerEmail(
-              expiredOrder.buyer_email!,
-              'auto_cancelled',
-              {
-                orderNo: expiredOrder.order_no!,
-                buyerName: expiredOrder.buyer_name ?? '',
-                artworkTitle: info?.artworkTitle ?? '',
-                artistName: info?.artistName ?? '',
-                amount: expiredOrder.total_amount ?? 0,
-              },
-              extractBuyerLocale(expiredOrder.metadata)
-            );
-          } catch (err) {
-            console.error('[expire-stale-orders] email failed:', err);
-          }
-        })();
+        const info = depositInfoById.get(expiredOrder.id);
+        // sendBuyerEmail은 내부에서 throw하지 않지만(자체 try/catch) 방어적으로 .catch 부착.
+        void sendBuyerEmail(
+          expiredOrder.buyer_email,
+          'auto_cancelled',
+          {
+            orderNo: expiredOrder.order_no,
+            buyerName: expiredOrder.buyer_name ?? '',
+            artworkTitle: info?.artworkTitle ?? '',
+            artistName: info?.artistName ?? '',
+            amount: expiredOrder.total_amount ?? 0,
+          },
+          extractBuyerLocale(expiredOrder.metadata)
+        ).catch((err) => console.error('[expire-stale-orders] email failed:', err));
       }
     }
 
@@ -153,10 +201,25 @@ export async function GET(request: NextRequest) {
     console.error(
       `[expire-stale-orders] cancelled ${pendingCancelled} pending + ${depositCancelled} awaiting_deposit orders`
     );
-    await notifyEmail('warning', `만료 주문 자동 취소 (${totalCancelled}건)`, {
+
+    const fields: Record<string, string> = {
       미결제취소: `${pendingCancelled}건`,
       입금대기취소: `${depositCancelled}건`,
+    };
+
+    // 취소된 주문을 사유별로 한 줄씩 나열 — 관리자가 어떤 작품·작가·구매자인지 즉시 파악 가능.
+    const details = [
+      ...pendingInfos.map((info) => ({ reason: '미결제', info })),
+      ...depositInfos.map((info) => ({ reason: '입금대기', info })),
+    ];
+    details.slice(0, NOTIFY_DETAIL_CAP).forEach((d, i) => {
+      fields[`${i + 1}. ${d.reason}`] = summarizeCancelledOrder(d.info);
     });
+    if (details.length > NOTIFY_DETAIL_CAP) {
+      fields['…'] = `외 ${details.length - NOTIFY_DETAIL_CAP}건 (관리자 주문 목록에서 확인)`;
+    }
+
+    await notifyEmail('warning', `만료 주문 자동 취소 (${totalCancelled}건)`, fields);
   }
 
   return NextResponse.json({

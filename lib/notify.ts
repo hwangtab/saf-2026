@@ -47,6 +47,31 @@ function escapeHtml(str: string): string {
 }
 
 /**
+ * 알림 필드 값(value)을 HTML로 렌더한다.
+ * 1) http(s) URL을 클릭 가능한 <a>로 → 2) 나머지는 escape로 XSS 방지 → 3) 줄바꿈(\n)을 <br>로.
+ * 관리자페이지 링크가 모든 알림 메일에서 클릭 가능해지고, 만료 알림처럼 한 항목에
+ * 여러 줄(작품/구매자/금액/링크)을 담는 멀티라인 값도 표현 가능.
+ *
+ * 보안: URL은 escape 이전의 RAW 값에서 URL-safe 문자만(따옴표·꺾쇠·공백 제외) 매칭하므로
+ * 속성 경계를 깰 문자가 매칭에 포함될 수 없다. href와 표시 텍스트 모두 escapeHtml로 인코딩
+ * (escapeHtml은 `&`도 `&amp;`로 변환 → entity가 속성 안에서 `"`로 디코딩되는 탈출도 차단).
+ * 비-URL 구간도 escapeHtml 처리.
+ */
+function renderFieldValue(value: string): string {
+  const urlRe = /https?:\/\/[A-Za-z0-9._~:/?#[\]@!$&'()*+,;=%-]+/g;
+  let html = '';
+  let lastIndex = 0;
+  for (let m = urlRe.exec(value); m !== null; m = urlRe.exec(value)) {
+    html += escapeHtml(value.slice(lastIndex, m.index));
+    const url = m[0];
+    html += `<a href="${escapeHtml(url)}" style="color:${BRAND_COLORS.primary.strong};text-decoration:underline;word-break:break-all;">${escapeHtml(url)}</a>`;
+    lastIndex = m.index + url.length;
+  }
+  html += escapeHtml(value.slice(lastIndex));
+  return html.replace(/\n/g, '<br>');
+}
+
+/**
  * Sends a payment notification email via Resend.
  * Silently no-ops if RESEND_API_KEY or NOTIFY_EMAIL_TO is not set.
  * Never throws — payment flow must not fail because of a notification error.
@@ -80,8 +105,8 @@ export async function notifyEmail(
         .map(
           ([key, value]) => `
       <tr>
-        <td style="padding:6px 12px;font-weight:600;color:${BRAND_COLORS.charcoal.muted};white-space:nowrap;border-bottom:1px solid ${BRAND_COLORS.gallery.hairline};">${escapeHtml(key)}</td>
-        <td style="padding:6px 12px;color:${BRAND_COLORS.charcoal.deep};border-bottom:1px solid ${BRAND_COLORS.gallery.hairline};">${escapeHtml(value)}</td>
+        <td style="padding:6px 12px;font-weight:600;color:${BRAND_COLORS.charcoal.muted};white-space:nowrap;vertical-align:top;border-bottom:1px solid ${BRAND_COLORS.gallery.hairline};">${escapeHtml(key)}</td>
+        <td style="padding:6px 12px;color:${BRAND_COLORS.charcoal.deep};word-break:break-word;border-bottom:1px solid ${BRAND_COLORS.gallery.hairline};">${renderFieldValue(value)}</td>
       </tr>`
         )
         .join('')
