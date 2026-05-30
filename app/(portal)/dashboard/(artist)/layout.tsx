@@ -11,7 +11,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <PortalShell
       title="SAF Artist"
-      titleHref="/dashboard/artworks"
       nav={<DashboardNav />}
       badge={
         <AdminBadge tone="success" className="hidden sm:inline-flex">

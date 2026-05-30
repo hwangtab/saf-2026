@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import SafeImage from '@/components/common/SafeImage';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
 
 interface PortalShellProps {
+  /** 로고 alt / 스크린리더용 포털 식별 라벨 (예: "SAF Artist") — 화면에는 로고 이미지가 노출됨 */
   title: string;
-  titleHref: string;
   nav: React.ReactNode;
   mobileNav?: React.ReactNode;
   badge?: React.ReactNode;
@@ -14,7 +15,6 @@ interface PortalShellProps {
 
 export default function PortalShell({
   title,
-  titleHref,
   nav,
   mobileNav,
   badge,
@@ -30,8 +30,18 @@ export default function PortalShell({
             <div className="flex items-center">
               {mobileNav && <div className="xl:hidden">{mobileNav}</div>}
               <div className="flex shrink-0 items-center ml-2 sm:ml-0">
-                <Link href={titleHref} className="text-xl font-bold text-gray-900">
-                  {title}
+                {/* 로고 클릭 시 씨앗페 공개 메인(/)으로 이동 */}
+                <Link
+                  href="/"
+                  className="flex items-center rounded transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  <SafeImage
+                    src="/images/logo/320pxX90px.webp"
+                    alt={title}
+                    width={160}
+                    height={45}
+                    className="h-9 w-auto object-contain"
+                  />
                 </Link>
               </div>
               {nav}

@@ -19,7 +19,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <PortalShell
       title="SAF Admin"
-      titleHref="/admin/dashboard"
       mobileNav={
         <Suspense fallback={null}>
           <AdminMobileNav regressionCount={regressionCount} />

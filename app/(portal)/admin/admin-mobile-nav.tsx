@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import SafeImage from '@/components/common/SafeImage';
 import { getAdminNavGroups } from './_components/admin-nav-items';
 
 interface AdminMobileNavProps {
@@ -106,7 +107,20 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
               aria-label={t('adminMenu')}
             >
               <div className="shrink-0 flex items-center justify-between border-b border-gray-100 p-4">
-                <span className="text-lg font-bold text-gray-900">SAF Admin</span>
+                {/* 로고 클릭 시 씨앗페 공개 메인(/)으로 이동 + 드로어 닫기 */}
+                <Link
+                  href="/"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center rounded transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  <SafeImage
+                    src="/images/logo/320pxX90px.webp"
+                    alt="SAF Admin"
+                    width={160}
+                    height={45}
+                    className="h-8 w-auto object-contain"
+                  />
+                </Link>
                 <button
                   type="button"
                   className="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"

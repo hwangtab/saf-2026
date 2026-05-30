@@ -11,7 +11,6 @@ export default async function ExhibitorLayout({ children }: { children: React.Re
   return (
     <PortalShell
       title="SAF Exhibitor"
-      titleHref="/exhibitor"
       nav={<ExhibitorNav />}
       badge={
         <AdminBadge tone="warning" className="hidden sm:inline-flex">
