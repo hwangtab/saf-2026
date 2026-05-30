@@ -45,6 +45,8 @@ export type OrderDetail = AdminOrderListItem & {
   payment_key: string | null;
   payment_status: string | null;
   payment_method_detail: string | null;
+  /** orders.metadata.payment_provider — 'domestic'|'overseas'|'manual_bank_transfer'|'widget'|'api_v1' */
+  payment_provider: string | null;
   approved_at: string | null;
   virtual_account_number: string | null;
   virtual_account_bank: string | null;
@@ -140,7 +142,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, escalated_at, artwork_id, artworks(title, images, artists(name_ko))'
+      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, escalated_at, artwork_id, metadata, artworks(title, images, artists(name_ko))'
     )
     .eq('id', orderId)
     .maybeSingle();
@@ -199,6 +201,8 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     payment_status: payment?.status ?? null,
     payment_method: payment?.method ?? null,
     payment_method_detail: payment?.method ?? null,
+    payment_provider:
+      (order.metadata as { payment_provider?: string } | null)?.payment_provider ?? null,
     approved_at: payment?.approved_at ?? null,
     virtual_account_number:
       typeof virtualAccount?.accountNumber === 'string' ? virtualAccount.accountNumber : null,

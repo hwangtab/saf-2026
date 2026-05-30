@@ -287,7 +287,10 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
 
   const isVirtualAccount =
     order.payment_method === '가상계좌' || order.payment_method === 'VIRTUAL_ACCOUNT';
-  const isBankTransfer = !order.payment_key; // 계좌이체 주문은 Toss payment_key 없음
+  // 무통장입금(수동 계좌이체)만 진짜 "계좌이체". payment_key 없음에는 토스 confirm 미도달(결제
+  // 미완료) 주문도 포함되므로 payment_provider로 구분 — domestic 결제 실패 주문이 "계좌이체"로
+  // 오표시되던 버그 방지.
+  const isManualBankTransfer = order.payment_provider === 'manual_bank_transfer';
   const canRefund = ['paid', 'preparing'].includes(order.status);
   const isAwaitingDeposit = order.status === 'awaiting_deposit';
   const nextOptions = NEXT_STATUS_OPTIONS[order.status as OrderStatus] ?? [];
@@ -706,12 +709,14 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
             <InfoRow
               label="결제 수단"
               value={
-                isBankTransfer
-                  ? '계좌이체 (수동)'
-                  : (METHOD_LABELS[order.payment_method ?? ''] ?? order.payment_method)
+                isManualBankTransfer
+                  ? '계좌이체 (무통장입금)'
+                  : order.payment_key
+                    ? (METHOD_LABELS[order.payment_method ?? ''] ?? order.payment_method ?? '—')
+                    : '결제 미완료'
               }
             />
-            {!isBankTransfer && (
+            {order.payment_key && (
               <>
                 <InfoRow label="결제 상태" value={order.payment_status} />
                 <InfoRow label="승인일시" value={formatDate(order.approved_at)} />
