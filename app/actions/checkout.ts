@@ -637,3 +637,53 @@ export async function cancelPendingOrder(orderNo: string, buyerEmail: string): P
     .eq('status', 'pending_payment')
     .eq('buyer_email', buyerEmail.trim().toLowerCase());
 }
+
+/**
+ * 무통장(BANK_TRANSFER) 결제 완료 안내(success) 랜딩 검증.
+ *
+ * Next.js 16의 미들웨어 rewrite가 default-locale 경로의 server `searchParams`를 떨구는
+ * 회귀 때문에 success 페이지는 클라이언트에서 `window.location.search`로 orderId를 읽는다.
+ * 임의 orderId로 SAF 브랜드 계좌 안내 화면을 위조하는 피싱을 막기 위해, 실제로
+ * 입금대기/완료 상태로 존재하는 주문인지 server에서 확인한다.
+ */
+export async function verifyBankTransferLanding(orderId: string): Promise<boolean> {
+  if (!orderId || typeof orderId !== 'string') return false;
+  try {
+    const adminClient = createSupabaseAdminClient();
+    const { data } = await adminClient
+      .from('orders')
+      .select('id')
+      .eq('order_no', orderId)
+      .in('status', ['awaiting_deposit', 'paid', 'preparing'])
+      .maybeSingle();
+    return !!data;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * 결제 실패/취소(fail) 랜딩에서 pending_payment 주문을 즉시 정리.
+ *
+ * Next.js 16 미들웨어 rewrite의 server `searchParams` 누락 회귀로 fail 페이지가
+ * 클라이언트에서 `window.location.search`의 orderId를 읽어 이 액션을 호출한다.
+ * `status='pending_payment'`에만 동작하므로 임의 orderId 호출은 무해
+ * (최악 = 정상 진행 중인 주문 강제 취소 → 사용자가 재시도, 수익 손실 없음).
+ */
+export async function cancelLandingOrder(orderId: string): Promise<void> {
+  if (!orderId || typeof orderId !== 'string') return;
+  const headersList = await headers();
+  const ip = getClientIp(headersList);
+  const rl = await rateLimit(`cancelLandingOrder:${ip}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.success) return;
+  try {
+    const adminClient = createSupabaseAdminClient();
+    await adminClient
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+      .eq('order_no', orderId)
+      .eq('status', 'pending_payment');
+  } catch (err) {
+    console.error('[cancelLandingOrder] failed:', err);
+  }
+}
