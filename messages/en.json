@@ -149,8 +149,8 @@
     "heroDescription": "Browse {artworkCount} original artworks — paintings, prints, photography,\nand sculptures by Korean artists.\nFree shipping · 7-day returns",
     "viewArtworks": "Shop Artworks",
     "aboutSaf": "About the Gallery",
-    "shareTitle": "SAF Online — {artworkCount} original Korean artworks",
-    "shareDescription": "{artistCount} Korean artists' works fund {loanCount} mutual-aid loans · {artworkCount} originals online. Paintings, prints, photography, sculpture.",
+    "shareTitle": "1 artwork purchase = 1 artist low-interest loan — {artworkCount} originals by {artistCount} Korean artists | SAF Online",
+    "shareDescription": "{artistCount} Korean artists' originals · 1 purchase = 1 mutual-aid loan (95% repayment). Paintings, prints, photography, sculpture · free shipping, 7-day returns.",
     "joinCta": {
       "title": "You can be an artist's oxygen, too",
       "subtitle": "As a member, you fund the pool each month and see transparently who borrows, how much, and how it's repaid — another way to stand with artists beyond buying work.",
@@ -822,8 +822,8 @@
     "title": "{category} — {count} Original Korean Artworks Direct from Artists | SAF Online",
     "metaDescription": "Browse {count} original {category} artworks ({availableCount} available). Proceeds fund {loanCount} artist loans. Seoul contemporary art. Free shipping, 7-day returns.",
     "heroDescription": "{availableCount} of {count} artworks available.",
-    "shareTitle": "{category} — {count} artworks at SAF Online",
-    "shareDescription": "Explore and purchase {category} artworks on SAF Online. Proceeds support the artist mutual-aid fund.",
+    "shareTitle": "{category} — {count} original Korean artworks · 1 purchase = 1 loan | SAF Online",
+    "shareDescription": "Buy {category} originals direct from artists. 1 purchase = 1 artist mutual-aid loan (95% repayment rate).",
     "notFound": "Category not found"
   },
   "checkout": {
