@@ -1009,6 +1009,72 @@ export default async function ParkSaenggwangPage({
           </div>
         </div>
 
+        {/* Retention — special 페이지 GA4 49 PV(7일) traffic 회수. 박생광 작가/한국화/민화 hub. */}
+        <div className="max-w-5xl mx-auto px-4 py-16 md:py-20">
+          <h2 className="text-2xl md:text-3xl font-bold text-charcoal-deep mb-3 text-center break-keep">
+            {isEnglish ? 'Explore Park Saeng-gwang Deeper' : '박생광을 더 깊이 만나기'}
+          </h2>
+          <p className="text-sm md:text-base text-charcoal-muted mb-8 text-center break-keep">
+            {isEnglish
+              ? 'Continue with related Korean painting masters, traditional minhwa, and master interviews.'
+              : '박생광 작가의 다른 작품과 한국화·민화의 계보를 씨앗페에서 이어볼 수 있습니다.'}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+              href="/artworks/artist/박생광"
+              className="block rounded-2xl border border-charcoal/15 bg-white p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-xs font-semibold uppercase tracking-wider text-primary-strong mb-2">
+                {isEnglish ? 'Browse artworks' : '씨앗페에서 작품 보기'}
+              </div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug break-keep">
+                {isEnglish
+                  ? "Park Saeng-gwang's collection — final 8-year transformation works"
+                  : '박생광 출품작 전체 — 마지막 8년 폭발적 변신 시기 작품'}
+              </div>
+            </Link>
+            <Link
+              href="/stories/park-saenggwang-last-transformation"
+              className="block rounded-2xl border border-charcoal/15 bg-white p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-xs font-semibold uppercase tracking-wider text-primary-strong mb-2">
+                {isEnglish ? 'Magazine essay' : '매거진 정전 에세이'}
+              </div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug break-keep">
+                {isEnglish
+                  ? 'Park Saeng-gwang — the master who reinvented himself in his final 8 years'
+                  : '박생광 — 마지막 8년의 폭발적 변신, 오방색 한국화로 거듭난 화가'}
+              </div>
+            </Link>
+            <Link
+              href="/stories/korean-painting-tradition-meets-modern"
+              className="block rounded-2xl border border-charcoal/15 bg-white p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-xs font-semibold uppercase tracking-wider text-primary-strong mb-2">
+                {isEnglish ? 'Korean painting hub' : '한국화 hub'}
+              </div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug break-keep">
+                {isEnglish
+                  ? 'Korean painting tradition meets modern — masters and inheritors'
+                  : '한국 회화 전통과 현대의 만남 — 거장과 계승자들'}
+              </div>
+            </Link>
+            <Link
+              href="/stories/stone-pigment-seokchae-aesthetics"
+              className="block rounded-2xl border border-charcoal/15 bg-white p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-xs font-semibold uppercase tracking-wider text-primary-strong mb-2">
+                {isEnglish ? 'Material story' : '재료 이야기'}
+              </div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug break-keep">
+                {isEnglish
+                  ? 'Stone pigment (seokchae) — mineral colors that last a thousand years'
+                  : '석채(石彩)의 세계 — 광물 분쇄에서 천 년 가는 색까지'}
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* Visit — 전시 정보 카드. */}
         <div className="max-w-[1440px] mx-auto px-4 py-16 md:py-24">
           <h2 className="text-4xl md:text-5xl mb-12 text-charcoal-deep font-black font-display text-balance text-center">
