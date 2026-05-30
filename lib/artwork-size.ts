@@ -4,7 +4,12 @@
  *
  * 주의: lib/utils/parseArtworkSize.ts는 3D 가상 갤러리 전용(미터 단위, 실패 시 기본값).
  * 관심사가 달라 통합하지 않는다. 이 모듈은 cm·표시·분류 전담.
+ *
+ * 단, 가상 갤러리("벽에 걸어보기")용 toRoomDimensions만 parseArtworkSize의 미터 변환·
+ * 기본값 로직을 폴백으로 재사용한다(구조화 cm 우선, 평문은 폴백).
  */
+
+import { parseArtworkSize, type ArtworkDimensions } from '@/lib/utils/parseArtworkSize';
 
 export interface Dimensions {
   width: number;
@@ -126,4 +131,25 @@ export function describeSize(input: {
   const ho = hoEst && hoEst.confident ? hoEst.ho : null;
   const bucket = classifyBucket(dims);
   return { cm, ho, bucket, is3d };
+}
+
+/**
+ * 가상 갤러리("벽에 걸어보기")용 미터 단위 치수.
+ * 구조화 컬럼(cm) 우선 — 정확·일관. 컬럼이 없으면 size 텍스트 파싱(parseArtworkSize) 폴백.
+ * 반환 타입은 3D 월드 컴포넌트가 쓰는 ArtworkDimensions(미터).
+ */
+export function toRoomDimensions(input: {
+  size?: string | null;
+  width_cm?: number | null;
+  height_cm?: number | null;
+  depth_cm?: number | null;
+}): ArtworkDimensions {
+  if (input.width_cm != null && input.height_cm != null) {
+    return {
+      widthM: input.width_cm / 100,
+      heightM: input.height_cm / 100,
+      depthM: input.depth_cm != null ? input.depth_cm / 100 : undefined,
+    };
+  }
+  return parseArtworkSize(input.size || '');
 }

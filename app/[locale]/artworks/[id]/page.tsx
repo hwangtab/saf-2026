@@ -429,6 +429,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 sold={artwork.sold}
                 reserved={artwork.reserved}
                 size={artwork.size}
+                width_cm={artwork.width_cm}
+                height_cm={artwork.height_cm}
+                depth_cm={artwork.depth_cm}
                 category={artwork.category}
                 material={artwork.material}
                 year={artwork.year}

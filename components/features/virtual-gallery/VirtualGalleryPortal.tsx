@@ -12,6 +12,8 @@ const VirtualRoom = dynamic(() => import('./VirtualRoom'), { ssr: false });
 interface VirtualGalleryPortalProps {
   imageUrl: string;
   dimensions: ArtworkDimensions;
+  /** 실측 라벨 (예: "72.7×60.6cm · 약 20호") — 헤더에 표시. 치수 미상이면 undefined */
+  sizeLabel?: string;
   title: string;
   artist: string;
   onClose: () => void;
@@ -69,6 +71,7 @@ function useIsMobile() {
 export default function VirtualGalleryPortal({
   imageUrl,
   dimensions,
+  sizeLabel,
   title,
   artist,
   onClose,
@@ -92,6 +95,7 @@ export default function VirtualGalleryPortal({
             noWebgl: '이 기기에서는 3D 뷰어를 지원하지 않습니다.',
             errorFallback: '3D 뷰어 로딩 중 오류가 발생했습니다.',
             close: '닫기',
+            actualSize: '실제 크기',
           }
         : {
             controlHint: 'Drag to look around · Scroll to zoom',
@@ -99,6 +103,7 @@ export default function VirtualGalleryPortal({
             noWebgl: '3D viewer is not supported on this device.',
             errorFallback: 'An error occurred while loading the 3D viewer.',
             close: 'Close',
+            actualSize: 'Actual size',
           },
     [isKo]
   );
@@ -171,6 +176,11 @@ export default function VirtualGalleryPortal({
                   {title}
                 </span>
                 <span className="text-white/50 ml-2">— {artist}</span>
+                {sizeLabel && (
+                  <span className="text-white/40 ml-2 hidden sm:inline">
+                    · {copy.actualSize} {sizeLabel}
+                  </span>
+                )}
               </div>
             </div>
 

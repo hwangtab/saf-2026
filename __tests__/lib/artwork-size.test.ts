@@ -4,6 +4,7 @@ import {
   estimateHo,
   classifyBucket,
   describeSize,
+  toRoomDimensions,
 } from '../../lib/artwork-size';
 
 describe('parseSizeText', () => {
@@ -91,5 +92,26 @@ describe('describeSize', () => {
   });
   it('치수 미상 → null', () => {
     expect(describeSize({ size: '확인 중' })).toBeNull();
+  });
+});
+
+describe('toRoomDimensions', () => {
+  it('구조화 컬럼 우선 (cm→m), 확인 중이어도 치수 사용', () => {
+    const r = toRoomDimensions({ size: '확인 중', width_cm: 72.7, height_cm: 60.6 });
+    expect(r.widthM).toBeCloseTo(0.727);
+    expect(r.heightM).toBeCloseTo(0.606);
+    expect(r.depthM).toBeUndefined();
+    expect(r.isDefault).toBeFalsy();
+  });
+  it('3D depth 포함', () => {
+    const r = toRoomDimensions({ size: '', width_cm: 60, height_cm: 60, depth_cm: 130 });
+    expect(r.widthM).toBeCloseTo(0.6);
+    expect(r.depthM).toBeCloseTo(1.3);
+  });
+  it('컬럼 없으면 size 텍스트 폴백', () => {
+    expect(toRoomDimensions({ size: '60x45cm' })).toMatchObject({ widthM: 0.6, heightM: 0.45 });
+  });
+  it('치수 미상(컬럼·텍스트 모두 없음) → isDefault', () => {
+    expect(toRoomDimensions({ size: '확인 중' }).isDefault).toBe(true);
   });
 });

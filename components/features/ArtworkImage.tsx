@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import dynamic from 'next/dynamic';
@@ -10,7 +10,7 @@ import {
   resolveArtworkImageUrlForPreset,
   resolveOptimizedArtworkImageUrl,
 } from '@/lib/utils';
-import { parseArtworkSize } from '@/lib/utils/parseArtworkSize';
+import { toRoomDimensions, describeSize } from '@/lib/artwork-size';
 import { buildArtworkAlt } from '@/lib/artwork-alt';
 
 const NON_WALL_CATEGORIES = ['조각', '도자/공예'];
@@ -31,6 +31,9 @@ interface ArtworkImageProps {
   sold?: boolean;
   reserved?: boolean;
   size?: string;
+  width_cm?: number | null;
+  height_cm?: number | null;
+  depth_cm?: number | null;
   category?: string;
   material?: string | null;
   year?: string | number | null;
@@ -45,11 +48,15 @@ export default function ArtworkImage({
   sold,
   reserved,
   size,
+  width_cm,
+  height_cm,
+  depth_cm,
   category,
   material,
   year,
 }: ArtworkImageProps) {
   const locale = useLocale();
+  const tCard = useTranslations('artworkCard');
   const isNonWall = NON_WALL_CATEGORIES.includes(category || '');
 
   const copy =
@@ -141,7 +148,14 @@ export default function ArtworkImage({
   const handlePrefetch = useCallback(() => {
     import('@/components/features/virtual-gallery/VirtualGalleryPortal');
   }, []);
-  const canPreview = !isNonWall && !parseArtworkSize(size || '').isDefault;
+  // 구조화 치수(cm) 우선 — '확인 중'이어도 치수가 있으면 정확히 방에 렌더 + 미리보기 활성.
+  const roomDims = toRoomDimensions({ size, width_cm, height_cm, depth_cm });
+  const canPreview = !isNonWall && !roomDims.isDefault;
+  // 모달 실측 라벨: "72.7×60.6cm · 약 20호" (호수 부적합 시 cm만)
+  const sizeInfo = describeSize({ size, width_cm, height_cm, depth_cm });
+  const sizeLabel = sizeInfo
+    ? sizeInfo.cm + (sizeInfo.ho != null ? ` · ${tCard('approxHo', { n: sizeInfo.ho })}` : '')
+    : undefined;
 
   const alt = buildArtworkAlt({ title, artist, material, year }, locale === 'en' ? 'en' : 'ko');
   const currentImage = safeImages[currentIndex] || '';
@@ -349,7 +363,8 @@ export default function ArtworkImage({
       {isRoomOpen && (
         <VirtualGalleryPortal
           imageUrl={resolveArtworkImageUrl(safeImages[0] || '')}
-          dimensions={parseArtworkSize(size || '')}
+          dimensions={roomDims}
+          sizeLabel={sizeLabel}
           title={title}
           artist={artist}
           onClose={() => setIsRoomOpen(false)}
