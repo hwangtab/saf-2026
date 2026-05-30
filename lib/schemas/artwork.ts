@@ -77,6 +77,10 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         categoryForLocale ? `buy ${categoryForLocale}` : null,
         'SAF Online',
         'buy artwork',
+        // 연도 + 작가명 조합 long-tail (예: "Oh Yoon 1985 print")
+        artwork.year && artistForLocale ? `${artistForLocale} ${artwork.year}` : null,
+        // 매체 + 'for sale' commerce intent
+        categoryForLocale ? `${categoryForLocale} for sale` : null,
       ]
     : [
         artwork.artist,
@@ -88,6 +92,10 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         '한국 현대미술',
         '씨앗페 온라인',
         '출품작',
+        // 연도 + 작가명 long-tail
+        artwork.year ? `${artwork.artist} ${artwork.year}` : null,
+        // 작품명 단독 (navigational)
+        artwork.title ? `${artwork.title} 원본` : null,
       ];
 
   const numericPriceValue = parseArtworkPrice(artwork.price);
@@ -393,6 +401,11 @@ export function generateArtworkJsonLd(
       url: resolvedImageUrl.startsWith('http')
         ? resolvedImageUrl
         : `${SITE_URL}${resolvedImageUrl}`,
+      contentUrl: resolvedImageUrl.startsWith('http')
+        ? resolvedImageUrl
+        : `${SITE_URL}${resolvedImageUrl}`,
+      // encodingFormat — webp/jpeg 자동 변환되므로 명시 image/* 발행 (Google Images metadata)
+      encodingFormat: /\.webp(\?|$)/i.test(resolvedImageUrl) ? 'image/webp' : 'image/jpeg',
       name: `${titleForLocale} - ${artistForLocale}`,
       alternateName: imageAlternateName,
       caption: isEnglish
@@ -402,6 +415,20 @@ export function generateArtworkJsonLd(
       height: 1200,
       acquireLicensePage: `${SITE_URL}/artworks/${artwork.id}`,
       representativeOfPage: true,
+      // creator + copyrightHolder — Google Images, AI 학습 시 작가 entity 귀속 시그널.
+      creator: {
+        '@type': 'Person',
+        '@id': buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artwork.artist)}`, locale),
+        name: artistForLocale,
+      },
+      copyrightHolder: {
+        '@type': 'Person',
+        '@id': buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artwork.artist)}`, locale),
+        name: artistForLocale,
+      },
+      // 작가 본인이 SAF에 저작권 보유. CC BY-NC-ND 4.0 — Non-Commercial/No-Derivative
+      // 학술·언론 인용은 가능하나 상업·변형 금지 (작가 권리 보호).
+      license: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
     },
     description: schemaDescription.substring(0, 500),
     // sku·mpn·countryOfOrigin은 Product 전용 필드. 2026-05 Product type 제거 이후
@@ -422,6 +449,25 @@ export function generateArtworkJsonLd(
         '@id': 'https://www.wikidata.org/wiki/Q884',
       },
     },
+    // copyrightHolder — VisualArtwork 본체 저작권은 작가 본인 (Person creator와 동일 reference).
+    // copyrightYear — 작품 제작년도. artwork.year null이면 필드 생략.
+    copyrightHolder: {
+      '@id': buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artwork.artist)}`, locale),
+    },
+    // 작품의 타겟 audience — 컬렉터 + 기업·기관 컬렉션 + 갤러리/박물관 큐레이터.
+    audience: {
+      '@type': 'Audience',
+      audienceType: isEnglish
+        ? 'Art collectors, gallery curators, corporate art buyers'
+        : '미술 컬렉터, 갤러리 큐레이터, 기업 컬렉션 담당자',
+    },
+    // 접근성 시그널 — Google E-A-T / GEO 신호 + WAI-ARIA 호환성
+    isFamilyFriendly: true,
+    accessibilityFeature: ['alternativeText', 'highContrastDisplay'],
+    accessibilityHazard: 'none',
+    ...(artwork.year && /^\d{4}$/.test(artwork.year)
+      ? { copyrightYear: Number(artwork.year) }
+      : {}),
     artMedium: materialForLocale || undefined,
     dateCreated: artwork.year || undefined,
     // size는 additionalProperty에 PropertyValue로 별도 노출 (라인 470 부근).
@@ -441,6 +487,17 @@ export function generateArtworkJsonLd(
       eventAttendanceMode: exhibitionSchemaState.eventAttendanceMode,
       location: exhibitionSchemaState.location,
       organizer: sellerOrg,
+      // superEvent — SAF 캠페인(3년 누적, 2023부터) EventSeries 상위로 연결.
+      // Knowledge Graph가 작품 → 2026 전시 → SAF 시리즈 전체 entity cluster 인식.
+      superEvent: {
+        '@type': 'EventSeries',
+        name: isEnglish
+          ? 'Seed Art Festival (SAF) — Artist Mutual Aid Series'
+          : '씨앗페(SAF) — 예술인 상호부조 시리즈',
+        startDate: '2023-03-21',
+        url: SITE_URL,
+        organizer: sellerOrg,
+      },
     },
     additionalProperty: [
       materialForLocale && {
@@ -467,6 +524,12 @@ export function generateArtworkJsonLd(
         '@type': 'PropertyValue',
         name: isEnglish ? 'Artist history' : '작가이력',
         value: historyForLocale.substring(0, 200),
+      },
+      // Country of Origin — Google Shopping/이미지 검색 entity 매칭 강화 + 'Korean art' query 정합성.
+      {
+        '@type': 'PropertyValue',
+        name: isEnglish ? 'Country of origin' : '원산지',
+        value: isEnglish ? 'Republic of Korea' : '대한민국',
       },
     ].filter(Boolean),
     ...(options?.mentionedInStories?.length && {

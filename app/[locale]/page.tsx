@@ -228,6 +228,13 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
             '@type': 'SpeakableSpecification',
             cssSelector: ['h1'],
           },
+          audience: {
+            '@type': 'PeopleAudience',
+            audienceType:
+              locale === 'en'
+                ? 'Art collectors, first-time buyers, Korean art enthusiasts, cultural policy supporters'
+                : '미술 컬렉터, 첫 그림 구매자, 한국 미술 관심층, 문화 정책 지지자',
+          },
         }}
       />
       {/* BreadcrumbList — 홈은 self-reference 단일 노드지만 네이버 풍부결과 가이드 권장.

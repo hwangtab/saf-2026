@@ -210,9 +210,47 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
     license: 'https://creativecommons.org/licenses/by/4.0/',
   };
 
+  // Testimonials → schema.org Review entity 배열.
+  // 한국 예술인 금융 배제 증언을 reviewBody로 발행 — Knowledge Graph 증언 entity + AI Overview
+  // '한국 예술인 금융 차별' 검색 시 직접 인용 가능.
+  const testimonialReviews = testimonialsData
+    .flatMap((group) => group.items)
+    .map((item, idx) => {
+      const reviewBody = (isEnglish && item.quote_en?.trim() ? item.quote_en : item.quote).replace(
+        /<\/?strong>/g,
+        ''
+      );
+      const authorName = isEnglish && item.author_en?.trim() ? item.author_en : item.author;
+      return {
+        '@context': 'https://schema.org' as const,
+        '@type': 'Review' as const,
+        '@id': `${pageUrl}#testimonial-${idx + 1}`,
+        reviewBody,
+        author: { '@type': 'Person' as const, name: authorName },
+        itemReviewed: {
+          '@type': 'Thing' as const,
+          name: isEnglish ? 'Artist Financial Exclusion in Korea' : '한국 예술인 금융 배제',
+        },
+        inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+        publisher: {
+          '@type': 'Organization' as const,
+          '@id': `${SITE_URL}#organization`,
+          name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+        },
+      };
+    });
+
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews]} />
+      <JsonLdScript
+        data={[
+          breadcrumbSchema,
+          aboutPageSchema,
+          datasetSchema,
+          ...claimReviews,
+          ...testimonialReviews,
+        ]}
+      />
       <PageHero
         customBackgroundImage={getHeroOverride('our-reality')}
         title={isEnglish ? 'Our Reality' : '우리의 현실'}

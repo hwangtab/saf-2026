@@ -126,6 +126,16 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     isPartOf: { '@id': `${SITE_URL}#website` },
     about: aboutEntities,
     primaryImageOfPage: { '@type': 'ImageObject', url: OG_IMAGE.url },
+    author: { '@id': `${SITE_URL}#organization` },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: isEnglish ? 'Korea Smart Cooperative' : '한국스마트협동조합',
+    },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', 'h2'],
+    },
   };
 
   const saf2026Schema = generateExhibitionSchema([], isEnglish ? 'en' : 'ko', { artistCount });

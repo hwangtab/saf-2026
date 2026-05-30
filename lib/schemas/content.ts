@@ -204,6 +204,16 @@ export interface BlogPostingSchemaInput {
    * Knowledge Graph entity 매칭 강화 — AI Overview, related searches에 직접 영향.
    */
   about?: readonly string[];
+  /**
+   * 본문 단어 수 — schema.org Article.wordCount. AI/Google이 콘텐츠 깊이 판단.
+   * 본문 markdown에서 단순 공백 split count 추천. 0 또는 undefined면 필드 생략.
+   */
+  wordCount?: number;
+  /**
+   * 글의 교육 수준 — buying-guide는 'Beginner', art-knowledge는 'Intermediate' 등.
+   * Knowledge Graph 'art education for beginners' query 매칭에 직접 영향.
+   */
+  educationalLevel?: 'Beginner' | 'Intermediate' | 'Advanced';
 }
 
 export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
@@ -243,6 +253,10 @@ export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
         height: 60,
       },
     },
+    // sourceOrganization — 편집 소스(SAF Magazine 편집부 = publisher 동일)
+    sourceOrganization: { '@id': `${SITE_URL}#organization` },
+    // 무료 read — 매거진 모든 글이 publicly accessible
+    isAccessibleForFree: true,
     mainEntityOfPage: { '@type': 'WebPage', '@id': post.url },
     ...(post.articleSection ? { articleSection: post.articleSection } : {}),
     ...(post.categoryUrl
@@ -259,6 +273,15 @@ export function generateBlogPostingSchema(post: BlogPostingSchemaInput) {
     ...(post.about && post.about.length > 0
       ? { about: post.about.map((name) => ({ '@type': 'Thing', name })) }
       : {}),
+    // wordCount — AI/Google 콘텐츠 깊이 시그널. 250WPM 기준 timeRequired(ISO 8601 duration) 함께 발행.
+    ...(post.wordCount && post.wordCount > 0
+      ? {
+          wordCount: post.wordCount,
+          timeRequired: `PT${Math.max(1, Math.round(post.wordCount / 250))}M`,
+        }
+      : {}),
+    // educationalLevel — buying-guide(컬렉팅 입문) Beginner, art-knowledge Intermediate 등 매핑
+    ...(post.educationalLevel ? { educationalLevel: post.educationalLevel } : {}),
   };
 }
 

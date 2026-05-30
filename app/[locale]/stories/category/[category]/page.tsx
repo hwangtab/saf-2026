@@ -519,6 +519,25 @@ export default async function StoryCategoryPage({ params }: Props) {
           },
         }
       : {}),
+    // 음성 검색 / GEO 시그널 — 카테고리 hero title + intro만 speakable
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '#category-hero-description'],
+    },
+    audience: {
+      '@type': 'PeopleAudience',
+      audienceType: isEnglish
+        ? category === 'buying-guide'
+          ? 'First-time art buyers, beginner collectors'
+          : category === 'artist-story'
+            ? 'Art enthusiasts curious about artist biographies'
+            : 'Art learners, collectors interested in Korean art history'
+        : category === 'buying-guide'
+          ? '첫 그림 구매자, 컬렉팅 입문자'
+          : category === 'artist-story'
+            ? '작가 이야기에 관심 있는 미술 애호가'
+            : '한국 미술사·매체에 관심 있는 컬렉터·학습자',
+    },
   };
 
   // 다른 카테고리

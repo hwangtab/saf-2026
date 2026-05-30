@@ -178,10 +178,13 @@ export default async function StoriesGuidePage({
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    '@id': `${buildLocaleUrl(path, locale)}#webpage`,
     name: copy.seoTitle,
     description: copy.pageDescription,
     url: buildLocaleUrl(path, locale),
+    isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: 'ko-KR',
+    author: { '@id': `${SITE_URL}#organization` },
     publisher: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
@@ -191,6 +194,7 @@ export default async function StoriesGuidePage({
       ? {
           mainEntity: {
             '@type': 'ItemList',
+            '@id': `${buildLocaleUrl(path, locale)}#item-list`,
             numberOfItems: allSpokes.length,
             itemListElement: allSpokes.map((story, i) => ({
               '@type': 'ListItem',
@@ -201,6 +205,11 @@ export default async function StoriesGuidePage({
           },
         }
       : {}),
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1'],
+    },
+    educationalLevel: 'Beginner',
   };
 
   return (

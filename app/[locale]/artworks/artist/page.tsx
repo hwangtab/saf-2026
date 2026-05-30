@@ -157,6 +157,16 @@ export default async function ArtistsIndexPage({ params }: { params: Promise<Loc
       '@id': `${SITE_URL}#organization`,
       name: isEn ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
     },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '#artists-index-description'],
+    },
+    audience: {
+      '@type': 'PeopleAudience',
+      audienceType: isEn
+        ? 'Art collectors, gallery curators, researchers of Korean contemporary art'
+        : '미술 컬렉터, 갤러리 큐레이터, 한국 현대미술 연구자',
+    },
   };
 
   const itemListSchema = {

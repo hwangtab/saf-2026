@@ -323,6 +323,15 @@ async function renderCategoryPage({ params }: Props) {
       '@type': 'SpeakableSpecification',
       cssSelector: ['h1', '#category-hero-description'],
     },
+    audience: {
+      '@type': 'PeopleAudience',
+      audienceType: isEnglish
+        ? `Collectors and buyers looking for Korean ${displayCategory.toLowerCase()}`
+        : `한국 ${displayCategory}을 찾는 컬렉터와 첫 구매자`,
+    },
+    // 캠페인 기간 — 카테고리 페이지가 SAF 2026 전시 기간 내내 active 상태임을 명시.
+    datePublished: '2026-01-26',
+    dateModified: new Date().toISOString().slice(0, 10),
   };
 
   // 관련 카테고리 (현재 카테고리 제외, 정적 순서로 표시)

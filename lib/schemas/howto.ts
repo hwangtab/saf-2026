@@ -2,6 +2,7 @@ import { SITE_URL, CONTACT, MERCHANT_POLICIES } from '@/lib/constants';
 import { ARTIST_COUNT, ARTWORK_COUNT, LOAN_COUNT } from '@/lib/site-stats';
 import { containsHangul } from '@/lib/search-utils';
 import { generateFAQSchema } from './content';
+import { getPrimaryStorySlug } from '@/lib/artist-story-map';
 
 export interface HowToStep {
   name: string;
@@ -293,6 +294,11 @@ export function generateArtworkSpecificFAQ(
     ? `네. "${title}"은 ${artistName} 작가의 ${material} 원본 작품이며, 씨앗페 2026 검증을 거쳤습니다. 해당 작품에는 정품 보증서가 함께 제공됩니다.`
     : `네. "${title}"은 ${artistName} 작가의 원본 작품이며, 씨앗페 2026 검증을 거쳤습니다. 해당 작품에는 정품 보증서가 함께 제공됩니다.`;
 
+  // 작가가 ARTIST_PRIMARY_STORY 등재(거장급 26명)된 경우 정전 스토리 link 5번째 Q&A 추가.
+  // GSC navigational query 강한 작가들의 작품 detail FAQ에서 정전 스토리로 link equity flow.
+  const primaryStorySlug = getPrimaryStorySlug(artwork.artist);
+  const primaryStoryUrl = primaryStorySlug ? `${SITE_URL}/stories/${primaryStorySlug}` : null;
+
   const faqs = isEn
     ? [
         {
@@ -315,6 +321,14 @@ export function generateArtworkSpecificFAQ(
           question: `Is "${title}" an original work with a certificate of authenticity?`,
           answer: certAnswerEn,
         },
+        ...(primaryStoryUrl
+          ? [
+              {
+                question: `Where can I learn more about ${artistName}'s practice and biography?`,
+                answer: `Read the canonical SAF Magazine article on ${artistName} at ${primaryStoryUrl}.`,
+              },
+            ]
+          : []),
       ]
     : [
         {
@@ -337,6 +351,14 @@ export function generateArtworkSpecificFAQ(
           question: `"${title}"은 원본 작품이며 진품 보증서가 제공되나요?`,
           answer: certAnswerKo,
         },
+        ...(primaryStoryUrl
+          ? [
+              {
+                question: `${artistName} 작가의 작업 세계와 이력을 더 깊이 알고 싶다면 어디서 볼 수 있나요?`,
+                answer: `씨앗페 매거진의 ${artistName} 작가 정전 인터뷰를 ${primaryStoryUrl} 에서 읽으실 수 있습니다.`,
+              },
+            ]
+          : []),
       ];
 
   return generateFAQSchema(faqs, locale);

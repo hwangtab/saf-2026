@@ -1,5 +1,185 @@
 [
   {
+    "hash": "df8f2db5",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 73 — artwork detail Facebook product meta 강화 (brand + category)",
+    "summary": "artwork detail의 Facebook/Instagram/Pinterest product:* 메타 태그에 product:brand + product:category 추가 — Facebook Merchant Catalog/Pinterest Product Rich Pin 카탈로그 매칭 정확도 강화",
+    "body": "배경:\n- 기존 product:* 메타: price:amount, price:currency, availability, condition, retailer_item_id\n- product:brand, product:category 누락 → Facebook 카탈로그 자동 매핑 시 'no brand'/'uncategorized' 분류 위험\n- 348 작품의 SNS 공유 시 Facebook Shop / Pinterest Product Pin 인식률 영향\n\n변경:\n- lib/schemas/artwork.ts L162-167:\n  - 'product:brand' 추가 — 한글 '씨앗페 온라인' / 영문 'SAF Online'\n  - 'product:category' 조건부 추가 — categoryForLocale 매핑 (회화/판화/사진/조각 등 11종 매체)\n  - 기존 5개 product:* 필드 보존\n\n회귀 방지:\n- hasFixedPrice spread 안에서만 적용 (문의가 작품은 제외 — Facebook이 가격 없는 product 거부)\n- categoryForLocale null 시 product:category 자동 생략\n- 기존 author, twitter:label1/data1, twitter:label2/data2 무변동\n- npm run type-check 통과\n\n효과:\n- 348개 작품 detail SNS Facebook/Pinterest 공유 시 brand/category 정규화 매칭\n- Pinterest Rich Pin 카탈로그 자동 분류 정확도 강화\n- Facebook Merchant Catalog 자동 매핑 정확도 강화",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "f40fa33e",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "Sprint 72 — story detail Open Graph article:tag 메타 추가",
+    "summary": "/stories/[slug] generateMetadata.openGraph에 tags 필드 추가 — story.tags(매체·작가·주제 키워드)를 Open Graph article:tag 메타로 노출. 매거진 글의 Article schema entity 시그널 보강",
+    "body": "배경:\n- Next.js Metadata API openGraph.type='article'은 publishedTime, modifiedTime, authors, section, tags 필드 지원\n- 기존 stories는 4개 (publishedTime, modifiedTime, authors, section)만 발행 — tags 누락\n- Open Graph article:tag는 Facebook Article schema + Knowledge Graph entity 정규화에 직접 영향\n- Sprint 29 BlogPosting.about Thing[] schema 시그널과 일관 (양쪽 layer 동시 발행)\n\n변경:\n- app/[locale]/stories/[slug]/page.tsx:\n  - openGraph.tags 필드 추가\n  - story.tags.slice(0, 6) — Facebook 권장 최대값\n  - tags 비어있으면 undefined → 필드 자체 생략\n\n결과 HTML 메타:\n<meta property=\"article:tag\" content=\"오윤\" />\n<meta property=\"article:tag\" content=\"판화\" />\n<meta property=\"article:tag\" content=\"민중미술\" />\n...\n\n효과:\n- 174 stories Facebook/LinkedIn 공유 시 article:tag entity 정규화 매칭\n- BlogPosting.about(Sprint 29) Thing entity와 양층 시그널 (schema + Open Graph)\n- 매거진 검색 entity '오윤', '판화', '민중미술' 같은 키워드 동시 매칭\n- 코드 1줄 추가 (조건부 spread 패턴, 회귀 0)\n\n회귀 방지:\n- tags 빈 배열 → 필드 자체 생략\n- 최대 6개로 noise 제한 (article:tag 표준 권장)\n- 기존 publishedTime/modifiedTime/authors/section 무변동\n- npm run type-check 통과",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8bedb678",
+    "type": "fix",
+    "scope": "mypage",
+    "subject": "로그아웃 버튼을 마이페이지 상단(제목 옆)으로 이동 — 모든 탭에서 즉시 보임",
+    "summary": "프로필 탭 하단에만 있던 SignOutButton이 사용자에게 안 보이는 문제. 마이페이지 헤더(제목과 같은 줄) 우측으로 옮겨 어느 탭에 있어도 한눈에 보이게",
+    "body": "- MypageTabs: 제목 옆에 SignOutButton 노출 (flex items-center justify-between)\n- ProfileTab: 하단 중복 SignOutButton 제거",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "5538d86b",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "mypage를 client-side 인증으로 전환 — Vercel edge cookie drop 우회",
+    "summary": "callback이 set한 supabase chunked session cookies(8KB+)가 vercel edge response header limit에 닿아 일부 drop. server SSR이 user를 못 가져옴. mypage 인증 체크 자체를 클라이언트로 이관해 server cookie 의존성 제거",
+    "body": "진단 확정 (logs):\n- callback 응답에 sb-*-auth-token.0, .1 set-cookie 정상 들어감\n- Path=/, SameSite=Lax 등 attribute 정상\n- 그러나 다음 GET /ko/mypage 요청 시 sb-* cookie 없음 (hasSupabaseAuthToken=false)\n- 아티스트는 정상(redirect destination 짧고 단계 적음), 콜렉터만 mypage 경로에서 실패\n- chunked cookies 합산이 vercel edge 8KB limit 도달이 가장 가능성 큰 원인\n\n수정:\n- mypage page.tsx: server-side user check / supabase.auth.getUser() / 데이터 fetch 모두 제거\n  - 단순 server wrapper로 i18n messages만 전달 (SSR 유지, SEO는 noindex라 무관)\n- 신규 MypageClient.tsx (client component):\n  - createSupabaseBrowserClient로 user fetch (최대 3회 retry — token 회복 시간 확보)\n  - user 있으면 orders/wishlist/profile fetch 후 MypageTabs render\n  - user null이면 router.replace('/login?redirectTo=/mypage')\n  - 로딩 중에는 spinner 표시\n- supabase client는 cookie + localStorage 양쪽 처리하므로 cookie drop 발생해도 localStorage로 회복 가능\n\n부수:\n- mypage 자체는 noindex라 SSR 손실 영향 없음\n- 첫 로드 시 spinner 1-2 frame (체감상 무시 가능)\n- 보안 동일 (httpOnly cookie 그대로 사용, JWT는 토큰 자체로 노출 안 됨)",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "096cebad",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "callback redirect를 manual NextResponse로 만들고 set-cookie 헤더 size 진단",
+    "summary": "logs 분석 결과 supabase가 token을 chunked cookies로 분할(.0/.1/.2)함을 확인. 한 응답에 큰 set-cookie 헤더 다수 → vercel edge에서 일부 잘릴 가능성 의심. NextResponse.redirect 대신 manual 응답 + 헤더 size 정확 진단",
+    "body": "logs로 확인된 사실:\n- callback 응답에 sb-khtunrybrzntlnowlahb-auth-token.0 set-cookie 들어있음 (auth-token.0 query 매칭)\n- Path=/, SameSite=Lax 등 attribute 정상\n- 그런데 mypage 진입 시 hasSupabaseAuthToken=false (브라우저가 sb-* cookie 안 보냄)\n\n가설:\n- chunked cookies 총 크기가 Vercel edge response header limit(~8KB)에 닿아 일부 set-cookie drop\n- 또는 NextResponse.redirect 내부 처리 단계에서 set-cookie 손실\n\n수정:\n- NextResponse.redirect → new NextResponse(null, {status:307, headers:{Location:url}})\n- set-cookie 헤더 명시 제어. 일부 next.js 미들웨어 처리 우회\n- 진단 로그에 totalSetCookieBytes + perCookieBytes 추가\n- 사용자 다음 시도 시 logs에서 header size 직접 확인",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "54bf6b77",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "cookie path '/' 강제 + 이중 cookie store set + set-cookie 헤더 직접 검증",
+    "summary": "logs 확인 결과 callback이 sb-* cookie set은 한 것으로 보이지만 mypage가 그 cookie 못 받음. path가 root 외 값일 가능성이 가장 큼 → 무조건 '/' override. 진단도 set-cookie 헤더 자체 추출로 강화",
+    "body": "logs 단서:\n- callback redirect 메시지에 'sb-khtunrybrzntlnowlahb' 이름 매칭 → supabase가 cookie set은 함\n- mypage [mypage] user null hasSupabaseAuthToken=false → 브라우저가 sb-* cookie 안 보냄\n- 즉 callback이 set한 cookie가 mypage 진입 시점에 도달 안 함\n\n수정:\n- setAll 콜백: c.options 받자마자 path: '/' override + cookiesToPropagate에 push + next/headers cookieStore.set\n- redirect: 모든 cookie에 path: '/' 강제 적용\n- next/headers cookies()에도 함께 set (이중 안전망 — Route Handler 환경)\n- 진단 로그에 response.headers.getSetCookie() preview 추가\n  → 실제 응답에 들어간 set-cookie 헤더 정확히 확인 가능\n\n이후 사용자 시도 시 setCookiePreviews에서 path=/, secure, httpOnly, sameSite=lax 같은 attribute가\n정상 포함됐는지, value가 잘리지 않았는지 직접 검증.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "f74e4668",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "callback + mypage 양쪽에 cookie 진단 로깅 + path '/' 강제",
+    "summary": "직전 fix 후에도 콜렉터가 /login?redirectTo=/mypage로 튕기는 상황 정확히 진단 위해 양쪽 끝에 정확한 cookie 상태 로깅 추가. path 누락 가능성도 안전망으로 차단",
+    "body": "callback:\n- redirect 직전에 cookieCount + cookieNames + destination 로깅\n- supabase가 setAll로 알려준 cookie의 options.path 누락 시 '/' 강제 (방어적)\n\nmypage page.tsx:\n- user null 케이스에서 cookies().getAll()의 이름 목록 + sb-* prefix 존재 여부 로깅\n- supabase.auth.getUser()가 throw한 authError code/message 같이 로깅\n\n이로써 다음 시도 직후 Vercel logs 한 번으로:\n- callback이 정말 supabase session cookie를 응답에 실었는지\n- mypage 진입 시 그 cookie가 도달했는지\n- 도달했다면 supabase가 왜 user를 못 가져왔는지\n\n세 가지가 동시에 보임. root cause 추측 그만, 실측으로 정확히 잡음.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "dfebb193",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "OAuth callback이 콜렉터를 /mypage 대신 /ko/mypage 명시 redirect — 진짜 root cause",
+    "summary": "아티스트는 정상이고 콜렉터만 로그인 페이지로 튕긴 진짜 이유 — bare /mypage redirect chain (callback → /mypage → intlProxy → /ko/mypage)에서 supabase session cookie 전파 실패. callback이 처음부터 locale prefix 포함해서 보내 chain 단축",
+    "body": "증거:\n- 사용자 보고: 아티스트 OAuth 로그인 정상, 콜렉터만 실패\n- callback이 set한 cookie 옵션은 직전 fix(300d45c7)로 정확함을 확인 (아티스트 OK)\n- 차이는 redirect destination만:\n  - 아티스트: /dashboard/artworks (portal 그룹, locale 없음, 한 번에 도달)\n  - 콜렉터: /mypage → intlProxy redirect → /ko/mypage (chain 2단계)\n- 두 번째 intlProxy redirect 단계에서 cookie 전파가 깔끔하지 않음\n\n수정:\n- NEXT_LOCALE cookie 읽어 localePrefix 결정 ('/ko' 또는 '/en')\n- noAppDestination의 /mypage 분기를 `${localePrefix}/mypage`로 변경\n- redirect chain 한 단계 단축 → callback이 set한 cookie가 첫 페이지 응답에 정확 전파\n- portal 경로(/dashboard, /exhibitor, /onboarding 등)는 locale prefix 불필요라 그대로 둠",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "300d45c7",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "OAuth callback cookie 전파 — supabase setAll 콜백 options까지 capture (진짜 hotfix)",
+    "summary": "직전 fix(ef880a58)가 cookies().getAll()로 name/value만 복사 → httpOnly·secure·sameSite·path·maxAge 옵션 누락 → 브라우저가 supabase session cookie 거부. 이번엔 setAll 콜백이 알려주는 옵션까지 capture해서 응답에 적용",
+    "body": "증거 (직전 시도에도 여전히 로그인 페이지로 튕긴 이유):\n- next/headers cookies().getAll()이 반환하는 RequestCookie 객체에 options 필드 없음\n- supabase가 set한 sb-*-auth-token cookie는 httpOnly + secure + path=/ 필수\n- 옵션 없이 set 시 브라우저가 무시 → 세션 미설정 → /login 무한 루프\n\n수정:\n- callback route에서 createSupabaseServerClient 대신 createServerClient inline 생성\n- supabase-ssr setAll 콜백 안에서 { name, value, options } 전체를 cookiesToPropagate에 push\n- redirectWithOAuthStateCleared가 그 배열을 모든 응답에 options 포함해서 set\n- middleware updateSession 패턴과 동일 메커니즘 (검증된 패턴)\n\n회귀 방지:\n- 함수 다시 동기로 변경 (await 16곳 일괄 제거)\n- 다른 인증 흐름(/forgot-password 등)의 createSupabaseServerClient 사용은 무영향",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "d427af26",
+    "type": "perf",
+    "scope": "special",
+    "subject": "거장·특별전 갤러리 화면 밖 카드 렌더 스킵 — 대량 작품 부하 해소",
+    "summary": "오윤(175점) 등 거장·특별전 페이지가 작품을 한 번에 전량 렌더해 부하가 걸리던 문제를 content-visibility로 화면 밖 카드 렌더를 건너뛰게 해 해결. 전 작품을 HTML에 유지(SEO)하면서 레이아웃·페인트 비용만 줄임.",
+    "body": "- MasterArtistGallery: CSS columns → grid 전환(content-visibility 호환) + .cv-gallery-card(content-visibility:auto, contain-intrinsic-size:auto 560px)\n- 5개 페이지 공통 적용: /special/oh-yoon·park-saenggwang + 거장 작가 페이지(이철수·민정기·박불똥)\n- animate-stamp 지연 전역 index*100ms(175번째=17초) → (index%8)*60ms 순환으로 캡 — content-visibility 진입 시 opacity-0 정체 방지\n- 상단 카드 eager 이미지 로딩(priorityIndex 전달)\n- 검증: build 852/852, Playwright로 grid·content-visibility·스크롤 진입 애니메이션 확인",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "505b8b5a",
+    "type": "feat",
+    "scope": "auth",
+    "subject": "일반 회원 로그아웃 버튼 추가 — 마이페이지 프로필 탭 하단",
+    "summary": "일반 회원에게 로그아웃 진입로가 어디에도 없던 회귀 fix. admin 포털에만 있던 SignOutButton을 mypage ProfileTab 마지막에 배치",
+    "body": "- 프로필 폼 + 마케팅 동의 박스 아래 별도 카드로 SignOutButton 노출\n- 컴포넌트 자체는 기존 components/auth/SignOutButton 재사용 (i18n·toast·router refresh 처리 포함)",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "ef880a58",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "OAuth callback이 supabase session cookie를 응답에 명시 복사 — 진짜 root cause hotfix",
+    "summary": "Supabase 측은 가입·로그인 모두 정상이지만 우리 callback이 session cookie를 응답에 못 실어서 사용자 브라우저에 미세팅 → 후속 페이지가 user 없다고 판단 → /login 무한 루프",
+    "body": "증거:\n- auth.users에 smartcoopkor@gmail.com 07:01:30 신규 가입 (Google) 확인\n- 같은 user의 last_sign_in_at 07:48:03 갱신 (4회 OAuth 시도 흔적)\n- 즉 Supabase는 매번 session 성공적으로 issue\n- 그러나 우리 callback이 NextResponse.redirect를 명시 반환하면서\n  next/headers cookies()로 set된 session cookie가 자동 머지 안 됨 (Next.js 15 동작)\n\n수정:\n- redirectWithOAuthStateCleared를 async로 변환\n- cookies()의 모든 cookie를 NextResponse.cookies에 명시 복사 후 redirect\n- 16곳 호출처에 await 추가 (sed 일괄 처리)\n- supabase가 set한 sb-*-auth-token 등 session cookie가 응답에 실리도록 보장\n\n이로써 SMTP·OAuth state 가드와 별개로, OAuth 흐름 자체가 처음부터 깨져 있던\n구조적 결함을 잡음. 사용자 재시도 시 정상 마이페이지 진입 예상.",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "75640b38",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "OAuth callback 모든 실패 분기 명시 로깅 + 사용자 친화 에러 메시지",
+    "summary": "callback이 silently /login으로 fall through하던 케이스를 단계별로 명확히 분리. Vercel logs + 사용자 화면 양쪽에 정확한 실패 지점 노출",
+    "body": "원인 추적 (지금 잡힌 회귀):\n- d2f0cfa4 hotfix 이후에도 사용자가 Google 가입 후 로그인 페이지로 튕김\n- supabase auth logs: /authorize → /token 모두 200 (Supabase 측 정상)\n- vercel logs: /auth/callback 307 (우리 callback 호출됨)\n- 그러나 그 후 /login에 머무름 → callback 내부 어딘가에서 silently /login으로 보낸 것\n\n진단 변경:\n- exchangeCodeForSession sessionError → console.error + /login?error=session_exchange\n- getUser() null → console.error + /login?error=session_missing\n- profileError → console.error + /login?error=profile_lookup\n- 최후 fallback도 /mypage → /login?error=callback_fallback (이전 fallback이 무한 루프 가능)\n\nlogin 페이지에 ko/en 에러 메시지 4종 추가:\n- sessionExchangeError: 소셜 로그인 세션 생성 실패\n- sessionMissingError: 세션 유실 (쿠키 차단 등)\n- profileLookupError: 계정 정보 조회 실패\n- callbackFallbackError: 인증 처리 미완료\n\n다음 단계:\n- 사용자 재시도 후 Vercel logs로 정확한 실패 지점 + supabase error code 확인\n- 그 결과에 따라 cookie 전파(SSR session cookie propagation) 또는 PKCE 흐름 수정",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "2d61cae9",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Sprint 71 — artist gallery openGraph.images / twitter.images override 제거 (Artist OG card 활성화)",
+    "summary": "/artworks/artist/[artist] generateMetadata의 openGraph.images + twitter.images 명시 override를 제거 — Next.js 컨벤션 파일 opengraph-image.tsx가 자동 emit (작가 이름 + 작품 수 + 가격 범위 + 대표 카테고리 + 대표 작품 이미지 + SAF 브랜딩)",
+    "body": "배경:\n- Sprint 69(artwork detail) + 70(stories detail) 동일 패턴 — production curl 검증 후 fix\n- Production: og:image=\"https://...supabase.co/.../admin-artwork-.../...webp\" (raw 작품 thumbnail)\n- 컨벤션 파일: 작가 카드 + 작품 메타(수·가격·매체) + 대표 작품 + SAF 브랜딩\n- raw 작품 도판보다 작가 entity 명확한 카드가 SNS 공유에 유리\n\n변경:\n- app/[locale]/artworks/artist/[artist]/page.tsx generateMetadata:\n  - openGraph.images / twitter.images 명시 override 제거 (28라인 reduction)\n  - images: undefined 명시로 컨벤션 우선\n  - representativeArtwork / seoImageUrl / imageUrl 변수 제거 (override만 사용)\n  - resolveSeoArtworkImageUrl import 제거 (미사용)\n- openGraph 다른 필드(type='website', siteName, locale) 보존\n- twitter card='summary_large_image' 보존\n\n효과:\n- 49개 작가 갤러리 SNS/카카오/Discover 공유 시 작가 카드 노출\n  - 작가 이름 한 줄\n  - 작품 수 + 판매중 수\n  - 가격 범위 ₩X-Y\n  - 대표 카테고리 라벨 (회화/판화/사진/조각)\n  - 대표 작품 이미지(sold 아닌 것 우선)\n  - SAF 브랜딩\n- 작가 검색 → SNS 미리보기에서 즉시 작가 entity + SAF 컬렉션 인지\n\nProduction 검증 (curl 2026-05-29):\n- https://www.saf2026.com/artworks/artist/이철수\n- og:image content=\"https://khtunrybrzntlnowlahb.supabase.co/.../admin-artwork-.../...webp\" (raw)\n- 컨벤션 파일 /opengraph-image* 경로 미노출 → override 사고 동일 패턴\n\n회귀 방지:\n- Sprint 69+70 동일 패턴 (production curl 검증 후 fix)\n- npm run type-check 통과\n- imageUrl / representativeArtwork 변수 미사용 회귀 차단 (lint 통과)\n\n남은 OG override 후보:\n- /petition/oh-yoon — 1974 구의동 양면 부조 mural은 실제 narrative anchor라 별도 검토 (현재 의도적 보존 권장)\n\n워크플로우 발견 경로:\n- Ultracode Sprint 65 multi-modal audit 'open-graph-twitter' dimension\n- adversarial verify는 narrative 회귀 위험으로 scope 제외 권장\n- Sprint 69+70 production curl로 raw thumbnail이 narrative anchor 가치 없음 확인\n- 컨벤션 파일이 작가 카드 디자인이라 명백히 우위 → scope 확장",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "93c8dc2b",
+    "type": "fix",
+    "scope": "design",
+    "subject": "헤더/footer sawtooth 패딩 누락 3곳 일괄 보강 — 마이페이지 + special 거장 페이지 2종",
+    "summary": "mypage 상단 패딩이 너무 좁아 헤더와 페이지 제목이 빠듯하게 붙던 회귀 + 같은 패턴의 다른 위반 2건 함께 정정",
+    "body": "[mypage] MypageTabs 헤더 직후 패딩 + footer sawtooth 보호 누락:\n- pt-20 단독 → pt-24 md:pt-28 (헤더 fixed h-16 위 시각 여유 확보)\n- pb-16 → SAWTOOTH_TOP_SAFE_PADDING (footer sawtooth 침범 보호)\n- 사용자 캡처 페이지가 정확히 이 케이스\n\n[special/oh-yoon, special/park-saenggwang] 거장 잡지형 페이지 footer sawtooth 보호 누락:\n- min-h-screen 컨테이너에 SAWTOOTH_TOP_SAFE_PADDING 추가\n- 마지막 섹션이 footer 톱니에 24~40px 가려지던 잠재 회귀 차단\n\n검증:\n- 전체 [locale]/* 페이지 중 SAWTOOTH도 PageHero도 없는 케이스 grep로 전수 검사\n- 나머지(/, /artworks/[id], /checkout/* 등)는 sub-component(HomeHero / SuccessClient 등)가\n  자체적으로 적용 중 — 위 3건만 진짜 누락\n- CLAUDE.md \"Sawtooth Divider 여백 규칙\" 표준에 다시 정합",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "6fce9ee6",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "Sprint 70 — story detail openGraph.images / twitter.images override 제거 (Magazine OG card 활성화)",
+    "summary": "/stories/[slug] generateMetadata의 openGraph.images + twitter.images override를 제거 — Next.js 컨벤션 파일 opengraph-image.tsx(카테고리별 색상 + SAF Magazine 브랜딩 + 글 제목이 그려진 1200x630 ImageResponse)가 자동 emit되도록 복구",
+    "body": "배경:\n- Sprint 69에서 artwork detail override 제거 후 매거진 detail도 production curl 검증\n- 결과: og:image=\"https://...supabase.co/storage/v1/object/.../42__original.webp\" (raw 작품 thumbnail)\n- 컨벤션 파일은 카테고리별 분기 디자인 (artist-story=primary 블루, buying-guide=charcoal, art-knowledge=success 그린) + Magazine 브랜딩\n- raw 작품 thumbnail보다 컨벤션 카드가 SNS/카카오 미리보기에서 매거진 entity 명확화 우위\n- workflow Sprint 65 'open-graph-twitter' dimension의 narrative 회귀 우려는 작품 thumbnail에 한정 — Magazine 브랜드 카드가 더 강함\n\nProduction 검증 (curl 2026-05-29):\n- https://www.saf2026.com/stories/saf-2026-painters\n- og:image=\"https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/.../42__original.webp\" (raw)\n- 컨벤션 파일 /opengraph-image* 경로 미노출 → override 사고 동일 패턴\n\n변경:\n- app/[locale]/stories/[slug]/page.tsx generateMetadata:\n  - openGraph.images / twitter.images 명시 override 제거\n  - images: undefined 명시로 컨벤션 우선\n  - heroImage / isCustomImage 로컬 변수 제거 (다른 곳에서 미사용)\n- openGraph 다른 필드(type='article', publishedTime, authors, section) 보존\n- twitter card='summary_large_image' 보존\n- 변경 의도 코멘트로 명시\n\n효과:\n- 174 stories 모두 SNS/카카오/Discover 공유 시 Magazine 브랜드 카드 노출\n- 카테고리별 색상 시그널: 작가 인터뷰는 블루, 구매 가이드는 charcoal, 미술 산책은 그린\n- AI Overview에 매거진 entity 명확\n- 코드 reduction: stories detail 28라인 → 8라인\n\n회귀 방지:\n- scope 한정: stories detail만 변경 (artist gallery + petition은 별도 sprint)\n- Sprint 69 패턴 동일 적용 (override 사고 검증 후 fix)\n- npm run type-check 통과\n- schemaImage(BlogPosting schema) + customBackgroundImage(PageHero hero) + relImg(관련 글) 변수는 별도 — 컨벤션 OG와 무관, 그대로 보존\n\nPR 머지 후 검증 권장:\n1. Vercel preview에서 og:image 경로가 /opengraph-image*로 변경됐는지 curl\n2. Twitter Card Validator / Facebook Sharing Debugger로 stories 5건(매체 hub + 작가 인터뷰 + 구매 가이드 mix) 미리보기\n3. 카카오톡 모바일 공유 미리보기\n\n워크플로우 발견 경로:\n- Ultracode Sprint 65 multi-modal audit 'open-graph-twitter' dimension\n- adversarial verify 시 stories는 'narrative 회귀 위험'으로 scope 제외 권장이었으나\n- production curl 후속 검증에서 raw thumbnail이 작품 도판이라 narrative anchor 가치 없음 확인\n- Magazine 컨벤션 카드가 명확히 우위 → scope 확장 결정",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "8d4cac4f",
+    "type": "fix",
+    "scope": "auth",
+    "subject": "forgot-password RPC 호출 시 this 바인딩 손실 — server action 500 본 fix",
+    "summary": "const rpc = admin.rpc as unknown as ... 패턴이 SupabaseClient.rpc() 메서드를 standalone 변수로 추출하면서 this 바인딩을 끊음 → 빌드 후 minifier가 `let e = (..., jd.createSupabaseAdminClient)().rpc; await e(...)` 형태로 호출 → strict mode에서 this === undefined → this.rest.rpc(...) 호출 시 TypeError: Cannot read properties of undefined (reading 'rest')",
+    "body": "증거 (workflow trace, confidence 0.98):\n- production stack trace: TypeError: Cannot read properties of undefined (reading 'rest') at ji (chunks/ssr/...page_actions_...js:37) digest: '2553037123'\n- 3건 동일 stack (16:04 / 16:00 / 15:48 KST)\n- supabase-js SupabaseClient.rpc() 본문: `return this.rest.rpc(fn, args, options)` — this 손실 시 정확히 이 throw\n- 이전 fix들 (c2e2c470 getClientIp, 6d87c153 type export 분리)이 진짜 throw point 우회\n\n수정:\n- const admin을 SupabaseClient typed shape의 cast로 받음 (변수 destructure 금지)\n- admin.rpc('check_reset_eligibility', ...) 메서드 호출 형태 유지 → this 바인딩 보존\n- 인라인 코멘트로 antipattern 명시 (NOTE: do NOT alias admin.rpc to a bare variable...)\n\n회귀 방지:\n- 코덱베이스 grep으로 동일 antipattern 0건 확인 (const rpc = ..., rpc as unknown)\n- type-check 통과\n- forgot-password 17/17 tests pass\n\n후속 권장 (별도 cycle):\n- jest mock이 rpc를 plain function으로 두고 있어 this 손실 미감지 — SupabaseClient prototype 구조 흉내내는 mock으로 강화",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
+    "hash": "dd1f4204",
+    "type": "feat",
+    "scope": "artworks",
+    "subject": "오윤 작품 175점 등록 — 기존 18점 갱신 + 신규 157점 추가",
+    "summary": "오윤 사후판화 전작 175점을 가나화랑 도큐먼트 기준 최신 데이터·고화질 이미지로 정비. 기존 18점(씨앗페)은 크기·연도·재질·가격을 CSV 작품가격으로 갱신하고 새 이미지로 교체했고, 4/8가져온 157점을 신규 등록. cafe24 종료에 따라 전부 토스 직접 결제(shop_url 제거).",
+    "body": "- 기존 18점: 크기/연도/재질/가격(CSV 작품가격) 갱신 + 고화질 이미지 교체 + dead cafe24 shop_url=null\n- 신규 157점: INSERT (category=사후판화, edition_type=open, tax_type=B, admin_product_name=OYN-{가나})\n- 이미지: thumb/card/detail/hero/original webp 5종 생성→Storage 업로드, 새 경로로 CDN 캐시 무효화\n- lib/artwork-material.ts: 오윤 판법 4종(목판화/고무판화 ±수채) EN 매핑 추가 — 영문 로케일 한국어 누출 방지\n- scripts/import-oh-yun-artworks.js + content/imports/oh-yun-prints-2026.json (재import 가드: OYN- prefix)\n- 검증: 독립 CSV↔DB 재파싱 정합성 PASS(mismatch 0, 불변식 위반 0), 이미지 175점 로드 정상, build 852/852",
+    "date": "2026-05-29",
+    "author": "황경하"
+  },
+  {
     "hash": "d2f0cfa4",
     "type": "fix",
     "scope": "auth",

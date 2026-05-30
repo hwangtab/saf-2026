@@ -12,7 +12,9 @@ export default function manifest(): MetadataRoute.Manifest {
     dir: 'ltr',
     categories: ['shopping', 'lifestyle', 'art'],
     start_url: '/',
+    scope: '/',
     display: 'standalone',
+    orientation: 'portrait-primary',
     background_color: BRAND_COLORS.charcoal.DEFAULT,
     theme_color: BRAND_COLORS.primary.DEFAULT,
     icons: [
@@ -39,6 +41,38 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
         sizes: '512x512',
         purpose: 'maskable',
+      },
+    ],
+    // PWA shortcuts — Android 홈 화면 long-press 시 quick action 노출.
+    // 주요 entry 4개(전체 작품·매거진·캠페인 소개·운용 보고서) 빠른 진입.
+    shortcuts: [
+      {
+        name: '전체 작품',
+        short_name: '작품',
+        description: `한국 작가 작품 ${ARTWORK_COUNT}점 둘러보기`,
+        url: '/artworks',
+        icons: [{ src: '/images/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+      },
+      {
+        name: '매거진',
+        short_name: '매거진',
+        description: '작가 인터뷰·컬렉팅 가이드·미술 산책',
+        url: '/stories',
+        icons: [{ src: '/images/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+      },
+      {
+        name: '씨앗페 소개',
+        short_name: '소개',
+        description: '예술인 상호부조 캠페인',
+        url: '/about',
+        icons: [{ src: '/images/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+      },
+      {
+        name: '운용 보고서',
+        short_name: '투명성',
+        description: '상호부조 대출 운영 실적',
+        url: '/transparency',
+        icons: [{ src: '/images/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
       },
     ],
   };

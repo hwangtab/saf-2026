@@ -189,12 +189,15 @@ export default async function StoryArchiveMonthPage({ params }: Props) {
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    '@id': `${buildLocaleUrl(path, locale)}#webpage`,
     name: isEn ? `${monthLabel} Magazine` : `${monthLabel} 매거진`,
     description: isEn
       ? `Browse all ${filtered.length} magazine articles published in ${monthLabel}.`
       : `${monthLabel}에 발행된 씨앗페 매거진 글 ${filtered.length}편.`,
     url: buildLocaleUrl(path, locale),
+    isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: isEn ? 'en-US' : 'ko-KR',
+    author: { '@id': `${SITE_URL}#organization` },
     publisher: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,
@@ -209,6 +212,10 @@ export default async function StoryArchiveMonthPage({ params }: Props) {
         url: buildLocaleUrl(`/stories/${story.slug}`, locale),
         name: isEn && story.title_en ? story.title_en : story.title,
       })),
+    },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1'],
     },
   };
 

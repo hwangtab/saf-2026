@@ -324,6 +324,16 @@ export default async function StoryDetailPage({ params }: Props) {
     // about Thing entity — Knowledge Graph 매칭 + AI Overview 신호. KO/EN 양쪽 노출
     // (entity name은 검색엔진이 정규화 처리). tags 비어있으면 생략.
     about: story.tags && story.tags.length > 0 ? story.tags.slice(0, 5) : undefined,
+    // wordCount — 본문 markdown에서 공백 split count. 250 WPM 기준 timeRequired 자동 계산.
+    // AI/Google 콘텐츠 깊이 시그널 + AI Overview citation 가중치.
+    wordCount: body ? body.trim().split(/\s+/).filter(Boolean).length : undefined,
+    // educationalLevel — 카테고리별 매핑. 'art education for beginners' query 매칭 시그널.
+    educationalLevel:
+      story.category === 'buying-guide'
+        ? 'Beginner'
+        : story.category === 'art-knowledge'
+          ? 'Intermediate'
+          : undefined,
     mentions: [
       ...relatedArtworks.map((art) => ({
         type: 'Product' as const,

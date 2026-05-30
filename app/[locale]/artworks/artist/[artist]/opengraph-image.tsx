@@ -7,7 +7,8 @@ import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { BRAND_COLORS } from '@/lib/colors';
 
 export const runtime = 'nodejs';
-export const alt = 'SAF Artist Page';
+export const alt =
+  'Korean contemporary artist on SAF Online — full artwork collection with prices, mediums, and bio';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const revalidate = 3600;

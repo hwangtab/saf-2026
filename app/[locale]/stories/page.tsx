@@ -202,6 +202,16 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
           },
         }
       : {}),
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '#magazine-hero-description'],
+    },
+    audience: {
+      '@type': 'PeopleAudience',
+      audienceType: isEnglish
+        ? 'Art enthusiasts, collectors, Korean art learners'
+        : '미술 관심층, 컬렉터, 한국 미술 학습자',
+    },
   };
 
   const [featured, ...rest] = stories;

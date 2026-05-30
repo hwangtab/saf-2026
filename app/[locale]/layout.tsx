@@ -49,7 +49,13 @@ import '@/styles/globals.css';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: BRAND_COLORS.primary.DEFAULT,
+  // 라이트/다크 모드별 theme-color — 모바일 브라우저 UI chrome 자동 매칭.
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: BRAND_COLORS.primary.DEFAULT },
+    { media: '(prefers-color-scheme: dark)', color: BRAND_COLORS.charcoal.deep },
+  ],
+  // 사이트는 light 모드 기준 디자인 — UA에 명시해 다크 모드 브라우저 자동 변환 비활성.
+  colorScheme: 'light',
   viewportFit: 'cover',
 };
 
@@ -97,6 +103,15 @@ export async function generateMetadata({
       ? 'Korean contemporary art, original artworks for sale, art gallery, artist mutual aid, SAF Online, Seed Art Festival, paintings, prints, sculpture, photography, Seoul art exhibition'
       : '한국 현대미술, 미술 작품 구매, 작품 원본 구매, 회화 원본, 판화 원본, 사진 작품, 조각 작품, 서울 전시회, 현대미술 전시회, 씨앗페, 씨앗페 온라인, 예술인 상호부조, 예술인 금융 차별, 예술인 대출',
     authors: [{ name: isEn ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME }],
+    // iOS Safari 자동 phone-link/email-link 변환 비활성화.
+    // ₩2,400,000 가격이 phone number로 잘못 link되거나 author 이메일이 mailto: 자동 전환되는 회귀 차단.
+    formatDetection: {
+      telephone: false,
+      email: false,
+      address: false,
+    },
+    // referrer 정책 — 외부 link click 시 origin 노출 최소화 + Vercel Analytics referrer 정확성 보존.
+    referrer: 'strict-origin-when-cross-origin',
     icons: {
       icon: '/favicon.ico',
       apple: '/images/icons/icon-192.png',
@@ -147,6 +162,14 @@ export async function generateMetadata({
     },
     other: {
       'pinterest-rich-pin': 'true',
+      // Apple PWA — 홈 화면 추가 시 상태바 색상 (theme-color 보완)
+      'apple-mobile-web-app-capable': 'yes',
+      'apple-mobile-web-app-status-bar-style': 'default',
+      'apple-mobile-web-app-title': '씨앗페',
+      // Windows tile color (시작 화면 widget)
+      'msapplication-TileColor': BRAND_COLORS.primary.DEFAULT,
+      // mobile-web-app-capable — 표준 PWA install prompt 호환
+      'mobile-web-app-capable': 'yes',
     },
   };
 }

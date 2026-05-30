@@ -155,6 +155,13 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${artworksUrl}#item-list` },
     ...(aboutHubs.length > 0 && { about: aboutHubs }),
+    audience: {
+      '@type': 'PeopleAudience',
+      audienceType:
+        locale === 'en'
+          ? 'Art collectors, first-time buyers, gallery curators'
+          : '미술 컬렉터, 첫 그림 구매자, 갤러리 큐레이터',
+    },
     author: {
       '@type': 'Organization',
       '@id': `${SITE_URL}#organization`,

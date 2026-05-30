@@ -534,6 +534,18 @@ async function renderArtistPage({ params }: Props) {
     isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
     mainEntity: { '@id': `${artistPageUrl}#item-list` },
+    author: { '@id': `${SITE_URL}#organization` },
+    audience: {
+      '@type': 'PeopleAudience',
+      audienceType:
+        locale === 'en'
+          ? `Collectors interested in ${formattedName}, gallery curators`
+          : `${formattedName} 작가에 관심 있는 컬렉터·갤러리 큐레이터`,
+    },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '#artist-bio'],
+    },
   }));
 
   // LCP preload는 PageHero가 자동 발행 — customBackgroundImage 받으면 lib/hero-image

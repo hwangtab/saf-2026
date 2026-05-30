@@ -223,6 +223,19 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
       name: 'South Korea',
       '@id': 'https://www.wikidata.org/wiki/Q884',
     },
+    // birthPlace 기본값 — DB에 없으므로 '한국' country 명시. 작가별 도시 정보는 별도 enrichment 사이클에서 추가.
+    birthPlace: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'KR',
+      },
+    },
+    // disambiguatingDescription — 동명이인 disambiguation 위한 짧은 식별 문구.
+    // dominantCategory가 있으면 매체 정보 포함 (예: "Korean printmaker / contemporary artist participating in SAF 2026").
+    disambiguatingDescription: artist.dominantCategory
+      ? `Korean ${artist.dominantCategory} artist participating in SAF 2026 (Seed Art Festival).`
+      : 'Korean contemporary artist participating in SAF 2026 (Seed Art Festival).',
     // 외부 권위 링크 (Wikipedia, MMCA, 작가 홈페이지/SNS 등) — Knowledge Graph entity 연결
     ...(sameAs.length > 0 && { sameAs }),
     // ProfilePage @type 제거 사유는 위 generateArtistSchema 주석 참조 — GSC가
@@ -273,6 +286,14 @@ export function generateEnhancedArtistSchema(artist: EnhancedArtistSchemaInput) 
     }),
     // Organization memberships
     ...(memberships.length > 0 && { memberOf: memberships }),
+    // SAF 캠페인 참여 사실 — Person.affiliation entity로 작가↔SAF Organization 연결.
+    // Knowledge Graph entity cluster 강화: 작가는 SAF 캠페인 affiliation을 가진 사람.
+    affiliation: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: 'SAF Online (Seed Art Festival)',
+      url: SITE_URL,
+    },
     // Work samples (representative artworks)
     ...(artist.artworks &&
       artist.artworks.length > 0 && {

@@ -8,7 +8,8 @@ import { getCategoryLabel } from '@/lib/artwork-category';
 import { BRAND_COLORS } from '@/lib/colors';
 
 export const runtime = 'nodejs';
-export const alt = 'SAF Artwork Detail';
+export const alt =
+  'Korean contemporary artwork on SAF Online — original painting, print, photography, or sculpture';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const revalidate = 3600;
