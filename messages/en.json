@@ -810,7 +810,7 @@
     "artistCta": "View All Artworks"
   },
   "categoryPage": {
-    "title": "Buy {category} Art",
+    "title": "{category} — {count} Original Korean Artworks Direct from Artists | SAF Online",
     "metaDescription": "Browse {count} original {category} artworks ({availableCount} available). Proceeds fund {loanCount} artist loans. Seoul contemporary art. Free shipping, 7-day returns.",
     "heroDescription": "{availableCount} of {count} artworks available.",
     "shareTitle": "{category} — {count} artworks at SAF Online",

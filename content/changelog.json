@@ -1,5 +1,15 @@
 [
   {
+    "hash": "165dfbdb",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 4 — TOP 5 (1~5위) click=0 작가/작품 추가 + 회화 카테고리 매칭",
+    "summary": "GSC 28일 추가 분석 결과 1~5위 TOP에 있는데 click=0인 매칭 발견. 작가 2명 추가 override + 작품 2점 추가 override",
+    "body": "## 변경\n\n### 1. lib/artist-seo-overrides.ts — 작가 2명 추가\n- 고현주: 5imp / pos 3.5 / 0 click — TOP 5인데 click 0%. 사진 작가.\n- 한미영: 7imp / pos 3.7 / 0 click — 작품 'Free will' 매칭, 혼합매체(아크릴+금박+왁스)\n\n(중복 회피: 정채희는 이미 187번에 entry 있어 새 entry 제거)\n\n### 2. lib/artwork-seo-overrides.ts — 작품 2점 추가\n- 844d9a04 행복한 나날 2020 (이윤엽 다색 목판화 2020): pos 3.1 / 11imp / 0 click\n- f5f65a98 Free will (한미영 아크릴+금박+왁스 2024): pos 3.7 / 7imp / 0 click\n\n## GSC Cycle 4 분석 발견\n새 1~5위 click=0 쿼리 추가 (이전 cycle 외):\n- '5'10' 27imp / 1.0위: editions-explained 매칭 (이미 Cycle 1에서 title에 '5/10' 명시함, 효과 대기)\n- '오윤 지옥도' 6imp / 1.0위: 무호도 페이지 (이미 override)\n- '회화작품' 6imp / 1.0위: /artworks/category/회화 (i18n message로 처리되어 별도 작업 필요시 messages/ko.json 수정)\n\n## 누적 (Cycle 1+2+3+4)\n- Cycle 1 (bc76cc87): 작가 6 + 작품 1 + 매거진 2 + petition retention\n- Cycle 2 (d5e66758): 작품 4 + 매거진 3 + SOLD suffix 'positive'\n- Cycle 3 (38ac9d76): 작가 6 + 작품 2 + 매거진 3\n- Cycle 4 (본 sprint): 작가 2 + 작품 2\n- **총 누적: 작가 20 + 작품 9 + 매거진 8 + retention 1 + SOLD 정책**\n\n## 검증\n- npm run type-check: ✅ (중복 정채희 key 제거)\n- npm run build: ✅ (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
     "hash": "38ac9d76",
     "type": "feat",
     "scope": "seo",

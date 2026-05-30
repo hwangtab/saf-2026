@@ -810,7 +810,7 @@
     "artistCta": "작품 목록으로"
   },
   "categoryPage": {
-    "title": "{category} 작품 구매",
+    "title": "{category} 원본 작품 {count}점 — 한국 현대미술 작가 직매 | 씨앗페 온라인",
     "metaDescription": "한국 작가 {category} 원본 작품 {count}점 중 {availableCount}점 구매 가능. 작가 직매·무료 배송·7일 반품. 작품 판매 수익은 {loanCount}건 저금리 대출이 된 예술인 상호부조 기금이 됩니다.",
     "heroDescription": "총 {count}점 중 {availableCount}점 구매 가능.",
     "shareTitle": "{category} 원본 작품 {count}점 · 한국 작가 직매",
