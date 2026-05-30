@@ -1,5 +1,25 @@
 [
   {
+    "hash": "7c3d2915",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "작품 크기 입력을 cm 3필드로 구조화",
+    "summary": "가로/세로/깊이 입력 → size 텍스트 자동 합성 + 치수·구간 컬럼 동시 저장 (오타 차단)",
+    "body": "- artwork-edit-form: size 단일 input → width/height/depth(cm) 3필드 (label a11y 연결)\n- admin-artworks: buildSizeFields로 size 합성 + width/height/depth/size_bucket 기록",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "5a3b5ae9",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 5 — 카테고리 page title + 매거진 6편 추가 CTR 강화",
+    "summary": "i18n categoryPage.title 강화 + GSC 추가 발견 0-click 매거진 6편 title 재작성. \"회화작품\" 1위 click=0 카테고리 페이지 + meet-artist 시리즈 0-click 보강",
+    "body": "## 변경\n\n### 1. messages/ko.json + messages/en.json — categoryPage.title 강화\n- 기존 KO: '{category} 작품 구매' (너무 짧음, GSC \"회화작품\" 1위 click 0%)\n- 신규 KO: '{category} 원본 작품 {count}점 — 한국 현대미술 작가 직매 | 씨앗페 온라인'\n- 신규 EN: '{category} — {count} Original Korean Artworks Direct from Artists | SAF Online'\n- '원본' + '작품 수' + '작가 직매' + 브랜드 명시로 commerce intent 매칭 강화\n- /artworks/category/회화·판화·사진·조각 8개 페이지 site-wide 영향\n\n### 2. stories DB UPDATE — 매거진 6편 title 강화 (Supabase 서울)\nGSC 28일 0-click 매거진 발견:\n- meet-artist-lee-eun-hwa (37imp / 5.5위 / 0 click):\n  - 기존: '이은화: 뉴욕에서 서울까지, 붓으로 잇는 여정'\n  - 신규: '이은화 작가 — 뉴욕에서 서울까지, 회화·설치·뉴미디어의 전방위 작업 (런던예대·소더비 석사)'\n- joo-jaehwan-art-and-life (33imp / 9.6위 / 0 click):\n  - 신규: '주재환 작가 — 등록금 대신 물감을 산 화가, 한국 민중미술 원로 (1940년생)'\n- meet-artist-cho-moon-ho (19imp / 5.7위 / 0 click):\n  - 신규: '조문호 작가 — 쪽방촌·청량리 기록 다큐멘터리 사진가, 30년 한국 도시의 가장자리'\n- meet-artist-son-eunyeong (22imp / 9.9위 / 0 click):\n  - 신규: '손은영 작가 — 20년 침묵 끝에 돌아온 셔터, 집과 정원의 사진'\n- meet-artist-lee-iktae (23imp / 2.6위 / 0 click):\n  - 신규: '이익태 작가 (1947-2025) — 한국 1세대 다큐멘터리 사진가, 50년 한국 풍경의 기록자'\n- gwangju-biennale-one-page-guide (16imp / 10.7위 / 0 click):\n  - 신규: '광주비엔날레 한 장으로 보기 — 아시아 최초 비엔날레 30년 전체 정리 가이드'\n\n## 누적 (Cycle 1+2+3+4+5)\n- Cycle 1 (bc76cc87): 작가 6 + 작품 1 + 매거진 2 + petition retention\n- Cycle 2 (d5e66758): 작품 4 + 매거진 3 + SOLD suffix 'positive'\n- Cycle 3 (38ac9d76): 작가 6 + 작품 2 + 매거진 3\n- Cycle 4 (165dfbdb): 작가 2 + 작품 2\n- Cycle 5 (본 sprint): 카테고리 page title + 매거진 6\n- **총 누적: 작가 20 + 작품 9 + 매거진 14 + retention 1 + SOLD 정책 + 카테고리 page**\n\n## 검증\n- npm run type-check: ✅\n- npm run build: ✅ (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
     "hash": "165dfbdb",
     "type": "feat",
     "scope": "seo",
