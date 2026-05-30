@@ -52,6 +52,16 @@ export const ARTWORK_SEO_OVERRIDES: Record<string, ArtworkSeoOverride> = {
     titleKo: '인생, 그 헛헛함에 대하여 — 남진현 작가 아크릴 회화 2026, 존재의 무게',
     titleEn: 'On the Hollow of Life — Nam Jinhyun, Acrylic on Canvas 2026',
   },
+  // Over the Dream-2 — 이수철 (2011). "이수철" 쿼리 pos 11.3 / 7노출 / 0클릭. Page 2 push 후보.
+  '9ac6db07-f334-4898-9189-00218aefe537': {
+    titleKo: 'Over the Dream-2 — 이수철 작가 사진 2011, 꿈 너머의 풍경',
+    titleEn: 'Over the Dream-2 — Photograph by Lee Sucheol 2011, Beyond the Dream',
+  },
+  // 탈방 — 조신욱 (2022, 수채화). "탈방" 쿼리 pos 11.3 / 9노출 / 1 click.
+  'f191466f-e6aa-4b91-a2d3-ef0a6c270c02': {
+    titleKo: '탈방 — 조신욱 작가 수채화 2022, 일상의 균열을 그리다',
+    titleEn: 'Talbang — Watercolor by Cho Sinuk 2022, Fractures of the Everyday',
+  },
 };
 
 export function getArtworkSeoOverride(id: string): ArtworkSeoOverride | undefined {

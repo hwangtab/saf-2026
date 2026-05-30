@@ -1,5 +1,15 @@
 [
   {
+    "hash": "d5e66758",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC 28일 추가 분석 — 작품 title 4점·매거진 title 3편·SOLD suffix CTR 회복",
+    "summary": "Sprint bc76cc87 이후 GSC 데이터 재분석. 추가 0-click 매칭 (작품 4점·매거진 3편) title 강화 + SOLD 작품 SERP suffix를 'positive' 워딩으로 전환",
+    "body": "## 변경\n\n### 1. lib/artwork-seo-overrides.ts — 작품 4점 추가\n\nGSC 28일 데이터에서 작품명 단독 검색이 TOP 10인데 click=0:\n\n- f5c45d1a 눈밭01 (홍진희, 2024, 한지·면사 자수): pos **1.0** / 18imp / 0 click\n  - 1위인데 click 0% — 검색자가 'why this artwork?' 인지 못함\n  - 신규: '눈밭01 — 홍진희 한지·면사 자수 2024, 겨울 풍경의 침묵'\n- 6b224b3d 눈밭02 (홍진희): 동일 처리\n- 1797d8a7 정글 도서관의 카바리 (천지수, 2025, 유화): pos 7.9 / 14imp / 0 click\n  - 작가 이력(이태리 미술대전 대상) title 강조\n- 3b89272e 인생, 그 헛헛함에 대하여 (남진현, 2026, acrylic): pos 3.9 / 13imp / 0 click\n  - 정서적 주제(존재의 무게) title 명시\n\n### 2. stories DB UPDATE — 매거진 title CTR 강화 (Supabase 서울)\n\n- prints-vs-originals-and-edition-numbers (129imp / 0.78% CTR):\n  - 신규: '판화 원화 차이 한 줄 정리 — AP·EA·HC·PP 에디션 번호 읽는 법 (수집 가치 비교)'\n  - 'AP·EA·HC·PP' 키워드 명시 — 컬렉터 전문 검색 의도 매칭\n- archival-pigment-print-photography (77imp / 2.6% CTR):\n  - 신규: '아키벌 피그먼트 프린트 뜻 — 디지털 사진이 200년 보존되는 안료 잉크 기술'\n  - '뜻' + '200년' 정답 직접 노출\n- oh-yoon-estate-print-guide (\"오윤후\" 등 27imp / 0 click 매칭):\n  - 신규: '오윤 사후 판화 가이드 — 한국 민중미술 거장 17점의 의미와 첫 한 점 추천'\n  - '오윤 사후 판화' + '17점' + '추천' 다층 의도 매칭, 구의동 벽화 청원 연결\n\n### 3. lib/schemas/artwork.ts — SOLD title suffix 'positive' 전환\n\n- 변경: ' · 판매 완료' → ' · 원본 1점'  (KO)\n- 변경: ' · Sold' → ' · Original (1 of 1)'  (EN)\n- 배경: 'Sold'/'판매 완료'는 SERP에서 'desperate' 인상 → click 회피 (구매 불가 인지)\n- '원본 1점'은 작품 unique 가치 강조 — 컬렉터·관람 의도 둘 다 충족\n- GSC 8,883imp / 1.8% CTR이 작품 detail 최대 레버라는 코드 주석과 정합\n\n## 검증\n- npm run type-check: ✅\n- npm run build: ✅ (456 HTML, 0 i18n violations)\n- 회귀: title override 패턴은 기존 동일\n\n## 예상 효과 (12주 GSC 추적)\n- 눈밭/카바리/헛헛함 작품 검색 CTR 0% → 5~15%\n- 매거진 3편 추가 클릭 ~10~20/주\n- SOLD 작품(전체 ~100점 추정) CTR +30~50%\n- 총 누적: 이전 sprint 효과 + 본 sprint 효과 = 주간 추가 클릭 60~120개\n\n## Sprint 누적 (이번 cycle 종료)\n1. bc76cc87 — 작가 6명·작품 1점·매거진 2편 title 강화 + petition retention 슬롯\n2. 본 sprint — 작품 4점·매거진 3편 추가 + SOLD suffix 'positive' 전환",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
     "hash": "d42a1073",
     "type": "feat",
     "scope": "db",

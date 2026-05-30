@@ -244,6 +244,35 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
     titleKo: '김호성 — 색면추상 화가, 빛과 평면의 회화 | 씨앗페',
     titleEn: 'Kim Hoseong — Color Field Abstract Painter | SAF Online',
   },
+
+  // ─── GSC 2026-05-02~05-27 추가: Page 2(11~15위) 작가 — Page 1 push 후보 ─────
+  이수철: {
+    // GSC: 12imp / pos 11.3 / 0 click — page 2 직전. 작가 페이지 + 작품 detail 양쪽 매칭.
+    // 사진 작가, Over the Dream 시리즈.
+    titleKo: '이수철 — Over the Dream 시리즈 사진 작가 | 씨앗페',
+    titleEn: 'Lee Sucheol — Photographer of the Over the Dream Series | SAF Online',
+  },
+  조신욱: {
+    // GSC: '탈방' 9imp / 11.3위 / 1 click — 작품 검색 매칭. 작가 페이지 보강.
+    // 수채화 작가.
+    titleKo: '조신욱 — 수채화 〈탈방〉, 일상의 균열을 그리는 작가 | 씨앗페',
+    titleEn: 'Cho Sinuk — Watercolorist of Daily Fractures, "Talbang" Series | SAF Online',
+  },
+  최윤정: {
+    // GSC: '최윤정 작가' 13imp / 11.6위 / 2 click — 미세하지만 CTR 가능성. story 매칭 우세.
+    titleKo: '최윤정 — 손끝의 풍경, 직조의 회화로 일상을 그리는 작가 | 씨앗페',
+    titleEn: 'Choi Yunjung — Painter Weaving Daily Landscape | SAF Online',
+  },
+  남진현: {
+    // 작품 override는 별도 ('인생, 그 헛헛함에 대하여'). 작가 페이지도 보강.
+    titleKo: '남진현 — 존재의 무게를 그리는 아크릴 회화 작가 | 씨앗페',
+    titleEn: 'Nam Jinhyun — Acrylic Painter on the Weight of Being | SAF Online',
+  },
+  홍진희: {
+    // 작품 '눈밭01/02' overrides 별도. 작가 페이지 보강.
+    titleKo: '홍진희 — 한지에 면사 자수, 침묵의 풍경을 짓는 작가 | 씨앗페',
+    titleEn: 'Hong Jinhee — Cotton Thread on Hanji, Quiet Landscapes | SAF Online',
+  },
 };
 
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
