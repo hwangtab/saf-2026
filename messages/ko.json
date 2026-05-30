@@ -522,7 +522,8 @@
     "exploreOthers": "다른 공간도 둘러보기",
     "emptyTitle": "지금은 어울리는 작품을 준비 중이에요",
     "emptyDesc": "조건에 맞는 판매 중 작품을 정리하고 있습니다. 전체 작품에서 먼저 둘러보세요.",
-    "browseAll": "전체 작품 보기"
+    "browseAll": "전체 작품 보기",
+    "viewCollection": "컬렉션 보기"
   },
   "artworkSizeFields": {
     "width": "가로",

@@ -522,7 +522,8 @@
     "exploreOthers": "Explore other spaces",
     "emptyTitle": "Pieces for this space are being prepared",
     "emptyDesc": "We are curating available works that match. Browse all artworks in the meantime.",
-    "browseAll": "Browse all artworks"
+    "browseAll": "Browse all artworks",
+    "viewCollection": "View collection"
   },
   "artworkSizeFields": {
     "width": "Width",

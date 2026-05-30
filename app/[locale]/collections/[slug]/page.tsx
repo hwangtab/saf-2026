@@ -7,6 +7,7 @@ import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import SectionTitle from '@/components/ui/SectionTitle';
 import CollectionArtworkGrid from '@/components/features/CollectionArtworkGrid';
+import CollectionCard from '@/components/features/CollectionCard';
 import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import { createPageMetadata } from '@/lib/seo';
@@ -85,6 +86,12 @@ export default async function CollectionDetailPage({
 
   const artworks = await getCollectionArtworks(slug);
   const others = getSpaceCollections().filter((c) => c.slug !== slug);
+  const otherCards = await Promise.all(
+    others.map(async (c) => ({
+      collection: c,
+      cover: (await getCollectionArtworks(c.slug))[0] ?? null,
+    }))
+  );
 
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
@@ -136,23 +143,15 @@ export default async function CollectionDetailPage({
 
       <Section variant="white" prevVariant="canvas-soft">
         <SectionTitle className="mb-8 text-center">{t('exploreOthers')}</SectionTitle>
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {others.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/collections/${c.slug}`}
-              className="group block rounded-2xl border border-gallery-hairline bg-white p-6 shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
-            >
-              <div className="mb-3 text-3xl" aria-hidden="true">
-                {c.emoji}
-              </div>
-              <h3 className="text-artwork-title text-lg text-charcoal-deep leading-snug group-hover:text-primary-strong">
-                {isEn ? c.titleEn : c.titleKo}
-              </h3>
-              <p className="mt-1 text-sm text-charcoal-muted break-keep">
-                {isEn ? c.subtitleEn : c.subtitleKo}
-              </p>
-            </Link>
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+          {otherCards.map(({ collection, cover }) => (
+            <CollectionCard
+              key={collection.slug}
+              collection={collection}
+              cover={cover}
+              locale={locale}
+              cta={t('viewCollection')}
+            />
           ))}
         </div>
       </Section>
