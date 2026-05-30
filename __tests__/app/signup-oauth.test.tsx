@@ -8,6 +8,8 @@ jest.mock('@/lib/auth/client', () => ({
     auth: {
       signInWithOAuth: mockSignInWithOAuth,
       signUp: jest.fn(),
+      // SignUpPage useEffect가 getUser().then()으로 기로그인 사용자를 mypage로 보냄 — Promise 반환 필수
+      getUser: jest.fn().mockResolvedValue({ data: { user: null } }),
     },
   })),
 }));
