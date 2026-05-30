@@ -134,6 +134,15 @@ export default async function Footer({ locale }: { locale: string }) {
                   </li>
                   <li>
                     <Link
+                      href="/collections"
+                      prefetch={false}
+                      className="text-gray-300 hover:text-white transition-colors"
+                    >
+                      {tNav('spaceCollections')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       href="/artworks/artist"
                       prefetch={false}
                       className="text-gray-300 hover:text-white transition-colors"
