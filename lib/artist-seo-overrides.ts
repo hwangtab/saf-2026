@@ -345,6 +345,14 @@ ARTIST_SEO_OVERRIDES.최연택 = {
   titleEn: 'Choe Yeontaek — Korean Multidisciplinary Artist, Cheongwadae Designer | SAF Online',
 };
 
+// ─── GSC Cycle 21 (2026-05-30): EN locale long-tail ─────────────────────────
+// "yuji saf" 3imp pos 7.3 — Lee Yuji 작가, 겸재 정선 미술관 〈내일의 작가〉 우수상.
+ARTIST_SEO_OVERRIDES.이유지 = {
+  titleKo:
+    '이유지 — 겸재 정선 미술관 〈내일의 작가〉 우수상, 내면의 풍경과 염원 한국 신진 회화 | 씨앗페',
+  titleEn: 'Lee Yuji — Gyeomjae Jeong Seon Museum Award, Korean Emerging Painter | SAF Online',
+};
+
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */
 export function getArtistSeoOverride(artistName: string): ArtistSeoOverride | undefined {
   return ARTIST_SEO_OVERRIDES[artistName];
