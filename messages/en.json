@@ -496,7 +496,13 @@
     "reservedBadge": "Reserved",
     "pendingValue": "Pending",
     "inquiryValue": "Inquiry",
-    "viewDetailsAria": "View {title} by {artist}"
+    "viewDetailsAria": "View {title} by {artist}",
+    "approxHo": "Size {n}",
+    "sizeBucketSmall": "Small",
+    "sizeBucketMedium": "Medium",
+    "sizeBucketLarge": "Large",
+    "sizeBucketXlarge": "Extra large",
+    "sizeBucketObject": "3D"
   },
   "trustBadges": {
     "authenticity": "Authentic",

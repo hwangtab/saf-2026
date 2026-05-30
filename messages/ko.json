@@ -496,7 +496,13 @@
     "reservedBadge": "예약중",
     "pendingValue": "확인 중",
     "inquiryValue": "문의",
-    "viewDetailsAria": "{title} — {artist} 자세히 보기"
+    "viewDetailsAria": "{title} — {artist} 자세히 보기",
+    "approxHo": "약 {n}호",
+    "sizeBucketSmall": "소품",
+    "sizeBucketMedium": "중형",
+    "sizeBucketLarge": "대형",
+    "sizeBucketXlarge": "특대",
+    "sizeBucketObject": "입체"
   },
   "trustBadges": {
     "authenticity": "100% 진품 보증",

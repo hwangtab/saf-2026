@@ -62,6 +62,16 @@ export const ARTWORK_SEO_OVERRIDES: Record<string, ArtworkSeoOverride> = {
     titleKo: '탈방 — 조신욱 작가 수채화 2022, 일상의 균열을 그리다',
     titleEn: 'Talbang — Watercolor by Cho Sinuk 2022, Fractures of the Everyday',
   },
+  // 행복한 나날 2020 — 이윤엽 (2020, 다색 목판화). "행복한 나날" pos 3.1 / 11imp / 0 click.
+  '844d9a04-779f-4a9e-832e-77b70fcfbf0b': {
+    titleKo: '행복한 나날 2020 — 이윤엽 다색 목판화, 일상에 머무는 빛',
+    titleEn: 'Happy Days 2020 — Multicolor Woodcut by Lee Yoonyeop, Light in the Everyday',
+  },
+  // Free will — 한미영 (2024, 아크릴+금박+왁스). "한미영" pos 3.7 / 7imp / 0 click.
+  'f5f65a98-2516-4904-9917-7392b1e47d13': {
+    titleKo: 'Free will — 한미영 아크릴·금박·왁스 회화 2024, 자유의지의 시각화',
+    titleEn: 'Free Will — Han Miyoung, Acrylic + Gold Leaf + Wax 2024, Visualizing Free Will',
+  },
 };
 
 export function getArtworkSeoOverride(id: string): ArtworkSeoOverride | undefined {

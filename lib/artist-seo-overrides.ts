@@ -273,6 +273,21 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
     titleKo: '홍진희 — 한지에 면사 자수, 침묵의 풍경을 짓는 작가 | 씨앗페',
     titleEn: 'Hong Jinhee — Cotton Thread on Hanji, Quiet Landscapes | SAF Online',
   },
+
+  // ─── GSC 2026-05-02~05-27 Cycle 4: TOP 5 (1~5위) click=0 + low-imp 작가 ─────
+  // 정채희는 이미 187번에 entry 있음 (서울대·북경 CAFA 옻칠 강조).
+  고현주: {
+    // GSC: 5imp / pos 3.5 / 0 click — TOP 5인데 click 0%. 사진 작가.
+    titleKo: '고현주 — 한국 현대 사진가, 침묵과 빛의 시각 언어 | 씨앗페',
+    titleEn:
+      'Go Hyeonju — Korean Contemporary Photographer, Visual Language of Silence | SAF Online',
+  },
+  한미영: {
+    // GSC: 7imp / pos 3.7 / 0 click — 작품 'Free will' 매칭. 혼합매체(아크릴+금박+왁스).
+    titleKo: '한미영 — 아크릴·금박·왁스의 혼합매체 회화, 자유의지 시리즈 | 씨앗페',
+    titleEn:
+      'Han Miyoung — Mixed Media Painting (Acrylic, Gold Leaf, Wax), Free Will Series | SAF Online',
+  },
 };
 
 /** 작가 이름(name_ko)으로 SEO 오버라이드 조회. 매핑 없으면 undefined. */

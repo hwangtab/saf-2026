@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { containsHangul } from '@/lib/search-utils';
 import { getMaterialLabel } from '@/lib/artwork-material';
+import { describeSize } from '@/lib/artwork-size';
 import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
@@ -320,7 +321,7 @@ function InlineGridCard({
                 <>
                   {showMaterial && localizedMaterial}
                   {showMaterial && showSize && ' · '}
-                  {showSize && localizedSize}
+                  {showSize && (describeSize(artwork)?.cm ?? localizedSize)}
                 </>
               );
             }

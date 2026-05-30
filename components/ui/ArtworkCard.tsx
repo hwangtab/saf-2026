@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { containsHangul } from '@/lib/search-utils';
 import { getMaterialLabel } from '@/lib/artwork-material';
+import { describeSize } from '@/lib/artwork-size';
 import { getMediumLabel } from '@/lib/medium-labels';
 import { buildArtworkAlt } from '@/lib/artwork-alt';
 
@@ -367,7 +368,7 @@ function ArtworkCard({
                 <>
                   {showMaterial && localizedMaterial}
                   {showMaterial && showSize && ' · '}
-                  {showSize && localizedSize}
+                  {showSize && (describeSize(artwork)?.cm ?? localizedSize)}
                 </>
               );
             }

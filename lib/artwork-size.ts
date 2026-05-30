@@ -105,7 +105,7 @@ function fmt(n: number): string {
 }
 
 export function describeSize(input: {
-  size: string;
+  size?: string | null;
   width_cm?: number | null;
   height_cm?: number | null;
   depth_cm?: number | null;

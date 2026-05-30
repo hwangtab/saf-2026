@@ -1,5 +1,25 @@
 [
   {
+    "hash": "38ac9d76",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC 28일 — Page 2(11~15위) stuck 회복 + 작가/작품/매거진 추가 강화",
+    "summary": "GSC 추가 분석 결과 page 2(11~15위) stuck 쿼리 + CTR 낮은 매거진 발견. 작가 6명 추가 override + 작품 2점 추가 override + 매거진 3편 title 강화",
+    "body": "## 변경\n\n### 1. lib/artist-seo-overrides.ts — 작가 6명 추가\n- 이수철: 12imp / pos 11.3 / 0 click — Page 2 push 후보\n- 조신욱: '탈방' 9imp / pos 11.3 / 1 click — 수채화 작가\n- 최윤정: '최윤정 작가' 13imp / pos 11.6 / 2 click\n- 남진현: '인생, 그 헛헛함' 작품 검색 매칭 강화\n- 홍진희: '눈밭01/02' 작품 검색 매칭 강화\n- 천지수: 이미 override 존재(중복 제거)\n\n### 2. lib/artwork-seo-overrides.ts — 작품 2점 추가\n- 9ac6db07 Over the Dream-2 (이수철 사진 2011): pos 11.3 / 7imp / 0 click\n- f191466f 탈방 (조신욱 수채화 2022): pos 11.3 / 9imp / 1 click\n\n### 3. stories DB UPDATE — 매거진 title 3편 (Supabase 서울)\n- meet-artist-choi-yun-jung: title에 \"작가\" 명시(SERP 매칭 강화)\n  - 기존: '최윤정: 회화와 혼합매체의 경계를 넘어'\n  - 신규: '최윤정 작가 — 회화와 혼합매체의 경계를 넘는 작업 세계'\n- meet-artist-kim-ju-ho: '김주호 작가 — 도자 조각의 인물상, 한국 현대 도예의 한 계보'\n- meet-artist-jung-young-shin: '정영신 작가 — 40년 오일장 기록 사진가·소설가, 600여 장터의 바람'\n\n## 검증\n- npm run type-check: ✅ (중복 천지수 entry 제거)\n- npm run build: ✅ (456 HTML, 0 i18n violations)\n\n## 누적 효과 (Cycle 1+2+3)\n- Cycle 1 (bc76cc87): 작가 6 + 작품 1 + 매거진 2 + petition retention\n- Cycle 2 (d5e66758): 작품 4 + 매거진 3 + SOLD suffix 'positive'\n- Cycle 3 (본 sprint): 작가 6 + 작품 2 + 매거진 3\n- 누적: 작가 18 + 작품 7 + 매거진 8 + petition retention + SOLD suffix\n\n## 다음 측정 cycle\n- GSC 데이터는 변경 후 ~7일에 SERP cache 갱신, 28일에 full impact 추적 가능\n- 추가 발견 가능성: 4~12위 stuck queries (현재 11위 미만 외 추가 분석 가능)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "11e213a2",
+    "type": "feat",
+    "scope": "artwork",
+    "subject": "치수 컬럼을 타입·fetch에 연결",
+    "summary": "width/height/depth/size_bucket을 supabase 타입·BaseArtwork·ArtworkRow·SELECT·매핑에 연결",
+    "body": "- types/supabase.ts artworks Row/Insert/Update에 4컬럼 추가\n- BaseArtwork·ArtworkCardData에 optional 필드\n- ARTWORK_SELECT_COLUMNS·LIGHT_ARTWORK_COLUMNS·mapArtworkRow 반영",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
     "hash": "d5e66758",
     "type": "feat",
     "scope": "seo",

@@ -17,6 +17,7 @@ import {
 } from '@/lib/supabase-data';
 import { resolveActiveNotice } from '@/lib/artist-notice';
 import { getMaterialLabel } from '@/lib/artwork-material';
+import { describeSize, type SizeBucket } from '@/lib/artwork-size';
 import { getMediumLabel } from '@/lib/medium-labels';
 import PrideBox from '@/components/features/PrideBox';
 import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
@@ -285,6 +286,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const localizedPrice = localizeDataValue(artwork.price);
   const localizedMaterial = getMaterialLabel(artwork.material, locale);
   const localizedSize = localizeDataValue(artwork.size);
+  const sizeInfo = describeSize(artwork);
+  const sizeBucketKey: Record<SizeBucket, string> = {
+    small: 'sizeBucketSmall',
+    medium: 'sizeBucketMedium',
+    large: 'sizeBucketLarge',
+    xlarge: 'sizeBucketXlarge',
+    object: 'sizeBucketObject',
+  };
   const localizedEdition = localizeDataValue(artwork.edition);
   const materialGuide = materialGuideSlug(artwork.material);
   const displayTitle = locale === 'en' && artwork.title_en ? artwork.title_en : artwork.title;
@@ -573,7 +582,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('size')}</span>
                       <span className="text-charcoal">
-                        {localizedSize}{' '}
+                        {sizeInfo ? (
+                          <>
+                            {sizeInfo.cm}
+                            {sizeInfo.ho != null && ` · ${tCard('approxHo', { n: sizeInfo.ho })}`}
+                            {sizeInfo.bucket && ` · ${tCard(sizeBucketKey[sizeInfo.bucket])}`}
+                          </>
+                        ) : (
+                          localizedSize
+                        )}{' '}
                         {artwork.size !== '확인 중' && liveStorySlugs.has(SIZE_GUIDE_SLUG) && (
                           <Link
                             href={guideStoryHref(SIZE_GUIDE_SLUG, locale === 'en')}
