@@ -47,8 +47,14 @@ describe('estimateHo', () => {
   it('종횡비 극단(180x30, 6:1) → confident=false', () => {
     expect(estimateHo({ width: 180, height: 30 })?.confident).toBe(false);
   });
-  it('정사각(45.5x45.5) → confident=true', () => {
-    expect(estimateHo({ width: 45.5, height: 45.5 })?.confident).toBe(true);
+  it('정사각(45.5x45.5)은 S형이라 confident=false (S 제외)', () => {
+    expect(estimateHo({ width: 45.5, height: 45.5 })?.confident).toBe(false);
+  });
+  it('P형 20호(72.7x53.0)도 긴 변 기준이라 면적과 무관하게 정확히 20호', () => {
+    expect(estimateHo({ width: 72.7, height: 53.0 })).toEqual({ ho: 20, confident: true });
+  });
+  it('M형 10호(53.0x33.4)도 긴 변 기준 10호', () => {
+    expect(estimateHo({ width: 53.0, height: 33.4 })).toEqual({ ho: 10, confident: true });
   });
 });
 

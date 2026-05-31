@@ -26,35 +26,39 @@ export interface SizeInfo {
   is3d: boolean;
 }
 
-// 표준 호수표(F형 기준) 면적(cm²). cm→호 역환산용 최근접 매칭 기준.
-const HO_TABLE: ReadonlyArray<{ ho: number; area: number }> = [
-  { ho: 1, area: 359 },
-  { ho: 2, area: 462 },
-  { ho: 3, area: 601 },
-  { ho: 4, area: 808 },
-  { ho: 5, area: 950 },
-  { ho: 6, area: 1301 },
-  { ho: 8, area: 1724 },
-  { ho: 10, area: 2412 },
-  { ho: 12, area: 3030 },
-  { ho: 15, area: 3450 },
-  { ho: 20, area: 4406 },
-  { ho: 25, area: 5236 },
-  { ho: 30, area: 6608 },
-  { ho: 40, area: 8030 },
-  { ho: 50, area: 10629 },
-  { ho: 60, area: 12639 },
-  { ho: 80, area: 16311 },
-  { ho: 100, area: 21135 },
-  { ho: 120, area: 25265 },
-  { ho: 150, area: 41323 },
-  { ho: 200, area: 50239 },
-  { ho: 300, area: 63474 },
-  { ho: 500, area: 82825 },
+// 표준 호수표(F형 기준) 긴 변(cm). cm→호 환산은 긴 변 기준 최근접 매칭.
+// 호수는 긴 변으로 결정되며 F·P·M형은 긴 변이 동일하므로, 긴 변으로 매칭하면 형(型)에
+// 무관하게 정확하다(면적은 F>P>M로 달라 부정확). 정사각(S형)은 estimateHo 비율 가드로 제외.
+const HO_TABLE: ReadonlyArray<{ ho: number; longEdge: number }> = [
+  { ho: 1, longEdge: 22.7 },
+  { ho: 2, longEdge: 25.8 },
+  { ho: 3, longEdge: 27.3 },
+  { ho: 4, longEdge: 33.4 },
+  { ho: 5, longEdge: 34.8 },
+  { ho: 6, longEdge: 40.9 },
+  { ho: 8, longEdge: 45.5 },
+  { ho: 10, longEdge: 53.0 },
+  { ho: 12, longEdge: 60.6 },
+  { ho: 15, longEdge: 65.1 },
+  { ho: 20, longEdge: 72.7 },
+  { ho: 25, longEdge: 80.3 },
+  { ho: 30, longEdge: 90.9 },
+  { ho: 40, longEdge: 100.0 },
+  { ho: 50, longEdge: 116.8 },
+  { ho: 60, longEdge: 130.3 },
+  { ho: 80, longEdge: 145.5 },
+  { ho: 100, longEdge: 162.2 },
+  { ho: 120, longEdge: 193.9 },
+  { ho: 150, longEdge: 227.3 },
+  { ho: 200, longEdge: 259.1 },
+  { ho: 300, longEdge: 290.9 },
+  { ho: 500, longEdge: 333.3 },
 ];
 
-// 종횡비 이 이상이면 호수 표기 부적합 → confident=false.
+// 종횡비 가드 — F·P·M형 비율 범위(약 1.1~2.2) 밖이면 호수 표기 부적합 → confident=false.
+// MAX 초과: M형보다 길쭉한 비정형. MIN 미만: 정사각(S형) — "S는 참고하지 않는다" 운영 기준 반영.
 const HO_RATIO_MAX = 2.2;
+const HO_RATIO_MIN = 1.1;
 
 // 구간 경계(면적 cm²) — 호수 사이 중간값으로 라벨("~10호"/"10–30호"/"30–100호"/"100호~")과 정합.
 // small/medium = 10호(2412)~12호(3030) 중간, medium/large = 30호(6608)~40호(8030) 중간,
@@ -85,14 +89,18 @@ export function area(d: Pick<Dimensions, 'width' | 'height'>): number {
 export function estimateHo(
   d: Pick<Dimensions, 'width' | 'height'>
 ): { ho: number; confident: boolean } | null {
-  const a = area(d);
-  if (!(a > 0)) return null;
+  const long = Math.max(d.width, d.height);
+  const short = Math.min(d.width, d.height);
+  if (!(long > 0) || !(short > 0)) return null;
+  // 긴 변 기준 최근접 — F·P·M 긴 변이 동일하므로 형에 무관하게 호수가 정확.
   let best = HO_TABLE[0];
   for (const row of HO_TABLE) {
-    if (Math.abs(row.area - a) < Math.abs(best.area - a)) best = row;
+    if (Math.abs(row.longEdge - long) < Math.abs(best.longEdge - long)) best = row;
   }
-  const ratio = Math.max(d.width, d.height) / Math.min(d.width, d.height);
-  return { ho: best.ho, confident: ratio <= HO_RATIO_MAX };
+  // F·P·M 비율 범위만 confident. 정사각(S형, 비율<1.1)·극단 비율(>2.2)은 호수 표기 생략.
+  const ratio = long / short;
+  const confident = ratio >= HO_RATIO_MIN && ratio <= HO_RATIO_MAX;
+  return { ho: best.ho, confident };
 }
 
 export function classifyBucket(d: Dimensions): SizeBucket {
