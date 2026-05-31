@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import clsx from 'clsx';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { createSupabaseBrowserClient } from '@/lib/auth/client';
 import SafeImage from '@/components/common/SafeImage';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -759,16 +760,9 @@ function OrderCard({
 
 // ─── Main Form ────────────────────────────────────────────────────────────────
 
-interface OrderLookupProps {
-  initialOrderDetail?: OrderPublicInfo | null;
-  initialBuyerEmail?: string | null;
-}
-
-export default function OrderLookup({
-  initialOrderDetail = null,
-  initialBuyerEmail = null,
-}: OrderLookupProps) {
+export default function OrderLookup() {
   const t = useTranslations('orderLookup');
+  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -777,25 +771,77 @@ export default function OrderLookup({
   const [orders, setOrders] = useState<PublicOrderListItem[] | null>(null);
   const [firstDetail, setFirstDetail] = useState<OrderPublicInfo | null>(null);
 
-  // 마이페이지 "주문 상세 보기" 링크 흐름 — 로그인 사용자 + 서버에서 조회 완료된 경우
-  // 폼 없이 바로 주문 상세 표시 (buyerEmail은 편집·취소 버튼 작동에 필요)
-  if (initialOrderDetail) {
+  // 로그인 회원 자동 처리 — 게스트(비회원)에게만 조회 폼을 노출하기 위해 먼저 세션을 확인한다.
+  // 서버가 아닌 클라이언트에서 판단하는 이유: 이 페이지는 정적 생성(force-static)이고,
+  // 미들웨어 rewrite가 ?orderNo= 쿼리를 서버 searchParams에서 떨구기 때문. 브라우저의
+  // 실제 URL(window.location.search)과 세션은 이런 함정의 영향을 받지 않는다.
+  const [authChecking, setAuthChecking] = useState(true);
+  const [autoDetail, setAutoDetail] = useState<OrderPublicInfo | null>(null);
+  const [autoEmail, setAutoEmail] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    const supabase = createSupabaseBrowserClient();
+    // getSession은 로컬 세션을 즉시 읽으므로 게스트는 사실상 깜빡임 없이 폼으로 진입.
+    supabase.auth
+      .getSession()
+      .then(async ({ data: { session } }) => {
+        if (cancelled) return;
+        const user = session?.user;
+        if (!user) {
+          setAuthChecking(false); // 게스트 → 조회 폼
+          return;
+        }
+        // 로그인 회원: 실제 브라우저 URL의 주문번호로 자동 조회 (마이페이지·결제완료 → 주문상세 흐름)
+        const urlOrderNo = new URLSearchParams(window.location.search).get('orderNo');
+        if (urlOrderNo) {
+          const res = await lookupOrderDetail(urlOrderNo, user.email ?? '');
+          if (cancelled) return;
+          if (res.success) {
+            setAutoDetail(res.order);
+            setAutoEmail(user.email ?? '');
+            setAuthChecking(false);
+            return;
+          }
+        }
+        // 주문번호가 없거나(헤더 메뉴 직접 진입) 조회 실패 → 마이페이지 주문 목록으로
+        router.replace('/mypage');
+      })
+      .catch(() => {
+        // 세션 확인 실패 시에도 최소한 게스트 조회 폼은 제공
+        if (!cancelled) setAuthChecking(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+  // 로그인 회원의 주문 상세 자동 표시 — 폼 없이 바로 노출
+  // (buyerEmail은 OrderCard의 배송지 수정·취소 버튼 작동에 필요)
+  if (autoDetail) {
     const item: PublicOrderListItem = {
-      orderNo: initialOrderDetail.orderNo,
-      status: initialOrderDetail.status,
-      artworkTitle: initialOrderDetail.artworkTitle,
-      artworkImage: initialOrderDetail.artworkImage,
-      totalAmount: initialOrderDetail.totalAmount,
-      createdAt: initialOrderDetail.createdAt,
+      orderNo: autoDetail.orderNo,
+      status: autoDetail.status,
+      artworkTitle: autoDetail.artworkTitle,
+      artworkImage: autoDetail.artworkImage,
+      totalAmount: autoDetail.totalAmount,
+      createdAt: autoDetail.createdAt,
     };
     return (
       <div>
         <h1 className="mb-6 text-2xl font-bold text-charcoal">{t('pageTitle')}</h1>
-        <OrderCard
-          item={item}
-          buyerEmail={initialBuyerEmail ?? ''}
-          initialDetail={initialOrderDetail}
-        />
+        <OrderCard item={item} buyerEmail={autoEmail} initialDetail={autoDetail} />
+      </div>
+    );
+  }
+
+  // 로그인 여부 확인 중 — 회원이 게스트 폼을 잠깐이라도 보지 않도록 대기
+  // (세션은 로컬에서 즉시 읽혀 게스트 영향은 무시할 수준)
+  if (authChecking) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+        <h1 className="text-2xl font-bold text-charcoal">{t('pageTitle')}</h1>
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-primary" />
       </div>
     );
   }
