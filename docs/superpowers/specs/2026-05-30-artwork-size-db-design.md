@@ -90,7 +90,7 @@ Supabase `artworks` (운영, `khtunrybrzntlnowlahb`), 총 **572개**:
 
 ### 4.1 표준 호수표 (F형 기준)
 
-면적 환산 기준표 — 코드 상수 `HO_TABLE`:
+긴 변 환산 기준표(F형) — 코드 상수 `HO_TABLE`는 각 호수의 F형 긴 변(cm)을 보유. 아래 표의 cm·면적은 참고용:
 
 | 호  | cm (F형)  | 면적(cm²) | 호  | cm (F형)    | 면적(cm²) |
 | --- | --------- | --------- | --- | ----------- | --------- |
@@ -120,7 +120,7 @@ export type SizeBucket = 'small' | 'medium' | 'large' | 'xlarge' | 'object';
 // 레거시 size text → 구조화 치수. 파싱 실패 시 null (placeholder/오타).
 export function parseSizeText(raw: string | null | undefined): Dimensions | null;
 
-// 면적 최근접 호수 + 신뢰도. 3D(depth!=null)이거나 종횡비 극단이면 confident=false 또는 null.
+// 긴 변(F형) 최근접 호수 + 신뢰도. 3D이거나 정사각(S형)·종횡비 극단이면 confident=false 또는 null.
 export function estimateHo(
   d: Pick<Dimensions, 'width' | 'height'>
 ): { ho: number; confident: boolean } | null;
@@ -150,11 +150,12 @@ export function describeSize(input: {
 ### 4.3 호수 환산 알고리즘 + 신뢰도 가드
 
 1. `depth != null`(3D) → 호수 미적용, `null` 반환.
-2. 면적 = `width * height`. `HO_TABLE`에서 면적 차이 최소인 호수 선택.
+2. **긴 변 = `max(width, height)`. `HO_TABLE`(F형 긴 변)에서 긴 변 차이 최소인 호수 선택.**
+   호수는 긴 변으로 결정되고 F·P·M형은 긴 변이 동일하므로, 긴 변 매칭이 형(型)에 무관하게 정확하다(면적은 F>P>M로 달라 부정확 — 운영 지시 "F 기준, S 제외" 반영).
 3. **신뢰도 가드** — `ratio = max(w,h)/min(w,h)`:
-   - `ratio > 2.2` → `confident=false` (호수 표기 생략, cm+구간만 노출)
-   - 그 외 → `confident=true`, `약 N호` 표기
-   - (정사각 ratio≈1.0은 S형 변형으로 confident 처리)
+   - `ratio > 2.2` → `confident=false` (M형보다 길쭉한 비정형 — 호수 표기 생략)
+   - `ratio < 1.1` → `confident=false` (정사각 S형 — "S는 참고하지 않는다" 기준, 호수 표기 생략)
+   - `1.1 ≤ ratio ≤ 2.2` (F·P·M형) → `confident=true`, `약 N호` 표기
 4. placeholder/파싱 실패 → `null`.
 
 ### 4.4 구간 경계 (면적 기준, 호수 통념 매핑)
@@ -262,7 +263,7 @@ placeholder/치수 미상 → bucket `null` (필터에서 제외).
 
 ## 12. 리스크 / 미해결
 
-- **호수 근사 정확도**: 면적 최근접 + 종횡비 가드로 대부분 신뢰 가능(데이터가 표준 호수표와 잘 일치). `약 N호` 표기로 근사임을 명시.
+- **호수 근사 정확도**: F형 긴 변 최근접 + 종횡비 가드(정사각 S형·극단 제외)로 형(F·P·M) 무관 정확. `약 N호` 표기로 근사임을 명시.
 - **마이그레이션 적용**: 비파괴(컬럼 추가)이나 운영 DB DDL → 적용 직전 사용자 확인.
 - **재백필 동기화**: 구간 경계 변경 시 `size_bucket` 캐시 재생성 필요 — 스크립트가 단일 진입점.
 - **fallback 정적 파일**: `content/saf2026-artworks.ts` 경로는 구조화 컬럼 없이도 `parseSizeText`로 런타임 파싱하여 동일 표시 보장.
