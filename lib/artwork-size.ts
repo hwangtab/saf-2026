@@ -30,6 +30,7 @@ export interface SizeInfo {
 // 호수는 긴 변으로 결정되며 F·P·M형은 긴 변이 동일하므로, 긴 변으로 매칭하면 형(型)에
 // 무관하게 정확하다(면적은 F>P>M로 달라 부정확). 정사각(S형)은 estimateHo 비율 가드로 제외.
 const HO_TABLE: ReadonlyArray<{ ho: number; longEdge: number }> = [
+  { ho: 0, longEdge: 18.0 },
   { ho: 1, longEdge: 22.7 },
   { ho: 2, longEdge: 25.8 },
   { ho: 3, longEdge: 27.3 },
@@ -55,10 +56,10 @@ const HO_TABLE: ReadonlyArray<{ ho: number; longEdge: number }> = [
   { ho: 500, longEdge: 333.3 },
 ];
 
-// 종횡비 가드 — F·P·M형 비율 범위(약 1.1~2.2) 밖이면 호수 표기 부적합 → confident=false.
-// MAX 초과: M형보다 길쭉한 비정형. MIN 미만: 정사각(S형) — "S는 참고하지 않는다" 운영 기준 반영.
+// 종횡비 가드 — 이 이상 길쭉하면(M형보다) 호수 표기 부적합 → confident=false.
+// 정사각(S형)도 긴 변으로 근사 호수 표기(운영 결정): S 규격표 자체는 미사용하되, 긴 변을
+// F형 표에 매칭해 "약 N호"를 보여준다. ("S는 참고하지 않는다" = S 규격표 미사용으로 충족)
 const HO_RATIO_MAX = 2.2;
-const HO_RATIO_MIN = 1.1;
 
 // 구간 경계(면적 cm²) — 호수 사이 중간값으로 라벨("~10호"/"10–30호"/"30–100호"/"100호~")과 정합.
 // small/medium = 10호(2412)~12호(3030) 중간, medium/large = 30호(6608)~40호(8030) 중간,
@@ -97,9 +98,9 @@ export function estimateHo(
   for (const row of HO_TABLE) {
     if (Math.abs(row.longEdge - long) < Math.abs(best.longEdge - long)) best = row;
   }
-  // F·P·M 비율 범위만 confident. 정사각(S형, 비율<1.1)·극단 비율(>2.2)은 호수 표기 생략.
+  // 극단 비율(M형보다 길쭉, >2.2)만 호수 표기 생략. 정사각(S형)은 긴 변으로 근사 호수 표기.
   const ratio = long / short;
-  const confident = ratio >= HO_RATIO_MIN && ratio <= HO_RATIO_MAX;
+  const confident = ratio <= HO_RATIO_MAX;
   return { ho: best.ho, confident };
 }
 

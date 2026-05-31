@@ -47,8 +47,11 @@ describe('estimateHo', () => {
   it('종횡비 극단(180x30, 6:1) → confident=false', () => {
     expect(estimateHo({ width: 180, height: 30 })?.confident).toBe(false);
   });
-  it('정사각(45.5x45.5)은 S형이라 confident=false (S 제외)', () => {
-    expect(estimateHo({ width: 45.5, height: 45.5 })?.confident).toBe(false);
+  it('정사각(45.5x45.5)도 긴 변으로 약 8호 표기 (S 규격표만 미사용)', () => {
+    expect(estimateHo({ width: 45.5, height: 45.5 })).toEqual({ ho: 8, confident: true });
+  });
+  it('0호 소품(18x14 → 0호)', () => {
+    expect(estimateHo({ width: 18, height: 14 })?.ho).toBe(0);
   });
   it('P형 20호(72.7x53.0)도 긴 변 기준이라 면적과 무관하게 정확히 20호', () => {
     expect(estimateHo({ width: 72.7, height: 53.0 })).toEqual({ ho: 20, confident: true });
