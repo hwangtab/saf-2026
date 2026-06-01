@@ -150,6 +150,47 @@ export async function lookupOrders(
   return { success: true, orders: result };
 }
 
+/**
+ * 비로그인(게스트)으로 결제해 buyer_user_id가 NULL인 주문을, 로그인한 회원 계정에 자동 귀속한다.
+ * 가입 전 게스트로 구매 → 이후 가입/로그인한 회원이 마이페이지에서 그 주문을 못 보던 갭을 메움.
+ *
+ * 보안: **검증된 이메일(email_confirmed_at)** 이 회원 이메일과 정확히 일치하는 주문만 대상.
+ * 미확인 이메일은 소유가 보장되지 않으므로(타인 이메일로 가입해 게스트 주문을 탈취하는 공격) 귀속하지 않는다.
+ * 멱등 — 이미 귀속됐거나 대상이 없으면 무해하게 0건 반환. 마이페이지 진입 시마다 호출해도 안전.
+ */
+export async function claimGuestOrders(): Promise<{ claimed: number }> {
+  try {
+    const sessionClient = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await sessionClient.auth.getUser();
+
+    if (!user) return { claimed: 0 };
+
+    const email = user.email?.trim().toLowerCase();
+    // 검증된 이메일만 신뢰 — 미확인 이메일은 소유 보장이 없어 귀속 금지
+    if (!email || !user.email_confirmed_at) return { claimed: 0 };
+
+    const adminClient = createSupabaseAdminClient();
+    const { data: claimedOrders, error } = await adminClient
+      .from('orders')
+      .update({ buyer_user_id: user.id })
+      .is('buyer_user_id', null)
+      .eq('buyer_email', email)
+      .select('id');
+
+    if (error) {
+      console.error('[claimGuestOrders] update failed:', error);
+      return { claimed: 0 };
+    }
+
+    return { claimed: claimedOrders?.length ?? 0 };
+  } catch (err) {
+    console.error('[claimGuestOrders] failed:', err);
+    return { claimed: 0 };
+  }
+}
+
 export async function lookupOrderDetail(
   orderNo: string,
   buyerEmail: string

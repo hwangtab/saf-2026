@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import { claimGuestOrders } from '@/app/actions/order-lookup';
 import MypageTabs from './MypageTabs';
 
 type Order = {
@@ -93,6 +94,11 @@ export default function MypageClient({ messages }: MypageClientProps) {
         router.replace('/login?redirectTo=/mypage');
         return;
       }
+
+      // 게스트(비로그인)로 결제해 buyer_user_id가 NULL인 주문을 이 계정에 자동 귀속한 뒤 목록 조회.
+      // 멱등하며, 검증된 이메일이 일치하는 주문만 대상(claimGuestOrders 내부 보안 가드).
+      await claimGuestOrders();
+      if (cancelled) return;
 
       const [ordersResult, wishlistResult, profileResult] = await Promise.all([
         supabase
