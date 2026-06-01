@@ -3,6 +3,11 @@ import { getHeroImageUrls } from '@/lib/hero-image';
 interface PageHeroBackgroundProps {
   customImage: string;
   seed?: string;
+  /**
+   * hero 배경 이미지 alt. 빈 값이면 네이버 사이트 진단이 "Alt 속성 누락"으로
+   * 집계하므로(PageHero는 거의 모든 공개 페이지에 깔림) 페이지 제목을 전달받아 채운다.
+   */
+  alt: string;
 }
 
 /**
@@ -15,7 +20,7 @@ interface PageHeroBackgroundProps {
  *
  * 서버 컴포넌트. animate-hero-breathing은 motion-reduce에서 자동 비활성.
  */
-export default function PageHeroBackground({ customImage }: PageHeroBackgroundProps) {
+export default function PageHeroBackground({ customImage, alt }: PageHeroBackgroundProps) {
   const urls = getHeroImageUrls(customImage);
   if (!urls) return null;
 
@@ -44,7 +49,7 @@ export default function PageHeroBackground({ customImage }: PageHeroBackgroundPr
           {}
           <img
             src={urls.mobile}
-            alt=""
+            alt={alt}
             loading="eager"
             fetchPriority="high"
             decoding="sync"

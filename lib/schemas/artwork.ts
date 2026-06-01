@@ -128,7 +128,16 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
         : ' · 가격 문의';
   const seoOverride = getArtworkSeoOverride(artwork.id);
   const overrideTitle = isEnglish ? seoOverride?.titleEn : seoOverride?.titleKo;
-  const pageTitle = overrideTitle ?? `${titleForLocale} · ${artistForLocale}${titleStatusSuffix}`;
+  // 같은 작가의 동일 제목 연작(예: 이호철 'Encore' 11점)은 가격까지 같으면 title이 완전 동일해져
+  // 네이버 "동일 제목 웹문서 다수" 진단에 걸린다. 크기를 덧붙여 <title>을 고유화한다.
+  // ⚠️ size는 가격(titleStatusSuffix) "뒤"에 둔다 — 가격은 CTR 핵심 레버(위 주석)이므로 SERP
+  // 표시 길이(모바일 ~30자) 안에 반드시 들어가야 하고, size는 잘려도 무방한 부가 정보. size
+  // 미상('확인 중')이면 생략. (네이버 동일-title 진단은 표시분이 아닌 전체 <title> 기준이라 끝에
+  // 붙여도 중복 구별 효과는 동일.)
+  const hasValidSize = Boolean(artwork.size) && !artwork.size.includes('확인');
+  const sizeForTitle = hasValidSize && sizeForLocale ? ` · ${sizeForLocale}` : '';
+  const pageTitle =
+    overrideTitle ?? `${titleForLocale} · ${artistForLocale}${titleStatusSuffix}${sizeForTitle}`;
 
   const baseMetadata = createPageMetadata(
     pageTitle,

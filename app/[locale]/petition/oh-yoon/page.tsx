@@ -226,7 +226,7 @@ export default async function PetitionOhYoonPage({
         <div aria-hidden="true" className="absolute inset-0 -z-10">
           <SafeImage
             src="/images/petition-oh-yoon/mural-2.png"
-            alt=""
+            alt={t('heroImageAlt')}
             fill
             priority
             sizes="100vw"

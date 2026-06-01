@@ -49,7 +49,7 @@ const isParkSaenggwangArtist = (artist: string): boolean => {
 
 const PAGE_COPY = {
   ko: {
-    title: '박생광 드로잉전: Park Saeng-gwang Drawings',
+    title: '박생광 드로잉전 — 오방색 거장의 연필화 | 씨앗페',
     description:
       '오방색의 거장 박생광(1904–1985)의 연필화. 1950년 전쟁이 그 이전의 모든 작품을 소실시켰고, 이 연필화들이 현존하는 박생광의 가장 이른 그림들이다. 2023년 예술의전당 한가람미술관에서 100점이 처음 공개된 이래 첫 전문 전시. 2026년 5월 20일부터 6월 8일까지 갤러리 PEG(서울특별시 은평구 통일로 870 M타워 6층).',
     ogDescription:

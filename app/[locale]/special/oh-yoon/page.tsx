@@ -39,7 +39,7 @@ const isOhYoonArtist = (artist: string): boolean => {
 
 const PAGE_COPY = {
   ko: {
-    title: '오윤 40주기 특별전: Oh Yoon 40th Anniversary Special Exhibition',
+    title: '오윤 40주기 특별전 — 민중미술 거장의 목판화 | 씨앗페',
     description:
       '민중미술의 거장 오윤(1946–1986) 40주기 특별전. 목판화에 시대의 아픔과 민중의 생명력을 새긴 오윤의 대표작을 씨앗페 온라인에서 감상하고 소장하세요. 현실, 한(恨), 함께하는 미술이라는 세 가지 테마로 오윤의 예술 세계와 민중미술의 역사를 조명하는 온라인 전시입니다.',
     ogDescription:

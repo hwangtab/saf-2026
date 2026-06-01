@@ -54,14 +54,10 @@ export default function HeaderLogo({ isDarkText }: HeaderLogoProps) {
             isDarkText ? 'opacity-100' : 'opacity-0'
           )}
         />
-        <SafeImage
-          src="/images/logo/320pxX90px_white.webp"
-          alt=""
+        <span
           aria-hidden="true"
-          width={160}
-          height={45}
           className={clsx(
-            'absolute inset-0 h-9 w-auto object-contain transition-opacity duration-300',
+            'absolute inset-0 h-9 w-40 bg-[url("/images/logo/320pxX90px_white.webp")] bg-contain bg-left bg-no-repeat transition-opacity duration-300',
             isDarkText ? 'opacity-0' : 'opacity-100'
           )}
         />

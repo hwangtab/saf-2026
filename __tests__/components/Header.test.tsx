@@ -13,7 +13,7 @@ jest.mock('next-intl', () => ({
 jest.mock('../../i18n/navigation', () => ({
   usePathname: () => '/',
   useRouter: () => ({ replace: jest.fn() }),
-  Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+  Link: ({ children, prefetch: _prefetch, ...props }: any) => <a {...props}>{children}</a>,
 }));
 
 jest.mock('../../lib/hooks/useLocalizedNavigation', () => ({
