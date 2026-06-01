@@ -167,20 +167,32 @@ export function ChangelogList({
           >
             이전
           </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <button
-              type="button"
-              key={p}
-              onClick={() => navigate({ page: p })}
-              className={`min-w-[2.25rem] rounded-lg px-2 py-2 text-sm font-medium transition ${
-                p === page
-                  ? 'bg-primary-a11y text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              {p}
-            </button>
-          ))}
+          {buildPageWindow(page, totalPages).map((p, i) =>
+            p === null ? (
+              <span
+                key={`ellipsis-${i}`}
+                className="select-none px-1 text-sm text-gray-400"
+                aria-hidden="true"
+              >
+                …
+              </span>
+            ) : (
+              <button
+                type="button"
+                key={p}
+                onClick={() => navigate({ page: p })}
+                aria-label={`${p}페이지`}
+                aria-current={p === page ? 'page' : undefined}
+                className={`min-w-[2.25rem] rounded-lg px-2 py-2 text-sm font-medium transition ${
+                  p === page
+                    ? 'bg-primary-a11y text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                {p}
+              </button>
+            )
+          )}
           <button
             type="button"
             onClick={() => navigate({ page: page + 1 })}
@@ -193,4 +205,17 @@ export function ChangelogList({
       )}
     </div>
   );
+}
+
+// 페이지 번호 윈도우 계산: 7페이지 이하는 전부, 초과 시 `1 … 현재±1 … 마지막`로 축약
+// (가로 스크롤 방지 — null은 ellipsis 자리). petition Pagination과 동일 로직.
+function buildPageWindow(page: number, total: number): (number | null)[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const pages: (number | null)[] = [1];
+  if (page > 3) pages.push(null);
+  for (let p = Math.max(2, page - 1); p <= Math.min(total - 1, page + 1); p++) pages.push(p);
+  if (page < total - 2) pages.push(null);
+  pages.push(total);
+  return pages;
 }
