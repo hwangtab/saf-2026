@@ -18,6 +18,7 @@ import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { getClientIp } from '@/lib/security/get-client-ip';
 import { logBuyerAction } from './activity-log-writer';
 import { createSupabaseServerClient } from '@/lib/auth/server';
+import { verifyOrderAccessToken } from '@/lib/email/order-access-token';
 
 export type PublicOrderListItem = {
   orderNo: string;
@@ -231,6 +232,34 @@ export async function lookupOrderDetail(
 
   const adminClient = createSupabaseAdminClient();
 
+  const row = await fetchOrderDetailRow(adminClient, trimmedOrderNo);
+  if (!row) {
+    return { success: false, error: 'NOT_FOUND' };
+  }
+
+  const isOwner = !!sessionUser && row.buyerUserId === sessionUser.id;
+
+  if (!isOwner && !trimmedEmail) return { success: false, error: 'NOT_FOUND' };
+  if (!isOwner && row.buyerEmail?.toLowerCase() !== trimmedEmail) {
+    return { success: false, error: 'NOT_FOUND' };
+  }
+
+  return { success: true, order: row.info };
+}
+
+type OrderDetailRow = {
+  info: OrderPublicInfo;
+  buyerEmail: string | null;
+  buyerUserId: string | null;
+};
+
+// 주문번호로 상세(작품·작가·결제수단·가상계좌 포함)를 조회·조립하는 공통 헬퍼.
+// lookupOrderDetail(이메일/세션 검증)과 lookupOrderByToken(서명 토큰 인증)이 공유한다.
+// 권한 검증은 호출자 책임 — 이 함수는 조회·조립만 한다.
+async function fetchOrderDetailRow(
+  adminClient: ReturnType<typeof createSupabaseAdminClient>,
+  orderNo: string
+): Promise<OrderDetailRow | null> {
   const { data: order, error } = await adminClient
     .from('orders')
     .select(
@@ -262,19 +291,10 @@ export async function lookupOrderDetail(
       )
     `
     )
-    .eq('order_no', trimmedOrderNo)
+    .eq('order_no', orderNo)
     .maybeSingle();
 
-  if (error || !order) {
-    return { success: false, error: 'NOT_FOUND' };
-  }
-
-  const isOwner = !!sessionUser && order.buyer_user_id === sessionUser.id;
-
-  if (!isOwner && !trimmedEmail) return { success: false, error: 'NOT_FOUND' };
-  if (!isOwner && order.buyer_email?.toLowerCase() !== trimmedEmail) {
-    return { success: false, error: 'NOT_FOUND' };
-  }
+  if (error || !order) return null;
 
   const artworkRow = order.artworks as unknown as {
     title: string;
@@ -322,8 +342,7 @@ export async function lookupOrderDetail(
   }
 
   return {
-    success: true,
-    order: {
+    info: {
       orderNo: order.order_no,
       status: order.status,
       artworkTitle: artworkRow?.title ?? '알 수 없음',
@@ -345,7 +364,40 @@ export async function lookupOrderDetail(
       trackingNumber: order.tracking_number ?? null,
       virtualAccount,
     },
+    buyerEmail: order.buyer_email,
+    buyerUserId: order.buyer_user_id,
   };
+}
+
+export type OrderTokenResult =
+  | { success: true; order: OrderPublicInfo; buyerEmail: string }
+  | { success: false; error: string };
+
+/**
+ * 이메일 본문의 서명 토큰(/orders?token=...)으로 주문 상세를 조회한다.
+ * 토큰 HMAC 서명 검증 통과 자체가 인증(그 결제/배송 이메일 수신자)이므로,
+ * 추가 email·세션 검증 없이 상세를 반환한다. 응답의 buyerEmail은 배송지 수정·취소 권한에 사용.
+ */
+export async function lookupOrderByToken(token: string): Promise<OrderTokenResult> {
+  const headersList = await headers();
+  const ip = getClientIp(headersList);
+  const rl = await rateLimit(`lookupOrderByToken:ip:${ip}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.success) {
+    return { success: false, error: 'RATE_LIMITED' };
+  }
+
+  const orderNo = verifyOrderAccessToken(token);
+  if (!orderNo) {
+    return { success: false, error: 'NOT_FOUND' };
+  }
+
+  const adminClient = createSupabaseAdminClient();
+  const row = await fetchOrderDetailRow(adminClient, orderNo);
+  if (!row) {
+    return { success: false, error: 'NOT_FOUND' };
+  }
+
+  return { success: true, order: row.info, buyerEmail: row.buyerEmail ?? '' };
 }
 
 export type UpdateShippingInput = {

@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import OrderCtaButton from './_components/order-cta-button';
 import { formatAmount, t, type EmailLocale } from './_components/i18n';
 import { LOAN_COUNT } from '@/lib/site-stats';
 
@@ -15,6 +16,7 @@ export interface DepositConfirmedEmailProps {
   itemAmount?: number;
   shippingAmount?: number;
   shipping?: { name?: string; phone?: string; address?: string; memo?: string };
+  orderUrl?: string;
   locale?: EmailLocale;
 }
 
@@ -31,6 +33,7 @@ export default function DepositConfirmedEmail({
   itemAmount,
   shippingAmount,
   shipping,
+  orderUrl,
   locale = 'ko',
 }: DepositConfirmedEmailProps) {
   const showItemized = typeof itemAmount === 'number' && typeof shippingAmount === 'number';
@@ -95,6 +98,7 @@ export default function DepositConfirmedEmail({
         <Text style={prideHeadText}>{prideHead}</Text>
         <Text style={prideBodyText}>{prideBody}</Text>
       </Section>
+      {orderUrl && <OrderCtaButton href={orderUrl} locale={locale} />}
     </SAFEmailLayout>
   );
 }

@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import OrderCtaButton from './_components/order-cta-button';
 import { t, type EmailLocale } from './_components/i18n';
 
 export interface DeliveredEmailProps {
@@ -11,6 +12,7 @@ export interface DeliveredEmailProps {
   artworkTitle: string;
   artistName: string;
   shipping?: { name?: string; phone?: string; address?: string; memo?: string };
+  orderUrl?: string;
   locale?: EmailLocale;
 }
 
@@ -20,6 +22,7 @@ export default function DeliveredEmail({
   artworkTitle,
   artistName,
   shipping,
+  orderUrl,
   locale = 'ko',
 }: DeliveredEmailProps) {
   const rows = [
@@ -58,6 +61,7 @@ export default function DeliveredEmail({
       <Text style={bodyText}>{body}</Text>
       <OrderInfoTable rows={rows} />
       <Text style={noteText}>{note}</Text>
+      {orderUrl && <OrderCtaButton href={orderUrl} locale={locale} />}
     </SAFEmailLayout>
   );
 }

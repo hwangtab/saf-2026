@@ -41,6 +41,7 @@ export const labels = {
   recipientPhone: { ko: '수령인 연락처', en: 'Phone' },
   shippingAddress: { ko: '배송지', en: 'Shipping Address' },
   shippingMemo: { ko: '배송 메모', en: 'Delivery Note' },
+  viewOrderDetail: { ko: '주문 상세 보기', en: 'View order details' },
 } as const;
 
 export function t(key: keyof typeof labels, locale: EmailLocale): string {

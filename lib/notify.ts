@@ -18,6 +18,7 @@ import DeliveredEmail from '@/emails/delivered';
 import RefundedEmail from '@/emails/refunded';
 import AutoCancelledEmail from '@/emails/auto-cancelled';
 import type { EmailLocale } from '@/emails/_components/i18n';
+import { signOrderAccessToken } from '@/lib/email/order-access-token';
 
 type NotifyLevel = 'payment' | 'warning' | 'error' | 'info';
 
@@ -202,6 +203,13 @@ export async function sendBuyerEmail(
   const from = process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from || !to) return;
 
+  // 이메일 → 원클릭 주문조회 링크. 서명 토큰이라 로그인·재입력 없이 상세로 직행.
+  // 진행형 5종에만 전달(환불·취소는 종료 주문이라 제외). secret 미설정 시 undefined → 버튼 미표시.
+  const orderToken = signOrderAccessToken(data.orderNo);
+  const orderUrl = orderToken
+    ? `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com'}/orders?token=${orderToken}`
+    : undefined;
+
   try {
     let emailElement: React.ReactElement;
 
@@ -217,6 +225,7 @@ export async function sendBuyerEmail(
           itemAmount: data.itemAmount,
           shippingAmount: data.shippingAmount,
           shipping: data.shipping,
+          orderUrl,
           locale,
         });
         break;
@@ -228,6 +237,7 @@ export async function sendBuyerEmail(
           artistName: data.artistName,
           amount: data.amount,
           virtualAccount: data.virtualAccount ?? {},
+          orderUrl,
           locale,
         });
         break;
@@ -241,6 +251,7 @@ export async function sendBuyerEmail(
           itemAmount: data.itemAmount,
           shippingAmount: data.shippingAmount,
           shipping: data.shipping,
+          orderUrl,
           locale,
         });
         break;
@@ -253,6 +264,7 @@ export async function sendBuyerEmail(
           carrier: data.carrier ?? '',
           trackingNumber: data.trackingNumber,
           shipping: data.shipping,
+          orderUrl,
           locale,
         });
         break;
@@ -263,6 +275,7 @@ export async function sendBuyerEmail(
           artworkTitle: data.artworkTitle,
           artistName: data.artistName,
           shipping: data.shipping,
+          orderUrl,
           locale,
         });
         break;

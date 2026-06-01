@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
+import OrderCtaButton from './_components/order-cta-button';
 import { formatAmount, formatDate, t, type EmailLocale } from './_components/i18n';
 
 export interface VirtualAccountIssuedEmailProps {
@@ -16,6 +17,7 @@ export interface VirtualAccountIssuedEmailProps {
     accountNumber?: string;
     dueDate?: string;
   };
+  orderUrl?: string;
   locale?: EmailLocale;
 }
 
@@ -26,6 +28,7 @@ export default function VirtualAccountIssuedEmail({
   artistName,
   amount,
   virtualAccount,
+  orderUrl,
   locale = 'ko',
 }: VirtualAccountIssuedEmailProps) {
   const rows = [
@@ -63,6 +66,7 @@ export default function VirtualAccountIssuedEmail({
     >
       <Text style={bodyText}>{body}</Text>
       <OrderInfoTable rows={rows} />
+      {orderUrl && <OrderCtaButton href={orderUrl} locale={locale} />}
     </SAFEmailLayout>
   );
 }

@@ -15,6 +15,7 @@ import { getCarrierLabel, getTrackingUrl } from '@/lib/shipping';
 import {
   lookupOrders,
   lookupOrderDetail,
+  lookupOrderByToken,
   updateBuyerShipping,
   cancelBuyerOrder,
 } from '@/app/actions/order-lookup';
@@ -782,51 +783,68 @@ export default function OrderLookup() {
 
   useEffect(() => {
     let cancelled = false;
-    const supabase = createSupabaseBrowserClient();
-    // getSession은 로컬 세션을 즉시 읽으므로 게스트는 사실상 깜빡임 없이 폼으로 진입.
-    supabase.auth
-      .getSession()
-      .then(async ({ data: { session } }) => {
+    (async () => {
+      const sp = new URLSearchParams(window.location.search);
+
+      // 1순위: 이메일 본문의 서명 토큰. 토큰 검증 자체가 인증이므로 로그인·세션·재입력 없이 직행.
+      const urlToken = sp.get('token');
+      if (urlToken) {
+        const res = await lookupOrderByToken(urlToken);
         if (cancelled) return;
-        const user = session?.user;
-        if (!user) {
-          // 게스트 — 결제 직후 success가 넘긴 orderNo + sessionStorage의 이메일로 자동조회.
-          // (게스트 상세조회는 이메일 검증 필수 → 결제 시점에 저장해 둔 이메일 사용. 남의 주문번호면
-          //  이메일 불일치로 서버가 차단 → 폼으로 fallback)
-          const guestOrderNo = new URLSearchParams(window.location.search).get('orderNo');
-          const lastEmail = sessionGet<string>('saf:lastBuyerEmail');
-          if (guestOrderNo && lastEmail) {
-            const res = await lookupOrderDetail(guestOrderNo, lastEmail);
-            if (cancelled) return;
-            if (res.success) {
-              setAutoDetail(res.order);
-              setAutoEmail(lastEmail);
-              setAuthChecking(false);
-              return;
-            }
-          }
-          setAuthChecking(false); // 자동조회 대상 없음 → 조회 폼
+        if (res.success) {
+          setAutoDetail(res.order);
+          setAutoEmail(res.buyerEmail);
+          setAuthChecking(false);
           return;
         }
-        // 로그인 회원: 실제 브라우저 URL의 주문번호로 자동 조회 (마이페이지·결제완료 → 주문상세 흐름)
-        const urlOrderNo = new URLSearchParams(window.location.search).get('orderNo');
-        if (urlOrderNo) {
-          const res = await lookupOrderDetail(urlOrderNo, user.email ?? '');
+        // 토큰 무효/만료 → 아래 세션·게스트 흐름으로 fallback
+      }
+
+      // 2순위: 세션. getSession은 로컬 세션을 즉시 읽어 게스트는 사실상 깜빡임 없이 폼으로 진입.
+      const supabase = createSupabaseBrowserClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (cancelled) return;
+      const user = session?.user;
+
+      if (!user) {
+        // 게스트 — 결제 직후 success가 넘긴 orderNo + sessionStorage의 이메일로 자동조회.
+        // (남의 주문번호면 이메일 불일치로 서버가 차단 → 폼으로 fallback)
+        const guestOrderNo = sp.get('orderNo');
+        const lastEmail = sessionGet<string>('saf:lastBuyerEmail');
+        if (guestOrderNo && lastEmail) {
+          const res = await lookupOrderDetail(guestOrderNo, lastEmail);
           if (cancelled) return;
           if (res.success) {
             setAutoDetail(res.order);
-            setAutoEmail(user.email ?? '');
+            setAutoEmail(lastEmail);
             setAuthChecking(false);
             return;
           }
         }
-        // 주문번호가 없거나(헤더 메뉴 직접 진입) 조회 실패 → 마이페이지 주문 목록으로
-        router.replace('/mypage');
-      })
-      .catch(() => {
-        // 세션 확인 실패 시에도 최소한 게스트 조회 폼은 제공
-        if (!cancelled) setAuthChecking(false);
-      });
+        setAuthChecking(false); // 자동조회 대상 없음 → 조회 폼
+        return;
+      }
+
+      // 로그인 회원: 실제 브라우저 URL의 주문번호로 자동 조회 (마이페이지·결제완료 → 주문상세 흐름)
+      const urlOrderNo = sp.get('orderNo');
+      if (urlOrderNo) {
+        const res = await lookupOrderDetail(urlOrderNo, user.email ?? '');
+        if (cancelled) return;
+        if (res.success) {
+          setAutoDetail(res.order);
+          setAutoEmail(user.email ?? '');
+          setAuthChecking(false);
+          return;
+        }
+      }
+      // 주문번호가 없거나(헤더 메뉴 직접 진입) 조회 실패 → 마이페이지 주문 목록으로
+      router.replace('/mypage');
+    })().catch(() => {
+      // 세션 확인 실패 시에도 최소한 게스트 조회 폼은 제공
+      if (!cancelled) setAuthChecking(false);
+    });
     return () => {
       cancelled = true;
     };
