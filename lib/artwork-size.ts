@@ -28,7 +28,8 @@ export interface SizeInfo {
 
 // 표준 호수표(F형 기준) 긴 변(cm). cm→호 환산은 긴 변 기준 최근접 매칭.
 // 호수는 긴 변으로 결정되며 F·P·M형은 긴 변이 동일하므로, 긴 변으로 매칭하면 형(型)에
-// 무관하게 정확하다(면적은 F>P>M로 달라 부정확). 정사각(S형)은 estimateHo 비율 가드로 제외.
+// 무관하게 정확하다(면적은 F>P>M로 달라 부정확). 정사각(S형)도 한 변=같은 호수 F형 긴 변이라
+// 긴 변 매칭이 곧 S 규격표(estimateHo 주석 참고).
 const HO_TABLE: ReadonlyArray<{ ho: number; longEdge: number }> = [
   { ho: 0, longEdge: 18.0 },
   { ho: 1, longEdge: 22.7 },
@@ -63,12 +64,13 @@ const HO_TABLE: ReadonlyArray<{ ho: number; longEdge: number }> = [
 // 정사각이 정확히 S호수로 환산됨(예: 45.5×45.5 → S8 = 8호, 53×53 → S10 = 10호).
 const HO_RATIO_MAX = 2.2;
 
-// 구간 경계(면적 cm²) — 호수 사이 중간값으로 라벨("~10호"/"10–30호"/"30–100호"/"100호~")과 정합.
-// small/medium = 10호(2412)~12호(3030) 중간, medium/large = 30호(6608)~40호(8030) 중간,
-// large/xlarge = 100호(21135)~120호(25265) 중간. 백필 SQL과 동일 유지. spec §4.4.
-const BUCKET_SMALL_MAX = 2721; // ~10호
-const BUCKET_MEDIUM_MAX = 7319; // 10–30호
-const BUCKET_LARGE_MAX = 23200; // 30–100호
+// 구간 경계(호수) — estimateHo 결과(긴 변 기준)로 분류해 cm·호수·구간 라벨이 삼자 정합한다.
+// 라벨("~10호"/"10–30호"/"30–100호"/"100호~")이 곧 분류 기준. 과거 면적 기준은 정사각(면적↑)·
+// 좁은 직사각(면적↓)에서 호수와 한 칸 어긋나(상세 한 줄 "약 10호 · 중형" 모순) → 호수로 통일.
+// 백필 SQL은 긴 변 cm 중간점(인접 호수 긴 변 평균: 56.8/95.45/178.05)으로 동일 결과. spec §4.4.
+const BUCKET_SMALL_MAX_HO = 10; // ~10호
+const BUCKET_MEDIUM_MAX_HO = 30; // 10–30호
+const BUCKET_LARGE_MAX_HO = 100; // 30–100호
 
 const SIZE_RE = /^(\d+(?:\.\d+)?)\s*[x×X]\s*(\d+(?:\.\d+)?)(?:\s*[x×X]\s*(\d+(?:\.\d+)?))?\s*cm$/;
 
@@ -108,10 +110,13 @@ export function estimateHo(
 
 export function classifyBucket(d: Dimensions): SizeBucket {
   if (d.depth != null) return 'object';
-  const a = area(d);
-  if (a <= BUCKET_SMALL_MAX) return 'small';
-  if (a <= BUCKET_MEDIUM_MAX) return 'medium';
-  if (a <= BUCKET_LARGE_MAX) return 'large';
+  // 호수(긴 변) 기준 — describeSize의 ho 표기와 동일 척도라 항상 정합.
+  // 극단 비율(confident=false)이라도 매칭된 호수값으로 분류(호수 표기만 생략될 뿐 크기는 유효).
+  const est = estimateHo(d);
+  const ho = est ? est.ho : 0;
+  if (ho <= BUCKET_SMALL_MAX_HO) return 'small';
+  if (ho <= BUCKET_MEDIUM_MAX_HO) return 'medium';
+  if (ho <= BUCKET_LARGE_MAX_HO) return 'large';
   return 'xlarge';
 }
 

@@ -61,15 +61,19 @@ describe('estimateHo', () => {
   });
 });
 
-describe('classifyBucket', () => {
+describe('classifyBucket (호수=긴 변 기준)', () => {
   it.each([
-    [{ width: 22.7, height: 15.8, depth: null }, 'small'], // 359
-    [{ width: 53, height: 45.5, depth: null }, 'small'], // 2411.5 (10호)
-    [{ width: 72.7, height: 60.6, depth: null }, 'medium'], // 4405.6 (20호)
-    [{ width: 90.9, height: 72.7, depth: null }, 'medium'], // 6608 (30호) — 라벨 정합
-    [{ width: 100, height: 80.3, depth: null }, 'large'], // 8030 (40호)
-    [{ width: 200, height: 150, depth: null }, 'xlarge'], // 30000 > 23200
+    [{ width: 22.7, height: 15.8, depth: null }, 'small'], // 1호
+    [{ width: 53, height: 45.5, depth: null }, 'small'], // 10호 (F형)
+    [{ width: 72.7, height: 60.6, depth: null }, 'medium'], // 20호
+    [{ width: 90.9, height: 72.7, depth: null }, 'medium'], // 30호 — 경계, 중형 유지
+    [{ width: 100, height: 80.3, depth: null }, 'large'], // 40호
+    [{ width: 200, height: 150, depth: null }, 'xlarge'], // 긴변 200 → 120호 > 100호
     [{ width: 60, height: 60, depth: 130 }, 'object'], // 3D
+    // 척도 통일 회귀: 면적 기준이면 어긋났던 케이스가 이제 호수와 정합
+    [{ width: 53, height: 53, depth: null }, 'small'], // 정사각 10호 (구 면적 2809 → medium 이었음)
+    [{ width: 60, height: 45, depth: null }, 'medium'], // 긴변 60 → 12호 (구 면적 2700 → small 이었음)
+    [{ width: 100, height: 70, depth: null }, 'large'], // 긴변 100 → 40호 (구 면적 7000 → medium 이었음)
   ] as const)('%o → %s', (d, expected) => {
     expect(classifyBucket(d)).toBe(expected);
   });
@@ -84,11 +88,11 @@ describe('describeSize', () => {
       is3d: false,
     });
   });
-  it('size text 폴백', () => {
+  it('size text 폴백 — 긴 변 60 → 12호 → 중형 (호수·구간 정합)', () => {
     expect(describeSize({ size: '60x45cm' })).toEqual({
       cm: '60×45cm',
-      ho: expect.any(Number),
-      bucket: 'small',
+      ho: 12,
+      bucket: 'medium',
       is3d: false,
     });
   });
