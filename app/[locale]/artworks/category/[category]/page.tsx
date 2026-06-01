@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // 매핑 없는 slug(`회화`/`판화` 등)는 한국어 slug 그대로, 영문은 CATEGORY_EN_MAP fallback.
   const displayCategory = getCategoryDisplayName(category, locale);
 
-  const title = t('title', { category: displayCategory });
+  const title = t('title', { category: displayCategory, count });
   const description = t('metaDescription', {
     category: displayCategory,
     count,
@@ -273,7 +273,7 @@ async function renderCategoryPage({ params }: Props) {
     '@type': 'CollectionPage',
     '@id': `${pageUrl}#webpage`,
     url: pageUrl,
-    name: t('title', { category: displayCategory }),
+    name: t('title', { category: displayCategory, count: categoryArtworks.length }),
     description: heroDescription,
     isPartOf: { '@id': `${SITE_URL}#website` },
     // 카테고리 명 Thing + 매체 hub + commerce hub CreativeWork — schema entity cluster.
@@ -376,7 +376,7 @@ async function renderCategoryPage({ params }: Props) {
 
       <div className={`min-h-screen ${SAWTOOTH_TOP_SAFE_PADDING}`}>
         <PageHero
-          title={t('title', { category: displayCategory })}
+          title={t('title', { category: displayCategory, count: categoryArtworks.length })}
           description={heroDescription}
           descriptionId="category-hero-description"
           breadcrumbItems={breadcrumbItems}
