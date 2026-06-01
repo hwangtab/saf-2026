@@ -623,6 +623,65 @@ export type Database = {
         };
         Relationships: [];
       };
+      exhibition_sale_details: {
+        Row: {
+          artist_share: number;
+          artwork_price: number;
+          created_at: string;
+          delivery_status: string | null;
+          exhibitor_name: string | null;
+          paid_status: string | null;
+          purchase_channel: string | null;
+          purchase_date: string | null;
+          raw_payload: Json;
+          release_status: string | null;
+          sale_id: string;
+          shipping_address: string | null;
+          shipping_required: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          artist_share?: number;
+          artwork_price?: number;
+          created_at?: string;
+          delivery_status?: string | null;
+          exhibitor_name?: string | null;
+          paid_status?: string | null;
+          purchase_channel?: string | null;
+          purchase_date?: string | null;
+          raw_payload?: Json;
+          release_status?: string | null;
+          sale_id: string;
+          shipping_address?: string | null;
+          shipping_required?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          artist_share?: number;
+          artwork_price?: number;
+          created_at?: string;
+          delivery_status?: string | null;
+          exhibitor_name?: string | null;
+          paid_status?: string | null;
+          purchase_channel?: string | null;
+          purchase_date?: string | null;
+          raw_payload?: Json;
+          release_status?: string | null;
+          sale_id?: string;
+          shipping_address?: string | null;
+          shipping_required?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'exhibition_sale_details_sale_id_fkey';
+            columns: ['sale_id'];
+            isOneToOne: true;
+            referencedRelation: 'artwork_sales';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       exhibitor_applications: {
         Row: {
           bio: string;

@@ -1,10 +1,12 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { UserList } from './user-list';
+import { CustomerList } from './customer-list';
 import type { Profile } from '@/types/admin';
 import { UserRole, UserStatus } from '@/types/database.types';
 import { hasComposedTrailingConsonantQuery, hasHangulJamo } from '@/lib/search-utils';
 import { sanitizeIlikeQuery } from '@/lib/utils/query';
+import { getCustomerRecords } from '@/app/actions/admin-customers';
 import {
   AdminPageDescription,
   AdminPageHeader,
@@ -32,6 +34,23 @@ export default async function UsersPage({ searchParams }: Props) {
       : undefined;
   const isReviewQueueMode = params.status === 'pending';
   const isCustomerMode = params.role === 'user' && !isReviewQueueMode;
+
+  if (isCustomerMode) {
+    const customers = await getCustomerRecords();
+
+    return (
+      <div className="space-y-6">
+        <AdminPageHeader>
+          <AdminPageTitle>고객 관리</AdminPageTitle>
+          <AdminPageDescription>
+            회원가입 고객과 씨앗페2026 전시 기간 구매 고객을 함께 관리합니다.
+          </AdminPageDescription>
+        </AdminPageHeader>
+
+        <CustomerList customers={customers} />
+      </div>
+    );
+  }
 
   // 기본 쿼리 빌더
   let query = supabase

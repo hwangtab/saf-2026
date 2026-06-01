@@ -35,6 +35,8 @@
     "sales:dedupe-legacy-csv": "node scripts/deduplicate-legacy-csv-sales.js --apply --verbose",
     "sales:rebuild-source:dry": "node scripts/rebuild-sales-source-from-csv.js --verbose",
     "sales:rebuild-source": "node scripts/rebuild-sales-source-from-csv.js --apply --verbose",
+    "sales:import-exhibition:dry": "node scripts/import-exhibition-customers.js --verbose",
+    "sales:import-exhibition": "node scripts/import-exhibition-customers.js --apply --import-id=saf2026-exhibition-sales-202601 --verbose",
     "trash:purge:expired:dry": "node scripts/purge-expired-trash.js --dry-run",
     "trash:purge:expired": "node scripts/purge-expired-trash.js",
     "generate-changelog": "node scripts/generate-changelog.js",
