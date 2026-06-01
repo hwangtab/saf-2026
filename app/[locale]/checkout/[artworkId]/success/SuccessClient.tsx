@@ -401,7 +401,12 @@ export default function SuccessClient() {
             <LinkButton href="/artworks" variant="primary" size="sm" className="px-6 py-3">
               {t('browseMore')}
             </LinkButton>
-            <LinkButton href="/orders" variant="white" size="sm" className="px-6 py-3">
+            <LinkButton
+              href={orderId ? `/orders?orderNo=${encodeURIComponent(orderId)}` : '/orders'}
+              variant="white"
+              size="sm"
+              className="px-6 py-3"
+            >
               {tOrder('viewOrders')}
             </LinkButton>
           </div>

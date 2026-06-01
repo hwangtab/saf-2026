@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import { Link, useRouter } from '@/i18n/navigation';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
+import { sessionGet } from '@/lib/storage';
 import SafeImage from '@/components/common/SafeImage';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -789,7 +790,22 @@ export default function OrderLookup() {
         if (cancelled) return;
         const user = session?.user;
         if (!user) {
-          setAuthChecking(false); // 게스트 → 조회 폼
+          // 게스트 — 결제 직후 success가 넘긴 orderNo + sessionStorage의 이메일로 자동조회.
+          // (게스트 상세조회는 이메일 검증 필수 → 결제 시점에 저장해 둔 이메일 사용. 남의 주문번호면
+          //  이메일 불일치로 서버가 차단 → 폼으로 fallback)
+          const guestOrderNo = new URLSearchParams(window.location.search).get('orderNo');
+          const lastEmail = sessionGet<string>('saf:lastBuyerEmail');
+          if (guestOrderNo && lastEmail) {
+            const res = await lookupOrderDetail(guestOrderNo, lastEmail);
+            if (cancelled) return;
+            if (res.success) {
+              setAutoDetail(res.order);
+              setAutoEmail(lastEmail);
+              setAuthChecking(false);
+              return;
+            }
+          }
+          setAuthChecking(false); // 자동조회 대상 없음 → 조회 폼
           return;
         }
         // 로그인 회원: 실제 브라우저 URL의 주문번호로 자동 조회 (마이페이지·결제완료 → 주문상세 흐름)

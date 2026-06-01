@@ -16,6 +16,7 @@ import {
   initiatePayment,
   createBankTransferOrder,
 } from '@/app/actions/checkout';
+import { sessionSet } from '@/lib/storage';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
@@ -157,6 +158,10 @@ export default function OverseasCheckoutClient({
       shippingPostalCode,
       shippingMemo,
     } = handle.getValues();
+
+    // 결제 후 주문조회(게스트)에서 이메일 재입력 없이 자동조회하도록 sessionStorage에 보관.
+    // orderNo는 success가 URL로 넘기고, 상세 조회 권한은 이 이메일로 서버 검증(URL 노출 없음).
+    sessionSet('saf:lastBuyerEmail', buyerEmail);
 
     setSubmitting(true);
     let createdOrderNo: string | null = null;
