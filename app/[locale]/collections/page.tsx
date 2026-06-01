@@ -8,6 +8,7 @@ import { OG_IMAGE } from '@/lib/constants';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
+import { resolveEnRobots } from '@/lib/en-indexable';
 import { resolveLocale } from '@/lib/server-locale';
 import { getSpaceCollections, getCollectionArtworks } from '@/lib/space-collections';
 
@@ -30,7 +31,14 @@ export async function generateMetadata({
     OG_IMAGE.url,
     locale
   );
-  return { ...base, alternates: createLocaleAlternates('/collections', locale, true) };
+  // 영문 컬렉션은 noindex + ko canonical — 고유 영문 콘텐츠가 큐레이션 카피로 한정돼
+  // EN_INDEXABLE(native-level 정보 페이지) 기준에 못 미침. 영문 SEO는 핵심 페이지에 집중.
+  const robots = resolveEnRobots(locale, false);
+  return {
+    ...base,
+    alternates: createLocaleAlternates('/collections', locale, true),
+    ...(robots && { robots }),
+  };
 }
 
 export default async function CollectionsLandingPage({

@@ -12,6 +12,7 @@ import { OG_IMAGE, SITE_URL } from '@/lib/constants';
 import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-utils';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
+import { resolveEnRobots } from '@/lib/en-indexable';
 import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import {
@@ -59,8 +60,14 @@ export async function generateMetadata({
     imageUrl,
     locale
   );
-  // koOnly: 영문 컬렉션은 ko canonical로 통합 — sitemap(ko-only)과 정합, 중복 hreflang 방지.
-  return { ...base, alternates: createLocaleAlternates(`/collections/${slug}`, locale, true) };
+  // 영문 컬렉션은 noindex + ko canonical — 고유 영문 콘텐츠가 큐레이션 카피로 한정.
+  // sitemap(ko-only)·중복 hreflang 방지와 정합. 영문 SEO는 핵심 페이지에 집중.
+  const robots = resolveEnRobots(locale, false);
+  return {
+    ...base,
+    alternates: createLocaleAlternates(`/collections/${slug}`, locale, true),
+    ...(robots && { robots }),
+  };
 }
 
 export default async function CollectionDetailPage({
