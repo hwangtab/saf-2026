@@ -7,6 +7,15 @@ type ArtworkArtistRow = {
   name_en: string | null;
 };
 
+type AdminTagRow = {
+  name: string | null;
+  archived_at: string | null;
+};
+
+type ArtworkAdminTagRow = {
+  admin_tags: AdminTagRow | AdminTagRow[] | null;
+};
+
 type ArtworkRow = {
   id: string;
   artist_id: string | null;
@@ -27,6 +36,7 @@ type ArtworkRow = {
   created_at: string | null;
   updated_at: string | null;
   artists: ArtworkArtistRow | ArtworkArtistRow[] | null;
+  artwork_admin_tags: ArtworkAdminTagRow[] | null;
 };
 
 function normalizeArtist(artist: ArtworkArtistRow | ArtworkArtistRow[] | null): ArtworkArtistRow {
@@ -37,6 +47,11 @@ function normalizeArtist(artist: ArtworkArtistRow | ArtworkArtistRow[] | null): 
     return artist[0] || { name_ko: null, name_en: null };
   }
   return artist;
+}
+
+function normalizeAdminTag(tag: AdminTagRow | AdminTagRow[] | null): AdminTagRow | null {
+  if (!tag) return null;
+  return Array.isArray(tag) ? (tag[0] ?? null) : tag;
 }
 
 function getKstDateToken() {
@@ -80,7 +95,7 @@ export async function GET(request: Request) {
   const { data: artworks, error: artworksError } = await supabase
     .from('artworks')
     .select(
-      'id, artist_id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, created_at, updated_at, artists(name_ko, name_en)'
+      'id, artist_id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, created_at, updated_at, artists(name_ko, name_en), artwork_admin_tags(admin_tags(name, archived_at))'
     )
     .order('created_at', { ascending: false });
 
@@ -111,6 +126,7 @@ export async function GET(request: Request) {
     '전체 이미지 URL 목록',
     '이미지 개수',
     '구매 링크',
+    '관리자 내부 태그',
     '등록일시',
     '수정일시',
   ];
@@ -120,6 +136,12 @@ export async function GET(request: Request) {
     const imageUrls = Array.isArray(artwork.images) ? artwork.images : [];
     const firstImageUrl = imageUrls[0] || '';
     const imageList = imageUrls.join(' | ');
+    const adminTagList = (artwork.artwork_admin_tags || [])
+      .map((row) => normalizeAdminTag(row.admin_tags))
+      .filter((tag): tag is AdminTagRow => Boolean(tag))
+      .map((tag) => (tag.archived_at ? `${tag.name || ''} (보관)` : tag.name || ''))
+      .filter(Boolean)
+      .join(' | ');
 
     return [
       artwork.id,
@@ -142,6 +164,7 @@ export async function GET(request: Request) {
       imageList,
       imageUrls.length,
       artwork.shop_url || '',
+      adminTagList,
       artwork.created_at || '',
       artwork.updated_at || '',
     ];

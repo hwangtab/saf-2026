@@ -5,7 +5,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { Archive, ChevronUp, ChevronDown, ChevronsUpDown, Plus, Tags } from 'lucide-react';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import {
@@ -14,6 +14,12 @@ import {
   batchToggleHidden,
   batchDeleteArtworks,
   updateArtworkCategory,
+  createAdminTag,
+  updateAdminTag,
+  archiveAdminTag,
+  restoreAdminTag,
+  addAdminTagToArtworks,
+  removeAdminTagFromArtworks,
 } from '@/app/actions/admin-artworks';
 import { ARTWORK_CATEGORIES } from '@/types';
 import {
@@ -36,7 +42,9 @@ import {
   normalizeQuery,
   normalizeSortFilter,
   normalizeStatusFilter,
+  normalizeTagFilter,
   normalizeVisibilityFilter,
+  type AdminArtworkTag,
   type ArtworkItem,
   type InitialArtworkFilters,
   type SortDirection,
@@ -50,11 +58,15 @@ const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'),
 
 export function AdminArtworkList({
   artworks,
+  adminTags,
+  archivedAdminTags,
   isTruncated = false,
   maxRows = 0,
   initialFilters,
 }: {
   artworks: ArtworkItem[];
+  adminTags: AdminArtworkTag[];
+  archivedAdminTags: AdminArtworkTag[];
   isTruncated?: boolean;
   maxRows?: number;
   initialFilters?: InitialArtworkFilters;
@@ -66,12 +78,21 @@ export function AdminArtworkList({
   const artworksRef = useRef(artworks);
   artworksRef.current = artworks;
   const [optimisticArtworks, setOptimisticArtworks] = useState(artworks);
+  const [tagOptions, setTagOptions] = useState(adminTags);
+  const [archivedTagOptions, setArchivedTagOptions] = useState(archivedAdminTags);
 
   useEffect(() => {
     setOptimisticArtworks(artworks);
   }, [artworks]);
+  useEffect(() => {
+    setTagOptions(adminTags);
+  }, [adminTags]);
+  useEffect(() => {
+    setArchivedTagOptions(archivedAdminTags);
+  }, [archivedAdminTags]);
   const initialStatusFilter = normalizeStatusFilter(initialFilters?.status);
   const initialVisibilityFilter = normalizeVisibilityFilter(initialFilters?.visibility);
+  const initialTagFilter = normalizeTagFilter(initialFilters?.tag);
   const initialQuery = normalizeQuery(initialFilters?.q);
   const initialSortFilter = normalizeSortFilter(initialFilters?.sort);
   const initialSortState = getSortStateFromFilter(initialSortFilter);
@@ -82,6 +103,7 @@ export function AdminArtworkList({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(initialStatusFilter);
   const [visibilityFilter, setVisibilityFilter] =
     useState<VisibilityFilter>(initialVisibilityFilter);
+  const [tagFilter, setTagFilter] = useState(initialTagFilter);
   const [sortFilter, setSortFilter] = useState<SortFilter>(initialSortFilter);
   const [sortKey, setSortKey] = useState<SortKey>(initialSortState.key);
   const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortState.direction);
@@ -98,23 +120,38 @@ export function AdminArtworkList({
   const [showBatchDeleteConfirm, setShowBatchDeleteConfirm] = useState(false);
   const [batchStatusConfirm, setBatchStatusConfirm] = useState<string | null>(null);
   const [batchHiddenConfirm, setBatchHiddenConfirm] = useState<boolean | null>(null);
+  const [newTagName, setNewTagName] = useState('');
+  const [newTagColor, setNewTagColor] = useState('#6b7280');
+  const [creatingTag, setCreatingTag] = useState(false);
+  const [archiveTagConfirm, setArchiveTagConfirm] = useState<AdminArtworkTag | null>(null);
+  const [editingTagId, setEditingTagId] = useState('');
+  const [editingTagName, setEditingTagName] = useState('');
+  const [editingTagColor, setEditingTagColor] = useState('#6b7280');
 
   useEffect(() => {
     setQuery(initialQuery);
     setStatusFilter(initialStatusFilter);
     setVisibilityFilter(initialVisibilityFilter);
+    setTagFilter(initialTagFilter);
     setSortFilter(initialSortFilter);
     const nextSortState = getSortStateFromFilter(initialSortFilter);
     setSortKey(nextSortState.key);
     setSortDirection(nextSortState.direction);
     setSelectedIds(new Set());
-  }, [initialQuery, initialStatusFilter, initialVisibilityFilter, initialSortFilter]);
+  }, [
+    initialQuery,
+    initialStatusFilter,
+    initialVisibilityFilter,
+    initialTagFilter,
+    initialSortFilter,
+  ]);
 
   const updateFilterParams = useCallback(
     (updates: {
       q?: string;
       status?: StatusFilter;
       visibility?: VisibilityFilter;
+      tag?: string;
       sort?: SortFilter;
     }) => {
       if (typeof window === 'undefined') return;
@@ -144,6 +181,15 @@ export function AdminArtworkList({
           params.set('visibility', visibility);
         } else {
           params.delete('visibility');
+        }
+      }
+
+      if ('tag' in updates) {
+        const tag = updates.tag?.trim();
+        if (tag) {
+          params.set('tag', tag);
+        } else {
+          params.delete('tag');
         }
       }
 
@@ -184,14 +230,16 @@ export function AdminArtworkList({
       if (statusFilter !== 'all' && artwork.status !== statusFilter) return false;
       if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
       if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
+      if (tagFilter && !artwork.admin_tags.some((tag) => tag.id === tagFilter)) return false;
       if (!query.trim()) return true;
       return matchesAnySearch(query, [
         artwork.title,
         artwork.artists?.name_ko,
         artwork.admin_product_name,
+        ...artwork.admin_tags.map((tag) => tag.name),
       ]);
     });
-  }, [optimisticArtworks, query, statusFilter, visibilityFilter]);
+  }, [optimisticArtworks, query, statusFilter, tagFilter, visibilityFilter]);
 
   const sortedArtworks = useMemo(() => {
     const sorted = [...filtered];
@@ -409,6 +457,146 @@ export function AdminArtworkList({
     }
   };
 
+  const handleCreateTag = async () => {
+    if (!newTagName.trim()) return;
+    setCreatingTag(true);
+    try {
+      const tag = await createAdminTag({ name: newTagName, color: newTagColor });
+      setTagOptions((prev) => [...prev, tag].sort((a, b) => a.name.localeCompare(b.name, 'ko')));
+      setNewTagName('');
+      setNewTagColor('#6b7280');
+      toast.success(t('adminTagCreated'));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('adminTagCreateError'));
+    } finally {
+      setCreatingTag(false);
+    }
+  };
+
+  const handleArchiveTag = async (tagId: string) => {
+    const tag = tagOptions.find((item) => item.id === tagId);
+    if (!tag) return;
+    setProcessingId(`tag:${tagId}`);
+    try {
+      await archiveAdminTag(tagId);
+      setTagOptions((prev) => prev.filter((item) => item.id !== tagId));
+      setArchivedTagOptions((prev) =>
+        [...prev, { ...tag, archived_at: new Date().toISOString() }].sort((a, b) =>
+          a.name.localeCompare(b.name, 'ko')
+        )
+      );
+      if (tagFilter === tagId) {
+        setTagFilter('');
+        updateFilterParams({ tag: undefined });
+      }
+      setArchiveTagConfirm(null);
+      toast.success(t('adminTagArchived'));
+    } catch {
+      toast.error(t('adminTagArchiveError'));
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleRestoreTag = async (tagId: string) => {
+    const tag = archivedTagOptions.find((item) => item.id === tagId);
+    if (!tag) return;
+    setProcessingId(`restore-tag:${tagId}`);
+    try {
+      const restored = await restoreAdminTag(tagId);
+      setArchivedTagOptions((prev) => prev.filter((item) => item.id !== tagId));
+      setTagOptions((prev) =>
+        [...prev, restored].sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+      );
+      toast.success(t('adminTagRestored'));
+    } catch {
+      toast.error(t('adminTagRestoreError'));
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleStartEditTag = (tagId: string) => {
+    const tag = tagOptions.find((item) => item.id === tagId);
+    setEditingTagId(tagId);
+    setEditingTagName(tag?.name || '');
+    setEditingTagColor(tag?.color || '#6b7280');
+  };
+
+  const handleUpdateTag = async () => {
+    if (!editingTagId || !editingTagName.trim()) return;
+    setProcessingId(`edit-tag:${editingTagId}`);
+    try {
+      const updated = await updateAdminTag(editingTagId, {
+        name: editingTagName,
+        color: editingTagColor,
+      });
+      setTagOptions((prev) =>
+        prev
+          .map((tag) => (tag.id === updated.id ? updated : tag))
+          .sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+      );
+      setOptimisticArtworks((prev) =>
+        prev.map((artwork) => ({
+          ...artwork,
+          admin_tags: artwork.admin_tags.map((tag) => (tag.id === updated.id ? updated : tag)),
+        }))
+      );
+      setEditingTagId('');
+      setEditingTagName('');
+      setEditingTagColor('#6b7280');
+      toast.success(t('adminTagUpdated'));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('adminTagUpdateError'));
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleBatchAddTag = async (tagId: string) => {
+    if (!tagId || selectedInFiltered.length === 0) return;
+    const tag = tagOptions.find((item) => item.id === tagId);
+    if (!tag) return;
+    setBatchProcessing(true);
+    try {
+      await addAdminTagToArtworks(selectedInFiltered, tagId);
+      const targets = new Set(selectedInFiltered);
+      setOptimisticArtworks((prev) =>
+        prev.map((item) =>
+          targets.has(item.id) && !item.admin_tags.some((existing) => existing.id === tagId)
+            ? { ...item, admin_tags: [...item.admin_tags, tag] }
+            : item
+        )
+      );
+      toast.success(t('batchTagAdded'));
+    } catch {
+      toast.error(t('batchTagError'));
+    } finally {
+      setBatchProcessing(false);
+    }
+  };
+
+  const handleBatchRemoveTag = async (tagId: string) => {
+    if (!tagId || selectedInFiltered.length === 0) return;
+    setBatchProcessing(true);
+    try {
+      await removeAdminTagFromArtworks(selectedInFiltered, tagId);
+      const targets = new Set(selectedInFiltered);
+      setOptimisticArtworks((prev) =>
+        prev.map((item) =>
+          targets.has(item.id)
+            ? { ...item, admin_tags: item.admin_tags.filter((tag) => tag.id !== tagId) }
+            : item
+        )
+      );
+      toast.success(t('batchTagRemoved'));
+    } catch {
+      toast.error(t('batchTagError'));
+    } finally {
+      setBatchProcessing(false);
+    }
+  };
+
   const handleImageClick = (images: string[], title: string) => {
     const normalizedImages = (images || []).map((image) =>
       resolveArtworkImageUrlForPreset(image, 'detail')
@@ -567,7 +755,7 @@ export function AdminArtworkList({
                 {t('searchDescription', { count: filtered.length })}
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-3 sm:flex sm:justify-end">
+            <div className="grid grid-cols-2 gap-3 sm:flex sm:justify-end">
               <AdminSelect
                 value={statusFilter}
                 onChange={(e) => {
@@ -598,6 +786,23 @@ export function AdminArtworkList({
                 <option value="hidden">{t('hiddenLabel')}</option>
               </AdminSelect>
               <AdminSelect
+                value={tagFilter}
+                onChange={(e) => {
+                  const nextTag = normalizeTagFilter(e.target.value);
+                  setTagFilter(nextTag);
+                  updateFilterParams({ tag: nextTag || undefined });
+                  setSelectedIds(new Set());
+                }}
+                wrapperClassName="min-w-[140px]"
+              >
+                <option value="">{t('allAdminTags')}</option>
+                {tagOptions.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </option>
+                ))}
+              </AdminSelect>
+              <AdminSelect
                 value={sortFilter}
                 onChange={(e) => {
                   const nextSort = normalizeSortFilter(e.target.value);
@@ -617,6 +822,139 @@ export function AdminArtworkList({
             </div>
           </div>
         </AdminCardHeader>
+
+        <div className="border-b border-[var(--admin-border-soft)] bg-white px-6 py-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-semibold text-charcoal-deep">
+                <Tags className="h-4 w-4 text-primary-a11y" aria-hidden="true" />
+                {t('adminTags')}
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {tagOptions.length === 0 ? (
+                  <span className="text-xs text-charcoal-soft">{t('noAdminTags')}</span>
+                ) : (
+                  tagOptions.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-charcoal/10 bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-deep"
+                    >
+                      <span
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: tag.color }}
+                        aria-hidden="true"
+                      />
+                      {tag.name}
+                      <button
+                        type="button"
+                        onClick={() => setArchiveTagConfirm(tag)}
+                        disabled={processingId === `tag:${tag.id}`}
+                        className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
+                        aria-label={t('archiveAdminTag', { tag: tag.name })}
+                      >
+                        <Archive className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_44px_auto]">
+              <AdminInput
+                value={newTagName}
+                onChange={(e) => setNewTagName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleCreateTag();
+                  }
+                }}
+                placeholder={t('adminTagPlaceholder')}
+                className="h-10"
+              />
+              <input
+                type="color"
+                value={newTagColor}
+                onChange={(e) => setNewTagColor(e.target.value)}
+                className="h-10 w-full rounded-md border border-[var(--admin-border)] bg-white p-1"
+                aria-label={t('adminTagColor')}
+              />
+              <Button
+                variant="white"
+                onClick={handleCreateTag}
+                disabled={creatingTag || !newTagName.trim()}
+                className="h-10 gap-1.5"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                {t('createAdminTag')}
+              </Button>
+            </div>
+          </div>
+          <div className="mt-3 grid gap-2 border-t border-[var(--admin-border-soft)] pt-3 lg:grid-cols-[minmax(180px,220px)_minmax(180px,1fr)_44px_auto]">
+            <AdminSelect
+              value={editingTagId}
+              onChange={(e) => handleStartEditTag(e.target.value)}
+              disabled={tagOptions.length === 0}
+            >
+              <option value="">{t('selectTagToEdit')}</option>
+              {tagOptions.map((tag) => (
+                <option key={tag.id} value={tag.id}>
+                  {tag.name}
+                </option>
+              ))}
+            </AdminSelect>
+            <AdminInput
+              value={editingTagName}
+              onChange={(e) => setEditingTagName(e.target.value)}
+              placeholder={t('editAdminTagName')}
+              disabled={!editingTagId}
+              className="h-10"
+            />
+            <input
+              type="color"
+              value={editingTagColor}
+              onChange={(e) => setEditingTagColor(e.target.value)}
+              disabled={!editingTagId}
+              className="h-10 w-full rounded-md border border-[var(--admin-border)] bg-white p-1 disabled:opacity-50"
+              aria-label={t('adminTagColor')}
+            />
+            <Button
+              variant="white"
+              onClick={handleUpdateTag}
+              disabled={
+                !editingTagId ||
+                !editingTagName.trim() ||
+                processingId === `edit-tag:${editingTagId}`
+              }
+              className="h-10"
+            >
+              {t('updateAdminTag')}
+            </Button>
+          </div>
+          {archivedTagOptions.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--admin-border-soft)] pt-3">
+              <span className="mr-1 text-xs font-medium text-charcoal-soft">
+                {t('archivedAdminTags')}
+              </span>
+              {archivedTagOptions.map((tag) => (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => handleRestoreTag(tag.id)}
+                  disabled={processingId === `restore-tag:${tag.id}`}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-muted ring-1 ring-charcoal/10 hover:bg-primary-surface hover:text-primary-strong disabled:opacity-50"
+                >
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: tag.color }}
+                    aria-hidden="true"
+                  />
+                  {t('restoreAdminTag', { tag: tag.name })}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Batch Actions Toolbar (Visible only when selected) */}
         {selectedInFiltered.length > 0 && (
@@ -638,6 +976,36 @@ export function AdminArtworkList({
                 <option value="available">{t('available')}</option>
                 <option value="reserved">{t('reserved')}</option>
                 <option value="sold">{t('sold')}</option>
+              </AdminSelect>
+              <AdminSelect
+                onChange={(e) => {
+                  if (e.target.value) handleBatchAddTag(e.target.value);
+                  e.target.value = '';
+                }}
+                disabled={batchProcessing || tagOptions.length === 0}
+                className="border-primary-soft"
+              >
+                <option value="">{t('batchAddTag')}</option>
+                {tagOptions.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </option>
+                ))}
+              </AdminSelect>
+              <AdminSelect
+                onChange={(e) => {
+                  if (e.target.value) handleBatchRemoveTag(e.target.value);
+                  e.target.value = '';
+                }}
+                disabled={batchProcessing || tagOptions.length === 0}
+                className="border-primary-soft"
+              >
+                <option value="">{t('batchRemoveTag')}</option>
+                {tagOptions.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </option>
+                ))}
               </AdminSelect>
               <Button
                 variant="white"
@@ -729,6 +1097,12 @@ export function AdminArtworkList({
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  {t('adminTags')}
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   <button
                     type="button"
                     onClick={() => handleSort('created_at')}
@@ -761,7 +1135,7 @@ export function AdminArtworkList({
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-0">
+                  <td colSpan={8} className="px-6 py-0">
                     <AdminEmptyState title={t('noSearchResult')} />
                   </td>
                 </tr>
@@ -884,6 +1258,27 @@ export function AdminArtworkList({
                         ))}
                       </AdminSelect>
                     </td>
+                    <td className="px-6 py-4">
+                      <div className="flex max-w-56 flex-wrap gap-1.5">
+                        {artwork.admin_tags.length === 0 ? (
+                          <span className="text-xs text-gray-400">{t('noAdminTags')}</span>
+                        ) : (
+                          artwork.admin_tags.map((tag) => (
+                            <span
+                              key={tag.id}
+                              className="inline-flex items-center gap-1 rounded-full bg-charcoal/5 px-2 py-0.5 text-xs text-charcoal-deep ring-1 ring-charcoal/10"
+                            >
+                              <span
+                                className="h-2 w-2 rounded-full"
+                                style={{ backgroundColor: tag.color }}
+                                aria-hidden="true"
+                              />
+                              {tag.name}
+                            </span>
+                          ))
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-500">
                         {formatDate(artwork.created_at, locale)}
@@ -997,6 +1392,19 @@ export function AdminArtworkList({
         confirmText={batchHiddenConfirm ? t('batchHideConfirm') : t('batchShowConfirm')}
         variant="info"
         isLoading={batchProcessing}
+      />
+
+      <AdminConfirmModal
+        isOpen={!!archiveTagConfirm}
+        onClose={() => setArchiveTagConfirm(null)}
+        onConfirm={() => {
+          if (archiveTagConfirm) handleArchiveTag(archiveTagConfirm.id);
+        }}
+        title={t('archiveAdminTagTitle')}
+        description={t('archiveAdminTagDescription', { tag: archiveTagConfirm?.name || '-' })}
+        confirmText={t('archiveAdminTagConfirm')}
+        variant="warning"
+        isLoading={!!processingId?.startsWith('tag:')}
       />
     </div>
   );
