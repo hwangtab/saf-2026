@@ -101,11 +101,18 @@ export function AdminBadge({
   description,
   ...props
 }: AdminBadgeProps) {
-  /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 툴팁 트리거 배지: 키보드 포커스를 위해 tabIndex 필요 */
+  const tooltipProps = description
+    ? {
+        role: 'note',
+        tabIndex: 0,
+      }
+    : {};
+
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset relative group cursor-help focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
+        'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset relative group focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
+        description && 'cursor-help',
         tone === 'default' && 'bg-charcoal/10 text-charcoal-muted ring-charcoal/15',
         tone === 'info' && 'bg-primary-surface text-primary-strong ring-primary-a11y/20',
         tone === 'success' && 'bg-success/10 text-success-a11y ring-success-a11y/20',
@@ -113,8 +120,7 @@ export function AdminBadge({
         tone === 'danger' && 'bg-danger/10 text-danger-a11y ring-danger-a11y/20',
         className
       )}
-      role="note"
-      tabIndex={0}
+      {...tooltipProps}
       {...props}
     >
       {props.children}
@@ -126,7 +132,6 @@ export function AdminBadge({
       )}
     </span>
   );
-  /* eslint-enable jsx-a11y/no-noninteractive-tabindex */
 }
 
 type AdminEmptyStateProps = HTMLAttributes<HTMLDivElement> & {

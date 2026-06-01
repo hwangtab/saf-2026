@@ -72,10 +72,23 @@ export type CustomerRecord = {
   sales: CustomerSaleSummary[];
 };
 
+export type CustomerContactOverrideInput = {
+  customer_key: string;
+  phone: string | null;
+  email: string | null;
+};
+
 type BuildCustomerRecordsInput = {
   profiles: CustomerProfileInput[];
   sales: CustomerSaleInput[];
+  contactOverrides?: CustomerContactOverrideInput[];
 };
+
+export function customerTypeLabel(type: CustomerType) {
+  if (type === 'member_buyer') return '회원+구매';
+  if (type === 'member_only') return '회원';
+  return '비회원';
+}
 
 function normalizeName(value: string | null | undefined): string {
   return (value || '').trim().normalize('NFC');
@@ -160,8 +173,12 @@ function finalizeRecord(record: CustomerRecord): CustomerRecord {
 export function buildCustomerRecords({
   profiles,
   sales,
+  contactOverrides = [],
 }: BuildCustomerRecordsInput): CustomerRecord[] {
   const byName = new Map<string, CustomerRecord>();
+  const contactOverrideByKey = new Map(
+    contactOverrides.map((override) => [override.customer_key, override])
+  );
 
   for (const profile of profiles) {
     const name = normalizeName(profile.name) || profile.email?.trim() || '이름 없음';
@@ -204,6 +221,14 @@ export function buildCustomerRecords({
     });
 
     byName.set(buyerName, record);
+  }
+
+  for (const record of byName.values()) {
+    const override = contactOverrideByKey.get(record.id);
+    if (override) {
+      record.phone = override.phone;
+      record.email = override.email;
+    }
   }
 
   return Array.from(byName.values())

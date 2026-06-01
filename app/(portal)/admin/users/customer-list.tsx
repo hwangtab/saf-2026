@@ -2,13 +2,14 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { Download } from 'lucide-react';
+import { updateCustomerContact } from '@/app/actions/admin-customers';
 import {
   AdminBadge,
   AdminCard,
   AdminCardHeader,
   AdminEmptyState,
 } from '@/app/admin/_components/admin-ui';
-import type { CustomerRecord } from '@/lib/admin/customer-records';
+import { customerTypeLabel, type CustomerRecord } from '@/lib/admin/customer-records';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { csvSafeCell } from '@/lib/utils/csv';
 
@@ -20,6 +21,13 @@ type SortKey =
   | 'totalRevenue'
   | 'lastPurchaseDate';
 type SortDirection = 'asc' | 'desc';
+type ContactField = 'phone' | 'email';
+
+type EditingState = {
+  customerId: string;
+  field: ContactField;
+  value: string;
+} | null;
 
 const krwFormatter = new Intl.NumberFormat('ko-KR', {
   style: 'currency',
@@ -37,27 +45,38 @@ function formatChannels(channels: string[]) {
   return channels.length > 0 ? channels.join(' · ') : '-';
 }
 
-function customerTypeLabel(type: CustomerRecord['customerType']) {
-  if (type === 'member_buyer') return '회원+구매';
-  if (type === 'member_only') return '회원';
-  return '비회원 구매';
-}
-
 function customerTypeTone(type: CustomerRecord['customerType']) {
   if (type === 'member_buyer') return 'success';
   if (type === 'member_only') return 'info';
   return 'warning';
 }
 
+function buildSearchText(customer: CustomerRecord, phone: string | null, email: string | null) {
+  return [
+    customer.customerName,
+    email,
+    phone,
+    ...customer.channels,
+    ...customer.sales.flatMap((sale) => [sale.artworkTitle, sale.artistName]),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+}
+
 export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
+  const [records, setRecords] = useState(customers);
   const [query, setQuery] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('totalRevenue');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [editing, setEditing] = useState<EditingState>(null);
+  const [savingField, setSavingField] = useState<string | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const trimmed = query.trim();
-    if (!trimmed) return customers;
-    return customers.filter((customer) =>
+    if (!trimmed) return records;
+    return records.filter((customer) =>
       matchesAnySearch(trimmed, [
         customer.customerName,
         customer.email,
@@ -65,7 +84,7 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
         customer.searchText,
       ])
     );
-  }, [customers, query]);
+  }, [records, query]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
@@ -86,11 +105,11 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
 
   const totals = useMemo(
     () => ({
-      members: customers.filter((customer) => customer.customerType !== 'buyer_only').length,
-      buyers: customers.filter((customer) => customer.purchaseCount > 0).length,
-      revenue: customers.reduce((sum, customer) => sum + customer.totalRevenue, 0),
+      members: records.filter((customer) => customer.customerType !== 'buyer_only').length,
+      buyers: records.filter((customer) => customer.purchaseCount > 0).length,
+      revenue: records.reduce((sum, customer) => sum + customer.totalRevenue, 0),
     }),
-    [customers]
+    [records]
   );
 
   function toggleSort(nextKey: SortKey) {
@@ -139,13 +158,106 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
     URL.revokeObjectURL(url);
   }, [sorted]);
 
+  const saveContact = useCallback(
+    async (customer: CustomerRecord, field: ContactField, value: string) => {
+      const savingKey = `${customer.id}:${field}`;
+      setSavingField(savingKey);
+      setEditError(null);
+
+      try {
+        const nextPhone = field === 'phone' ? value : customer.phone || '';
+        const nextEmail = field === 'email' ? value : customer.email || '';
+        const result = await updateCustomerContact({
+          customerKey: customer.id,
+          customerName: customer.customerName,
+          phone: nextPhone,
+          email: nextEmail,
+        });
+
+        setRecords((current) =>
+          current.map((item) => {
+            if (item.id !== customer.id) return item;
+            const phone = result.phone;
+            const email = result.email;
+            return {
+              ...item,
+              phone,
+              email,
+              searchText: buildSearchText(item, phone, email),
+            };
+          })
+        );
+        setEditing(null);
+      } catch (error) {
+        setEditError(error instanceof Error ? error.message : '저장 중 오류가 발생했습니다.');
+      } finally {
+        setSavingField(null);
+      }
+    },
+    []
+  );
+
+  function renderContactCell(customer: CustomerRecord, field: ContactField) {
+    const value = field === 'phone' ? customer.phone : customer.email;
+    const isEditing = editing?.customerId === customer.id && editing.field === field;
+    const savingKey = `${customer.id}:${field}`;
+    const isSaving = savingField === savingKey;
+
+    if (isEditing) {
+      return (
+        <div className="flex min-w-[220px] items-center gap-2">
+          <input
+            type={field === 'email' ? 'email' : 'tel'}
+            value={editing.value}
+            onChange={(event) =>
+              setEditing({ customerId: customer.id, field, value: event.target.value })
+            }
+            className="h-8 w-36 rounded-md border border-[var(--admin-border)] bg-white px-2 text-sm text-charcoal-deep shadow-sm focus-visible:border-primary-a11y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+          />
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => saveContact(customer, field, editing.value)}
+            className="h-8 rounded-md bg-charcoal-deep px-2 text-xs font-medium text-white transition hover:bg-charcoal-muted disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            저장
+          </button>
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => {
+              setEditing(null);
+              setEditError(null);
+            }}
+            className="h-8 rounded-md border border-[var(--admin-border)] bg-white px-2 text-xs font-medium text-charcoal-muted transition hover:bg-charcoal/5 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            취소
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          setEditing({ customerId: customer.id, field, value: value || '' });
+          setEditError(null);
+        }}
+        className="rounded-sm text-left text-charcoal-muted underline-offset-2 hover:text-charcoal-deep hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+      >
+        {value || <span className="text-primary-a11y">추가</span>}
+      </button>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-3">
         <AdminCard className="p-4">
           <div className="text-xs font-medium text-charcoal-soft">전체 고객</div>
           <div className="mt-1 text-2xl font-semibold text-charcoal-deep">
-            {numberFormatter.format(customers.length)}명
+            {numberFormatter.format(records.length)}명
           </div>
         </AdminCard>
         <AdminCard className="p-4">
@@ -172,7 +284,7 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
         />
         <span className="text-sm text-charcoal-soft">
           {numberFormatter.format(filtered.length)}명
-          {query.trim() ? ` / ${numberFormatter.format(customers.length)}명` : ''}
+          {query.trim() ? ` / ${numberFormatter.format(records.length)}명` : ''}
         </span>
         <button
           type="button"
@@ -191,6 +303,7 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
             <p className="mt-1 text-xs text-charcoal-soft">
               회원 고객 {numberFormatter.format(totals.members)}명 · 비회원 구매자 포함
             </p>
+            {editError && <p className="mt-2 text-xs font-medium text-danger-a11y">{editError}</p>}
           </div>
         </AdminCardHeader>
 
@@ -256,8 +369,12 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
                         {customerTypeLabel(customer.customerType)}
                       </AdminBadge>
                     </td>
-                    <td className="px-4 py-3 text-charcoal-muted">{customer.phone || '-'}</td>
-                    <td className="px-4 py-3 text-charcoal-muted">{customer.email || '-'}</td>
+                    <td className="px-4 py-3 text-charcoal-muted">
+                      {renderContactCell(customer, 'phone')}
+                    </td>
+                    <td className="px-4 py-3 text-charcoal-muted">
+                      {renderContactCell(customer, 'email')}
+                    </td>
                     <td className="px-4 py-3 text-right text-charcoal-muted">
                       {numberFormatter.format(customer.purchaseCount)}
                     </td>

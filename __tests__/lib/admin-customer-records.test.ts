@@ -1,4 +1,4 @@
-import { buildCustomerRecords } from '@/lib/admin/customer-records';
+import { buildCustomerRecords, customerTypeLabel } from '@/lib/admin/customer-records';
 
 describe('buildCustomerRecords', () => {
   it('merges member profiles and purchase customers by exact trimmed name', () => {
@@ -87,5 +87,58 @@ describe('buildCustomerRecords', () => {
       channels: ['온라인'],
       deliverySummary: '확인 중',
     });
+  });
+
+  it('uses customer contact overrides before profile or sale fallback contacts', () => {
+    const records = buildCustomerRecords({
+      profiles: [
+        {
+          id: 'profile-1',
+          name: '이승미',
+          email: 'member@example.com',
+          status: 'active',
+          created_at: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+      sales: [
+        {
+          id: 'sale-1',
+          artwork_id: 'artwork-1',
+          buyer_name: '이승미',
+          buyer_phone: '010-1234-5678',
+          sale_price: 1000000,
+          quantity: 1,
+          sold_at: '2026-01-13T03:00:00.000Z',
+          source: 'manual',
+          source_detail: 'manual_csv',
+          artworks: {
+            title: '봄의소리',
+            artists: { name_ko: '오윤' },
+          },
+          exhibition_sale_details: null,
+        },
+      ],
+      contactOverrides: [
+        {
+          customer_key: 'profile:profile-1',
+          phone: '010-9999-0000',
+          email: 'override@example.com',
+        },
+      ],
+    });
+
+    expect(records[0]).toMatchObject({
+      id: 'profile:profile-1',
+      phone: '010-9999-0000',
+      email: 'override@example.com',
+    });
+    expect(records[0].searchText).toContain('override@example.com');
+    expect(records[0].searchText).toContain('010-9999-0000');
+  });
+
+  it('labels purchase-only customers as non-members', () => {
+    expect(customerTypeLabel('buyer_only')).toBe('비회원');
+    expect(customerTypeLabel('member_only')).toBe('회원');
+    expect(customerTypeLabel('member_buyer')).toBe('회원+구매');
   });
 });

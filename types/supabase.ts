@@ -481,6 +481,44 @@ export type Database = {
           },
         ];
       };
+      customer_contact_overrides: {
+        Row: {
+          created_at: string;
+          customer_key: string;
+          customer_name: string;
+          email: string | null;
+          phone: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          customer_key: string;
+          customer_name: string;
+          email?: string | null;
+          phone?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          customer_key?: string;
+          customer_name?: string;
+          email?: string | null;
+          phone?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'customer_contact_overrides_updated_by_fkey';
+            columns: ['updated_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       email_broadcast_recipients: {
         Row: {
           broadcast_id: string;
