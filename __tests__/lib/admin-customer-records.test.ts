@@ -1,4 +1,8 @@
-import { buildCustomerRecords, customerTypeLabel } from '@/lib/admin/customer-records';
+import {
+  buildCustomerRecords,
+  buildMemberUserManagementHref,
+  customerTypeLabel,
+} from '@/lib/admin/customer-records';
 
 describe('buildCustomerRecords', () => {
   it('merges member profiles and purchase customers by exact trimmed name', () => {
@@ -140,5 +144,31 @@ describe('buildCustomerRecords', () => {
     expect(customerTypeLabel('buyer_only')).toBe('비회원');
     expect(customerTypeLabel('member_only')).toBe('회원');
     expect(customerTypeLabel('member_buyer')).toBe('회원+구매');
+  });
+
+  it('builds user management href only for member customers', () => {
+    expect(
+      buildMemberUserManagementHref({
+        profileId: 'profile-1',
+        customerName: '이승미',
+        email: 'member@example.com',
+      })
+    ).toBe('/admin/users?q=member%40example.com');
+
+    expect(
+      buildMemberUserManagementHref({
+        profileId: 'profile-2',
+        customerName: '김회원',
+        email: null,
+      })
+    ).toBe('/admin/users?q=%EA%B9%80%ED%9A%8C%EC%9B%90');
+
+    expect(
+      buildMemberUserManagementHref({
+        profileId: null,
+        customerName: '박비회원',
+        email: 'buyer@example.com',
+      })
+    ).toBeNull();
   });
 });

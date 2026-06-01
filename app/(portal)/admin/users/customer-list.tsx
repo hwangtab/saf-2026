@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
-import { Download } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { Download, X } from 'lucide-react';
 import { updateCustomerContact } from '@/app/actions/admin-customers';
 import {
   AdminBadge,
@@ -9,7 +10,11 @@ import {
   AdminCardHeader,
   AdminEmptyState,
 } from '@/app/admin/_components/admin-ui';
-import { customerTypeLabel, type CustomerRecord } from '@/lib/admin/customer-records';
+import {
+  buildMemberUserManagementHref,
+  customerTypeLabel,
+  type CustomerRecord,
+} from '@/lib/admin/customer-records';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { csvSafeCell } from '@/lib/utils/csv';
 
@@ -45,6 +50,13 @@ function formatChannels(channels: string[]) {
   return channels.length > 0 ? channels.join(' · ') : '-';
 }
 
+function statusLabel(status: string | null) {
+  if (status === 'active') return '활성';
+  if (status === 'pending') return '대기';
+  if (status === 'suspended') return '정지';
+  return status || '-';
+}
+
 function customerTypeTone(type: CustomerRecord['customerType']) {
   if (type === 'member_buyer') return 'success';
   if (type === 'member_only') return 'info';
@@ -72,6 +84,7 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
   const [editing, setEditing] = useState<EditingState>(null);
   const [savingField, setSavingField] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+  const [selectedMemberCustomer, setSelectedMemberCustomer] = useState<CustomerRecord | null>(null);
 
   const filtered = useMemo(() => {
     const trimmed = query.trim();
@@ -251,6 +264,29 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
     );
   }
 
+  function renderCustomerType(customer: CustomerRecord) {
+    const label = customerTypeLabel(customer.customerType);
+    if (!customer.profileId) {
+      return <AdminBadge tone={customerTypeTone(customer.customerType)}>{label}</AdminBadge>;
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={() => setSelectedMemberCustomer(customer)}
+        className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+        aria-label={`${customer.customerName} 회원 데이터 보기`}
+      >
+        <AdminBadge
+          tone={customerTypeTone(customer.customerType)}
+          className="cursor-pointer transition hover:ring-primary-a11y/40"
+        >
+          {label}
+        </AdminBadge>
+      </button>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-3">
@@ -364,11 +400,7 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
                     <td className="px-4 py-3 font-semibold text-charcoal-deep">
                       {customer.customerName}
                     </td>
-                    <td className="px-4 py-3">
-                      <AdminBadge tone={customerTypeTone(customer.customerType)}>
-                        {customerTypeLabel(customer.customerType)}
-                      </AdminBadge>
-                    </td>
+                    <td className="px-4 py-3">{renderCustomerType(customer)}</td>
                     <td className="px-4 py-3 text-charcoal-muted">
                       {renderContactCell(customer, 'phone')}
                     </td>
@@ -400,6 +432,174 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
           </div>
         )}
       </AdminCard>
+
+      {selectedMemberCustomer && (
+        <MemberCustomerDrawer
+          customer={selectedMemberCustomer}
+          onClose={() => setSelectedMemberCustomer(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function MemberCustomerDrawer({
+  customer,
+  onClose,
+}: {
+  customer: CustomerRecord;
+  onClose: () => void;
+}) {
+  const userManagementHref = buildMemberUserManagementHref(customer);
+  const recentSales = customer.sales
+    .slice()
+    .sort((a, b) => b.soldAt.localeCompare(a.soldAt))
+    .slice(0, 8);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-charcoal-deep/35">
+      <button
+        type="button"
+        className="absolute inset-0 h-full w-full cursor-default bg-transparent"
+        aria-label="회원 데이터 패널 닫기"
+        onClick={onClose}
+      />
+      <dialog
+        open
+        className="relative z-10 m-0 ml-auto flex h-full w-full max-w-xl flex-col overflow-hidden border-0 bg-white p-0 shadow-2xl"
+        aria-labelledby="member-customer-drawer-title"
+      >
+        <div className="flex items-start justify-between gap-4 border-b border-[var(--admin-border-soft)] px-5 py-4">
+          <div>
+            <p className="text-xs font-medium text-charcoal-soft">회원 데이터</p>
+            <h2
+              id="member-customer-drawer-title"
+              className="mt-1 text-xl font-semibold text-charcoal-deep"
+            >
+              {customer.customerName}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-charcoal-muted transition hover:bg-charcoal/5 hover:text-charcoal-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+            aria-label="회원 데이터 패널 닫기"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
+          <section>
+            <h3 className="text-sm font-semibold text-charcoal-deep">기본 정보</h3>
+            <dl className="mt-3 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+              <InfoItem label="유형" value={customerTypeLabel(customer.customerType)} />
+              <InfoItem label="상태" value={statusLabel(customer.status)} />
+              <InfoItem label="이메일" value={customer.email || '-'} />
+              <InfoItem label="연락처" value={customer.phone || '-'} />
+              <InfoItem label="가입일" value={formatDate(customer.joinedAt)} />
+              <InfoItem label="Profile ID" value={customer.profileId || '-'} mono />
+            </dl>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-semibold text-charcoal-deep">구매 요약</h3>
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <SummaryBox
+                label="구매 수량"
+                value={`${numberFormatter.format(customer.purchaseCount)}건`}
+              />
+              <SummaryBox
+                label="작품 수"
+                value={`${numberFormatter.format(customer.artworkCount)}점`}
+              />
+              <SummaryBox label="총 구매액" value={krwFormatter.format(customer.totalRevenue)} />
+              <SummaryBox label="최근 구매일" value={formatDate(customer.lastPurchaseDate)} />
+            </div>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-semibold text-charcoal-deep">구매 작품</h3>
+            {recentSales.length === 0 ? (
+              <p className="mt-3 rounded-md bg-charcoal/5 px-3 py-4 text-sm text-charcoal-soft">
+                구매 이력이 없습니다.
+              </p>
+            ) : (
+              <div className="mt-3 divide-y divide-[var(--admin-border-soft)] rounded-md border border-[var(--admin-border-soft)]">
+                {recentSales.map((sale) => (
+                  <div key={sale.saleId} className="px-3 py-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium text-charcoal-deep">
+                          {sale.artworkTitle || '작품명 없음'}
+                        </p>
+                        <p className="mt-1 text-xs text-charcoal-soft">
+                          {[sale.artistName, sale.channel, formatDate(sale.soldAt)]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </p>
+                      </div>
+                      <p className="shrink-0 text-sm font-semibold text-charcoal-deep">
+                        {krwFormatter.format(sale.salePrice * sale.quantity)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+
+        <div className="border-t border-[var(--admin-border-soft)] px-5 py-4">
+          {userManagementHref && (
+            <Link
+              href={userManagementHref}
+              className="inline-flex h-10 w-full items-center justify-center rounded-md bg-charcoal-deep px-4 text-sm font-medium text-white transition hover:bg-charcoal-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+            >
+              사용자 관리에서 보기
+            </Link>
+          )}
+        </div>
+      </dialog>
+    </div>
+  );
+}
+
+function InfoItem({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="rounded-md bg-charcoal/5 px-3 py-2">
+      <dt className="text-xs font-medium text-charcoal-soft">{label}</dt>
+      <dd
+        className={`mt-1 break-all text-sm text-charcoal-deep ${mono ? 'font-mono text-xs' : ''}`}
+      >
+        {value}
+      </dd>
+    </div>
+  );
+}
+
+function SummaryBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border border-[var(--admin-border-soft)] px-3 py-3">
+      <div className="text-xs font-medium text-charcoal-soft">{label}</div>
+      <div className="mt-1 text-sm font-semibold text-charcoal-deep">{value}</div>
     </div>
   );
 }

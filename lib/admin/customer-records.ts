@@ -90,6 +90,17 @@ export function customerTypeLabel(type: CustomerType) {
   return '비회원';
 }
 
+export function buildMemberUserManagementHref(customer: {
+  profileId: string | null;
+  customerName: string;
+  email: string | null;
+}) {
+  if (!customer.profileId) return null;
+  const query = customer.email?.trim() || customer.customerName.trim();
+  if (!query) return '/admin/users';
+  return `/admin/users?q=${encodeURIComponent(query)}`;
+}
+
 function normalizeName(value: string | null | undefined): string {
   return (value || '').trim().normalize('NFC');
 }
