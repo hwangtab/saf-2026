@@ -132,6 +132,103 @@ export type Database = {
           },
         ];
       };
+      admin_tags: {
+        Row: {
+          archived_at: string | null;
+          color: string;
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          id: string;
+          name: string;
+          slug: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          archived_at?: string | null;
+          color?: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          id?: string;
+          name: string;
+          slug: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          archived_at?: string | null;
+          color?: string;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          id?: string;
+          name?: string;
+          slug?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'admin_tags_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'admin_tags_updated_by_fkey';
+            columns: ['updated_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      artwork_admin_tags: {
+        Row: {
+          artwork_id: string;
+          created_at: string;
+          created_by: string | null;
+          tag_id: string;
+        };
+        Insert: {
+          artwork_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          tag_id: string;
+        };
+        Update: {
+          artwork_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          tag_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'artwork_admin_tags_artwork_id_fkey';
+            columns: ['artwork_id'];
+            isOneToOne: false;
+            referencedRelation: 'artworks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'artwork_admin_tags_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'artwork_admin_tags_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'admin_tags';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       artist_applications: {
         Row: {
           artist_name: string;

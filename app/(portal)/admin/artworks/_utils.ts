@@ -7,7 +7,17 @@ export type ArtworkItem = {
   images: string[] | null;
   created_at: string | null;
   category: string | null;
+  admin_tags: AdminArtworkTag[];
   artists: { name_ko: string | null } | null;
+};
+
+export type AdminArtworkTag = {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+  description: string | null;
+  archived_at: string | null;
 };
 
 export type StatusFilter = 'all' | 'available' | 'reserved' | 'sold';
@@ -19,6 +29,7 @@ export type SortFilter = 'default' | 'recent' | 'oldest';
 export type InitialArtworkFilters = {
   status?: string;
   visibility?: string;
+  tag?: string;
   q?: string;
   sort?: string;
 };
@@ -34,6 +45,10 @@ export function normalizeVisibilityFilter(value: string | undefined): Visibility
 }
 
 export function normalizeQuery(value: string | undefined): string {
+  return (value || '').trim();
+}
+
+export function normalizeTagFilter(value: string | undefined): string {
   return (value || '').trim();
 }
 

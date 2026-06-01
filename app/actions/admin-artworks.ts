@@ -11,6 +11,7 @@ import {
   buildArtworkSizeFields,
 } from '@/lib/utils/form-helpers';
 import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
+import { normalizeAdminTagInput, type AdminTagInput } from '@/lib/admin-artwork-tags';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 type EditionType = Database['public']['Enums']['edition_type'];
@@ -1007,4 +1008,370 @@ export async function batchDeleteArtworks(ids: string[]) {
   );
 
   return { success: true, count: ids.length };
+}
+
+function normalizeTagInput(input: AdminTagInput) {
+  return normalizeAdminTagInput(input);
+}
+
+export async function getAdminTags(includeArchived = false) {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  let query = supabase
+    .from('admin_tags')
+    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
+    .order('name', { ascending: true });
+
+  if (!includeArchived) {
+    query = query.is('archived_at', null);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getArtworkAdminTags(artworkId: string) {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data, error } = await supabase
+    .from('artwork_admin_tags')
+    .select('admin_tags(id, name, slug, color, description, archived_at, created_at, updated_at)')
+    .eq('artwork_id', artworkId);
+
+  if (error) throw error;
+
+  return (data || [])
+    .map((row) => (Array.isArray(row.admin_tags) ? row.admin_tags[0] : row.admin_tags))
+    .filter((tag): tag is NonNullable<typeof tag> => Boolean(tag))
+    .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+}
+
+export async function createAdminTag(input: AdminTagInput) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+  const tag = normalizeTagInput(input);
+
+  const { data: archivedMatch, error: archivedError } = await supabase
+    .from('admin_tags')
+    .select('id, name, archived_at')
+    .eq('slug', tag.slug)
+    .not('archived_at', 'is', null)
+    .maybeSingle();
+
+  if (archivedError) throw archivedError;
+  if (archivedMatch) {
+    throw new Error('보관 처리된 동일한 이름의 태그가 있습니다. 기존 태그를 수정해 주세요.');
+  }
+
+  const { data, error } = await supabase
+    .from('admin_tags')
+    .insert({
+      ...tag,
+      created_by: admin.id,
+      updated_by: admin.id,
+    })
+    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
+    .single();
+
+  if (error?.code === '23505') {
+    throw new Error('이미 같은 이름의 태그가 있습니다.');
+  }
+  if (error) throw error;
+
+  revalidatePath('/admin/artworks');
+
+  await logAdminAction('admin_tag_created', 'admin_tag', data.id, { name: data.name }, admin.id, {
+    summary: `관리자 태그 생성: ${data.name}`,
+    afterSnapshot: data,
+    reversible: false,
+  });
+
+  return data;
+}
+
+export async function updateAdminTag(id: string, input: AdminTagInput) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+  const tag = normalizeTagInput(input);
+
+  const { data: before } = await supabase
+    .from('admin_tags')
+    .select('id, name, slug, color, description, archived_at, updated_at')
+    .eq('id', id)
+    .single();
+
+  if (before?.archived_at) {
+    throw new Error('보관 처리된 태그는 수정할 수 없습니다.');
+  }
+
+  const { data, error } = await supabase
+    .from('admin_tags')
+    .update({
+      ...tag,
+      updated_by: admin.id,
+    })
+    .eq('id', id)
+    .is('archived_at', null)
+    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
+    .single();
+
+  if (error?.code === '23505') {
+    throw new Error('이미 같은 이름의 태그가 있습니다.');
+  }
+  if (error) throw error;
+
+  revalidatePath('/admin/artworks');
+
+  await logAdminAction('admin_tag_updated', 'admin_tag', id, { name: data.name }, admin.id, {
+    summary: `관리자 태그 수정: ${data.name}`,
+    beforeSnapshot: before || null,
+    afterSnapshot: data,
+    reversible: false,
+  });
+
+  return data;
+}
+
+export async function archiveAdminTag(id: string) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: before } = await supabase
+    .from('admin_tags')
+    .select('id, name, slug, color, description, archived_at, updated_at')
+    .eq('id', id)
+    .single();
+
+  const { data, error } = await supabase
+    .from('admin_tags')
+    .update({
+      archived_at: new Date().toISOString(),
+      updated_by: admin.id,
+    })
+    .eq('id', id)
+    .is('archived_at', null)
+    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
+    .single();
+
+  if (error) throw error;
+
+  revalidatePath('/admin/artworks');
+
+  await logAdminAction('admin_tag_archived', 'admin_tag', id, { name: data.name }, admin.id, {
+    summary: `관리자 태그 보관: ${data.name}`,
+    beforeSnapshot: before || null,
+    afterSnapshot: data,
+    reversible: false,
+  });
+
+  return data;
+}
+
+export async function restoreAdminTag(id: string) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: before } = await supabase
+    .from('admin_tags')
+    .select('id, name, slug, color, description, archived_at, updated_at')
+    .eq('id', id)
+    .single();
+
+  const { data, error } = await supabase
+    .from('admin_tags')
+    .update({
+      archived_at: null,
+      updated_by: admin.id,
+    })
+    .eq('id', id)
+    .not('archived_at', 'is', null)
+    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
+    .single();
+
+  if (error) throw error;
+
+  revalidatePath('/admin/artworks');
+
+  await logAdminAction('admin_tag_restored', 'admin_tag', id, { name: data.name }, admin.id, {
+    summary: `관리자 태그 복원: ${data.name}`,
+    beforeSnapshot: before || null,
+    afterSnapshot: data,
+    reversible: false,
+  });
+
+  return data;
+}
+
+export async function createAndAttachAdminTagToArtwork(artworkId: string, input: AdminTagInput) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+  const tag = normalizeTagInput(input);
+
+  const { data: archivedMatch, error: archivedError } = await supabase
+    .from('admin_tags')
+    .select('id, name, archived_at')
+    .eq('slug', tag.slug)
+    .not('archived_at', 'is', null)
+    .maybeSingle();
+
+  if (archivedError) throw archivedError;
+  if (archivedMatch) {
+    throw new Error('보관 처리된 동일한 이름의 태그가 있습니다. 기존 태그를 복원해 주세요.');
+  }
+
+  const { data: createdTag, error: createError } = await supabase
+    .from('admin_tags')
+    .insert({
+      ...tag,
+      created_by: admin.id,
+      updated_by: admin.id,
+    })
+    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
+    .single();
+
+  if (createError?.code === '23505') {
+    throw new Error('이미 같은 이름의 태그가 있습니다.');
+  }
+  if (createError) throw createError;
+
+  const { error: attachError } = await supabase.from('artwork_admin_tags').insert({
+    artwork_id: artworkId,
+    tag_id: createdTag.id,
+    created_by: admin.id,
+  });
+
+  if (attachError) {
+    await supabase
+      .from('admin_tags')
+      .update({
+        archived_at: new Date().toISOString(),
+        updated_by: admin.id,
+      })
+      .eq('id', createdTag.id);
+    throw attachError;
+  }
+
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${artworkId}`);
+
+  await logAdminAction(
+    'admin_tag_created_and_attached',
+    'artwork',
+    artworkId,
+    { tag_id: createdTag.id, tag_name: createdTag.name },
+    admin.id,
+    {
+      summary: `관리자 태그 생성 및 작품 추가: ${createdTag.name}`,
+      afterSnapshot: { artwork_id: artworkId, tag: createdTag },
+      reversible: false,
+    }
+  );
+
+  return createdTag;
+}
+
+export async function addAdminTagToArtworks(artworkIds: string[], tagId: string) {
+  if (artworkIds.length === 0) {
+    return { success: true, count: 0 };
+  }
+  validateBatchSize(artworkIds);
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: tag, error: tagError } = await supabase
+    .from('admin_tags')
+    .select('id, name, archived_at')
+    .eq('id', tagId)
+    .single();
+
+  if (tagError) throw tagError;
+  if (tag.archived_at) {
+    throw new Error('보관 처리된 태그는 추가할 수 없습니다.');
+  }
+
+  const rows = [...new Set(artworkIds)].map((artworkId) => ({
+    artwork_id: artworkId,
+    tag_id: tagId,
+    created_by: admin.id,
+  }));
+
+  const { error } = await supabase.from('artwork_admin_tags').upsert(rows, {
+    onConflict: 'artwork_id,tag_id',
+    ignoreDuplicates: true,
+  });
+
+  if (error) throw error;
+
+  revalidatePath('/admin/artworks');
+  for (const artworkId of artworkIds) {
+    revalidatePath(`/admin/artworks/${artworkId}`);
+  }
+
+  await logAdminAction(
+    'artwork_admin_tag_added',
+    'artwork',
+    artworkIds.join(','),
+    { count: rows.length, tag_id: tagId, tag_name: tag.name },
+    admin.id,
+    {
+      summary: `작품 내부 태그 추가: ${tag.name} (${rows.length}건)`,
+      afterSnapshot: { artwork_ids: artworkIds, tag },
+      reversible: false,
+    }
+  );
+
+  return { success: true, count: rows.length };
+}
+
+export async function removeAdminTagFromArtworks(artworkIds: string[], tagId: string) {
+  if (artworkIds.length === 0) {
+    return { success: true, count: 0 };
+  }
+  validateBatchSize(artworkIds);
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: existing, error: existingError } = await supabase
+    .from('artwork_admin_tags')
+    .select('artwork_id, tag_id, admin_tags(name)')
+    .in('artwork_id', artworkIds)
+    .eq('tag_id', tagId);
+
+  if (existingError) throw existingError;
+
+  const { error } = await supabase
+    .from('artwork_admin_tags')
+    .delete()
+    .in('artwork_id', artworkIds)
+    .eq('tag_id', tagId);
+
+  if (error) throw error;
+
+  revalidatePath('/admin/artworks');
+  for (const artworkId of artworkIds) {
+    revalidatePath(`/admin/artworks/${artworkId}`);
+  }
+
+  const firstTag = Array.isArray(existing?.[0]?.admin_tags)
+    ? existing?.[0]?.admin_tags[0]
+    : existing?.[0]?.admin_tags;
+  const tagName = firstTag?.name || tagId;
+
+  await logAdminAction(
+    'artwork_admin_tag_removed',
+    'artwork',
+    artworkIds.join(','),
+    { count: existing?.length || 0, tag_id: tagId, tag_name: tagName },
+    admin.id,
+    {
+      summary: `작품 내부 태그 제거: ${tagName} (${existing?.length || 0}건)`,
+      beforeSnapshot: { items: existing || [] },
+      reversible: false,
+    }
+  );
+
+  return { success: true, count: existing?.length || 0 };
 }
