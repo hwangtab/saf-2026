@@ -14,6 +14,7 @@ import {
   buildAdminArtworkHref,
   buildMemberUserManagementHref,
   customerTypeLabel,
+  formatPurchaseQuantityLabel,
   type CustomerRecord,
   type CustomerSaleSummary,
 } from '@/lib/admin/customer-records';
@@ -142,6 +143,26 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
   function sortIndicator(key: SortKey) {
     if (sortKey !== key) return <span className="ml-1 text-gray-300">↕</span>;
     return <span className="ml-1">{sortDirection === 'asc' ? '▲' : '▼'}</span>;
+  }
+
+  function sortAriaValue(key: SortKey) {
+    if (sortKey !== key) return 'none';
+    return sortDirection === 'asc' ? 'ascending' : 'descending';
+  }
+
+  function renderSortButton(key: SortKey, label: string, align: 'left' | 'right' = 'left') {
+    return (
+      <button
+        type="button"
+        onClick={() => toggleSort(key)}
+        className={`inline-flex w-full select-none items-center gap-1 rounded-sm text-xs font-semibold uppercase text-charcoal-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25 ${
+          align === 'right' ? 'justify-end text-right' : 'justify-start text-left'
+        }`}
+      >
+        {label}
+        {sortIndicator(key)}
+      </button>
+    );
   }
 
   const exportCsv = useCallback(() => {
@@ -278,7 +299,10 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
     return (
       <button
         type="button"
-        onClick={() => setSelectedMemberCustomer(customer)}
+        onClick={() => {
+          setSelectedPurchaseCustomer(null);
+          setSelectedMemberCustomer(customer);
+        }}
         className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
         aria-label={`${customer.customerName} 회원 데이터 보기`}
       >
@@ -301,7 +325,10 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
     return (
       <button
         type="button"
-        onClick={() => setSelectedPurchaseCustomer(customer)}
+        onClick={() => {
+          setSelectedMemberCustomer(null);
+          setSelectedPurchaseCustomer(customer);
+        }}
         className="rounded-sm font-semibold text-charcoal-deep underline-offset-2 transition hover:text-primary-a11y hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
         aria-label={`${customer.customerName} 구매 내역 보기`}
       >
@@ -374,43 +401,28 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
               <thead className="bg-charcoal/5 text-xs font-semibold uppercase text-charcoal-soft">
                 <tr>
                   <th className="px-4 py-3 text-left">#</th>
-                  <th
-                    className="cursor-pointer select-none px-4 py-3 text-left"
-                    onClick={() => toggleSort('name')}
-                  >
-                    고객명{sortIndicator('name')}
+                  <th className="px-4 py-3 text-left" aria-sort={sortAriaValue('name')}>
+                    {renderSortButton('name', '고객명')}
                   </th>
-                  <th
-                    className="cursor-pointer select-none px-4 py-3 text-left"
-                    onClick={() => toggleSort('type')}
-                  >
-                    유형{sortIndicator('type')}
+                  <th className="px-4 py-3 text-left" aria-sort={sortAriaValue('type')}>
+                    {renderSortButton('type', '유형')}
                   </th>
                   <th className="px-4 py-3 text-left">연락처</th>
                   <th className="px-4 py-3 text-left">이메일</th>
-                  <th
-                    className="cursor-pointer select-none px-4 py-3 text-right"
-                    onClick={() => toggleSort('purchaseCount')}
-                  >
-                    구매 수량{sortIndicator('purchaseCount')}
+                  <th className="px-4 py-3 text-right" aria-sort={sortAriaValue('purchaseCount')}>
+                    {renderSortButton('purchaseCount', '구매 수량', 'right')}
+                  </th>
+                  <th className="px-4 py-3 text-right" aria-sort={sortAriaValue('artworkCount')}>
+                    {renderSortButton('artworkCount', '작품 수', 'right')}
+                  </th>
+                  <th className="px-4 py-3 text-right" aria-sort={sortAriaValue('totalRevenue')}>
+                    {renderSortButton('totalRevenue', '총 구매액', 'right')}
                   </th>
                   <th
-                    className="cursor-pointer select-none px-4 py-3 text-right"
-                    onClick={() => toggleSort('artworkCount')}
+                    className="px-4 py-3 text-right"
+                    aria-sort={sortAriaValue('lastPurchaseDate')}
                   >
-                    작품 수{sortIndicator('artworkCount')}
-                  </th>
-                  <th
-                    className="cursor-pointer select-none px-4 py-3 text-right"
-                    onClick={() => toggleSort('totalRevenue')}
-                  >
-                    총 구매액{sortIndicator('totalRevenue')}
-                  </th>
-                  <th
-                    className="cursor-pointer select-none px-4 py-3 text-right"
-                    onClick={() => toggleSort('lastPurchaseDate')}
-                  >
-                    최근 구매일{sortIndicator('lastPurchaseDate')}
+                    {renderSortButton('lastPurchaseDate', '최근 구매일', 'right')}
                   </th>
                   <th className="px-4 py-3 text-left">구매경로</th>
                   <th className="px-4 py-3 text-left">배송상태</th>
@@ -527,11 +539,11 @@ function CustomerPurchaseDrawer({
         <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
           <section>
             <h3 className="text-sm font-semibold text-charcoal-deep">구매 요약</h3>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-5">
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               <SummaryBox label="총 구매액" value={krwFormatter.format(customer.totalRevenue)} />
               <SummaryBox
                 label="구매 수량"
-                value={`${numberFormatter.format(customer.purchaseCount)}건`}
+                value={formatPurchaseQuantityLabel(customer.purchaseCount)}
               />
               <SummaryBox
                 label="작품 수"
@@ -632,7 +644,7 @@ function MemberCustomerDrawer({
             <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <SummaryBox
                 label="구매 수량"
-                value={`${numberFormatter.format(customer.purchaseCount)}건`}
+                value={formatPurchaseQuantityLabel(customer.purchaseCount)}
               />
               <SummaryBox
                 label="작품 수"
@@ -678,7 +690,13 @@ function sortSalesByRecent(sales: CustomerSaleSummary[]) {
   return sales.slice().sort((a, b) => b.soldAt.localeCompare(a.soldAt));
 }
 
-function PurchaseSaleItem({ sale, compact = false }: { sale: CustomerSaleSummary; compact?: boolean }) {
+function PurchaseSaleItem({
+  sale,
+  compact = false,
+}: {
+  sale: CustomerSaleSummary;
+  compact?: boolean;
+}) {
   const artworkHref = buildAdminArtworkHref(sale.artworkId);
   const title = sale.artworkTitle || '작품명 없음';
 
@@ -739,7 +757,7 @@ function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-[var(--admin-border-soft)] px-3 py-3">
       <div className="text-xs font-medium text-charcoal-soft">{label}</div>
-      <div className="mt-1 text-sm font-semibold text-charcoal-deep">{value}</div>
+      <div className="mt-1 break-words text-sm font-semibold text-charcoal-deep">{value}</div>
     </div>
   );
 }

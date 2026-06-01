@@ -107,6 +107,10 @@ export function buildAdminArtworkHref(artworkId: string | null | undefined) {
   return `/admin/artworks/${encodeURIComponent(trimmed)}`;
 }
 
+export function formatPurchaseQuantityLabel(quantity: number) {
+  return `${new Intl.NumberFormat('ko-KR').format(quantity)}점`;
+}
+
 function normalizeName(value: string | null | undefined): string {
   return (value || '').trim().normalize('NFC');
 }

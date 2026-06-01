@@ -3,6 +3,7 @@ import {
   buildCustomerRecords,
   buildMemberUserManagementHref,
   customerTypeLabel,
+  formatPurchaseQuantityLabel,
 } from '@/lib/admin/customer-records';
 
 describe('buildCustomerRecords', () => {
@@ -184,5 +185,9 @@ describe('buildCustomerRecords', () => {
   it('builds admin artwork detail hrefs from sale artwork ids', () => {
     expect(buildAdminArtworkHref('artwork-1')).toBe('/admin/artworks/artwork-1');
     expect(buildAdminArtworkHref('')).toBeNull();
+  });
+
+  it('labels purchase quantity as artwork pieces, not order counts', () => {
+    expect(formatPurchaseQuantityLabel(2)).toBe('2점');
   });
 });
