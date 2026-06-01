@@ -102,7 +102,7 @@ export function ExhibitionPurchaseAnalyticsView({
   const exportCsv = useCallback(() => {
     const lines: string[] = [];
     lines.push(
-      '구매자,연락처,구매 수량,작품 수,총 구매액,평균 구매액,최근 구매일,구매경로,배송상태,입금상태,반출상태'
+      '구매자,연락처,구매 수량,작품 수,총 구매액,평균 구매액,최근 구매일,구매경로,배송상태,결제상태,인도상태'
     );
     for (const buyer of sorted) {
       lines.push(
@@ -178,7 +178,7 @@ export function ExhibitionPurchaseAnalyticsView({
           ]}
         />
         <DistributionCard
-          title="입금 상태"
+          title="결제 상태"
           rows={analytics.paidStatuses.map((row) => ({
             label: row.label,
             value: row.count,
@@ -186,7 +186,7 @@ export function ExhibitionPurchaseAnalyticsView({
           }))}
         />
         <DistributionCard
-          title="반출 상태"
+          title="인도 상태"
           rows={analytics.releaseStatuses.map((row) => ({
             label: row.label,
             value: row.count,

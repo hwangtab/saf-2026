@@ -71,12 +71,12 @@ describe('buildExhibitionPurchaseAnalytics', () => {
       { label: '배송완료', count: 1 },
     ]);
     expect(analytics.paidStatuses).toEqual([
-      { label: '확인 중', count: 2 },
-      { label: '입금완료', count: 1 },
+      { label: '결제완료(방식 미기록)', count: 2 },
+      { label: '계좌입금', count: 1 },
     ]);
     expect(analytics.releaseStatuses).toEqual([
       { label: '확인 중', count: 2 },
-      { label: '반출완료', count: 1 },
+      { label: '직접반출', count: 1 },
     ]);
     expect(analytics.purchaseBuckets).toEqual([
       { label: '2점 이상', buyerCount: 1 },
@@ -92,8 +92,76 @@ describe('buildExhibitionPurchaseAnalytics', () => {
       lastPurchaseDate: '2026-01-25T01:00:00.000Z',
       channels: ['온라인문의', '현장'],
       deliverySummary: '확인 중 2건 · 배송완료 1건',
-      paidSummary: '확인 중 2건 · 입금완료 1건',
-      releaseSummary: '확인 중 2건 · 반출완료 1건',
+      paidSummary: '결제완료(방식 미기록) 2건 · 계좌입금 1건',
+      releaseSummary: '확인 중 2건 · 직접반출 1건',
+    });
+  });
+
+  it('normalizes messy payment and release memo values into analysis labels', () => {
+    const analytics = buildExhibitionPurchaseAnalytics([
+      {
+        id: 'sale-card',
+        artwork_id: 'artwork-card',
+        buyer_name: '정규화',
+        buyer_phone: null,
+        sale_price: 100000,
+        quantity: 1,
+        sold_at: '2026-01-24T01:00:00.000Z',
+        exhibition_sale_details: {
+          purchase_channel: '현장',
+          delivery_status: '배송완료',
+          shipping_required: '',
+          paid_status: '카드??',
+          release_status: '',
+        },
+      },
+      {
+        id: 'sale-bank',
+        artwork_id: 'artwork-bank',
+        buyer_name: '정규화',
+        buyer_phone: null,
+        sale_price: 100000,
+        quantity: 1,
+        sold_at: '2026-01-25T01:00:00.000Z',
+        exhibition_sale_details: {
+          purchase_channel: '현장',
+          delivery_status: '직접반출',
+          shipping_required: '',
+          paid_status: '1.24 017계좌입금완료',
+          release_status: '',
+        },
+      },
+      {
+        id: 'sale-mixed',
+        artwork_id: 'artwork-mixed',
+        buyer_name: '정규화',
+        buyer_phone: null,
+        sale_price: 100000,
+        quantity: 1,
+        sold_at: '2026-01-26T01:00:00.000Z',
+        exhibition_sale_details: {
+          purchase_channel: '온라인',
+          delivery_status: '',
+          shipping_required: '',
+          paid_status: '현금 100만원, 카드 20만원',
+          release_status: '',
+        },
+      },
+    ]);
+
+    expect(analytics.paidStatuses).toEqual([
+      { label: '계좌입금', count: 1 },
+      { label: '카드', count: 1 },
+      { label: '혼합 결제', count: 1 },
+    ]);
+    expect(analytics.releaseStatuses).toEqual([
+      { label: '배송/전달 완료', count: 1 },
+      { label: '직접반출', count: 1 },
+      { label: '확인 중', count: 1 },
+    ]);
+    expect(analytics.buyers[0]).toMatchObject({
+      paidSummary: '계좌입금 1건 · 카드 1건 · 혼합 결제 1건',
+      releaseSummary: '배송/전달 완료 1건 · 직접반출 1건 · 확인 중 1건',
     });
   });
 });

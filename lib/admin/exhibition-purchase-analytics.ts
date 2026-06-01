@@ -77,6 +77,10 @@ function normalizeLabel(value: string | null | undefined) {
   return trimmed || '확인 중';
 }
 
+function normalizeText(value: string | null | undefined) {
+  return value?.trim().toLowerCase() || '';
+}
+
 function normalizeName(value: string | null | undefined) {
   return value?.trim().normalize('NFC') || '';
 }
@@ -106,6 +110,46 @@ function isShippingRequired(value: string | null | undefined) {
 function isShippingCompleted(value: string | null | undefined) {
   const label = value?.trim();
   return !!label && /완료|배송완료|발송완료|수령완료/.test(label);
+}
+
+function normalizePaidStatus(detail: ResolvedDetail, sale: ExhibitionPurchaseSaleInput) {
+  const status = normalizeText(detail?.paid_status);
+  if (!status) {
+    return sale.sale_price > 0 ? '결제완료(방식 미기록)' : '확인 중';
+  }
+
+  const hasCash = status.includes('현금');
+  const hasCard = status.includes('카드');
+  if (hasCash && hasCard) return '혼합 결제';
+  if (status.includes('미입금')) return '미입금';
+  if (hasCard) return '카드';
+  if (hasCash) return '현금';
+  if (status.includes('입금')) return '계좌입금';
+  return detail?.paid_status?.trim() || '확인 중';
+}
+
+function normalizeReleaseStatus(detail: ResolvedDetail) {
+  const releaseStatus = normalizeText(detail?.release_status);
+  const deliveryStatus = normalizeText(detail?.delivery_status);
+  const combined = `${releaseStatus} ${deliveryStatus}`;
+
+  if (combined.includes('직접반출') || combined.includes('직접불출')) {
+    return '직접반출';
+  }
+  if (releaseStatus.includes('반출')) return '직접반출';
+  if (
+    deliveryStatus.includes('배송완료') ||
+    deliveryStatus.includes('배달완료') ||
+    deliveryStatus.includes('택배') ||
+    deliveryStatus.includes('직접 배송 완료') ||
+    deliveryStatus.includes('직접배송완료') ||
+    deliveryStatus.includes('작가 직접 배달 완료') ||
+    deliveryStatus.includes('작가가 직접배송완료')
+  ) {
+    return '배송/전달 완료';
+  }
+
+  return detail?.release_status?.trim() || '확인 중';
 }
 
 export function buildExhibitionPurchaseAnalytics(
@@ -150,8 +194,8 @@ export function buildExhibitionPurchaseAnalytics(
     const revenue = sale.sale_price * quantity;
     const channel = normalizeLabel(detail.purchase_channel);
     const deliveryStatus = normalizeLabel(detail.delivery_status || detail.shipping_required);
-    const paidStatus = normalizeLabel(detail.paid_status);
-    const releaseStatus = normalizeLabel(detail.release_status);
+    const paidStatus = normalizePaidStatus(detail, sale);
+    const releaseStatus = normalizeReleaseStatus(detail);
 
     totalRevenue += revenue;
     saleQuantity += quantity;
