@@ -11,9 +11,11 @@ import {
   AdminEmptyState,
 } from '@/app/admin/_components/admin-ui';
 import {
+  buildAdminArtworkHref,
   buildMemberUserManagementHref,
   customerTypeLabel,
   type CustomerRecord,
+  type CustomerSaleSummary,
 } from '@/lib/admin/customer-records';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { csvSafeCell } from '@/lib/utils/csv';
@@ -85,6 +87,9 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
   const [savingField, setSavingField] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
   const [selectedMemberCustomer, setSelectedMemberCustomer] = useState<CustomerRecord | null>(null);
+  const [selectedPurchaseCustomer, setSelectedPurchaseCustomer] = useState<CustomerRecord | null>(
+    null
+  );
 
   const filtered = useMemo(() => {
     const trimmed = query.trim();
@@ -287,6 +292,24 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
     );
   }
 
+  function renderRevenueCell(customer: CustomerRecord) {
+    const formatted = krwFormatter.format(customer.totalRevenue);
+    if (customer.totalRevenue <= 0) {
+      return <span>{formatted}</span>;
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={() => setSelectedPurchaseCustomer(customer)}
+        className="rounded-sm font-semibold text-charcoal-deep underline-offset-2 transition hover:text-primary-a11y hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+        aria-label={`${customer.customerName} 구매 내역 보기`}
+      >
+        {formatted}
+      </button>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-3">
@@ -414,7 +437,7 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
                       {numberFormatter.format(customer.artworkCount)}
                     </td>
                     <td className="px-4 py-3 text-right font-semibold text-charcoal-deep">
-                      {krwFormatter.format(customer.totalRevenue)}
+                      {renderRevenueCell(customer)}
                     </td>
                     <td className="px-4 py-3 text-right text-charcoal-muted">
                       {formatDate(customer.lastPurchaseDate)}
@@ -439,6 +462,102 @@ export function CustomerList({ customers }: { customers: CustomerRecord[] }) {
           onClose={() => setSelectedMemberCustomer(null)}
         />
       )}
+
+      {selectedPurchaseCustomer && (
+        <CustomerPurchaseDrawer
+          customer={selectedPurchaseCustomer}
+          onClose={() => setSelectedPurchaseCustomer(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function CustomerPurchaseDrawer({
+  customer,
+  onClose,
+}: {
+  customer: CustomerRecord;
+  onClose: () => void;
+}) {
+  const sortedSales = useMemo(() => sortSalesByRecent(customer.sales), [customer.sales]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-charcoal-deep/35">
+      <button
+        type="button"
+        className="absolute inset-0 h-full w-full cursor-default bg-transparent"
+        aria-label="구매 내역 패널 닫기"
+        onClick={onClose}
+      />
+      <dialog
+        open
+        className="relative z-10 m-0 ml-auto flex h-full w-full max-w-2xl flex-col overflow-hidden border-0 bg-white p-0 shadow-2xl"
+        aria-labelledby="customer-purchase-drawer-title"
+      >
+        <div className="flex items-start justify-between gap-4 border-b border-[var(--admin-border-soft)] px-5 py-4">
+          <div>
+            <p className="text-xs font-medium text-charcoal-soft">구매 내역</p>
+            <h2
+              id="customer-purchase-drawer-title"
+              className="mt-1 text-xl font-semibold text-charcoal-deep"
+            >
+              {customer.customerName} 구매 내역
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-charcoal-muted transition hover:bg-charcoal/5 hover:text-charcoal-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+            aria-label="구매 내역 패널 닫기"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
+          <section>
+            <h3 className="text-sm font-semibold text-charcoal-deep">구매 요약</h3>
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-5">
+              <SummaryBox label="총 구매액" value={krwFormatter.format(customer.totalRevenue)} />
+              <SummaryBox
+                label="구매 수량"
+                value={`${numberFormatter.format(customer.purchaseCount)}건`}
+              />
+              <SummaryBox
+                label="작품 수"
+                value={`${numberFormatter.format(customer.artworkCount)}점`}
+              />
+              <SummaryBox label="최근 구매일" value={formatDate(customer.lastPurchaseDate)} />
+              <SummaryBox label="구매경로" value={formatChannels(customer.channels)} />
+            </div>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-semibold text-charcoal-deep">구매 작품</h3>
+            {sortedSales.length === 0 ? (
+              <p className="mt-3 rounded-md bg-charcoal/5 px-3 py-4 text-sm text-charcoal-soft">
+                구매 이력이 없습니다.
+              </p>
+            ) : (
+              <div className="mt-3 divide-y divide-[var(--admin-border-soft)] rounded-md border border-[var(--admin-border-soft)]">
+                {sortedSales.map((sale) => (
+                  <PurchaseSaleItem key={sale.saleId} sale={sale} />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </dialog>
     </div>
   );
 }
@@ -451,10 +570,7 @@ function MemberCustomerDrawer({
   onClose: () => void;
 }) {
   const userManagementHref = buildMemberUserManagementHref(customer);
-  const recentSales = customer.sales
-    .slice()
-    .sort((a, b) => b.soldAt.localeCompare(a.soldAt))
-    .slice(0, 8);
+  const recentSales = sortSalesByRecent(customer.sales).slice(0, 8);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -536,23 +652,7 @@ function MemberCustomerDrawer({
             ) : (
               <div className="mt-3 divide-y divide-[var(--admin-border-soft)] rounded-md border border-[var(--admin-border-soft)]">
                 {recentSales.map((sale) => (
-                  <div key={sale.saleId} className="px-3 py-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-medium text-charcoal-deep">
-                          {sale.artworkTitle || '작품명 없음'}
-                        </p>
-                        <p className="mt-1 text-xs text-charcoal-soft">
-                          {[sale.artistName, sale.channel, formatDate(sale.soldAt)]
-                            .filter(Boolean)
-                            .join(' · ')}
-                        </p>
-                      </div>
-                      <p className="shrink-0 text-sm font-semibold text-charcoal-deep">
-                        {krwFormatter.format(sale.salePrice * sale.quantity)}
-                      </p>
-                    </div>
-                  </div>
+                  <PurchaseSaleItem key={sale.saleId} sale={sale} compact />
                 ))}
               </div>
             )}
@@ -570,6 +670,46 @@ function MemberCustomerDrawer({
           )}
         </div>
       </dialog>
+    </div>
+  );
+}
+
+function sortSalesByRecent(sales: CustomerSaleSummary[]) {
+  return sales.slice().sort((a, b) => b.soldAt.localeCompare(a.soldAt));
+}
+
+function PurchaseSaleItem({ sale, compact = false }: { sale: CustomerSaleSummary; compact?: boolean }) {
+  const artworkHref = buildAdminArtworkHref(sale.artworkId);
+  const title = sale.artworkTitle || '작품명 없음';
+
+  return (
+    <div className={compact ? 'px-3 py-3' : 'px-4 py-4'}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          {artworkHref ? (
+            <Link
+              href={artworkHref}
+              className="font-medium text-charcoal-deep underline-offset-2 hover:text-primary-a11y hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+            >
+              {title}
+            </Link>
+          ) : (
+            <p className="font-medium text-charcoal-deep">{title}</p>
+          )}
+          <p className="mt-1 text-xs text-charcoal-soft">
+            {[sale.artistName, sale.channel, formatDate(sale.soldAt)].filter(Boolean).join(' · ')}
+          </p>
+          {!compact && (
+            <p className="mt-1 text-xs text-charcoal-soft">
+              수량 {numberFormatter.format(sale.quantity)}점
+              {sale.deliveryStatus ? ` · ${sale.deliveryStatus}` : ''}
+            </p>
+          )}
+        </div>
+        <p className="shrink-0 text-sm font-semibold text-charcoal-deep">
+          {krwFormatter.format(sale.salePrice * sale.quantity)}
+        </p>
+      </div>
     </div>
   );
 }

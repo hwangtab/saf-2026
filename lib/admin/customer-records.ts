@@ -101,6 +101,12 @@ export function buildMemberUserManagementHref(customer: {
   return `/admin/users?q=${encodeURIComponent(query)}`;
 }
 
+export function buildAdminArtworkHref(artworkId: string | null | undefined) {
+  const trimmed = artworkId?.trim();
+  if (!trimmed) return null;
+  return `/admin/artworks/${encodeURIComponent(trimmed)}`;
+}
+
 function normalizeName(value: string | null | undefined): string {
   return (value || '').trim().normalize('NFC');
 }

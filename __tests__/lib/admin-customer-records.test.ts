@@ -1,4 +1,5 @@
 import {
+  buildAdminArtworkHref,
   buildCustomerRecords,
   buildMemberUserManagementHref,
   customerTypeLabel,
@@ -51,6 +52,14 @@ describe('buildCustomerRecords', () => {
       totalRevenue: 1000000,
       channels: ['현장'],
       deliverySummary: '배송완료 1건',
+    });
+    expect(records[0].sales[0]).toMatchObject({
+      artworkId: 'artwork-1',
+      artworkTitle: '봄의소리',
+      artistName: '오윤',
+      quantity: 1,
+      salePrice: 1000000,
+      channel: '현장',
     });
   });
 
@@ -170,5 +179,10 @@ describe('buildCustomerRecords', () => {
         email: 'buyer@example.com',
       })
     ).toBeNull();
+  });
+
+  it('builds admin artwork detail hrefs from sale artwork ids', () => {
+    expect(buildAdminArtworkHref('artwork-1')).toBe('/admin/artworks/artwork-1');
+    expect(buildAdminArtworkHref('')).toBeNull();
   });
 });
