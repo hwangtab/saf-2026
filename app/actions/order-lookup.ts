@@ -7,6 +7,7 @@ import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
+import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
   buildAdminNotificationFields,
   getOrderNotificationInfo,
@@ -628,6 +629,17 @@ export async function cancelBuyerOrder(
             extractBuyerLocale(order.metadata)
           );
         }
+        void sendBuyerSms(
+          info?.buyerPhone,
+          'auto_cancelled',
+          {
+            buyerName: order.buyer_name ?? '',
+            artworkTitle: info?.artworkTitle ?? '',
+            amount: order.total_amount,
+          },
+          extractBuyerLocale(order.metadata),
+          order.order_no
+        );
       } catch (err) {
         console.error('[cancelBuyerOrder] awaiting cancel email failed:', err);
       }
@@ -757,6 +769,17 @@ export async function cancelBuyerOrder(
           extractBuyerLocale(order.metadata)
         );
       }
+      void sendBuyerSms(
+        info?.buyerPhone,
+        'refunded',
+        {
+          buyerName: order.buyer_name ?? '',
+          artworkTitle: info?.artworkTitle ?? '',
+          amount: order.total_amount,
+        },
+        extractBuyerLocale(order.metadata),
+        order.order_no
+      );
     } catch (err) {
       console.error('[cancelBuyerOrder] email failed:', err);
     }
