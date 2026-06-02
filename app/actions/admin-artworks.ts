@@ -1205,6 +1205,53 @@ export async function restoreAdminTag(id: string) {
   return data;
 }
 
+export async function deleteAdminTag(id: string) {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: tag, error: tagError } = await supabase
+    .from('admin_tags')
+    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
+    .eq('id', id)
+    .single();
+
+  if (tagError) throw tagError;
+
+  const { data: links, error: linksError } = await supabase
+    .from('artwork_admin_tags')
+    .select('artwork_id, tag_id')
+    .eq('tag_id', id);
+
+  if (linksError) throw linksError;
+
+  const artworkIds = [...new Set((links || []).map((link) => link.artwork_id))];
+
+  const { error } = await supabase.from('admin_tags').delete().eq('id', id);
+
+  if (error) throw error;
+
+  revalidatePath('/admin/artworks');
+  for (const artworkId of artworkIds) {
+    revalidatePath(`/admin/artworks/${artworkId}`);
+  }
+
+  await logAdminAction(
+    'admin_tag_deleted',
+    'admin_tag',
+    id,
+    { name: tag.name, artwork_count: artworkIds.length },
+    admin.id,
+    {
+      summary: `관리자 태그 영구 삭제: ${tag.name} (${artworkIds.length}개 작품 연결 제거)`,
+      beforeSnapshot: { tag, links: links || [] },
+      afterSnapshot: null,
+      reversible: false,
+    }
+  );
+
+  return { success: true, tagId: id, artworkIds, count: artworkIds.length };
+}
+
 export async function createAndAttachAdminTagToArtwork(artworkId: string, input: AdminTagInput) {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();

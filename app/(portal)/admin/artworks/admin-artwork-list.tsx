@@ -5,7 +5,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Archive, ChevronUp, ChevronDown, ChevronsUpDown, Plus, Tags } from 'lucide-react';
+import { Archive, ChevronUp, ChevronDown, ChevronsUpDown, Plus, Tags, Trash2 } from 'lucide-react';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import {
@@ -18,6 +18,7 @@ import {
   updateAdminTag,
   archiveAdminTag,
   restoreAdminTag,
+  deleteAdminTag,
   addAdminTagToArtworks,
   removeAdminTagFromArtworks,
 } from '@/app/actions/admin-artworks';
@@ -124,6 +125,7 @@ export function AdminArtworkList({
   const [newTagColor, setNewTagColor] = useState('#6b7280');
   const [creatingTag, setCreatingTag] = useState(false);
   const [archiveTagConfirm, setArchiveTagConfirm] = useState<AdminArtworkTag | null>(null);
+  const [deleteTagConfirm, setDeleteTagConfirm] = useState<AdminArtworkTag | null>(null);
   const [editingTagId, setEditingTagId] = useState('');
   const [editingTagName, setEditingTagName] = useState('');
   const [editingTagColor, setEditingTagColor] = useState('#6b7280');
@@ -516,6 +518,40 @@ export function AdminArtworkList({
     }
   };
 
+  const handleDeleteTag = async (tagId: string) => {
+    const tag =
+      tagOptions.find((item) => item.id === tagId) ||
+      archivedTagOptions.find((item) => item.id === tagId);
+    if (!tag) return;
+    setProcessingId(`delete-tag:${tagId}`);
+    try {
+      await deleteAdminTag(tagId);
+      setTagOptions((prev) => prev.filter((item) => item.id !== tagId));
+      setArchivedTagOptions((prev) => prev.filter((item) => item.id !== tagId));
+      setOptimisticArtworks((prev) =>
+        prev.map((artwork) => ({
+          ...artwork,
+          admin_tags: artwork.admin_tags.filter((item) => item.id !== tagId),
+        }))
+      );
+      if (tagFilter === tagId) {
+        setTagFilter('');
+        updateFilterParams({ tag: undefined });
+      }
+      if (editingTagId === tagId) {
+        setEditingTagId('');
+        setEditingTagName('');
+        setEditingTagColor('#6b7280');
+      }
+      setDeleteTagConfirm(null);
+      toast.success(t('adminTagDeleted'));
+    } catch {
+      toast.error(t('adminTagDeleteError'));
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   const handleStartEditTag = (tagId: string) => {
     const tag = tagOptions.find((item) => item.id === tagId);
     setEditingTagId(tagId);
@@ -845,18 +881,27 @@ export function AdminArtworkList({
                         aria-hidden="true"
                       />
                       {tag.name}
-                      <button
-                        type="button"
-                        onClick={() => setArchiveTagConfirm(tag)}
-                        disabled={processingId === `tag:${tag.id}`}
-                        className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
-                        aria-label={t('archiveAdminTag', { tag: tag.name })}
-                      >
-                        <Archive className="h-3 w-3" aria-hidden="true" />
-                      </button>
-                    </span>
-                  ))
-                )}
+                        <button
+                          type="button"
+                          onClick={() => setArchiveTagConfirm(tag)}
+                          disabled={processingId === `tag:${tag.id}`}
+                          className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
+                          aria-label={t('archiveAdminTag', { tag: tag.name })}
+                        >
+                          <Archive className="h-3 w-3" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDeleteTagConfirm(tag)}
+                          disabled={processingId === `delete-tag:${tag.id}`}
+                          className="rounded-full p-0.5 text-charcoal-soft hover:bg-danger/10 hover:text-danger-a11y disabled:opacity-50"
+                          aria-label={t('deleteAdminTag', { tag: tag.name })}
+                        >
+                          <Trash2 className="h-3 w-3" aria-hidden="true" />
+                        </button>
+                      </span>
+                    ))
+                  )}
               </div>
             </div>
             <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_44px_auto]">
@@ -937,20 +982,30 @@ export function AdminArtworkList({
                 {t('archivedAdminTags')}
               </span>
               {archivedTagOptions.map((tag) => (
-                <button
-                  key={tag.id}
-                  type="button"
-                  onClick={() => handleRestoreTag(tag.id)}
-                  disabled={processingId === `restore-tag:${tag.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-muted ring-1 ring-charcoal/10 hover:bg-primary-surface hover:text-primary-strong disabled:opacity-50"
-                >
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ backgroundColor: tag.color }}
-                    aria-hidden="true"
-                  />
-                  {t('restoreAdminTag', { tag: tag.name })}
-                </button>
+                <span key={tag.id} className="inline-flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleRestoreTag(tag.id)}
+                    disabled={processingId === `restore-tag:${tag.id}`}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-muted ring-1 ring-charcoal/10 hover:bg-primary-surface hover:text-primary-strong disabled:opacity-50"
+                  >
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: tag.color }}
+                      aria-hidden="true"
+                    />
+                    {t('restoreAdminTag', { tag: tag.name })}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTagConfirm(tag)}
+                    disabled={processingId === `delete-tag:${tag.id}`}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-danger/5 px-2.5 py-1 text-xs text-danger-a11y ring-1 ring-danger/20 hover:bg-danger/10 disabled:opacity-50"
+                  >
+                    <Trash2 className="h-3 w-3" aria-hidden="true" />
+                    {t('deleteAdminTagShort')}
+                  </button>
+                </span>
               ))}
             </div>
           )}
@@ -1405,6 +1460,19 @@ export function AdminArtworkList({
         confirmText={t('archiveAdminTagConfirm')}
         variant="warning"
         isLoading={!!processingId?.startsWith('tag:')}
+      />
+
+      <AdminConfirmModal
+        isOpen={!!deleteTagConfirm}
+        onClose={() => setDeleteTagConfirm(null)}
+        onConfirm={() => {
+          if (deleteTagConfirm) handleDeleteTag(deleteTagConfirm.id);
+        }}
+        title={t('deleteAdminTagTitle')}
+        description={t('deleteAdminTagDescription', { tag: deleteTagConfirm?.name || '-' })}
+        confirmText={t('deleteAdminTagConfirm')}
+        variant="danger"
+        isLoading={!!processingId?.startsWith('delete-tag:')}
       />
     </div>
   );
