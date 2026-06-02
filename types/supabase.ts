@@ -1788,6 +1788,17 @@ export type Database = {
       };
       close_petition: { Args: { p_slug: string }; Returns: Json };
       close_petitions_due: { Args: never; Returns: Json };
+      create_and_attach_admin_tag_to_artwork: {
+        Args: {
+          p_admin_id?: string;
+          p_artwork_id: string;
+          p_color?: string;
+          p_description?: string | null;
+          p_name: string;
+          p_slug: string;
+        };
+        Returns: Database['public']['Tables']['admin_tags']['Row'];
+      };
       execute_sql: { Args: { sql: string }; Returns: undefined };
       extract_query_param: {
         Args: { key: string; qs: string };

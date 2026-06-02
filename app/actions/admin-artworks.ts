@@ -1210,49 +1210,23 @@ export async function createAndAttachAdminTagToArtwork(artworkId: string, input:
   const supabase = await requireAdminClient();
   const tag = normalizeTagInput(input);
 
-  const { data: archivedMatch, error: archivedError } = await supabase
-    .from('admin_tags')
-    .select('id, name, archived_at')
-    .eq('slug', tag.slug)
-    .not('archived_at', 'is', null)
-    .maybeSingle();
-
-  if (archivedError) throw archivedError;
-  if (archivedMatch) {
-    throw new Error('보관 처리된 동일한 이름의 태그가 있습니다. 기존 태그를 복원해 주세요.');
-  }
-
-  const { data: createdTag, error: createError } = await supabase
-    .from('admin_tags')
-    .insert({
-      ...tag,
-      created_by: admin.id,
-      updated_by: admin.id,
-    })
-    .select('id, name, slug, color, description, archived_at, created_at, updated_at')
-    .single();
-
-  if (createError?.code === '23505') {
-    throw new Error('이미 같은 이름의 태그가 있습니다.');
-  }
-  if (createError) throw createError;
-
-  const { error: attachError } = await supabase.from('artwork_admin_tags').insert({
-    artwork_id: artworkId,
-    tag_id: createdTag.id,
-    created_by: admin.id,
+  const { data: createdTag, error } = await supabase.rpc('create_and_attach_admin_tag_to_artwork', {
+    p_artwork_id: artworkId,
+    p_name: tag.name,
+    p_slug: tag.slug,
+    p_color: tag.color,
+    p_description: tag.description,
+    p_admin_id: admin.id,
   });
 
-  if (attachError) {
-    await supabase
-      .from('admin_tags')
-      .update({
-        archived_at: new Date().toISOString(),
-        updated_by: admin.id,
-      })
-      .eq('id', createdTag.id);
-    throw attachError;
+  if (error?.code === 'P0001' && error.message.includes('archived_admin_tag_slug_exists')) {
+    throw new Error('보관 처리된 동일한 이름의 태그가 있습니다. 기존 태그를 복원해 주세요.');
   }
+  if (error?.code === '23505') {
+    throw new Error('이미 같은 이름의 태그가 있습니다.');
+  }
+  if (error) throw error;
+  if (!createdTag) throw new Error('태그 생성 결과를 확인할 수 없습니다.');
 
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${artworkId}`);
