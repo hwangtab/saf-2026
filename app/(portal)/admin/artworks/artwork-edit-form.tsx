@@ -779,7 +779,7 @@ export function ArtworkEditForm({
               )}
             </div>
 
-            <div className="grid gap-2 md:grid-cols-[minmax(180px,1fr)_minmax(180px,1fr)]">
+            <div className="grid gap-3 lg:grid-cols-[minmax(220px,1fr)_minmax(360px,1fr)]">
               <AdminSelect
                 value=""
                 onChange={(e) => {
@@ -787,6 +787,9 @@ export function ArtworkEditForm({
                   e.target.value = '';
                 }}
                 disabled={tagSaving || tagOptions.length === 0}
+                wrapperClassName="min-w-0"
+                className="h-12 pr-11"
+                iconClassName="right-4 h-4 w-4"
               >
                 <option value="">기존 태그 추가...</option>
                 {tagOptions
@@ -798,7 +801,7 @@ export function ArtworkEditForm({
                   ))}
               </AdminSelect>
 
-              <div className="grid gap-2 sm:grid-cols-[minmax(160px,1fr)_44px_auto]">
+              <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_48px_auto]">
                 <input
                   type="text"
                   value={newAdminTagName}
@@ -810,13 +813,13 @@ export function ArtworkEditForm({
                     }
                   }}
                   placeholder="새 태그 생성 후 추가"
-                  className="h-11 rounded-md border border-gray-300 px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
+                  className="h-12 min-w-0 rounded-md border border-gray-300 px-3 text-sm focus-visible:border-primary-a11y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y"
                 />
                 <input
                   type="color"
                   value={newAdminTagColor}
                   onChange={(e) => setNewAdminTagColor(e.target.value)}
-                  className="h-11 w-full rounded-md border border-gray-300 bg-white p-1"
+                  className="h-12 w-12 rounded-md border border-gray-300 bg-white p-1"
                   aria-label="내부 태그 색상"
                 />
                 <Button
@@ -824,9 +827,9 @@ export function ArtworkEditForm({
                   variant="white"
                   onClick={handleCreateAndAddAdminTag}
                   disabled={tagSaving || !newAdminTagName.trim()}
-                  className="gap-1.5"
+                  leadingIcon={<Plus className="h-4 w-4" />}
+                  className="h-12 whitespace-nowrap px-4"
                 >
-                  <Plus className="h-4 w-4" aria-hidden="true" />
                   추가
                 </Button>
               </div>
