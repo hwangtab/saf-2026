@@ -21,6 +21,7 @@ import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
 import { apiError, type ApiLocale } from '@/lib/api-locale';
 import { krwToUsd } from '@/lib/utils/currency';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
   getOrderNotificationInfo,
   buildAdminNotificationFields,
@@ -601,6 +602,22 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
           },
         },
         buyerLocale
+      );
+      void sendBuyerSms(
+        input.buyerPhone,
+        'virtual_account_issued',
+        {
+          buyerName: input.buyerName ?? '',
+          artworkTitle: info?.artworkTitle ?? '',
+          amount: result.totalAmount,
+          virtualAccount: {
+            bankName: BANK_TRANSFER_INFO.bankName,
+            accountNumber: BANK_TRANSFER_INFO.accountNumber,
+            dueDate: dueDateStr,
+          },
+        },
+        buyerLocale,
+        result.orderNo
       );
     } catch (err) {
       console.error('[createBankTransferOrder] email failed:', err);

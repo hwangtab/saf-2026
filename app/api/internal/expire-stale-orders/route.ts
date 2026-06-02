@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
+import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
   getOrderNotificationInfo,
   type OrderNotificationInfo,
@@ -163,6 +164,17 @@ export async function GET(request: NextRequest) {
           },
           extractBuyerLocale(expiredOrder.metadata)
         ).catch((err) => console.error('[expire-stale-orders] email failed:', err));
+        void sendBuyerSms(
+          info?.buyerPhone,
+          'auto_cancelled',
+          {
+            buyerName: expiredOrder.buyer_name ?? '',
+            artworkTitle: info?.artworkTitle ?? '',
+            amount: expiredOrder.total_amount ?? 0,
+          },
+          extractBuyerLocale(expiredOrder.metadata),
+          expiredOrder.order_no
+        );
       }
     }
 

@@ -8,6 +8,7 @@ import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
+import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
   buildAdminNotificationFields,
   getOrderNotificationInfo,
@@ -345,6 +346,13 @@ export async function refundOrder(input: RefundInput) {
           extractBuyerLocale(order.metadata)
         );
       }
+      void sendBuyerSms(
+        order.buyer_phone,
+        'refunded',
+        { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: order.total_amount ?? 0 },
+        extractBuyerLocale(order.metadata),
+        order.order_no ?? undefined
+      );
     } catch (err) {
       console.error('[refundOrder] email failed:', err);
     }
@@ -426,7 +434,7 @@ export async function updateOrderStatus(
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, buyer_email, buyer_name, artwork_id, metadata')
+    .select('id, order_no, status, buyer_email, buyer_name, buyer_phone, artwork_id, metadata')
     .eq('id', orderId)
     .single();
 
@@ -543,6 +551,19 @@ export async function updateOrderStatus(
             },
             locale
           );
+          void sendBuyerSms(
+            order.buyer_phone,
+            'shipped',
+            {
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: info?.artworkTitle ?? '',
+              amount: 0,
+              carrier: trackingInfo?.carrier ?? undefined,
+              trackingNumber: trackingInfo?.trackingNumber ?? undefined,
+            },
+            locale,
+            order.order_no ?? undefined
+          );
         } else {
           void sendBuyerEmail(
             order.buyer_email!,
@@ -556,6 +577,17 @@ export async function updateOrderStatus(
               shipping,
             },
             locale
+          );
+          void sendBuyerSms(
+            order.buyer_phone,
+            'delivered',
+            {
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: info?.artworkTitle ?? '',
+              amount: 0,
+            },
+            locale,
+            order.order_no ?? undefined
           );
         }
       } catch (err) {
@@ -713,6 +745,13 @@ export async function confirmDeposit(orderId: string) {
           extractBuyerLocale(order.metadata)
         );
       }
+      void sendBuyerSms(
+        order.buyer_phone,
+        'deposit_confirmed',
+        { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: 0 },
+        extractBuyerLocale(order.metadata),
+        order.order_no ?? undefined
+      );
     } catch (err) {
       console.error('[confirmDeposit] email failed:', err);
     }
@@ -815,7 +854,9 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, artwork_id, buyer_name, buyer_email, total_amount, metadata')
+    .select(
+      'id, order_no, status, artwork_id, buyer_name, buyer_phone, buyer_email, total_amount, metadata'
+    )
     .eq('id', orderId)
     .single();
 
@@ -876,6 +917,13 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
           extractBuyerLocale(order.metadata)
         );
       }
+      void sendBuyerSms(
+        order.buyer_phone,
+        'auto_cancelled',
+        { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: 0 },
+        extractBuyerLocale(order.metadata),
+        order.order_no ?? undefined
+      );
     } catch (err) {
       console.error('[cancelAwaitingOrder] email failed:', err);
     }
