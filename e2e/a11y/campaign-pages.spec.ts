@@ -1,7 +1,14 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const ROUTES = ['/petition/oh-yoon', '/special/oh-yoon', '/artworks/artist/신학철'];
+const ROUTES = [
+  '/petition/oh-yoon',
+  '/special/oh-yoon',
+  '/artworks/artist/신학철',
+  '/artworks/artist/민정기',
+  '/artworks/artist/이철수',
+  '/artworks/artist/박불똥',
+];
 
 for (const locale of ['ko', 'en'] as const) {
   for (const route of ROUTES) {
