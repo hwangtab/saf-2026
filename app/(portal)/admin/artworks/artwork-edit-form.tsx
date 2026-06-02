@@ -83,7 +83,6 @@ export function ArtworkEditForm({
   const [savingImages, setSavingImages] = useState(false);
   const [images, setImages] = useState<string[]>(artwork.images || []);
   const [tones, setTones] = useState<string[]>(artwork.tone || []);
-  const [toneCustomInput, setToneCustomInput] = useState('');
   const [tagOptions, setTagOptions] = useState(adminTags);
   const [selectedAdminTags, setSelectedAdminTags] = useState(artworkAdminTags);
   const [newAdminTagName, setNewAdminTagName] = useState('');
@@ -658,10 +657,10 @@ export function ArtworkEditForm({
           />
         </div>
 
-        <div>
-          <p className="block text-sm font-medium text-gray-700 mb-2">
-            톤/무드{' '}
-            <span className="text-xs text-gray-400 font-normal">
+        <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <p className="block text-sm font-medium text-gray-700">
+            톤/무드
+            <span className="ml-1 text-xs text-gray-400 font-normal">
               (비슷한 작품 랭킹용 — 복수 선택 가능)
             </span>
           </p>
@@ -669,7 +668,7 @@ export function ArtworkEditForm({
           {tones.map((t) => (
             <input key={t} type="hidden" name="tone" value={t} />
           ))}
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="mt-3 flex flex-wrap gap-2">
             {ARTWORK_TONES.map((tone) => {
               const active = tones.includes(tone);
               return (
@@ -691,66 +690,18 @@ export function ArtworkEditForm({
               );
             })}
           </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={toneCustomInput}
-              onChange={(e) => setToneCustomInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  const val = toneCustomInput.trim();
-                  if (val && !tones.includes(val)) setTones((prev) => [...prev, val]);
-                  setToneCustomInput('');
-                }
-              }}
-              placeholder="직접 입력 후 추가 버튼"
-              className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                const val = toneCustomInput.trim();
-                if (val && !tones.includes(val)) setTones((prev) => [...prev, val]);
-                setToneCustomInput('');
-              }}
-              className="rounded-md px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 border border-gray-300"
-            >
-              추가
-            </button>
-          </div>
-          {tones.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {tones.map((t) => (
-                <span
-                  key={t}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs"
-                >
-                  {t}
-                  <button
-                    type="button"
-                    onClick={() => setTones((prev) => prev.filter((x) => x !== t))}
-                    className="hover:text-primary-strong"
-                    aria-label={`${t} 삭제`}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         {isEditing && (
           <div className="rounded-lg border border-primary-soft bg-primary-surface/40 p-4">
-            <div className="mb-3">
+            <div className="border-b border-primary-soft pb-3">
               <p className="text-sm font-medium text-gray-700">관리자 내부 태그</p>
               <p className="mt-1 text-xs text-gray-500">
                 공개 페이지와 작가/전시자 포털에는 노출되지 않는 운영용 태그입니다.
               </p>
             </div>
 
-            <div className="mb-4 flex flex-wrap gap-1.5">
+            <div className="mt-4 flex flex-wrap gap-1.5">
               {selectedAdminTags.length === 0 ? (
                 <span className="text-xs text-gray-400">태그 없음</span>
               ) : (
@@ -779,59 +730,77 @@ export function ArtworkEditForm({
               )}
             </div>
 
-            <div className="grid gap-3 lg:grid-cols-[minmax(220px,1fr)_minmax(360px,1fr)]">
-              <AdminSelect
-                value=""
-                onChange={(e) => {
-                  handleAddAdminTag(e.target.value);
-                  e.target.value = '';
-                }}
-                disabled={tagSaving || tagOptions.length === 0}
-                wrapperClassName="min-w-0"
-                className="h-12 pr-11"
-                iconClassName="right-4 h-4 w-4"
-              >
-                <option value="">기존 태그 추가...</option>
-                {tagOptions
-                  .filter((tag) => !selectedAdminTags.some((selected) => selected.id === tag.id))
-                  .map((tag) => (
-                    <option key={tag.id} value={tag.id}>
-                      {tag.name}
-                    </option>
-                  ))}
-              </AdminSelect>
-
-              <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_48px_auto]">
-                <input
-                  type="text"
-                  value={newAdminTagName}
-                  onChange={(e) => setNewAdminTagName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleCreateAndAddAdminTag();
-                    }
-                  }}
-                  placeholder="새 태그 생성 후 추가"
-                  className="h-12 min-w-0 rounded-md border border-gray-300 px-3 text-sm focus-visible:border-primary-a11y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y"
-                />
-                <input
-                  type="color"
-                  value={newAdminTagColor}
-                  onChange={(e) => setNewAdminTagColor(e.target.value)}
-                  className="h-12 w-12 rounded-md border border-gray-300 bg-white p-1"
-                  aria-label="내부 태그 색상"
-                />
-                <Button
-                  type="button"
-                  variant="white"
-                  onClick={handleCreateAndAddAdminTag}
-                  disabled={tagSaving || !newAdminTagName.trim()}
-                  leadingIcon={<Plus className="h-4 w-4" />}
-                  className="h-12 whitespace-nowrap px-4"
+            <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(220px,1fr)_minmax(360px,1fr)]">
+              <div>
+                <label
+                  htmlFor="existing-admin-tag-select"
+                  className="mb-1.5 block text-xs font-medium text-gray-500"
                 >
-                  추가
-                </Button>
+                  기존 태그 연결
+                </label>
+                <AdminSelect
+                  id="existing-admin-tag-select"
+                  value=""
+                  onChange={(e) => {
+                    handleAddAdminTag(e.target.value);
+                    e.target.value = '';
+                  }}
+                  disabled={tagSaving || tagOptions.length === 0}
+                  wrapperClassName="min-w-0"
+                  className="h-12 pr-11"
+                  iconClassName="right-4 h-4 w-4"
+                >
+                  <option value="">기존 태그 추가...</option>
+                  {tagOptions
+                    .filter((tag) => !selectedAdminTags.some((selected) => selected.id === tag.id))
+                    .map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                </AdminSelect>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="new-admin-tag-name"
+                  className="mb-1.5 block text-xs font-medium text-gray-500"
+                >
+                  새 태그 생성
+                </label>
+                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_48px_auto]">
+                  <input
+                    id="new-admin-tag-name"
+                    type="text"
+                    value={newAdminTagName}
+                    onChange={(e) => setNewAdminTagName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleCreateAndAddAdminTag();
+                      }
+                    }}
+                    placeholder="새 내부 태그 이름"
+                    className="h-12 min-w-0 rounded-md border border-gray-300 px-3 text-sm focus-visible:border-primary-a11y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y"
+                  />
+                  <input
+                    type="color"
+                    value={newAdminTagColor}
+                    onChange={(e) => setNewAdminTagColor(e.target.value)}
+                    className="h-12 w-12 rounded-md border border-gray-300 bg-white p-1"
+                    aria-label="내부 태그 색상"
+                  />
+                  <Button
+                    type="button"
+                    variant="white"
+                    onClick={handleCreateAndAddAdminTag}
+                    disabled={tagSaving || !newAdminTagName.trim()}
+                    leadingIcon={<Plus className="h-4 w-4" />}
+                    className="h-12 whitespace-nowrap px-4"
+                  >
+                    태그 추가
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
