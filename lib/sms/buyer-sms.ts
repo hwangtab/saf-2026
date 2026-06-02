@@ -30,7 +30,8 @@ export function buildSmsText(type: BuyerSmsType, data: BuyerSmsData): string {
     case 'virtual_account_issued': {
       const va = data.virtualAccount ?? {};
       const due = va.dueDate ? ` / 기한 ${va.dueDate}` : '';
-      return `[씨앗페] 입금안내: ${va.bankName ?? ''} ${va.accountNumber ?? ''} / ${won(data.amount)}${due}`;
+      const greeting = data.buyerName ? `${data.buyerName}님, ` : '';
+      return `[씨앗페] ${greeting}입금안내: ${va.bankName ?? ''} ${va.accountNumber ?? ''} / ${won(data.amount)}${due}`;
     }
     case 'deposit_confirmed':
       return `[씨앗페] ${data.buyerName}님, 입금이 확인되었습니다. 작품을 준비합니다.`;

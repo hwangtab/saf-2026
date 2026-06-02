@@ -37,6 +37,16 @@ describe('buildSmsText', () => {
     expect(t).toBe('[씨앗페] 입금안내: IBK기업 01012345678 / ₩50,000 / 기한 6/5 23:59');
   });
 
+  it('virtual_account_issued: 이름이 있으면 인사말 포함', () => {
+    const t = buildSmsText('virtual_account_issued', {
+      buyerName: '홍길동',
+      artworkTitle: '',
+      amount: 50000,
+      virtualAccount: { bankName: 'IBK기업', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+    });
+    expect(t).toBe('[씨앗페] 홍길동님, 입금안내: IBK기업 01012345678 / ₩50,000 / 기한 6/5 23:59');
+  });
+
   it('shipped: 작품명·택배사·운송장', () => {
     const t = buildSmsText('shipped', {
       buyerName: '',
