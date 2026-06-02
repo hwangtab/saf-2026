@@ -8,6 +8,11 @@ const nextConfig = require('eslint-config-next/core-web-vitals');
 const config = [
   ...nextConfig,
   {
+    // eslint-config-next는 jsx-a11y plugin을 files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}']
+    // 스코프에서만 등록한다(.cjs 등 제외). 이 룰 블록에 동일 스코프를 지정하지 않으면
+    // .vercel 빌드 산출물의 ___next_launcher.cjs 같은 스코프 밖 파일에 jsx-a11y 룰이 적용되며
+    // "could not find plugin 'jsx-a11y'" 에러로 `eslint .` 전체가 중단된다.
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
       // jsx-a11y recommended (plugin already registered by eslint-config-next)
       'jsx-a11y/alt-text': 'error',
@@ -47,6 +52,9 @@ const config = [
     },
   },
   {
+    // 위와 동일 이유 — react/@next/next plugin도 같은 files 스코프에서만 등록되므로
+    // 룰 블록의 스코프를 맞춰 스코프 밖 파일(.cjs 등)에서의 plugin-미등록 에러를 막는다.
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
       'react/no-unescaped-entities': 'error',
       'react/display-name': 'error',
@@ -105,7 +113,16 @@ const config = [
     },
   },
   {
-    ignores: ['coverage/**', '.next/**', '.worktrees/**'],
+    // .vercel: `vercel build`/`vercel pull` 산출물(___next_launcher.cjs 등) — lint 대상 아님.
+    // .claude/.understand-anything: 도구/워크트리 산출물.
+    ignores: [
+      'coverage/**',
+      '.next/**',
+      '.worktrees/**',
+      '.vercel/**',
+      '.claude/**',
+      '.understand-anything/**',
+    ],
   },
 ];
 
