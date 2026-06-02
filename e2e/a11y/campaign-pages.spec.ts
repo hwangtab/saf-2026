@@ -18,6 +18,11 @@ const ROUTES = [
   '/artworks/artist/김레이시',
   '/artworks/artist/정미정',
   '/artworks/artist/박성완',
+  '/artworks/artist/이익태',
+  '/artworks/artist/이호철',
+  '/artworks/artist/강석태',
+  '/artworks/artist/민정See',
+  '/artworks/artist/홍진희',
 ];
 
 for (const locale of ['ko', 'en'] as const) {
