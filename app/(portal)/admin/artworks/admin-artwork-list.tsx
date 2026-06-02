@@ -32,6 +32,7 @@ import {
   AdminHelp,
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
+import { SHOW_ADMIN_TAGS_IN_ARTWORK_LIST } from '@/lib/admin-artwork-tags';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesAnySearch } from '@/lib/search-utils';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
@@ -230,14 +231,19 @@ export function AdminArtworkList({
       if (statusFilter !== 'all' && artwork.status !== statusFilter) return false;
       if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
       if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
-      if (tagFilter && !artwork.admin_tags.some((tag) => tag.id === tagFilter)) return false;
+      if (
+        SHOW_ADMIN_TAGS_IN_ARTWORK_LIST &&
+        tagFilter &&
+        !artwork.admin_tags.some((tag) => tag.id === tagFilter)
+      ) {
+        return false;
+      }
       if (!query.trim()) return true;
-      return matchesAnySearch(query, [
-        artwork.title,
-        artwork.artists?.name_ko,
-        artwork.admin_product_name,
-        ...artwork.admin_tags.map((tag) => tag.name),
-      ]);
+      const searchFields = [artwork.title, artwork.artists?.name_ko, artwork.admin_product_name];
+      if (SHOW_ADMIN_TAGS_IN_ARTWORK_LIST) {
+        searchFields.push(...artwork.admin_tags.map((tag) => tag.name));
+      }
+      return matchesAnySearch(query, searchFields);
     });
   }, [optimisticArtworks, query, statusFilter, tagFilter, visibilityFilter]);
 
@@ -785,23 +791,25 @@ export function AdminArtworkList({
                 <option value="visible">{t('visible')}</option>
                 <option value="hidden">{t('hiddenLabel')}</option>
               </AdminSelect>
-              <AdminSelect
-                value={tagFilter}
-                onChange={(e) => {
-                  const nextTag = normalizeTagFilter(e.target.value);
-                  setTagFilter(nextTag);
-                  updateFilterParams({ tag: nextTag || undefined });
-                  setSelectedIds(new Set());
-                }}
-                wrapperClassName="min-w-[140px]"
-              >
-                <option value="">{t('allAdminTags')}</option>
-                {tagOptions.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    {tag.name}
-                  </option>
-                ))}
-              </AdminSelect>
+              {SHOW_ADMIN_TAGS_IN_ARTWORK_LIST && (
+                <AdminSelect
+                  value={tagFilter}
+                  onChange={(e) => {
+                    const nextTag = normalizeTagFilter(e.target.value);
+                    setTagFilter(nextTag);
+                    updateFilterParams({ tag: nextTag || undefined });
+                    setSelectedIds(new Set());
+                  }}
+                  wrapperClassName="min-w-[140px]"
+                >
+                  <option value="">{t('allAdminTags')}</option>
+                  {tagOptions.map((tag) => (
+                    <option key={tag.id} value={tag.id}>
+                      {tag.name}
+                    </option>
+                  ))}
+                </AdminSelect>
+              )}
               <AdminSelect
                 value={sortFilter}
                 onChange={(e) => {
@@ -823,138 +831,140 @@ export function AdminArtworkList({
           </div>
         </AdminCardHeader>
 
-        <div className="border-b border-[var(--admin-border-soft)] bg-white px-6 py-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-sm font-semibold text-charcoal-deep">
-                <Tags className="h-4 w-4 text-primary-a11y" aria-hidden="true" />
-                {t('adminTags')}
-              </div>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {tagOptions.length === 0 ? (
-                  <span className="text-xs text-charcoal-soft">{t('noAdminTags')}</span>
-                ) : (
-                  tagOptions.map((tag) => (
-                    <span
-                      key={tag.id}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-charcoal/10 bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-deep"
-                    >
+        {SHOW_ADMIN_TAGS_IN_ARTWORK_LIST && (
+          <div className="border-b border-[var(--admin-border-soft)] bg-white px-6 py-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-charcoal-deep">
+                  <Tags className="h-4 w-4 text-primary-a11y" aria-hidden="true" />
+                  {t('adminTags')}
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {tagOptions.length === 0 ? (
+                    <span className="text-xs text-charcoal-soft">{t('noAdminTags')}</span>
+                  ) : (
+                    tagOptions.map((tag) => (
                       <span
-                        className="h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: tag.color }}
-                        aria-hidden="true"
-                      />
-                      {tag.name}
-                      <button
-                        type="button"
-                        onClick={() => setArchiveTagConfirm(tag)}
-                        disabled={processingId === `tag:${tag.id}`}
-                        className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
-                        aria-label={t('archiveAdminTag', { tag: tag.name })}
+                        key={tag.id}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-charcoal/10 bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-deep"
                       >
-                        <Archive className="h-3 w-3" aria-hidden="true" />
-                      </button>
-                    </span>
-                  ))
-                )}
+                        <span
+                          className="h-2.5 w-2.5 rounded-full"
+                          style={{ backgroundColor: tag.color }}
+                          aria-hidden="true"
+                        />
+                        {tag.name}
+                        <button
+                          type="button"
+                          onClick={() => setArchiveTagConfirm(tag)}
+                          disabled={processingId === `tag:${tag.id}`}
+                          className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
+                          aria-label={t('archiveAdminTag', { tag: tag.name })}
+                        >
+                          <Archive className="h-3 w-3" aria-hidden="true" />
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_44px_auto]">
+                <AdminInput
+                  value={newTagName}
+                  onChange={(e) => setNewTagName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleCreateTag();
+                    }
+                  }}
+                  placeholder={t('adminTagPlaceholder')}
+                  className="h-10"
+                />
+                <input
+                  type="color"
+                  value={newTagColor}
+                  onChange={(e) => setNewTagColor(e.target.value)}
+                  className="h-10 w-full rounded-md border border-[var(--admin-border)] bg-white p-1"
+                  aria-label={t('adminTagColor')}
+                />
+                <Button
+                  variant="white"
+                  onClick={handleCreateTag}
+                  disabled={creatingTag || !newTagName.trim()}
+                  className="h-10 gap-1.5"
+                >
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  {t('createAdminTag')}
+                </Button>
               </div>
             </div>
-            <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_44px_auto]">
+            <div className="mt-3 grid gap-2 border-t border-[var(--admin-border-soft)] pt-3 lg:grid-cols-[minmax(180px,220px)_minmax(180px,1fr)_44px_auto]">
+              <AdminSelect
+                value={editingTagId}
+                onChange={(e) => handleStartEditTag(e.target.value)}
+                disabled={tagOptions.length === 0}
+              >
+                <option value="">{t('selectTagToEdit')}</option>
+                {tagOptions.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </option>
+                ))}
+              </AdminSelect>
               <AdminInput
-                value={newTagName}
-                onChange={(e) => setNewTagName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleCreateTag();
-                  }
-                }}
-                placeholder={t('adminTagPlaceholder')}
+                value={editingTagName}
+                onChange={(e) => setEditingTagName(e.target.value)}
+                placeholder={t('editAdminTagName')}
+                disabled={!editingTagId}
                 className="h-10"
               />
               <input
                 type="color"
-                value={newTagColor}
-                onChange={(e) => setNewTagColor(e.target.value)}
-                className="h-10 w-full rounded-md border border-[var(--admin-border)] bg-white p-1"
+                value={editingTagColor}
+                onChange={(e) => setEditingTagColor(e.target.value)}
+                disabled={!editingTagId}
+                className="h-10 w-full rounded-md border border-[var(--admin-border)] bg-white p-1 disabled:opacity-50"
                 aria-label={t('adminTagColor')}
               />
               <Button
                 variant="white"
-                onClick={handleCreateTag}
-                disabled={creatingTag || !newTagName.trim()}
-                className="h-10 gap-1.5"
+                onClick={handleUpdateTag}
+                disabled={
+                  !editingTagId ||
+                  !editingTagName.trim() ||
+                  processingId === `edit-tag:${editingTagId}`
+                }
+                className="h-10"
               >
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                {t('createAdminTag')}
+                {t('updateAdminTag')}
               </Button>
             </div>
+            {archivedTagOptions.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--admin-border-soft)] pt-3">
+                <span className="mr-1 text-xs font-medium text-charcoal-soft">
+                  {t('archivedAdminTags')}
+                </span>
+                {archivedTagOptions.map((tag) => (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    onClick={() => handleRestoreTag(tag.id)}
+                    disabled={processingId === `restore-tag:${tag.id}`}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-muted ring-1 ring-charcoal/10 hover:bg-primary-surface hover:text-primary-strong disabled:opacity-50"
+                  >
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: tag.color }}
+                      aria-hidden="true"
+                    />
+                    {t('restoreAdminTag', { tag: tag.name })}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="mt-3 grid gap-2 border-t border-[var(--admin-border-soft)] pt-3 lg:grid-cols-[minmax(180px,220px)_minmax(180px,1fr)_44px_auto]">
-            <AdminSelect
-              value={editingTagId}
-              onChange={(e) => handleStartEditTag(e.target.value)}
-              disabled={tagOptions.length === 0}
-            >
-              <option value="">{t('selectTagToEdit')}</option>
-              {tagOptions.map((tag) => (
-                <option key={tag.id} value={tag.id}>
-                  {tag.name}
-                </option>
-              ))}
-            </AdminSelect>
-            <AdminInput
-              value={editingTagName}
-              onChange={(e) => setEditingTagName(e.target.value)}
-              placeholder={t('editAdminTagName')}
-              disabled={!editingTagId}
-              className="h-10"
-            />
-            <input
-              type="color"
-              value={editingTagColor}
-              onChange={(e) => setEditingTagColor(e.target.value)}
-              disabled={!editingTagId}
-              className="h-10 w-full rounded-md border border-[var(--admin-border)] bg-white p-1 disabled:opacity-50"
-              aria-label={t('adminTagColor')}
-            />
-            <Button
-              variant="white"
-              onClick={handleUpdateTag}
-              disabled={
-                !editingTagId ||
-                !editingTagName.trim() ||
-                processingId === `edit-tag:${editingTagId}`
-              }
-              className="h-10"
-            >
-              {t('updateAdminTag')}
-            </Button>
-          </div>
-          {archivedTagOptions.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--admin-border-soft)] pt-3">
-              <span className="mr-1 text-xs font-medium text-charcoal-soft">
-                {t('archivedAdminTags')}
-              </span>
-              {archivedTagOptions.map((tag) => (
-                <button
-                  key={tag.id}
-                  type="button"
-                  onClick={() => handleRestoreTag(tag.id)}
-                  disabled={processingId === `restore-tag:${tag.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-charcoal/5 px-2.5 py-1 text-xs text-charcoal-muted ring-1 ring-charcoal/10 hover:bg-primary-surface hover:text-primary-strong disabled:opacity-50"
-                >
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ backgroundColor: tag.color }}
-                    aria-hidden="true"
-                  />
-                  {t('restoreAdminTag', { tag: tag.name })}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Batch Actions Toolbar (Visible only when selected) */}
         {selectedInFiltered.length > 0 && (
@@ -977,36 +987,40 @@ export function AdminArtworkList({
                 <option value="reserved">{t('reserved')}</option>
                 <option value="sold">{t('sold')}</option>
               </AdminSelect>
-              <AdminSelect
-                onChange={(e) => {
-                  if (e.target.value) handleBatchAddTag(e.target.value);
-                  e.target.value = '';
-                }}
-                disabled={batchProcessing || tagOptions.length === 0}
-                className="border-primary-soft"
-              >
-                <option value="">{t('batchAddTag')}</option>
-                {tagOptions.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    {tag.name}
-                  </option>
-                ))}
-              </AdminSelect>
-              <AdminSelect
-                onChange={(e) => {
-                  if (e.target.value) handleBatchRemoveTag(e.target.value);
-                  e.target.value = '';
-                }}
-                disabled={batchProcessing || tagOptions.length === 0}
-                className="border-primary-soft"
-              >
-                <option value="">{t('batchRemoveTag')}</option>
-                {tagOptions.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    {tag.name}
-                  </option>
-                ))}
-              </AdminSelect>
+              {SHOW_ADMIN_TAGS_IN_ARTWORK_LIST && (
+                <>
+                  <AdminSelect
+                    onChange={(e) => {
+                      if (e.target.value) handleBatchAddTag(e.target.value);
+                      e.target.value = '';
+                    }}
+                    disabled={batchProcessing || tagOptions.length === 0}
+                    className="border-primary-soft"
+                  >
+                    <option value="">{t('batchAddTag')}</option>
+                    {tagOptions.map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                  </AdminSelect>
+                  <AdminSelect
+                    onChange={(e) => {
+                      if (e.target.value) handleBatchRemoveTag(e.target.value);
+                      e.target.value = '';
+                    }}
+                    disabled={batchProcessing || tagOptions.length === 0}
+                    className="border-primary-soft"
+                  >
+                    <option value="">{t('batchRemoveTag')}</option>
+                    {tagOptions.map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                  </AdminSelect>
+                </>
+              )}
               <Button
                 variant="white"
                 onClick={() => setBatchHiddenConfirm(true)}
@@ -1093,12 +1107,14 @@ export function AdminArtworkList({
                     <span className="text-[11px] text-gray-400">{getSortArrow('category')}</span>
                   </button>
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {t('adminTags')}
-                </th>
+                {SHOW_ADMIN_TAGS_IN_ARTWORK_LIST && (
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    {t('adminTags')}
+                  </th>
+                )}
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -1135,7 +1151,7 @@ export function AdminArtworkList({
             <tbody className="bg-white divide-y divide-gray-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-0">
+                  <td colSpan={SHOW_ADMIN_TAGS_IN_ARTWORK_LIST ? 8 : 7} className="px-6 py-0">
                     <AdminEmptyState title={t('noSearchResult')} />
                   </td>
                 </tr>
@@ -1258,27 +1274,29 @@ export function AdminArtworkList({
                         ))}
                       </AdminSelect>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex max-w-56 flex-wrap gap-1.5">
-                        {artwork.admin_tags.length === 0 ? (
-                          <span className="text-xs text-gray-400">{t('noAdminTags')}</span>
-                        ) : (
-                          artwork.admin_tags.map((tag) => (
-                            <span
-                              key={tag.id}
-                              className="inline-flex items-center gap-1 rounded-full bg-charcoal/5 px-2 py-0.5 text-xs text-charcoal-deep ring-1 ring-charcoal/10"
-                            >
+                    {SHOW_ADMIN_TAGS_IN_ARTWORK_LIST && (
+                      <td className="px-6 py-4">
+                        <div className="flex max-w-56 flex-wrap gap-1.5">
+                          {artwork.admin_tags.length === 0 ? (
+                            <span className="text-xs text-gray-400">{t('noAdminTags')}</span>
+                          ) : (
+                            artwork.admin_tags.map((tag) => (
                               <span
-                                className="h-2 w-2 rounded-full"
-                                style={{ backgroundColor: tag.color }}
-                                aria-hidden="true"
-                              />
-                              {tag.name}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </td>
+                                key={tag.id}
+                                className="inline-flex items-center gap-1 rounded-full bg-charcoal/5 px-2 py-0.5 text-xs text-charcoal-deep ring-1 ring-charcoal/10"
+                              >
+                                <span
+                                  className="h-2 w-2 rounded-full"
+                                  style={{ backgroundColor: tag.color }}
+                                  aria-hidden="true"
+                                />
+                                {tag.name}
+                              </span>
+                            ))
+                          )}
+                        </div>
+                      </td>
+                    )}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm text-gray-500">
                         {formatDate(artwork.created_at, locale)}

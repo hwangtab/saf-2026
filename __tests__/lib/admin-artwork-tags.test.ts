@@ -1,4 +1,5 @@
 import {
+  SHOW_ADMIN_TAGS_IN_ARTWORK_LIST,
   normalizeAdminTagName,
   toAdminTagSlug,
   normalizeAdminTagColor,
@@ -6,6 +7,10 @@ import {
 } from '@/lib/admin-artwork-tags';
 
 describe('admin-artwork-tags', () => {
+  it('keeps internal tags out of the default artwork management list', () => {
+    expect(SHOW_ADMIN_TAGS_IN_ARTWORK_LIST).toBe(false);
+  });
+
   describe('normalizeAdminTagName', () => {
     it('trims and collapses whitespace', () => {
       expect(normalizeAdminTagName('  봄   큐레이션\t후보  ')).toBe('봄 큐레이션 후보');

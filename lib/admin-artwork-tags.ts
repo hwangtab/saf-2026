@@ -1,4 +1,5 @@
 export const DEFAULT_ADMIN_TAG_COLOR = '#6b7280';
+export const SHOW_ADMIN_TAGS_IN_ARTWORK_LIST = false;
 
 export type AdminTagInput = {
   name: string;
