@@ -14,6 +14,7 @@ import {
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
+import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
   buildAdminNotificationFields,
   getOrderNotificationInfo,
@@ -257,6 +258,17 @@ export async function POST(req: NextRequest) {
               console.error('[toss-webhook] deposit email failed:', err);
             }
           }
+          void sendBuyerSms(
+            order?.buyer_phone,
+            'deposit_confirmed',
+            {
+              buyerName: order?.buyer_name ?? '',
+              artworkTitle: depositInfo?.artworkTitle ?? '',
+              amount: order?.total_amount ?? 0,
+            },
+            extractBuyerLocale(order?.metadata),
+            order?.order_no ?? undefined
+          );
         }
       } else {
         // paymentRecord가 DB에 없는데 Toss에서 DONE 수신 — 심각한 정합성 문제
@@ -555,7 +567,9 @@ export async function POST(req: NextRequest) {
     if (CANCELED_STATUSES.has(newStatus) && paymentRow.order_id) {
       const { data: existingOrder } = await supabase
         .from('orders')
-        .select('status, artwork_id, order_no, buyer_email, buyer_name, total_amount, metadata')
+        .select(
+          'status, artwork_id, order_no, buyer_email, buyer_name, buyer_phone, total_amount, metadata'
+        )
         .eq('id', paymentRow.order_id)
         .single();
 
@@ -661,6 +675,17 @@ export async function POST(req: NextRequest) {
             }
           })();
         }
+        void sendBuyerSms(
+          existingOrder.buyer_phone,
+          'refunded',
+          {
+            buyerName: existingOrder.buyer_name ?? '',
+            artworkTitle: '',
+            amount: existingOrder.total_amount ?? 0,
+          },
+          extractBuyerLocale(existingOrder.metadata),
+          existingOrder.order_no ?? undefined
+        );
       }
     }
   }
