@@ -3,11 +3,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Plus, X } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import {
   updateArtworkDetails,
   updateArtworkImages,
   createAdminArtwork,
+  createAndAttachAdminTagToArtwork,
+  addAdminTagToArtworks,
+  removeAdminTagFromArtworks,
 } from '@/app/actions/admin-artworks';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
@@ -47,9 +51,20 @@ type Artwork = {
   artists: Artist | null;
 };
 
+type AdminArtworkTag = {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+  description: string | null;
+  archived_at: string | null;
+};
+
 type ArtworkEditFormProps = {
   artwork?: Partial<Artwork>;
   artists: Artist[];
+  adminTags?: AdminArtworkTag[];
+  artworkAdminTags?: AdminArtworkTag[];
   initialArtistId?: string;
   artistJustCreated?: boolean;
 };
@@ -57,6 +72,8 @@ type ArtworkEditFormProps = {
 export function ArtworkEditForm({
   artwork = {},
   artists,
+  adminTags = [],
+  artworkAdminTags = [],
   initialArtistId,
   artistJustCreated = false,
 }: ArtworkEditFormProps) {
@@ -66,7 +83,11 @@ export function ArtworkEditForm({
   const [savingImages, setSavingImages] = useState(false);
   const [images, setImages] = useState<string[]>(artwork.images || []);
   const [tones, setTones] = useState<string[]>(artwork.tone || []);
-  const [toneCustomInput, setToneCustomInput] = useState('');
+  const [tagOptions, setTagOptions] = useState(adminTags);
+  const [selectedAdminTags, setSelectedAdminTags] = useState(artworkAdminTags);
+  const [newAdminTagName, setNewAdminTagName] = useState('');
+  const [newAdminTagColor, setNewAdminTagColor] = useState('#6b7280');
+  const [tagSaving, setTagSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEditing = !!artwork.id;
@@ -110,6 +131,14 @@ export function ArtworkEditForm({
     setSelectedArtistId(initialSelectedArtistId);
   }, [initialSelectedArtistId]);
 
+  useEffect(() => {
+    setTagOptions(adminTags);
+  }, [adminTags]);
+
+  useEffect(() => {
+    setSelectedAdminTags(artworkAdminTags);
+  }, [artworkAdminTags]);
+
   const filteredArtists = useMemo(() => {
     const normalizedQuery = artistQuery.trim();
     if (!normalizedQuery) return artists;
@@ -152,6 +181,60 @@ export function ArtworkEditForm({
       toast.error('An error occurred while saving.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAddAdminTag = async (tagId: string) => {
+    if (!artwork.id || !tagId || selectedAdminTags.some((tag) => tag.id === tagId)) return;
+    const tag = tagOptions.find((item) => item.id === tagId);
+    if (!tag) return;
+    setTagSaving(true);
+    try {
+      await addAdminTagToArtworks([artwork.id], tagId);
+      setSelectedAdminTags((prev) =>
+        [...prev, tag].sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+      );
+      toast.success('내부 태그를 추가했습니다.');
+    } catch {
+      toast.error('내부 태그 추가 중 오류가 발생했습니다.');
+    } finally {
+      setTagSaving(false);
+    }
+  };
+
+  const handleRemoveAdminTag = async (tagId: string) => {
+    if (!artwork.id) return;
+    setTagSaving(true);
+    try {
+      await removeAdminTagFromArtworks([artwork.id], tagId);
+      setSelectedAdminTags((prev) => prev.filter((tag) => tag.id !== tagId));
+      toast.success('내부 태그를 제거했습니다.');
+    } catch {
+      toast.error('내부 태그 제거 중 오류가 발생했습니다.');
+    } finally {
+      setTagSaving(false);
+    }
+  };
+
+  const handleCreateAndAddAdminTag = async () => {
+    if (!artwork.id || !newAdminTagName.trim()) return;
+    setTagSaving(true);
+    try {
+      const tag = await createAndAttachAdminTagToArtwork(artwork.id, {
+        name: newAdminTagName,
+        color: newAdminTagColor,
+      });
+      setTagOptions((prev) => [...prev, tag].sort((a, b) => a.name.localeCompare(b.name, 'ko')));
+      setSelectedAdminTags((prev) =>
+        [...prev, tag].sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+      );
+      setNewAdminTagName('');
+      setNewAdminTagColor('#6b7280');
+      toast.success('내부 태그를 만들고 작품에 추가했습니다.');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '내부 태그 생성 중 오류가 발생했습니다.');
+    } finally {
+      setTagSaving(false);
     }
   };
 
@@ -574,10 +657,10 @@ export function ArtworkEditForm({
           />
         </div>
 
-        <div>
-          <p className="block text-sm font-medium text-gray-700 mb-2">
-            톤/무드{' '}
-            <span className="text-xs text-gray-400 font-normal">
+        <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <p className="block text-sm font-medium text-gray-700">
+            톤/무드
+            <span className="ml-1 text-xs text-gray-400 font-normal">
               (비슷한 작품 랭킹용 — 복수 선택 가능)
             </span>
           </p>
@@ -585,7 +668,7 @@ export function ArtworkEditForm({
           {tones.map((t) => (
             <input key={t} type="hidden" name="tone" value={t} />
           ))}
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="mt-3 flex flex-wrap gap-2">
             {ARTWORK_TONES.map((tone) => {
               const active = tones.includes(tone);
               return (
@@ -607,55 +690,121 @@ export function ArtworkEditForm({
               );
             })}
           </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={toneCustomInput}
-              onChange={(e) => setToneCustomInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  const val = toneCustomInput.trim();
-                  if (val && !tones.includes(val)) setTones((prev) => [...prev, val]);
-                  setToneCustomInput('');
-                }
-              }}
-              placeholder="직접 입력 후 추가 버튼"
-              className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y focus-visible:border-primary-a11y"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                const val = toneCustomInput.trim();
-                if (val && !tones.includes(val)) setTones((prev) => [...prev, val]);
-                setToneCustomInput('');
-              }}
-              className="rounded-md px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 border border-gray-300"
-            >
-              추가
-            </button>
-          </div>
-          {tones.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {tones.map((t) => (
-                <span
-                  key={t}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs"
-                >
-                  {t}
-                  <button
-                    type="button"
-                    onClick={() => setTones((prev) => prev.filter((x) => x !== t))}
-                    className="hover:text-primary-strong"
-                    aria-label={`${t} 삭제`}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
+
+        {isEditing && (
+          <div className="rounded-lg border border-primary-soft bg-primary-surface/40 p-4">
+            <div className="border-b border-primary-soft pb-3">
+              <p className="text-sm font-medium text-gray-700">관리자 내부 태그</p>
+              <p className="mt-1 text-xs text-gray-500">
+                공개 페이지와 작가/전시자 포털에는 노출되지 않는 운영용 태그입니다.
+              </p>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {selectedAdminTags.length === 0 ? (
+                <span className="text-xs text-gray-400">태그 없음</span>
+              ) : (
+                selectedAdminTags.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs text-charcoal-deep ring-1 ring-charcoal/10"
+                  >
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: tag.color }}
+                      aria-hidden="true"
+                    />
+                    {tag.name}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveAdminTag(tag.id)}
+                      disabled={tagSaving}
+                      className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
+                      aria-label={`${tag.name} 내부 태그 제거`}
+                    >
+                      <X className="h-3 w-3" aria-hidden="true" />
+                    </button>
+                  </span>
+                ))
+              )}
+            </div>
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(220px,1fr)_minmax(360px,1fr)]">
+              <div>
+                <label
+                  htmlFor="existing-admin-tag-select"
+                  className="mb-1.5 block text-xs font-medium text-gray-500"
+                >
+                  기존 태그 연결
+                </label>
+                <AdminSelect
+                  id="existing-admin-tag-select"
+                  value=""
+                  onChange={(e) => {
+                    handleAddAdminTag(e.target.value);
+                    e.target.value = '';
+                  }}
+                  disabled={tagSaving || tagOptions.length === 0}
+                  wrapperClassName="min-w-0"
+                  className="h-12 pr-11"
+                  iconClassName="right-4 h-4 w-4"
+                >
+                  <option value="">기존 태그 추가...</option>
+                  {tagOptions
+                    .filter((tag) => !selectedAdminTags.some((selected) => selected.id === tag.id))
+                    .map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                </AdminSelect>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="new-admin-tag-name"
+                  className="mb-1.5 block text-xs font-medium text-gray-500"
+                >
+                  새 태그 생성
+                </label>
+                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_48px_auto]">
+                  <input
+                    id="new-admin-tag-name"
+                    type="text"
+                    value={newAdminTagName}
+                    onChange={(e) => setNewAdminTagName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleCreateAndAddAdminTag();
+                      }
+                    }}
+                    placeholder="새 내부 태그 이름"
+                    className="h-12 min-w-0 rounded-md border border-gray-300 px-3 text-sm focus-visible:border-primary-a11y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y"
+                  />
+                  <input
+                    type="color"
+                    value={newAdminTagColor}
+                    onChange={(e) => setNewAdminTagColor(e.target.value)}
+                    className="h-12 w-12 rounded-md border border-gray-300 bg-white p-1"
+                    aria-label="내부 태그 색상"
+                  />
+                  <Button
+                    type="button"
+                    variant="white"
+                    onClick={handleCreateAndAddAdminTag}
+                    disabled={tagSaving || !newAdminTagName.trim()}
+                    leadingIcon={<Plus className="h-4 w-4" />}
+                    className="h-12 whitespace-nowrap px-4"
+                  >
+                    태그 추가
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-end gap-3">
           <Button type="button" variant="white" onClick={() => router.push('/admin/artworks')}>

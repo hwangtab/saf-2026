@@ -1,5 +1,11 @@
 import { requireAdmin } from '@/lib/auth/guards';
-import { getArtworkById, getAllArtists, getArtworkSales } from '@/app/actions/admin-artworks';
+import {
+  getArtworkById,
+  getAllArtists,
+  getArtworkSales,
+  getAdminTags,
+  getArtworkAdminTags,
+} from '@/app/actions/admin-artworks';
 import type { Artwork, ArtworkSale } from '@/types';
 import { ArtworkEditForm } from '../artwork-edit-form';
 import { SalesHistory } from './sales-history';
@@ -16,11 +22,15 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
   let artwork;
   let artists;
   let sales;
+  let adminTags;
+  let artworkAdminTags;
   try {
-    [artwork, artists, sales] = await Promise.all([
+    [artwork, artists, sales, adminTags, artworkAdminTags] = await Promise.all([
       getArtworkById(id),
       getAllArtists(),
       getArtworkSales(id),
+      getAdminTags(),
+      getArtworkAdminTags(id),
     ]);
   } catch (error) {
     console.error('[admin-artwork-detail] Artwork detail loading failed:', error);
@@ -46,7 +56,12 @@ export default async function AdminArtworkDetailPage({ params }: Props) {
           </p>
         </div>
       </div>
-      <ArtworkEditForm artwork={normalizedArtwork as Partial<Artwork>} artists={artists} />
+      <ArtworkEditForm
+        artwork={normalizedArtwork as Partial<Artwork>}
+        artists={artists}
+        adminTags={adminTags}
+        artworkAdminTags={artworkAdminTags}
+      />
 
       <div className="border-t border-gray-200 pt-6">
         <SalesHistory
