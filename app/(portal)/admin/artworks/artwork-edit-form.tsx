@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, X } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import {
   updateArtworkDetails,
@@ -12,9 +12,11 @@ import {
   createAndAttachAdminTagToArtwork,
   addAdminTagToArtworks,
   removeAdminTagFromArtworks,
+  deleteAdminTag,
 } from '@/app/actions/admin-artworks';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';
 import { useToast } from '@/lib/hooks/useToast';
 import { matchesSearchText } from '@/lib/search-utils';
 import { cn } from '@/lib/utils/cn';
@@ -87,6 +89,8 @@ export function ArtworkEditForm({
   const [selectedAdminTags, setSelectedAdminTags] = useState(artworkAdminTags);
   const [newAdminTagName, setNewAdminTagName] = useState('');
   const [newAdminTagColor, setNewAdminTagColor] = useState('#6b7280');
+  const [deleteAdminTagId, setDeleteAdminTagId] = useState('');
+  const [deleteTagConfirm, setDeleteTagConfirm] = useState<AdminArtworkTag | null>(null);
   const [tagSaving, setTagSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -208,9 +212,26 @@ export function ArtworkEditForm({
     try {
       await removeAdminTagFromArtworks([artwork.id], tagId);
       setSelectedAdminTags((prev) => prev.filter((tag) => tag.id !== tagId));
-      toast.success('내부 태그를 제거했습니다.');
+      toast.success('이 작품에서 내부 태그 연결을 제거했습니다.');
     } catch {
       toast.error('내부 태그 제거 중 오류가 발생했습니다.');
+    } finally {
+      setTagSaving(false);
+    }
+  };
+
+  const handleDeleteAdminTag = async (tagId: string) => {
+    if (!tagId) return;
+    setTagSaving(true);
+    try {
+      await deleteAdminTag(tagId);
+      setTagOptions((prev) => prev.filter((tag) => tag.id !== tagId));
+      setSelectedAdminTags((prev) => prev.filter((tag) => tag.id !== tagId));
+      setDeleteAdminTagId((prev) => (prev === tagId ? '' : prev));
+      setDeleteTagConfirm(null);
+      toast.success('내부 태그를 영구 삭제했습니다.');
+    } catch {
+      toast.error('내부 태그 삭제 중 오류가 발생했습니다.');
     } finally {
       setTagSaving(false);
     }
@@ -721,9 +742,20 @@ export function ArtworkEditForm({
                       onClick={() => handleRemoveAdminTag(tag.id)}
                       disabled={tagSaving}
                       className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
-                      aria-label={`${tag.name} 내부 태그 제거`}
+                      title="이 작품에서만 제거"
+                      aria-label={`${tag.name} 태그를 이 작품에서만 제거`}
                     >
                       <X className="h-3 w-3" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteTagConfirm(tag)}
+                      disabled={tagSaving}
+                      className="rounded-full p-0.5 text-danger-a11y/70 hover:bg-danger/10 hover:text-danger-a11y disabled:opacity-50"
+                      title="태그 영구 삭제"
+                      aria-label={`${tag.name} 태그 영구 삭제`}
+                    >
+                      <Trash2 className="h-3 w-3" aria-hidden="true" />
                     </button>
                   </span>
                 ))
@@ -803,6 +835,51 @@ export function ArtworkEditForm({
                 </div>
               </div>
             </div>
+
+            {tagOptions.length > 0 && (
+              <div className="mt-4 border-t border-primary-soft pt-4">
+                <label
+                  htmlFor="delete-admin-tag-select"
+                  className="mb-1.5 block text-xs font-medium text-gray-500"
+                >
+                  기존 태그 영구 삭제
+                </label>
+                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_auto]">
+                  <AdminSelect
+                    id="delete-admin-tag-select"
+                    value={deleteAdminTagId}
+                    onChange={(e) => setDeleteAdminTagId(e.target.value)}
+                    disabled={tagSaving}
+                    wrapperClassName="min-w-0"
+                    className="h-12 pr-11"
+                    iconClassName="right-4 h-4 w-4"
+                  >
+                    <option value="">삭제할 태그 선택...</option>
+                    {tagOptions.map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                  </AdminSelect>
+                  <Button
+                    type="button"
+                    variant="white"
+                    onClick={() => {
+                      const tag = tagOptions.find((item) => item.id === deleteAdminTagId);
+                      if (tag) setDeleteTagConfirm(tag);
+                    }}
+                    disabled={tagSaving || !deleteAdminTagId}
+                    leadingIcon={<Trash2 className="h-4 w-4" />}
+                    className="h-12 whitespace-nowrap border-danger/30 px-4 text-danger-a11y hover:bg-danger/10 hover:text-danger-a11y"
+                  >
+                    영구 삭제
+                  </Button>
+                </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  태그를 삭제하면 연결된 모든 작품에서도 이 태그가 함께 제거됩니다.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -815,6 +892,24 @@ export function ArtworkEditForm({
           </Button>
         </div>
       </form>
+
+      <AdminConfirmModal
+        isOpen={!!deleteTagConfirm}
+        onClose={() => {
+          if (!tagSaving) setDeleteTagConfirm(null);
+        }}
+        onConfirm={() => {
+          if (deleteTagConfirm) handleDeleteAdminTag(deleteTagConfirm.id);
+        }}
+        title="내부 태그 삭제"
+        description={`'${
+          deleteTagConfirm?.name || '-'
+        }' 태그를 영구 삭제하시겠습니까?\n연결된 모든 작품에서도 이 태그가 함께 제거됩니다. 이 작업은 되돌릴 수 없습니다.`}
+        confirmText="영구 삭제"
+        cancelText="취소"
+        variant="danger"
+        isLoading={tagSaving}
+      />
     </div>
   );
 }
