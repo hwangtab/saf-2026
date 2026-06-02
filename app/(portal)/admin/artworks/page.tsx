@@ -1,6 +1,5 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { getAdminTags } from '@/app/actions/admin-artworks';
 import { AdminArtworkList } from './admin-artwork-list';
 import LinkButton from '@/components/ui/LinkButton';
 import {
@@ -14,7 +13,6 @@ type Props = {
   searchParams: Promise<{
     status?: string;
     visibility?: string;
-    tag?: string;
     q?: string;
     sort?: string;
   }>;
@@ -23,14 +21,6 @@ type Props = {
 // Supabase nested embed는 1:N 관계를 single이 아닌 array로 반환할 수 있어
 // artists를 union으로 받은 뒤 아래 mapping에서 평탄화한다.
 type ArtistRef = Pick<Tables<'artists'>, 'name_ko'>;
-type AdminTagRef = Pick<
-  Tables<'admin_tags'>,
-  'id' | 'name' | 'slug' | 'color' | 'description' | 'archived_at'
->;
-type ArtworkAdminTagRef = {
-  tag_id: string;
-  admin_tags: AdminTagRef | AdminTagRef[] | null;
-};
 type AdminArtworkRow = Pick<
   Tables<'artworks'>,
   | 'id'
@@ -43,7 +33,6 @@ type AdminArtworkRow = Pick<
   | 'category'
 > & {
   artists: ArtistRef | ArtistRef[] | null;
-  artwork_admin_tags: ArtworkAdminTagRef[] | null;
 };
 
 export default async function AdminArtworksPage({ searchParams }: Props) {
@@ -51,16 +40,13 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
   const supabase = await createSupabaseServerClient();
   const params = await searchParams;
 
-  const [artworksResult, allAdminTags] = await Promise.all([
-    supabase
-      .from('artworks')
-      .select(
-        'id, title, admin_product_name, status, is_hidden, images, created_at, category, artists(name_ko), artwork_admin_tags(tag_id, admin_tags(id, name, slug, color, description, archived_at))'
-      )
-      .order('created_at', { ascending: false })
-      .returns<AdminArtworkRow[]>(),
-    getAdminTags(true),
-  ]);
+  const artworksResult = await supabase
+    .from('artworks')
+    .select(
+      'id, title, admin_product_name, status, is_hidden, images, created_at, category, artists(name_ko)'
+    )
+    .order('created_at', { ascending: false })
+    .returns<AdminArtworkRow[]>();
 
   if (artworksResult.error) {
     console.error('[admin-artworks-page] Artwork list loading failed:', artworksResult.error);
@@ -68,8 +54,6 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
   }
 
   const artworks = artworksResult.data;
-  const adminTags = allAdminTags.filter((tag) => !tag.archived_at);
-  const archivedAdminTags = allAdminTags.filter((tag) => tag.archived_at);
 
   // DB status/is_hidden은 nullable이지만 어드민 UI(`ArtworkItem`)는 non-null을 요구.
   // production 데이터에 null이 들어오면 가장 보수적인 active 상태로 fallback.
@@ -80,10 +64,6 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
     artists: Array.isArray(artwork.artists)
       ? (artwork.artists[0] ?? null)
       : (artwork.artists ?? null),
-    admin_tags: (artwork.artwork_admin_tags || [])
-      .map((row) => (Array.isArray(row.admin_tags) ? row.admin_tags[0] : row.admin_tags))
-      .filter((tag): tag is AdminTagRef => Boolean(tag))
-      .sort((a, b) => a.name.localeCompare(b.name, 'ko')),
   }));
 
   return (
@@ -104,12 +84,9 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
       </div>
       <AdminArtworkList
         artworks={normalizedArtworks}
-        adminTags={adminTags}
-        archivedAdminTags={archivedAdminTags}
         initialFilters={{
           status: params.status,
           visibility: params.visibility,
-          tag: params.tag,
           q: params.q,
           sort: params.sort,
         }}
