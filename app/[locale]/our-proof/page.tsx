@@ -429,7 +429,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                   </tr>
                   <tr className="border-b">
                     <td className="px-6 py-4 font-semibold">Interest rate</td>
-                    <td className="px-6 py-4 text-center text-danger">15-30%</td>
+                    <td className="px-6 py-4 text-center text-danger-a11y">15-30%</td>
                     <td className="px-6 py-4 text-center text-primary-strong font-semibold">
                       Fixed 5% APR
                     </td>
@@ -798,7 +798,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 </tr>
                 <tr className="border-b">
                   <td className="px-6 py-4 font-semibold">금리</td>
-                  <td className="px-6 py-4 text-center text-danger">15~30%</td>
+                  <td className="px-6 py-4 text-center text-danger-a11y">15~30%</td>
                   <td className="px-6 py-4 text-center text-primary-strong font-semibold">
                     연 5% 고정
                   </td>
