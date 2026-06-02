@@ -121,6 +121,10 @@ function resolveSaleDetail(sale: CustomerSaleInput) {
   return detail || null;
 }
 
+function hasExhibitionSaleDetail(sale: CustomerSaleInput) {
+  return resolveSaleDetail(sale) !== null;
+}
+
 function resolveChannel(sale: CustomerSaleInput): string {
   const detail = resolveSaleDetail(sale);
   if (detail?.purchase_channel?.trim()) return detail.purchase_channel.trim();
@@ -207,6 +211,8 @@ export function buildCustomerRecords({
   }
 
   for (const sale of sales) {
+    if (!hasExhibitionSaleDetail(sale)) continue;
+
     const buyerName = normalizeName(sale.buyer_name);
     if (!buyerName) continue;
 

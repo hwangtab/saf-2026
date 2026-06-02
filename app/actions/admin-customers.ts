@@ -53,7 +53,7 @@ export async function getCustomerRecords(): Promise<CustomerRecord[]> {
             'source',
             'source_detail',
             'artworks(title, artists(name_ko))',
-            'exhibition_sale_details(purchase_channel, delivery_status, shipping_required)',
+            'exhibition_sale_details!inner(purchase_channel, delivery_status, shipping_required)',
           ].join(', ')
         )
         .not('buyer_name', 'is', null)

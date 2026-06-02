@@ -103,6 +103,59 @@ describe('buildCustomerRecords', () => {
     });
   });
 
+  it('counts only exhibition purchase sales and ignores legacy sale rows', () => {
+    const records = buildCustomerRecords({
+      profiles: [],
+      sales: [
+        {
+          id: 'sale-exhibition',
+          artwork_id: 'artwork-1',
+          buyer_name: '이승미',
+          buyer_phone: '010-1234-5678',
+          sale_price: 1000000,
+          quantity: 1,
+          sold_at: '2026-01-13T03:00:00.000Z',
+          source: 'manual',
+          source_detail: 'manual_csv',
+          artworks: {
+            title: '봄의소리',
+            artists: { name_ko: '오윤' },
+          },
+          exhibition_sale_details: {
+            purchase_channel: '현장',
+            delivery_status: '배송완료',
+            shipping_required: '배송해야 함',
+          },
+        },
+        {
+          id: 'sale-legacy',
+          artwork_id: 'artwork-1',
+          buyer_name: '이승미',
+          buyer_phone: '010-1234-5678',
+          sale_price: 1000000,
+          quantity: 1,
+          sold_at: '2026-01-13T03:00:00.000Z',
+          source: 'manual',
+          source_detail: 'manual',
+          artworks: {
+            title: '봄의소리',
+            artists: { name_ko: '오윤' },
+          },
+          exhibition_sale_details: null,
+        },
+      ],
+    });
+
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({
+      customerName: '이승미',
+      purchaseCount: 1,
+      totalRevenue: 1000000,
+    });
+    expect(records[0].sales).toHaveLength(1);
+    expect(records[0].sales[0].saleId).toBe('sale-exhibition');
+  });
+
   it('uses customer contact overrides before profile or sale fallback contacts', () => {
     const records = buildCustomerRecords({
       profiles: [
