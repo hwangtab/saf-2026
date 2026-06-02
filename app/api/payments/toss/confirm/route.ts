@@ -8,6 +8,7 @@ import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { sanitizeConfirmResponse, sanitizeMethodDetail } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
   buildAdminNotificationFields,
   getOrderNotificationInfo,
@@ -323,6 +324,17 @@ export async function POST(req: NextRequest) {
         buyerLocale
       );
     }
+    void sendBuyerSms(
+      order.buyer_phone,
+      'payment_confirmed',
+      {
+        buyerName: order.buyer_name ?? '',
+        artworkTitle: notifyInfo?.artworkTitle ?? '',
+        amount: tossResponse.totalAmount,
+      },
+      buyerLocale,
+      orderId
+    );
   } else if (isVirtualAccount) {
     const va = tossResponse.virtualAccount as
       | { bankName?: string; accountNumber?: string; dueDate?: string }
@@ -363,6 +375,22 @@ export async function POST(req: NextRequest) {
         buyerLocale
       );
     }
+    void sendBuyerSms(
+      order.buyer_phone,
+      'virtual_account_issued',
+      {
+        buyerName: order.buyer_name ?? '',
+        artworkTitle: notifyInfo?.artworkTitle ?? '',
+        amount: tossResponse.totalAmount,
+        virtualAccount: {
+          bankName: va?.bankName,
+          accountNumber: va?.accountNumber,
+          dueDate: va?.dueDate,
+        },
+      },
+      buyerLocale,
+      orderId
+    );
   }
 
   return NextResponse.json({
