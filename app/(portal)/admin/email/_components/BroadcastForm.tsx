@@ -14,6 +14,8 @@ import type { BroadcastTemplate } from '@/lib/email/templates';
 
 type Mode = 'segment' | 'search';
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const DEFAULT_SEGMENT: SegmentSelection = {
   channel: 'member',
   subset: 'all',
@@ -45,22 +47,71 @@ export function BroadcastForm() {
   // search-mode state
   const [selectedContacts, setSelectedContacts] = useState<SelectedContact[]>([]);
   const [searchAdvertising, setSearchAdvertising] = useState(false);
+  const [manualEmails, setManualEmails] = useState('');
 
   const hour = new Date().getHours();
   const isNightTime = hour >= 21 || hour < 8;
+  const manualSummary = (() => {
+    const tokens = manualEmails
+      .split(/[\s,;]+/)
+      .map((token) => token.toLowerCase().trim())
+      .filter(Boolean);
+    const seen = new Set<string>();
+    let valid = 0;
+    let invalid = 0;
+    let duplicate = 0;
+    let alreadySelected = 0;
+
+    for (const token of tokens) {
+      if (!EMAIL_RE.test(token)) {
+        invalid += 1;
+        continue;
+      }
+      if (seen.has(token)) {
+        duplicate += 1;
+        continue;
+      }
+      seen.add(token);
+      if (selectedContacts.some((contact) => contact.email.toLowerCase() === token)) {
+        alreadySelected += 1;
+        continue;
+      }
+      valid += 1;
+    }
+
+    return { tokens, valid, invalid, duplicate, alreadySelected };
+  })();
   const submitBlockReason = (() => {
+    if (mode === 'search' && manualSummary.valid > 0) {
+      return '입력 중인 이메일이 아직 추가되지 않았습니다. 입력한 이메일 추가 버튼을 눌러주세요.';
+    }
     if (mode === 'search' && selectedContacts.length === 0) {
-      return '검색 발송은 수신자를 1명 이상 선택해야 합니다.';
+      return '받는 사람을 1명 이상 추가해주세요.';
     }
     if (mode === 'segment' && segment.channel === 'petition' && !segment.petitionSlug) {
       return '청원 캠페인 알림은 청원을 먼저 선택해야 합니다.';
     }
     if (mode === 'segment' && segment.isArtworkBuyer && !segment.artworkId.trim()) {
-      return '특정 작품 구매자 발송은 작품 ID를 입력해야 합니다.';
+      return '특정 작품 구매자는 작품을 먼저 선택해야 합니다.';
     }
     return null;
   })();
   const submitDisabled = isPending || Boolean(submitBlockReason);
+  const addManualRecipients = () => {
+    const existingEmails = new Set(selectedContacts.map((contact) => contact.email.toLowerCase()));
+    const nextRecipients: SelectedContact[] = [];
+    const seen = new Set<string>();
+
+    for (const token of manualSummary.tokens) {
+      if (!EMAIL_RE.test(token) || seen.has(token) || existingEmails.has(token)) continue;
+      seen.add(token);
+      nextRecipients.push({ email: token, name: null });
+    }
+
+    if (nextRecipients.length === 0) return;
+    setSelectedContacts([...selectedContacts, ...nextRecipients]);
+    setManualEmails('');
+  };
 
   const applyTemplate = (t: BroadcastTemplate) => {
     setSubject(t.subject);
@@ -68,7 +119,6 @@ export function BroadcastForm() {
     setCtaLabel(t.ctaLabel ?? '');
     setCtaUrl(t.ctaUrl ?? '');
     if (t.channel === 'individual') {
-      // individual 템플릿 → 검색 발송 모드에서만 의미 있음
       setSearchAdvertising(t.isAdvertisement);
       setMode('search');
     } else {
@@ -115,6 +165,7 @@ export function BroadcastForm() {
           setCtaLabel('');
           setCtaUrl('');
           setSelectedContacts([]);
+          setManualEmails('');
           setConfirmed(false);
           router.refresh();
         }
@@ -166,60 +217,103 @@ export function BroadcastForm() {
         </div>
       )}
 
-      {/* 발송 모드 토글 */}
-      <fieldset className="flex gap-2 rounded-lg border border-gray-200 p-1">
-        <legend className="sr-only">발송 모드 선택</legend>
-        <button
-          type="button"
-          onClick={() => {
-            setMode('segment');
-            setConfirmed(false);
-          }}
-          className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
-            mode === 'segment'
-              ? 'bg-primary-strong text-white'
-              : 'text-charcoal hover:bg-canvas-strong'
-          }`}
-        >
-          세그먼트 발송
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setMode('search');
-            setConfirmed(false);
-          }}
-          className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
-            mode === 'search'
-              ? 'bg-primary-strong text-white'
-              : 'text-charcoal hover:bg-canvas-strong'
-          }`}
-        >
-          검색 발송
-        </button>
-      </fieldset>
+      <section className="space-y-3 rounded-lg border border-gray-200 bg-canvas-soft p-4">
+        <div>
+          <h3 className="text-sm font-semibold text-charcoal-deep">받는 사람</h3>
+          <p className="mt-1 text-xs text-charcoal-muted">
+            그룹 전체를 고르거나, 명단에서 찾고, 명단에 없는 이메일을 직접 추가할 수 있습니다.
+          </p>
+        </div>
+
+        <fieldset className="flex gap-2 rounded-lg border border-gray-200 bg-white p-1">
+          <legend className="sr-only">받는 사람 구성 방식</legend>
+          <button
+            type="button"
+            onClick={() => {
+              setMode('segment');
+              setConfirmed(false);
+            }}
+            className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
+              mode === 'segment'
+                ? 'bg-primary-strong text-white'
+                : 'text-charcoal hover:bg-canvas-strong'
+            }`}
+          >
+            그룹 전체 선택
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode('search');
+              setConfirmed(false);
+            }}
+            className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
+              mode === 'search'
+                ? 'bg-primary-strong text-white'
+                : 'text-charcoal hover:bg-canvas-strong'
+            }`}
+          >
+            개별로 추가
+          </button>
+        </fieldset>
+
+        {mode === 'segment' && <AudienceSelector value={segment} onChange={setSegment} />}
+
+        {mode === 'search' && (
+          <div className="space-y-4">
+            <ContactSearch selected={selectedContacts} onChange={setSelectedContacts} />
+
+            <div className="space-y-2">
+              <label
+                htmlFor="broadcast-manual-emails"
+                className="block text-sm font-medium text-charcoal"
+              >
+                이메일 직접 추가
+              </label>
+              <textarea
+                id="broadcast-manual-emails"
+                value={manualEmails}
+                onChange={(e) => setManualEmails(e.target.value)}
+                rows={3}
+                placeholder={'name@example.com, another@example.com\n줄바꿈 또는 쉼표로 구분'}
+                className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 font-mono text-sm"
+              />
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs text-charcoal-muted">
+                  추가 가능 {manualSummary.valid.toLocaleString('ko-KR')}명
+                  {manualSummary.invalid > 0 &&
+                    ` · 형식 오류 ${manualSummary.invalid.toLocaleString('ko-KR')}건`}
+                  {manualSummary.duplicate > 0 &&
+                    ` · 입력 중복 ${manualSummary.duplicate.toLocaleString('ko-KR')}건`}
+                  {manualSummary.alreadySelected > 0 &&
+                    ` · 이미 추가됨 ${manualSummary.alreadySelected.toLocaleString('ko-KR')}건`}
+                </p>
+                <button
+                  type="button"
+                  onClick={addManualRecipients}
+                  disabled={manualSummary.valid === 0}
+                  className="rounded-lg border border-primary px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary-soft disabled:opacity-50"
+                >
+                  입력한 이메일 추가
+                </button>
+              </div>
+            </div>
+
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
+              <input
+                type="checkbox"
+                checked={searchAdvertising}
+                onChange={(e) => setSearchAdvertising(e.target.checked)}
+                className="rounded border-gray-300"
+              />
+              광고성 메일 (수신자에게 (광고) 표기·발송사 정보 포함)
+            </label>
+          </div>
+        )}
+      </section>
 
       {/* 템플릿 선택 */}
       <TemplatePicker mode={mode} onSelect={applyTemplate} />
-
-      {/* 수신자 세그먼트 (mode === 'segment') */}
-      {mode === 'segment' && <AudienceSelector value={segment} onChange={setSegment} />}
-
-      {/* 연락처 검색 (mode === 'search') */}
-      {mode === 'search' && (
-        <div className="space-y-3">
-          <ContactSearch selected={selectedContacts} onChange={setSelectedContacts} />
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
-            <input
-              type="checkbox"
-              checked={searchAdvertising}
-              onChange={(e) => setSearchAdvertising(e.target.checked)}
-              className="rounded border-gray-300"
-            />
-            광고성 메일 (수신자에게 (광고) 표기·발송사 정보 포함)
-          </label>
-        </div>
-      )}
 
       {/* 제목 */}
       <div>
@@ -304,7 +398,7 @@ export function BroadcastForm() {
           onChange={(e) => setConfirmed(e.target.checked)}
           className="rounded border-gray-300"
         />
-        수신자 목록을 확인했으며 발송을 확정합니다.
+        받는 사람, 광고성 여부, 제목과 본문을 확인했습니다. 발송합니다.
       </label>
 
       {error && <p className="text-sm text-danger-a11y">{error}</p>}
@@ -316,7 +410,7 @@ export function BroadcastForm() {
           disabled={submitDisabled}
           className="rounded-lg bg-primary-strong px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-strong/90 disabled:opacity-50"
         >
-          {isPending ? '처리 중…' : '발송 예약'}
+          {isPending ? '발송 처리 중...' : '발송하기'}
         </button>
         <button
           type="button"
@@ -336,7 +430,7 @@ export function BroadcastForm() {
           }
           className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-charcoal hover:bg-canvas-strong disabled:opacity-50"
         >
-          {isTestPending ? '발송 중…' : '나에게 테스트 발송'}
+          {isTestPending ? '테스트 보내는 중...' : '나에게 테스트 보내기'}
         </button>
       </div>
     </form>

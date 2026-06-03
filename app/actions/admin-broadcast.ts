@@ -16,6 +16,7 @@ import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import { PetitionAudienceResolver } from '@/lib/email/audiences/petition';
 import type { BroadcastChannel, Recipient } from '@/lib/email/audiences/types';
 import { validateUrl, validateTextLength } from '@/lib/utils/input-validation';
+import { matchesAnySearch } from '@/lib/search-utils';
 import type { ActionState } from '@/types';
 import type { Json } from '@/types/supabase';
 import BroadcastEmail from '@/emails/broadcast';
@@ -29,6 +30,16 @@ export interface EnqueueBroadcastInput {
   petitionSlug?: string;
   audienceFilter?: Record<string, unknown>;
   isAdvertisement?: boolean;
+}
+
+export interface BroadcastArtworkSearchResult {
+  id: string;
+  title: string;
+  titleEn: string | null;
+  artistName: string | null;
+  artistNameEn: string | null;
+  status: string | null;
+  image: string | null;
 }
 
 // 브로드캐스트를 큐에 등록.
@@ -81,7 +92,7 @@ export async function enqueueBroadcast(
     }
     resolver = new PetitionAudienceResolver(petitionSlug);
   } else {
-    return { message: `채널 '${channel}'은 세그먼트 발송을 지원하지 않습니다.`, error: true };
+    return { message: `채널 '${channel}'은 그룹 전체 선택을 지원하지 않습니다.`, error: true };
   }
 
   let recipients: Recipient[];
@@ -123,7 +134,7 @@ export async function enqueueBroadcast(
 
   if (existing?.id) {
     return {
-      message: '동일한 캠페인이 최근 등록되어 있습니다. 기존 발송이 진행 중입니다.',
+      message: '동일한 캠페인이 최근 등록되어 발송이 진행 중입니다.',
       broadcastId: existing.id,
     };
   }
@@ -176,7 +187,7 @@ export async function enqueueBroadcast(
   });
 
   return {
-    message: `${recipients.length}명에게 발송 예약되었습니다.`,
+    message: `${recipients.length}명에게 발송을 시작했습니다.`,
     broadcastId: broadcast.id,
   };
 }
@@ -271,6 +282,63 @@ export async function getPetitionOptions(): Promise<Array<{ slug: string; title:
   return data ?? [];
 }
 
+export async function searchBroadcastArtworks(
+  query: string
+): Promise<{ results: BroadcastArtworkSearchResult[]; total: number }> {
+  await requireAdmin();
+
+  const normalizedQuery = query.normalize('NFC').trim().slice(0, 120);
+  if (!normalizedQuery) return { results: [], total: 0 };
+
+  const supabase = await requireAdminClient();
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(
+      `
+      id,
+      title,
+      title_en,
+      status,
+      images,
+      artists(name_ko, name_en)
+    `
+    )
+    .order('created_at', { ascending: false })
+    .limit(2000);
+
+  if (error) {
+    console.error('[search-broadcast-artworks] error:', error);
+    return { results: [], total: 0 };
+  }
+
+  const matched = (data ?? []).filter((artwork) => {
+    const artist = Array.isArray(artwork.artists) ? artwork.artists[0] : artwork.artists;
+    return matchesAnySearch(normalizedQuery, [
+      artwork.title,
+      artwork.title_en,
+      artist?.name_ko,
+      artist?.name_en,
+    ]);
+  });
+
+  return {
+    total: matched.length,
+    results: matched.slice(0, 12).map((artwork) => {
+      const artist = Array.isArray(artwork.artists) ? artwork.artists[0] : artwork.artists;
+      const images = Array.isArray(artwork.images) ? artwork.images : [];
+      return {
+        id: artwork.id,
+        title: artwork.title,
+        titleEn: artwork.title_en,
+        artistName: artist?.name_ko ?? null,
+        artistNameEn: artist?.name_en ?? null,
+        status: artwork.status,
+        image: typeof images[0] === 'string' ? images[0] : null,
+      };
+    }),
+  };
+}
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? '씨앗페 <noreply@saf2026.com>';
 
@@ -302,7 +370,7 @@ export async function enqueueIndividualBroadcast(input: {
   const { data: suppressions } = await supabase
     .from('email_suppressions')
     .select('email_hash')
-    .in('channel', ['individual', 'all']);
+    .in('channel', isAdvertisement ? ['individual', 'customer', 'all'] : ['individual', 'all']);
   const suppressed = new Set((suppressions ?? []).map((s) => s.email_hash as string));
 
   const seen = new Set<string>();
@@ -334,7 +402,7 @@ export async function enqueueIndividualBroadcast(input: {
     .maybeSingle();
   if (existingBroadcast?.id) {
     return {
-      message: '동일한 개별 발송이 최근 등록되어 있습니다. 기존 발송이 진행 중입니다.',
+      message: '동일한 개별 발송이 최근 등록되어 발송이 진행 중입니다.',
       broadcastId: existingBroadcast.id,
     };
   }
@@ -375,7 +443,10 @@ export async function enqueueIndividualBroadcast(input: {
     is_advertisement: isAdvertisement,
     subject,
   });
-  return { message: `${rows.length}명에게 발송 예약되었습니다.`, broadcastId: broadcast.id };
+  return {
+    message: `${rows.length}명에게 발송을 시작했습니다.`,
+    broadcastId: broadcast.id,
+  };
 }
 
 // 작성 중인 내용으로 관리자 본인에게 테스트 1통 즉시 발송(큐 우회). 실전 0건 리스크 완화.

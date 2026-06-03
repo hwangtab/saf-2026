@@ -6,7 +6,7 @@ type Broadcast = Awaited<ReturnType<typeof getBroadcasts>>[number];
 
 const STATUS_LABELS: Record<string, string> = {
   draft: '임시저장',
-  queued: '발송 예약됨',
+  queued: '발송 준비 중',
   sending: '발송 중',
   sent: '발송 완료',
   failed: '발송 실패',

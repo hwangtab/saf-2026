@@ -1,3 +1,56 @@
+# 관리자 이메일 발송 UX 전면 재정리
+
+## 변경 파일
+
+- `/Users/macbook_hwang/saf-2026/app/(portal)/admin/email/_components/BroadcastForm.tsx`
+  - `세그먼트 발송` / `검색 발송` 토글 노출 제거
+  - `받는 사람` 섹션에서 `그룹 전체 선택` 또는 `개별로 추가`를 고르는 구조로 변경
+  - 개별 추가에서 명단 검색과 이메일 직접 입력을 모두 지원
+  - 직접 입력 이메일 형식 오류/중복/이미 추가됨 요약 표시
+  - `발송하기`, `나에게 테스트 보내기`, 발송 확인 문구로 변경
+
+- `/Users/macbook_hwang/saf-2026/app/(portal)/admin/email/_components/ContactSearch.tsx`
+  - `명단에서 찾아 추가`, `추가`, `선택된 받는 사람` 문구로 변경
+  - 선택 목록 해제 UX 유지
+
+- `/Users/macbook_hwang/saf-2026/app/actions/admin-broadcast.ts`
+  - 발송 시작 성공 메시지로 변경
+  - 광고성 개별 발송은 `individual`/`customer`/`all` 수신거부를 함께 적용
+  - 기존 큐 등록, 수신거부, 중복 제거 구조 유지
+
+- `/Users/macbook_hwang/saf-2026/__tests__/app/admin/email/BroadcastForm.test.tsx`
+- `/Users/macbook_hwang/saf-2026/__tests__/app/admin/email/ContactSearch.test.tsx`
+  - 새 문구와 직접 이메일 추가 흐름 테스트 보강
+
+## 검증
+
+- `git diff --check` 통과
+- `npm run lint`, `npm run type-check`, 관련 Jest 실행은 현재 작업 환경에 `npm`이 없어 완료하지 못함
+  - 실패 사유: `zsh:1: command not found: npm`
+
+# 관리자 이메일 작품 구매자 대상 검색 선택
+
+## 변경 파일
+
+- `/Users/macbook_hwang/saf-2026/app/actions/admin-broadcast.ts`
+  - 관리자 이메일 발송용 작품 검색 액션 `searchBroadcastArtworks` 추가
+  - 웹사이트 작품 검색과 같은 `matchesAnySearch` 기반으로 작품명/영문명/작가명/영문 작가명을 검색
+
+- `/Users/macbook_hwang/saf-2026/app/(portal)/admin/email/_components/AudienceSelector.tsx`
+  - `특정 작품 구매자` 선택 시 UUID 직접 입력 대신 작품 검색 선택 UI 사용
+
+- `/Users/macbook_hwang/saf-2026/app/(portal)/admin/email/_components/ArtworkSearchSelect.tsx`
+  - 작품명/작가명 실시간 검색, 후보 선택, 선택된 작품 요약, 다시 선택 지원
+
+- `/Users/macbook_hwang/saf-2026/__tests__/app/admin/email/ArtworkSearchSelect.test.tsx`
+  - 검색 결과 선택과 다시 선택 흐름 테스트 추가
+
+## 검증
+
+- `git diff --check` 통과
+- `npm run lint`, `npm run type-check`, 관련 Jest 실행은 현재 작업 환경에 `npm`이 없어 완료하지 못함
+  - 실패 사유: `zsh:1: command not found: npm`
+
 # 관리자 이메일 발송 UX 메인 반영
 
 ## 변경 파일

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getPetitionOptions } from '@/app/actions/admin-broadcast';
 import { AudiencePreview } from './AudiencePreview';
+import { ArtworkSearchSelect } from './ArtworkSearchSelect';
 import type { BroadcastChannel } from '@/lib/email/audiences/types';
 
 export interface SegmentSelection {
@@ -80,13 +81,9 @@ export function AudienceSelector({ value, onChange }: Props) {
 
       {value.isArtworkBuyer && (
         <>
-          <input
-            aria-label="작품 ID"
-            type="text"
+          <ArtworkSearchSelect
             value={value.artworkId}
-            onChange={(e) => set({ artworkId: e.target.value })}
-            placeholder="작품 ID(UUID)"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            onChange={(artworkId) => set({ artworkId })}
           />
           <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
             <input

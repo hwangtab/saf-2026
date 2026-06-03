@@ -40,7 +40,7 @@ export function ContactSearch({ selected, onChange }: Props) {
     <div className="space-y-3">
       <div className="flex gap-2">
         <input
-          aria-label="연락처 검색"
+          aria-label="명단에서 찾아 추가"
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -50,7 +50,7 @@ export function ContactSearch({ selected, onChange }: Props) {
               runSearch();
             }
           }}
-          placeholder="이름 또는 이메일"
+          placeholder="이름 또는 이메일 검색"
           className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
         />
         <button
@@ -59,7 +59,7 @@ export function ContactSearch({ selected, onChange }: Props) {
           disabled={isPending}
           className="shrink-0 rounded-lg bg-primary-strong px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isPending ? '검색 중…' : '검색'}
+          {isPending ? '찾는 중...' : '찾기'}
         </button>
       </div>
 
@@ -81,8 +81,8 @@ export function ContactSearch({ selected, onChange }: Props) {
                 {c.suppressed
                   ? '수신거부됨'
                   : selected.some((s) => s.email === c.email)
-                    ? '담김'
-                    : '담기'}
+                    ? '추가됨'
+                    : '추가'}
               </button>
             </li>
           ))}
@@ -103,7 +103,7 @@ export function ContactSearch({ selected, onChange }: Props) {
         <div className="space-y-2 rounded-lg border border-gray-200 bg-white p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm font-medium text-charcoal">
-              선택된 수신자 {selected.length.toLocaleString('ko-KR')}명
+              선택된 받는 사람 {selected.length.toLocaleString('ko-KR')}명
             </p>
             <button
               type="button"
