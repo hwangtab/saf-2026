@@ -1,5 +1,15 @@
 [
   {
+    "hash": "434154ff",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "윤겸·이열·장천 김성태·조신욱·최재란 전용 작가 페이지 추가",
+    "summary": "매체 다양성 5인(유화·나무사진·캘리그라피·책가도·정물사진) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- YoonGyeomFeature: 회복·평온 유화, 'Serenity Fortress' 모티프\n- LeeYeolFeature: 밤에 조명 주어 촬영하는 나무 사진가, 신목 시리즈\n- KimSeongtaeFeature: 한국 캘리그라피 대표, 전통 서예×디자인·휘호\n- JoSinukFeature: 조선 책가도(冊架圖) 도상의 현대 회화 재해석\n- ChoiJaeranFeature: '쿼크의 시간' 시든 정물에 우주를 드로잉한 사진\n- ShinHakchulFeature 정전 패턴 복제(PaperGrain·hero·bio·전시·타임라인·상호부조 배너·MasterArtistMediumSections + JSON-LD)\n- page.tsx MASTER_ARTIST_FEATURES dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 전원 통과(날조 1인칭 인용 0건, 전 사실 DB history 대조 확인)",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
     "hash": "c831d271",
     "type": "feat",
     "scope": "master",
