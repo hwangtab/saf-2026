@@ -3,30 +3,57 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { enqueueBroadcast } from '@/app/actions/admin-broadcast';
-import { AudiencePreview } from './AudiencePreview';
-import type { BroadcastChannel } from '@/lib/email/audiences/types';
+import { TemplatePicker } from './TemplatePicker';
+import { AudienceSelector, type SegmentSelection } from './AudienceSelector';
+import type { BroadcastTemplate } from '@/lib/email/templates';
 
-const CHANNEL_OPTIONS: { value: BroadcastChannel; label: string; available: boolean }[] = [
-  { value: 'member', label: '작가·출품자 업무', available: true },
-  { value: 'customer', label: '고객 마케팅 (광고)', available: true },
-  { value: 'petition', label: '청원 캠페인 알림', available: true },
-];
+type Mode = 'segment' | 'search';
+
+const DEFAULT_SEGMENT: SegmentSelection = {
+  channel: 'member',
+  subset: 'all',
+  petitionSlug: '',
+  artworkId: '',
+  isArtworkBuyer: false,
+  advertising: false,
+};
 
 export function BroadcastForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [channel, setChannel] = useState<BroadcastChannel>('member');
+
+  // mode — only 'segment' is wired in this task; 'search' is a stub for a later task
+  const [mode] = useState<Mode>('segment');
+
+  // form fields
   const [subject, setSubject] = useState('');
   const [bodyMd, setBodyMd] = useState('');
   const [ctaLabel, setCtaLabel] = useState('');
   const [ctaUrl, setCtaUrl] = useState('');
-  const [petitionSlug, setPetitionSlug] = useState('');
+  const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [confirmed, setConfirmed] = useState(false);
+
+  // segment audience state
+  const [segment, setSegment] = useState<SegmentSelection>(DEFAULT_SEGMENT);
 
   const hour = new Date().getHours();
   const isNightTime = hour >= 21 || hour < 8;
+
+  const applyTemplate = (t: BroadcastTemplate) => {
+    setSubject(t.subject);
+    setBodyMd(t.bodyMd);
+    setCtaLabel(t.ctaLabel ?? '');
+    setCtaUrl(t.ctaUrl ?? '');
+    setSegment((s) => ({
+      ...s,
+      advertising: t.isAdvertisement,
+      ...(t.channel === 'customer' ? { channel: 'customer', isArtworkBuyer: false } : {}),
+      ...(t.channel === 'member' || t.channel === 'petition'
+        ? { channel: t.channel, isArtworkBuyer: false }
+        : {}),
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,12 +66,19 @@ export function BroadcastForm() {
 
     startTransition(async () => {
       const result = await enqueueBroadcast({
-        channel,
+        channel: segment.channel,
         subject,
         bodyMd,
         ctaLabel: ctaLabel || undefined,
         ctaUrl: ctaUrl || undefined,
-        petitionSlug: channel === 'petition' ? petitionSlug : undefined,
+        petitionSlug: segment.channel === 'petition' ? segment.petitionSlug : undefined,
+        audienceFilter: {
+          subset: segment.subset,
+          ...(segment.isArtworkBuyer
+            ? { artworkId: segment.artworkId, mode: 'artwork-buyer' }
+            : {}),
+        },
+        isAdvertisement: segment.advertising,
       });
 
       if (result.error) {
@@ -56,6 +90,7 @@ export function BroadcastForm() {
         setCtaLabel('');
         setCtaUrl('');
         setConfirmed(false);
+        setSegment(DEFAULT_SEGMENT);
         router.refresh();
       }
     });
@@ -74,51 +109,17 @@ export function BroadcastForm() {
         </div>
       )}
 
-      <div>
-        <label htmlFor="broadcast-channel" className="mb-1 block text-sm font-medium text-charcoal">
-          채널
-        </label>
-        <select
-          id="broadcast-channel"
-          value={channel}
-          onChange={(e) => setChannel(e.target.value as BroadcastChannel)}
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-        >
-          {CHANNEL_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value} disabled={!opt.available}>
-              {opt.label}
-              {!opt.available ? ' (준비 중)' : ''}
-            </option>
-          ))}
-        </select>
-        <div className="mt-2">
-          <AudiencePreview channel={channel} />
-        </div>
-      </div>
+      {/* 템플릿 선택 */}
+      <TemplatePicker mode={mode} onSelect={applyTemplate} />
 
-      {channel === 'petition' && (
-        <div>
-          <label
-            htmlFor="broadcast-petition-slug"
-            className="mb-1 block text-sm font-medium text-charcoal"
-          >
-            청원 슬러그
-          </label>
-          <input
-            id="broadcast-petition-slug"
-            type="text"
-            value={petitionSlug}
-            onChange={(e) => setPetitionSlug(e.target.value)}
-            placeholder="oh-yoon"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-          />
-        </div>
-      )}
+      {/* 수신자 세그먼트 (mode === 'segment') */}
+      {mode === 'segment' && <AudienceSelector value={segment} onChange={setSegment} />}
 
+      {/* 제목 */}
       <div>
         <label htmlFor="broadcast-subject" className="mb-1 block text-sm font-medium text-charcoal">
           제목
-          {channel === 'customer' && (
+          {segment.channel === 'customer' && (
             <span className="ml-1 font-normal text-charcoal-muted">
               (발송 시 자동으로 &quot;(광고)&quot; 접두어 추가됨)
             </span>
@@ -135,6 +136,7 @@ export function BroadcastForm() {
         />
       </div>
 
+      {/* 본문 */}
       <div>
         <label htmlFor="broadcast-body" className="mb-1 block text-sm font-medium text-charcoal">
           본문 (마크다운)
@@ -150,6 +152,7 @@ export function BroadcastForm() {
         />
       </div>
 
+      {/* CTA */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label
@@ -185,6 +188,7 @@ export function BroadcastForm() {
         </div>
       </div>
 
+      {/* 발송 확인 체크박스 */}
       <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
         <input
           type="checkbox"
@@ -201,7 +205,7 @@ export function BroadcastForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-strong disabled:opacity-50"
+        className="rounded-lg bg-primary-strong px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-strong/90 disabled:opacity-50"
       >
         {isPending ? '처리 중…' : '발송 예약'}
       </button>
