@@ -7,6 +7,7 @@ import type { BroadcastChannel, Recipient } from '@/lib/email/audiences/types';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import { CustomerAudienceResolver } from '@/lib/email/audiences/customer';
 import { PetitionAudienceResolver } from '@/lib/email/audiences/petition';
+import { ArtworkBuyerAudienceResolver } from '@/lib/email/audiences/artwork-buyer';
 import type { ActionState } from '@/types';
 import type { Json } from '@/types/supabase';
 
@@ -189,31 +190,61 @@ export async function getBroadcasts() {
   }>;
 }
 
-export async function previewAudience(channel: BroadcastChannel): Promise<{
-  total: number;
-  breakdown: Record<string, number>;
-}> {
+export async function previewAudience(
+  channel: BroadcastChannel,
+  filter?: {
+    subset?: 'all' | 'artist' | 'exhibitor';
+    petitionSlug?: string;
+    artworkId?: string;
+    advertising?: boolean;
+  }
+): Promise<{ total: number; breakdown: Record<string, number> }> {
   await requireAdmin();
 
   if (channel === 'member') {
-    const resolver = new MemberAudienceResolver();
-    const recipients = await resolver.resolve();
-    return { total: recipients.length, breakdown: { member: recipients.length } };
+    const recipients = await new MemberAudienceResolver().resolve({
+      subset: filter?.subset ?? 'all',
+    });
+    const label =
+      filter?.subset === 'artist'
+        ? '작가'
+        : filter?.subset === 'exhibitor'
+          ? '출품자'
+          : '작가·출품자';
+    return { total: recipients.length, breakdown: { [label]: recipients.length } };
   }
 
   if (channel === 'customer') {
-    const resolver = new CustomerAudienceResolver();
-    const recipients = await resolver.resolve();
-    return {
-      total: recipients.length,
-      breakdown: { '동의자·거래고객': recipients.length },
-    };
+    if (filter?.artworkId) {
+      const recipients = await new ArtworkBuyerAudienceResolver(filter.artworkId, {
+        advertising: filter.advertising ?? false,
+      }).resolve();
+      return { total: recipients.length, breakdown: { 작품구매자: recipients.length } };
+    }
+    const recipients = await new CustomerAudienceResolver().resolve();
+    return { total: recipients.length, breakdown: { '동의자·거래고객': recipients.length } };
   }
 
-  // petition preview requires slug — return placeholder
   if (channel === 'petition') {
-    return { total: 0, breakdown: { '(청원 슬러그 입력 필요)': 0 } };
+    if (!filter?.petitionSlug) return { total: 0, breakdown: { '(청원 선택 필요)': 0 } };
+    const recipients = await new PetitionAudienceResolver(filter.petitionSlug).resolve();
+    return { total: recipients.length, breakdown: { 서명자: recipients.length } };
   }
 
   return { total: 0, breakdown: {} };
+}
+
+// 발송 대상 청원 드롭다운용 — 종료된 청원도 포함(종료 청원 서명자 결과 보고 메일 대상).
+export async function getPetitionOptions(): Promise<Array<{ slug: string; title: string }>> {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+  const { data, error } = await supabase
+    .from('petitions')
+    .select('slug, title')
+    .order('created_at', { ascending: false });
+  if (error) {
+    console.error('[get-petition-options] error:', error);
+    return [];
+  }
+  return data ?? [];
 }
