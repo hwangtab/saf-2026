@@ -676,6 +676,7 @@ export type Database = {
           dispatch_locked_until: string | null;
           failed_count: number;
           id: string;
+          is_advertisement: boolean;
           petition_slug: string | null;
           queued_at: string | null;
           recipient_count: number;
@@ -696,6 +697,7 @@ export type Database = {
           dispatch_locked_until?: string | null;
           failed_count?: number;
           id?: string;
+          is_advertisement?: boolean;
           petition_slug?: string | null;
           queued_at?: string | null;
           recipient_count?: number;
@@ -716,6 +718,7 @@ export type Database = {
           dispatch_locked_until?: string | null;
           failed_count?: number;
           id?: string;
+          is_advertisement?: boolean;
           petition_slug?: string | null;
           queued_at?: string | null;
           recipient_count?: number;
