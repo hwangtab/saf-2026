@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build": "npm run generate-changelog && node scripts/sync-site-stats.js && next build && npm run verify:i18n-placeholders",
+    "build": "npm run generate-changelog && node scripts/sync-site-stats.js && NODE_OPTIONS=--max-old-space-size=8192 next build && npm run verify:i18n-placeholders",
     "sync-stats": "node scripts/sync-site-stats.js",
     "verify:i18n-placeholders": "node scripts/verify-i18n-placeholders.mjs",
     "start": "next start",
@@ -16,7 +16,7 @@
     "check:server-button-imports": "node scripts/check-server-button-imports.js",
     "check:empty-alt": "node scripts/check-empty-alt.js",
     "format": "prettier --write .",
-    "type-check": "next typegen && tsc --noEmit",
+    "type-check": "next typegen && NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit",
     "format-artworks": "node scripts/format_artworks.js",
     "validate-artworks": "node scripts/validate_artworks.js",
     "ga4:naver-check": "node scripts/ga4-naver-check.js",

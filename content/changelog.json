@@ -1,5 +1,35 @@
 [
   {
+    "hash": "71b2e124",
+    "type": "feat",
+    "scope": "email",
+    "subject": "rebuild admin broadcast recipient UX",
+    "summary": "새 기능 추가",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하 맥북"
+  },
+  {
+    "hash": "e1f85469",
+    "type": "feat",
+    "scope": "email",
+    "subject": "improve admin broadcast recipient UX",
+    "summary": "새 기능 추가",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하 맥북"
+  },
+  {
+    "hash": "faa988eb",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "신건우·최혜수·심현희·우용민·김규학 전용 작가 페이지 추가",
+    "summary": "매체 다양성 5인(도시 건축 회화·존재의 조각·동양화 인물·수묵 한국화·도시 풍경) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- SinGeonwuFeature: Cropped City, 잘라낸 도시·건축적 풍경\n- ChoeHyesuFeature: 자취의 기록, 유한한 생의 관찰(벨기에·프랑스 수학)\n- SimHyeonhuiFeature: 그려야 한다는 충동, 노인의 얼굴 대작·독자 노선\n- UYongminFeature: 탕진수묵, 지리·두륜의 대형 수묵\n- KimGyuhakFeature: 21세기 도시, 풍경의 재해석(인천)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(날조 1인칭 인용 0건, 전 사실 DB history 원문 대조 확인)",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
     "hash": "c871e009",
     "type": "feat",
     "scope": "artists",
