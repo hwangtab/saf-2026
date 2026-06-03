@@ -1,5 +1,785 @@
 [
   {
+    "hash": "c831d271",
+    "type": "feat",
+    "scope": "master",
+    "subject": "Round 3 작가 5명 dispatch 등록 + a11y",
+    "summary": "이익태·이호철·강석태·민정See·홍진희 작가 페이지에 전용 페이지 연결",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "e774607e",
+    "type": "feat",
+    "scope": "artist",
+    "subject": "홍진희 전용 페이지 — 실로 그린 숲",
+    "summary": "홍진희(실을 회화로 풀어내는 작가) 전용 페이지 신설",
+    "body": "- 섬유·회화 경계 탐구 bio 5단락 (ko/en)\n- 〈실로 그린 숲〉·실과 회화 사이 sub-essay 2편\n- 타임라인·소장처·캠페인 상호부조 섹션\n- JSON-LD Person·ExhibitionEvent·BreadcrumbList\n- DB 실 검증: MMCA 미술은행·경기도미술관·개인전 16회+\n- 거장/master 프레이밍 없음, 3인칭→1인칭 인용 변환 없음",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "7ea7882c",
+    "type": "feat",
+    "scope": "master",
+    "subject": "민정See 전용 페이지 — 플라스틱의 표면",
+    "summary": "민정See(플라스틱 물성으로 현대사회를 비판하는 판화·드로잉 작가) 전용 페이지 신설",
+    "body": "- MIN_JEONGSEE_PATH = /artworks/artist/민정See (encodeURIComponent)\n- isMinJeongSeeArtist: toLowerCase()로 '민정See' → '민정see' 정규화 처리\n- 신진 tier — 거장/master 프레이밍 없음, jobTitle=판화가/Printmaker\n- 인용문 없음 (1인칭 출처 없음 — DB는 3인칭 서술)\n- 검증된 DB 기반 사실: 홍익대 판화(2002), SAIC Printmedia 석사(2010),\n  Plastic Society I(2014) / Plastic Promise(2016) / 빛 이후 표상(2024),\n  2025 화랑미술제 Zoom-In 선정, 소마미술관·영은미술관·Frans Masereel Centrum 소장\n- sub-essay 3편: ①플라스틱의 물성 ②표면과 위장 ③확장된 판화 실천\n- ko/en 양언어, robots: index:false(en)",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "bae612fb",
+    "type": "feat",
+    "scope": "master",
+    "subject": "강석태 전용 페이지 — 마음의 별",
+    "summary": "강석태(어린왕자·별 모티프의 동화적 회화 작가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "1b246a5a",
+    "type": "feat",
+    "scope": "master",
+    "subject": "이호철 전용 페이지 — 일상의 틈",
+    "summary": "이호철(일상의 틈을 들여다보는 회화·판화 작가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "1e3ebc5e",
+    "type": "feat",
+    "scope": "master",
+    "subject": "이익태 전용 페이지 — 토탈 아티스트",
+    "summary": "이익태(영화·연극·퍼포먼스·회화를 넘나든 토탈 아티스트) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "f0791157",
+    "type": "feat",
+    "scope": "master",
+    "subject": "주요 작가 5명 dispatch 등록 + a11y",
+    "summary": "주재환·손은영·김레이시·정미정·박성완 작가 페이지에 전용 페이지 연결",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "4011a168",
+    "type": "feat",
+    "scope": "master",
+    "subject": "박성완 전용 페이지 — 광주·전남의 삶과 풍경",
+    "summary": "박성완(광주·전남 기반 회화 작가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "16da1a43",
+    "type": "feat",
+    "scope": "master",
+    "subject": "정미정 전용 페이지 — 시간·기억의 다층 회화",
+    "summary": "정미정(시간·공간·기억을 쌓는 회화 작가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "448953fe",
+    "type": "feat",
+    "scope": "master",
+    "subject": "김레이시 전용 페이지 — 구상에서 추상으로",
+    "summary": "김레이시(추상 회화 작가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "a3c3eb18",
+    "type": "feat",
+    "scope": "master",
+    "subject": "손은영 전용 페이지 — 회화와 사진의 경계",
+    "summary": "손은영(회화와 사진 사이, 도시·야경 「밤의 집」 작가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "f1e1ce86",
+    "type": "feat",
+    "scope": "master",
+    "subject": "주재환 전용 페이지 — 현실과 발언·풍자 콜라주",
+    "summary": "주재환(현실과 발언 창립 멤버, 풍자·개념미술가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "d7219e84",
+    "type": "feat",
+    "scope": "master",
+    "subject": "거장 미전용 5명 dispatch 등록 + a11y",
+    "summary": "박재동·류연복·김준권·최병수·조문호 작가 페이지에 전용 거장 페이지 연결",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "cd277dba",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "send SMS on checkout VA issue and stale order expiry",
+    "summary": "체크아웃 가상계좌 발급·만료주문 자동취소 시 SMS 병행 발송",
+    "body": "- app/actions/checkout.ts: virtual_account_issued 이메일 직후 sendBuyerSms 병행 호출\n- app/api/internal/expire-stale-orders/route.ts: auto_cancelled 이메일 직후 sendBuyerSms 병행 호출",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "fa93d073",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "send SMS on buyer self-cancel and refund",
+    "summary": "구매자 셀프취소·환불 시 SMS 병행 발송",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "72c6c1d0",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "send SMS on admin order status changes",
+    "summary": "관리자 환불·배송·배송완료·입금확인·취소 시 구매자 SMS 병행 발송",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "aa1fd7e5",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "send SMS on deposit confirm and refund webhook",
+    "summary": "입금확인·환불 웹훅 시 구매자 SMS 병행 발송",
+    "body": "- deposit_confirmed: DEPOSIT_CALLBACK DONE 처리 후 sendBuyerEmail 다음에 sendBuyerSms 병행\n- refunded: CANCELED_STATUSES 처리 후 sendBuyerEmail 다음에 sendBuyerSms 병행\n- refunded 블록 select에 buyer_phone 컬럼 추가 (기존 누락)\n- sendBuyerSms는 en locale·비-KR 번호·phone 없음 시 자체 스킵, never throw",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "225196dd",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "our-proof 금리 셀 WCAG AA 대비 위반 수정",
+    "summary": "our-proof 페이지 비교표 금리 셀 색상 대비 미달(CI 차단) 수정",
+    "body": "- `text-danger`(#D94F45, 4.07:1 — large text 전용)를 작은 본문 셀에 사용해\n  WCAG AA(4.5:1) 미달 → e2e-a11y가 ko/en 양쪽에서 58줄 위반으로 main CI 차단\n- 코드베이스 표준인 `text-danger-a11y`(#B91C1C, 5.92:1 AA)로 교체 (page.tsx 2곳)",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "64f5aa96",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "send SMS on payment confirm and virtual account issue",
+    "summary": "결제승인·가상계좌 발급 시 구매자 SMS 병행 발송",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "1ed90328",
+    "type": "fix",
+    "scope": "sms",
+    "subject": "include buyer name in virtual account SMS when present",
+    "summary": "가상계좌 안내 SMS에 수신자 이름 추가(이름 있을 때만)",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "bb605d48",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add buyer SMS dispatcher with per-type templates",
+    "summary": "타입별 본문 생성 + sendBuyerSms 디스패처(스킵 규칙·로그) 추가",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "0ef23d81",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add sms_logs table migration",
+    "summary": "SMS 발송 로그 테이블(sms_logs) + admin RLS 추가",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "bfbb2e05",
+    "type": "feat",
+    "scope": "master",
+    "subject": "조문호 전용 거장 페이지 — 다큐멘터리 사진",
+    "summary": "조문호(사람만 찍는 다큐멘터리 사진가) 전용 페이지 신설",
+    "body": "- JO_MUNHO_PATH + isJoMunhoArtist (5개 키 정규화)\n- buildJoMunhoMetadata / JoMunhoFeature export\n- 3부 에세이: ①사람만 찍는다 ②청량리 588 ③산골→동자동\n- 타임라인: 1947–현재 (검증된 항목만)\n- Person JSON-LD: birthDate 1947, birthPlace 경남 창녕\n- ko/en 양쪽 동일 깊이, 브랜드 토큰 준수",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "2f089098",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add Solapi single-send client with HMAC auth",
+    "summary": "Solapi 단건 SMS 발송 클라이언트(HMAC 서명·재시도·no-op) 추가",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "b0c47ed3",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add Korean mobile number normalization",
+    "summary": "SMS 발송용 한국 휴대폰 번호 정규화 유틸 추가",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "19d9dc23",
+    "type": "feat",
+    "scope": "master",
+    "subject": "최병수 전용 거장 페이지 — 걸개그림·환경미술",
+    "summary": "최병수(「한열이를 살려내라」 걸개그림·환경미술가) 전용 페이지 신설",
+    "body": "- ParkBuldongFeature 패턴 클론 (1 공개작 내러티브 중심 구조)\n- hero: 걸개그림·광장 모티프 (charcoal 배경, 수평·수직 테두리)\n- bio 6단락 ko/en: 목수→미술가→걸개그림→환경미술 검증 사실 기반\n- sub-essay 3편: ① 1987 걸개그림 제작 경위 ② 노동자에서 미술가로 ③ 환경·생명의 미술\n- timeline: 1960 출생, 1986 현장 연행, 1987 민미협·걸개그림, 1988–환경미술, 2006 책, 2020 개인전\n- 0/1-work graceful fallback (ParkBuldong 패턴)\n- Person JSON-LD: knowsAbout [Minjung art, 걸개그림, Environmental art]\n- 검증된 사실만 사용; 미확인 구체 수치·전시명은 일반화",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "0f187f7d",
+    "type": "feat",
+    "scope": "master",
+    "subject": "김준권 전용 거장 페이지 — 수묵 목판화",
+    "summary": "김준권(나무에 새긴 40년, 수묵 목판화가) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "1d10e70a",
+    "type": "feat",
+    "scope": "master",
+    "subject": "류연복 전용 거장 페이지 — 목판화·국토",
+    "summary": "류연복(칼로 새긴 민중·국토의 목판화가) 전용 페이지 신설",
+    "body": "- RyuYeonbokFeature + buildRyuYeonbokMetadata 컴포넌트 신설\n- hero: \"칼이 지나간 자리에 사람이 산다\" — 목판 나뭇결·칼선 모티프\n- bio 5단락 (ko/en): 홍익대 → 1980s 민중판화 → 1993 안성 정착 → 국토순례 → 국제 소개\n- sub-essay 3편: ① 칼로 새긴 민중의 삶 ② 국토·자연의 목판 ③ 1980년대 민중판화 운동\n- 타임라인: 1958–2026 검증 사실만\n- 전시·게재 카드: 경남도립미술관·Azalea·샤자대·한국현대목판화협회 확인 사실\n- JSON-LD: breadcrumb / ExhibitionEvent / Person / ItemList / AggregateOffer\n- 캠페인 프레이밍: 류연복 = 동료 예술인을 위한 연대자",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "70dd4be5",
+    "type": "feat",
+    "scope": "master",
+    "subject": "박재동 전용 거장 페이지 — 시사만화·그림판",
+    "summary": "박재동(한국 시사만화의 대부) 전용 페이지 신설",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "5cecc385",
+    "type": "feat",
+    "scope": "master",
+    "subject": "박불똥 본문 심화 — 포토몽타주·민중미술 운동·대표 연작 sub-essay",
+    "summary": "박불똥 페이지 bio 심화 + 포토몽타주·그림마당 민·비판 방법 심층 서사 + 연표 구체화",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "03119b98",
+    "type": "feat",
+    "scope": "master",
+    "subject": "이철수 본문 심화 — 민중판화·제천 낙향·대중 확산 sub-essay",
+    "summary": "이철수 페이지 bio 심화 + 민중판화·선(禪) 전환·대중적 확산 심층 서사 + 연표 구체화",
+    "body": "- bio 3단 → 5단: 1981 첫전, 민중판화 시기, 1987 제천 귀농, 1988 전환, 40년 작업 규모\n- sub-essay 3편 + coda 신설: ①1980s 칼로 새긴 저항 ②제천 농사짓는 판화가 ③달력·편지 대중 확산\n- 연표 구체화: \"1990s~/현재\" → 1988 전환·1989 국제전·2002 나뭇잎편지·2021 개인전·2024 전태일전\n- 전시카드: 1989 독일·스위스·아일랜드 연도 명기\n- 모든 사실 출처 검증 (충북인뉴스·위키백과·경향신문·여성신문·뉴스1)",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "e5eddf14",
+    "type": "feat",
+    "scope": "master",
+    "subject": "민정기 본문 심화 — 현실과 발언·판문점·진경 전환 sub-essay",
+    "summary": "민정기 페이지 bio 심화(3→5단락) + 현실과 발언·2018 판문점·진경산수 전환 3개 심층 서사 추가",
+    "body": "- bio: 현실과 발언 창립(1979 결성·1980 촛불전시) → 이발소 그림 반미학 선언 → 1987 양평 이전 → 1990s 실경산수 전환 → 파노라마 산수 정의까지 5단락으로 확장\n- sub-essay ①: 현실과 발언 1980 촛불전시 + 이발소 그림의 반미학적 의미 + 1990년 해체\n- sub-essay ②: 「북한산 전도」(2007, MMCA 소장) 판문점 정상회담 에피소드 심층 서술\n- sub-essay ③: 1987 양평 이전·진경산수 전환·300여 미술인 토대 형성\n- coda: 씨앗페 연대자 프레이밍\n- 연표: 1990s 실경산수 전환·2018 북한산 전도 정상회담 항목 추가, 수상 기념전(2007) 명시\n- 전시·소장 카드: 이중섭미술상(2006) + 2007 조선일보미술관 기념전 + 소장처 5곳 추가\n- 인용문: 검증된 직접 인용 없음 — 의도적 생략\n- ko/en 동등 깊이 작성",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "4eeaf572",
+    "type": "feat",
+    "scope": "master",
+    "subject": "신학철 본문 심화 — 모내기 사건·연작 형식 sub-essay",
+    "summary": "신학철 페이지 bio 심화(3→5단락) + 「모내기」·「한국근대사」 심층 서사 3-essay 섹션 신설 + 전시·소장 카드 검증 데이터로 보강",
+    "body": "- bio: AG전(1969–75)·서울방법전(1977–81) 참여 및 1978 전환 의미 구체화; 40년 연작 범위 명시; 「모내기」→UN 2004 서사까지 통합\n- sub-essay 섹션 신설 (박생광 패턴 적용):\n  ① 모더니스트에서 증언자로 — 1978년의 전환\n  ② 수직으로 쌓는 역사 — 「한국근대사·한국현대사」 연작의 형식\n  ③ 「모내기」 — 한 점의 그림이 받은 재판 (압수→UN 2004→MMCA 위탁 전 서사)\n- 전시·소장 카드: 학고재 1991·2016, 광주시립미술관 2024–25 회고전, MMCA 소장작 구체명(한국근대사-누가 하늘을 보았다 하는가 링크), SeMA 소장작 구체명\n- 연표: 1969·1991·2024 항목 추가(총 13개); 2004 UN 조항 번호(제19조) 보강\n- quote 섹션 OMIT: 검색으로 발언 텍스트 단편 확인되나 1차 출처 인터뷰 URL 미확보 — 안전성 우선\n- 색상 토큰·i18n 규칙 전면 준수; type-check·eslint·forbidden-token 검사 통과",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "da80fedf",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "make tag creation attachment atomic",
+    "summary": "관리자 버그 수정",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "ac8d82c2",
+    "type": "fix",
+    "scope": "lint",
+    "subject": "jsx-a11y/react 룰 블록에 files 스코프 지정해 eslint . 중단 해결",
+    "summary": "eslint . 전체 실행이 'could not find plugin jsx-a11y'로 중단되던 버그 수정",
+    "body": "- 근본 원인: eslint-config-next는 jsx-a11y/react/@next plugin을\n  files:['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'] 스코프에서만 등록하는데,\n  커스텀 룰 블록은 files 스코프가 없어 universal 적용 → .cjs 등 스코프 밖\n  파일(.vercel/**/___next_launcher.cjs)에 룰이 걸려 plugin 미등록 에러로 전체 중단\n- 단일 .tsx lint는 통과하나 eslint .(디렉토리)는 .cjs 포함으로 실패하던 현상 설명\n- fix: 두 커스텀 룰 블록에 nextConfig와 동일한 files 스코프 지정(근본 해결)\n- 보조: ignores에 .vercel/.claude/.understand-anything 추가(빌드·도구 산출물 제외)",
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "f2c336ec",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "add internal artwork tags",
+    "summary": "관리자 새 기능 추가",
+    "body": null,
+    "date": "2026-06-02",
+    "author": "황경하"
+  },
+  {
+    "hash": "1c512990",
+    "type": "feat",
+    "scope": "master",
+    "subject": "신학철 거장 큐레이션 페이지 추가 (#56)",
+    "summary": "신학철 전용 거장 페이지(ShinHakchulFeature) 설계 문서 추가",
+    "body": "* Normalize exhibition purchase statuses\n\n* docs(spec): 신학철 거장 큐레이션 페이지 설계\n\n\n- 거장 6명 중 신학철만 일반 작가 페이지 톤 → 전용 feature로 격 통일\n- 시각 컨셉 '역사의 지층·수직 축적', 「모내기」 사건 핵심 축\n- 공개 3점만 노출, 사실관계 WebSearch 검증 완료\n\n\n* docs(plan): 신학철 거장 페이지 구현 계획\n\n\n\n* feat(master): 신학철 거장 큐레이션 페이지 추가\n\n\n- 히어로/내러티브/테마3/연표/전시·소장/상호부조/작품 갤러리\n- Person·ExhibitionEvent·ItemList·AggregateOffer JSON-LD\n- ko/en 이중언어, 역사의 지층 수직 모티프\n\n\n* feat(master): 신학철 거장 페이지 dispatch 등록 + a11y 경로\n\n\n\n---------\n\nCo-authored-by: Claude Opus 4.8 (1M context) <noreply@anthropic.com>",
+    "date": "2026-06-01",
+    "author": "hwangtab"
+  },
+  {
+    "hash": "9f023474",
+    "type": "fix",
+    "scope": null,
+    "subject": "stabilize Supabase build timeout",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "4e77881f",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "네이버 노출 개선 — robots Yeti 차단·이미지 alt·메타 검색어 정렬",
+    "summary": "네이버 중복 색인·이미지 alt 누락 회귀 해결 및 거장/청원 메타를 실제 검색어에 정렬",
+    "body": "- robots: Yeti·AI봇이 공통 Disallow를 무시하던 구조 버그 수정. 별도 user-agent\n  그룹이 `*`의 차단을 통째로 건너뛰어 네이버가 쿼리 변형(?page·?sort·?returnTo)을\n  전부 크롤 → 동일 title/description 폭증. COMMON_DISALLOW 상수로 추출해 일괄 적용\n- alt: 전 페이지 로고 + hero 배경(작가·스토리·뉴스 thumbnail)의 빈 alt 해소.\n  PageHeroBackground에 alt prop 추가, petition 오윤 벽화 배경 alt 부여\n- artwork: 동일 제목 연작(이호철 Encore 등) title에 크기를 덧붙여 고유화.\n  가격(CTR 레버) 뒤에 배치해 SERP 표시 잘림 방지\n- petition/special: 제목을 실제 네이버 검색어(오윤 벽화·민중미술 목판화)에 정렬\n- check-empty-alt: 공개 라우트 빈 alt를 빌드에서 차단 (lint 편입, 회귀 방지)\n- ga4-naver-check: 네이버 유입 진단 스크립트 추가",
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "671bee7d",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "카테고리 title의 {count} 변수 미전달 회귀 수정",
+    "summary": "카테고리 페이지 제목의 {count}가 안 넘어가 ko/en title이 깨지던 문제 수정",
+    "body": "- categoryPage.title 메시지는 {count}를 쓰는데 호출 3곳(메타·JSON-LD name·PageHero)이 누락\n- 빌드 FORMATTING_ERROR 30건 + 카테고리 <title> 폴백 노출 → count 전달로 해소",
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "c53c4799",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "개발 이력 페이지네이션 번호 축약 (가로 스크롤 방지)",
+    "summary": "변경 이력 페이지 번호가 전부 표시돼 가로로 길어지던 문제 수정",
+    "body": "- /admin/changelog 페이지네이션이 totalPages 전체를 렌더링해 페이지가 쌓일수록 가로 스크롤 발생\n- petition Pagination의 buildPageWindow 로직 재사용 — 최대 7개만 표시 (1 … 현재±1 … 마지막)\n- 번호 버튼에 aria-label/aria-current, ellipsis에 aria-hidden 추가",
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "d9465926",
+    "type": "feat",
+    "scope": "orders",
+    "subject": "이메일 원클릭 주문조회 (서명 토큰)",
+    "summary": "결제·배송 안내 이메일의 \"주문 상세 보기\" 링크로 로그인·재입력 없이 주문을 바로 조회",
+    "body": "- lib/email/order-access-token.ts: HMAC-SHA256 서명 토큰 sign/verify (unsubscribe-token 패턴\n  복제, EMAIL_UNSUB_SECRET 재사용, 'ord|' 네임스페이스로 수신거부 토큰과 분리, 만료 없음)\n- lookupOrderByToken server action: 토큰 서명 검증=인증(이메일 수신자) → email·세션 검증 없이\n  주문 상세 반환. lookupOrderDetail의 조회·조립 로직을 fetchOrderDetailRow 헬퍼로 공유(중복 제거)\n- 진행형 5종 이메일(결제확인·가상계좌·입금확인·배송시작·배송완료)에 OrderCtaButton 추가.\n  notify.ts가 ${siteUrl}/orders?token=... 전달(환불·취소 2종 제외)\n- OrderLookup: URL token 최우선 분기 → 회원/게스트/세션 무관 상세 직행, 무효 시 기존 흐름 fallback\n- 보안: orderNo만 서명(email은 URL·토큰 어디에도 노출 없음), 위변조 거부 검증 완료,\n  IP rate limit 유지, secret 미설정 시 버튼 미표시로 graceful degrade",
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "0f0fc879",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "영문 컬렉션 noindex 정책 확정 (ko canonical 통합)",
+    "summary": "영문 컬렉션 페이지에 resolveEnRobots(false) 명시 — 고유 영문 콘텐츠가 큐레이션 카피로 한정돼 EN_INDEXABLE 기준 미달. koOnly alternates에 빠져있던 noindex 신호 보강",
+    "body": "- 랜딩·개별 generateMetadata에 resolveEnRobots(locale, false)\n- stories 비-indexable 패턴과 일관 (alternates koOnly + robots noindex)\n- 영문 SEO는 핵심 14페이지 + 선별 매거진에 집중",
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "40c7fda6",
+    "type": "feat",
+    "scope": "orders",
+    "subject": "결제 완료 후 게스트 주문조회 자동화 (빈틈 2)",
+    "summary": "비회원이 결제 직후 주문조회 시 이름·연락처를 다시 입력하지 않고 바로 조회되게 개선",
+    "body": "- 결제완료(success)의 \"주문조회\" 버튼이 orderNo를 URL로 전달(success·가상계좌·무통장 3곳)\n- checkout 결제 시작 시 buyer 이메일을 sessionStorage('saf:lastBuyerEmail')에 보관\n  (CheckoutClient·OverseasCheckoutClient — 카드·간편·무통장 공통 경로)\n- OrderLookup 게스트 경로: URL orderNo + sessionStorage 이메일로 자동 상세조회\n- 보안: 이메일은 URL 노출 없이 sessionStorage에만 두고 서버가 buyer_email 일치를 검증.\n  남의 주문번호를 URL에 넣어도 이메일 불일치로 차단(orderNo 단독으론 상세 비노출). rate limit 유지",
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "78cf8abe",
+    "type": "feat",
+    "scope": "orders",
+    "subject": "로그인 시 게스트 주문 자동 귀속(claim)",
+    "summary": "비회원으로 결제한 주문을 로그인 시 회원 계정에 자동 연결해 마이페이지에서 보이게 함",
+    "body": "- 가입 전 게스트로 구매(buyer_user_id NULL)한 주문이 이후 로그인해도\n  마이페이지(buyer_user_id 기준 조회)에 안 뜨던 갭 — production에 귀속 대상 54건 확인\n- claimGuestOrders server action: 검증된 이메일(email_confirmed_at)이 정확히\n  일치하는 NULL 주문만 user.id로 귀속. 미확인 이메일로 타인 주문 탈취 차단. 멱등.\n- MypageClient가 인증 직후·주문 목록 조회 전에 호출(귀속분이 바로 목록에 반영)\n- 직전 b44bce28(\"로그인 회원 → /mypage\" 동선)과 짝을 이뤄, 회원이 회원/게스트\n  주문을 가리지 않고 마이페이지에서 일괄 조회 가능",
+    "date": "2026-06-01",
+    "author": "황경하"
+  },
+  {
+    "hash": "8a481fab",
+    "type": "fix",
+    "scope": "artwork",
+    "subject": "데이터 블라인드 스팟 보정 — 정사각 호수 표기 + 0호 추가",
+    "summary": "실데이터 분석에서 정사각(S형) 66개·0호급 19개가 호수 누락/과대로 드러남. 정사각도 긴 변으로 약 N호 표기, HO_TABLE에 0호 추가",
+    "body": "- estimateHo: 정사각 가드(ratio<1.1) 제거 — 정사각도 긴 변 F형 매칭으로 호수 표기(S 규격표는 미사용). 극단(>2.2)만 생략\n- HO_TABLE에 0호(18×14, 긴변 18.0) 추가 — 18~22cm 소품이 1호로 과대 표기되던 블라인드 스팟 보정\n- 실측: anon 426 표본 중 정사각 66(2D 16%)·0호급 19. 호수 생략은 극단 13개로 축소",
+    "date": "2026-05-31",
+    "author": "황경하"
+  },
+  {
+    "hash": "c5c06165",
+    "type": "feat",
+    "scope": "artwork",
+    "subject": "호수 환산을 F형 긴 변 기준으로 정확화 + 정사각(S형) 제외",
+    "summary": "면적 최근접 → F형 긴 변 최근접 매칭. 호수는 긴 변으로 결정되고 F·P·M형 긴 변이 동일하므로 형에 무관하게 정확. 정사각(S형)은 비율<1.1 가드로 호수 표기 제외",
+    "body": "- HO_TABLE: F형 면적 → F형 긴 변\n- estimateHo: 긴 변 매칭, 비율 1.1~2.2(F·P·M)만 confident, 정사각·극단 제외\n- P형 20호(72.7x53.0)가 면적 기준 15호 → 긴 변 기준 정확히 20호로 개선\n- 운영 지시 \"그림호수는 F 기준, S는 참고하지 않는다\" 반영",
+    "date": "2026-05-31",
+    "author": "황경하"
+  },
+  {
+    "hash": "b44bce28",
+    "type": "fix",
+    "scope": "orders",
+    "subject": "로그인 회원 주문/배송조회 시 정보 재입력 제거",
+    "summary": "로그인 회원이 주문/배송조회에서 이름·연락처를 다시 입력하던 불편 수정",
+    "body": "- /orders 페이지가 상위 [locale]/layout.tsx의 force-static을 상속해 정적\n  생성되면서, 서버의 supabase.auth.getUser()가 빌드 타임에 항상 null →\n  로그인 회원도 게스트 조회 폼(이름·이메일·휴대폰)을 보던 버그\n- 미들웨어(next-intl) rewrite가 ?orderNo= 쿼리를 서버 searchParams에서\n  떨구는 것도 확인(ko·en 모두) → force-dynamic 단독으로는 해결 불가\n- page.tsx는 정적 셸로 정리하고, 로그인 감지·주문번호 자동조회·마이페이지\n  리다이렉트를 OrderLookup(클라이언트)이 브라우저 세션·window.location.search로\n  전담 (정적 캐시·쿼리 떨굼·토큰 refresh 함정 회피 — 결제 success/fail과 동일 패턴)\n- 로그인 회원: 헤더 진입 → /mypage 주문 목록 / ?orderNo= 진입 → 자동 상세 조회\n- 게스트(비회원): 기존 조회 폼 그대로 유지",
+    "date": "2026-05-31",
+    "author": "황경하"
+  },
+  {
+    "hash": "2bfbf239",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "입금대기 주문 자동취소 무한 보류(\"취소 연장\") 기능",
+    "summary": "특수 상황에서 관리자가 입금대기 주문의 24시간 자동취소를 무한 보류할 수 있는 \"취소 연장\" 버튼 추가",
+    "body": "expire-stale-orders cron이 created_at + 24시간 지난 awaiting_deposit 주문을 자동 취소하는데,\n고객이 입금을 늦게 하는 등 특수 상황에서 이를 보류할 수단이 없었음. 한 번 누르면 입금 확인하거나\n수동 취소할 때까지 주문이 계속 유지된다(무한 보류, 토글로 해제 가능).\n\n- 마이그레이션: orders.deposit_auto_cancel_paused boolean NOT NULL DEFAULT false (production 적용 완료)\n- expire-stale-orders cron: paused=true 주문을 만료 대상에서 제외 (.eq 한 줄)\n- setDepositAutoCancelPaused server action: admin 전용, awaiting_deposit에서만 토글, activity_logs 기록\n- order-detail.tsx: \"취소 연장\"/\"보류 해제\" 토글 버튼 + \"자동취소 보류 중\" 배지\n- 입금확인(confirmDeposit)은 status('awaiting_deposit')만 보므로, 보류 중에 입금 확인을 눌러도\n  정상 진행(paid → sold → 알림). 가상계좌 webhook 취소·수동 취소는 보류와 무관하게 동작\n- types/supabase.ts 재생성 (deposit 컬럼 + 기존 미반영 check_reset_eligibility RPC 타입)\n- 회귀 가드 테스트: cron의 paused 제외 필터 + action 가드 보장\n\n검증: type-check OK / build OK / 가드 테스트 2/2 / 마이그레이션 production 적용 완료",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "ff8f60b0",
+    "type": "fix",
+    "scope": "collections",
+    "subject": "컬렉션 설명 카피 충실화 + 본문 줄바꿈 자연화",
+    "summary": "빈약한 1~3문장 설명을 공간의 정서·큐레이션 기준·구매 동기를 담은 4문장으로 재작성, 본문 문단 text-pretty로 줄바꿈 균형",
+    "body": "- 6개 컬렉션(거실/침실/현관/서재/첫그림/선물) descriptionKo/En 풍부하게 재작성\n- 개별 페이지 본문 문단: max-w-3xl → max-w-2xl + text-pretty (text-center 짧은 줄 어색 해소)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "579e9068",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "토스 결제 실패 주문이 \"계좌이체\"로 오표시되던 버그 수정",
+    "summary": "주문 상세에서 카드/통합결제 실패 주문을 무통장입금과 구분 못 해 전부 \"계좌이체\"로 표시하던 문제 수정",
+    "body": "isBankTransfer = !payment_key 판정이 Toss confirm 미도달(결제 실패) 주문과 의도적\n무통장입금 주문을 구분하지 못했음. 둘 다 payment_key가 없어, domestic(토스 통합결제)\n실패 주문까지 \"계좌이체 (수동)\"으로 오표시됨 (민경식 고객 5건 사례). 이 fix는 결제 랜딩\n회귀(4f255da9)와 별개로, 같은 사고에서 드러난 admin 표시 로직 결함을 정정.\n\n- admin-orders.ts: getOrderDetail의 order select에 metadata 누락분 추가 +\n  OrderDetail에 payment_provider 노출\n- order-detail.tsx:\n  - payment_provider === 'manual_bank_transfer' → \"계좌이체 (무통장입금)\"\n  - payment_key 있음(토스 confirm 완료) → 실제 결제수단 라벨(카드/계좌이체/가상계좌)\n  - 그 외(domestic/PayPal 등 confirm 미도달) → \"결제 미완료\"\n  - 토스 결제 정보(상태/승인일시)는 payment_key 있을 때만 노출\n\n검증: type-check OK / build OK",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "79423cd4",
+    "type": "fix",
+    "scope": "collections",
+    "subject": "컬렉션 카드를 표준 NowShowing 카드 패턴으로 통일",
+    "summary": "임의로 지어낸 인라인 카드를 제거하고 홈 NowShowing(ShowingCard)과 동일한 표준 이미지 카드로 — 랜딩·개별 \"다른 공간\" 공용 CollectionCard 컴포넌트",
+    "body": "- CollectionCard 신규: 이미지(16:10) + 이모지 배지 + gradient overlay + 제목/부제/CTA (NowShowing과 동일 클래스)\n- 랜딩·개별 페이지가 CollectionCard 사용, 다른 공간 카드도 대표작 cover fetch\n- i18n collections.viewCollection (ko/en)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "b706b9d3",
+    "type": "fix",
+    "scope": "portal",
+    "subject": "포털 헤더의 \"SAF Artist/Admin/Exhibitor\" 텍스트를 씨앗페 로고로 교체",
+    "summary": "관리자·작가·전시자 포털 좌상단에 글자 대신 씨앗페 로고를 표시하고, 클릭하면 씨앗페 메인으로 이동하도록 수정",
+    "body": "- PortalShell 데스크탑 헤더: title 텍스트 렌더 → SafeImage 로고 이미지로 교체\n- 로고 링크를 포털 내부 대시보드에서 씨앗페 공개 메인(/)으로 변경\n- admin 모바일 드로어 헤더의 \"SAF Admin\" 텍스트도 동일하게 로고로 교체 + 클릭 시 드로어 닫기\n- 더 이상 쓰지 않는 titleHref prop 제거 (admin/dashboard/exhibitor 3개 레이아웃 정리)\n- title 값은 로고 alt(스크린리더용 포털 식별 라벨)로 재활용",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "e019986f",
+    "type": "fix",
+    "scope": "collections",
+    "subject": "컬렉션 페이지를 표준 PageHero+Section으로 재작업",
+    "summary": "인라인 hero·min-h-screen 래퍼를 표준 디자인 컴포넌트로 교체 — 다른 서브페이지와 동일한 히어로·패딩·톱니 구분선 적용",
+    "body": "- 인라인 bg-gradient hero → 표준 PageHero (charcoal-deep, page-hero-min-h, SawtoothDivider, breadcrumb 자동)\n- 직접 패딩 div → Section(variant canvas-soft/white, prevVariant로 배경 전환, 표준 py-12 md:py-20)\n- 카드: gallery-hairline border + Card hover 패턴(hover:-translate-y-1 hover:shadow-xl) + text-artwork-title 큐레이터 라벨\n- DESIGN.md 브랜드 토큰 준수 (charcoal/canvas/primary-strong)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "0faaa597",
+    "type": "fix",
+    "scope": "admin,exhibitor,artist",
+    "subject": "작품 크기 cm 3필드 입력을 모든 수정 경로로 통일",
+    "summary": "admin뿐 아니라 exhibitor·artist 대시보드에서도 작품 크기를 가로/세로/깊이 cm로 입력 → size 텍스트 자동 합성 + width/height/depth/size_bucket 동시 저장. 어디서 수정하든 구조화 데이터 일관 보장",
+    "body": "- form-helpers: buildArtworkSizeFields 공통 헬퍼 추출 (admin 로컬 함수 → 공용)\n- exhibitor-artworks·artwork(artist) create/update에 ...sizeFields 적용\n- exhibitor·artist 폼: size 단일 input → cm 3필드, 폼 타입에 치수 추가\n- i18n 공통 네임스페이스 artworkSizeFields(width/height/depth, ko/en)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "4f255da9",
+    "type": "fix",
+    "scope": "checkout",
+    "subject": "결제 완료/실패 랜딩을 client-side query 읽기로 전환 — 카드결제 전면 중단 회귀 수정",
+    "summary": "카드결제가 5/22부터 9일간 전면 실패하던 P0 버그 수정. 결제를 마쳐도 구매 완료가 안 되고 작품 페이지로 튕기던 원인 해결",
+    "body": "근본 원인: Next.js 16 미들웨어 rewrite가 default-locale(/checkout/...) 경로의 query를\nserver searchParams로 전달하지 못함(path params는 보존). 토스 successUrl이 locale 없는\n/checkout/{id}/success?paymentKey...&orderId...라, 결제 후 돌아온 파라미터가 통째로 유실되어\nsuccess 페이지가 작품 상세로 redirect → confirm 미실행 → 모든 카드결제가 pending_payment로\n취소됨. 마지막 성공 5/21, production curl·로컬 재현·Playwright로 확정.\n\n수정:\n- success·fail/page.tsx: 얇은 wrapper로 전환, server searchParams 의존 제거\n- SuccessClient/FailClient: window.location.search에서 결제 파라미터 직접 읽기\n  (브라우저 주소창 query는 internal rewrite와 무관하게 원본 유지)\n- app/actions/checkout.ts: verifyBankTransferLanding(무통장 안내 피싱 방지)\n  + cancelLandingOrder(fail 시 pending 주문 정리) server action 추가\n- 회귀 가드 테스트 추가 — server searchParams 재등장 / client window.location.search 누락 차단\n\n검증: type-check OK / build OK (SSG) / Playwright로 confirm POST 호출 확인 / 회귀 테스트 4/4",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "e43a3d61",
+    "type": "fix",
+    "scope": "collections,gallery,admin",
+    "subject": "코드 리뷰 발견 버그 7건 수정",
+    "summary": "컬렉션 잘못된 slug 500 방지, OG·페이지 작품 일치, 크기필터 URL 검증, 카운트 정합, admin float 노이즈, 영문 복수 처리",
+    "body": "- collections/[slug]: dynamicParams=false (잘못된 slug 404), generateMetadata가 본문과 동일 cache 키로 OG=첫작품 일치, alternates koOnly(sitemap 정합)\n- collections 랜딩: cover도 동일 cache 키로 썸네일=첫작품 일치, alternates koOnly\n- useArtworkFilter: size_bucket URL 값 유효성 검증(잘못된 값 0건 방지)\n- ArtworkGalleryWithSort: 크기필터 totalCount를 전체 작품 수로(CategoryFilter 정합)\n- admin buildSizeFields: number→string float 노이즈 제거(toFixed)\n- en.json collections.artworkCount: ICU plural(1 work/N works)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "c4beafd1",
+    "type": "feat",
+    "scope": "nav",
+    "subject": "푸터 둘러보기에 \"공간으로 찾기\" 링크 추가",
+    "summary": "공간·용도 컬렉션(/collections)을 푸터 작품 링크 영역에도 노출 — 헤더에 이어 발견성 강화",
+    "body": null,
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "1e59a8e1",
+    "type": "feat",
+    "scope": "payments",
+    "subject": "만료 주문 취소 알림 상세화 + 모든 알림 메일 링크 클릭화",
+    "summary": "만료 주문 자동 취소 알림에 작가·작품·구매자·연락처·금액·관리자 링크를 표시하고, 모든 결제 알림 메일의 관리자 페이지 링크를 클릭 가능하게 함",
+    "body": "- expire-stale-orders: 취소된 주문마다 작품·작가·구매자(연락처·이메일)·금액·주문번호·관리자 페이지 링크를 멀티라인으로 표시 (기존엔 건수만 노출)\n- 미결제 취소건도 상세 조회 추가, 입금대기건은 구매자 이메일과 알림이 동일 조회 결과를 공유해 중복 쿼리 제거\n- lib/notify: 알림 필드 값의 http(s) URL을 클릭 링크로, 줄바꿈을 <br>로 렌더 → 모든 알림 메일에 적용\n- 보안: URL 링크화는 RAW 값에서 URL-safe 문자만 매칭하고 escapeHtml로 인코딩하여 속성 경계 탈출(XSS) 차단",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "0dc6e1eb",
+    "type": "feat",
+    "scope": "nav",
+    "subject": "헤더 \"작품\" 메뉴에 \"공간으로 찾기\" 진입점 추가",
+    "summary": "공간·용도 컬렉션(/collections)을 헤더 작품 드롭다운에 노출 — 데스크탑·모바일 메뉴 동시 반영",
+    "body": "- useLocalizedNavigation: 전체 작품 다음에 공간으로 찾기 항목\n- i18n nav.spaceCollections·spaceCollectionsDesc (ko/en)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "ed2f4bbf",
+    "type": "feat",
+    "scope": "collections",
+    "subject": "공간·용도 큐레이션 컬렉션 (Phase 3)",
+    "summary": "/collections에 거실·침실·현관·서재·첫그림·선물 6개 공간 큐레이션 추가 — 작품은 크기·가격 규칙으로 자동 선별(관리 0, 항상 최신 재고), 공간별 카피는 정적 정의",
+    "body": "- lib/space-collections: 규칙 기반 자동 큐레이션 (size_bucket+가격 필터, 톤 가점, 작가 dedupe)\n- /collections 랜딩 + /collections/[slug] 개별 (force-static, generateStaticParams)\n- CollectionArtworkGrid (EntryLevel 패턴 재사용), 다른 컬렉션 상호링크\n- i18n ko/en, hero-routes 등록 + 회귀 테스트, sitemap, e2e a11y spec",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "9251d94a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 21 — EN locale long-tail 이유지 작가 SEO override",
+    "summary": "GSC EN locale long-tail 'yuji saf' (3imp pos 7.3 0 click) 발견. Lee Yuji 작가 SEO override 추가 — 겸재 정선 미술관 우수상 명시.",
+    "body": "## 변경\n### lib/artist-seo-overrides.ts\n- 이유지 (Lee Yuji, 신진 회화): 겸재 정선 미술관 〈내일의 작가〉 우수상·내면의 풍경 명시\n\n## 누적 (Cycle 1~21)\n- 작가 SEO: 31 (+1)\n- 작품 SEO: 32\n- 매거진 title: 28\n- retention 10 cards + sitemap 가속 + i18n + SNS funnel 5 paths",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "814a8d2f",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 20 — homepage + category shareTitle/Description 1:1 등식 통일",
+    "summary": "Cycle 17-19에 이어 homepage + /artworks/category 페이지 share 카피에도 '작품 1점 = 대출 1건. 95% 상환' 등식 적용. SNS funnel 5 paths 통일.",
+    "body": "## 변경\n### messages/ko.json + en.json\n- homepage shareTitle: '한국 현대미술 원본 N점' → '작품 1점 구매 = 예술인 1명 저금리 대출 1건' 등식 forward\n- category shareTitle: 'N점 한국 작가 직매' → '1점 구매 = 1건 대출' 등식 추가\n\n## 누적 (Cycle 1~20) — SNS funnel 5 paths 통일\n- petition + homepage(layout) + homepage(page) + /artworks + /artworks/category\n- 1:1 등식 + 95% 상환율 social proof가 SNS 카드 5종 모두에 통일",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "8770c4e3",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 19 — /artworks shareTitle/Description 1:1 등식으로 강화",
+    "summary": "SNS share 시 noise 많은 generic title 대신 '작품 1점 구매 = 예술인 1명 대출 1건. 95% 상환율' 단순 등식으로 hook 명확화. KO/EN 동시.",
+    "body": "## 변경\n\n### messages/ko.json (artworks)\n- shareTitle: '...씨앗페' generic → '작품 1점 구매 = 예술인 1명 저금리 대출 1건 — 한국 현대미술 원본 N점 | 씨앗페'\n- shareDescription: '...상호부조 기금' → '1점 구매 = 1건 대출(95% 상환율)' 등식 명시\n\n### messages/en.json (artworks)\n- shareTitle: '1 artwork purchase = 1 artist low-interest loan — N original Korean artworks | SAF Online'\n- shareDescription: '1 purchase = 1 mutual-aid loan (95% repayment rate)' 등식\n\n## 누적 (Cycle 1~19)\n- 90 SEO entries + retention 10 + sitemap + i18n + GA4 + SNS funnel 3 paths (petition + homepage + artworks)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "a99bf893",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 18 — homepage OG·Twitter description social proof 강화",
+    "summary": "GA4 SNS referrals 25%·homepage 440 PV(7d) entry point. ogDescription/twitterDescription에 '1점 구매 = 1건 대출 / 95% 상환율' 명확한 등가 + social proof로 SNS share CTR 강화.",
+    "body": "## 변경\n\n### messages/ko.json (homepage)\n- ogDescription: '95% 상환' social proof 추가, 길이 최적화\n- twitterDescription: '작품 1점 구매 = 예술인 1명 저금리 대출 1건. 95% 상환율.' 단순·강력 등식\n- EN은 이미 84.9% / 95% repayment social proof 적용 상태\n\n## 효과\n- SNS share 카드 본문에 social proof + 정량 수치 직접 노출\n- 작품 구매와 대출 funnel의 1:1 등가를 명확히 → 캠페인 의도 즉시 이해\n- Facebook/Twitter OG cache 7d 후 신규 share부터 반영\n\n## 누적 (Cycle 1~18)\n- 90 SEO entries + retention 10 + sitemap 가속 + i18n + GA4 deep + SNS 카피 (petition + homepage)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "2fe45b72",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 17 — petition metaDescription social proof + urgency 강화",
+    "summary": "GA4 SNS referrals 25% 차지 발견(Cycle 16). petition page metaDescription에 '1만 명 동참' 현재진행형 social proof + '30초 서명' urgency 명시로 SNS click-through 강화.",
+    "body": "## 변경\n\n### messages/ko.json\n- 기존: \"...1만 명의 이름을 모읍니다.\" (목표 설정형)\n- 신규: \"1만 명 동참 — ...30초 서명으로 함께해 주세요.\" (달성 현재진행형 + urgency)\n- 1만 명 초과 달성한 현재 상태 반영, action 강조\n\n### messages/en.json\n- 기존: \"...Gathering 10,000 signatures.\"\n- 신규: \"10,000+ citizens joined — ...Sign in 30 seconds.\"\n\n## 효과 mechanism\n- SNS share 시 OG metaDescription이 카드 본문에 노출\n- '동참 중' 진행형 social proof로 conversion 강화\n- '30초' urgency로 friction 인식 감소\n- Facebook OG cache 7d / Twitter card cache 7d 후 신규 share부터 반영\n\n## 누적 (Cycle 1~17)\n- 90 SEO entries + retention 10 + sitemap 가속 + i18n 강화 + GA4 deep 도구 + 청원 카피",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "40c4cdb9",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 16 — GA4 deeper 분석 도구 + 미발견 leverage 진단",
+    "summary": "GA4 deep analysis(source/medium·landing/bounce·device·country·artwork detail engagement) 도구 추가. 본 세션 GA4 deep 결과로 SNS referral 비중·artwork detail engagement 부족 등 미발견 leverage 진단.",
+    "body": "## 변경\n\n### scripts/ga4-deep-cycle16.js (신규)\n- Source/Medium top 15\n- Top landing pages with bounce + avgDuration\n- Device breakdown\n- Country\n- /artworks/* top pages with engagement duration\n\n## GA4 deep 인사이트 (7d, 신규 발견)\n\n### A. SNS referrals 압도 (~25% of traffic)\n- lm.facebook.com 945 sess (Facebook Lite/mobile in-app browser)\n- t.co 644 sess (Twitter/X)\n- facebook.com 423 sess\n- ig/social, instagram, threads.com 등 합산\n- → OG image quality·share copy 강화가 핵심 leverage\n- → 모든 dynamic OG image 라우트 4개 이미 구현됨 (petition·artwork·story·artist)\n\n### B. artwork detail engagement 거의 0초 (Critical issue)\n- /artworks/cfc18307 39 PV / 1s engagement\n- /artworks/1350256c 33 PV / 1s engagement\n- /artworks/e637bb45 28 PV / 0s engagement\n- 거의 모든 artwork detail이 0-2초 engagement\n- → above-the-fold(LCP·image load·layout) 문제 의심\n- → 별도 cycle (UX/perf scope) 필요\n\n### C. device 90% mobile, country 99% Korean\n- mobile bounce 27%·desktop bounce 24%·tablet 35%\n- → mobile-first 정책 유효\n\n### D. /petition/oh-yoon 6,232 sess bounce 25%·avgDur 227s\n- 압도적으로 healthy landing — petition retention slot 확장(Cycle 12) 효과 검증 후보 #1\n\n## 누적 (Cycle 1~16)\n- 90 SEO entries + retention 10 cards + sitemap 가속 + GA4 deep 도구",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "c9267b79",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 15 — artist·category sitemap lastModified now 갱신",
+    "summary": "artist 페이지 30개 SEO override(Cycle 1·3·4·8·10·11) + category page title 강화(Cycle 5) 효과 반영을 위해 sitemap lastModified를 정적 exhibitionEndDate에서 now로 갱신. priority 상향.",
+    "body": "## 변경\n\n### app/sitemap.ts\n- artist 페이지: lastModified now, changefreq weekly, priority 0.65→0.75 (전 작가 일괄)\n- category 페이지: lastModified now, changefreq weekly, priority 0.75→0.8 (4개 카테고리)\n\n## mechanism\n- Cycle 1·3·4·8·10·11에서 추가한 artist SEO override 30개 — 사이트맵 lastModified 갱신 없으면 Googlebot이 stale로 판단\n- now·weekly·priority↑로 재크롤링 우선순위 즉시 상향\n- 4축 leverage: SEO + retention + sitemap freshness + recrawl priority\n\n## 누적 (Cycle 1~15)\n- 90 SEO entries + retention 10 cards + sitemap 가속 (3 high-traffic + N artists + 4 categories)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "630e3d0d",
+    "type": "feat",
+    "scope": "gallery",
+    "subject": "\"벽에 걸어보기\"를 구조화 치수로 정확화 + 실측 라벨 (Phase 2)",
+    "summary": "가상 방 3D 미리보기가 평문 대신 width/height/depth 컬럼을 직접 사용 — 정확도·일관성 향상, 확인중이어도 치수 있으면 미리보기 활성, 모달에 실제 크기·호수 라벨",
+    "body": "- lib/artwork-size: toRoomDimensions (cm 컬럼 우선, parseArtworkSize 폴백) + 테스트\n- ArtworkImage: 치수 props 추가, canPreview·dimensions를 구조화 데이터 기반으로, sizeLabel 조합\n- VirtualGalleryPortal: 헤더에 \"실제 크기 72.7×60.6cm · 약 20호\" 라벨 (i18n)\n- 상세 page: ArtworkImage에 width/height/depth 전달",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "6a8c25aa",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 14 — sitemap lastModified·priority 갱신으로 Googlebot recrawl 가속",
+    "summary": "Cycle 12-13에서 변경한 /petition/oh-yoon·/special/oh-yoon·/special/park-saenggwang 3개 high-traffic 페이지의 sitemap lastModified를 오늘로 갱신, priority/changeFrequency 상향. Googlebot이 다음 sitemap fetch 시 우선 recrawl → 7-14일 측정 사이클 단축 시도.",
+    "body": "## 변경\n\n### app/sitemap.ts\n- /petition/oh-yoon: priority 0.8→0.95, changefreq monthly→weekly, lastModified 2026-01-01→2026-05-30\n  (GA4 89% traffic 페이지인데 sitemap은 1월 stale 상태였음)\n- /special/oh-yoon: priority 0.85→0.9, changefreq monthly→weekly, lastModified 2026-05-30\n- /special/park-saenggwang: priority 0.85→0.9, changefreq monthly→weekly, lastModified 2026-05-30\n\n## 효과 mechanism\n- Googlebot은 sitemap의 lastModified를 마지막 crawl과 비교, 변경 페이지 우선 recrawl\n- 통상 7-14일 외부 사이클을 3-7일로 단축 가능\n- Cycle 12-13 retention 강화 효과를 SERP에 빠르게 반영\n\n## 누적 (Cycle 1~14)\n- 작가 SEO: 30\n- 작품 SEO: 32\n- 매거진 title: 28\n- petition retention: 6 cards\n- special retention: 4 cards (park-saenggwang)\n- sitemap recrawl 가속: 3 paths\n- 총 90 entries + 강화 작업 3건",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "b5c19f67",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 13 — /special/park-saenggwang retention slot 추가",
+    "summary": "GA4 49 PV(7일) /special/park-saenggwang에 retention 4 cards 추가. 박생광 작가 출품작 + 매거진 + 한국화 hub + 석채 재료 이야기로 traffic 회수.",
+    "body": "## 변경\n\n### app/[locale]/special/park-saenggwang/page.tsx\n- Visit 섹션 직전에 retention slot 추가 (KO/EN 모두)\n- 4 cards: /artworks/artist/박생광, /stories/park-saenggwang-last-transformation,\n  /stories/korean-painting-tradition-meets-modern, /stories/stone-pigment-seokchae-aesthetics\n\n## GA4 측정 가능\n- /special/park-saenggwang 49 PV/7d → outbound 0%였을 가능성\n- artwork_to_story_click·view_item 메트릭 즉시 검증 가능\n\n## 누적 (Cycle 1~13)\n- 작가 SEO: 30\n- 작품 SEO: 32\n- 매거진 title: 28\n- petition retention: 6 cards\n- special retention: 1 추가 (park-saenggwang)\n- 총 90 entries + retention 강화 2건\n\n## 검증\n- npm run type-check: OK\n- npm run build: OK (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "e71719bf",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 12 — petition retention slot 4→6 cards 확장",
+    "summary": "/petition/oh-yoon 11,477 PV(전체 89%)인데 retention 거의 0%인 GA4 발견. retention slot에 2 card 추가 (사후판화 가이드 + 스페셜 페이지) — 청원 후 다음 행동 옵션 다양화로 internal page engagement 회복 시도.",
+    "body": "## 변경\n\n### app/[locale]/petition/oh-yoon/page.tsx\n- retention slot 4 cards → 6 cards\n- 추가 card 1: /stories/oh-yoon-estate-print-guide (사후판화 컬렉터 가이드)\n- 추가 card 2: /special/oh-yoon (1985년의 오윤 스페셜)\n- 사후판화 진품 인증·미술관 소장 차이 같은 product-intent 매칭 강화\n- 청원→상품 직행 funnel 추가 leverage\n\n## GA4 측정 가능\n- GSC와 달리 GA4는 실시간 수집 — 다음 세션에서 즉시 검증 가능\n- 측정 대상 메트릭: artwork_to_story_click, story_to_artwork_click, /artworks/artist/오윤 inbound traffic from petition\n\n## 누적 (Cycle 1~12)\n- 작가 SEO: 30\n- 작품 SEO: 32\n- 매거진 title: 28\n- petition retention: 6 cards (Cycle 1 4→Cycle 12 6)\n- 총 90 entries + retention 강화\n\n## 검증\n- npm run type-check: OK\n- npm run build: OK (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "31b1ac85",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 11 — page 2-3 stuck queries 작가 2명 추가 보강",
+    "summary": "GSC 28일 position 15-20 stuck queries에서 박생광 거장(pos 16.6 / 5imp)·최연택 중견(pos 19.2 / 5imp) 발견. SEO override로 page 1 진입 시 CTR 대비.",
+    "body": "## 변경\n- 박생광 (1904-1985 한국화 거장): 마지막 8년 오방색 변신·내고 화풍 명시\n- 최연택 (다재다능 예술가): 청와대 식기 디자인·신영복 협업 명시\n\n## 누적 (Cycle 1~11)\n- 작가 SEO: 30 (+2)\n- 작품 SEO: 32\n- 매거진 title: 28\n- 총 90 entries\n\n## 검증\n- npm run type-check: OK\n- npm run build: OK",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "f9a79e25",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 10 — GA4 traffic 기반 작가 2명 + 작품 4건 사전 SEO 강화",
+    "summary": "GA4 7일 traffic 분석으로 GSC index에 미반영된 viral·direct·캠페인 traffic 작가 2명과 작품 4건 발견. GSC 상위 진입 시 CTR 회복 사전 대비.",
+    "body": "## 변경\n\n### lib/artist-seo-overrides.ts — 2 entries\n- 류연복 (GA4 63 PV / 7d): 1958년생 한국 현대 목판화 거장, 민주화 운동 참여\n- 심모비 (GA4 16 PV / 7d): SIM_Moby, 연옥(Purgatory) 신진 작가\n\n### lib/artwork-seo-overrides.ts — 4 entries\n- 림지언 \"풀, 꽃!\" (cfc18307, 38 PV): 디지털 회화\n- 오윤 \"대지\" (e637bb45, 28 PV): 1983년 한지 목판화 정전\n- 오윤 \"춘무인추무의\" (74824081, 22 PV): 1985년 한지 고무판화·수채\n- 서금앵 \"공간에 마음을 놓다\" (068d38d7, 15 PV): 2024년 유화\n\n## GA4 인사이트 (참고용)\n- 전체 7일: 7,365 users / 8,553 sessions / 12,850 PV\n- /petition/oh-yoon 11,487 PV (89.4%) — 압도적 viral traffic\n- petition_sign 128 (1.1% 전환)\n- purchase_click 23, begin_checkout 22 — commerce funnel 잠재 큼\n- artwork_to_story_click 7 / story_to_artwork_click 2 — 내부 link engagement 미미 (별도 cycle 후보)\n\n## 누적 (Cycle 1~10)\n- 작가 SEO: 28 (+2)\n- 작품 SEO: 32 (+4)\n- 매거진 title: 28\n- petition retention + SOLD 정책 + 카테고리 page\n- 총 88 entries\n\n## 검증\n- npm run type-check: OK\n- npm run build: OK (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "29626e05",
+    "type": "feat",
+    "scope": "gallery",
+    "subject": "크기 구간 필터 + 크기순 정렬 추가",
+    "summary": "호수 기반 소품/중형/대형/특대/입체 필터 칩(0건 동적 숨김)과 크기순 정렬, 클라이언트 훅 확장",
+    "body": "- SortOption에 size-desc/size-asc, sortArtworks 면적 정렬(미상 끝)\n- useArtworkFilter: sizeBucket 필터 + URL 동기화 + sizeBucketCounts\n- SizeBucketFilter 신규(CategoryFilter 패턴), 갤러리 배치\n- i18n: sort·filters·a11y 키 (ko/en)\n- 카드 cm 표기 × 기호 통일에 맞춰 ArtworkCard 테스트 갱신",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "3a3e1d57",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 9 — long-tail 0 click 작품 11건 SEO override 추가",
+    "summary": "GSC 28일 long-tail 분석에서 page 1 ranking인데 click=0인 작품 11건 발견 (오윤 3건·양순열 2건·최혜수 2건·윤겸·신예리·이익태·강레아). 작품별 작가·매체·맥락 forward 제목으로 보강.",
+    "body": "## 변경\n\n### lib/artwork-seo-overrides.ts — 11 entries 추가\n- 오윤 \"칼노래\"(4c920878), \"봄의소리1\"(7f154b6f), \"팔엽일화\"(1350256c) — 한지 목판화 사후판화\n- 양순열 \"Ottogi Earthy Rainbow Matte\"(760c97d0), \"Ottogi Mother Ya-ho\"(91a78fd6) — 카페인트 레진 모성\n- 최혜수 \"놀이터 n°2\"(ab859f7f), \"n°3\"(7b724018) — 벨기에 왕립 미술대 출신 강조\n- 윤겸 \"GreenForest\"(5d7b6368) — 평온과 반복의 숲\n- 신예리 \"야형화접도\"(3f992cc3) — 한지 분채 전통 채색화\n- 이익태 \"시지프스의 연인\"(e0fac99d) — 1세대 다큐 사진가의 회화\n- 강레아 \"#01 S1707SP\"(56c2c3f3) — 한지 피그먼트 프린트\n\n## 누적 (Cycle 1~9)\n- 작가 SEO: 26\n- 작품 SEO: 28 (Cycle 9 +11)\n- 매거진 title: 28\n- petition retention + SOLD 정책 + 카테고리 page\n\n## 검증\n- npm run type-check: OK\n- npm run build: OK (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "234f91ae",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 8 — 신규 발견 0 click 작가 6명 + Cycle 7 매거진 7편 DB",
+    "summary": "GSC 28일 long-tail 분석에서 page 1 ranking인데 click=0인 작가 6명 추가 발견. artist-seo-overrides 6 entries 보강. Cycle 7 매거진 7편 DB title 동시 strengthening 기록.",
+    "body": "## 변경\n\n### lib/artist-seo-overrides.ts — 6 entries 추가\n- 이동구 (도예 중견, pos 7.2 / 6imp / 0 click): 서울과기대 도예과·이동구 도예공방 명시\n- 한미영 (회화 신진, pos 5.0 / 5imp / 0 click): 단국대 서양화·일상의 정서\n- 조이락 (전통미술 중견, pos 8.8 / 5imp / 0 click): 20년 고려불화·국립중앙박물관 소장\n- 신건우 (미디어아트 중견, pos 8.7 / 3imp / 0 click): 도시·건축 풍경 시각예술\n- 신학철 (민중미술 거장, pos 9.0 / 3imp / 0 click): 1세대 거장(1943-) 포토몽타주\n- 이윤엽 (목판화 중견, pos 7.0 / 4imp / 0 click): 농부·노동자 다색 목판화\n\n### Supabase stories DB — Cycle 7 매거진 7편 title 강화 (코드 변경 0)\n- artwork-size-guide (14imp / 6.8위 / 0 click): 공간별 호수·cm 환산\n- choosing-by-medium (13imp / 7.4위): 매체별 특성 + 보관 가이드\n- drawing-vs-painting (12imp / 9.9위): 가격·컬렉션 가치 추가\n- minjung-art-intro (12imp / 8.9위): 1980년대 저항·오윤·신학철 계보 명시\n- stone-pigment-seokchae-aesthetics (11imp / 7.3위): 광물 분쇄·천 년 가는 색\n- meet-artist-yoon-gyeom (10imp / 10.9위): 단색 회화·숲 강화\n- fine-art-photography (10imp / 9.4위): 한국 다큐멘터리 사진 컬렉션\n\n## 누적 (Cycle 1~8)\n- 작가 SEO override: 26 (Cycle 8 +6)\n- 작품 SEO override: 17\n- 매거진 title: 28 (Cycle 7 +7)\n- petition retention: 1\n- SOLD suffix 정책\n- 카테고리 page title\n\n## 검증\n- npm run type-check: OK\n- npm run build: OK (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
+    "hash": "6175d7a0",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "GSC Cycle 6 — TOP 1-3 위 0 click 작품 8건 추가 보강",
+    "summary": "GSC 28일 추가 분석에서 TOP 1-3 ranking인데 click=0인 catastrophic CTR 작품 8건 발견 — artwork-seo-overrides에 작가·맥락 forward 제목 보강.",
+    "body": "## 변경\n\n### lib/artwork-seo-overrides.ts — 8 entries 추가\n\nGSC 28일 신규 발견 (page 1-2, 0 click):\n- 36cad3b5 김주호 \"내 손끝에 은하수\" 질구이 2020 (pos 1.8 / 21imp / 0 click)\n- db1d7b02 김주호 \"사랑만들기\" 철판조각 2013 (pos 5.2 / 25imp / 0 click)\n- f4ad6271 손은영 \"언덕위의 집\" 다큐사진 2024 (pos 1.2 / 12imp / 0 click)\n- 7623bfa5 정금희 \"화락이토 #15\" 다큐사진 2018 (pos 1.1 / 12imp / 0 click)\n- 1cb51984 오윤 \"춤2\" 한지 목판화 1985 (pos 3.1 / 12imp / 0 click) — 민중미술 정전\n- b3838f14 오윤 \"낮도깨비\" 한지 목판화·수채 1985 (pos 8.0 / 36imp / 0 click)\n- fe024496 윤겸 \"Pink fortress\" 유화 2024 (pos 2.6 / 8imp / 0 click)\n- 5c76728c 민정기 \"속리산 돌거북\" 유화 2025 (pos 2.3 / 8imp / 0 click) — 민중미술 1세대 거장\n\nTOP 1-3 ranking인데 click 0%인 작품은 검색 의도와 generic 제목의\nmismatch 결정적 신호 → 작가·매체·맥락 forward 제목으로 교체.\n\n## 누적 (Cycle 1~6)\n- 작가 SEO override: 20\n- 작품 SEO override: 17 (Cycle 6 +8)\n- 매거진 title: 14\n- petition retention: 1\n- SOLD suffix 정책\n- 카테고리 page title 강화\n\n## 검증\n- npm run type-check: OK\n- npm run build: OK (456 HTML, 0 i18n violations)",
+    "date": "2026-05-30",
+    "author": "황경하"
+  },
+  {
     "hash": "7c3d2915",
     "type": "feat",
     "scope": "admin",
