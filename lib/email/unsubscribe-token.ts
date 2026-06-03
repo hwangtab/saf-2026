@@ -44,7 +44,9 @@ export function verifyUnsubscribeToken(
 
     const emailHash = decoded.slice(0, pipeIndex);
     const raw = decoded.slice(pipeIndex + 1);
-    if (!(['customer', 'member', 'petition'] as const).includes(raw as BroadcastChannel)) {
+    if (
+      !(['customer', 'member', 'petition', 'individual'] as const).includes(raw as BroadcastChannel)
+    ) {
       return null;
     }
     const channel = raw as BroadcastChannel;

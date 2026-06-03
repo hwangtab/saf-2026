@@ -6,9 +6,15 @@ import type { BroadcastChannel } from '@/lib/email/audiences/types';
 
 interface Props {
   channel: BroadcastChannel;
+  filter?: {
+    subset?: 'all' | 'artist' | 'exhibitor';
+    petitionSlug?: string;
+    artworkId?: string;
+    advertising?: boolean;
+  };
 }
 
-export function AudiencePreview({ channel }: Props) {
+export function AudiencePreview({ channel, filter }: Props) {
   const [result, setResult] = useState<{
     total: number;
     breakdown: Record<string, number>;
@@ -18,7 +24,7 @@ export function AudiencePreview({ channel }: Props) {
   const handlePreview = async () => {
     setLoading(true);
     try {
-      const r = await previewAudience(channel);
+      const r = await previewAudience(channel, filter);
       setResult(r);
     } finally {
       setLoading(false);

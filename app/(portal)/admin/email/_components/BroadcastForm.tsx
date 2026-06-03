@@ -2,31 +2,73 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { enqueueBroadcast } from '@/app/actions/admin-broadcast';
-import { AudiencePreview } from './AudiencePreview';
-import type { BroadcastChannel } from '@/lib/email/audiences/types';
+import {
+  enqueueBroadcast,
+  enqueueIndividualBroadcast,
+  sendTestEmail,
+} from '@/app/actions/admin-broadcast';
+import { TemplatePicker } from './TemplatePicker';
+import { AudienceSelector, type SegmentSelection } from './AudienceSelector';
+import { ContactSearch, type SelectedContact } from './ContactSearch';
+import type { BroadcastTemplate } from '@/lib/email/templates';
 
-const CHANNEL_OPTIONS: { value: BroadcastChannel; label: string; available: boolean }[] = [
-  { value: 'member', label: '작가·출품자 업무', available: true },
-  { value: 'customer', label: '고객 마케팅 (광고)', available: true },
-  { value: 'petition', label: '청원 캠페인 알림', available: true },
-];
+type Mode = 'segment' | 'search';
+
+const DEFAULT_SEGMENT: SegmentSelection = {
+  channel: 'member',
+  subset: 'all',
+  petitionSlug: '',
+  artworkId: '',
+  isArtworkBuyer: false,
+  advertising: false,
+};
 
 export function BroadcastForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [channel, setChannel] = useState<BroadcastChannel>('member');
+  const [isTestPending, startTestTransition] = useTransition();
+
+  const [mode, setMode] = useState<Mode>('segment');
+
+  // form fields
   const [subject, setSubject] = useState('');
   const [bodyMd, setBodyMd] = useState('');
   const [ctaLabel, setCtaLabel] = useState('');
   const [ctaUrl, setCtaUrl] = useState('');
-  const [petitionSlug, setPetitionSlug] = useState('');
+  const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [confirmed, setConfirmed] = useState(false);
+
+  // segment audience state
+  const [segment, setSegment] = useState<SegmentSelection>(DEFAULT_SEGMENT);
+
+  // search-mode state
+  const [selectedContacts, setSelectedContacts] = useState<SelectedContact[]>([]);
+  const [searchAdvertising, setSearchAdvertising] = useState(false);
 
   const hour = new Date().getHours();
   const isNightTime = hour >= 21 || hour < 8;
+
+  const applyTemplate = (t: BroadcastTemplate) => {
+    setSubject(t.subject);
+    setBodyMd(t.bodyMd);
+    setCtaLabel(t.ctaLabel ?? '');
+    setCtaUrl(t.ctaUrl ?? '');
+    if (t.channel === 'individual') {
+      // individual 템플릿 → 검색 발송 모드에서만 의미 있음
+      setSearchAdvertising(t.isAdvertisement);
+      setMode('search');
+    } else {
+      setSegment((s) => ({
+        ...s,
+        advertising: t.isAdvertisement,
+        ...(t.channel === 'customer' ? { channel: 'customer', isArtworkBuyer: false } : {}),
+        ...(t.channel === 'member' || t.channel === 'petition'
+          ? { channel: t.channel, isArtworkBuyer: false }
+          : {}),
+      }));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,13 +80,45 @@ export function BroadcastForm() {
     setSuccess(null);
 
     startTransition(async () => {
+      if (mode === 'search') {
+        const result = await enqueueIndividualBroadcast({
+          recipients: selectedContacts,
+          subject,
+          bodyMd,
+          ctaLabel: ctaLabel || undefined,
+          ctaUrl: ctaUrl || undefined,
+          isAdvertisement: searchAdvertising,
+        });
+        if (result.error) {
+          setError(result.message);
+        } else {
+          setSuccess(result.message);
+          setSubject('');
+          setBodyMd('');
+          setCtaLabel('');
+          setCtaUrl('');
+          setSelectedContacts([]);
+          setConfirmed(false);
+          router.refresh();
+        }
+        return;
+      }
+
+      // segment mode
       const result = await enqueueBroadcast({
-        channel,
+        channel: segment.channel,
         subject,
         bodyMd,
         ctaLabel: ctaLabel || undefined,
         ctaUrl: ctaUrl || undefined,
-        petitionSlug: channel === 'petition' ? petitionSlug : undefined,
+        petitionSlug: segment.channel === 'petition' ? segment.petitionSlug : undefined,
+        audienceFilter: {
+          subset: segment.subset,
+          ...(segment.isArtworkBuyer
+            ? { artworkId: segment.artworkId, mode: 'artwork-buyer' }
+            : {}),
+        },
+        isAdvertisement: segment.advertising,
       });
 
       if (result.error) {
@@ -56,6 +130,7 @@ export function BroadcastForm() {
         setCtaLabel('');
         setCtaUrl('');
         setConfirmed(false);
+        setSegment(DEFAULT_SEGMENT);
         router.refresh();
       }
     });
@@ -74,51 +149,66 @@ export function BroadcastForm() {
         </div>
       )}
 
-      <div>
-        <label htmlFor="broadcast-channel" className="mb-1 block text-sm font-medium text-charcoal">
-          채널
-        </label>
-        <select
-          id="broadcast-channel"
-          value={channel}
-          onChange={(e) => setChannel(e.target.value as BroadcastChannel)}
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+      {/* 발송 모드 토글 */}
+      <fieldset className="flex gap-2 rounded-lg border border-gray-200 p-1">
+        <legend className="sr-only">발송 모드 선택</legend>
+        <button
+          type="button"
+          onClick={() => {
+            setMode('segment');
+            setConfirmed(false);
+          }}
+          className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
+            mode === 'segment'
+              ? 'bg-primary-strong text-white'
+              : 'text-charcoal hover:bg-canvas-strong'
+          }`}
         >
-          {CHANNEL_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value} disabled={!opt.available}>
-              {opt.label}
-              {!opt.available ? ' (준비 중)' : ''}
-            </option>
-          ))}
-        </select>
-        <div className="mt-2">
-          <AudiencePreview channel={channel} />
-        </div>
-      </div>
+          세그먼트 발송
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setMode('search');
+            setConfirmed(false);
+          }}
+          className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
+            mode === 'search'
+              ? 'bg-primary-strong text-white'
+              : 'text-charcoal hover:bg-canvas-strong'
+          }`}
+        >
+          검색 발송
+        </button>
+      </fieldset>
 
-      {channel === 'petition' && (
-        <div>
-          <label
-            htmlFor="broadcast-petition-slug"
-            className="mb-1 block text-sm font-medium text-charcoal"
-          >
-            청원 슬러그
+      {/* 템플릿 선택 */}
+      <TemplatePicker mode={mode} onSelect={applyTemplate} />
+
+      {/* 수신자 세그먼트 (mode === 'segment') */}
+      {mode === 'segment' && <AudienceSelector value={segment} onChange={setSegment} />}
+
+      {/* 연락처 검색 (mode === 'search') */}
+      {mode === 'search' && (
+        <div className="space-y-3">
+          <ContactSearch selected={selectedContacts} onChange={setSelectedContacts} />
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
+            <input
+              type="checkbox"
+              checked={searchAdvertising}
+              onChange={(e) => setSearchAdvertising(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+            광고성 메일 (수신자에게 (광고) 표기·발송사 정보 포함)
           </label>
-          <input
-            id="broadcast-petition-slug"
-            type="text"
-            value={petitionSlug}
-            onChange={(e) => setPetitionSlug(e.target.value)}
-            placeholder="oh-yoon"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-          />
         </div>
       )}
 
+      {/* 제목 */}
       <div>
         <label htmlFor="broadcast-subject" className="mb-1 block text-sm font-medium text-charcoal">
           제목
-          {channel === 'customer' && (
+          {(segment.channel === 'customer' || (mode === 'search' && searchAdvertising)) && (
             <span className="ml-1 font-normal text-charcoal-muted">
               (발송 시 자동으로 &quot;(광고)&quot; 접두어 추가됨)
             </span>
@@ -135,6 +225,7 @@ export function BroadcastForm() {
         />
       </div>
 
+      {/* 본문 */}
       <div>
         <label htmlFor="broadcast-body" className="mb-1 block text-sm font-medium text-charcoal">
           본문 (마크다운)
@@ -150,6 +241,7 @@ export function BroadcastForm() {
         />
       </div>
 
+      {/* CTA */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label
@@ -185,6 +277,7 @@ export function BroadcastForm() {
         </div>
       </div>
 
+      {/* 발송 확인 체크박스 */}
       <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
         <input
           type="checkbox"
@@ -198,13 +291,35 @@ export function BroadcastForm() {
       {error && <p className="text-sm text-danger-a11y">{error}</p>}
       {success && <p className="text-sm text-success-a11y">{success}</p>}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-strong disabled:opacity-50"
-      >
-        {isPending ? '처리 중…' : '발송 예약'}
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          disabled={isPending || (mode === 'search' && selectedContacts.length === 0)}
+          className="rounded-lg bg-primary-strong px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-strong/90 disabled:opacity-50"
+        >
+          {isPending ? '처리 중…' : '발송 예약'}
+        </button>
+        <button
+          type="button"
+          disabled={isTestPending}
+          onClick={() =>
+            startTestTransition(async () => {
+              const r = await sendTestEmail({
+                subject,
+                bodyMd,
+                ctaLabel: ctaLabel || undefined,
+                ctaUrl: ctaUrl || undefined,
+                isAdvertisement: mode === 'search' ? searchAdvertising : segment.advertising,
+              });
+              if (r.error) setError(r.message);
+              else setSuccess(r.message);
+            })
+          }
+          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-charcoal hover:bg-canvas-strong disabled:opacity-50"
+        >
+          {isTestPending ? '발송 중…' : '나에게 테스트 발송'}
+        </button>
+      </div>
     </form>
   );
 }

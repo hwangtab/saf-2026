@@ -69,6 +69,7 @@ function confirmFormResponse(token: string, channel: string): NextResponse {
     customer: '광고/마케팅',
     member: '작가·출품자 업무',
     petition: '청원 캠페인 알림',
+    individual: '개별 발송',
   };
   const channelLabel = labels[channel] ?? channel;
   const html = `<!DOCTYPE html>

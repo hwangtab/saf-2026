@@ -8,6 +8,7 @@ import { sendBatch } from '@/lib/email/resend-batch';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { hashEmail } from '@/lib/email/email-hash';
 import BroadcastEmail from '@/emails/broadcast';
+import { splitAndPersonalize } from '@/lib/email/broadcast-body';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
   // commit d0f39bba의 멱등 가드 정책과 동일 원칙.
   const { data: broadcasts } = await supabase
     .from('email_broadcasts')
-    .select('id, channel, subject, body_md, cta_label, cta_url, status')
+    .select('id, channel, subject, body_md, cta_label, cta_url, status, is_advertisement')
     .in('status', ['queued', 'sending'])
     .gt('recipient_count', 0)
     .order('queued_at', { ascending: true })
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
     // 환경변수 미설정이면 broadcast를 failed로 마킹하고 발송 중단.
     const sanityToken = generateUnsubscribeToken(
       'sanity-check-hash',
-      broadcast.channel as 'customer' | 'member' | 'petition'
+      broadcast.channel as 'customer' | 'member' | 'petition' | 'individual'
     );
     if (!sanityToken) {
       console.error(
@@ -124,11 +125,6 @@ export async function GET(request: NextRequest) {
         break;
       }
 
-      const bodyParagraphs = (broadcast.body_md as string)
-        .split(/\n\n+/)
-        .map((p: string) => p.trim())
-        .filter(Boolean);
-
       const batchItems = await Promise.all(
         (
           pending as Array<{
@@ -138,17 +134,19 @@ export async function GET(request: NextRequest) {
             locale: string;
           }>
         ).map(async (r) => {
+          const bodyParagraphs = splitAndPersonalize(broadcast.body_md as string, r.name);
           const emailHash = hashEmail(r.email);
           const unsubToken = generateUnsubscribeToken(
             emailHash,
-            broadcast.channel as 'customer' | 'member' | 'petition'
+            broadcast.channel as 'customer' | 'member' | 'petition' | 'individual'
           );
           const unsubscribeUrl = unsubToken
             ? `${SITE_URL}/api/email/unsubscribe?t=${unsubToken}`
             : `${SITE_URL}/api/email/unsubscribe?invalid=1`;
 
           const emailEl = React.createElement(BroadcastEmail, {
-            channel: broadcast.channel as 'customer' | 'member' | 'petition',
+            channel: broadcast.channel as 'customer' | 'member' | 'petition' | 'individual',
+            isAdvertisement: (broadcast.is_advertisement ?? false) as boolean,
             recipientName: r.name,
             subject: broadcast.subject as string,
             bodyParagraphs,
@@ -159,7 +157,7 @@ export async function GET(request: NextRequest) {
           });
 
           const html = await render(emailEl);
-          const isAd = broadcast.channel === 'customer';
+          const isAd = (broadcast.is_advertisement ?? false) as boolean;
           const subject = isAd
             ? `(광고) ${broadcast.subject as string}`
             : (broadcast.subject as string);
