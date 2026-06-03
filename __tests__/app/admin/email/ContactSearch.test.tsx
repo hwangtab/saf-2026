@@ -12,8 +12,8 @@ describe('ContactSearch', () => {
     });
     const onChange = jest.fn();
     render(<ContactSearch selected={[]} onChange={onChange} />);
+    // 타이핑만으로 실시간 검색(버튼 없음)
     fireEvent.change(screen.getByLabelText('명단에서 찾아 추가'), { target: { value: '구매자' } });
-    fireEvent.click(screen.getByText('찾기'));
     await waitFor(() => screen.getByText(/a@x.com/));
     fireEvent.click(screen.getByRole('button', { name: '추가' }));
     expect(onChange).toHaveBeenCalledWith([{ email: 'a@x.com', name: '구매자A' }]);
@@ -26,7 +26,6 @@ describe('ContactSearch', () => {
     });
     render(<ContactSearch selected={[]} onChange={jest.fn()} />);
     fireEvent.change(screen.getByLabelText('명단에서 찾아 추가'), { target: { value: '차단' } });
-    fireEvent.click(screen.getByText('찾기'));
     await waitFor(() => screen.getByText(/b@x.com/));
     expect(screen.getByRole('button', { name: '수신거부됨' })).toBeDisabled();
   });

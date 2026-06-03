@@ -6,6 +6,7 @@ import {
   verifyResendWebhook,
   parseResendEvent,
   extractRecipientEmail,
+  isSuppressibleBounce,
 } from '@/lib/email/resend-webhook';
 
 export const runtime = 'nodejs';
@@ -50,21 +51,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, ignored: event.type });
   }
 
-  // Transient(임시) 바운스는 정상 수신자를 잃지 않도록 suppress 제외, log만.
-  if (isBounce && event.data.bounce?.type && event.data.bounce.type !== 'Permanent') {
-    console.warn('[resend-webhook] transient bounce skipped:', event.data.bounce.type);
+  // 임시(transient) 등 비영구 바운스는 정상 수신자를 잃지 않도록 suppress 제외, log만.
+  // 영구·불확실(type 누락)은 suppress(isSuppressibleBounce) — case-insensitive 판정으로
+  // 'permanent' 대소문자 변형을 임시로 오분류하던 빈틈을 막는다.
+  if (isBounce && !isSuppressibleBounce(event)) {
+    console.warn('[resend-webhook] non-permanent bounce skipped:', event.data.bounce?.type);
     return NextResponse.json({ ok: true, soft_bounce: true });
   }
-
-  const email = extractRecipientEmail(event);
-  if (!email) {
-    console.error('[resend-webhook] no recipient email in payload');
-    return NextResponse.json({ error: 'No recipient' }, { status: 400 });
-  }
-
-  const reason = isComplaint ? 'complaint' : 'bounce';
-  const recipientStatus = isComplaint ? 'complained' : 'bounced';
-  const emailHash = hashEmail(email);
 
   let supabase;
   try {
@@ -73,6 +66,27 @@ export async function POST(req: NextRequest) {
     console.error('[resend-webhook] missing supabase config:', err);
     return NextResponse.json({ error: 'Server config error' }, { status: 500 });
   }
+
+  let email = extractRecipientEmail(event);
+  // to가 없으면 resend_id(email_id)로 수신자 이메일을 역조회 — payload 형태 차이로
+  // 바운스/컴플레인 suppression이 유실되는 빈틈을 막는다.
+  if (!email && event.data.email_id) {
+    const { data: row } = await supabase
+      .from('email_broadcast_recipients')
+      .select('email')
+      .eq('resend_id', event.data.email_id)
+      .limit(1)
+      .maybeSingle();
+    email = (row?.email as string | undefined) ?? null;
+  }
+  if (!email) {
+    console.error('[resend-webhook] no recipient email in payload');
+    return NextResponse.json({ error: 'No recipient' }, { status: 400 });
+  }
+
+  const reason = isComplaint ? 'complaint' : 'bounce';
+  const recipientStatus = isComplaint ? 'complained' : 'bounced';
+  const emailHash = hashEmail(email);
 
   // 1) 전 채널 영구 차단 (멱등 — Resend 재시도 안전)
   const { error: suppressError } = await supabase

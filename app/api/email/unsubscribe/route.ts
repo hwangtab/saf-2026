@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { verifyUnsubscribeToken } from '@/lib/email/unsubscribe-token';
+import { rateLimit } from '@/lib/rate-limit';
+import { getClientIp } from '@/lib/security/get-client-ip';
 
 export const runtime = 'nodejs';
 
@@ -21,6 +23,13 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // 토큰은 HMAC으로 위변조 불가하나, 유효 토큰 유출 시 반복 POST 방어용 IP rate-limit(분산).
+  const ip = getClientIp(request.headers);
+  const rl = await rateLimit(`unsubscribe:${ip}`, { limit: 20, windowMs: 60_000 });
+  if (!rl.success) {
+    return htmlResponse('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', 429);
+  }
+
   // RFC 8058 List-Unsubscribe-Post: token은 form-data 또는 query에서 받음.
   const formData = await request.formData().catch(() => null);
   const token = formData?.get('t')?.toString() ?? request.nextUrl.searchParams.get('t') ?? null;

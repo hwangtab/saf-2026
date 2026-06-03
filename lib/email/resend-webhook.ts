@@ -66,3 +66,14 @@ export function extractRecipientEmail(event: ResendWebhookEvent): string | null 
   if (typeof to === 'string') return to;
   return null;
 }
+
+// 바운스를 영구 차단(suppress) 대상으로 볼지 판정.
+// - 영구(permanent) 바운스 → suppress (대소문자 무시: 'Permanent'/'permanent' 모두)
+// - bounce.type 누락 → 보수적으로 suppress (영구 바운스를 다른 표기로 받아 임시로 오분류 →
+//   죽은 주소에 반복 발송하는 사고를 막기 위함)
+// - 임시(transient) 등 명시적 비영구 → suppress 제외(정상 수신자 보호)
+export function isSuppressibleBounce(event: ResendWebhookEvent): boolean {
+  if (event.type !== 'email.bounced') return false;
+  const type = event.data.bounce?.type?.toLowerCase();
+  return !type || type === 'permanent';
+}

@@ -3,6 +3,7 @@ import {
   verifyResendWebhook,
   parseResendEvent,
   extractRecipientEmail,
+  isSuppressibleBounce,
 } from '@/lib/email/resend-webhook';
 
 // 테스트용 서명 생성기 (Svix 스킴과 동일)
@@ -96,5 +97,33 @@ describe('extractRecipientEmail', () => {
   });
   it('returns null for empty array', () => {
     expect(extractRecipientEmail({ type: 'email.bounced', data: { to: [] } })).toBeNull();
+  });
+});
+
+describe('isSuppressibleBounce', () => {
+  const bounced = (type?: string) => ({
+    type: 'email.bounced',
+    data: { to: ['x@y.com'], ...(type ? { bounce: { type } } : {}) },
+  });
+
+  it('suppresses permanent bounces (case-insensitive)', () => {
+    expect(isSuppressibleBounce(bounced('Permanent'))).toBe(true);
+    expect(isSuppressibleBounce(bounced('permanent'))).toBe(true);
+    expect(isSuppressibleBounce(bounced('PERMANENT'))).toBe(true);
+  });
+
+  it('suppresses when bounce.type is missing (fail-safe)', () => {
+    expect(isSuppressibleBounce(bounced(undefined))).toBe(true);
+  });
+
+  it('does not suppress explicit transient bounces', () => {
+    expect(isSuppressibleBounce(bounced('Transient'))).toBe(false);
+    expect(isSuppressibleBounce(bounced('transient'))).toBe(false);
+  });
+
+  it('only applies to email.bounced events', () => {
+    expect(isSuppressibleBounce({ type: 'email.complained', data: { to: ['x@y.com'] } })).toBe(
+      false
+    );
   });
 });

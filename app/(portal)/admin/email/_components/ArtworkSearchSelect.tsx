@@ -7,6 +7,7 @@ import {
   type BroadcastArtworkSearchResult,
 } from '@/app/actions/admin-broadcast';
 import { useDebounce } from '@/lib/hooks/useDebounce';
+import { FIELD_FOCUS } from './field-styles';
 
 interface Props {
   value: string;
@@ -27,28 +28,28 @@ export function ArtworkSearchSelect({ value, onChange }: Props) {
   const [searched, setSearched] = useState(false);
   const [isPending, startTransition] = useTransition();
   const debouncedQuery = useDebounce(query, 300);
+
+  // 부모가 value를 외부에서 비우면(예: 받는 사람 종류 전환) 내부 선택도 초기화.
+  // effect 안 setState(cascading render) 대신 React 권장 "렌더 중 상태 조정" 패턴 사용.
+  const [prevValue, setPrevValue] = useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    if (!value) setSelected(null);
+  }
+
   const selectedArtworkId = selected?.id ?? value;
+  const trimmedQuery = debouncedQuery.trim();
 
+  // 검색어가 비면 fetch하지 않는다(effect 내 동기 setState 회피). 빈 검색어일 때의 결과 노출은
+  // 렌더에서 trimmedQuery 게이팅으로 막으므로 stale results 상태는 화면에 드러나지 않는다.
   useEffect(() => {
-    const trimmed = debouncedQuery.trim();
-    if (!trimmed) {
-      setResults([]);
-      setSearched(false);
-      return;
-    }
-
+    if (!trimmedQuery) return;
     startTransition(async () => {
-      const response = await searchBroadcastArtworks(trimmed);
+      const response = await searchBroadcastArtworks(trimmedQuery);
       setResults(response.results);
       setSearched(true);
     });
-  }, [debouncedQuery]);
-
-  useEffect(() => {
-    if (!value) {
-      setSelected(null);
-    }
-  }, [value]);
+  }, [trimmedQuery]);
 
   const selectArtwork = (artwork: BroadcastArtworkSearchResult) => {
     setSelected(artwork);
@@ -65,9 +66,16 @@ export function ArtworkSearchSelect({ value, onChange }: Props) {
 
   return (
     <div className="space-y-2">
-      <label htmlFor="broadcast-artwork-search" className="block text-sm font-medium text-charcoal">
-        작품 검색
-      </label>
+      {selectedArtworkId ? (
+        <p className="text-sm font-medium text-charcoal">선택된 작품</p>
+      ) : (
+        <label
+          htmlFor="broadcast-artwork-search"
+          className="block text-sm font-medium text-charcoal"
+        >
+          작품 검색
+        </label>
+      )}
       {selectedArtworkId ? (
         <div className="rounded-lg border border-primary/30 bg-white p-3">
           <div className="flex items-start justify-between gap-3">
@@ -99,13 +107,19 @@ export function ArtworkSearchSelect({ value, onChange }: Props) {
             id="broadcast-artwork-search"
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSearched(false); // 타이핑 시 이전 "결과 없음" 잔류 즉시 제거
+            }}
             placeholder="작품명 또는 작가명 입력"
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className={`block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm ${FIELD_FOCUS}`}
           />
           {isPending && <p className="text-xs text-charcoal-muted">작품 검색 중...</p>}
-          {results.length > 0 && (
-            <ul className="max-h-64 divide-y divide-gray-100 overflow-auto rounded-lg border border-gray-200 bg-white">
+          {trimmedQuery && results.length > 0 && (
+            <ul
+              aria-live="polite"
+              className="max-h-64 divide-y divide-gray-100 overflow-auto rounded-lg border border-gray-200 bg-white"
+            >
               {results.map((artwork) => (
                 <li key={artwork.id}>
                   <button
@@ -127,8 +141,11 @@ export function ArtworkSearchSelect({ value, onChange }: Props) {
               ))}
             </ul>
           )}
-          {searched && !isPending && results.length === 0 && (
-            <p className="rounded-lg border border-gray-200 bg-white px-3 py-4 text-sm text-charcoal-muted">
+          {trimmedQuery && searched && !isPending && results.length === 0 && (
+            <p
+              aria-live="polite"
+              className="rounded-lg border border-gray-200 bg-white px-3 py-4 text-sm text-charcoal-muted"
+            >
               검색 결과가 없습니다.
             </p>
           )}

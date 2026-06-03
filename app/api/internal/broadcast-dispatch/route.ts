@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
-import { sendBatch } from '@/lib/email/resend-batch';
+import { sendBatch, buildBatchIdempotencyKey } from '@/lib/email/resend-batch';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { hashEmail } from '@/lib/email/email-hash';
 import BroadcastEmail from '@/emails/broadcast';
@@ -118,6 +118,7 @@ export async function GET(request: NextRequest) {
         .eq('broadcast_id', broadcast.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: true })
+        .order('id', { ascending: true }) // created_at 동순위 시 청크 경계 결정론화(행 누락·중복선택 방지)
         .limit(CHUNK_SIZE);
 
       if (!pending || pending.length === 0) {
@@ -158,17 +159,34 @@ export async function GET(request: NextRequest) {
 
           const html = await render(emailEl);
           const isAd = (broadcast.is_advertisement ?? false) as boolean;
+          const adPrefix = r.locale === 'en' ? '(Advertisement) ' : '(광고) ';
           const subject = isAd
-            ? `(광고) ${broadcast.subject as string}`
+            ? `${adPrefix}${broadcast.subject as string}`
             : (broadcast.subject as string);
 
-          return { from: FROM_EMAIL, to: r.email, subject, html };
+          // RFC 8058 원클릭 수신거부 — Gmail/Apple Mail의 네이티브 수신거부 UI 노출(스팸 평판 개선).
+          // unsubscribe 라우트 POST가 query의 토큰을 받으므로 One-Click POST가 그대로 처리된다.
+          // 유효 토큰이 있을 때만 헤더 부여(secret 누락 broadcast는 앞단에서 발송 거부됨).
+          const headers = unsubToken
+            ? {
+                'List-Unsubscribe': `<${unsubscribeUrl}>`,
+                'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+              }
+            : undefined;
+
+          return { from: FROM_EMAIL, to: r.email, subject, html, headers };
         })
       );
 
-      const result = await sendBatch(batchItems);
-
       const pendingRows = pending as Array<{ id: string }>;
+
+      // 멱등 키: 같은 청크가 재발송돼도(크래시·타임아웃·상태업데이트 실패 후 다음 cron 재시도)
+      // Resend가 중복 발송을 차단. row id 정렬 해시라 재발송 시 동일 청크에 안정적으로 매칭된다.
+      const idempotencyKey = buildBatchIdempotencyKey(
+        broadcast.id as string,
+        pendingRows.map((r) => r.id)
+      );
+      const result = await sendBatch(batchItems, { idempotencyKey });
 
       // result.ids[i] = batchItems[i] = pendingRows[i]의 Resend 메시지 ID (요청 순서 보존).
       // 웹훅(app/api/webhooks/resend)이 resend_id로 바운스/컴플레인을 매칭하므로 수신자별로 저장.
@@ -205,14 +223,32 @@ export async function GET(request: NextRequest) {
       if (updateFailedIds.length > 0) {
         // Resend는 이미 발송했으므로 'failed'가 아닌 'sent'로 재시도.
         // 일시적 RLS/네트워크 오류였다면 두 번째에서 성공해 pending 잔존 방지.
-        await Promise.all(
-          updateFailedIds.map((id) =>
-            supabase
+        const retryResults = await Promise.all(
+          updateFailedIds.map(async (id) => {
+            const { error } = await supabase
               .from('email_broadcast_recipients')
               .update({ status: 'sent', sent_at: sentAt })
-              .eq('id', id)
-          )
+              .eq('id', id);
+            return { id, error };
+          })
         );
+
+        // 2차도 실패한 row: 이미 Resend로 발송됐는데 상태를 기록하지 못함.
+        // pending으로 두면 다음 cron이 무한 재시도(멱등 키로 중복 수신은 막히나 broadcast가
+        // 영원히 'sending'에 고착). 'failed'로 마킹해 루프를 끊고 finalize 가능하게 한다
+        // — 이미 발송됐으나 기록 실패임을 error에 명시(failed_count에 소폭 반영되는 트레이드오프).
+        const stillFailedIds = retryResults.filter((r) => r.error).map((r) => r.id);
+        if (stillFailedIds.length > 0) {
+          console.error(
+            `[broadcast-dispatch] sent-update permanently failed for ${stillFailedIds.length} rows ` +
+              `(already sent via Resend; marking 'failed' to break re-dispatch loop):`,
+            stillFailedIds
+          );
+          await supabase
+            .from('email_broadcast_recipients')
+            .update({ status: 'failed', error: 'sent via Resend but status update failed' })
+            .in('id', stillFailedIds);
+        }
       }
 
       if (failedIds.length > 0) {
@@ -221,6 +257,28 @@ export async function GET(request: NextRequest) {
           .update({ status: 'failed', error: result.error ?? 'batch partial failure' })
           .in('id', failedIds);
       }
+
+      // 청크마다 진행 카운트를 DB에서 재집계해 갱신 — 발송 중에도 이력에서 진행률이 보인다.
+      // (running 합산이 아니라 재집계라 크래시/락 인계 후 재개에도 정확). 락 보유 시에만 기록.
+      const { count: sentSoFar } = await supabase
+        .from('email_broadcast_recipients')
+        .select('id', { count: 'exact', head: true })
+        .eq('broadcast_id', broadcast.id)
+        .eq('status', 'sent');
+      const { count: failedSoFar } = await supabase
+        .from('email_broadcast_recipients')
+        .select('id', { count: 'exact', head: true })
+        .eq('broadcast_id', broadcast.id)
+        .eq('status', 'failed');
+      await supabase
+        .from('email_broadcasts')
+        .update({
+          status: 'sending',
+          sent_count: sentSoFar ?? 0,
+          failed_count: failedSoFar ?? 0,
+        })
+        .eq('id', broadcast.id)
+        .eq('dispatch_lock_token', lockToken);
 
       totalDispatched += sentUpdates.length;
 

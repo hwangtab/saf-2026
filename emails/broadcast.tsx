@@ -131,6 +131,11 @@ export default function BroadcastEmail({
             {CONTACT.PHONE} | {locale === 'en' ? 'Email: ' : '이메일: '}
             {CONTACT.EMAIL}
           </Text>
+          <Text style={adFooterTextStyle}>
+            {locale === 'en'
+              ? 'You may unsubscribe from these advertising emails for free at any time using the link below.'
+              : '본 광고 메일은 아래 링크를 통해 언제든지 무료로 수신거부할 수 있습니다.'}
+          </Text>
         </Section>
       )}
 

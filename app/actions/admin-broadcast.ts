@@ -6,7 +6,7 @@ import { render } from '@react-email/render';
 
 import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
-import { hashEmail } from '@/lib/email/email-hash';
+import { hashEmail, PETITION_SALT } from '@/lib/email/email-hash';
 import { sendBatch } from '@/lib/email/resend-batch';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { splitAndPersonalize } from '@/lib/email/broadcast-body';
@@ -15,6 +15,7 @@ import { CustomerAudienceResolver } from '@/lib/email/audiences/customer';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import { PetitionAudienceResolver } from '@/lib/email/audiences/petition';
 import type { BroadcastChannel, Recipient } from '@/lib/email/audiences/types';
+import { MAX_DIRECT_RECIPIENTS } from '@/lib/email/broadcast-segment';
 import { validateUrl, validateTextLength } from '@/lib/utils/input-validation';
 import { matchesAnySearch } from '@/lib/search-utils';
 import type { ActionState } from '@/types';
@@ -46,7 +47,7 @@ export interface BroadcastArtworkSearchResult {
 // 1) 수신자 추출 → 2) email_broadcasts INSERT → 3) email_broadcast_recipients INSERT → 4) 활동 로그.
 export async function enqueueBroadcast(
   input: EnqueueBroadcastInput
-): Promise<ActionState & { broadcastId?: string }> {
+): Promise<ActionState & { broadcastId?: string; deduped?: boolean }> {
   const admin = await requireAdmin();
 
   const supabase = await requireAdminClient();
@@ -134,8 +135,10 @@ export async function enqueueBroadcast(
 
   if (existing?.id) {
     return {
-      message: '동일한 캠페인이 최근 등록되어 발송이 진행 중입니다.',
+      message:
+        '같은 채널·제목의 캠페인이 최근 5분 내에 이미 등록돼 발송 중입니다. 새로 발송되지 않았습니다.',
       broadcastId: existing.id,
+      deduped: true,
     };
   }
 
@@ -223,6 +226,32 @@ export async function getBroadcasts() {
   }>;
 }
 
+// 미리보기 수신자 수 — DB count 함수(count_*_audience)로 행 전송 없이 계산.
+// RPC 실패(미적용 환경·일시 오류) 시 resolver로 폴백해 기능이 절대 깨지지 않게 한다.
+// 미리보기 표시 전용이며 실제 발송은 resolver를 독립적으로 쓰므로, RPC 드리프트의 영향은 표시값에 한정.
+async function countAudienceViaRpc(
+  rpc: string,
+  args: Record<string, unknown>,
+  fallback: () => Promise<number>
+): Promise<number> {
+  try {
+    const supabase = (await requireAdminClient()) as unknown as {
+      rpc: (
+        fn: string,
+        params: Record<string, unknown>
+      ) => Promise<{ data: unknown; error: { message?: string } | null }>;
+    };
+    const { data, error } = await supabase.rpc(rpc, args);
+    if (error) throw new Error(error.message ?? `${rpc} rpc error`);
+    const n = typeof data === 'number' ? data : Number(data);
+    if (!Number.isFinite(n)) throw new Error(`${rpc} returned non-numeric`);
+    return n;
+  } catch (err) {
+    console.error(`[previewAudience] ${rpc} failed — resolver 폴백:`, err);
+    return fallback();
+  }
+}
+
 export async function previewAudience(
   channel: BroadcastChannel,
   filter?: {
@@ -235,51 +264,70 @@ export async function previewAudience(
   await requireAdmin();
 
   if (channel === 'member') {
-    const recipients = await new MemberAudienceResolver().resolve({
-      subset: filter?.subset ?? 'all',
-    });
-    const label =
-      filter?.subset === 'artist'
-        ? '작가'
-        : filter?.subset === 'exhibitor'
-          ? '출품자'
-          : '작가·출품자';
-    return { total: recipients.length, breakdown: { [label]: recipients.length } };
+    const subset = filter?.subset ?? 'all';
+    const total = await countAudienceViaRpc(
+      'count_member_audience',
+      { p_subset: subset, p_salt: PETITION_SALT },
+      async () => (await new MemberAudienceResolver().resolve({ subset })).length
+    );
+    const label = subset === 'artist' ? '작가' : subset === 'exhibitor' ? '출품자' : '작가·출품자';
+    return { total, breakdown: { [label]: total } };
   }
 
   if (channel === 'customer') {
     if (filter?.artworkId) {
-      const recipients = await new ArtworkBuyerAudienceResolver(filter.artworkId, {
-        advertising: filter.advertising ?? false,
-      }).resolve();
-      return { total: recipients.length, breakdown: { 작품구매자: recipients.length } };
+      const artworkId = filter.artworkId;
+      const advertising = filter.advertising ?? false;
+      const total = await countAudienceViaRpc(
+        'count_artwork_buyer_audience',
+        { p_artwork_id: artworkId, p_advertising: advertising, p_salt: PETITION_SALT },
+        async () =>
+          (await new ArtworkBuyerAudienceResolver(artworkId, { advertising }).resolve()).length
+      );
+      return { total, breakdown: { 작품구매자: total } };
     }
-    const recipients = await new CustomerAudienceResolver().resolve();
-    return { total: recipients.length, breakdown: { '동의자·거래고객': recipients.length } };
+    const total = await countAudienceViaRpc(
+      'count_customer_audience',
+      { p_salt: PETITION_SALT },
+      async () => (await new CustomerAudienceResolver().resolve()).length
+    );
+    return { total, breakdown: { '동의자·거래고객': total } };
   }
 
   if (channel === 'petition') {
     if (!filter?.petitionSlug) return { total: 0, breakdown: { '(청원 선택 필요)': 0 } };
-    const recipients = await new PetitionAudienceResolver(filter.petitionSlug).resolve();
-    return { total: recipients.length, breakdown: { 서명자: recipients.length } };
+    const slug = filter.petitionSlug;
+    const total = await countAudienceViaRpc(
+      'count_petition_audience',
+      { p_slug: slug, p_salt: PETITION_SALT },
+      async () => (await new PetitionAudienceResolver(slug).resolve()).length
+    );
+    return { total, breakdown: { 서명자: total } };
   }
 
   return { total: 0, breakdown: {} };
 }
 
 // 발송 대상 청원 드롭다운용 — 종료된 청원도 포함(종료 청원 서명자 결과 보고 메일 대상).
-export async function getPetitionOptions(): Promise<Array<{ slug: string; title: string }>> {
+// isActive로 진행/종료를 구분해 UI에서 종료 청원 오발송을 시각적으로 방지.
+export async function getPetitionOptions(): Promise<
+  Array<{ slug: string; title: string; isActive: boolean }>
+> {
   await requireAdmin();
   const supabase = await requireAdminClient();
   const { data, error } = await supabase
     .from('petitions')
-    .select('slug, title')
+    .select('slug, title, is_active')
     .order('created_at', { ascending: false });
   if (error) {
     console.error('[get-petition-options] error:', error);
     return [];
   }
-  return data ?? [];
+  return (data ?? []).map((p) => ({
+    slug: p.slug as string,
+    title: p.title as string,
+    isActive: Boolean(p.is_active),
+  }));
 }
 
 export async function searchBroadcastArtworks(
@@ -349,7 +397,7 @@ export async function enqueueIndividualBroadcast(input: {
   ctaLabel?: string;
   ctaUrl?: string;
   isAdvertisement: boolean;
-}): Promise<ActionState & { broadcastId?: string }> {
+}): Promise<ActionState & { broadcastId?: string; deduped?: boolean }> {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
   const { recipients, subject, bodyMd, ctaLabel, ctaUrl, isAdvertisement } = input;
@@ -357,6 +405,13 @@ export async function enqueueIndividualBroadcast(input: {
   if (!subject.trim() || !bodyMd.trim())
     return { message: '제목과 본문은 필수입니다.', error: true };
   if (recipients.length === 0) return { message: '수신자를 1명 이상 선택하세요.', error: true };
+  // 임의 대량 발송(오발송·도메인 평판 훼손) 방어 — 한도 초과는 그룹 발송 채널로 유도.
+  if (recipients.length > MAX_DIRECT_RECIPIENTS) {
+    return {
+      message: `직접 지정은 한 번에 최대 ${MAX_DIRECT_RECIPIENTS.toLocaleString('ko-KR')}명까지 보낼 수 있습니다. (${recipients.length.toLocaleString('ko-KR')}명 선택됨)`,
+      error: true,
+    };
+  }
 
   let validatedCtaUrl: string | null;
   let validatedCtaLabel: string | null;
@@ -402,8 +457,10 @@ export async function enqueueIndividualBroadcast(input: {
     .maybeSingle();
   if (existingBroadcast?.id) {
     return {
-      message: '동일한 개별 발송이 최근 등록되어 발송이 진행 중입니다.',
+      message:
+        '같은 제목의 개별 발송이 최근 5분 내에 이미 등록돼 발송 중입니다. 새로 발송되지 않았습니다.',
       broadcastId: existingBroadcast.id,
+      deduped: true,
     };
   }
 

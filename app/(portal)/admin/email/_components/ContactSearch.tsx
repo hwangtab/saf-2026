@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { searchContacts, type ContactSearchResult } from '@/app/actions/admin-contact-search';
+import { useDebounce } from '@/lib/hooks/useDebounce';
+import { FIELD_FOCUS } from './field-styles';
 
 export interface SelectedContact {
   email: string;
@@ -19,15 +21,20 @@ export function ContactSearch({ selected, onChange }: Props) {
   const [truncated, setTruncated] = useState(false);
   const [searched, setSearched] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const debouncedQuery = useDebounce(query, 300);
+  const trimmedQuery = debouncedQuery.trim();
 
-  const runSearch = () => {
+  // 작품 검색과 동일하게 타이핑하면 실시간으로 후보를 조회한다(버튼 없음).
+  // 빈 검색어면 조회하지 않고(effect 내 동기 setState 회피), 결과 노출은 trimmedQuery로 게이팅.
+  useEffect(() => {
+    if (!trimmedQuery) return;
     startTransition(async () => {
-      const r = await searchContacts(query);
+      const r = await searchContacts(trimmedQuery);
       setResults(r.results);
       setTruncated(r.truncated);
       setSearched(true);
     });
-  };
+  }, [trimmedQuery]);
 
   const add = (c: ContactSearchResult) => {
     if (selected.some((s) => s.email === c.email)) return;
@@ -36,64 +43,69 @@ export function ContactSearch({ selected, onChange }: Props) {
   const remove = (email: string) => onChange(selected.filter((s) => s.email !== email));
   const clearAll = () => onChange([]);
 
+  const showResults = Boolean(trimmedQuery) && results.length > 0;
+  const showNoResults = Boolean(trimmedQuery) && searched && !isPending && results.length === 0;
+
   return (
     <div className="space-y-3">
-      <div className="flex gap-2">
+      <div className="relative">
         <input
           aria-label="명단에서 찾아 추가"
-          type="text"
+          type="search"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              runSearch();
-            }
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setSearched(false); // 타이핑 시작 시 이전 "결과 없음" 잔류 즉시 제거
           }}
-          placeholder="이름 또는 이메일 검색"
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          placeholder="이름 또는 이메일 입력 (실시간 검색)"
+          className={`block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm ${FIELD_FOCUS}`}
         />
-        <button
-          type="button"
-          onClick={runSearch}
-          disabled={isPending}
-          className="shrink-0 rounded-lg bg-primary-strong px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-        >
-          {isPending ? '찾는 중...' : '찾기'}
-        </button>
+        {isPending && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-charcoal-muted">
+            찾는 중…
+          </span>
+        )}
       </div>
 
-      {results.length > 0 && (
-        <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200">
-          {results.map((c) => (
-            <li key={c.email} className="flex items-center justify-between gap-2 px-3 py-2 text-sm">
-              <span className="truncate">
-                <strong className="text-charcoal-deep">{c.name ?? '(이름없음)'}</strong>{' '}
-                <span className="text-charcoal-muted">{c.email}</span>{' '}
-                <span className="text-xs text-charcoal-soft">[{c.sources.join('·')}]</span>
-              </span>
-              <button
-                type="button"
-                disabled={c.suppressed || selected.some((s) => s.email === c.email)}
-                onClick={() => add(c)}
-                className="shrink-0 rounded border border-gray-300 px-2 py-1 text-xs disabled:opacity-40"
+      {showResults && (
+        <ul
+          aria-live="polite"
+          className="max-h-64 divide-y divide-gray-100 overflow-auto rounded-lg border border-gray-200"
+        >
+          {results.map((c) => {
+            const already = selected.some((s) => s.email === c.email);
+            return (
+              <li
+                key={c.email}
+                className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
               >
-                {c.suppressed
-                  ? '수신거부됨'
-                  : selected.some((s) => s.email === c.email)
-                    ? '추가됨'
-                    : '추가'}
-              </button>
-            </li>
-          ))}
+                <span className="min-w-0 truncate">
+                  <strong className="text-charcoal-deep">{c.name ?? '(이름없음)'}</strong>{' '}
+                  <span className="text-charcoal-muted">{c.email}</span>{' '}
+                  <span className="text-xs text-charcoal-soft">[{c.sources.join('·')}]</span>
+                </span>
+                <button
+                  type="button"
+                  disabled={c.suppressed || already}
+                  onClick={() => add(c)}
+                  className="shrink-0 rounded border border-gray-300 px-2 py-1 text-xs disabled:opacity-40"
+                >
+                  {c.suppressed ? '수신거부됨' : already ? '추가됨' : '추가'}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
-      {searched && !isPending && results.length === 0 && (
-        <p className="rounded-lg border border-gray-200 bg-white px-3 py-4 text-sm text-charcoal-muted">
+      {showNoResults && (
+        <p
+          aria-live="polite"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-4 text-sm text-charcoal-muted"
+        >
           검색 결과가 없습니다.
         </p>
       )}
-      {truncated && (
+      {truncated && showResults && (
         <p className="text-xs text-charcoal-soft">
           결과가 많아 일부만 표시합니다. 검색어를 좁혀주세요.
         </p>

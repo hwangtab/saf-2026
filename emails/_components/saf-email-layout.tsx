@@ -29,6 +29,9 @@ export default function SAFEmailLayout({
       <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        {/* 라이트 고정 디자인 — 클라이언트 다크모드 강제 반전으로 대비가 깨지는 것 방지 */}
+        <meta name="color-scheme" content="light" />
+        <meta name="supported-color-schemes" content="light" />
       </Head>
       <Preview>{previewText}</Preview>
       <Body style={bodyStyle}>
