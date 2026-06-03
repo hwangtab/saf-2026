@@ -6,7 +6,8 @@ import type { EmailLocale } from './_components/i18n';
 import { CONTACT } from '@/lib/constants';
 
 export interface BroadcastEmailProps {
-  channel: 'customer' | 'member' | 'petition';
+  channel: 'customer' | 'member' | 'petition' | 'individual';
+  isAdvertisement: boolean;
   recipientName: string | null;
   subject: string;
   bodyParagraphs: string[];
@@ -19,14 +20,16 @@ export interface BroadcastEmailProps {
 /**
  * 브로드캐스트 이메일 템플릿 — 고객(광고)/작가/청원 채널별 지원.
  *
- * 채널별 특징:
- * - 'customer': 정통망법 §50 발송자 정보 푸터 표시 + 제목에 "(광고)" 접두어
- * - 'member'/'petition': 간단한 푸터 (브랜드 + 연락처)
+ * 광고 여부는 isAdvertisement prop(← DB email_broadcasts.is_advertisement)으로 결정:
+ * - isAdvertisement=true: 정통망법 §50 발송자 정보 푸터 + 제목에 "(광고)" 접두어
+ * - isAdvertisement=false: 간단한 푸터 (브랜드 + 연락처)
+ * 채널: 'customer' | 'member' | 'petition' | 'individual' (수신거부 토큰 스코프용)
  *
  * i18n 미적용 — broadcast 이메일은 DB/API에서 locale을 명시적으로 결정.
  */
 export default function BroadcastEmail({
-  channel,
+  channel: _channel,
+  isAdvertisement,
   recipientName,
   subject,
   bodyParagraphs,
@@ -35,7 +38,7 @@ export default function BroadcastEmail({
   unsubscribeUrl,
   locale = 'ko',
 }: BroadcastEmailProps) {
-  const isAd = channel === 'customer';
+  const isAd = isAdvertisement;
 
   const headerTitle =
     locale === 'en'
@@ -58,7 +61,7 @@ export default function BroadcastEmail({
   const unsubscribeText =
     locale === 'en' ? 'Unsubscribe from this mailing list' : '이메일 수신거부 및 구독취소';
 
-  // 'customer' 채널 시 헤더 색상을 primary 블루로 → 광고임을 명시
+  // 광고(isAdvertisement=true) 시 헤더 색상을 primary-strong 블루로 → 광고임을 명시
   const headerColor = isAd ? '#0E4ECF' : '#2176FF';
 
   return (
@@ -91,7 +94,7 @@ export default function BroadcastEmail({
         </Section>
       )}
 
-      {/* 'customer' 채널 시 정통망법 발송자 정보 */}
+      {/* 광고(isAdvertisement=true) 시 정통망법 발송자 정보 */}
       {isAd && (
         <Section style={adFooterBoxStyle}>
           <Text style={adFooterLabelText}>
