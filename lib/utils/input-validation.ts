@@ -26,10 +26,15 @@ export function validateUrl(value: string | null, fieldName?: string): string | 
   }
 }
 
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function isValidEmail(value: string): boolean {
+  return EMAIL_REGEX.test(value.trim());
+}
+
 export function validateEmail(value: string | null): string | null {
   if (!value?.trim()) return null;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(value.trim())) {
+  if (!EMAIL_REGEX.test(value.trim())) {
     throw new Error('유효하지 않은 이메일 형식입니다.');
   }
   return value.trim();
