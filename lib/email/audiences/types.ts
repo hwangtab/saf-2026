@@ -1,4 +1,4 @@
-export type BroadcastChannel = 'customer' | 'member' | 'petition';
+export type BroadcastChannel = 'customer' | 'member' | 'petition' | 'individual';
 
 export interface Recipient {
   email: string;

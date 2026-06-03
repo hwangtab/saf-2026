@@ -45,5 +45,12 @@ describe('unsubscribe token', () => {
       expect(verifyUnsubscribeToken('any.token')).toBeNull();
       process.env.EMAIL_UNSUB_SECRET = original;
     });
+
+    it('individual 채널 토큰을 검증한다', () => {
+      process.env.EMAIL_UNSUB_SECRET = SECRET;
+      const emailHash = 'abcd1234'.repeat(8);
+      const token = generateUnsubscribeToken(emailHash, 'individual')!;
+      expect(verifyUnsubscribeToken(token)).toEqual({ emailHash, channel: 'individual' });
+    });
   });
 });
