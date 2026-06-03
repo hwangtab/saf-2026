@@ -1,5 +1,145 @@
 [
   {
+    "hash": "a38e86a3",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "천지수·안은경·김종환·송광연·정서온 전용 작가 페이지 추가",
+    "summary": "매체 다양성 5인(그림책 서평회화·여행가방 동양화·판화·나비의꿈 팝아트·집 회화) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- CheonJisuFeature: 책 읽는 아틀리에, 회화·삽화·그림책 서평\n- AnEungyeongFeature: '여행가방' 현대인의 불안·소외와 회복\n- KimJonghwanFeature: 판화공방 '판화방'·옛이야기 그림책 삽화\n- SongGwangyeonFeature: 한국적 도상+팝아트 〈나비의 꿈〉\n- JeongSeoonFeature: '집'을 매개로 한 공간·존재 회화(대구·베를린)\n- ShinHakchulFeature 정전 패턴 복제(PaperGrain·hero·bio·전시·타임라인·상호부조 배너·MasterArtistMediumSections + JSON-LD)\n- page.tsx MASTER_ARTIST_FEATURES dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 전원 통과(날조 1인칭 인용 0건, 전 사실 DB history 원문 대조 확인)",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "7afe9089",
+    "type": "fix",
+    "scope": "email",
+    "subject": "작품 구매자 광고 토글 추가 + 검색 truncation 정확화",
+    "summary": "특정 작품 구매자 발송에 운영/광고 토글 노출(준법 광고·6개월 제한 도달 가능), 연락처 검색 per-source 컷도 truncated에 반영",
+    "body": "- AudienceSelector: isArtworkBuyer 영역에 `advertising` 체크박스 추가 (fragment 래핑)\n- admin-contact-search: 4개 소스별 LIMIT 도달 여부를 sourceCapped로 추적, OR로 truncated에 반영",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "691245f9",
+    "type": "feat",
+    "scope": "email",
+    "subject": "검색 발송 모드 + 나에게 테스트 발송",
+    "summary": "연락처 검색→선택 발송(individual), 운영/광고 토글, 본인 테스트 발송 버튼",
+    "body": "- ContactSearch: 보유 연락처 검색·담기·제거, 수신거부 비활성화\n- BroadcastForm: mode setter 활성화, 세그먼트/검색 모드 토글 UI\n- 검색 모드 submit → enqueueIndividualBroadcast + searchAdvertising\n- 나에게 테스트 발송 버튼 → sendTestEmail (큐 우회, 양 모드 공통)\n- individual 템플릿 선택 시 searchAdvertising 자동 설정\n- 기존 segment 흐름·BroadcastForm.test.tsx 회귀 없음",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "79b4ba12",
+    "type": "feat",
+    "scope": "email",
+    "subject": "발송 폼에 템플릿 선택 + 세그먼트 세부필터",
+    "summary": "TemplatePicker·AudienceSelector 분리, 작가/출품자·청원·작품구매자 선택 UI",
+    "body": "- TemplatePicker: BROADCAST_TEMPLATES 드롭다운, 선택 시 제목·본문·CTA·채널 자동 채움\n- AudienceSelector: 수신자 그룹(작가/출품자, 고객, 청원, 작품구매자) + 세부필터\n  (작가만/출품자만, 청원 드롭다운, 작품 ID 입력) + AudiencePreview 내장\n- BroadcastForm: TemplatePicker + AudienceSelector 통합, mode('segment'|'search') 상태\n  추가(segment만 구현, search는 이후 태스크), audienceFilter·isAdvertisement 전달\n- RTL 테스트: 템플릿 선택 → 제목 자동 채움 검증",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "94770b38",
+    "type": "feat",
+    "scope": "email",
+    "subject": "코드 프리셋 템플릿 라이브러리",
+    "summary": "채널별 스타터 템플릿(전시·신작·청원·개별 등) 정의, 브랜드 톤 적용",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "7fb666ba",
+    "type": "feat",
+    "scope": "email",
+    "subject": "enqueue 광고플래그·작품구매자·subset + 개별발송/테스트발송",
+    "summary": "customer 세그먼트 광고 강제, 작품구매자/작가출품자 분기, 검색 개별발송과 본인 테스트발송 추가",
+    "body": "- EnqueueBroadcastInput에 isAdvertisement 옵션 추가\n- customer 광범위 세그먼트는 is_advertisement=true 강제(법적)\n- customer+artworkId는 ArtworkBuyerAudienceResolver 분기 + 입력 플래그 사용\n- resolver.resolve(audienceFilter) 로 member subset 등 필터 전달\n- is_advertisement DB INSERT에 persisted\n- enqueueIndividualBroadcast: 수신거부 차감 후 individual 채널 큐 등록\n- sendTestEmail: 관리자 본인에게 즉시 테스트 1통 발송(큐 우회)",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "8c9cfe7d",
+    "type": "feat",
+    "scope": "email",
+    "subject": "통합 연락처 검색(구매자·서명자·작가·출품자)",
+    "summary": "이름·이메일로 보유 연락처 검색, 출처 라벨 병합·suppression 플래그·dedup",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "1f852260",
+    "type": "feat",
+    "scope": "email",
+    "subject": "청원 목록 조회 + 미리보기 세부필터(작가/출품자·청원·작품구매자)",
+    "summary": "getActivePetitions 추가, previewAudience가 subset/petitionSlug/artworkId 반영",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "fd90e017",
+    "type": "feat",
+    "scope": "email",
+    "subject": "특정 작품 구매자 audience resolver",
+    "summary": "orders.artwork_id 기준 구매자 추출, 광고 모드 시 6개월 제한",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "88ba0bec",
+    "type": "feat",
+    "scope": "email",
+    "subject": "member 채널 작가/출품자 subset 필터",
+    "summary": "MemberAudienceResolver가 filter.subset으로 작가만/출품자만 추출 지원",
+    "body": "- resolve(filter?)에 subset: 'artist' | 'exhibitor' 옵션 추가\n- subset='artist'면 출품자 쿼리 스킵 (2쿼리만 실행)\n- subset='exhibitor'면 작가 쿼리 스킵 (2쿼리만 실행)\n- 미지정이면 기존 3쿼리 동작 유지 (하위 호환)",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "dcac5710",
+    "type": "feat",
+    "scope": "email",
+    "subject": "광고 분기를 is_advertisement prop으로 분리 + 본문 개인화",
+    "summary": "(광고) 표기·발송사 footer를 채널이 아닌 is_advertisement 플래그로 결정하고 {{name}} 치환 적용",
+    "body": "- BroadcastEmailProps에 isAdvertisement: boolean 추가, channel 타입에 'individual' 포함\n- const isAd = channel === 'customer' → const isAd = isAdvertisement\n- dispatch: is_advertisement 컬럼 select 추가, splitAndPersonalize 수신자별 호출\n- subject 광고 접두어도 broadcast.is_advertisement 기준으로 변경\n- 테스트: @react-email/render dynamic-import Jest 우회(renderToStaticMarkup mock)",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "fa747159",
+    "type": "feat",
+    "scope": "email",
+    "subject": "본문 문단 분리 + {{name}} 치환 헬퍼",
+    "summary": "브로드캐스트 본문 개인화용 순수 함수 splitAndPersonalize 추가",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "808a2163",
+    "type": "feat",
+    "scope": "email",
+    "subject": "BroadcastChannel에 individual 추가 + 수신거부 처리",
+    "summary": "검색 발송 채널 individual의 수신거부 토큰·확인 페이지 지원",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "55f87fb5",
+    "type": "feat",
+    "scope": "email",
+    "subject": "is_advertisement 컬럼 + individual 채널 마이그레이션",
+    "summary": "광고 분기를 채널에서 분리하고 검색 발송용 individual 채널 추가",
+    "body": null,
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
     "hash": "376d05c8",
     "type": "feat",
     "scope": "artists",
