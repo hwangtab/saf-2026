@@ -48,6 +48,19 @@ export function BroadcastForm() {
 
   const hour = new Date().getHours();
   const isNightTime = hour >= 21 || hour < 8;
+  const submitBlockReason = (() => {
+    if (mode === 'search' && selectedContacts.length === 0) {
+      return '검색 발송은 수신자를 1명 이상 선택해야 합니다.';
+    }
+    if (mode === 'segment' && segment.channel === 'petition' && !segment.petitionSlug) {
+      return '청원 캠페인 알림은 청원을 먼저 선택해야 합니다.';
+    }
+    if (mode === 'segment' && segment.isArtworkBuyer && !segment.artworkId.trim()) {
+      return '특정 작품 구매자 발송은 작품 ID를 입력해야 합니다.';
+    }
+    return null;
+  })();
+  const submitDisabled = isPending || Boolean(submitBlockReason);
 
   const applyTemplate = (t: BroadcastTemplate) => {
     setSubject(t.subject);
@@ -72,6 +85,10 @@ export function BroadcastForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitBlockReason) {
+      setError(submitBlockReason);
+      return;
+    }
     if (!confirmed) {
       setError('발송 확인 체크박스를 선택해주세요.');
       return;
@@ -277,6 +294,8 @@ export function BroadcastForm() {
         </div>
       </div>
 
+      {submitBlockReason && <p className="text-sm text-danger-a11y">{submitBlockReason}</p>}
+
       {/* 발송 확인 체크박스 */}
       <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
         <input
@@ -294,7 +313,7 @@ export function BroadcastForm() {
       <div className="flex gap-3">
         <button
           type="submit"
-          disabled={isPending || (mode === 'search' && selectedContacts.length === 0)}
+          disabled={submitDisabled}
           className="rounded-lg bg-primary-strong px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-strong/90 disabled:opacity-50"
         >
           {isPending ? '처리 중…' : '발송 예약'}

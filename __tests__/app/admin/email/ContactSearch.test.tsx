@@ -30,4 +30,25 @@ describe('ContactSearch', () => {
     await waitFor(() => screen.getByText(/b@x.com/));
     expect(screen.getByRole('button', { name: '수신거부됨' })).toBeDisabled();
   });
+
+  it('선택된 수신자를 개별 또는 전체 해제할 수 있다', () => {
+    const onChange = jest.fn();
+    render(
+      <ContactSearch
+        selected={[
+          { email: 'a@x.com', name: '구매자A' },
+          { email: 'b@x.com', name: null },
+        ]}
+        onChange={onChange}
+      />
+    );
+
+    expect(screen.getByText('선택된 수신자 2명')).toBeInTheDocument();
+    expect(screen.getByText('a@x.com')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'a@x.com 제거' }));
+    expect(onChange).toHaveBeenCalledWith([{ email: 'b@x.com', name: null }]);
+
+    fireEvent.click(screen.getByRole('button', { name: '선택 전체 해제' }));
+    expect(onChange).toHaveBeenCalledWith([]);
+  });
 });

@@ -1,3 +1,26 @@
+# 관리자 이메일 발송 UX 메인 반영
+
+## 변경 파일
+
+- `/Users/macbook_hwang/saf-2026/app/(portal)/admin/email/_components/BroadcastForm.tsx`
+  - 검색 발송 수신자 0명, 청원 미선택, 작품 구매자 작품 ID 미입력 상태를 발송 전 차단
+  - 발송 버튼 위에 차단 사유 표시
+  - main의 기존 세그먼트/검색 발송 및 테스트 발송 구조는 유지
+
+- `/Users/macbook_hwang/saf-2026/app/(portal)/admin/email/_components/ContactSearch.tsx`
+  - 검색 결과 0건 안내 추가
+  - 선택된 수신자 패널을 이름/이메일 검토형으로 개선
+  - 선택 수신자 개별 해제와 선택 전체 해제 추가
+
+- `/Users/macbook_hwang/saf-2026/__tests__/app/admin/email/ContactSearch.test.tsx`
+  - 선택 수신자 개별 해제와 전체 해제 회귀 테스트 추가
+
+## 검증
+
+- `git diff --check` 통과
+- `npm run lint`, `npm run type-check`, Jest 실행은 현재 작업 환경에 `npm`이 없어 완료하지 못함
+  - 실패 사유: `zsh:1: command not found: npm`
+
 # 스토리 제목 하이픈 정리
 
 ## 처리 결과

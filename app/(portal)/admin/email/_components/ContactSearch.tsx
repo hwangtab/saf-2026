@@ -17,6 +17,7 @@ export function ContactSearch({ selected, onChange }: Props) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ContactSearchResult[]>([]);
   const [truncated, setTruncated] = useState(false);
+  const [searched, setSearched] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const runSearch = () => {
@@ -24,6 +25,7 @@ export function ContactSearch({ selected, onChange }: Props) {
       const r = await searchContacts(query);
       setResults(r.results);
       setTruncated(r.truncated);
+      setSearched(true);
     });
   };
 
@@ -32,6 +34,7 @@ export function ContactSearch({ selected, onChange }: Props) {
     onChange([...selected, { email: c.email, name: c.name }]);
   };
   const remove = (email: string) => onChange(selected.filter((s) => s.email !== email));
+  const clearAll = () => onChange([]);
 
   return (
     <div className="space-y-3">
@@ -85,6 +88,11 @@ export function ContactSearch({ selected, onChange }: Props) {
           ))}
         </ul>
       )}
+      {searched && !isPending && results.length === 0 && (
+        <p className="rounded-lg border border-gray-200 bg-white px-3 py-4 text-sm text-charcoal-muted">
+          검색 결과가 없습니다.
+        </p>
+      )}
       {truncated && (
         <p className="text-xs text-charcoal-soft">
           결과가 많아 일부만 표시합니다. 검색어를 좁혀주세요.
@@ -92,22 +100,38 @@ export function ContactSearch({ selected, onChange }: Props) {
       )}
 
       {selected.length > 0 && (
-        <div className="rounded-lg bg-canvas-strong p-3">
-          <p className="mb-2 text-sm font-medium text-charcoal">담긴 수신자 {selected.length}명</p>
-          <ul className="flex flex-wrap gap-2">
+        <div className="space-y-2 rounded-lg border border-gray-200 bg-white p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-medium text-charcoal">
+              선택된 수신자 {selected.length.toLocaleString('ko-KR')}명
+            </p>
+            <button
+              type="button"
+              onClick={clearAll}
+              className="text-sm font-medium text-danger-a11y underline underline-offset-2"
+            >
+              선택 전체 해제
+            </button>
+          </div>
+          <ul className="max-h-36 divide-y divide-gray-100 overflow-auto rounded-lg border border-gray-100">
             {selected.map((s) => (
               <li
                 key={s.email}
-                className="flex items-center gap-1 rounded-full bg-white px-2 py-1 text-xs"
+                className="flex items-center justify-between gap-3 px-3 py-2 text-sm"
               >
-                {s.name ?? s.email}
+                <span className="min-w-0">
+                  <span className="block truncate text-charcoal">{s.name ?? '(이름없음)'}</span>
+                  <span className="block truncate font-mono text-xs text-charcoal-muted">
+                    {s.email}
+                  </span>
+                </span>
                 <button
                   type="button"
                   onClick={() => remove(s.email)}
                   aria-label={`${s.email} 제거`}
-                  className="text-danger-a11y"
+                  className="shrink-0 text-xs font-medium text-charcoal-muted underline underline-offset-2"
                 >
-                  ×
+                  해제
                 </button>
               </li>
             ))}
