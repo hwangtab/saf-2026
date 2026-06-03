@@ -1,5 +1,15 @@
 [
   {
+    "hash": "376d05c8",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "남진현·이현정·심모비·이수철·최윤정 전용 작가 페이지 추가",
+    "summary": "서사·매체 다양성 5인(시대의 상처 추상·김치/DMZ·연옥 디지털회화·순수사진·팝아트) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- NamJinhyunFeature: 혁명가에서 화가로, 얼굴에 새긴 시대의 아크릴 추상\n- LeeHyeonjeongFeature: 〈김치〉 연작·평화/DMZ, 발효된 정체성과 경계\n- SimMobyFeature: '연옥(Purgatory)'·메가바이트의 침식 윤회·회화의 윤회\n- LeeSucheolFeature: 순수 사진의 존재론적 경계 확장(카메라 없는 인화)\n- ChoeYunjeongFeature: pop kids·미디어가 씌운 안경, 동시대 욕망\n- ShinHakchulFeature 정전 패턴 복제(PaperGrain·hero·bio·전시·타임라인·상호부조 배너·MasterArtistMediumSections + JSON-LD)\n- page.tsx MASTER_ARTIST_FEATURES dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 전원 통과(날조 1인칭 인용 0건, 정치 서사 중립 처리, 전 사실 DB 대조 확인)",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
     "hash": "434154ff",
     "type": "feat",
     "scope": "artists",
