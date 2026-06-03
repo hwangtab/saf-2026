@@ -1,5 +1,15 @@
 [
   {
+    "hash": "c871e009",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "이유지·서금앵·이지은·Salnus·이윤엽 전용 작가 페이지 추가",
+    "summary": "매체 다양성 5인(염원의 회화·공간 회화·독일 추상·투명 설치·민중 목판화) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- LeeYujiFeature: 심연에서 피어나는 염원의 풍경\n- SeoGeumjaengFeature: 공간의 기운·일상에 머무는 기억\n- LeeJieunFeature: Hollowed Colors, 입체와 회화의 경계(한국·독일)\n- SalnusFeature: 보여짐과 가려짐, 투명한 구(球)의 긴장\n- LeeYunyeopFeature: 파견미술가의 칼, 노동의 목판화\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(서금앵 살붙이기 3건·Salnus 호랑가시나무 영문 오역 교정), 날조 1인칭 인용 0건",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
     "hash": "a38e86a3",
     "type": "feat",
     "scope": "artists",
