@@ -79,14 +79,26 @@ export function AudienceSelector({ value, onChange }: Props) {
       )}
 
       {value.isArtworkBuyer && (
-        <input
-          aria-label="작품 ID"
-          type="text"
-          value={value.artworkId}
-          onChange={(e) => set({ artworkId: e.target.value })}
-          placeholder="작품 ID(UUID)"
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-        />
+        <>
+          <input
+            aria-label="작품 ID"
+            type="text"
+            value={value.artworkId}
+            onChange={(e) => set({ artworkId: e.target.value })}
+            placeholder="작품 ID(UUID)"
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          />
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-charcoal">
+            <input
+              type="checkbox"
+              checked={value.advertising}
+              onChange={(e) => set({ advertising: e.target.checked })}
+              className="rounded border-gray-300"
+            />
+            광고성 메일 (수신자에게 &ldquo;(광고)&rdquo; 표기·발송사 정보 포함, 최근 6개월 구매자로
+            제한)
+          </label>
+        </>
       )}
 
       <AudiencePreview

@@ -32,6 +32,7 @@ export async function searchContacts(
   const supabase = await requireAdminClient();
   const like = `%${sanitized.replace(/[%_]/g, (m) => `\\${m}`)}%`;
 
+  let sourceCapped = false;
   const merged = new Map<string, { name: string | null; sources: Set<string> }>();
   const add = (
     email: string | null | undefined,
@@ -53,6 +54,7 @@ export async function searchContacts(
     .select('buyer_email, buyer_name')
     .or(`buyer_name.ilike.${like},buyer_email.ilike.${like}`)
     .limit(LIMIT);
+  if ((orders?.length ?? 0) >= LIMIT) sourceCapped = true;
   for (const o of orders ?? []) add(o.buyer_email as string, o.buyer_name as string, '구매자');
 
   // 2) 서명자 (마스킹 제외)
@@ -62,6 +64,7 @@ export async function searchContacts(
     .eq('is_masked', false)
     .or(`full_name.ilike.${like},email.ilike.${like}`)
     .limit(LIMIT);
+  if ((signers?.length ?? 0) >= LIMIT) sourceCapped = true;
   for (const s of signers ?? []) add(s.email as string, s.full_name as string, '서명자');
 
   // 3) 작가
@@ -70,6 +73,7 @@ export async function searchContacts(
     .select('contact_email, name_ko, name_en')
     .or(`name_ko.ilike.${like},name_en.ilike.${like},contact_email.ilike.${like}`)
     .limit(LIMIT);
+  if ((artists?.length ?? 0) >= LIMIT) sourceCapped = true;
   for (const a of artists ?? [])
     add(a.contact_email as string, (a.name_ko as string) ?? (a.name_en as string), '작가');
 
@@ -81,6 +85,7 @@ export async function searchContacts(
     .not('email', 'is', null)
     .or(`name.ilike.${like},email.ilike.${like}`)
     .limit(LIMIT);
+  if ((profiles?.length ?? 0) >= LIMIT) sourceCapped = true;
   for (const p of profiles ?? [])
     add(p.email as string, p.name as string, p.role === 'exhibitor' ? '출품자' : '회원');
 
@@ -98,5 +103,5 @@ export async function searchContacts(
     suppressed: suppressed.has(hashEmail(email)),
   }));
 
-  return { results: all.slice(0, LIMIT), truncated: all.length > LIMIT };
+  return { results: all.slice(0, LIMIT), truncated: sourceCapped || all.length > LIMIT };
 }
