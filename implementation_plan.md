@@ -1564,3 +1564,54 @@ GSC의 페이지 색인/제외 보고서에 쌓일 수 있는 공개 URL 쿼리 
 
 - 공개 콘텐츠 쿼리 변형은 크롤 차단이 아니라 308 정규화로 처리됩니다.
 - `/stories?category=` 카테고리 정규화와 legacy 숫자 작품 ID 리다이렉트는 유지됩니다.
+
+---
+
+# 콘텐츠 CTR 개선 메타 문구 실행 계획 (2026-06-04)
+
+## 1) 목적
+
+GSC 최근 28일 기준 노출은 많지만 CTR이 낮은 콘텐츠의 SERP 문구를 검색 의도에 더 직접 매칭합니다. 본문 제목은 매거진 톤을 유지하고, 검색 결과용 `<title>`/description과 오윤 청원 메타 문구를 조정해 클릭률 개선을 노립니다.
+
+## 2) 근거
+
+- `/stories/reading-art-sizes-ho-vs-cm`
+  - 336 impressions / 1 click / CTR 0.30% / 평균 5.4위
+  - `10호 크기`, `10호 사이즈`, `30호 사이즈`, `30호 크기` 쿼리 CTR 0%
+- `/stories/editions-explained`
+  - 746 impressions / 4 clicks / CTR 0.54%
+  - `에디션 뜻` 439 impressions / 2 clicks / CTR 0.46%
+- `/petition/oh-yoon`
+  - `오윤` 322 impressions / 2 clicks / CTR 0.62%
+- `/stories/archival-pigment-print-photography`
+  - `피그먼트 뜻` 70 impressions / 0 clicks
+- `/stories/prints-vs-originals-and-edition-numbers`
+  - `넘버링 뜻` 70 impressions / 0 clicks
+
+## 3) 변경 범위
+
+- `lib/stories-seo-overrides.ts`
+  - `reading-art-sizes-ho-vs-cm`: title 첫머리에 `10호·30호 그림 크기`, description 첫머리에 즉답 배치
+  - `editions-explained`: `에디션 뜻`, `5/10`, `넘버링`, `한정판` 중심으로 단순화
+  - `archival-pigment-print-photography`: `피그먼트 뜻`을 title 첫머리로 이동
+  - `prints-vs-originals-and-edition-numbers`: `넘버링 뜻`을 title 첫머리로 이동
+- `messages/ko.json`, `messages/en.json`
+  - 오윤 청원 meta title/description을 `오윤 작가`, `판화 작품`, `유족`, `권리 회복` 의도에 맞게 조정
+  - hero subtitle에 `오윤 작가`와 `작품 보존` 맥락 보강
+- `__tests__/seo/content-ctr-metadata.test.ts`
+  - CTR 개선 대상 키워드가 title/description에 직접 포함되는지 회귀 테스트 추가
+
+## 4) 검증
+
+- RED: 새 테스트가 기존 오버라이드/메시지 문구에서 실패해야 합니다.
+- GREEN: 메타 문구 변경 후 테스트 통과.
+- 정적 검증:
+  - `npm test -- __tests__/seo/content-ctr-metadata.test.ts`
+  - `npx eslint lib/stories-seo-overrides.ts __tests__/seo/content-ctr-metadata.test.ts`
+  - `npm run type-check`
+  - `git diff --check`
+
+## 5) 완료 기준
+
+- 상위 CTR 개선 대상 5개 URL의 핵심 쿼리가 SERP title/description에 직접 노출됩니다.
+- DB 원문 제목/본문은 변경하지 않고, 검색 결과용 메타만 조정합니다.

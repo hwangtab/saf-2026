@@ -22,12 +22,12 @@ export interface StorySeoOverride {
 
 export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
   'editions-explained': {
-    // GSC: 28일 502 imp / 2 click (CTR 0.4%, pos ~7.9) — "에디션 뜻"(416 imp, CTR 0%) 키워드 직접 포함.
-    // "넘버링 뜻"(78 imp), "한정판 뜻"(36 imp)도 description에 흡수.
-    titleKo: '에디션 뜻 완벽 정리 — 오픈·리미티드·유니크 에디션 차이 (넘버링·한정판 포함)',
+    // GSC 2026-05-05~06-01: 746 imp / 4 click (CTR 0.54%). "에디션 뜻" 439 imp / CTR 0.46%.
+    // SERP에서 즉시 답을 기대하는 정의형 검색이라 title을 짧고 직접적으로 정리.
+    titleKo: '에디션 뜻 쉽게 정리 — 5/10·넘버링·한정판은 무슨 의미일까?',
     titleEn: 'Art Edition Explained — Open, Limited & Unique Editions, Numbering & AP/EA Meaning',
     descriptionKo:
-      '에디션 뜻이 궁금하다면 — 오픈·리미티드·유니크 에디션 차이, 넘버링(5/10) 읽는 법, 한정판 의미, AP·EA·HC 약어까지 작가가 직접 설명합니다.',
+      '에디션은 한정 발행 번호입니다. 5/10은 10점 중 5번째 작품이라는 뜻. 넘버링, 리미티드 에디션, 한정판이 가격에 미치는 영향을 쉽게 설명합니다.',
     descriptionEn:
       'What do open, limited, and unique editions mean? How to read edition numbers (5/10), what AP, EA, HC stand for — explained with real SAF artwork examples.',
   },
@@ -40,19 +40,20 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
       'What is printmaking and what makes a print "original"? Woodcut, etching, lithograph, silkscreen — the basics of edition art.',
   },
   'prints-vs-originals-and-edition-numbers': {
-    titleKo: '에디션 넘버링 읽는 법 — 판화와 원화의 차이, 1/100·AP·EA 의미 | 씨앗페 매거진',
+    titleKo: '넘버링 뜻 — 판화 에디션 번호 3/30·AP·EA·HC·PP 읽는 법',
     titleEn: 'How to Read Edition Numbers (1/100, AP, EA) — Prints vs Originals | SAF Magazine',
     descriptionKo:
-      '판화 에디션 넘버링(1/100, AP, EA, HC) 뜻과 읽는 법, 판화와 원화의 차이, 가격이 형성되는 원리, 컬렉팅 시 체크포인트까지.',
+      '작품 아래 적힌 3/30, AP, EA, HC, PP는 무엇을 뜻할까요? 판화 넘버링과 에디션 번호를 쉽게 읽는 법, 원화와의 차이를 정리했습니다.',
     descriptionEn:
       'Edition numbers explained — fraction format, AP, EA, HC. Why prints and originals differ in price, and what to verify before purchase.',
   },
   'reading-art-sizes-ho-vs-cm': {
-    // GSC: 187 imp / 0.53% CTR — "10호 사이즈"(63 imp, CTR 0%) 검색어 title에 직접 흡수.
-    titleKo: '10호 사이즈 30호 100호 크기 cm — 호수 환산표 (F호·M호·P호) | 씨앗페',
+    // GSC 2026-05-05~06-01: 336 imp / 1 click (CTR 0.30%, pos 5.4).
+    // "10호 크기", "30호 사이즈", "30호 크기"처럼 즉답형 쿼리 CTR이 0%라 title/desc 첫머리에 답 배치.
+    titleKo: '10호·30호 그림 크기 몇 cm? 작품 호수 사이즈 환산표 1~100호',
     titleEn: 'Korean Art Canvas Sizes (호) to cm — F/M/P Format Chart | SAF Magazine',
     descriptionKo:
-      '10호는 53×45.5cm, 30호는 91×72.7cm. 한국 미술 호수 사이즈(F·M·P·S 형식별) ↔ 센티미터 환산표와 공간별 권장 작품 크기 가이드.',
+      '10호는 53×45.5cm, 30호는 90×72.7cm. 그림 호수별 cm 크기, F·P·M 차이, 1호부터 100호까지 한눈에 정리했습니다.',
     descriptionEn:
       'Korean canvas size (호) to centimeter conversion. F/M/P/S format chart, plus space-by-space size recommendations for collectors.',
   },
@@ -81,11 +82,11 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     // 메타는 GSC quality flag 위험).
   },
   'archival-pigment-print-photography': {
-    // GSC: 54 imp / 2 click (CTR 3.70%) — "피그먼트 프린트"(36 imp, CTR 0%) 정의형 검색 흡수.
-    titleKo: '피그먼트 프린트란? 아카이벌 잉크젯 사진의 보존성·에디션 | 씨앗페 매거진',
+    // GSC 2026-05-05~06-01: "피그먼트 뜻" 70 imp / 0 click. 초보 정의형 쿼리를 title 앞에 배치.
+    titleKo: '피그먼트 뜻 — 아키벌 피그먼트 프린트와 사진 작품 보존 방식',
     titleEn: 'What Is Archival Pigment Print? Inkjet Photography Explained | SAF Magazine',
     descriptionKo:
-      '피그먼트 프린트(아카이벌 잉크젯) 인쇄 방식과 보존성, 사진 에디션 넘버링, 컬렉터 체크포인트까지.',
+      '피그먼트는 염료가 아닌 안료 잉크를 뜻합니다. 아키벌 피그먼트 프린트가 디지털 사진을 오래 보존하는 이유와 작품 구매 시 확인할 점을 정리했습니다.',
     descriptionEn:
       'How archival pigment prints work, their longevity, photo edition numbering, and collector tips.',
   },

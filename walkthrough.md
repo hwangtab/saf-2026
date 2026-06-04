@@ -692,6 +692,41 @@
 
 ---
 
+## 콘텐츠 CTR 개선용 SERP 메타 문구 보강
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf-2026/lib/stories-seo-overrides.ts`
+  - `reading-art-sizes-ho-vs-cm`: `10호·30호 그림 크기`, `10호는 53×45.5cm`, `30호는 90×72.7cm` 즉답형 문구로 title/description 정리
+  - `editions-explained`: `에디션 뜻`, `5/10`, `넘버링`, `한정판` 중심으로 SERP title/description 단순화
+  - `archival-pigment-print-photography`: `피그먼트 뜻`을 title 첫머리에 배치하고 안료 잉크 정의를 description에 명시
+  - `prints-vs-originals-and-edition-numbers`: `넘버링 뜻`, `3/30`, `AP·EA·HC·PP` 검색 의도에 맞춰 title/description 조정
+- `/Users/hwang-gyeongha/saf-2026/messages/ko.json`
+  - 오윤 청원 meta title/description과 hero subtitle에 `오윤 작가`, `판화 작품`, `유족 권리 회복` 의도 반영
+- `/Users/hwang-gyeongha/saf-2026/messages/en.json`
+  - 영문 오윤 청원 meta title/description과 hero subtitle을 같은 의도로 보강
+- `/Users/hwang-gyeongha/saf-2026/__tests__/seo/content-ctr-metadata.test.ts`
+  - GSC 고노출·저CTR 대상 키워드가 SERP 메타에 직접 포함되는지 회귀 테스트 추가
+- `/Users/hwang-gyeongha/saf-2026/implementation_plan.md`
+  - 콘텐츠 CTR 개선 메타 문구 실행 계획 추가
+
+### 기대 효과
+
+- 평균 순위가 이미 좋은 `10호/30호 크기` 계열 쿼리에서 SERP 즉답성이 올라감
+- `에디션 뜻`, `피그먼트 뜻`, `넘버링 뜻`처럼 정의형 검색어가 title 앞쪽에 노출됨
+- `오윤` 단일 쿼리에서 petition 페이지가 단순 청원보다 작가·판화·유족 권리 문맥으로 보이도록 개선
+
+### 검증 결과
+
+- `npm test -- __tests__/seo/content-ctr-metadata.test.ts` 통과
+- `npx eslint lib/stories-seo-overrides.ts __tests__/seo/content-ctr-metadata.test.ts` 통과
+  - Browserslist `caniuse-lite` 오래됨 경고만 출력
+- `node -e "JSON.parse(...messages/ko.json); JSON.parse(...messages/en.json)"` 통과
+- `npm run type-check` 통과
+- `git diff --check` 통과
+
+---
+
 ## 작품 썸네일 전면 비율 보존 + 저채도 브랜드 프레임 적용
 
 ### 변경 파일
