@@ -154,15 +154,16 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, error: apiError('artwork_not_found', buyerLocale) };
   }
 
-  // 동일 구매자의 같은 작품에 대한 기존 pending_payment 주문 자동 정리
-  // (탭 닫기, 뒤로가기 등으로 catch 블록이 실행되지 못한 경우 대비)
-  // buyer_email 필터로 다른 구매자의 진행 중인 주문은 취소하지 않음
+  // 동일 구매자의 같은 작품에 대한 오래된 pending_payment 주문 자동 정리.
+  // buyer_email은 본인 인증 수단이 아니므로, 현재 결제 가능성이 있는 최근 주문은 건드리지 않는다.
+  const pendingPaymentCleanupCutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
   await adminClient
     .from('orders')
     .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
     .eq('artwork_id', artworkId)
     .eq('buyer_email', buyerEmailNorm)
-    .eq('status', 'pending_payment');
+    .eq('status', 'pending_payment')
+    .lt('created_at', pendingPaymentCleanupCutoff);
 
   // Check availability via RPC
   const { data: availResult, error: availError } = await adminClient.rpc(

@@ -31,10 +31,16 @@ export interface SearchResponse {
   query: string;
 }
 
+function normalizeSearchLimit(value: string | null) {
+  const parsed = Number.parseInt(value ?? '', 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return 8;
+  return Math.min(parsed, 20);
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = (searchParams.get('q')?.trim() ?? '').slice(0, 200);
-  const limit = Math.min(parseInt(searchParams.get('limit') ?? '8', 10), 20);
+  const limit = normalizeSearchLimit(searchParams.get('limit'));
 
   if (!query) {
     return NextResponse.json<SearchResponse>(

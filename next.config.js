@@ -157,20 +157,22 @@ const nextConfig = {
         source: '/_next/static/:path*',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       },
-      // /en/terms·artworks·news는 코드 레벨 robots:{index:false} 설정이 있으나
+      // /en/terms 및 /en/artworks/*·/en/news/* 하위 경로는 코드 레벨 robots:{index:false}
+      // 설정이 있으나
       // meta noindex는 HTML 렌더링 후에야 인식됨. HTTP 헤더로 동일 정책을 이중 송출해
-      // Google 인덱스 해제를 가속. artworks·news는 robots.txt Disallow도 병행.
-      // 인덱서블 EN 페이지(/en, /en/our-reality 등)는 이 패턴에 미매칭.
+      // Google 인덱스 해제를 가속. artworks·news 하위 경로는 robots.txt에서 막지 않아
+      // 크롤러가 이 noindex 헤더를 직접 확인할 수 있게 한다.
+      // 인덱서블 EN 루트 목록(/en/artworks, /en/news)은 이 패턴에 미매칭.
       {
         source: '/en/terms/:path*',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, follow' }],
       },
       {
-        source: '/en/artworks/:path*',
+        source: '/en/artworks/:path+',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, follow' }],
       },
       {
-        source: '/en/news/:path*',
+        source: '/en/news/:path+',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, follow' }],
       },
       // 공개 페이지의 Cache-Control에서 `no-store` 제거해 bfcache(뒤로가기 즉시 복원) 허용.

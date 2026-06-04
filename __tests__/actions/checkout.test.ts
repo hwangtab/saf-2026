@@ -47,6 +47,10 @@ let mockInsertResultsQueue: MockResult[] = [];
 let mockUpdateResult: MockResult = { data: null, error: null };
 let mockAuthUserResult: MockResult = { data: { user: null }, error: null };
 const capturedInsertedRows: Array<Record<string, unknown>> = [];
+const capturedOrderUpdates: Array<{
+  patch: Record<string, unknown>;
+  filters: Array<{ op: 'eq' | 'lt'; column: string; value: unknown }>;
+}> = [];
 
 const mockSingle = jest.fn();
 const mockSelect = jest.fn();
@@ -88,14 +92,31 @@ jest.mock('@/lib/auth/server', () => ({
           return mockInsertResult;
         });
         const insertSelect = jest.fn(() => ({ single: insertSingle }));
-        const updateEq: jest.Mock = jest.fn(() => ({ eq: updateEq, ...mockUpdateResult }));
         return {
           select: buildChain(mockArtworkResult).select,
           insert: jest.fn((row: Record<string, unknown>) => {
             capturedInsertedRows.push(row);
             return { select: insertSelect };
           }),
-          update: jest.fn(() => ({ eq: updateEq })),
+          update: jest.fn((patch: Record<string, unknown>) => {
+            const call = {
+              patch,
+              filters: [] as Array<{ op: 'eq' | 'lt'; column: string; value: unknown }>,
+            };
+            capturedOrderUpdates.push(call);
+            const chain = {
+              eq: jest.fn((column: string, value: unknown) => {
+                call.filters.push({ op: 'eq', column, value });
+                return chain;
+              }),
+              lt: jest.fn((column: string, value: unknown) => {
+                call.filters.push({ op: 'lt', column, value });
+                return chain;
+              }),
+              ...mockUpdateResult,
+            };
+            return chain;
+          }),
         };
       }
       return {
@@ -179,6 +200,7 @@ beforeEach(async () => {
   mockUpdateResult = { data: null, error: null };
   mockAuthUserResult = { data: { user: null }, error: null };
   capturedInsertedRows.length = 0;
+  capturedOrderUpdates.length = 0;
 
   const mod = await import('@/app/actions/checkout');
   createOrder = mod.createOrder;
@@ -259,6 +281,29 @@ describe('createOrder', () => {
       expect(result.orderName).toContain('봄의 정원');
       expect(result.orderName).toContain('김작가');
     }
+  });
+
+  it('기존 pending_payment 자동 정리는 30분 지난 주문만 대상으로 한다', async () => {
+    setupSuccessfulArtwork();
+
+    const result = await createOrder(validInput);
+
+    expect(result.success).toBe(true);
+    const cleanupCall = capturedOrderUpdates.find((call) =>
+      call.filters.some(
+        (filter) =>
+          filter.op === 'eq' && filter.column === 'status' && filter.value === 'pending_payment'
+      )
+    );
+    expect(cleanupCall).toBeDefined();
+    expect(cleanupCall?.filters).toEqual(
+      expect.arrayContaining([
+        { op: 'eq', column: 'artwork_id', value: validInput.artworkId },
+        { op: 'eq', column: 'buyer_email', value: validInput.buyerEmail },
+        { op: 'eq', column: 'status', value: 'pending_payment' },
+        expect.objectContaining({ op: 'lt', column: 'created_at' }),
+      ])
+    );
   });
 
   it('20만원 미만 작품은 배송비 4000원 추가', async () => {

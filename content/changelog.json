@@ -1,6 +1,5 @@
 [
-  {
-    "hash": "0c16d7b7",
+  {    "hash": "0c16d7b7",
     "type": "feat",
     "scope": "email",
     "subject": "관리자 이메일 발송 시스템 전면 개편 및 배달성·컴플라이언스 하드닝",

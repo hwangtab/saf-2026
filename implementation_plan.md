@@ -81,6 +81,462 @@
 - 세그먼트 발송 필수 조건이 빠졌을 때 차단 사유가 보인다.
 - 선택된 수신자 이메일을 한눈에 확인하고 해제할 수 있다.
 
+---
+
+# 관리자 이메일 시스템 개선 Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** 관리자 이메일 시스템의 중복 큐 등록, 청원 수신자 미리보기, 발송 통계 불일치, 마크다운 안내 오해를 줄인다.
+
+**Architecture:** 서버 액션의 수신자 미리보기 입력을 실제 발송 입력과 맞추고, 큐 등록 멱등성은 DB 제약으로 보강한다. 디스패치 통계는 최종 상태 전체를 반영하도록 집계하고, 마크다운 렌더링을 추가하지 않는 대신 UI 문구를 현재 동작과 일치시킨다.
+
+**Tech Stack:** Next.js 14 App Router, TypeScript, Supabase, Jest, React Email
+
+---
+
+## 1) 범위
+
+- 수정:
+  - `app/actions/admin-broadcast.ts`
+  - `app/(portal)/admin/email/_components/AudiencePreview.tsx`
+  - `app/(portal)/admin/email/_components/BroadcastForm.tsx`
+  - `app/api/internal/broadcast-dispatch/route.ts`
+  - `supabase/migrations/20260604090000_email_broadcast_idempotency_key.sql`
+- 테스트 추가:
+  - `__tests__/actions/admin-broadcast.test.ts`
+  - `__tests__/app/broadcast-dispatch.test.ts`
+- 문서:
+  - `walkthrough.md`
+
+## 2) 구현 작업
+
+### Task 1: 청원 수신자 미리보기 입력 정합성
+
+**Files:**
+
+- Modify: `app/actions/admin-broadcast.ts`
+- Modify: `app/(portal)/admin/email/_components/AudiencePreview.tsx`
+- Modify: `app/(portal)/admin/email/_components/BroadcastForm.tsx`
+- Test: `__tests__/actions/admin-broadcast.test.ts`
+
+- [ ] **Step 1: 실패 테스트 작성**
+
+`previewAudience`가 청원 슬러그를 받아 실제 `PetitionAudienceResolver`를 호출하는지 테스트한다.
+
+```ts
+it('petition preview uses petitionSlug and returns signer count', async () => {
+  mockRequireAdmin.mockResolvedValue({ id: 'admin-1' });
+  mockPetitionResolve.mockResolvedValue([
+    { email: 'one@example.com', name: 'one', locale: 'ko', emailHash: 'h1' },
+    { email: 'two@example.com', name: 'two', locale: 'ko', emailHash: 'h2' },
+  ]);
+
+  const result = await previewAudience({ channel: 'petition', petitionSlug: 'oh-yoon' });
+
+  expect(mockPetitionResolver).toHaveBeenCalledWith('oh-yoon');
+  expect(result).toEqual({ total: 2, breakdown: { petition: 2 } });
+});
+```
+
+- [ ] **Step 2: 테스트 실패 확인**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/actions/admin-broadcast.test.ts
+```
+
+Expected: `previewAudience`가 현재 `BroadcastChannel`만 받기 때문에 TypeScript 또는 런타임 기대값 불일치로 실패한다.
+
+- [ ] **Step 3: 서버 액션 시그니처 변경**
+
+`app/actions/admin-broadcast.ts`의 `previewAudience`를 아래 형태로 바꾼다.
+
+```ts
+export interface PreviewAudienceInput {
+  channel: BroadcastChannel;
+  petitionSlug?: string;
+}
+
+export async function previewAudience(input: PreviewAudienceInput): Promise<{
+  total: number;
+  breakdown: Record<string, number>;
+}> {
+  await requireAdmin();
+
+  const { channel, petitionSlug } = input;
+
+  if (channel === 'member') {
+    const resolver = new MemberAudienceResolver();
+    const recipients = await resolver.resolve();
+    return { total: recipients.length, breakdown: { member: recipients.length } };
+  }
+
+  if (channel === 'customer') {
+    const resolver = new CustomerAudienceResolver();
+    const recipients = await resolver.resolve();
+    return { total: recipients.length, breakdown: { '동의자·거래고객': recipients.length } };
+  }
+
+  if (channel === 'petition') {
+    if (!petitionSlug?.trim()) {
+      return { total: 0, breakdown: { '청원 슬러그 필요': 0 } };
+    }
+    const resolver = new PetitionAudienceResolver(petitionSlug.trim());
+    const recipients = await resolver.resolve();
+    return { total: recipients.length, breakdown: { petition: recipients.length } };
+  }
+
+  return { total: 0, breakdown: {} };
+}
+```
+
+- [ ] **Step 4: 클라이언트 입력 연결**
+
+`AudiencePreview` props를 `{ channel, petitionSlug }`로 확장하고, `BroadcastForm`에서 `petitionSlug` 상태를 전달한다.
+
+```tsx
+<AudiencePreview channel={channel} petitionSlug={petitionSlug} />
+```
+
+`handlePreview`는 아래처럼 호출한다.
+
+```ts
+const r = await previewAudience({ channel, petitionSlug });
+```
+
+- [ ] **Step 5: 테스트 통과 확인**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/actions/admin-broadcast.test.ts
+```
+
+Expected: PASS.
+
+### Task 2: 브로드캐스트 큐 등록 멱등성 DB 보강
+
+**Files:**
+
+- Modify: `app/actions/admin-broadcast.ts`
+- Create: `supabase/migrations/20260604090000_email_broadcast_idempotency_key.sql`
+- Test: `__tests__/actions/admin-broadcast.test.ts`
+
+- [ ] **Step 1: 실패 테스트 작성**
+
+동일 admin/channel/subject가 동시에 들어올 때 `23505` unique violation을 사용자 친화 메시지로 처리하는지 테스트한다.
+
+```ts
+it('returns existing-campaign message when idempotency unique constraint races', async () => {
+  mockRequireAdmin.mockResolvedValue({ id: 'admin-1' });
+  mockMemberResolve.mockResolvedValue([
+    { email: 'artist@example.com', name: 'artist', locale: 'ko', emailHash: 'h1' },
+  ]);
+  mockBroadcastInsert.mockResolvedValue({
+    data: null,
+    error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+  });
+
+  const result = await enqueueBroadcast({
+    channel: 'member',
+    subject: '공지',
+    bodyMd: '본문',
+  });
+
+  expect(result).toEqual({
+    message: '동일한 캠페인이 최근 등록되어 있습니다. 기존 발송이 진행 중입니다.',
+    error: false,
+  });
+});
+```
+
+- [ ] **Step 2: DB 마이그레이션 추가**
+
+최근 5분 조건은 partial unique index로 표현하기 어렵기 때문에, 생성 시각을 5분 버킷으로 고정한 멱등성 키 컬럼을 둔다.
+
+```sql
+ALTER TABLE public.email_broadcasts
+  ADD COLUMN IF NOT EXISTS idempotency_key text;
+
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_email_broadcasts_idempotency_key_active
+  ON public.email_broadcasts (idempotency_key)
+  WHERE idempotency_key IS NOT NULL
+    AND status IN ('queued', 'sending');
+```
+
+- [ ] **Step 3: 서버 액션에서 키 생성**
+
+`enqueueBroadcast`에서 insert 전에 아래 키를 만든다.
+
+```ts
+const idempotencyBucket = Math.floor(Date.now() / (5 * 60 * 1000));
+const idempotencyKey = `${admin.id}:${channel}:${subject.trim()}:${idempotencyBucket}`;
+```
+
+insert payload에 추가한다.
+
+```ts
+idempotency_key: idempotencyKey,
+```
+
+`broadcastError?.code === '23505'`이면 중복 캠페인 메시지를 반환한다.
+
+```ts
+if (broadcastError?.code === '23505') {
+  return {
+    message: '동일한 캠페인이 최근 등록되어 있습니다. 기존 발송이 진행 중입니다.',
+    error: false,
+  };
+}
+```
+
+- [ ] **Step 4: 테스트 통과 확인**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/actions/admin-broadcast.test.ts
+```
+
+Expected: PASS.
+
+### Task 3: 디스패치 최종 집계 상태 보정
+
+**Files:**
+
+- Modify: `app/api/internal/broadcast-dispatch/route.ts`
+- Test: `__tests__/app/broadcast-dispatch.test.ts`
+
+- [ ] **Step 1: 실패 테스트 작성**
+
+`bounced`와 `complained`가 있는 브로드캐스트를 finalize할 때 `failed_count`에 포함되는지 테스트한다.
+
+```ts
+it('counts bounced and complained recipients as failed when finalizing broadcast', async () => {
+  mockPendingQuery.mockResolvedValue({ data: [], error: null });
+  mockCountByStatus.mockImplementation((status: string) => {
+    const counts: Record<string, number> = { sent: 8, failed: 1, bounced: 2, complained: 1 };
+    return Promise.resolve({ count: counts[status] ?? 0, error: null });
+  });
+
+  await GET(makeCronRequest());
+
+  expect(mockBroadcastUpdate).toHaveBeenCalledWith(
+    expect.objectContaining({ sent_count: 8, failed_count: 4 })
+  );
+});
+```
+
+- [ ] **Step 2: 집계 로직 변경**
+
+기존 `sent`, `failed`만 세는 로직을 유지하되 `bounced`, `complained`도 실패 계열로 더한다.
+
+```ts
+const { count: bouncedCount } = await supabase
+  .from('email_broadcast_recipients')
+  .select('id', { count: 'exact', head: true })
+  .eq('broadcast_id', broadcast.id)
+  .eq('status', 'bounced');
+
+const { count: complainedCount } = await supabase
+  .from('email_broadcast_recipients')
+  .select('id', { count: 'exact', head: true })
+  .eq('broadcast_id', broadcast.id)
+  .eq('status', 'complained');
+
+const finalFailedCount = (failedCount ?? 0) + (bouncedCount ?? 0) + (complainedCount ?? 0);
+```
+
+update payload는 아래처럼 바꾼다.
+
+```ts
+failed_count: finalFailedCount,
+```
+
+- [ ] **Step 3: 테스트 통과 확인**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/app/broadcast-dispatch.test.ts
+```
+
+Expected: PASS.
+
+### Task 4: 본문 입력 라벨을 실제 동작과 일치
+
+**Files:**
+
+- Modify: `app/(portal)/admin/email/_components/BroadcastForm.tsx`
+
+- [ ] **Step 1: 라벨과 placeholder 변경**
+
+마크다운 렌더링을 추가하지 않고 현재 구현에 맞춰 “문단 텍스트”로 표현한다.
+
+```tsx
+<label htmlFor="broadcast-body" className="mb-1 block text-sm font-medium text-charcoal">
+  본문
+</label>
+```
+
+```tsx
+placeholder = '이메일 본문을 입력하세요. 빈 줄로 문단을 구분합니다.';
+```
+
+- [ ] **Step 2: 정적 확인**
+
+Run:
+
+```bash
+rg -n "본문 \\(마크다운\\)|마크다운" 'app/(portal)/admin/email'
+```
+
+Expected: 관리자 이메일 폼 경로에서 해당 문구가 나오지 않는다.
+
+### Task 5: 검증 및 보고
+
+**Files:**
+
+- Modify: `walkthrough.md`
+
+- [ ] **Step 1: 관련 테스트 실행**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/actions/admin-broadcast.test.ts __tests__/app/broadcast-dispatch.test.ts __tests__/lib/email/audiences/customer.test.ts __tests__/lib/email/audiences/member.test.ts __tests__/lib/email/audiences/petition.test.ts __tests__/lib/email/unsubscribe-token.test.ts __tests__/lib/email/resend-webhook.test.ts
+```
+
+Expected: PASS.
+
+- [ ] **Step 2: 타입 및 lint 확인**
+
+Run:
+
+```bash
+npm run lint
+npm run type-check
+```
+
+Expected: 두 명령 모두 exit code 0.
+
+- [ ] **Step 3: walkthrough 작성**
+
+`walkthrough.md` 상단에 아래 내용을 추가한다.
+
+```md
+# 관리자 이메일 시스템 개선 결과 (2026-06-04)
+
+## 변경 사항
+
+- 청원 이메일 수신자 미리보기가 실제 청원 슬러그 기준 수신자 수를 보여주도록 수정.
+- 브로드캐스트 중복 큐 등록을 DB unique index와 서버 액션 처리로 보강.
+- 바운스/컴플레인 수신자를 최종 실패 통계에 포함.
+- 관리자 이메일 본문 입력 라벨을 실제 문단 텍스트 동작과 일치시킴.
+
+## 검증
+
+- `npm test -- --runInBand ...`
+- `npm run lint`
+- `npm run type-check`
+```
+
+## 3) 완료 기준
+
+- 청원 채널 미리보기가 `petitionSlug` 기준 실제 수신자 수를 반환한다.
+- 동일 admin/channel/subject/5분 버킷의 중복 큐 등록이 DB 레벨에서 차단된다.
+- 발송 완료 이력에서 `bounced`, `complained`가 실패 통계에 포함된다.
+- 관리자 이메일 폼이 마크다운 렌더링을 암시하지 않는다.
+- 관련 Jest, lint, type-check가 통과한다.
+
+---
+
+# 주문/검색 잔여 버그 개선 실행 계획 (2026-06-03)
+
+## 1) 목적
+
+- 전체 코드베이스 리뷰에서 발견한 실제 위험 2개를 고친다.
+- 다른 기존 변경은 건드리지 않는다.
+
+## 2) 수정 대상
+
+### A. 주문 생성 시 기존 pending 주문 취소 조건 강화
+
+- 현재 문제:
+  - `createOrder`가 같은 `artworkId + buyerEmail`의 기존 `pending_payment` 주문을 바로 취소한다.
+  - 다른 사람이 이메일을 알고 있으면 결제 대기 주문을 취소할 수 있다.
+- 개선 방향:
+  - 자동 취소 대상을 더 좁힌다.
+  - 오래된 pending 주문만 정리하거나, 같은 세션/사용자 조건이 확인될 때만 취소한다.
+  - 최소 수정으로는 “짧은 시간 내 타인의 주문 취소”가 불가능하도록 시간 조건을 추가한다.
+
+### B. 검색 API limit 검증 강화
+
+- 현재 문제:
+  - `limit=-1`, `limit=abc` 같은 값이 들어오면 의도와 다른 결과가 나올 수 있다.
+- 개선 방향:
+  - `limit`을 정수로 파싱한다.
+  - 허용 범위는 `1~20`으로 고정한다.
+  - 잘못된 값은 기본값 `8`로 처리한다.
+
+## 3) 테스트 계획
+
+1. 검색 API limit 단위 테스트 추가
+   - 음수 limit은 기본값 또는 최소값으로 안전 처리되는지 확인
+   - 큰 limit은 20개로 제한되는지 확인
+2. 주문 pending 취소 조건 테스트 추가
+   - 같은 이메일/작품이어도 너무 최근 주문은 자동 취소하지 않는지 확인
+   - 오래된 pending 주문만 정리되는지 확인
+
+## 4) 검증
+
+- 관련 Jest 테스트
+- `npm run lint`
+- `npx tsc --noEmit --pretty false`
+- 필요 시 전체 Jest
+
+## 5) 완료 기준
+
+- 두 버그가 테스트로 재현되고, 수정 후 통과한다.
+- lint/type 검사가 통과한다.
+- 변경 범위는 관련 테스트, `checkout.ts`, `app/api/search/route.ts`, 문서 기록으로 제한한다.
+
+# 잔여 lint 경고 정리 실행 계획 (2026-06-03)
+
+## 1) 목적
+
+- 실제 서비스 코드 버그는 없지만, lint 경고가 너무 많아 중요한 문제를 보기 어렵다.
+- 임시 실험 파일 경고와 React Compiler 경고를 먼저 줄인다.
+
+## 2) 수정 범위
+
+- `eslint.config.mjs`
+  - `tmp/**`를 lint 제외 대상에 추가한다.
+  - 이유: 임시 조사 스크립트의 `console.log` 경고가 서비스 코드 신호를 가린다.
+- `components/common/GoogleAnalytics.tsx`
+  - React Compiler가 싫어하는 `function (this: void)` 표현을 더 단순한 함수 표현으로 바꾼다.
+
+## 3) 제외 범위
+
+- 작품 데이터 경고 63개는 이번 작업에서 고치지 않는다.
+- 여러 접근성 경고는 화면 동작 영향이 있을 수 있어 별도 작업으로 분리한다.
+
+## 4) 검증
+
+1. 수정 전 `npm run lint` 경고 상태를 기준으로 삼는다.
+2. 수정 후 `npm run lint`를 다시 실행한다.
+3. `npx tsc --noEmit --pretty false`를 실행한다.
+4. 필요하면 관련 Jest 테스트를 실행한다.
+
+## 5) 완료 기준
+
+- lint error 0개를 유지한다.
+- `tmp/**` 경고가 사라진다.
+- `GoogleAnalytics.tsx`의 React Compiler 경고가 사라진다.
+- 코드 변경은 위 두 파일에만 제한한다.
+
 # 스토리 제목 하이픈 정리 실행 계획 (2026-04-09)
 
 ## 1) 목적
@@ -926,3 +1382,185 @@
 - 공개/포털의 작품 썸네일이 모두 비율 보존으로 표시된다.
 - 고정 비율 슬롯 내 여백은 저채도 브랜드 프레임으로 일관 적용된다.
 - `lint`, `type-check` 통과 및 주요 경로 시각 검증 완료.
+
+---
+
+# GSC 기술 경고 감소 개선 실행 계획 (2026-06-04)
+
+## 1) 목적
+
+GSC의 페이지 색인/제외 보고서에 쌓일 수 있는 공개 URL 쿼리 파라미터 중복 신호를 줄입니다. 특히 `/artworks?sort=...`, `/artworks?category=...`, `/artworks/:id?returnTo=...`처럼 canonical은 동일하지만 HTML은 200으로 응답하는 URL을 렌더 전에 정규 URL로 308 리다이렉트해 Google이 중복 URL을 계속 발견하지 않게 합니다.
+
+## 2) 현재 확인 결과
+
+- `https://www.saf2026.com/robots.txt`는 200 정상이며 쿼리 URL 차단 정책이 있습니다.
+- `https://www.saf2026.com/sitemap.xml`은 200 정상, 약 807 URL, 쿼리 URL 없음, 용량 약 492KB입니다.
+- `/en/artworks/*`, `/en/news/*`, 영어 thin-content 페이지의 `noindex, follow`는 의도된 제외로 확인됩니다.
+- 한국어 법적 페이지는 sitemap 포함 + `index, follow`라 “제출된 URL에 noindex” 경고 대상이 아닙니다.
+- 공개 작품 목록/작품 상세 쿼리 URL은 robots 차단 대상이지만 실제 요청 시 200 HTML을 반환합니다. 이 조합은 GSC에서 “robots.txt에 의해 차단됨”, “중복, Google에서 선택한 표준 URL이 사용자와 다름”, “크롤링됨 - 현재 색인 생성 안 됨”류의 노이즈를 만들 수 있습니다.
+
+## 3) 변경 범위
+
+### 수정 파일
+
+- `proxy.ts`
+  - 공개 작품 목록 URL의 검색/필터/정렬 쿼리를 정규 `/artworks` 또는 `/en/artworks`로 308 리다이렉트합니다.
+  - 공개 작품 상세 URL의 `returnTo` 등 쿼리를 정규 `/artworks/:id` 또는 `/en/artworks/:id`로 308 리다이렉트합니다.
+  - `/checkout`, `/admin`, `/dashboard`, `/exhibitor`, `/mypage` 등 사용자 상태나 결제에 필요한 쿼리는 건드리지 않습니다.
+
+### 테스트 파일
+
+- `__tests__/app/stories-indexing-guards.test.ts`
+  - 기존 proxy 소스 가드에 artwork 쿼리 정규화 조건을 추가합니다.
+  - 문자열 기반 회귀 테스트로 `ARTWORKS_LIST_PATH`, `ARTWORK_DETAIL_PATH`, `canonicalizeSearchlessUrl`, 308 리다이렉트 존재를 확인합니다.
+
+## 4) 구현 절차
+
+1. 실패 테스트 작성
+   - `__tests__/app/stories-indexing-guards.test.ts`에 “proxy는 공개 작품 목록/상세 쿼리 URL을 searchless canonical URL로 308 리다이렉트한다” 테스트를 추가합니다.
+   - 예상 실패: 아직 `ARTWORKS_LIST_PATH`, `ARTWORK_DETAIL_PATH`, `canonicalizeSearchlessUrl`가 없으므로 테스트 실패.
+
+2. 실패 확인
+   - 실행: `npm test -- __tests__/app/stories-indexing-guards.test.ts`
+   - 기대: 새 테스트만 실패.
+
+3. 최소 구현
+   - `proxy.ts`에 아래 정책을 추가합니다.
+     - `ARTWORKS_LIST_PATH = /^\/(en\/)?artworks\/?$/`
+     - `ARTWORK_DETAIL_PATH = /^\/(?:(ko|en)\/)?artworks\/[^/?]+\/?$/`
+     - `canonicalizeSearchlessUrl(pathname, request.url)` 헬퍼로 search 없는 URL 생성
+     - legacy 숫자 ID 리다이렉트보다 먼저 또는 충돌 없는 위치에서 쿼리 제거 처리
+   - 숫자 legacy ID(`/artworks/151?returnTo=...`)는 기존 UUID 리다이렉트가 우선되어야 하므로, 상세 쿼리 제거는 legacy 매칭 이후에 둡니다.
+
+4. 통과 확인
+   - 실행: `npm test -- __tests__/app/stories-indexing-guards.test.ts`
+   - 기대: 통과.
+
+5. 정적 검증
+   - 실행: `npm run lint -- --quiet` 또는 `npm run lint`
+   - 실행: `npm run type-check`
+   - 프로젝트 시간이 길면 최소 `npx eslint proxy.ts __tests__/app/stories-indexing-guards.test.ts`를 먼저 실행합니다.
+
+6. 운영 확인
+   - 배포 후 아래 URL이 308로 정규 URL을 가리키는지 확인합니다.
+     - `https://www.saf2026.com/artworks?sort=latest` → `https://www.saf2026.com/artworks`
+     - `https://www.saf2026.com/artworks/45dac49b-e8f2-4aea-8b86-8452dba853c0?returnTo=%2Fspecial%2Foh-yoon` → `https://www.saf2026.com/artworks/45dac49b-e8f2-4aea-8b86-8452dba853c0`
+   - GSC에서는 기존 발견 URL이 바로 사라지지 않으므로 1~3주 단위로 제외 항목 추이를 봅니다.
+
+## 5) 리스크
+
+- 작품 목록 필터/정렬 공유 URL이 검색엔진뿐 아니라 사용자에게도 정규 목록으로 이동할 수 있습니다.
+  - 현재 robots에서 `/artworks?*` 전체를 차단하고 있어 SEO 정책상 이미 정규 URL만 유지하는 방향입니다.
+  - 공유 가능한 필터 URL이 제품 요구사항이면, 308 대신 `noindex, follow` 헤더/메타 정책으로 바꿔야 합니다.
+- 작품 상세의 `returnTo`는 UX용 뒤로가기 힌트입니다.
+  - 검색/외부 유입에서 해당 파라미터가 없어져도 작품 상세 접근 자체에는 영향이 없습니다.
+
+## 6) 완료 기준
+
+- 공개 작품 목록/상세 쿼리 URL이 렌더 전 308로 정규 URL에 흡수됩니다.
+- 기존 `/stories?category=` 정규화와 legacy 숫자 작품 ID 리다이렉트가 유지됩니다.
+- 대상 Jest 테스트와 lint/type-check가 통과합니다.
+
+---
+
+# EN 목록 페이지 X-Robots-Tag 충돌 개선 실행 계획 (2026-06-04)
+
+## 1) 목적
+
+`/en/artworks`, `/en/news`는 `EN_INDEXABLE_PAGES`와 sitemap에서 색인 대상으로 관리되지만, `next.config.js`의 `X-Robots-Tag: noindex, follow` 헤더 패턴이 루트 목록 페이지까지 덮어 GSC의 “제출된 URL에 noindex 태그가 있음” 경고를 만들 수 있습니다. 헤더 패턴을 detail 하위 경로에만 적용해 sitemap·HTML meta·HTTP header 정책을 일치시킵니다.
+
+## 2) 변경 범위
+
+- `next.config.js`
+  - `/en/artworks/:path*` → `/en/artworks/:path+`
+  - `/en/news/:path*` → `/en/news/:path+`
+  - 루트 `/en/artworks`, `/en/news`는 색인 허용.
+  - 하위 detail/category/artist 경로는 기존처럼 noindex header 유지.
+- `__tests__/app/en-indexable-headers.test.ts`
+  - EN indexable 루트 목록이 catch-all noindex header에 걸리지 않는지 소스 가드 추가.
+
+## 3) 검증
+
+- RED: 새 테스트가 기존 `:path*` 패턴 때문에 실패해야 합니다.
+- GREEN: 패턴 수정 후 새 테스트 통과.
+- 정적 검증:
+  - `npm test -- __tests__/app/en-indexable-headers.test.ts`
+  - `npx eslint next.config.js __tests__/app/en-indexable-headers.test.ts`
+  - `npm run type-check`
+
+## 4) 완료 기준
+
+- `/en/artworks`, `/en/news`가 sitemap 제출 + HTML `index, follow` + HTTP noindex 없음 상태로 정렬됩니다.
+- `/en/artworks/<하위경로>`, `/en/news/<하위경로>`는 기존 noindex header 정책을 유지합니다.
+
+---
+
+# EN 하위 noindex URL robots 차단 충돌 개선 실행 계획 (2026-06-04)
+
+## 1) 목적
+
+`/en/artworks/*`, `/en/news/*` 하위 경로는 `X-Robots-Tag: noindex, follow`로 색인 제외 신호를 보내지만, `robots.txt`에서도 같은 경로를 차단하고 있어 Google이 noindex 헤더를 확인하지 못할 수 있습니다. GSC의 “robots.txt에 의해 차단됨” 또는 “차단되었지만 색인됨” 노이즈를 줄이기 위해 하위 URL은 크롤 허용 + noindex 헤더 정책으로 일원화합니다.
+
+## 2) 변경 범위
+
+- `app/robots.ts`
+  - `COMMON_DISALLOW`에서 `/en/artworks/`, `/en/news/` 제거.
+  - 주석을 `robots.txt 차단`이 아니라 `X-Robots-Tag noindex로 색인 제외` 정책에 맞게 정리.
+- `next.config.js`
+  - `/en/artworks/:path+`, `/en/news/:path+` noindex 헤더는 유지.
+  - 관련 주석에서 robots.txt 병행 차단 표현 제거.
+- `__tests__/app/en-indexable-headers.test.ts`
+  - robots.txt가 `/en/artworks/`, `/en/news/`를 차단하지 않는지 회귀 테스트 추가.
+  - 하위 경로 noindex 헤더는 계속 존재하는지 함께 확인.
+
+## 3) 검증
+
+- RED: 새 테스트가 현재 `COMMON_DISALLOW`의 `/en/artworks/`, `/en/news/` 때문에 실패해야 합니다.
+- GREEN: robots 차단 제거 후 테스트 통과.
+- 정적 검증:
+  - `npm test -- __tests__/app/en-indexable-headers.test.ts`
+  - `npx eslint app/robots.ts next.config.js __tests__/app/en-indexable-headers.test.ts`
+  - `npm run type-check`
+
+## 4) 완료 기준
+
+- `/en/artworks`, `/en/news` 루트 목록은 sitemap 제출 + 색인 허용 상태를 유지합니다.
+- `/en/artworks/*`, `/en/news/*` 하위 URL은 robots.txt로 막지 않고, HTTP `X-Robots-Tag: noindex, follow`를 Google이 확인할 수 있습니다.
+
+---
+
+# 공개 콘텐츠 쿼리 URL robots 차단/308 정규화 충돌 개선 실행 계획 (2026-06-04)
+
+## 1) 목적
+
+`/artworks?*`, `/stories?*`, `/news?*`, `/artworks/*?*`는 중복 URL이므로 정규 URL로 합쳐야 합니다. 현재 일부는 `proxy.ts`에서 308 리다이렉트하지만 `robots.txt`가 같은 패턴을 차단해 Google/Yeti가 리다이렉트를 확인하지 못할 수 있습니다. 공개 콘텐츠 쿼리 URL은 robots 차단 대신 308 정규화로 처리해 GSC의 “robots.txt에 의해 차단됨” 노이즈와 중복 URL 발견을 함께 줄입니다.
+
+## 2) 변경 범위
+
+- `proxy.ts`
+  - 기존 `/stories?category=` → `/stories/category/:category` 308 유지.
+  - 그 외 `/stories?*`는 `/stories`로 308.
+  - `/news?*`는 `/news`로 308.
+  - 기존 `/artworks?*`, `/artworks/:id?*` searchless 308 유지.
+- `app/robots.ts`
+  - `/artworks?*`, `/stories?*`, `/news?*`, `/artworks/*?*` 차단 제거.
+  - 공개 콘텐츠 쿼리 URL은 proxy 308 정규화 정책이라는 주석으로 정리.
+- `__tests__/app/stories-indexing-guards.test.ts`
+  - `/stories?*`, `/news?*`, artwork 쿼리 URL이 `canonicalizeSearchlessUrl`로 308 처리되는지 회귀 테스트 추가.
+- `__tests__/app/en-indexable-headers.test.ts`
+  - robots.txt에 공개 콘텐츠 쿼리 차단 패턴이 남지 않는지 회귀 테스트 추가.
+
+## 3) 검증
+
+- RED: 새 테스트가 현재 `/news?*` 정규화 누락과 robots query disallow 잔존 때문에 실패해야 합니다.
+- GREEN: proxy 정규화 및 robots 차단 제거 후 테스트 통과.
+- 정적 검증:
+  - `npm test -- __tests__/app/stories-indexing-guards.test.ts __tests__/app/en-indexable-headers.test.ts`
+  - `npx eslint proxy.ts app/robots.ts __tests__/app/stories-indexing-guards.test.ts __tests__/app/en-indexable-headers.test.ts`
+  - `npm run type-check`
+  - `git diff --check`
+
+## 4) 완료 기준
+
+- 공개 콘텐츠 쿼리 변형은 크롤 차단이 아니라 308 정규화로 처리됩니다.
+- `/stories?category=` 카테고리 정규화와 legacy 숫자 작품 ID 리다이렉트는 유지됩니다.

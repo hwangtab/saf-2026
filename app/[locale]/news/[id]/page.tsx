@@ -100,8 +100,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? [{ url: article.thumbnail, alt: localizedTitle }]
         : [{ url: OG_IMAGE.url, alt: isEn ? OG_IMAGE.altEn : OG_IMAGE.alt }],
     },
-    // 영문 news detail은 noindex — robots.ts에서 `/en/news/` prefix crawl 차단됨 +
-    // EN_INDEXABLE_PAGES 화이트리스트는 `/news` list만 포함(detail 슬러그 없음). 외부 발견 시
+    // 영문 news detail은 noindex — EN_INDEXABLE_PAGES 화이트리스트는 `/news` list만 포함(detail 슬러그 없음).
+    // robots.txt로 막지 않아 크롤러가 X-Robots-Tag/meta noindex를 확인할 수 있다. 외부 발견 시
     // layout 기본 `index: true` 응답을 막아 정합성 확보. 다른 영문 detail
     // (artworks/[id], artworks/artist/[artist], artworks/category/[category]) 정책과 일관.
     ...(isEn ? { robots: { index: false, follow: true } } : {}),

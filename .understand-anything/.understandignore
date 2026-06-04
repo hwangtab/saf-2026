@@ -1,0 +1,39 @@
+# .understandignore — patterns for files/dirs to exclude from analysis
+# Syntax: same as .gitignore (globs, # comments, ! negation, trailing / for dirs)
+#
+# Built-in defaults (always excluded): node_modules/, .git/, dist/, build/,
+#   .next/, out/, coverage/, *.lock, *.min.js, *.png/*.jpg/*.svg/*.woff/*.mp3/*.mp4/*.pdf, etc.
+#
+# Scope chosen by user: "전체 포함" — analyze docs / supabase / content / tests too.
+# Only generated artifacts, backups, and junk are excluded below.
+
+# --- Build / test / generated output ---
+output/
+test-results/
+playwright-report/
+coverage/
+backups/
+tmp/
+
+# --- gitignore-derived junk ---
+content/articles/
+docs/미술시장 보고서/
+scripts/.magazine-sql/
+saf2026_*.sql
+saf2026_*.dump
+
+# --- Video pipeline build artifacts (keep src/scenes, drop generated media) ---
+video/out/
+video/node_modules/
+video/.venv/
+video/public/voices/
+video/public/bgm/
+video/public/sfx/
+video/public/artworks/
+
+# --- Public assets (images already excluded by defaults; drop remaining bulk) ---
+public/images/
+public/fonts/
+
+# --- Type build cache ---
+tsconfig.tsbuildinfo

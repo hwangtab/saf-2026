@@ -122,6 +122,7 @@ const config = [
       '.vercel/**',
       '.claude/**',
       '.understand-anything/**',
+      'tmp/**',
     ],
   },
 ];

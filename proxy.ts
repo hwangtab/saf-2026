@@ -16,7 +16,15 @@ const LEGACY_ARTWORK_PATH = /^\/(?:(ko|en)\/)?artworks\/(\d+)\/?$/;
 // stories 정적화 후 server-side query 필터 제거. 외부 백링크나 직접 입력으로 들어온 query URL이
 // 색인되면 /stories(전체 매거진)와 중복 색인 위험. 정적 카테고리 라우트로 흡수해 단일 정규 URL 보장.
 const STORIES_LIST_PATH = /^\/(en\/)?stories\/?$/;
+const NEWS_LIST_PATH = /^\/(en\/)?news\/?$/;
 const VALID_STORY_CATEGORIES = new Set(['artist-story', 'buying-guide', 'art-knowledge']);
+
+// 공개 작품 URL의 query 변형은 SEO 중복 URL로만 작동한다. 필터/정렬 공유 URL은 검색엔진에
+// 노출하지 않고, 작품 상세 returnTo 등 UX 힌트는 정규 detail URL로 흡수한다.
+const ARTWORKS_LIST_PATH = /^\/(en\/)?artworks\/?$/;
+const ARTWORK_DETAIL_PATH = /^\/(?:(ko|en)\/)?artworks\/[^/?]+\/?$/;
+const SEARCHLESS_LIST_QUERY_PATHS = [STORIES_LIST_PATH, NEWS_LIST_PATH, ARTWORKS_LIST_PATH];
+const TRACKING_QUERY_PARAMS = new Set(['fbclid', 'gclid', 'msclkid']);
 
 const intlProxy = createMiddleware(routing);
 
@@ -59,6 +67,19 @@ const STATIC_SKIP_PATHS = new Set([
   '/en/llms-full.txt',
 ]);
 
+function canonicalizeSearchlessUrl(pathname: string, requestUrl: string): URL {
+  const url = new URL(pathname, requestUrl);
+  url.search = '';
+  url.hash = '';
+  return url;
+}
+
+function hasTrackingSearchParam(searchParams: URLSearchParams): boolean {
+  return Array.from(searchParams.keys()).some(
+    (key) => key.startsWith('utm_') || TRACKING_QUERY_PARAMS.has(key)
+  );
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
@@ -95,6 +116,16 @@ export async function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 404 });
   }
 
+  // 공개 콘텐츠 목록/상세의 query URL은 canonical HTML과 동일한 중복 URL이다.
+  // legacy 숫자 ID는 위 UUID redirect가 우선되어야 하므로 이 블록은 legacy 처리 뒤에 둔다.
+  if (
+    searchParams.size > 0 &&
+    (SEARCHLESS_LIST_QUERY_PATHS.some((pattern) => pattern.test(pathname)) ||
+      ARTWORK_DETAIL_PATH.test(pathname))
+  ) {
+    return NextResponse.redirect(canonicalizeSearchlessUrl(pathname, request.url), 308);
+  }
+
   // Admin redirect
   if (pathname === '/admin') {
     return NextResponse.redirect(new URL('/admin/dashboard', request.url));
@@ -118,6 +149,11 @@ export async function proxy(request: NextRequest) {
   const normalizedPath = stripLocale(pathname);
   if (pathname !== normalizedPath && belongsToSurface(normalizedPath, '/mypage')) {
     return await updateSession(request);
+  }
+
+  // 공개 페이지의 광고·추적 query는 robots 차단 대신 정규 URL 308로 흡수한다.
+  if (searchParams.size > 0 && hasTrackingSearchParam(searchParams)) {
+    return NextResponse.redirect(canonicalizeSearchlessUrl(pathname, request.url), 308);
   }
 
   // Public pages: handle i18n locale routing

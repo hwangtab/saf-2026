@@ -74,6 +74,57 @@
 - `npm run lint`, `npm run type-check`, Jest 실행은 현재 작업 환경에 `npm`이 없어 완료하지 못함
   - 실패 사유: `zsh:1: command not found: npm`
 
+---
+
+# 주문/검색 잔여 버그 개선
+
+## 변경 파일
+
+- `app/actions/checkout.ts`
+  - 새 주문 생성 시 같은 이메일/작품의 기존 `pending_payment` 주문을 취소하던 조건을 강화했다.
+  - 이제 30분이 지난 오래된 pending 주문만 자동 정리한다.
+  - 최근 결제 대기 주문은 이메일만으로 취소하지 않는다.
+
+- `app/api/search/route.ts`
+  - 검색 API `limit` 값을 `1~20` 범위로 정규화했다.
+  - 음수/잘못된 값은 기본값 `8`로 처리한다.
+
+- `__tests__/actions/checkout.test.ts`
+  - pending 주문 자동 정리에 `created_at < 30분 전` 조건이 있는지 회귀 테스트를 추가했다.
+
+- `__tests__/app/search-route-limit.test.ts`
+  - `limit=-1`과 큰 limit 값 처리 테스트를 추가했다.
+
+## 검증 결과
+
+- `npx jest __tests__/actions/checkout.test.ts --runInBand` 통과
+- `npx jest __tests__/app/search-route-limit.test.ts --runInBand` 통과
+- `npm run lint` 통과
+  - error 0개
+  - warning 46개
+- `npx tsc --noEmit --pretty false` 통과
+- `npx jest --runInBand --no-cache` 통과
+  - 79 suites / 746 tests
+
+# 잔여 lint 경고 정리
+
+## 변경 파일
+
+- `eslint.config.mjs`
+  - `tmp/**`를 lint 제외 대상에 추가했다.
+  - 임시 실험 스크립트의 `console.log` 경고가 서비스 코드 경고를 가리지 않도록 정리했다.
+
+- `components/common/GoogleAnalytics.tsx`
+  - `function (this: void)` 표현을 일반 함수 표현으로 바꿨다.
+  - GA4 공식 stub의 `arguments` 큐잉 방식은 유지했다.
+
+## 검증 결과
+
+- `npm run lint` 통과
+  - error 0개
+  - warning 93개 → 46개
+- `npx tsc --noEmit --pretty false` 통과
+
 # 스토리 제목 하이픈 정리
 
 ## 처리 결과
@@ -565,6 +616,79 @@
 
 - `npm run lint` 통과
 - `npm run type-check` 통과
+
+---
+
+## GSC 기술 SEO 색인 정책 충돌 개선
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf-2026/proxy.ts`
+  - 공개 작품 목록/상세 쿼리 URL을 검색엔진이 중복 URL로 보지 않도록 search 없는 정규 URL로 308 리다이렉트
+  - 예: `/artworks?sort=latest` → `/artworks`
+  - 예: `/artworks/:id?returnTo=...` → `/artworks/:id`
+- `/Users/hwang-gyeongha/saf-2026/next.config.js`
+  - `/en/artworks`, `/en/news` 루트 목록은 `X-Robots-Tag: noindex`에 걸리지 않도록 유지
+  - `/en/artworks/*`, `/en/news/*` 하위 경로는 `X-Robots-Tag: noindex, follow` 유지
+- `/Users/hwang-gyeongha/saf-2026/app/robots.ts`
+  - `/en/artworks/`, `/en/news/` robots.txt 차단 제거
+  - Google이 하위 경로의 HTTP `noindex` 헤더를 직접 확인할 수 있게 정책 일원화
+- `/Users/hwang-gyeongha/saf-2026/__tests__/app/stories-indexing-guards.test.ts`
+  - 작품 쿼리 URL 정규화 회귀 테스트 추가
+- `/Users/hwang-gyeongha/saf-2026/__tests__/app/en-indexable-headers.test.ts`
+  - EN 루트 목록 색인 허용, EN 하위 URL noindex 헤더, robots 차단 제거 회귀 테스트 추가
+- `/Users/hwang-gyeongha/saf-2026/implementation_plan.md`
+  - GSC 개선 실행 계획 3건 추가
+
+### 기대 효과
+
+- GSC의 “제출된 URL에 noindex 태그가 있음” 경고 대상이던 `/en/artworks`, `/en/news` 루트 목록 충돌 제거
+- `/en/artworks/*`, `/en/news/*`는 robots.txt 차단 대신 HTTP `noindex`로 색인 제외 신호를 명확히 전달
+- 작품 목록/상세의 쿼리 변형 URL이 정규 URL로 흡수되어 중복 URL·크롤 노이즈 감소
+
+### 검증 결과
+
+- `npm test -- __tests__/app/en-indexable-headers.test.ts` 통과
+- `npm test -- __tests__/app/en-indexable-headers.test.ts __tests__/app/stories-indexing-guards.test.ts` 통과
+- `npx eslint app/robots.ts next.config.js __tests__/app/en-indexable-headers.test.ts proxy.ts __tests__/app/stories-indexing-guards.test.ts` 통과
+  - Browserslist `caniuse-lite` 오래됨 경고만 출력
+- `npm run type-check` 통과
+- `git diff --check` 통과
+
+---
+
+## GSC 공개 쿼리 URL 잔여 충돌 해결
+
+### 변경 파일
+
+- `/Users/hwang-gyeongha/saf-2026/proxy.ts`
+  - `/stories?category=...` 정규 카테고리 라우트 308 유지
+  - 그 외 `/stories?*`, `/news?*`, `/artworks?*`, `/artworks/:id?*`를 search 없는 정규 URL로 308 리다이렉트
+  - 공개 페이지의 `utm_*`, `fbclid`, `gclid`, `msclkid` tracking 쿼리를 search 없는 정규 URL로 308 리다이렉트
+  - 포털/인증/정적/API 경로는 기존 처리 흐름 유지
+- `/Users/hwang-gyeongha/saf-2026/app/robots.ts`
+  - 공개 콘텐츠 쿼리 URL과 tracking 쿼리의 robots.txt 차단 제거
+  - robots 차단 대신 proxy 308 정규화로 canonical URL에 합류하도록 정책 정리
+- `/Users/hwang-gyeongha/saf-2026/__tests__/app/stories-indexing-guards.test.ts`
+  - 공개 콘텐츠 목록 쿼리 URL과 tracking 쿼리 정규화 가드 추가
+- `/Users/hwang-gyeongha/saf-2026/__tests__/app/en-indexable-headers.test.ts`
+  - robots.txt에 공개 쿼리/tracking 차단 패턴이 재도입되지 않도록 회귀 테스트 추가
+- `/Users/hwang-gyeongha/saf-2026/implementation_plan.md`
+  - 공개 콘텐츠 쿼리 URL robots 차단/308 정규화 충돌 개선 계획 추가
+
+### 기대 효과
+
+- 크롤러가 쿼리 변형 URL에서 robots 차단에 막히지 않고 308 리다이렉트를 확인 가능
+- GSC의 “robots.txt에 의해 차단됨” 노이즈와 “표준 없는 중복” URL 발견 가능성 감소
+- 네이버/Yeti 등 명시 user-agent 그룹도 동일한 canonical 합류 경로를 따름
+
+### 검증 결과
+
+- `npm test -- __tests__/app/stories-indexing-guards.test.ts __tests__/app/en-indexable-headers.test.ts` 통과
+- `npx eslint proxy.ts app/robots.ts __tests__/app/stories-indexing-guards.test.ts __tests__/app/en-indexable-headers.test.ts next.config.js` 통과
+  - Browserslist `caniuse-lite` 오래됨 경고만 출력
+- `npm run type-check` 통과
+- `git diff --check` 통과
 
 ---
 

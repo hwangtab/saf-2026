@@ -23,7 +23,7 @@ export default function GoogleAnalytics() {
     // spread `(...args) => push(args)`로 하면 진짜 Array로 push되는데, gtag.js 내부의
     // Consent Mode 처리·Tag-2.0 처리 일부 분기가 Arguments-shape를 strict하게 검사한다는
     // 보고가 있어 표준 stub으로 통일. (5/1~10 collect 0건 회귀의 잔여 가설 제거용)
-    const gtag = function (this: void) {
+    const gtag = function () {
       w.dataLayer!.push(arguments);
     } as unknown as GtagFn;
     w.gtag = gtag;

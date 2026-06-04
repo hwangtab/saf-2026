@@ -149,7 +149,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
   return {
     ...baseMetadata,
-    // koOnly=true: KO canonical 통합 — EN 작품 페이지(noindex+크롤차단)가 en-US hreflang으로
+    // koOnly=true: KO canonical 통합 — EN 작품 페이지(noindex)가 en-US hreflang으로
     // 잘못 발행되는 문제 수정. KO 페이지에서 무효 hreflang 클러스터 제거.
     alternates: createLocaleAlternates(`/artworks/${artwork.id}`, locale, true),
     keywords: keywordBase.filter((k): k is string => Boolean(k)),
