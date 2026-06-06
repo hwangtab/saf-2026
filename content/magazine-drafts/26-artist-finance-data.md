@@ -34,7 +34,7 @@ display_order: 26
 
 # 예술인 금융 현실을 보여주는 5개의 숫자
 
-[![오윤, 〈형님〉, 사후판화 목판, 24x34cm — 통계 뒤에는 얼굴이 있다](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp)](/artworks/618357b4-b410-472d-8ba5-e0cf3189380e)
+[![오윤, 〈형님〉, 사후판화 목판, 24x34cm — 통계 뒤에는 얼굴이 있다](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp)](/artworks/618357b4-b410-472d-8ba5-e0cf3189380e)
 
 > 한국 예술인의 금융 현실은 여러 보고서에 흩어져 있습니다. 이 글은 그 흩어진 데이터를 **다섯 개의 숫자 카드**로 압축합니다. 각 숫자는 한 장의 카드처럼 독립적으로 읽을 수 있고, 다섯 장을 나란히 놓으면 한국 예술 생태계의 구조가 드러납니다.
 
@@ -155,7 +155,7 @@ display_order: 26
 
 숫자는 실태를 보여주지만, 그 안의 삶은 보여주지 않습니다. 작업실 월세 때문에 연 24% 대출을 썼던 회화 작가, 공연 직전 추심 전화를 받아야 했던 음악가, 50대에 처음 은행에서 거절당한 조각가의 이야기는 [창작을 포기한 날 — 다섯 예술인의 증언](/stories/testimonials-narrative)에서 읽을 수 있습니다.
 
-[![박재동, 〈연인〉, 수채 텍스처 위 안료, 29.7x42cm — 이 숫자들 뒤에는 이런 손끝이 있다](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-7858c093-e449-4099-8bfd-deb18e6d6c11/6msfznw8y58_1773289930943.webp)](/artworks/7858c093-e449-4099-8bfd-deb18e6d6c11)
+[![박재동, 〈연인〉, 수채 텍스처 위 안료, 29.7x42cm — 이 숫자들 뒤에는 이런 손끝이 있다](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-7858c093-e449-4099-8bfd-deb18e6d6c11/6msfznw8y58_1773289930943.webp)](/artworks/7858c093-e449-4099-8bfd-deb18e6d6c11)
 
 ---
 

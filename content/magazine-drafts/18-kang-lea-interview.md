@@ -5,6 +5,7 @@ title: '산을 오르며 사진을 찍는다 — 강레아 작가의 세계'
 title_en: 'Climbing to Photograph: The World of Kang Lea'
 category: 'artist-story'
 excerpt: '산악 사진과 현대 사진의 경계에서 걸어온 작가 강레아. 등반·클라이밍·여성 등반가의 서사가 사진으로 기록되는 과정과, 그의 작업이 갖는 미술사적 의미를 소개합니다.'
+excerpt_en: 'Kang Lea has worked along the border between mountaineering and contemporary photography. How narratives of climbing and women climbers become photographic records, and what the work means within art history.'
 tags:
   - 강레아
   - 산악 사진
@@ -21,7 +22,7 @@ internal_links:
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
   - { text: '지방에서 작업하는 작가들', href: '/stories/regional-artists' }
   - { text: '드로잉과 회화의 경계', href: '/stories/drawing-vs-painting' }
-  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-photoessay' }
+  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-solidarity' }
 author: 'SAF 매거진 편집부'
 published_at: '2026-06-25'
 is_published: false
@@ -37,9 +38,11 @@ note_to_editor: |
   정합하도록 편집되었으나, 직접 녹취본이 아닌 재구성입니다.
 ---
 
+_편집자 주: 이 글은 강레아 작가의 공개된 기사·전시 이력을 바탕으로 재구성한 프로필입니다. 본문의 인용은 작가의 공개 인터뷰와 정합하도록 편집된 것으로, 직접 녹취한 발언이 아닙니다._
+
 # 산을 오르며 사진을 찍는다 — 강레아 작가의 세계
 
-[![강레아, 〈#01_S1707SP〉, 한지에 피그먼트 프린트, 66x45cm, 유일본](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp)](/artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3)
+[![강레아, 〈#01_S1707SP〉, 한지에 피그먼트 프린트, 66x45cm, 유일본](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp)](/artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3)
 
 사진가에게 가장 드문 조건은 **몸**입니다. 특정 장소에 도달할 수 있는 몸, 그 장소의 혹독함을 견디는 몸, 그리고 그 순간을 놓치지 않는 몸. 강레아 작가의 사진을 이해하는 출발점은 그의 작업이 **등반가의 몸**에서 시작된다는 사실입니다.
 

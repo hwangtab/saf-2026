@@ -5,6 +5,7 @@ title: '창작을 포기한 날 — 다섯 예술인의 증언'
 title_en: 'The Day I Quit Creating: Five Testimonies'
 category: 'art-knowledge'
 excerpt: '84.9%, 48.6%, 95% 같은 숫자는 실은 얼굴입니다. 창작을 그만두었다 다시 돌아온 다섯 사람의 목소리를 엮습니다. 숫자 뒤에 사람이 있습니다.'
+excerpt_en: 'Numbers like 84.9%, 48.6%, and 95% are really faces. Five voices of people who quit creating and came back. Behind the numbers are people.'
 tags:
   - 예술인 증언
   - 창작 포기
@@ -18,9 +19,12 @@ secondary_keywords:
   - '금융 차별 사례'
 meta_description: '숫자로 보여지지 않는, 고금리 대출·창작 중단·관계 단절을 겪은 다섯 예술인의 증언을 엮었습니다. 84.9%라는 통계 뒤에 있는 얼굴들.'
 internal_links:
-  - { text: '데이터로 본 예술인 금융 현실', href: '/stories/artist-finance-data-korea' }
+  - { text: '데이터로 본 예술인 금융 현실', href: '/stories/artist-finance-5-numbers' }
   - { text: '제1금융권이 예술인을 거절하는 이유', href: '/stories/why-banks-reject-artists' }
-  - { text: '상호부조 대출이 95% 상환된 이유', href: '/stories/mutual-aid-95percent' }
+  - {
+      text: '상호부조 대출이 95% 상환된 이유',
+      href: '/stories/what-95-percent-repayment-rate-means',
+    }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
 published_at: '2026-06-05'
@@ -41,9 +45,11 @@ note_to_editor: |
   참고하되, 중복 없이 새로운 맥락을 부여할 것.
 ---
 
+_편집자 주: 이 글의 증언은 예술인 인터뷰 자료와 공익 단체가 수집한 익명 증언을 바탕으로 재구성한 것입니다. 인물명은 가명이며, 식별 가능한 세부 사항은 각색되었습니다._
+
 # 창작을 포기한 날 — 다섯 예술인의 증언
 
-[![오윤, 〈남녁땅뱃노래〉, 사후판화 목판, 17.5x25.5cm — 이 얼굴들 뒤에 각자의 '창작을 포기한 날'이 있다](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp)](/artworks/536f693e-ef7d-487a-86f9-5dc986220001)
+[![오윤, 〈남녁땅뱃노래〉, 사후판화 목판, 17.5x25.5cm — 이 얼굴들 뒤에 각자의 '창작을 포기한 날'이 있다](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp)](/artworks/536f693e-ef7d-487a-86f9-5dc986220001)
 
 84.9%. 48.6%. 95%. 이 숫자들은 언론 기사 제목에 등장하지만, 실은 사람의 얼굴을 가진 숫자입니다. 한 명 한 명이 겪은 어떤 날이 누적된 결과가 저 퍼센트 기호입니다.
 
@@ -55,7 +61,7 @@ note_to_editor: |
 
 ---
 
-[![박재동, 〈비탈에서〉, 수채 텍스처 위 안료, 21x29.7cm — 지연의 작업실 벽에 붙어 있던 풍경](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-1f817351-6bc5-4927-828e-85fa7ca46dc0/th0ofoyria_1773289606388.webp)](/artworks/1f817351-6bc5-4927-828e-85fa7ca46dc0)
+[![박재동, 〈비탈에서〉, 수채 텍스처 위 안료, 21x29.7cm — 지연의 작업실 벽에 붙어 있던 풍경](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-1f817351-6bc5-4927-828e-85fa7ca46dc0/th0ofoyria_1773289606388.webp)](/artworks/1f817351-6bc5-4927-828e-85fa7ca46dc0)
 
 ## 첫 번째 증언 — 지연 (가명, 회화, 32세)
 

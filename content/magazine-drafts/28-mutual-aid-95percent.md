@@ -37,7 +37,7 @@ display_order: 28
 
 # 은행 연체율 vs 씨앗페 상호부조 — 숫자로 비교하는 신용의 두 정의
 
-[![이철수, 〈물흐르고 흘러 바다〉, 목판·한지, 98x42cm, 에디션 10 — 한 점이 다른 작가의 월세가 되는 순환](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-cb8e1679-abb0-4cf2-898c-9d85e2d2a782/0wn8bh0fdr8d_1771896503912__original.webp)](/artworks/cb8e1679-abb0-4cf2-898c-9d85e2d2a782)
+[![이철수, 〈물흐르고 흘러 바다〉, 목판·한지, 98x42cm, 에디션 10 — 한 점이 다른 작가의 월세가 되는 순환](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-cb8e1679-abb0-4cf2-898c-9d85e2d2a782/0wn8bh0fdr8d_1771896503912__original.webp)](/artworks/cb8e1679-abb0-4cf2-898c-9d85e2d2a782)
 
 한국 금융은 여러 층으로 이루어져 있습니다. 시중은행이 가장 위에 있고, 그 아래 카드사·저축은행·캐피탈·대부업이 차례로 놓입니다. 각 층마다 **연체율**이 다르고, 그것이 그 층의 "신용 강도"를 보여주는 핵심 지표로 쓰입니다.
 

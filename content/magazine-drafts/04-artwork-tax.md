@@ -5,6 +5,7 @@ title: '미술품 세금, 언제·얼마나 내야 할까'
 title_en: 'Art Tax Guide: When and How Much Do You Pay?'
 category: 'buying-guide'
 excerpt: '미술품을 살 때 세금을 내야 할까요? 팔 때는 어떻게 되나요? 한국의 미술품 세제는 생각보다 친절합니다. 부가세부터 양도세까지 한 번에 정리.'
+excerpt_en: "Do you pay tax when you buy art? What about when you sell? Korea's art-tax rules are friendlier than you'd expect — from VAT to capital gains, sorted out in one place."
 tags:
   - 미술품 세금
   - 양도소득세
@@ -18,12 +19,9 @@ secondary_keywords:
   - '그림 세금'
 meta_description: '미술품 구매·판매·상속 시 세금이 얼마나 드는지 정리했습니다. 6천만원 비과세 한도, 20% 원천징수, 생존 작가 비과세 등 한국 세법의 핵심만 쉽게 풀어드립니다.'
 internal_links:
-  - {
-      text: '30만원으로 시작하는 첫 원화 컬렉팅',
-      href: '/stories/first-collecting-guide-under-300k',
-    }
-  - { text: '미술품 보관·액자·조명 가이드', href: '/stories/artwork-storage' }
-  - { text: '진위·COA 체크리스트', href: '/stories/authenticity-checklist' }
+  - { text: '10만원대로 시작하는 첫 미술 컬렉션', href: '/stories/first-art-collection-under-400k' }
+  - { text: '액자와 표구 가이드', href: '/stories/framing-and-mounting-artworks' }
+  - { text: '진위·COA 체크리스트', href: '/stories/how-to-read-artwork-coa' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진'
 published_at: '2026-05-07'
@@ -33,7 +31,7 @@ display_order: 4
 
 # 미술품 세금, 언제·얼마나 내야 할까
 
-[![김규학, 〈바람과 빛-142〉, 캔버스에 유화, 65x91cm, 유일본](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/g5w3knourg_1771652781991__original.webp)](/artworks/e4ab8c28-4e83-448b-b381-68a7ab1f4951)
+[![김규학, 〈바람과 빛-142〉, 캔버스에 유화, 65x91cm, 유일본](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/g5w3knourg_1771652781991__original.webp)](/artworks/e4ab8c28-4e83-448b-b381-68a7ab1f4951)
 
 미술품을 처음 사려는 사람이 두 번째로 많이 하는 질문이 세금입니다. "작품 하나 샀다고 세무서에서 연락 오는 건 아니겠지?"부터 "나중에 팔면 세금이 얼마나 나오지?"까지 걱정이 다양합니다.
 
@@ -70,7 +68,7 @@ display_order: 4
 ### 해외에서 사는 경우
 
 - **관세와 부가세가 함께 부과**될 수 있음
-- 상세 내용은 [해외 배송·관세·포장 Q&A](/stories/shipping-faq) 글에서 다룹니다
+- 상세 내용은 [해외 배송·관세·포장 Q&A](/stories/moving-and-shipping-artworks) 글에서 다룹니다
 
 **실용 팁:** 구매 시 "이 가격이 all-in(부가세·배송·액자 포함)인가요?"를 반드시 물어보세요. 정식 판매자는 투명하게 답해줍니다.
 
@@ -99,7 +97,7 @@ display_order: 4
 
 예를 들어 50만원에 산 그림을 1,000만원에 판다고 해도, 1점당 양도가 6천만원 미만이라면 세금이 없습니다. 이 점이 미술품이 중장기적으로 매력적인 이유 중 하나입니다.
 
-[![이광수, 〈回4〉, 캔버스에 아크릴, 60x45cm — 생존 국내 작가의 작품은 양도가와 관계없이 양도소득세 비과세](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-98aa7ce3-403b-4b6b-b4a4-5929e40074fd/qhpjmy3uh88_1771897507115__original.webp)](/artworks/98aa7ce3-403b-4b6b-b4a4-5929e40074fd)
+[![이광수, 〈回4〉, 캔버스에 아크릴, 60x45cm — 생존 국내 작가의 작품은 양도가와 관계없이 양도소득세 비과세](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-98aa7ce3-403b-4b6b-b4a4-5929e40074fd/qhpjmy3uh88_1771897507115__original.webp)](/artworks/98aa7ce3-403b-4b6b-b4a4-5929e40074fd)
 
 ### 비과세 구간 ② 생존 국내 작가의 작품
 

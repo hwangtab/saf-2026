@@ -35,7 +35,7 @@ display_order: 2
 
 # 같은 작가, 판화와 원화의 가격이 10배 차이 나는 이유
 
-[![이철수, 〈독도-마음바다〉, 목판·한지, 76x47cm, 에디션 10 — 같은 작가의 한정 판화](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0/ihhciy1fbj_1771896384520__original.webp)](/artworks/4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0)
+[![이철수, 〈독도-마음바다〉, 목판·한지, 76x47cm, 에디션 10 — 같은 작가의 한정 판화](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0/ihhciy1fbj_1771896384520__original.webp)](/artworks/4026ab1f-f053-4518-a7c4-ddbaa2e6c5e0)
 
 같은 작가 이름으로 서명된 두 작품 앞에 서 있다고 상상해보세요. 한쪽은 판화로 30만원, 다른 한쪽은 원화로 300만원입니다. 작가도 같고, 연도도 비슷하고, 심지어 이미지도 닮아 있습니다. 그런데 가격이 열 배입니다.
 
@@ -135,7 +135,7 @@ display_order: 2
 
 ## 실제 사례 — [이철수](/artworks/artist/이철수)·[오윤](/artworks/artist/오윤)·이광수를 통해 본 계산법
 
-[![이철수, 〈에고, ego〉, 목판·한지, 50x42cm, 에디션 10 — ₩1,200,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f26aa92f-d09a-4469-9ff7-7cd34a2648ca/u9dh6xli5co_1771896705102__original.webp)](/artworks/f26aa92f-d09a-4469-9ff7-7cd34a2648ca)
+[![이철수, 〈에고, ego〉, 목판·한지, 50x42cm, 에디션 10 — ₩1,200,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-f26aa92f-d09a-4469-9ff7-7cd34a2648ca/u9dh6xli5co_1771896705102__original.webp)](/artworks/f26aa92f-d09a-4469-9ff7-7cd34a2648ca)
 
 씨앗페에 출품된 실제 작품 가격 구조를 살펴봅니다.
 

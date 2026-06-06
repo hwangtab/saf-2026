@@ -1,6 +1,7 @@
 ---
 slug: oh-yun-song-of-the-blade
 title: 오윤 〈칼노래〉 단일 작품론 — 1985년, 한 칼이 노래가 되기까지
+title_en: "Oh Yun's Song of the Blade — 1985, How a Blade Became a Song"
 excerpt: 32.2x25.5cm. 죽기 1년 전 새긴 한 점. 오윤의 〈칼노래〉(1985)는 무엇을 노래하고 있었는가. 동학의 칼춤에서 사후판화의 시장 가치까지, 한 작품을 30분 안에 깊이 읽는 단일 작품론.
 excerpt_en: 32.2x25.5cm. A single woodblock cut one year before his death. What was Oh Yoon's *Song of the Blade* (1985) singing? A 30-minute deep read of a single work — from the Donghak sword dance to the posthumous print market.
 category: artist-story
@@ -15,7 +16,7 @@ internal_links:
   - /artworks/4c920878-32dd-4727-ab03-6eda996597d5
 ---
 
-[![오윤, 〈칼노래〉, 1985, (사후판화)목판, 32.2x25.5cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp)](/artworks/4c920878-32dd-4727-ab03-6eda996597d5)
+[![오윤, 〈칼노래〉, 1985, (사후판화)목판, 32.2x25.5cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp)](/artworks/4c920878-32dd-4727-ab03-6eda996597d5)
 
 32.2 x 25.5cm. 거의 한 손에 들어오는 크기입니다. 그러나 이 작은 목판 한 장은 오윤(1946–1986)이라는 작가가 죽기 1년 전, 자신의 칼끝으로 도달한 한 자리이기도 합니다.
 
@@ -27,7 +28,7 @@ internal_links:
 
 오윤은 양각(陽刻) — 즉 종이에 찍히는 부분을 남기고 나머지를 파내는 — 기법으로 이 형상을 새겼습니다. 굵은 선이 두드러지고 검은 면이 단단합니다. 같은 시기 새겨진 〈춘무인추무의〉(1985, 65.5x48cm)나 〈팔엽일화〉(1985, 50x50cm)와 비교했을 때 이 〈칼노래〉는 훨씬 작고 단순합니다. 그러나 오히려 그 단순함이 한 동작 한 동작의 무게를 살립니다.
 
-[![오윤, 〈춘무인추무의〉, 1985, (사후판화)목판, 65.5x48cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp)](/artworks/74824081-63a0-4b76-9de6-a57d865c110e)
+[![오윤, 〈춘무인추무의〉, 1985, (사후판화)목판, 65.5x48cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp)](/artworks/74824081-63a0-4b76-9de6-a57d865c110e)
 
 같은 1985년, 같은 칼끝. 〈춘무인추무의〉는 봄에는 사람이 없고 가을에는 뜻이 없다는 한문 제목에 시대의 허망을 담은 큰 화면이고, 〈칼노래〉는 그 허망을 칼 한 자루로 응축한 작은 화면입니다. 같은 작가의 같은 해 작업이지만 호흡의 길이가 다릅니다.
 
@@ -37,7 +38,7 @@ internal_links:
 
 오윤은 〈남녁땅뱃노래〉(1985), 〈봄의소리1〉(1983), 〈봄의소리2〉(1984) 같은 작품에서도 '노래'·'소리'라는 단어를 자주 썼습니다.
 
-[![오윤, 〈남녁땅뱃노래〉, 1985, (사후판화)목판, 17.5x25.5cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp)](/artworks/536f693e-ef7d-487a-86f9-5dc986220001)
+[![오윤, 〈남녁땅뱃노래〉, 1985, (사후판화)목판, 17.5x25.5cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp)](/artworks/536f693e-ef7d-487a-86f9-5dc986220001)
 
 뱃노래도, 봄의 소리도, 칼노래도 모두 같은 가족의 어휘입니다. 오윤에게 미술은 '보는 것'이기 이전에 '듣는 것' — 즉 시대의 소리를 칼끝으로 받아 적는 작업이었습니다.
 
@@ -49,7 +50,7 @@ internal_links:
 
 같은 1985년, 그는 〈낮도깨비〉, 〈무호도〉, 〈팔엽일화〉, 〈징2〉 같은 무속 도상을 집중적으로 새겼습니다. 이 시기를 따로 묶어 [한국 샤머니즘 미술 — 오윤의 도깨비, 박생광의 굿, 안은경의 회복](/stories/korean-shamanism-art)에서 다뤘습니다.
 
-[![오윤, 〈징2〉, 1985, (사후판화)목판, 32.7x25cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp)](/artworks/4a78be2f-01b1-4db2-956e-32b11df89177)
+[![오윤, 〈징2〉, 1985, (사후판화)목판, 32.7x25cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/152__original.webp)](/artworks/4a78be2f-01b1-4db2-956e-32b11df89177)
 
 징은 무당이 굿을 시작할 때 두드리는 첫 악기입니다. 〈징2〉와 〈칼노래〉는 같은 굿판의 두 장면이라고 보아도 좋습니다. 징을 울려 신을 부르고, 칼노래로 한을 풀어내는 — 1985년 오윤의 화면은 그렇게 한 굿판으로 묶입니다.
 

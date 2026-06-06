@@ -5,6 +5,7 @@ title: '예술인이 제1금융권에서 거절당하는 진짜 이유'
 title_en: 'Why Banks Reject Artists: The Real Reason'
 category: 'art-knowledge'
 excerpt: '은행 창구에서 "대출이 어렵습니다"라는 말을 듣고 돌아선 예술인들. 단순히 "소득이 낮아서"가 아닙니다. 한국 신용 평가 시스템의 구조적 맹점을 짚습니다.'
+excerpt_en: "Artists who turned away after hearing that a loan would not be possible. It isn't simply low income. We trace the structural blind spots in Korea's credit-scoring system."
 tags:
   - 예술인 금융
   - 금융 차별
@@ -18,8 +19,11 @@ secondary_keywords:
   - '예술인 패스'
 meta_description: '은행이 예술인을 거절하는 이유는 "돈이 없어서"가 아닙니다. 신용 평가 알고리즘의 구조적 맹점, 자격 요건의 편향, 그리고 해결 경로를 분석합니다.'
 internal_links:
-  - { text: '데이터로 본 예술인 금융 현실 (84.9%)', href: '/stories/artist-finance-data-korea' }
-  - { text: '상호부조 대출이 95% 상환된 이유', href: '/stories/mutual-aid-95percent' }
+  - { text: '데이터로 본 예술인 금융 현실 (84.9%)', href: '/stories/artist-finance-5-numbers' }
+  - {
+      text: '상호부조 대출이 95% 상환된 이유',
+      href: '/stories/what-95-percent-repayment-rate-means',
+    }
   - { text: '해외 사례 비교', href: '/stories/global-artist-finance' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
@@ -30,7 +34,7 @@ display_order: 27
 
 # 예술인이 제1금융권에서 거절당하는 진짜 이유
 
-[![박재동, 〈연인〉, 수채 텍스처 위 안료, 29.7x42cm — 은행 시스템은 이런 작품을 '소득'으로 읽지 못한다](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-7858c093-e449-4099-8bfd-deb18e6d6c11/6msfznw8y58_1773289930943.webp)](/artworks/7858c093-e449-4099-8bfd-deb18e6d6c11)
+[![박재동, 〈연인〉, 수채 텍스처 위 안료, 29.7x42cm — 은행 시스템은 이런 작품을 '소득'으로 읽지 못한다](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-7858c093-e449-4099-8bfd-deb18e6d6c11/6msfznw8y58_1773289930943.webp)](/artworks/7858c093-e449-4099-8bfd-deb18e6d6c11)
 
 "죄송하지만 이번에는 어렵겠습니다." 은행 창구에서 이 한 문장을 듣고 돌아서본 예술인이라면, 그 순간의 감각을 기억합니다. 상담원은 미안한 표정을 짓지만, 시스템은 이미 결정을 내렸습니다. **왜 거절되었는지조차 투명하게 설명되지 않습니다.**
 

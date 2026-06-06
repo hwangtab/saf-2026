@@ -5,6 +5,7 @@ title: '작가 × 후원자 — 작품 한 점이 만든 관계'
 title_en: 'Artist and Patron: A Dialogue That Started with One Artwork'
 category: 'artist-story'
 excerpt: '작품 한 점을 사는 일은 판매자와 구매자의 거래가 아닙니다. 시간이 지나면 그것은 두 사람의 관계가 됩니다. 씨앗페에서 만난 작가와 후원자의 2년간 대화.'
+excerpt_en: "Buying an artwork isn't a transaction between a seller and a buyer. Given time, it becomes a relationship between two people. A two-year dialogue between an artist and a patron who met at Seed Art Festival."
 tags:
   - 컬렉터 관계
   - 후원자
@@ -19,8 +20,11 @@ secondary_keywords:
 meta_description: '작품 한 점의 구매가 장기 관계로 이어진 한 작가와 한 후원자의 대담. 미술 후원이 재정적 거래를 넘어 무엇이 될 수 있는지를 보여주는 기록.'
 internal_links:
   - { text: '첫 작품을 산 사람들 (컬렉터 인터뷰)', href: '/stories/first-collector-interview' }
-  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-photoessay' }
-  - { text: '상호부조 대출이 95% 상환된 이유', href: '/stories/mutual-aid-95percent' }
+  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-solidarity' }
+  - {
+      text: '상호부조 대출이 95% 상환된 이유',
+      href: '/stories/what-95-percent-repayment-rate-means',
+    }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
 published_at: '2026-07-15'
@@ -34,9 +38,11 @@ note_to_editor: |
   각색되었습니다.
 ---
 
+_편집자 주: 이 대담은 씨앗페를 통한 실제 작가–후원자 관계를 바탕으로 재구성한 것으로, 인물명은 가명이며 에피소드는 각색되었습니다._
+
 # 작가 × 후원자 — 작품 한 점이 만든 관계
 
-[![윤겸, 〈Serenity Fortress 평온의 요새〉, Oil on canvas, 51x45cm — 작품 한 점이 작가와 구매자를 2년간 이어주는 실'](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/y2xbs590dh_1771080775630__original.webp)](/artworks/86b50d54-dce7-4309-953e-2fb69d608f62)
+[![윤겸, 〈Serenity Fortress 평온의 요새〉, Oil on canvas, 51x45cm — 작품 한 점이 작가와 구매자를 2년간 이어주는 실'](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/03b086e7-a380-4d5d-bfe7-ed43d6b974e9/y2xbs590dh_1771080775630__original.webp)](/artworks/86b50d54-dce7-4309-953e-2fb69d608f62)
 
 작품 한 점을 사고판다는 것은, 엄밀히 말하면 판매자와 구매자의 일회성 거래입니다. 대부분의 거래는 거기서 끝납니다. 작품은 벽에 걸리고, 판매자와 구매자는 각자의 삶으로 돌아갑니다.
 

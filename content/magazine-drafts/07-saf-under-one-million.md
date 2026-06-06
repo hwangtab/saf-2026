@@ -5,6 +5,7 @@ title: '씨앗페에서 100만원 이하로 살 수 있는 작품 TOP 20'
 title_en: '20 Artworks Under ₩1,000,000 at Seed Art Festival'
 category: 'buying-guide'
 excerpt: '예술을 들이는 일이 사치라는 생각은 접어두세요. 100만원 이하, 심지어 30만원 이하의 진짜 원화들이 씨앗페 작가 127명 사이에 있습니다. 실제 작품 20점을 큐레이션했습니다.'
+excerpt_en: "Owning art isn't a luxury reserved for the wealthy. Among the 127 Seed Art Festival artists are real original works under 1,000,000 won — some even under 300,000. Here are 20 we curated."
 tags:
   - 씨앗페
   - 100만원 이하
@@ -19,12 +20,9 @@ secondary_keywords:
   - '100만원 미만 미술품'
 meta_description: '100만원 이하 원화 20점을 SAF(씨앗페) 작가들 사이에서 큐레이션했습니다. 가격·크기·작가 배경을 한 번에 비교할 수 있는 첫 컬렉팅 쇼핑 리스트.'
 internal_links:
-  - {
-      text: '30만원으로 시작하는 첫 원화 컬렉팅',
-      href: '/stories/first-collecting-guide-under-300k',
-    }
-  - { text: '신진 작가 작품 고르는 5가지 기준', href: '/stories/choosing-emerging-artist' }
-  - { text: '판화 vs 원화 vs 프린트', href: '/stories/print-vs-original' }
+  - { text: '10만원대로 시작하는 첫 미술 컬렉션', href: '/stories/first-art-collection-under-400k' }
+  - { text: '신진 작가 작품 고르는 5가지 기준', href: '/stories/five-criteria-for-choosing-art' }
+  - { text: '판화 vs 원화 vs 프린트', href: '/stories/print-vs-original-price-economics' }
   - { text: '씨앗페 작품 전체 둘러보기', href: '/artworks' }
 author: 'SAF 매거진'
 published_at: '2026-05-14'
@@ -42,7 +40,7 @@ note_to_editor: |
 
 # 씨앗페에서 100만원 이하로 살 수 있는 작품 TOP 20
 
-[![박재동, 〈엄마 저 나무 봐〉, 수채 텍스처 위 안료 프린트, 21x29.7cm, ₩300,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-cd08a6c1-b2aa-4fc4-a1f8-74494dc53550/2m8r9y3zt2_1773289613272.webp)](/artworks/cd08a6c1-b2aa-4fc4-a1f8-74494dc53550)
+[![박재동, 〈엄마 저 나무 봐〉, 수채 텍스처 위 안료 프린트, 21x29.7cm, ₩300,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-cd08a6c1-b2aa-4fc4-a1f8-74494dc53550/2m8r9y3zt2_1773289613272.webp)](/artworks/cd08a6c1-b2aa-4fc4-a1f8-74494dc53550)
 
 첫 원화는 '비싸지 않지만 가볍지도 않은' 가격대에 들어와야 합니다. 너무 싸면 장식물처럼 느껴지고, 너무 비싸면 용기가 나지 않기 때문입니다. 경험상 **30~100만원 구간**이 첫 컬렉터에게 가장 만족도가 높은 영역입니다.
 
@@ -70,15 +68,15 @@ note_to_editor: |
 
 ---
 
-[![박재동, 〈달빛아래 연인〉, 수채 텍스처 위 안료, 21x29.7cm, ₩300,000 — 오픈 에디션 아트프린트](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-5a752957-47c0-404d-9978-247819cb04ca/x4tijee396a_1773289503427.webp)](/artworks/5a752957-47c0-404d-9978-247819cb04ca)
+[![박재동, 〈달빛아래 연인〉, 수채 텍스처 위 안료, 21x29.7cm, ₩300,000 — 오픈 에디션 아트프린트](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-5a752957-47c0-404d-9978-247819cb04ca/x4tijee396a_1773289503427.webp)](/artworks/5a752957-47c0-404d-9978-247819cb04ca)
 
-[![박재동, 〈새해소망〉, 수채 텍스처 위 안료, 21x29.7cm, ₩300,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-94535e0b-7a3b-4c38-9b71-5e46a30bcd97/5cs2v7tg9uk_1773289439033.webp)](/artworks/94535e0b-7a3b-4c38-9b71-5e46a30bcd97)
+[![박재동, 〈새해소망〉, 수채 텍스처 위 안료, 21x29.7cm, ₩300,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-94535e0b-7a3b-4c38-9b71-5e46a30bcd97/5cs2v7tg9uk_1773289439033.webp)](/artworks/94535e0b-7a3b-4c38-9b71-5e46a30bcd97)
 
 ## 🎨 30만원 이하 — 첫 작품을 위한 입문 5선
 
 ### 1. 이열 — 〈기억의 푸른 바오밥〉 (한정 판화 에디션 100)
 
-[![이열, 〈기억의 푸른 바오밥〉, Hahnemühle Baryta FB 피그먼트 잉크젯 프린트, 21x29.7cm, ₩150,000, 에디션 100](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp)](/artworks/ac9a36d3-9446-4e47-95b9-53351ab059d6)
+[![이열, 〈기억의 푸른 바오밥〉, Hahnemühle Baryta FB 피그먼트 잉크젯 프린트, 21x29.7cm, ₩150,000, 에디션 100](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/438e60e0-0d0f-4ed2-a5cc-a3c0a0756329/278__original.webp)](/artworks/ac9a36d3-9446-4e47-95b9-53351ab059d6)
 
 - **가격**: ₩150,000
 - **크기**: 21x29.7cm | **기법**: 피그먼트 잉크젯 프린트 (Hahnemühle Baryta FB, 에디션 100)
@@ -87,7 +85,7 @@ note_to_editor: |
 
 ### 2. 김레이시 — 〈Returning around 5〉 (소형 유화, 오리지널)
 
-[![김레이시, 〈Returning around 5〉, Oil on canvas, 19x19cm, ₩170,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/169__original.webp)](/artworks/9c8ead1a-b5f1-4ae5-998b-84e10175d1ba)
+[![김레이시, 〈Returning around 5〉, Oil on canvas, 19x19cm, ₩170,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/169__original.webp)](/artworks/9c8ead1a-b5f1-4ae5-998b-84e10175d1ba)
 
 - **가격**: ₩170,000
 - **크기**: 19x19cm | **기법**: Oil on canvas (유일 원화)
@@ -96,7 +94,7 @@ note_to_editor: |
 
 ### 3. 박생광 — 〈가마쿠라 나무〉 (연필 드로잉, 원본)
 
-[![박생광, 〈가마쿠라 나무〉, 종이에 연필, 15.7x22.2cm, ₩200,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/298__original.jpg)](/artworks/75716a64-2fe0-47a8-917b-c2e7269990de)
+[![박생광, 〈가마쿠라 나무〉, 종이에 연필, 15.7x22.2cm, ₩200,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/298__original.jpg)](/artworks/75716a64-2fe0-47a8-917b-c2e7269990de)
 
 - **가격**: ₩200,000
 - **크기**: 15.7x22.2cm | **기법**: 종이에 연필 (유일 원본)
@@ -105,7 +103,7 @@ note_to_editor: |
 
 ### 4. 이윤엽 — 〈무슨일 있어?〉 (소형 목판화)
 
-[![이윤엽, 〈무슨일 있어?〉, 다색목판, 9.5x14cm, ₩200,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp)](/artworks/153e2b0a-90f1-4550-992c-ea28b70da648)
+[![이윤엽, 〈무슨일 있어?〉, 다색목판, 9.5x14cm, ₩200,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/235__original.webp)](/artworks/153e2b0a-90f1-4550-992c-ea28b70da648)
 
 - **가격**: ₩200,000
 - **크기**: 9.5x14cm | **기법**: 다색목판 (오픈 에디션)
@@ -114,7 +112,7 @@ note_to_editor: |
 
 ### 5. 김유진 — 〈폭발의 다음〉 (종이 위 회화)
 
-[![김유진, 〈폭발의 다음〉, Paint on paper, 26x18cm, ₩200,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp)](/artworks/86d67a1a-d757-41d7-8f26-2291e88cbc42)
+[![김유진, 〈폭발의 다음〉, Paint on paper, 26x18cm, ₩200,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ba5234c4-51b3-405b-9e06-db2b2ed184df/266__original.webp)](/artworks/86d67a1a-d757-41d7-8f26-2291e88cbc42)
 
 - **가격**: ₩200,000
 - **크기**: 26x18cm | **기법**: Paint on paper (유일 원화)
@@ -127,7 +125,7 @@ note_to_editor: |
 
 ### 6. 박재동 — 〈단풍〉 (안료 프린트, 오픈 에디션)
 
-[![박재동, 〈단풍〉, 수채 텍스처 위 안료, 21x29.7cm, ₩300,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-4042d843-dc36-4bd6-8e38-d8b83409bb86/ztogu29f82_1773289485607.webp)](/artworks/4042d843-dc36-4bd6-8e38-d8b83409bb86)
+[![박재동, 〈단풍〉, 수채 텍스처 위 안료, 21x29.7cm, ₩300,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-4042d843-dc36-4bd6-8e38-d8b83409bb86/ztogu29f82_1773289485607.webp)](/artworks/4042d843-dc36-4bd6-8e38-d8b83409bb86)
 
 - **가격**: ₩300,000
 - **크기**: 21x29.7cm | **기법**: Pigment on watercolor texture (오픈 에디션)
@@ -136,7 +134,7 @@ note_to_editor: |
 
 ### 7. 림지언 — 〈진달래진달래〉 (디지털 페인팅, 에디션 10)
 
-[![림지언, 〈진달래진달래〉, Digital Painting, 33.4x45.5cm, ₩300,000, 에디션 10](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/x6oe3pvro4f_1771574933811__original.webp)](/artworks/0d2beb22-5838-48cd-a093-5150255864d1)
+[![림지언, 〈진달래진달래〉, Digital Painting, 33.4x45.5cm, ₩300,000, 에디션 10](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/498c2734-f036-4822-98a7-80ed53a4c17f/x6oe3pvro4f_1771574933811__original.webp)](/artworks/0d2beb22-5838-48cd-a093-5150255864d1)
 
 - **가격**: ₩300,000
 - **크기**: 33.4x45.5cm | **기법**: 디지털 페인팅 (에디션 10)
@@ -145,7 +143,7 @@ note_to_editor: |
 
 ### 8. 박성완 — 〈강쟁정미소〉 (소형 유화)
 
-[![박성완, 〈강쟁정미소〉, Oil on canvas, 24.2x33.4cm, ₩400,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/pdvigkconhc_1773043797930__original.webp)](/artworks/776e3476-5de2-4f99-afd3-be84d8169b52)
+[![박성완, 〈강쟁정미소〉, Oil on canvas, 24.2x33.4cm, ₩400,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/pdvigkconhc_1773043797930__original.webp)](/artworks/776e3476-5de2-4f99-afd3-be84d8169b52)
 
 - **가격**: ₩400,000
 - **크기**: 24.2x33.4cm | **기법**: Oil on canvas (유일 원화)
@@ -154,7 +152,7 @@ note_to_editor: |
 
 ### 9. 이윤엽 — 〈콩밭메는 할머니 2〉 (다색목판화)
 
-[![이윤엽, 〈콩밭메는 할머니 2〉, 다색목판, 25x32.5cm, ₩400,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp)](/artworks/06b76f49-9e49-478a-8f53-8051f31503f8)
+[![이윤엽, 〈콩밭메는 할머니 2〉, 다색목판, 25x32.5cm, ₩400,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/411a33be-9297-4c47-b4f4-e5c84e79e6d9/238__original.webp)](/artworks/06b76f49-9e49-478a-8f53-8051f31503f8)
 
 - **가격**: ₩400,000
 - **크기**: 25x32.5cm | **기법**: 다색목판 (60장 이상의 판으로 찍은 오픈 에디션)
@@ -163,7 +161,7 @@ note_to_editor: |
 
 ### 10. 김호성 — 〈Inviting〉 (피그먼트 프린트, 디아섹)
 
-[![김호성, 〈Inviting〉, Pigment print (디아섹), 30x45cm, ₩500,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/135__original.webp)](/artworks/64870b7f-96f4-470a-859c-ff714369c6c2)
+[![김호성, 〈Inviting〉, Pigment print (디아섹), 30x45cm, ₩500,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/becc22c3-f436-45ca-8697-08653d12a64a/135__original.webp)](/artworks/64870b7f-96f4-470a-859c-ff714369c6c2)
 
 - **가격**: ₩500,000
 - **크기**: 30x45cm | **기법**: Pigment print, 디아섹 마운팅 (유일)
@@ -172,7 +170,7 @@ note_to_editor: |
 
 ### 11. 한미영 — 〈Free will〉 (혼합매체)
 
-[![한미영, 〈Free will〉, Mixed media on canvas (acrylic, gold leaf, wax paint), 72.7x53cm, ₩550,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/229__original.webp)](/artworks/f5f65a98-2516-4904-9917-7392b1e47d13)
+[![한미영, 〈Free will〉, Mixed media on canvas (acrylic, gold leaf, wax paint), 72.7x53cm, ₩550,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/b4e7aea8-5d97-47ff-ab3d-d1c3a96525af/229__original.webp)](/artworks/f5f65a98-2516-4904-9917-7392b1e47d13)
 
 - **가격**: ₩550,000
 - **크기**: 72.7x53.0cm | **기법**: Mixed media — 아크릴, 금박, 왁스 페인트 (유일 원화)
@@ -181,7 +179,7 @@ note_to_editor: |
 
 ### 12. 김주희 — 〈월정교〉 (유화)
 
-[![김주희, 〈월정교〉, Oil on canvas, 31.8x31.8cm, ₩500,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp)](/artworks/53f0d943-9039-416c-9dd0-1215618e36b8)
+[![김주희, 〈월정교〉, Oil on canvas, 31.8x31.8cm, ₩500,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dedcad53-cd2c-4dba-aae7-e35a526f82c1/263__original.webp)](/artworks/53f0d943-9039-416c-9dd0-1215618e36b8)
 
 - **가격**: ₩500,000
 - **크기**: 31.8x31.8cm | **기법**: Oil on canvas (유일 원화)
@@ -194,7 +192,7 @@ note_to_editor: |
 
 ### 13. 정서온 — 〈너와 나 사이 #1〉 (장지 흑연·안료)
 
-[![정서온, 〈너와 나 사이 #1〉, 장지 위에 흑연가루·안료, 40x32cm, ₩600,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/132__original.webp)](/artworks/9e54df22-7441-4ce2-9fbc-dabf34d2d96d)
+[![정서온, 〈너와 나 사이 #1〉, 장지 위에 흑연가루·안료, 40x32cm, ₩600,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/52b7dcc4-7c74-49b7-8869-9d71e1fedaa1/132__original.webp)](/artworks/9e54df22-7441-4ce2-9fbc-dabf34d2d96d)
 
 - **가격**: ₩600,000
 - **크기**: 40x32cm | **기법**: 장지 위에 흑연가루, 안료 (유일 원화)
@@ -203,7 +201,7 @@ note_to_editor: |
 
 ### 14. 라인석 — 〈곡선운동의 궤적으로부터 — 롯데월드타워 230817〉 (피그먼트 잉크젯)
 
-[![라인석, 〈곡선운동의 궤적으로부터 롯데월드타워 230817〉, Pigment based inkjet on matte paper, 50x30cm, ₩700,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp)](/artworks/e26e5ab8-dc57-452b-9ed1-13edff47e58d)
+[![라인석, 〈곡선운동의 궤적으로부터 롯데월드타워 230817〉, Pigment based inkjet on matte paper, 50x30cm, ₩700,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/4ea509fd-7f19-4420-8ed3-0c84836685dd/14__original.webp)](/artworks/e26e5ab8-dc57-452b-9ed1-13edff47e58d)
 
 - **가격**: ₩700,000
 - **크기**: 50x30cm | **기법**: Pigment based inkjet on matte paper (유일)
@@ -212,7 +210,7 @@ note_to_editor: |
 
 ### 15. 우용민 — 〈병오마 1〉 (한지에 먹)
 
-[![우용민, 〈병오마 1〉, 한지에 먹, 71x36cm, ₩700,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/196__original.webp)](/artworks/25c45839-7f6d-4cdd-b4a4-bea3fb85d70e)
+[![우용민, 〈병오마 1〉, 한지에 먹, 71x36cm, ₩700,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c0a3be68-25f6-4f5f-909e-14e05a46a300/196__original.webp)](/artworks/25c45839-7f6d-4cdd-b4a4-bea3fb85d70e)
 
 - **가격**: ₩700,000
 - **크기**: 71x36cm | **기법**: 한지에 먹 (유일 원화)
@@ -221,7 +219,7 @@ note_to_editor: |
 
 ### 16. 박성완 — 〈전일빌딩에서무등〉 (유화)
 
-[![박성완, 〈전일빌딩에서무등〉, Oil on canvas, 37.8x37.8cm, ₩700,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/o0y7niqw3wk_1773044832962__original.webp)](/artworks/3a2dd3a6-5cb7-42e4-9e09-f75ea3d111a8)
+[![박성완, 〈전일빌딩에서무등〉, Oil on canvas, 37.8x37.8cm, ₩700,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/39b1802a-e627-4286-8b20-c5571998a0b1/o0y7niqw3wk_1773044832962__original.webp)](/artworks/3a2dd3a6-5cb7-42e4-9e09-f75ea3d111a8)
 
 - **가격**: ₩700,000
 - **크기**: 37.8x37.8cm | **기법**: Oil on canvas (유일 원화)
@@ -230,7 +228,7 @@ note_to_editor: |
 
 ### 17. 심모비 — 〈9407 SIM_Visibility〉 (믹스미디어)
 
-[![심모비, 〈9407 SIM_Visibility〉, 믹스미디어 이후 아크릴 스틱 콜라주, 아크릴 채색, 45.5x53cm, ₩800,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/pvnthqu3z6_1770991227778__original.webp)](/artworks/2d8348ce-3fdf-4d26-b364-053a9baa4595)
+[![심모비, 〈9407 SIM_Visibility〉, 믹스미디어 이후 아크릴 스틱 콜라주, 아크릴 채색, 45.5x53cm, ₩800,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/bfcb5ff5-e1b9-474a-b37d-7c3aa344fa28/pvnthqu3z6_1770991227778__original.webp)](/artworks/2d8348ce-3fdf-4d26-b364-053a9baa4595)
 
 - **가격**: ₩800,000
 - **크기**: 45.5x53cm | **기법**: 믹스미디어, 아크릴 스틱 콜라주, 아크릴 채색 (유일 원화)
@@ -243,7 +241,7 @@ note_to_editor: |
 
 ### 18. 이문형 — 〈책거리 × 키스해링〉 (한지 수묵채색)
 
-[![이문형, 〈책거리x키스해링〉, 한지위에 수묵채색, 60.6x40.9cm, ₩840,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/65__original.webp)](/artworks/77e62473-f813-4a36-9231-11173f9cb645)
+[![이문형, 〈책거리x키스해링〉, 한지위에 수묵채색, 60.6x40.9cm, ₩840,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/855d527e-9ee5-4ed4-9b2c-a27c9fb90aa0/65__original.webp)](/artworks/77e62473-f813-4a36-9231-11173f9cb645)
 
 - **가격**: ₩840,000
 - **크기**: 60.6x40.9cm | **기법**: 한지 위에 수묵채색 (유일 원화)
@@ -252,7 +250,7 @@ note_to_editor: |
 
 ### 19. 김레이시 — 〈Scattered lights 2〉 (유화)
 
-[![김레이시, 〈Scattered lights 2〉, Oil on canvas, 45.5x45.5cm, ₩900,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/170__original.webp)](/artworks/ad2bc9f4-0628-4b7d-92a3-feb8430d46d3)
+[![김레이시, 〈Scattered lights 2〉, Oil on canvas, 45.5x45.5cm, ₩900,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6573a229-2349-4360-b1ee-e73006d988a2/170__original.webp)](/artworks/ad2bc9f4-0628-4b7d-92a3-feb8430d46d3)
 
 - **가격**: ₩900,000
 - **크기**: 45.5x45.5cm | **기법**: Oil on canvas (유일 원화)
@@ -261,7 +259,7 @@ note_to_editor: |
 
 ### 20. 정영신 — 〈1988 마이산 중턱에서〉 (파인아트 피그먼트 프린트)
 
-[![정영신, 〈1988 마이산 중턱에서〉, Pigment ink on FineArt Paper print, 80x49cm, ₩1,000,000](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/191__original.webp)](/artworks/69d60b05-a619-4cbd-ad0d-25869a17282d)
+[![정영신, 〈1988 마이산 중턱에서〉, Pigment ink on FineArt Paper print, 80x49cm, ₩1,000,000](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c49fd4b9-67ce-4f0c-a1d7-ae527a1372a5/191__original.webp)](/artworks/69d60b05-a619-4cbd-ad0d-25869a17282d)
 
 - **가격**: ₩1,000,000
 - **크기**: 80x49cm | **기법**: Pigment ink on FineArt Paper print (유일)

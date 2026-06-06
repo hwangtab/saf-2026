@@ -5,6 +5,7 @@ title: '50년간 민중의 얼굴을 그리다 — 신학철 작가'
 title_en: 'Shin Hak-chul: Five Decades of Painting the People'
 category: 'artist-story'
 excerpt: '1970년대부터 2020년대까지 한 번도 붓을 놓지 않은 작가. 한국 근현대사의 고통과 희망을 몸·산·강으로 엮어온 50년의 작업 세계를 정리합니다.'
+excerpt_en: 'An artist who never put down the brush from the 1970s to the 2020s. Five decades of work weaving the pain and hope of modern Korean history into bodies, mountains, and rivers.'
 tags:
   - 신학철
   - 민중미술
@@ -19,7 +20,10 @@ secondary_keywords:
 meta_description: '신학철 작가의 50년 작업 세계. 〈한국현대사〉 시리즈, 민중미술의 태동, 1989년 구속 사건, 2020년대 회고전까지—한국 근현대사를 그림으로 쓴 작가의 궤적.'
 internal_links:
   - { text: '민중미술이란 무엇인가', href: '/stories/minjung-art-intro' }
-  - { text: '한국 현대미술 30년사 타임라인', href: '/stories/korean-contemporary-timeline' }
+  - {
+      text: '한국 현대미술 30년사 타임라인',
+      href: '/stories/korean-modern-art-history-in-5-minutes',
+    }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
   - { text: '한국 단색화 이해하기', href: '/stories/dansaekhwa-intro' }
 author: 'SAF 매거진 편집부'
@@ -36,9 +40,11 @@ note_to_editor: |
   대한 당부 등을 수록할 것.
 ---
 
+_편집자 주: 이 글은 신학철 작가의 공개된 전시·언론·평론 자료를 바탕으로 재구성한 프로필 에세이이며, 직접 진행한 인터뷰가 아닙니다._
+
 # 50년간 민중의 얼굴을 그리다 — 신학철 작가
 
-[![오윤, 〈남녁땅뱃노래〉, 사후판화 목판, 17.5x25.5cm — 신학철과 동시대를 걸어간 민중미술 1세대의 대표 이미지](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp)](/artworks/536f693e-ef7d-487a-86f9-5dc986220001)
+[![오윤, 〈남녁땅뱃노래〉, 사후판화 목판, 17.5x25.5cm — 신학철과 동시대를 걸어간 민중미술 1세대의 대표 이미지](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/155__original.webp)](/artworks/536f693e-ef7d-487a-86f9-5dc986220001)
 
 한국 현대미술사에서 **한 주제를 50년간 붙들고 있었던 작가**는 흔하지 않습니다. 신학철은 그 드문 예외에 속합니다. 1970년대 초부터 2020년대까지, 그는 한국 근현대사를 주제로 한 대형 서사화를 멈춘 적이 없습니다. 붓 한 자루로 한 나라의 백 년을 그려온 셈입니다.
 
@@ -72,7 +78,7 @@ note_to_editor: |
 
 1979년 결성된 '현실과 발언' 동인을 중심으로 민중미술이 조직화되면서, 신학철도 이 흐름의 핵심 작가로 자리 잡습니다. 다만 그의 작업은 동인 내에서도 **독특한 위치**였습니다. 오윤의 목판화가 민중의 얼굴을 정면으로 그리고, 김정헌이 농촌의 일상을 담담히 그렸다면, 신학철은 **역사의 거대 서사**를 다뤘습니다. 각자의 방식으로 같은 시대에 응답했던 셈입니다.
 
-[![오윤, 〈형님〉, 사후판화 목판, 24x34cm — 1세대 민중미술이 그려낸 '민중의 얼굴'](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp)](/artworks/618357b4-b410-472d-8ba5-e0cf3189380e)
+[![오윤, 〈형님〉, 사후판화 목판, 24x34cm — 1세대 민중미술이 그려낸 '민중의 얼굴'](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/216__original.webp)](/artworks/618357b4-b410-472d-8ba5-e0cf3189380e)
 
 ## 1989년 — 〈모내기〉 사건
 

@@ -5,6 +5,7 @@ title: '미술관 용어 사전 — 비엔날레·아트페어·레지던시 한
 title_en: 'Art World Glossary: Biennale, Art Fair, Residency, and More'
 category: 'art-knowledge'
 excerpt: '전시 서문과 뉴스 기사를 읽다가 모르는 단어에 막혀본 적 있나요? 미술관·갤러리·시장에서 자주 쓰이는 필수 용어 50가지를 한 번에 정리했습니다.'
+excerpt_en: 'Ever get stuck on an unfamiliar word in an exhibition text or an art news story? Fifty essential terms from museums, galleries, and the market, defined in one place.'
 tags:
   - 미술 용어
   - 미술관
@@ -19,9 +20,12 @@ secondary_keywords:
   - '커미션'
 meta_description: '비엔날레, 아트페어, 레지던시, 큐레이터, 커미션, 도록, 바이얼—미술관·갤러리·시장에서 쓰이는 핵심 50단어를 정리한 미술 용어 사전.'
 internal_links:
-  - { text: '전시 보는 법', href: '/stories/how-to-see-exhibition' }
-  - { text: '한국 현대미술 30년사 타임라인', href: '/stories/korean-contemporary-timeline' }
-  - { text: '판화 vs 원화 vs 프린트', href: '/stories/print-vs-original' }
+  - { text: '전시 보는 법', href: '/stories/how-to-enjoy-art-exhibitions' }
+  - {
+      text: '한국 현대미술 30년사 타임라인',
+      href: '/stories/korean-modern-art-history-in-5-minutes',
+    }
+  - { text: '판화 vs 원화 vs 프린트', href: '/stories/print-vs-original-price-economics' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
 published_at: '2026-06-22'
@@ -31,7 +35,7 @@ display_order: 17
 
 # 미술관 용어 사전 — 비엔날레·아트페어·레지던시 한 번에 정리
 
-[![이철수, 〈호박옹〉, 목판·한지, 60x50cm, 에디션 10 — 용어를 알면 정보량이 달라지는 한 점](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e292e8b4-fa55-453f-825a-1f050fdd95ae/tf0uetfcjs_1771896697698__original.webp)](/artworks/e292e8b4-fa55-453f-825a-1f050fdd95ae)
+[![이철수, 〈호박옹〉, 목판·한지, 60x50cm, 에디션 10 — 용어를 알면 정보량이 달라지는 한 점](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-e292e8b4-fa55-453f-825a-1f050fdd95ae/tf0uetfcjs_1771896697698__original.webp)](/artworks/e292e8b4-fa55-453f-825a-1f050fdd95ae)
 
 "올해 광주비엔날레 기획자는 누구죠?" "그 갤러리 지난달 바젤 아트페어에 나왔어요." "요즘 금천예술공장 레지던시 들어갔대요." 미술계 사람들은 자연스럽게 이런 단어들을 씁니다. 그러나 처음 듣는 사람에게는 외국어처럼 들립니다.
 
@@ -117,7 +121,7 @@ display_order: 17
 
 ### 원화 (Original Painting)
 
-작가가 직접 그린 유일본. [판화 vs 원화 vs 프린트](/stories/print-vs-original)에서 자세히 다룸.
+작가가 직접 그린 유일본. [판화 vs 원화 vs 프린트](/stories/print-vs-original-price-economics)에서 자세히 다룸.
 
 ### 판화 (Print / Edition Print)
 
@@ -169,7 +173,7 @@ display_order: 17
 
 ### COA (Certificate of Authenticity)
 
-진품 증명서. 작가·발행자 서명 포함. [진위·COA 체크리스트](/stories/authenticity-checklist) 참고.
+진품 증명서. 작가·발행자 서명 포함. [진위·COA 체크리스트](/stories/how-to-read-artwork-coa) 참고.
 
 ## 전시·기획 관련 용어
 
@@ -213,7 +217,7 @@ display_order: 17
 
 작가·전시의 역사적 기록을 수집·보관한 자료.
 
-[![최재란, 〈쿼크의시간#138〉, Archival pigment print, 40x30cm, 에디션 16 — 사진·디지털 판화의 에디션 개념](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/40de2fae-6e9a-496e-a506-31180e3f3b31.webp)](/artworks/e538b891-6f93-453f-8d2e-3d97daea2bb6)
+[![최재란, 〈쿼크의시간#138〉, Archival pigment print, 40x30cm, 에디션 16 — 사진·디지털 판화의 에디션 개념](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/cfb9572a-72da-46ff-8082-ccb4e01e698d/40de2fae-6e9a-496e-a506-31180e3f3b31.webp)](/artworks/e538b891-6f93-453f-8d2e-3d97daea2bb6)
 
 ## 시장·거래 관련 용어
 
@@ -395,4 +399,4 @@ A. **Fine Arts**는 전통적 고급 미술(회화·조각·판화 등)을, **Vi
 
 ---
 
-용어는 벽이 아니라 문입니다. 한 단어를 알면 그 뒤의 세계가 열립니다. 이 50개의 단어가 앞으로 당신이 읽을 미술 뉴스·전시 서문·작가 인터뷰의 문을 열어주기를 바랍니다. [전시 보는 법](/stories/how-to-see-exhibition)과 함께 읽어보세요.
+용어는 벽이 아니라 문입니다. 한 단어를 알면 그 뒤의 세계가 열립니다. 이 50개의 단어가 앞으로 당신이 읽을 미술 뉴스·전시 서문·작가 인터뷰의 문을 열어주기를 바랍니다. [전시 보는 법](/stories/how-to-enjoy-art-exhibitions)과 함께 읽어보세요.

@@ -1,6 +1,7 @@
 ---
 slug: korean-shamanism-art
 title: 한국 샤머니즘 미술 — 오윤의 도깨비, 박생광의 굿, 안은경의 회복
+title_en: "Korean Shamanism in Art — Oh Yun's Goblins, Park Saeng-gwang's Gut Ritual, An Eunkyung's Healing"
 excerpt: 한국 미술의 가장 깊은 지층에는 무속이 있습니다. 박생광의 오방색 굿과 오윤의 낮도깨비, 그리고 동시대 안은경의 장지 위 회복까지 — 샤머니즘 미술이 동시대 거실에서도 의미를 갖는 이유를 씨앗페 소장 작품으로 읽습니다.
 excerpt_en: At the deepest layer of Korean art lies shamanism. From Park Saeng-gwang's five-color rituals to Oh Yoon's daytime goblins and An Eun-kyung's contemporary acts of recovery on traditional janji paper — we read why shamanism still resonates in today's living rooms through SAF-owned works.
 category: art-knowledge
@@ -25,11 +26,11 @@ internal_links:
 
 씨앗페가 보유한 박생광의 후기 드로잉 두 점은 그 폭발이 시작되던 무렵의 호흡을 보여줍니다.
 
-[![박생광, 〈백두산 천지 아침〉, 종이에 연필, 25.7x18.8cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp)](/artworks/581eaec2-9a24-4b18-96a6-ee92c1979120)
+[![박생광, 〈백두산 천지 아침〉, 종이에 연필, 25.7x18.8cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp)](/artworks/581eaec2-9a24-4b18-96a6-ee92c1979120)
 
 천지를 바라보는 시선은 단순한 풍경 사생이 아닙니다. 한국 무속에서 백두산은 신령의 거처이고, 박생광에게 백두산 천지는 돌아가야 할 정신의 원향이었습니다. 그가 채색 작업으로 옮겨가기 전 연필로 잡아둔 이 호흡은, 이후 오방색 캔버스에서 폭발하게 될 에너지의 씨앗입니다.
 
-[![박생광, 〈쏘가리〉, 1950, 종이에 연필, 25x18cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp)](/artworks/0fa23930-184b-4516-9f10-a454864457a7)
+[![박생광, 〈쏘가리〉, 1950, 종이에 연필, 25x18cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/279__original.webp)](/artworks/0fa23930-184b-4516-9f10-a454864457a7)
 
 쏘가리는 한국 민화에서 입신양명·다산의 상징입니다. 박생광이 1950년에 연필로 그려둔 이 한 점은, 후일 그가 오방색으로 무당과 부적을 옮길 때 다시 회귀하는 민속적 어휘의 출발점이었습니다.
 
@@ -37,15 +38,15 @@ internal_links:
 
 오윤(1946–1986)의 판화는 민중의 신앙을 새깁니다. 그가 새긴 무호도(舞虎圖), 낮도깨비, 팔엽일화는 한국 굿판의 시각 언어를 그대로 가져온 것입니다. 오윤에 대한 종합적 정리는 [칼끝으로 시대를 새긴 작가 — 오윤 40주기 특별전](/stories/oh-yun-40th-anniversary)에 있습니다. 여기서는 무속의 결만 따로 떼어 봅니다. 씨앗페가 소장한 오윤의 출품작 전체는 [오윤 작가 갤러리](/artworks/artist/오윤)에서 볼 수 있습니다.
 
-[![오윤, 〈낮도깨비〉, 1985, (사후판화)목판, 54.5x36cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp)](/artworks/b3838f14-0601-4e2a-a502-4b099ecd50ad)
+[![오윤, 〈낮도깨비〉, 1985, (사후판화)목판, 54.5x36cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp)](/artworks/b3838f14-0601-4e2a-a502-4b099ecd50ad)
 
 도깨비는 한국 무속의 가장 대중적인 신령입니다. 화내고, 장난치고, 가난한 자의 편을 드는 도깨비. 오윤은 이 도깨비를 한낮의 시장 골목에 풀어놓습니다. '낮도깨비'라는 제목 자체가 한국말의 직조인데, 캄캄한 밤이 아니라 햇빛 환한 대낮에 출몰하는 도깨비라는 뜻입니다. 오윤은 1985년의 한국이 그런 시대였다고 말한 것입니다.
 
-[![오윤, 〈무호도〉, 1985, (사후판화)목판, 35x25.6cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/153__original.webp)](/artworks/45dac49b-e8f2-4aea-8b86-8452dba853c0)
+[![오윤, 〈무호도〉, 1985, (사후판화)목판, 35x25.6cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/153__original.webp)](/artworks/45dac49b-e8f2-4aea-8b86-8452dba853c0)
 
 무호도(舞虎圖) — 춤추는 호랑이. 한국 민화에서 호랑이는 산신의 시봉(侍奉)이고, 굿판의 첫 신령입니다. 까치호랑이로 익숙한 그 도상이 오윤의 칼끝에서 굵은 양각의 리듬으로 다시 태어났습니다. 작품 제목에 '도(圖)'가 붙은 것도 의도적입니다. 박물관의 풍속화·민화 도상과 의식적으로 대화하고 있다는 신호입니다.
 
-[![오윤, 〈팔엽일화〉, 1985, (사후판화)목판, 50x50cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp)](/artworks/1350256c-5137-4a99-afcc-043e4c72287b)
+[![오윤, 〈팔엽일화〉, 1985, (사후판화)목판, 50x50cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/211__original.webp)](/artworks/1350256c-5137-4a99-afcc-043e4c72287b)
 
 팔엽일화(八葉一花) — 여덟 잎이 한 송이 꽃이 된다. 불교와 무속이 만나는 자리에서 자주 쓰이는 형상입니다. 한 가운데 핀 한 송이를 여덟 잎이 둘러싸는 만다라는 무당의 부적에서도, 절집의 단청에서도 발견됩니다. 50x50cm 정사각의 목판으로 새긴 이 한 점은 오윤이 자신의 죽음 1년 전 도달한 정점입니다.
 
@@ -53,11 +54,11 @@ internal_links:
 
 샤머니즘은 1985년에서 멈추지 않습니다. 동시대 작가 안은경의 작업은 무속의 본질 — '회복'을 장지 위에서 새로 호흡합니다. 장지(壯紙)는 한국 전통 한지 중에서도 가장 두텁고 결이 강한 종이로, 굿청의 부적과 가벼운 굿거리에 쓰이던 종이입니다. 작가는 그 위에 채색과 혼합재료를 올립니다. 안은경 작가의 입체적 프로필은 [빈 가방을 들고 떠난다는 것](/stories/meet-artist-an-eungyeong)에서, 장지 기법 자체에 대해서는 [장지에 채색 — 안은경으로 읽는 한국화의 동시대 호흡](/stories/janji-painting-an-eunkyung)에서 다뤘습니다.
 
-[![안은경, 〈서툰 여행〉, 2020, 장지에 혼합재료, 45.5x53cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/79__original.webp)](/artworks/734ed0f3-1f9f-41bd-b0a1-70a09417f6c1)
+[![안은경, 〈서툰 여행〉, 2020, 장지에 혼합재료, 45.5x53cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/79__original.webp)](/artworks/734ed0f3-1f9f-41bd-b0a1-70a09417f6c1)
 
 빈 가방 하나, 길 하나, 떨고 있는 인물 하나. 안은경의 화면은 무속의 영매(靈媒)가 일하는 자리와 닮았습니다. 떠나야 할 사람을 위해 길을 닦고, 두려움 앞의 떨림을 그대로 인정하는 자리. '서툰 여행'이라는 제목은 이 화면을 종교화가 아닌 '오늘 우리 거실의 무속'으로 옮겨놓습니다.
 
-[![안은경, 〈돌아보다〉, 2021, 장지에 채색, 30x30cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/3u7zwr5h3bq_1773042861449__original.webp)](/artworks/f301dfd1-5ae7-4b14-843c-0be7526ff48b)
+[![안은경, 〈돌아보다〉, 2021, 장지에 채색, 30x30cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/3u7zwr5h3bq_1773042861449__original.webp)](/artworks/f301dfd1-5ae7-4b14-843c-0be7526ff48b)
 
 회복은 곧잘 '돌아봄'에서 시작됩니다. 무당의 굿이 망자에게 맺힌 한을 풀어 보내는 의식이라면, 안은경의 〈돌아보다〉는 산 자가 자신의 어제를 응시하는 작은 굿입니다. 30x30cm 정사각의 화면이 정확히 그 의식의 척도와 닮아 있습니다.
 

@@ -5,6 +5,7 @@ title: '한국 단색화 이해하기 — 반복과 침묵의 미학'
 title_en: 'Understanding Dansaekhwa: The Korean Monochrome'
 category: 'art-knowledge'
 excerpt: '같은 획을 천 번 반복하는 그림. 그게 왜 예술인가? 단색화를 이해하는 열쇠는 "단색"이 아니라 "반복"에 있습니다. 박서보부터 하종현까지, 한국 모노크롬의 미학.'
+excerpt_en: "A painting that repeats the same stroke a thousand times — why is that art? The key to Dansaekhwa isn't the single color but the repetition. From Park Seo-bo to Ha Chong-hyun, the aesthetics of Korean monochrome."
 tags:
   - 단색화
   - 한국 현대미술
@@ -19,7 +20,10 @@ secondary_keywords:
   - '단색화 의미'
 meta_description: '박서보, 이우환, 정상화, 하종현, 윤형근—한국 단색화 5거장을 통해 "반복과 침묵의 미학"이 어떻게 세계 미술 시장의 주목을 받게 되었는지 정리합니다.'
 internal_links:
-  - { text: '한국 현대미술 30년사 타임라인', href: '/stories/korean-contemporary-timeline' }
+  - {
+      text: '한국 현대미술 30년사 타임라인',
+      href: '/stories/korean-modern-art-history-in-5-minutes',
+    }
   - { text: '민중미술이란 무엇인가', href: '/stories/minjung-art-intro' }
   - { text: '드로잉과 회화의 경계', href: '/stories/drawing-vs-painting' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
@@ -31,7 +35,7 @@ display_order: 14
 
 # 한국 단색화 이해하기 — 반복과 침묵의 미학
 
-[![이광수, 〈回6〉, 캔버스에 아크릴, 60x45cm — 반복과 수행으로 쌓아 올린 한국 추상의 현재형](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-f8b4e8f6-e93c-484f-9cc2-e3de89152262/eb0u1dcjum5_1771897517433__original.webp)](/artworks/f8b4e8f6-e93c-484f-9cc2-e3de89152262)
+[![이광수, 〈回6〉, 캔버스에 아크릴, 60x45cm — 반복과 수행으로 쌓아 올린 한국 추상의 현재형](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-f8b4e8f6-e93c-484f-9cc2-e3de89152262/eb0u1dcjum5_1771897517433__original.webp)](/artworks/f8b4e8f6-e93c-484f-9cc2-e3de89152262)
 
 단색화(丹色畵, Dansaekhwa)를 처음 본 사람은 당혹합니다. "이거는 뭐가 그려져 있는 거야?" 하얀 캔버스에 연한 격자무늬, 단색의 칠, 무수히 반복된 점. 그림이라기보다는 **표면 그 자체**처럼 보입니다.
 
@@ -69,7 +73,7 @@ display_order: 14
 
 단색화 작가들은 이 전통을 **캔버스와 유화·아크릴의 시대**에 재번역했습니다. 결과적으로 서양 추상과 동아시아 전통이 만나는 독특한 언어가 탄생했습니다.
 
-[![김규학, 〈바람과 빛-51〉, 캔버스에 유화, 50x65cm — 절제된 색채와 긴 호흡의 붓질](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/kx3cftpw7s8_1771651596386__original.webp)](/artworks/2d4e2768-eeae-4fca-8cf0-4bdf9ab1991a)
+[![김규학, 〈바람과 빛-51〉, 캔버스에 유화, 50x65cm — 절제된 색채와 긴 호흡의 붓질](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/87c030a1-5bd1-41da-aa6c-39890a4ca624/kx3cftpw7s8_1771651596386__original.webp)](/artworks/2d4e2768-eeae-4fca-8cf0-4bdf9ab1991a)
 
 _[김규학](/artworks/artist/김규학) — 단색화 이후 세대의 감수성으로 빛과 대기를 탐구하는 중견 화가. 씨앗페에서 만날 수 있는 단색 계열 작가._
 
@@ -209,4 +213,4 @@ A. **Dansaekhwa**가 국제 공식 표기입니다. "Korean Monochrome"이라는
 
 ---
 
-단색화는 한국 미술이 세계에 기여한 하나의 **독자적 어휘**입니다. 이 어휘를 이해하면, 한국 현대미술의 깊이가 한 층 더 열립니다. [한국 현대미술 30년사](/stories/korean-contemporary-timeline)와 함께 읽으시길 권합니다.
+단색화는 한국 미술이 세계에 기여한 하나의 **독자적 어휘**입니다. 이 어휘를 이해하면, 한국 현대미술의 깊이가 한 층 더 열립니다. [한국 현대미술 30년사](/stories/korean-modern-art-history-in-5-minutes)와 함께 읽으시길 권합니다.

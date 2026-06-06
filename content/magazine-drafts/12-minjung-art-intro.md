@@ -5,6 +5,7 @@ title: '민중미술이란 무엇인가 — 신학철로 읽는 한 계보'
 title_en: 'Introduction to Minjung Art Through Shin Hak-chul'
 category: 'art-knowledge'
 excerpt: '1980년대의 저항, 2000년대의 재평가, 2020년대의 재해석. 민중미술은 사라진 장르가 아닙니다. 여전히 한국 미술의 한 척추로 살아있는 계보를 따라갑니다.'
+excerpt_en: 'Resistance in the 1980s, reappraisal in the 2000s, reinterpretation in the 2020s. Minjung art never disappeared — follow a lineage still alive as one spine of Korean art, read through Shin Hak-chul.'
 tags:
   - 민중미술
   - 신학철
@@ -18,7 +19,10 @@ secondary_keywords:
   - '민중미술 역사'
 meta_description: '민중미술은 1980년대 사회 저항에서 태어나 2020년대까지 이어지는 한국 미술의 한 계보입니다. 신학철 작가의 작업을 통해 민중미술의 40년을 읽습니다.'
 internal_links:
-  - { text: '한국 현대미술 30년사 타임라인', href: '/stories/korean-contemporary-timeline' }
+  - {
+      text: '한국 현대미술 30년사 타임라인',
+      href: '/stories/korean-modern-art-history-in-5-minutes',
+    }
   - { text: '한국 단색화 이해하기', href: '/stories/dansaekhwa-intro' }
   - { text: '신학철 작가 인터뷰', href: '/stories/shin-hakchul-interview' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
@@ -30,7 +34,7 @@ display_order: 12
 
 # 민중미술이란 무엇인가 — 신학철로 읽는 한 계보
 
-[![오윤, 〈지리산3〉, 사후판화 목판, 22x25cm — 민중미술 목판의 대표 작가](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp)](/artworks/ec78c03b-9e16-46a2-af71-7e28ac12da60)
+[![오윤, 〈지리산3〉, 사후판화 목판, 22x25cm — 민중미술 목판의 대표 작가](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/186__original.webp)](/artworks/ec78c03b-9e16-46a2-af71-7e28ac12da60)
 
 민중미술이라는 단어는 오해받기 쉬운 말입니다. 어떤 사람에게는 1980년대의 '정치 포스터' 같은 이미지를 떠올리고, 어떤 사람에게는 '이미 끝난 운동'처럼 느껴집니다. 그러나 민중미술은 여전히 살아있습니다. 40년 동안 변모해왔지만 끊어진 적은 없습니다.
 
@@ -62,7 +66,7 @@ display_order: 12
 
 **"역사 그 자체가 몸이다"**—신학철의 작업 언어는 민중미술의 대표적 상징이 되었습니다.
 
-[![오윤, 〈소리꾼1〉, 사후판화 목판, 25.5x34.5cm — 민중의 얼굴을 정제된 목판 선으로 담아낸 대표작](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/214__original.webp)](/artworks/951c0751-1e28-446e-9786-4dfd7ced92e8)
+[![오윤, 〈소리꾼1〉, 사후판화 목판, 25.5x34.5cm — 민중의 얼굴을 정제된 목판 선으로 담아낸 대표작](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/214__original.webp)](/artworks/951c0751-1e28-446e-9786-4dfd7ced92e8)
 
 ## 확장: 1983~1989 — "민중미술"이라는 이름
 
@@ -126,7 +130,7 @@ display_order: 12
 
 이 작가들은 자신을 '민중미술가'로 부르지 않기도 하지만, **사회와 역사의 질문을 작품의 중심에 두는 태도**에서 민중미술의 DNA를 공유합니다.
 
-[![오윤, 〈낮도깨비〉, 사후판화 목판, 54.5x36cm — 민중미술의 해학과 저항이 결합된 상징적 이미지](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp)](/artworks/b3838f14-0601-4e2a-a502-4b099ecd50ad)
+[![오윤, 〈낮도깨비〉, 사후판화 목판, 54.5x36cm — 민중미술의 해학과 저항이 결합된 상징적 이미지](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/154__original.webp)](/artworks/b3838f14-0601-4e2a-a502-4b099ecd50ad)
 
 ## 현재: 2016~2025 — 민중미술이라는 '질문'
 
@@ -204,4 +208,4 @@ A. 정확히는 **"1세대 운동으로서의 민중미술"**이 형식적으로
 
 ---
 
-한국 미술의 한 축을 이해하고 싶다면, 단색화와 함께 민중미술이라는 **반대편 축**을 알아야 합니다. 두 축을 동시에 알 때 한국 현대미술의 입체가 보입니다. [한국 현대미술 30년사 타임라인](/stories/korean-contemporary-timeline)과 함께 읽으시길 권합니다.
+한국 미술의 한 축을 이해하고 싶다면, 단색화와 함께 민중미술이라는 **반대편 축**을 알아야 합니다. 두 축을 동시에 알 때 한국 현대미술의 입체가 보입니다. [한국 현대미술 30년사 타임라인](/stories/korean-modern-art-history-in-5-minutes)과 함께 읽으시길 권합니다.

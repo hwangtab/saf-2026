@@ -4,8 +4,9 @@ title: 국립현대미술관 4관 비교 — 서울·과천·덕수궁·청주, 
 title_en: MMCA Korea 4 Branches Compared — Seoul, Gwacheon, Deoksugung, Cheongju
 category: buying-guide
 excerpt: 국립현대미술관(MMCA) 네 곳은 같은 기관이지만 성격이 완전히 다릅니다. 동시대·근대·근현대·수장형. 처음 가는 관람객을 위한 4관 비교 가이드.
+excerpt_en: "MMCA's four sites are one institution with completely different characters: contemporary, modern, modern-contemporary, and open storage. A comparison guide for first-time visitors."
 display_order: 38
-published_at: 2026-08-01
+published_at: '2026-08-01'
 tags:
   - 국립현대미술관
   - MMCA
@@ -18,7 +19,7 @@ meta_description: 국립현대미술관 서울·과천·덕수궁·청주관의 
 
 # 국립현대미술관 4관 비교
 
-[![이광수, 〈回3〉, 캔버스에 아크릴, 60x45cm — 단색·반복의 한국 모더니즘 흐름](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-3053bc46-108b-4ecd-97c8-60653a8bb24d/zspe6hzi6u9_1771897499985__original.webp)](/artworks/3053bc46-108b-4ecd-97c8-60653a8bb24d)
+[![이광수, 〈回3〉, 캔버스에 아크릴, 60x45cm — 단색·반복의 한국 모더니즘 흐름](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-3053bc46-108b-4ecd-97c8-60653a8bb24d/zspe6hzi6u9_1771897499985__original.webp)](/artworks/3053bc46-108b-4ecd-97c8-60653a8bb24d)
 
 "국립현대미술관에 가자"는 말은 사실 **네 개의 미술관 중 어디에 갈지 정해야 한다는 뜻**입니다. MMCA는 서울·과천·덕수궁·청주 — 서로 매우 다른 성격의 4관을 한 우산 아래 운영합니다. 같은 입장권으로 4관 모두 관람 가능하지만, 한 번에 다 가는 사람은 거의 없습니다. **무엇을 보고 싶은지에 따라 가야 할 관이 달라집니다.**
 
@@ -39,7 +40,7 @@ meta_description: 국립현대미술관 서울·과천·덕수궁·청주관의 
 
 ## 1. MMCA 서울관 — 동시대 미술의 현재
 
-[![이광수, 〈回4〉, 캔버스에 아크릴, 60x45cm — 동시대 추상 회화의 단색 호흡](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-98aa7ce3-403b-4b6b-b4a4-5929e40074fd/qhpjmy3uh88_1771897507115__original.webp)](/artworks/98aa7ce3-403b-4b6b-b4a4-5929e40074fd)
+[![이광수, 〈回4〉, 캔버스에 아크릴, 60x45cm — 동시대 추상 회화의 단색 호흡](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-98aa7ce3-403b-4b6b-b4a4-5929e40074fd/qhpjmy3uh88_1771897507115__original.webp)](/artworks/98aa7ce3-403b-4b6b-b4a4-5929e40074fd)
 
 서울관은 **'지금 한국 미술이 어디에 있는가'**를 보여주는 관입니다. 2013년 옛 기무사 자리에 문을 열어 동시대 회화·조각·미디어아트·설치를 가장 빠르게 전시합니다. 한 해 평균 8~10개의 기획 전시가 돌아가고, 외부 관람객 동선이 가장 좋은 곳입니다.
 
@@ -61,7 +62,7 @@ meta_description: 국립현대미술관 서울·과천·덕수궁·청주관의 
 
 ## 2. MMCA 과천관 — 한국 근현대미술 본진
 
-[![오윤, 〈대지〉, 사후판화 목판, 36x43.3cm — 한국 민중미술의 대표 이미지](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp)](/artworks/e637bb45-e888-443b-8f2e-8911c79d9ba7)
+[![오윤, 〈대지〉, 사후판화 목판, 36x43.3cm — 한국 민중미술의 대표 이미지](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp)](/artworks/e637bb45-e888-443b-8f2e-8911c79d9ba7)
 
 과천관은 **MMCA의 본관**이자 컬렉션의 가장 깊은 곳입니다. 1986년 개관 — 한국에 '국립' 미술관 시대가 시작된 곳이고, 단색화·민중미술·1980~90년대 한국 현대미술의 핵심 소장품이 여기 있습니다.
 

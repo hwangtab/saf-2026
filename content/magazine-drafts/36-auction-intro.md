@@ -5,6 +5,7 @@ title: '한국 미술 경매 입문 — 서울옥션·케이옥션 처음 가는
 title_en: 'Korean Art Auction Primer: Seoul Auction and K-Auction'
 category: 'buying-guide'
 excerpt: '경매장 문을 처음 여는 일은 생각보다 조용합니다. 서울옥션·케이옥션의 작동 구조, 수수료·낙찰가·리저브의 수학, 첫 응찰자가 알아야 할 모든 것.'
+excerpt_en: "Opening the door to an auction room is quieter than you'd think. How Seoul Auction and K-Auction work, the math of fees, hammer prices, and reserves, and everything a first-time bidder should know."
 tags:
   - 미술 경매
   - 서울옥션
@@ -31,7 +32,7 @@ display_order: 36
 
 # 한국 미술 경매 입문 — 서울옥션·케이옥션 처음 가는 법
 
-[![이호철, 〈Encore〉, Signed Limited Edition Fine Art Print, 105x61cm — 경매 시장에서 유통 가능한 중대형 작품](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/admin-artwork-e690c4a6-c39e-4dc8-9e2c-a86c50f11ed1/t2zzlspyym_1772692557546__original.webp)](/artworks/e690c4a6-c39e-4dc8-9e2c-a86c50f11ed1)
+[![이호철, 〈Encore〉, Signed Limited Edition Fine Art Print, 105x61cm — 경매 시장에서 유통 가능한 중대형 작품](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/admin-artwork-e690c4a6-c39e-4dc8-9e2c-a86c50f11ed1/t2zzlspyym_1772692557546__original.webp)](/artworks/e690c4a6-c39e-4dc8-9e2c-a86c50f11ed1)
 
 경매장을 처음 가본 사람은 공통적으로 두 가지를 말합니다. "생각보다 조용하다"와 "생각보다 빠르다". 영화에서 본 긴장된 숨소리와 휘날리는 패들은 실제 경매장의 아주 일부일 뿐입니다. 대부분의 경매는 **프로페셔널하고 차분한 진행** 속에서 몇 초 단위로 낙찰이 결정됩니다.
 

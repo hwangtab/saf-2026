@@ -1,6 +1,7 @@
 ---
 slug: oh-yun-market-01-after-forty
 title: 마흔에 떠난 자리 — 1986년 7월에서 2026년 4월까지, 오윤이 우리에게 도착하는 길
+title_en: 'The Place He Left at Forty — From July 1986 to April 2026, How Oh Yun Reaches Us'
 series: 오윤 사후판화 시장분석 ①
 excerpt: 1986년 마흔에 떠난 작가. 10년 뒤 일곱 사람이 모여 그의 사후판화를 처음이자 마지막으로 발행했다. 작가가 살아 있을 때 한 번도 가격이 매겨진 적 없던 판화에, 그가 떠난 자리에서 동료들이 표식을 새긴 셈이었다. 사후 40주기를 맞는 2026년, 그가 다시 도착한다. 오윤 사후판화 시장분석 시리즈 ①.
 excerpt_en: He died at forty in 1986. Ten years later, seven people gathered to issue the first — and only — posthumous print edition of his work. The painter who never priced a single print in his lifetime had his prints marked, signed, and closed by his peers after his death. As 2026 marks the fortieth anniversary, Oh Yoon arrives again. Series 1 of a posthumous-print market analysis.
@@ -27,11 +28,11 @@ internal_links:
 
 그해 봄, 그는 마지막 개인전을 그림마당 민에서 열었다. 생애 첫 개인전이자 마지막 개인전이었다. 1980년대 한국 화단에서 마흔이라는 나이는 작가로서 막 자기 어법이 단단해지기 시작하는 시점이다. 그가 남긴 것은, 그러니까, 한 작가가 본격적으로 펼치기 직전에 멈춰버린 작업의 단면이었다.
 
-[![오윤, 〈칼노래〉, 1985, (사후판화)목판, 32.2×25.5cm — 죽기 1년 전 새긴 한 점](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp)](/artworks/4c920878-32dd-4727-ab03-6eda996597d5)
+[![오윤, 〈칼노래〉, 1985, (사후판화)목판, 32.2×25.5cm — 죽기 1년 전 새긴 한 점](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp)](/artworks/4c920878-32dd-4727-ab03-6eda996597d5)
 
 회화·판화·조각·드로잉을 합쳐 약 400여 점. 그가 직접 새긴 목판 원판은 약 180여 종. 「무호도」, 「칼노래」, 「춘무인추무의」, 「대지」 같은 도상들이 그 안에 있었다. 한국 미술사 어디에도 다시 나타나지 않은 얼굴들이었다. 흥미롭게도 그의 대표작 가운데 상당수가 죽기 한 해 전인 1985년에 한꺼번에 쏟아져 나왔다 — 마치 시간이 얼마 남지 않았음을 알았던 것처럼.
 
-[![오윤, 〈무호도〉, 1985, (사후판화)목판, 35×25.6cm — 1985년 한 해에 쏟아져 나온 도상의 한 점](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/153__original.webp)](/artworks/45dac49b-e8f2-4aea-8b86-8452dba853c0)
+[![오윤, 〈무호도〉, 1985, (사후판화)목판, 35×25.6cm — 1985년 한 해에 쏟아져 나온 도상의 한 점](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/153__original.webp)](/artworks/45dac49b-e8f2-4aea-8b86-8452dba853c0)
 
 작가는 자기 판화에 에디션 번호를 매긴 적이 없었다. 누가 부탁하면 또 찍어주었고, 자신이 새긴 판을 파기한 적도 없었다. 판화는 그에게 회화와 다른 것이었다. 회화는 한 점뿐이지만, 판화는 무수히 복제해 나눌 수 있었다. 그 '나눌 수 있음'이 그에게는 1980년대 민중미술이 가진 반상업주의의 한 형태였다. 그는 죽을 때까지 자기 판화에 가격을 매기는 일에 관심이 없었다.
 
@@ -69,7 +70,7 @@ internal_links:
 
 그 한 달 동안 다섯 명의 작가가 직접 손으로 인쇄했다. 홍선웅, 유연복, 남궁산, 김윤기, 박야일. 작가의 동료들이었다. 도록 글은 일곱 사람이 나누어 썼다. 김지하, 심광현, 홍선웅, 성완경, 원동석, 유홍준, 허진무. 감수는 주재환이 맡았다.
 
-[![오윤, 〈춘무인추무의〉, 1985, (사후판화)목판, 65.5×48cm — 1996년 한 달 동안 다섯 동료가 손으로 찍어낸 도상](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp)](/artworks/74824081-63a0-4b76-9de6-a57d865c110e)
+[![오윤, 〈춘무인추무의〉, 1985, (사후판화)목판, 65.5×48cm — 1996년 한 달 동안 다섯 동료가 손으로 찍어낸 도상](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/210__original.webp)](/artworks/74824081-63a0-4b76-9de6-a57d865c110e)
 
 그리고 이 모든 일이 끝났을 때, 그들은 마지막 한 가지를 하기로 했다. 다 찍은 판에 미세한 변형을 가한다. 다시는 어떤 판화도 이 판에서 나올 수 없도록. 변형된 판으로 한 번 더 찍어 그 사실을 종이 위에 남긴다 — 그것이 **CP, Cancellation Proof**였다. 발행이 끝났다는 사실 자체를 시각적 증거로 남기는 의례였다. 의도는 분명했고, 도판에 따라 그 마지막 단계까지 닿은 것도 있었다.
 
@@ -97,7 +98,7 @@ internal_links:
 
 같은 시기, 단색화가 글로벌 시장에서 폭발했다. 박서보의 작품이 홍콩 옥션에서 기록을 갈아치우는 동안, 한국 미술시장 분석가들 사이에서는 한 가지 질문이 조용히 돌았다. **단색화 다음은 무엇인가.** 한국 모더니즘이 정점에 달한 다음, 글로벌 시장이 한국 미술에서 다음으로 발견할 카테고리는 무엇인가. 답은 합의된 적이 없지만, 한국의 '리얼리즘 계열'이라는 견해가 반복적으로 제기되어 왔다.
 
-[![오윤, 〈대지〉, 1983, (사후판화)목판, 36×43.3cm — 정점 이전의 큰 호흡, 미술사가 다시 발견하고 있는 자리](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp)](/artworks/e637bb45-e888-443b-8f2e-8911c79d9ba7)
+[![오윤, 〈대지〉, 1983, (사후판화)목판, 36×43.3cm — 정점 이전의 큰 호흡, 미술사가 다시 발견하고 있는 자리](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/213__original.webp)](/artworks/e637bb45-e888-443b-8f2e-8911c79d9ba7)
 
 ✻ ✻ ✻
 

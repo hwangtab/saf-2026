@@ -5,6 +5,7 @@ title: '청년 작가의 첫 개인전 준비기 — 6개월의 기록'
 title_en: 'A Young Artist Preparing Their First Solo Show'
 category: 'artist-story'
 excerpt: '작가 인생에서 첫 개인전은 특별한 문턱입니다. 작가 한 명이 6개월간 첫 개인전을 준비하는 과정을 따라가며, 한국 신진 작가의 현실을 기록합니다.'
+excerpt_en: "A first solo show is a singular threshold in an artist's life. We follow one artist through six months of preparing their debut, documenting the reality facing emerging Korean artists."
 tags:
   - 청년 작가
   - 첫 개인전
@@ -18,9 +19,9 @@ secondary_keywords:
   - '청년 작가 현실'
 meta_description: '한 청년 작가의 첫 개인전 6개월 준비 과정을 시간순으로 기록. 공간 섭외부터 오프닝까지, 한국 신진 작가가 마주하는 현실.'
 internal_links:
-  - { text: '신진 작가 작품 고르는 5가지 기준', href: '/stories/choosing-emerging-artist' }
+  - { text: '신진 작가 작품 고르는 5가지 기준', href: '/stories/five-criteria-for-choosing-art' }
   - { text: '작업실 탐방 포맷', href: '/stories/studio-visit-template' }
-  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-photoessay' }
+  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-solidarity' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
 published_at: '2026-07-09'
@@ -35,9 +36,11 @@ note_to_editor: |
   현재 버전은 실제 사례들을 종합해 재구성한 전형적 서사입니다.
 ---
 
+_편집자 주: 이 글은 여러 청년 작가의 사례를 종합해 재구성한 전형적 서사이며, 특정 개인의 실제 기록이 아닙니다._
+
 # 청년 작가의 첫 개인전 준비기 — 6개월의 기록
 
-[![남진현, 〈한 점 부끄럼 없이〉, acrylic on canvas, 53x40.9cm — 첫 개인전 준비 중인 청년 작가의 한 점](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/4a8d7d00-584e-4337-9005-629fb59df951.webp)](/artworks/4b6f8e69-54c8-4a0f-a535-2c1b6bc398e9)
+[![남진현, 〈한 점 부끄럼 없이〉, acrylic on canvas, 53x40.9cm — 첫 개인전 준비 중인 청년 작가의 한 점](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/4a8d7d00-584e-4337-9005-629fb59df951.webp)](/artworks/4b6f8e69-54c8-4a0f-a535-2c1b6bc398e9)
 
 작가의 이력서에서 가장 중요한 한 줄은 **"첫 개인전"**입니다. 그룹전은 여러 번 해도 개인전 하나의 무게를 넘지 못합니다. 한 작가가 "나는 내 이름으로 공간을 채울 수 있다"고 공식적으로 선언하는 지점이 첫 개인전이기 때문입니다.
 

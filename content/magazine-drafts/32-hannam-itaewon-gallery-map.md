@@ -4,8 +4,9 @@ title: 한남·이태원 미술관·갤러리 지도 — 글로벌 메가 갤러
 title_en: Hannam-Itaewon Gallery Map — Where Global Mega-Galleries Set Up in Seoul
 category: buying-guide
 excerpt: 페이스·가고시안·타데우스 로팍·화이트큐브·페로탱이 한남에 모인 이유. 리움미술관과 글로벌 갤러리 7곳을 하루에 잇는 한남·이태원 지도.
+excerpt_en: 'Why Pace, Gagosian, Thaddaeus Ropac, White Cube, and Perrotin all gathered in Hannam. A map linking Leeum and seven global galleries in a single day.'
 display_order: 32
-published_at: 2026-09-01
+published_at: '2026-09-01'
 tags:
   - 한남동
   - 이태원
@@ -18,7 +19,7 @@ meta_description: 한남·이태원 갤러리 지도 — 페이스·가고시안
 
 # 한남·이태원 미술관·갤러리 지도
 
-[![강레아, 〈#01_S1707SP〉, 한지에 피그먼트 프린트, 66x45cm — 한국 동시대 사진의 한 결](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp)](/artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3)
+[![강레아, 〈#01_S1707SP〉, 한지에 피그먼트 프린트, 66x45cm — 한국 동시대 사진의 한 결](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/fe690edb-c9d1-411e-a690-6edb90acc276/202__original.webp)](/artworks/56c2c3f3-d237-4556-aca7-b64b3d4fcea3)
 
 2017년까지 한남동은 미술 지도에 거의 없었습니다. 리움미술관 한 곳이 외로이 자리잡고 있었을 뿐. 그런데 2017년 페이스 갤러리(Pace Gallery)의 서울 진출을 신호탄으로 **글로벌 메가 갤러리들이 한꺼번에 한남동을 선택**했습니다.
 
@@ -146,7 +147,7 @@ meta_description: 한남·이태원 갤러리 지도 — 페이스·가고시안
 
 ---
 
-[![최혜수, 〈놀이터 (Playground) n'2〉, 시멘트·유사 금박·왁스·아크릴, 72.7x91cm — 한남 메가 갤러리에서 보이는 동시대 한국 회화의 결](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/90__original.webp)](/artworks/ab859f7f-bab1-480c-a5dd-975ca179d6bb)
+[![최혜수, 〈놀이터 (Playground) n'2〉, 시멘트·유사 금박·왁스·아크릴, 72.7x91cm — 한남 메가 갤러리에서 보이는 동시대 한국 회화의 결](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/dba02a90-674e-4aa6-b8a7-bbf4e3c904e3/90__original.webp)](/artworks/ab859f7f-bab1-480c-a5dd-975ca179d6bb)
 
 ## 한남에서 작품을 살 때 알아두면 좋은 것
 

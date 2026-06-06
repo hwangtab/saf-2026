@@ -5,6 +5,7 @@ title: '여성 작가 5인의 대화 — 육아·생계·창작의 삼각형'
 title_en: 'A Roundtable with Five Women Artists'
 category: 'artist-story'
 excerpt: '작가는 성별을 가지고 태어나지 않지만, 삶은 성별의 무게를 다르게 놓습니다. 육아·생계·창작의 삼각형 속에서 버텨온 여성 작가 5인의 좌담.'
+excerpt_en: "Artists aren't born with a gender, but life distributes its weight unequally. Five women artists talk about surviving the triangle of childcare, livelihood, and creation."
 tags:
   - 여성 작가
   - 페미니즘 미술
@@ -18,8 +19,8 @@ secondary_keywords:
   - '성별과 창작'
 meta_description: '한국 여성 작가 5인의 좌담. 육아와 창작의 양립, 갤러리 시장에서의 성별 편향, 연대의 경험—구체적 현실로 풀어낸 5시간의 대화.'
 internal_links:
-  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-photoessay' }
-  - { text: '한국 현대미술 30년사', href: '/stories/korean-contemporary-timeline' }
+  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-solidarity' }
+  - { text: '한국 현대미술 30년사', href: '/stories/korean-modern-art-history-in-5-minutes' }
   - { text: '창작을 포기한 날 — 증언 5편', href: '/stories/testimonials-narrative' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
@@ -36,9 +37,11 @@ note_to_editor: |
   정합하도록 구성되었으나 실제 녹취본은 아닙니다.
 ---
 
+_편집자 주: 이 좌담은 여성 작가들의 공개 인터뷰·증언 자료를 바탕으로 재구성한 가상의 좌담회이며, 실제로 녹취된 대화가 아닙니다._
+
 # 여성 작가 5인의 대화 — 육아·생계·창작의 삼각형
 
-[![안은경, 〈잠시 머무는 순간〉, 장지에 혼합재료, 16x22cm](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/ou84hr2az6_1773135064192__original.webp)](/artworks/7c825453-4042-41af-9e2f-d1cff9add6f0)
+[![안은경, 〈잠시 머무는 순간〉, 장지에 혼합재료, 16x22cm](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/ou84hr2az6_1773135064192__original.webp)](/artworks/7c825453-4042-41af-9e2f-d1cff9add6f0)
 
 한국 예술계에서 "여성 작가의 삶"이라는 주제는 몇 년 전만 해도 공적으로 말하기 어려운 자리였습니다. 개인의 문제로 치부되거나, 페미니즘이라는 이름 아래 뭉뚱그려졌습니다. 그러나 동료들 간에는 오랫동안 공유되어 온 **구체적 현실**이 있었습니다. 육아와 창작의 양립, 시장의 성별 편향, 임신·출산기의 경력 단절.
 

@@ -5,6 +5,7 @@ title: '작업실 탐방 — 씨앗페 작가들의 하루'
 title_en: 'Studio Visit: A Day in the Life of SAF Artists'
 category: 'artist-story'
 excerpt: '작가의 작품을 이해하는 가장 깊은 통로는 작업실입니다. 씨앗페 작가들의 작업실을 찾아가, 그들의 하루가 어떻게 흘러가는지를 기록합니다.'
+excerpt_en: "The deepest way into an artist's work is the studio. We visit the studios of Seed Art Festival artists to record how their days unfold."
 tags:
   - 작업실
   - 스튜디오 비지트
@@ -18,8 +19,8 @@ secondary_keywords:
   - '작업실 풍경'
 meta_description: '작품을 만드는 장소를 보는 것은 작품을 이해하는 가장 깊은 방법입니다. 씨앗페 작가들의 작업실과 하루의 리듬을 기록한 스튜디오 비지트.'
 internal_links:
-  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-photoessay' }
-  - { text: '신진 작가 작품 고르는 5가지 기준', href: '/stories/choosing-emerging-artist' }
+  - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-solidarity' }
+  - { text: '신진 작가 작품 고르는 5가지 기준', href: '/stories/five-criteria-for-choosing-art' }
   - { text: '지방에서 작업하는 작가들', href: '/stories/regional-artists' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
@@ -35,9 +36,11 @@ note_to_editor: |
   시리즈로 연재 가능. 매월 1~2인 탐방 후 별도 글로 발행.
 ---
 
+_편집자 주: 이 글은 '작업실 탐방' 시리즈의 구성 예시입니다. 특정 작가의 실제 방문을 기록한 것이 아닙니다._
+
 # 작업실 탐방 — 씨앗페 작가들의 하루
 
-[![안은경, 〈돌아보다〉, 장지에 채색, 30x30cm — 한 작가의 장지 작업실에서 태어난 한 점](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/3u7zwr5h3bq_1773042861449__original.webp)](/artworks/f301dfd1-5ae7-4b14-843c-0be7526ff48b)
+[![안은경, 〈돌아보다〉, 장지에 채색, 30x30cm — 한 작가의 장지 작업실에서 태어난 한 점](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/d3e4275b-5baa-4e4d-810a-4051fb142d63/3u7zwr5h3bq_1773042861449__original.webp)](/artworks/f301dfd1-5ae7-4b14-843c-0be7526ff48b)
 
 작품만 보아서는 작가를 안다고 할 수 없습니다. **작품이 만들어진 장소**—작업실—를 보면 작가를 훨씬 깊이 이해할 수 있습니다. 벽에 붙은 참고 이미지, 붓을 꽂아둔 항아리, 책상 위의 책, 바닥에 떨어진 물감 자국이 모두 작가의 언어입니다.
 

@@ -4,8 +4,9 @@ title: 석채의 세계 — 광물에서 화면까지, 천 년 가는 색의 재
 title_en: The World of Stone Pigment (Seokchae) — Korean Mineral Color
 category: art-knowledge
 excerpt: 석채(石彩)는 광물을 갈아 만든 안료. 진사·청금석·공작석으로 그린 색은 천 년이 지나도 변하지 않습니다. 조이락 작가의 〈양귀비〉, 〈황금꽃〉으로 석채의 깊이를 읽습니다.
+excerpt_en: "Seokchae is pigment ground from minerals: cinnabar, lapis lazuli, malachite, colors that stay unchanged for a thousand years. A close read of stone pigment's depth in contemporary Korean painting."
 display_order: 39
-published_at: 2026-09-25
+published_at: '2026-09-25'
 tags:
   - 석채
   - 광물 안료
@@ -18,7 +19,7 @@ meta_description: 석채(石彩) 안료의 모든 것 — 진사·청금석·공
 
 # 석채의 세계
 
-[![조이락, 〈양귀비〉, 한지에 석채, 28x31.5cm — 광물 안료가 만드는 깊은 색](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp)](/artworks/ab5a71c4-71d3-4805-b145-044e0affc717)
+[![조이락, 〈양귀비〉, 한지에 석채, 28x31.5cm — 광물 안료가 만드는 깊은 색](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp)](/artworks/ab5a71c4-71d3-4805-b145-044e0affc717)
 
 색은 시간을 견디지 못합니다. 일반 유화 물감의 합성 안료는 50~150년이 지나면 빛에 의해 분해되고, 디지털 잉크젯 출력은 30~50년 안에 색이 빠집니다. 그런데 천 년이 지나도 변하지 않는 색이 있습니다 — **석채(石彩), 광물을 갈아 만든 안료**입니다.
 
@@ -73,7 +74,7 @@ meta_description: 석채(石彩) 안료의 모든 것 — 진사·청금석·공
 
 ### 〈양귀비〉 — 한지에 석채의 깊이
 
-[![조이락, 〈양귀비〉, 한지에 석채, 28x31.5cm — 광물 안료가 한지 결 위에서 빛난다](https://vqejnuntjnxzpgwfndtv.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp)](/artworks/ab5a71c4-71d3-4805-b145-044e0affc717)
+[![조이락, 〈양귀비〉, 한지에 석채, 28x31.5cm — 광물 안료가 한지 결 위에서 빛난다](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/ac0e10eb-6966-435e-86db-aaaa5410523e/183__original.webp)](/artworks/ab5a71c4-71d3-4805-b145-044e0affc717)
 
 조이락의 〈양귀비〉는 **한지 위에 석채를 입힌** 전통적 한국화 기법의 동시대 작품입니다. 양귀비 꽃잎의 짙은 빨강은 진사 또는 진사 계열 광물의 발색이고, 잎의 짙은 녹색은 공작석·녹청 계열입니다.
 
