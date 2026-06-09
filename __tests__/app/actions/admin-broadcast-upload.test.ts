@@ -59,6 +59,23 @@ describe('uploadEmailBroadcastImage', () => {
     );
   });
 
+  it.each([
+    ['900KB', 900 * 1024],
+    ['1.2MB', Math.ceil(1.2 * 1024 * 1024)],
+  ])('uploads %s images under the 2MB app limit', async (_label, size) => {
+    const formData = new FormData();
+    formData.append('file', new File([new Uint8Array(size)], 'sized.png', { type: 'image/png' }));
+
+    const result = await uploadEmailBroadcastImage(formData);
+
+    expect(result.error).toBeFalsy();
+    expect(uploadMock).toHaveBeenCalledWith(
+      expect.stringMatching(/^email-broadcasts\/admin-1\/.+\.png$/),
+      expect.any(File),
+      expect.objectContaining({ contentType: 'image/png', upsert: false })
+    );
+  });
+
   it('rejects images larger than 2MB', async () => {
     const formData = new FormData();
     const overLimit = new Uint8Array(2 * 1024 * 1024 + 1);
