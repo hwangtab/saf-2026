@@ -44,6 +44,7 @@ import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import ArtworkGalleryWithSort from '@/components/features/ArtworkGalleryWithSort';
 import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
+import SalesArtworkSpotlight from '@/components/features/SalesArtworkSpotlight';
 import MinJoungkiFeature, {
   buildMinJoungkiMetadata,
 } from '@/components/special/master-artists/MinJoungkiFeature';
@@ -290,6 +291,13 @@ const MASTER_ARTIST_FEATURES = {
 type MasterArtistName = keyof typeof MASTER_ARTIST_FEATURES;
 
 const isMasterArtist = (name: string): name is MasterArtistName => name in MASTER_ARTIST_FEATURES;
+const OH_YOON_SALES_PRIORITY = [
+  '45dac49b-e8f2-4aea-8b86-8452dba853c0',
+  'e637bb45-e888-443b-8f2e-8911c79d9ba7',
+  'd17d1423-20f7-4bf6-9611-89a3688280f8',
+  '1cb51984-cc53-49e2-bf93-1eb4e00f780a',
+  '4c920878-32dd-4727-ab03-6eda996597d5',
+] as const;
 
 // force-dynamic 영구 유지 — force-static 환경에서만 발생하는 production-only throw 회귀
 // (류연복·천지윤·송광호·이문호 등). dev mode는 200 정상 응답, force-dynamic도 200, 오직
@@ -545,6 +553,36 @@ async function renderArtistPage({ params }: Props) {
     : localizedDescription;
 
   const pageUrl = buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artistName)}`, locale);
+  const availableArtworks = listArtworks.filter((artwork) => !artwork.sold && !artwork.reserved);
+  const priorityMap = new Map<string, number>(
+    OH_YOON_SALES_PRIORITY.map((id, index) => [id, index])
+  );
+  const featuredSalesArtworks =
+    artistName === '오윤'
+      ? availableArtworks
+          .filter((artwork) => priorityMap.has(artwork.id))
+          .sort((a, b) => (priorityMap.get(a.id) ?? 99) - (priorityMap.get(b.id) ?? 99))
+      : [...availableArtworks]
+          .sort(
+            (a, b) =>
+              (parseArtworkPrice(a.price) ?? Infinity) - (parseArtworkPrice(b.price) ?? Infinity)
+          )
+          .slice(0, 5);
+  const bodyPrices = availableArtworks
+    .map((artwork) => parseArtworkPrice(artwork.price))
+    .filter((price): price is number => price !== null && price > 0);
+  const bodyPriceRange =
+    bodyPrices.length > 0
+      ? {
+          min: Math.min(...bodyPrices),
+          max: Math.max(...bodyPrices),
+        }
+      : null;
+  const formattedBodyPriceRange = bodyPriceRange
+    ? bodyPriceRange.min === bodyPriceRange.max
+      ? `${bodyPriceRange.min.toLocaleString(isEnglish ? 'en-US' : 'ko-KR')} KRW`
+      : `${bodyPriceRange.min.toLocaleString(isEnglish ? 'en-US' : 'ko-KR')}–${bodyPriceRange.max.toLocaleString(isEnglish ? 'en-US' : 'ko-KR')} KRW`
+    : null;
 
   // Person JSON-LD Schema for SEO (enhanced with credentials, expertise, work samples)
   const artistHistory = artistArtworks.find((a) => a.history)?.history;
@@ -838,6 +876,38 @@ async function renderArtistPage({ params }: Props) {
         <Section variant="white" prevVariant="white" className="pt-8 pb-4 md:pt-10 md:pb-6">
           <div className="container-max">
             <ArtistNoticeBanner type={notice.type} message={notice.message} locale={locale} />
+          </div>
+        </Section>
+      )}
+
+      {featuredSalesArtworks.length > 0 && (
+        <Section variant="canvas" prevVariant="white" className="pt-10 pb-12 md:pt-12 md:pb-16">
+          <div className="container-max">
+            <SalesArtworkSpotlight
+              artworks={featuredSalesArtworks}
+              eyebrow={
+                isEnglish
+                  ? `${availableArtworks.length} available works`
+                  : `구매 가능 작품 ${availableArtworks.length}점`
+              }
+              title={
+                isEnglish
+                  ? `Available works by ${formattedName}`
+                  : `${formattedName} 작가의 구매 가능한 작품`
+              }
+              description={
+                formattedBodyPriceRange
+                  ? isEnglish
+                    ? `Browse available works before the full gallery. Current listed price range: ${formattedBodyPriceRange}.`
+                    : `전체 목록을 보기 전, 구매 가능한 작품을 먼저 확인하세요. 현재 가격대는 ${formattedBodyPriceRange}입니다.`
+                  : isEnglish
+                    ? 'Browse available works before the full gallery.'
+                    : '전체 목록을 보기 전, 구매 가능한 작품을 먼저 확인하세요.'
+              }
+              ctaLabel={isEnglish ? 'Browse full artist gallery' : '작가 작품 전체 보기'}
+              allHref={`/artworks/artist/${encodeURIComponent(artistName)}`}
+              source={`artist-page-sales-${artistName}`}
+            />
           </div>
         </Section>
       )}
