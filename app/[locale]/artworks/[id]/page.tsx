@@ -34,7 +34,6 @@ import RelatedArticles from '@/components/features/RelatedArticles';
 import RelatedMagazineCard from '@/components/features/RelatedMagazineCard';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
-import { generateArtworkPurchaseFAQ, generateArtworkSpecificFAQ } from '@/lib/schemas/howto';
 import { getCategoryLabel } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import SupportMessage from '@/components/features/SupportMessage';
@@ -201,6 +200,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
       return da - db;
     })
     .slice(0, 6);
+  const soldAlternativeWorks = [...otherWorks, ...sameCategoryWorks]
+    .filter((candidate) => !candidate.sold && !candidate.reserved)
+    .filter((candidate, index, arr) => arr.findIndex((item) => item.id === candidate.id) === index)
+    .slice(0, 3);
 
   // Get related articles for this artist (static content)
   const relatedArticles = getArticlesByArtist(artwork.artist);
@@ -334,43 +337,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
     }
   );
 
-  const purchaseFaqSchema = generateArtworkPurchaseFAQ(locale);
-  // 작품-특화 FAQ — 제목·작가·매체·크기·가격을 답변에 포함시켜 작품마다 unique한 Q&A.
-  // "{작가명} 작품 가격", "{작품명} 어떤 작품" 같은 롱테일 검색·LLM 인용 흡수.
-  const artworkSpecificFaqSchema = generateArtworkSpecificFAQ(
-    {
-      id: artwork.id,
-      title: artwork.title,
-      title_en: artwork.title_en,
-      artist: artwork.artist,
-      artist_en: artwork.artist_en,
-      material: artwork.material,
-      size: artwork.size,
-      year: artwork.year,
-      price: artwork.price,
-      description: artwork.description,
-      description_en: artwork.description_en,
-      category: artwork.category,
-      sold: artwork.sold,
-    },
-    locale
-  );
-
-  // GSC가 "FAQPage 입력란이 중복되었습니다" 보고(2026-04-26~). Google FAQ Rich Results
-  // 가이드라인: 페이지당 FAQPage 1개만 허용. 두 함수의 mainEntity(Q&A 배열)를 합쳐
-  // 단일 FAQPage로 발행. 두 함수 모두 generateFAQSchema()를 거치는 동일 형식이라
-  // mainEntity concat 안전.
-  const faqSchema =
-    artworkSpecificFaqSchema && Array.isArray(artworkSpecificFaqSchema.mainEntity)
-      ? {
-          ...purchaseFaqSchema,
-          mainEntity: [
-            ...(Array.isArray(purchaseFaqSchema.mainEntity) ? purchaseFaqSchema.mainEntity : []),
-            ...artworkSpecificFaqSchema.mainEntity,
-          ],
-        }
-      : purchaseFaqSchema;
-
   // LCP preload는 ArtworkImage의 <picture>가 자체 fetchPriority="high" + Vercel Edge/Next.js의
   // 자동 preload 인젝션으로 처리. 페이지 레벨에서 별도 <link rel="preload">를 추가하면 같은
   // URL을 두 번 hint하는 형태(production HTML pos 440/707 + pos 7624/7891)가 되어 우선순위
@@ -386,7 +352,6 @@ export default async function ArtworkDetailPage({ params }: Props) {
   return (
     <>
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
-      <JsonLdScript data={faqSchema} />
       <Section
         variant="white"
         prevVariant="canvas"
@@ -461,6 +426,44 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 category={artwork.category ?? undefined}
                 hasSameCategoryWorks={sameCategoryWorks.length > 0}
               />
+
+              {(artwork.sold || artwork.reserved) && soldAlternativeWorks.length > 0 && (
+                <div className="rounded-2xl border border-primary/10 bg-primary-surface p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary-a11y">
+                    {t('alternativeEyebrow')}
+                  </p>
+                  <h2 className="mt-1 text-base font-bold text-charcoal">
+                    {t('alternativeTitle')}
+                  </h2>
+                  <div className="mt-4 space-y-2">
+                    {soldAlternativeWorks.map((candidate) => (
+                      <Link
+                        key={candidate.id}
+                        href={`/artworks/${candidate.id}`}
+                        className="group flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 text-sm shadow-sm transition-colors hover:bg-canvas-soft"
+                      >
+                        <span className="min-w-0">
+                          <span className="block truncate font-bold text-charcoal group-hover:text-primary-strong">
+                            {locale === 'en' && candidate.title_en
+                              ? candidate.title_en
+                              : candidate.title}
+                          </span>
+                          <span className="mt-0.5 block truncate text-xs text-charcoal-muted">
+                            {locale === 'en' && candidate.artist_en
+                              ? candidate.artist_en
+                              : candidate.artist}{' '}
+                            · {candidate.price}
+                          </span>
+                        </span>
+                        <ArrowRight
+                          className="h-4 w-4 shrink-0 text-primary-a11y"
+                          aria-hidden="true"
+                        />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* 위시리스트 — 매뉴얼 7.2 [4] · 10.4 1단계. 모든 작품 상태에서 저장 가능. */}
               <WishlistHeartButton

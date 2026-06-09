@@ -32,6 +32,13 @@ export default async function CommercePanel({ data }: Props) {
     summary.checkoutViews > 0
       ? Math.round((summary.ordersPaid / summary.checkoutViews) * 1000) / 10
       : 0;
+  const slotLabelByKey: Record<string, string> = {
+    story_mid_intent: t('slot_story_mid_intent'),
+    story_bottom_related: t('slot_story_bottom_related'),
+    oh_yoon_hub: t('slot_oh_yoon_hub'),
+    artist_page_sales: t('slot_artist_page_sales'),
+    unknown: t('slot_unknown'),
+  };
 
   return (
     <section className="space-y-6">
@@ -75,6 +82,68 @@ export default async function CommercePanel({ data }: Props) {
             highlight
           />
         </div>
+      </AdminCard>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h3 className="text-base font-semibold text-gray-900">{t('pushCandidatesTitle')}</h3>
+            <p className="mt-1 text-xs text-gray-500">{t('pushCandidatesDesc')}</p>
+          </AdminCardHeader>
+          <PushCandidatesTable
+            data={data.pushCandidates}
+            emptyTitle={t('noFunnelData')}
+            emptyDescription={t('noFunnelDataDesc')}
+            artworkLabel={t('artworkColumn')}
+            reasonLabel={t('reasonColumn')}
+            viewsLabel={t('viewsColumn')}
+            checkoutLabel={t('checkoutColumn')}
+            rateLabel={t('checkoutToPaidRate')}
+            getReasonLabel={(reason) =>
+              reason === 'checkout_leak' ? t('reasonCheckoutLeak') : t('reasonLowCheckout')
+            }
+          />
+        </AdminCard>
+
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h3 className="text-base font-semibold text-gray-900">
+              {t('recommendationSlotsTitle')}
+            </h3>
+            <p className="mt-1 text-xs text-gray-500">{t('recommendationSlotsDesc')}</p>
+          </AdminCardHeader>
+          <RecommendationSlotsTable
+            data={data.recommendationSlots}
+            emptyTitle={t('noRecommendationSlotData')}
+            emptyDescription={t('noRecommendationSlotDataDesc')}
+            slotLabel={t('slotColumn')}
+            clicksLabel={t('clicksColumn')}
+            checkoutLabel={t('checkoutColumn')}
+            paidLabel={t('paidColumn')}
+            revenueLabel={t('revenueColumn')}
+            formatRevenue={(value) => (value > 0 ? krwFormatter.format(value) : '—')}
+            getSlotLabel={(slot) => slotLabelByKey[slot] ?? slot}
+          />
+        </AdminCard>
+      </div>
+
+      <AdminCard className="flex flex-col">
+        <AdminCardHeader className="rounded-t-2xl">
+          <h3 className="text-base font-semibold text-gray-900">{t('checkoutLeakageTitle')}</h3>
+          <p className="mt-1 text-xs text-gray-500">{t('checkoutLeakageDesc')}</p>
+        </AdminCardHeader>
+        <CheckoutLeakageTable
+          data={data.checkoutLeakage}
+          emptyTitle={t('noFunnelData')}
+          emptyDescription={t('noFunnelDataDesc')}
+          segmentLabel={t('segmentColumn')}
+          createdLabel={t('funnelOrdersCreated')}
+          paidLabel={t('paidColumn')}
+          cancelledLabel={t('cancelledOrRefundedColumn')}
+          pendingLabel={t('pendingColumn')}
+          revenueLabel={t('revenueColumn')}
+          formatRevenue={(value) => (value > 0 ? krwFormatter.format(value) : '—')}
+        />
       </AdminCard>
 
       {/* 일별 매출 추이 */}
@@ -232,6 +301,215 @@ function FunnelStat({
         {value}
       </p>
       {sub && <p className="mt-0.5 text-xs text-gray-500">{sub}</p>}
+    </div>
+  );
+}
+
+function PushCandidatesTable({
+  data,
+  emptyTitle,
+  emptyDescription,
+  artworkLabel,
+  reasonLabel,
+  viewsLabel,
+  checkoutLabel,
+  rateLabel,
+  getReasonLabel,
+}: {
+  data: AnalyticsData['commerce']['pushCandidates'];
+  emptyTitle: string;
+  emptyDescription: string;
+  artworkLabel: string;
+  reasonLabel: string;
+  viewsLabel: string;
+  checkoutLabel: string;
+  rateLabel: string;
+  getReasonLabel: (reason: AnalyticsData['commerce']['pushCandidates'][number]['reason']) => string;
+}) {
+  if (data.length === 0) {
+    return <AdminEmptyState title={emptyTitle} description={emptyDescription} />;
+  }
+  const numberFormatter = new Intl.NumberFormat();
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left text-sm">
+        <thead>
+          <tr className="border-b border-gray-100">
+            <th className="px-6 py-3 font-medium text-gray-500">{artworkLabel}</th>
+            <th className="px-6 py-3 font-medium text-gray-500">{reasonLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{viewsLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{checkoutLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{rateLabel}</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-50">
+          {data.map((row) => (
+            <tr
+              key={`${row.artworkId}-${row.reason}`}
+              className="transition-colors hover:bg-gray-50"
+            >
+              <td className="px-6 py-3 max-w-[260px]">
+                <a
+                  href={`/artworks/${row.artworkId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block hover:underline"
+                >
+                  <div className="font-medium text-gray-900 line-clamp-2">
+                    {row.artworkTitle || row.artworkId}
+                  </div>
+                  {row.artist && <div className="mt-0.5 text-xs text-gray-500">{row.artist}</div>}
+                </a>
+              </td>
+              <td className="px-6 py-3 text-gray-700">{getReasonLabel(row.reason)}</td>
+              <td className="px-6 py-3 text-right tabular-nums text-gray-900">
+                {numberFormatter.format(row.views)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-gray-900">
+                {numberFormatter.format(row.checkoutViews)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-danger-a11y">
+                {row.reason === 'checkout_leak'
+                  ? `${row.checkoutToPaidRate}%`
+                  : `${row.viewToCheckoutRate}%`}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function RecommendationSlotsTable({
+  data,
+  emptyTitle,
+  emptyDescription,
+  slotLabel,
+  clicksLabel,
+  checkoutLabel,
+  paidLabel,
+  revenueLabel,
+  formatRevenue,
+  getSlotLabel,
+}: {
+  data: AnalyticsData['commerce']['recommendationSlots'];
+  emptyTitle: string;
+  emptyDescription: string;
+  slotLabel: string;
+  clicksLabel: string;
+  checkoutLabel: string;
+  paidLabel: string;
+  revenueLabel: string;
+  formatRevenue: (value: number) => string;
+  getSlotLabel: (slot: string) => string;
+}) {
+  if (data.length === 0) {
+    return <AdminEmptyState title={emptyTitle} description={emptyDescription} />;
+  }
+  const numberFormatter = new Intl.NumberFormat();
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left text-sm">
+        <thead>
+          <tr className="border-b border-gray-100">
+            <th className="px-6 py-3 font-medium text-gray-500">{slotLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{clicksLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{checkoutLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{paidLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{revenueLabel}</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-50">
+          {data.map((row) => (
+            <tr key={row.slot} className="transition-colors hover:bg-gray-50">
+              <td className="px-6 py-3">
+                <div className="font-medium text-gray-900">{getSlotLabel(row.slot)}</div>
+                <div className="mt-0.5 text-xs text-gray-500">{row.slot}</div>
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-gray-900">
+                {numberFormatter.format(row.clicks)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-gray-900">
+                {numberFormatter.format(row.checkoutViews)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-gray-900">
+                {numberFormatter.format(row.ordersPaid)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums font-medium text-gray-900">
+                {formatRevenue(row.revenue)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function CheckoutLeakageTable({
+  data,
+  emptyTitle,
+  emptyDescription,
+  segmentLabel,
+  createdLabel,
+  paidLabel,
+  cancelledLabel,
+  pendingLabel,
+  revenueLabel,
+  formatRevenue,
+}: {
+  data: AnalyticsData['commerce']['checkoutLeakage'];
+  emptyTitle: string;
+  emptyDescription: string;
+  segmentLabel: string;
+  createdLabel: string;
+  paidLabel: string;
+  cancelledLabel: string;
+  pendingLabel: string;
+  revenueLabel: string;
+  formatRevenue: (value: number) => string;
+}) {
+  if (data.length === 0) {
+    return <AdminEmptyState title={emptyTitle} description={emptyDescription} />;
+  }
+  const numberFormatter = new Intl.NumberFormat();
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left text-sm">
+        <thead>
+          <tr className="border-b border-gray-100">
+            <th className="px-6 py-3 font-medium text-gray-500">{segmentLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{createdLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{paidLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{cancelledLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{pendingLabel}</th>
+            <th className="px-6 py-3 text-right font-medium text-gray-500">{revenueLabel}</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-50">
+          {data.map((row) => (
+            <tr key={row.segment} className="transition-colors hover:bg-gray-50">
+              <td className="px-6 py-3 font-medium text-gray-900">{row.segment}</td>
+              <td className="px-6 py-3 text-right tabular-nums text-gray-900">
+                {numberFormatter.format(row.ordersCreated)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-success-a11y">
+                {numberFormatter.format(row.ordersPaid)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-danger-a11y">
+                {numberFormatter.format(row.cancelledOrRefunded)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums text-gray-700">
+                {numberFormatter.format(row.pending)}
+              </td>
+              <td className="px-6 py-3 text-right tabular-nums font-medium text-gray-900">
+                {formatRevenue(row.revenue)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

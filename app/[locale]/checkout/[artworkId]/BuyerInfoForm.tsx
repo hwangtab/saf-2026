@@ -140,9 +140,6 @@ const BuyerInfoForm = forwardRef<
 
       if (!form.shippingAddress.trim()) next.shippingAddress = t('errorFieldAddress');
       if (!form.shippingPostalCode.trim()) next.shippingPostalCode = t('errorFieldPostal');
-      if (!form.shippingAddressDetail.trim())
-        next.shippingAddressDetail = t('errorFieldAddressDetail');
-
       setErrors(next);
 
       const firstErrorKey = (Object.keys(next) as (keyof FormState)[]).find((k) => next[k]);
@@ -230,7 +227,12 @@ const BuyerInfoForm = forwardRef<
 
       {/* 구매자 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-charcoal">{t('buyerInfo')}</h3>
+        <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-charcoal">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary-a11y">
+            1
+          </span>
+          {t('buyerInfo')}
+        </h3>
         <div className="space-y-4">
           <div>
             <label htmlFor="checkout-buyer-name" className={labelClass}>
@@ -292,7 +294,12 @@ const BuyerInfoForm = forwardRef<
 
       {/* 배송지 정보 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-base font-semibold text-charcoal">{t('shippingInfo')}</h3>
+        <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-charcoal">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary-a11y">
+            2
+          </span>
+          {t('shippingInfo')}
+        </h3>
 
         <label className="mb-4 flex cursor-pointer items-center gap-2 text-sm text-charcoal">
           <input
@@ -427,7 +434,8 @@ const BuyerInfoForm = forwardRef<
 
           <div>
             <label htmlFor="checkout-shipping-detail" className={labelClass}>
-              {t('shippingAddressDetail')} <span className="text-danger">*</span>
+              {t('shippingAddressDetail')}{' '}
+              <span className="font-normal text-charcoal-soft">{t('optionalField')}</span>
             </label>
             <input
               id="checkout-shipping-detail"
@@ -442,11 +450,12 @@ const BuyerInfoForm = forwardRef<
               onChange={handleChange('shippingAddressDetail')}
               onFocus={(e) => e.currentTarget.setAttribute('lang', langAttr)}
               aria-invalid={!!errors.shippingAddressDetail}
-              aria-describedby={
-                errors.shippingAddressDetail ? 'err-checkout-shipping-detail' : undefined
-              }
+              aria-describedby="hint-checkout-shipping-detail"
               placeholder={t('placeholderAddressDetail')}
             />
+            <p id="hint-checkout-shipping-detail" className="mt-1 text-xs text-charcoal-soft">
+              {t('addressDetailOptionalHint')}
+            </p>
             <FieldError msg={errors.shippingAddressDetail} id="err-checkout-shipping-detail" />
           </div>
 

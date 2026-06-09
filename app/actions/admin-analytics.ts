@@ -83,6 +83,33 @@ export type AnalyticsData = {
       viewToCheckoutRate: number;
       checkoutToPaidRate: number;
     }>;
+    pushCandidates: Array<{
+      artworkId: string;
+      artworkTitle: string | null;
+      artist: string;
+      reason: 'high_views_low_checkout' | 'checkout_leak';
+      views: number;
+      checkoutViews: number;
+      ordersPaid: number;
+      viewToCheckoutRate: number;
+      checkoutToPaidRate: number;
+    }>;
+    recommendationSlots: Array<{
+      slot: string;
+      clicks: number;
+      uniqueClickers: number;
+      checkoutViews: number;
+      ordersPaid: number;
+      revenue: number;
+    }>;
+    checkoutLeakage: Array<{
+      segment: string;
+      ordersCreated: number;
+      ordersPaid: number;
+      cancelledOrRefunded: number;
+      pending: number;
+      revenue: number;
+    }>;
     revenueDailyTrend: Array<{
       date: string;
       ordersPaid: number;
@@ -434,6 +461,28 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     revenue: number;
     view_to_checkout_rate: number;
     checkout_to_paid_rate: number;
+  };
+  type RecommendationEventRow = {
+    device_id: string | null;
+    event_name: string | null;
+    event_data: {
+      source?: string | null;
+      placement?: string | null;
+      artwork_id?: string | null;
+      price_band?: string | null;
+      payment_type?: string | null;
+    } | null;
+  };
+  type RecentOrderRow = {
+    artwork_id: string | null;
+    status: string | null;
+    paid_at: string | null;
+    total_amount: number | null;
+    metadata: {
+      payment_provider?: string | null;
+      payment_method?: string | null;
+      method?: string | null;
+    } | null;
   };
   type RevenueTrendRow = {
     day: string;
@@ -950,16 +999,41 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     ])
   );
 
-  const [storyMetaRes, artworkMetaRes] = await Promise.all([
-    storySlugs.length > 0
-      ? supabase.from('stories').select('slug, title').in('slug', storySlugs)
-      : Promise.resolve({ data: [] as Array<{ slug: string; title: string }> }),
-    artworkIds.length > 0
-      ? supabase.from('artworks').select('id, title, artists(name_ko)').in('id', artworkIds)
-      : Promise.resolve({
-          data: [] as Array<{ id: string; title: string; artists: { name_ko: string } | null }>,
-        }),
-  ]);
+  const [storyMetaRes, artworkMetaRes, recommendationEventsRes, recentOrdersRes] =
+    await Promise.all([
+      storySlugs.length > 0
+        ? supabase.from('stories').select('slug, title').in('slug', storySlugs)
+        : Promise.resolve({ data: [] as Array<{ slug: string; title: string }> }),
+      artworkIds.length > 0
+        ? supabase
+            .from('artworks')
+            .select('id, title, price, status, artists(name_ko)')
+            .in('id', artworkIds)
+        : Promise.resolve({
+            data: [] as Array<{
+              id: string;
+              title: string;
+              price: string | null;
+              status: string | null;
+              artists: { name_ko: string } | null;
+            }>,
+          }),
+      supabase
+        .from('page_views')
+        .select('device_id, event_name, event_data')
+        .gte('event_timestamp', sinceTs)
+        .in('event_name', [
+          'story_to_artwork_click',
+          'sales_artwork_spotlight_click',
+          'sales_artwork_spotlight_all_click',
+        ])
+        .limit(1000),
+      supabase
+        .from('orders')
+        .select('artwork_id, status, paid_at, total_amount, metadata')
+        .gte('created_at', sinceTs)
+        .limit(500),
+    ]);
 
   const storyTitleByslug = new Map<string, string>();
   if (Array.isArray(storyMetaRes.data)) {
@@ -967,20 +1041,140 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       if (s?.slug && s?.title) storyTitleByslug.set(s.slug, s.title);
     }
   }
-  const artworkMetaById = new Map<string, { title: string; artist: string }>();
+  const artworkMetaById = new Map<
+    string,
+    { title: string; artist: string; price: string | null; status: string | null }
+  >();
   if (Array.isArray(artworkMetaRes.data)) {
     for (const a of artworkMetaRes.data as Array<{
       id: string;
       title: string;
+      price: string | null;
+      status: string | null;
       artists: { name_ko: string } | null;
     }>) {
       if (a?.id) {
         artworkMetaById.set(a.id, {
           title: a.title ?? '',
           artist: a.artists?.name_ko ?? '',
+          price: a.price ?? null,
+          status: a.status ?? null,
         });
       }
     }
+  }
+
+  if (recommendationEventsRes.error) {
+    console.error(
+      '[admin-analytics] recommendation event query failed:',
+      recommendationEventsRes.error
+    );
+  }
+  if (recentOrdersRes.error) {
+    console.error('[admin-analytics] recent orders query failed:', recentOrdersRes.error);
+  }
+
+  const recommendationEvents = Array.isArray(recommendationEventsRes.data)
+    ? (recommendationEventsRes.data as RecommendationEventRow[])
+    : [];
+  const recentOrders = Array.isArray(recentOrdersRes.data)
+    ? (recentOrdersRes.data as RecentOrderRow[])
+    : [];
+
+  const extraArtworkIds = Array.from(
+    new Set([
+      ...recommendationEvents
+        .map((row) => row.event_data?.artwork_id)
+        .filter((id): id is string => Boolean(id))
+        .filter((id) => !artworkMetaById.has(id)),
+      ...recentOrders
+        .map((row) => row.artwork_id)
+        .filter((id): id is string => Boolean(id))
+        .filter((id) => !artworkMetaById.has(id)),
+    ])
+  );
+  if (extraArtworkIds.length > 0) {
+    const extraArtworkMetaRes = await supabase
+      .from('artworks')
+      .select('id, title, price, status, artists(name_ko)')
+      .in('id', extraArtworkIds);
+    if (extraArtworkMetaRes.error) {
+      console.error(
+        '[admin-analytics] extra artwork metadata query failed:',
+        extraArtworkMetaRes.error
+      );
+    }
+    if (Array.isArray(extraArtworkMetaRes.data)) {
+      for (const a of extraArtworkMetaRes.data as Array<{
+        id: string;
+        title: string;
+        price: string | null;
+        status: string | null;
+        artists: { name_ko: string } | null;
+      }>) {
+        if (a?.id) {
+          artworkMetaById.set(a.id, {
+            title: a.title ?? '',
+            artist: a.artists?.name_ko ?? '',
+            price: a.price ?? null,
+            status: a.status ?? null,
+          });
+        }
+      }
+    }
+  }
+
+  function isRevenueOrder(status: string | null, paidAt: string | null): boolean {
+    return (
+      Boolean(paidAt) &&
+      !['cancelled', 'refunded', 'refund_requested'].includes(String(status ?? ''))
+    );
+  }
+
+  function getPriceBand(price: string | number | null | undefined): string {
+    const numeric = Number(String(price ?? '').replace(/[^\d]/g, ''));
+    if (!Number.isFinite(numeric) || numeric <= 0) return 'inquiry';
+    if (numeric < 500_000) return 'under_500k';
+    if (numeric < 1_000_000) return '500k_1m';
+    if (numeric < 3_000_000) return '1m_3m';
+    if (numeric < 10_000_000) return '3m_10m';
+    return 'over_10m';
+  }
+
+  function getRecommendationSlot(row: RecommendationEventRow): string {
+    const data = row.event_data ?? {};
+    const placement = data.placement ?? '';
+    const source = data.source ?? '';
+    if (placement === 'story_mid_intent') return 'story_mid_intent';
+    if (placement === 'story_bottom_related') return 'story_bottom_related';
+    if (source.includes('oh-yoon') || source.includes('오윤')) return 'oh_yoon_hub';
+    if (source.startsWith('artist-page-sales')) return 'artist_page_sales';
+    return placement || source || 'unknown';
+  }
+
+  const orderSummaryByArtwork = new Map<
+    string,
+    { created: number; paid: number; revenue: number; cancelledOrRefunded: number; pending: number }
+  >();
+  for (const order of recentOrders) {
+    if (!order.artwork_id) continue;
+    const current = orderSummaryByArtwork.get(order.artwork_id) ?? {
+      created: 0,
+      paid: 0,
+      revenue: 0,
+      cancelledOrRefunded: 0,
+      pending: 0,
+    };
+    current.created += 1;
+    if (isRevenueOrder(order.status, order.paid_at)) {
+      current.paid += 1;
+      current.revenue += Number(order.total_amount ?? 0);
+    } else if (['cancelled', 'refunded', 'refund_requested'].includes(String(order.status ?? ''))) {
+      current.cancelledOrRefunded += 1;
+    } else {
+      current.pending += 1;
+    }
+    orderSummaryByArtwork.set(order.artwork_id, current);
   }
 
   const crossLinks: AnalyticsData['crossLinks'] = {
@@ -1100,6 +1294,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
           };
         })
       : [],
+    pushCandidates: [],
+    recommendationSlots: [],
+    checkoutLeakage: [],
     revenueDailyTrend: Array.isArray(revenueTrendRes.data)
       ? revenueTrendRes.data.map((row) => ({
           date: row.day,
@@ -1108,6 +1305,127 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
         }))
       : [],
   };
+
+  const funnelByArtwork = new Map(commerce.topArtworkFunnel.map((row) => [row.artworkId, row]));
+  commerce.pushCandidates = commerce.topArtworkFunnel
+    .filter((row) => {
+      const meta = artworkMetaById.get(row.artworkId);
+      const isAvailable = !meta?.status || meta.status === 'available';
+      if (!isAvailable || row.ordersPaid > 0) return false;
+      return (
+        (row.views >= 10 && row.viewToCheckoutRate < 3) ||
+        (row.checkoutViews > 0 && row.checkoutToPaidRate < 15)
+      );
+    })
+    .map((row) => ({
+      artworkId: row.artworkId,
+      artworkTitle: row.artworkTitle,
+      artist: row.artist,
+      reason:
+        row.checkoutViews > 0 && row.checkoutToPaidRate < 15
+          ? ('checkout_leak' as const)
+          : ('high_views_low_checkout' as const),
+      views: row.views,
+      checkoutViews: row.checkoutViews,
+      ordersPaid: row.ordersPaid,
+      viewToCheckoutRate: row.viewToCheckoutRate,
+      checkoutToPaidRate: row.checkoutToPaidRate,
+    }))
+    .sort((a, b) => b.checkoutViews - a.checkoutViews || b.views - a.views)
+    .slice(0, 10);
+
+  const slotMap = new Map<
+    string,
+    {
+      clickers: Set<string>;
+      clicks: number;
+      artworkIds: Set<string>;
+    }
+  >();
+  for (const event of recommendationEvents) {
+    if (
+      event.event_name !== 'story_to_artwork_click' &&
+      event.event_name !== 'sales_artwork_spotlight_click'
+    ) {
+      continue;
+    }
+    const slot = getRecommendationSlot(event);
+    const current = slotMap.get(slot) ?? {
+      clickers: new Set<string>(),
+      clicks: 0,
+      artworkIds: new Set<string>(),
+    };
+    current.clicks += 1;
+    if (event.device_id) current.clickers.add(event.device_id);
+    if (event.event_data?.artwork_id) current.artworkIds.add(event.event_data.artwork_id);
+    slotMap.set(slot, current);
+  }
+  commerce.recommendationSlots = Array.from(slotMap.entries())
+    .map(([slot, row]) => {
+      let checkoutViews = 0;
+      let ordersPaid = 0;
+      let revenue = 0;
+      for (const artworkId of row.artworkIds) {
+        const funnel = funnelByArtwork.get(artworkId);
+        const orders = orderSummaryByArtwork.get(artworkId);
+        checkoutViews += funnel?.checkoutViews ?? 0;
+        ordersPaid += orders?.paid ?? funnel?.ordersPaid ?? 0;
+        revenue += orders?.revenue ?? funnel?.revenue ?? 0;
+      }
+      return {
+        slot,
+        clicks: row.clicks,
+        uniqueClickers: row.clickers.size,
+        checkoutViews,
+        ordersPaid,
+        revenue,
+      };
+    })
+    .sort((a, b) => b.clicks - a.clicks)
+    .slice(0, 10);
+
+  const leakageMap = new Map<
+    string,
+    {
+      ordersCreated: number;
+      ordersPaid: number;
+      cancelledOrRefunded: number;
+      pending: number;
+      revenue: number;
+    }
+  >();
+  for (const order of recentOrders) {
+    const provider =
+      order.metadata?.payment_provider ??
+      order.metadata?.payment_method ??
+      order.metadata?.method ??
+      'unknown';
+    const priceBand = getPriceBand(
+      order.artwork_id ? artworkMetaById.get(order.artwork_id)?.price : null
+    );
+    const segment = `${provider} · ${priceBand}`;
+    const current = leakageMap.get(segment) ?? {
+      ordersCreated: 0,
+      ordersPaid: 0,
+      cancelledOrRefunded: 0,
+      pending: 0,
+      revenue: 0,
+    };
+    current.ordersCreated += 1;
+    if (isRevenueOrder(order.status, order.paid_at)) {
+      current.ordersPaid += 1;
+      current.revenue += Number(order.total_amount ?? 0);
+    } else if (['cancelled', 'refunded', 'refund_requested'].includes(String(order.status ?? ''))) {
+      current.cancelledOrRefunded += 1;
+    } else {
+      current.pending += 1;
+    }
+    leakageMap.set(segment, current);
+  }
+  commerce.checkoutLeakage = Array.from(leakageMap.entries())
+    .map(([segment, row]) => ({ segment, ...row }))
+    .sort((a, b) => b.ordersCreated - a.ordersCreated)
+    .slice(0, 10);
 
   // Phase C: 작가/매거진 attribution
   const attribution: AnalyticsData['attribution'] = {
