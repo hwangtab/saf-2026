@@ -30,7 +30,6 @@ export interface BroadcastEmailProps {
 export default function BroadcastEmail({
   channel: _channel,
   isAdvertisement,
-  recipientName,
   subject,
   bodyHtml,
   ctaLabel,
@@ -49,15 +48,6 @@ export default function BroadcastEmail({
         ? `(광고) ${subject}`
         : subject;
 
-  const greeting =
-    locale === 'en'
-      ? recipientName
-        ? `Dear ${recipientName},`
-        : 'Hello,'
-      : recipientName
-        ? `${recipientName}님,`
-        : '안녕하세요,';
-
   const unsubscribeText =
     locale === 'en' ? 'Unsubscribe from this mailing list' : '이메일 수신거부 및 구독취소';
 
@@ -71,8 +61,6 @@ export default function BroadcastEmail({
       previewText={headerTitle}
       locale={locale}
     >
-      <Text style={greetingText}>{greeting}</Text>
-
       <div dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
       {/* CTA URL은 admin-broadcast.ts의 validateUrl이 이미 검증하지만, 향후 DB 직접 수정/마이그레이션
@@ -144,13 +132,6 @@ export default function BroadcastEmail({
     </SAFEmailLayout>
   );
 }
-
-const greetingText: React.CSSProperties = {
-  margin: '0 0 16px',
-  fontSize: '15px',
-  fontWeight: 500,
-  color: '#1F2428',
-};
 
 const ctaWrapperStyle: React.CSSProperties = {
   margin: '24px 0 8px',

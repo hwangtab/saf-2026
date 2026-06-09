@@ -80,6 +80,16 @@ describe('BroadcastComposer', () => {
     expect(subject.value).toContain('전시 일정');
   });
 
+  it('미리보기에서 작성하지 않은 가짜 수신자 인사말을 넣지 않는다', async () => {
+    await renderComposer();
+
+    fireEvent.change(screen.getByLabelText('제목'), { target: { value: '테스트 해봐요' } });
+    fireEvent.change(screen.getByLabelText('본문'), { target: { value: '<p>보내봅니다</p>' } });
+
+    expect(screen.getByText('보내봅니다')).toBeInTheDocument();
+    expect(screen.queryByText('○○○님,')).not.toBeInTheDocument();
+  });
+
   it('직접 지정에서 명단에 없는 이메일을 추가할 수 있다', async () => {
     await renderComposer();
 

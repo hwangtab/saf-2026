@@ -25,6 +25,20 @@ const base = {
 };
 
 describe('BroadcastEmail isAdvertisement', () => {
+  it('does not inject an automatic greeting outside the rich body', async () => {
+    const html = await render(
+      React.createElement(BroadcastEmail, {
+        ...base,
+        channel: 'individual',
+        isAdvertisement: false,
+        bodyHtml: '<p>보내봅니다</p>',
+      })
+    );
+
+    expect(html).toContain('보내봅니다');
+    expect(html).not.toContain('홍길동님,');
+  });
+
   it('isAdvertisement=true면 헤더에 (광고) 접두어와 발송사 정보를 넣는다', async () => {
     const html = await render(
       React.createElement(BroadcastEmail, { ...base, channel: 'individual', isAdvertisement: true })
