@@ -1,5 +1,6 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getBroadcasts } from '@/app/actions/admin-broadcast';
+import { getInboundMessages } from '@/app/actions/admin-email-inbound';
 import {
   AdminPageHeader,
   AdminPageTitle,
@@ -7,10 +8,11 @@ import {
 } from '@/app/(portal)/admin/_components/admin-ui';
 import { BroadcastComposer } from './_components/BroadcastComposer';
 import { BroadcastHistory } from './_components/BroadcastHistory';
+import { InboundMessages } from './_components/InboundMessages';
 
 export default async function AdminEmailPage() {
   await requireAdmin();
-  const broadcasts = await getBroadcasts();
+  const [broadcasts, inboundMessages] = await Promise.all([getBroadcasts(), getInboundMessages()]);
 
   return (
     <div className="space-y-8">
@@ -27,6 +29,11 @@ export default async function AdminEmailPage() {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-charcoal-deep">발송 이력</h2>
         <BroadcastHistory initial={broadcasts} />
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-charcoal-deep">받은 회신</h2>
+        <InboundMessages initial={inboundMessages} />
       </section>
     </div>
   );

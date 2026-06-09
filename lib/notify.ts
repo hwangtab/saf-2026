@@ -19,6 +19,7 @@ import RefundedEmail from '@/emails/refunded';
 import AutoCancelledEmail from '@/emails/auto-cancelled';
 import type { EmailLocale } from '@/emails/_components/i18n';
 import { signOrderAccessToken } from '@/lib/email/order-access-token';
+import { buildReplyToAddress } from '@/lib/email/inbound';
 
 type NotifyLevel = 'payment' | 'warning' | 'error' | 'info';
 
@@ -310,7 +311,14 @@ export async function sendBuyerEmail(
 
     const html = await render(emailElement);
     await resendFetch(
-      { apiKey, from, to, subject: BUYER_EMAIL_SUBJECTS[locale][type], html },
+      {
+        apiKey,
+        from,
+        to,
+        subject: BUYER_EMAIL_SUBJECTS[locale][type],
+        html,
+        reply_to: buildReplyToAddress(),
+      },
       `[buyer-email:${type}:${locale}]`
     );
   } catch (err) {
@@ -355,14 +363,28 @@ export async function sendArtistApprovalEmail(to: string, artistName: string): P
 
   // 작가 승인 이메일은 관리자가 명시적으로 발송하는 액션 — 실패 시 throw해서 감사 로그에 허위 성공 기록 방지
   const ok = await resendFetch(
-    { apiKey, from, to, subject: '[씨앗페] 작가 대시보드 이용 안내', html },
+    {
+      apiKey,
+      from,
+      to,
+      subject: '[씨앗페] 작가 대시보드 이용 안내',
+      html,
+      reply_to: buildReplyToAddress(),
+    },
     '[artist-approval]'
   );
   if (!ok) throw new Error('이메일 발송에 실패했습니다. Resend API 응답을 확인하세요.');
 }
 
 async function resendFetch(
-  opts: { apiKey: string; from: string; to: string | string[]; subject: string; html: string },
+  opts: {
+    apiKey: string;
+    from: string;
+    to: string | string[];
+    subject: string;
+    html: string;
+    reply_to?: string;
+  },
   logPrefix: string
 ): Promise<boolean> {
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -381,6 +403,7 @@ async function resendFetch(
           to: opts.to,
           subject: opts.subject,
           html: opts.html,
+          ...(opts.reply_to ? { reply_to: opts.reply_to } : {}),
         }),
         signal: controller.signal,
       });

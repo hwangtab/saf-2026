@@ -8,6 +8,7 @@ import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { hashEmail, PETITION_SALT } from '@/lib/email/email-hash';
 import { sendBatch } from '@/lib/email/resend-batch';
+import { buildReplyFromAddress, buildReplyToAddress } from '@/lib/email/inbound';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { splitAndPersonalize } from '@/lib/email/broadcast-body';
 import { ArtworkBuyerAudienceResolver } from '@/lib/email/audiences/artwork-buyer';
@@ -388,7 +389,7 @@ export async function searchBroadcastArtworks(
 }
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com';
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? '씨앗페 <noreply@saf2026.com>';
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? buildReplyFromAddress();
 
 export async function enqueueIndividualBroadcast(input: {
   recipients: Array<{ email: string; name: string | null }>;
@@ -563,7 +564,9 @@ export async function sendTestEmail(input: {
   const subject = input.isAdvertisement
     ? `(광고) [테스트] ${input.subject}`
     : `[테스트] ${input.subject}`;
-  const result = await sendBatch([{ from: FROM_EMAIL, to, subject, html }]);
+  const result = await sendBatch([
+    { from: FROM_EMAIL, to, subject, html, reply_to: buildReplyToAddress() },
+  ]);
   if (result.error || result.ids.length === 0) {
     return { message: `테스트 발송 실패: ${result.error ?? '알 수 없는 오류'}`, error: true };
   }

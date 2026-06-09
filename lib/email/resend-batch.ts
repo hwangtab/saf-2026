@@ -9,6 +9,7 @@ export interface BatchEmailItem {
   to: string;
   subject: string;
   html: string;
+  reply_to?: string;
   // 선택: List-Unsubscribe 등 메일 헤더(원클릭 수신거부). Resend가 그대로 전달.
   headers?: Record<string, string>;
 }

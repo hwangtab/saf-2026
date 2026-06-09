@@ -5,6 +5,7 @@ import * as React from 'react';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { sendBatch, buildBatchIdempotencyKey } from '@/lib/email/resend-batch';
+import { buildReplyFromAddress, buildReplyToAddress } from '@/lib/email/inbound';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { hashEmail } from '@/lib/email/email-hash';
 import BroadcastEmail from '@/emails/broadcast';
@@ -17,7 +18,7 @@ const CHUNK_SIZE = 100;
 const THROTTLE_MS = 500;
 const LEASE_SECONDS = 120; // 청크당 시간(~5s)보다 충분히 커서 발송 중 만료 없음; run 사망 시 2분 후 resume
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com';
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'noreply@saf2026.com';
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? buildReplyFromAddress();
 
 export async function GET(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
@@ -174,7 +175,14 @@ export async function GET(request: NextRequest) {
               }
             : undefined;
 
-          return { from: FROM_EMAIL, to: r.email, subject, html, headers };
+          return {
+            from: FROM_EMAIL,
+            to: r.email,
+            subject,
+            html,
+            reply_to: buildReplyToAddress(r.id),
+            headers,
+          };
         })
       );
 

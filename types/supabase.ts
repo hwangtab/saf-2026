@@ -737,6 +737,90 @@ export type Database = {
           },
         ];
       };
+      email_inbound_messages: {
+        Row: {
+          attachments: Json;
+          cc_emails: string[];
+          created_at: string;
+          from_email: string | null;
+          headers: Json;
+          html_body: string | null;
+          id: string;
+          in_reply_to: string | null;
+          matched_broadcast_recipient_id: string | null;
+          message_id: string | null;
+          received_at: string;
+          references_header: string | null;
+          replied_at: string | null;
+          replied_by: string | null;
+          reply_resend_id: string | null;
+          resend_email_id: string;
+          status: string;
+          subject: string | null;
+          text_body: string | null;
+          to_emails: string[];
+        };
+        Insert: {
+          attachments?: Json;
+          cc_emails?: string[];
+          created_at?: string;
+          from_email?: string | null;
+          headers?: Json;
+          html_body?: string | null;
+          id?: string;
+          in_reply_to?: string | null;
+          matched_broadcast_recipient_id?: string | null;
+          message_id?: string | null;
+          received_at?: string;
+          references_header?: string | null;
+          replied_at?: string | null;
+          replied_by?: string | null;
+          reply_resend_id?: string | null;
+          resend_email_id: string;
+          status?: string;
+          subject?: string | null;
+          text_body?: string | null;
+          to_emails?: string[];
+        };
+        Update: {
+          attachments?: Json;
+          cc_emails?: string[];
+          created_at?: string;
+          from_email?: string | null;
+          headers?: Json;
+          html_body?: string | null;
+          id?: string;
+          in_reply_to?: string | null;
+          matched_broadcast_recipient_id?: string | null;
+          message_id?: string | null;
+          received_at?: string;
+          references_header?: string | null;
+          replied_at?: string | null;
+          replied_by?: string | null;
+          reply_resend_id?: string | null;
+          resend_email_id?: string;
+          status?: string;
+          subject?: string | null;
+          text_body?: string | null;
+          to_emails?: string[];
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'email_inbound_messages_matched_broadcast_recipient_id_fkey';
+            columns: ['matched_broadcast_recipient_id'];
+            isOneToOne: false;
+            referencedRelation: 'email_broadcast_recipients';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'email_inbound_messages_replied_by_fkey';
+            columns: ['replied_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       email_suppressions: {
         Row: {
           channel: string;

@@ -6,9 +6,20 @@ export type ResendWebhookEvent = {
   created_at?: string;
   data: {
     email_id?: string;
+    created_at?: string;
     to?: string[] | string;
+    cc?: string[] | string;
+    bcc?: string[] | string;
     from?: string;
     subject?: string;
+    message_id?: string;
+    attachments?: Array<{
+      id?: string;
+      filename?: string;
+      content_type?: string;
+      content_disposition?: string | null;
+      content_id?: string | null;
+    }>;
     bounce?: { type?: string; subType?: string; message?: string };
   };
 };

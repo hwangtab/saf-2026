@@ -8,6 +8,7 @@ import {
   extractRecipientEmail,
   isSuppressibleBounce,
 } from '@/lib/email/resend-webhook';
+import { notifyInboundEmail, processInboundEmail } from '@/lib/email/inbound';
 
 export const runtime = 'nodejs';
 
@@ -45,9 +46,10 @@ export async function POST(req: NextRequest) {
 
   const isComplaint = event.type === 'email.complained';
   const isBounce = event.type === 'email.bounced';
+  const isReceived = event.type === 'email.received';
 
   // 관심 없는 이벤트(delivered/opened 등)는 200으로 ack — Resend 재시도 방지.
-  if (!isComplaint && !isBounce) {
+  if (!isComplaint && !isBounce && !isReceived) {
     return NextResponse.json({ ok: true, ignored: event.type });
   }
 
@@ -65,6 +67,19 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error('[resend-webhook] missing supabase config:', err);
     return NextResponse.json({ error: 'Server config error' }, { status: 500 });
+  }
+
+  if (isReceived) {
+    try {
+      const inbound = await processInboundEmail(event, supabase);
+      await notifyInboundEmail(event, inbound.id).catch((err) => {
+        console.error('[resend-webhook] inbound notify failed:', err);
+      });
+      return NextResponse.json({ ok: true, inbound_id: inbound.id });
+    } catch (err) {
+      console.error('[resend-webhook] inbound processing failed:', err);
+      return NextResponse.json({ error: 'Inbound processing failed' }, { status: 500 });
+    }
   }
 
   let email = extractRecipientEmail(event);

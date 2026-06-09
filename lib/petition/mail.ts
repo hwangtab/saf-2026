@@ -10,7 +10,7 @@
  */
 
 import { BRAND_COLORS } from '@/lib/colors';
-import { CONTACT } from '@/lib/constants';
+import { buildReplyFromAddress, buildReplyToAddress } from '@/lib/email/inbound';
 import { formatPetitionDeadline } from './format';
 
 interface SendReceiptParams {
@@ -26,7 +26,7 @@ interface SendResult {
   error?: string;
 }
 
-const DEFAULT_FROM = '씨앗페 <noreply@saf2026.com>';
+const DEFAULT_FROM = buildReplyFromAddress();
 
 export async function sendPetitionReceipt({
   to,
@@ -51,7 +51,7 @@ export async function sendPetitionReceipt({
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ from, to: [to], reply_to: CONTACT.EMAIL, subject, html }),
+      body: JSON.stringify({ from, to: [to], reply_to: buildReplyToAddress(), subject, html }),
     });
 
     if (!res.ok) {

@@ -71,6 +71,35 @@ describe('parseResendEvent', () => {
     const e = parseResendEvent({ type: 'email.bounced', data: { to: ['a@b.com'] } });
     expect(e?.type).toBe('email.bounced');
   });
+  it('preserves received email metadata', () => {
+    const e = parseResendEvent({
+      type: 'email.received',
+      created_at: '2026-06-09T01:02:03.000Z',
+      data: {
+        email_id: 'recv_123',
+        from: 'sender@example.com',
+        to: ['reply@saf2026.com'],
+        cc: ['ops@saf2026.com'],
+        message_id: '<msg-1@example.com>',
+        subject: 'Re: 작품 문의',
+        attachments: [
+          {
+            id: 'att_1',
+            filename: 'image.png',
+            content_type: 'image/png',
+            content_disposition: 'attachment',
+            content_id: null,
+          },
+        ],
+      },
+    });
+
+    expect(e?.type).toBe('email.received');
+    expect(e?.data.email_id).toBe('recv_123');
+    expect(e?.data.message_id).toBe('<msg-1@example.com>');
+    expect(e?.data.cc).toEqual(['ops@saf2026.com']);
+    expect(e?.data.attachments?.[0]?.filename).toBe('image.png');
+  });
   it('returns null for non-object', () => {
     expect(parseResendEvent('nope')).toBeNull();
     expect(parseResendEvent(null)).toBeNull();
