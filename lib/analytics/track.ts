@@ -19,8 +19,17 @@ import { track as vercelTrack } from '@vercel/analytics';
  * - 예: `donate_click`, `share_click`, `web_vitals`, `story_to_artwork_click`
  */
 export type AnalyticsValue = string | number | boolean | null;
+export type Ga4EventParams = Record<string, unknown>;
 
-export function trackEvent(name: string, params: Record<string, AnalyticsValue> = {}): void {
+interface TrackEventOptions {
+  ga4Params?: Ga4EventParams;
+}
+
+export function trackEvent(
+  name: string,
+  params: Record<string, AnalyticsValue> = {},
+  options: TrackEventOptions = {}
+): void {
   // SSR safety
   if (typeof window === 'undefined') return;
 
@@ -35,7 +44,7 @@ export function trackEvent(name: string, params: Record<string, AnalyticsValue> 
   try {
     const w = window as Window & { gtag?: (...args: unknown[]) => void };
     if (typeof w.gtag === 'function') {
-      w.gtag('event', name, params);
+      w.gtag('event', name, options.ga4Params ?? params);
     }
   } catch (err) {
     console.error('[analytics] gtag send failed:', err);
