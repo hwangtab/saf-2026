@@ -67,13 +67,13 @@ describe('checkout funnel ecommerce analytics', () => {
     expect(combined).not.toContain('1–2 business days');
     expect(combined).not.toContain('3–5 business days');
 
-    expect(koMessages).toContain('보통 1~2주 안에 발송');
-    expect(koMessages).toContain('액자 제작');
+    expect(koMessages).toContain('액자 제작이 필요한 작품은 제작 기간 때문에 보통 1~2주');
+    expect(koMessages).toContain('액자 제작이 필요 없는 작품은 보통 3~4일');
     expect(koMessages).toContain('안전 포장');
-    expect(enMessages).toContain('Shipping usually begins within 1-2 weeks');
-    expect(enMessages).toContain('framing when needed');
-    expect(legal).toContain('보통 1~2주 안에 발송');
-    expect(qa).toContain('shipping usually begins within 1-2 weeks');
-    expect(guide).toContain('액자 제작');
+    expect(enMessages).toContain('need custom framing may take 1-2 weeks');
+    expect(enMessages).toContain('do not need framing usually arrive within 3-4 days');
+    expect(legal).toContain('액자 제작이 필요한 작품은 제작 기간 때문에 보통 1~2주');
+    expect(qa).toContain('do not need framing usually arrive within 3-4 days');
+    expect(guide).toContain('액자 제작이 필요 없는 작품은 보통 3~4일');
   });
 });

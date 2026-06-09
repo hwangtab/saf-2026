@@ -1,3 +1,180 @@
+# Google Merchant API 상품 동기화
+
+## 변경 사항
+
+- Google Merchant API v1 기반 상품 동기화 골격을 추가했다.
+- `lib/google-merchant/product-mapper.ts`에서 SAF 작품 데이터를 Merchant `ProductInput` payload로 변환한다.
+  - 판매 가능 작품만 등록한다.
+  - `sold`, `reserved`, `hidden`, 가격 미확정, 이미지 없음, 제목 없음 작품은 제외한다.
+  - 원작/판화 특성상 `identifier_exists: no`를 기본으로 한다.
+  - 페이지 JSON-LD `Product`를 되살리지 않고 Merchant API payload로 쇼핑 데이터를 분리한다.
+- `lib/google-merchant/client.ts`에서 Merchant API REST client를 추가했다.
+  - OAuth refresh token 또는 service account key를 통해 `https://www.googleapis.com/auth/content` scope access token을 발급한다.
+  - `productInputs:insert`로 create/update를 수행한다.
+  - `productInputs/{name}` DELETE로 특정 상품 삭제를 수행한다.
+- `scripts/google-merchant-sync.js`를 추가했다.
+  - 기본은 dry-run이며 Google API를 호출하지 않는다.
+  - `--apply`를 붙일 때만 실제 insert/update를 실행한다.
+  - `--delete-id {artworkId}`로 특정 상품 삭제 dry-run/apply를 지원한다.
+  - 실행 결과를 `reports/google-merchant-sync-2026-06-09.json`과 `.md`로 저장한다.
+- `package.json`에 `merchant:sync`, `merchant:sync:apply` 스크립트를 추가했다.
+
+## 필요한 환경변수
+
+- `GOOGLE_MERCHANT_ACCOUNT_ID`
+- `GOOGLE_MERCHANT_DATASOURCE_NAME`
+- `GOOGLE_MERCHANT_OAUTH_CLIENT_ID`
+- `GOOGLE_MERCHANT_OAUTH_CLIENT_SECRET`
+- `GOOGLE_MERCHANT_OAUTH_REFRESH_TOKEN`
+- 선택: `GOOGLE_MERCHANT_SERVICE_ACCOUNT_KEY`
+
+## 검증
+
+- `npm test -- --runInBand __tests__/lib/google-merchant/product-mapper.test.ts __tests__/scripts/google-merchant-sync.test.js` 통과
+- `npm run merchant:sync -- --limit 5` 통과
+  - dry-run, planned insert 5건, skipped 67건
+  - 실제 Merchant API 호출 없음
+- `npm run merchant:sync -- --limit 1 --apply` 통과
+  - 실제 Merchant API 등록 1건 성공, failed 0건
+- 전체 Merchant API 등록 통과
+  - planned insert 453건, inserted 453건, failed 0건, skipped 67건
+  - 리포트: `reports/google-merchant-sync-2026-06-09.json`, `reports/google-merchant-sync-2026-06-09.md`
+- `npm run merchant:sync -- --delete-id 844d9a04-779f-4a9e-832e-77b70fcfbf0b` 통과
+  - dry-run delete 계획만 생성, 실제 삭제 없음
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 접근성 warning 46개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+
+## 다음 운영 단계
+
+- Merchant Center 진단에서 승인/불승인 사유를 확인한다.
+- API 상품은 만료 방지를 위해 최소 30일마다 `npm run merchant:sync:apply`로 갱신한다.
+
+---
+
+# GSC 잔존 개선사항 정리
+
+## 변경 사항
+
+- 작품 상세 JSON-LD에서 `FAQPage` 주입을 제거해 GSC의 `Duplicate field "FAQPage"` 오류 재발을 차단했다.
+- 작품 상세 `VisualArtwork`에서 `Offer`/`audience`를 제거해 Product snippets 및 Merchant listings 경고를 유발하는 eligibility를 끊었다.
+- 작품 이미지 `ImageObject`에 `creditText`, `copyrightNotice`를 추가했다.
+- 작가 페이지 `CollectionPage.mainEntity -> ItemList` 연결을 제거해 `Invalid object type for field "mainEntity"` 오류를 차단했다.
+- `/our-reality`의 증언 `Review` JSON-LD를 제거해 `Invalid object type for field "itemReviewed"` 오류를 제거했다.
+- 회귀 테스트를 추가해 작품 상세 FAQ, 작가 페이지 mainEntity, 현실 페이지 Review 주입이 다시 생기지 않도록 했다.
+
+## 검증
+
+- `npm test -- --runInBand __tests__/schemas/schema-validation.test.ts` 통과: 1 suite / 71 tests
+- `npm test -- --runInBand gsc-rich-result-cleanup-source` 통과: 1 suite / 3 tests
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 접근성 warning 46개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+
+## 배포 후 확인 필요
+
+- GSC URL Inspection API는 현재 배포본 기준으로 응답하므로, 이번 코드 반영 후 배포가 완료되어야 Search Console의 잔존 이슈가 줄어든다.
+- 배포 후 `npm run gsc:rich-audit -- --delay-ms 100 --concurrency 4 --progress-every 50` 또는 문제 URL 샘플 재검사를 실행한다.
+
+## 배포 및 재검사 (2026-06-09)
+
+- GSC 관련 production 파일 6개만 임시 worktree(`/tmp/saf-gsc-deploy`)에 적용해 preview 배포를 생성했다.
+  - Preview: `https://saf2026-8xa73i7w5-hwang-khs-projects.vercel.app`
+- Preview 샘플 검사:
+  - 매거진 샘플: `Product`/`Offer` 타입 없음
+  - 작품 상세 샘플: `FAQPage` 없음, `offers`/`audience`/`size` 직속 필드 없음, `ImageObject.creditText`/`copyrightNotice` 있음
+  - 작가 페이지 샘플: `CollectionPage.mainEntity` 없음
+  - `/our-reality`: `Review` 타입 없음
+- Production 배포:
+  - Production deployment: `https://saf2026-9vfl0shpp-hwang-khs-projects.vercel.app`
+  - Alias: `https://saf2026.com`
+- Production HTML 샘플 검사:
+  - `https://saf2026.com` 및 `https://www.saf2026.com` 양쪽에서 매거진/작품/작가/현실 페이지 샘플 JSON-LD가 새 schema로 응답함을 확인했다.
+- GSC URL Inspection API 샘플 검사:
+  - 동일 샘플 URL 4개는 아직 이전 색인 rich result 결과를 반환한다.
+  - Google URL Inspection API는 색인 버전 기준 데이터를 반환하므로, Search Console의 잔존 오류 카운트는 Google 재크롤/재검증 전까지 남을 수 있다.
+  - 다음 운영 작업: Search Console UI에서 주요 issue별 “수정 확인” 또는 우선 URL의 “Request indexing”을 시작하고, 재크롤 후 감사 스크립트를 재실행한다.
+- Production live HTML 전수 재검사:
+  - 이전 GSC issue URL union 409개를 `https://www.saf2026.com` 현재 HTML 기준으로 재파싱했다.
+  - 결과 파일: `reports/gsc-live-schema-postdeploy-2026-06-09.json`, `reports/gsc-live-schema-postdeploy-2026-06-09.md`
+  - 2xx 응답 URL 기준 live schema 잔존 문제: 0건
+  - 404 URL 4개는 schema 검증 대상에서 제외했다.
+- Search Console sitemap 재제출:
+  - `https://www.saf2026.com/sitemap.xml` 제출 완료
+  - `lastSubmitted`: `2026-06-09T05:09:09.538Z`
+  - Search Console API 응답 기준 `warnings: 0`, `errors: 0`, `isPending: true`
+- GSC UI 확인:
+  - in-app Playwright 세션은 Google 로그인 화면으로 이동해 인증된 Search Console UI 조작이 불가능했다.
+  - 로그인된 Chrome에서는 Search Console `saf2026.com` 속성에 접근 가능함을 확인했다.
+  - UI 기준 최종 업데이트는 `26. 6. 7.`이며, 아직 이전 집계가 남아 있다: 제품 스니펫 잘못됨 127, 잦은 문의 사항 잘못됨 2, 프로필 페이지 잘못됨 2, 리뷰 스니펫 잘못됨 15.
+  - 제품 스니펫 상세의 `'offers', 'review' 또는 'aggregateRating'을(를) 지정해야 합니다.` 이슈는 “수정 결과 확인”을 눌렀고, `유효성 검사 상태: 시작됨`, `시작된 날짜: 26. 6. 9.`로 바뀐 것을 확인했다.
+  - 리뷰 스니펫 상세의 `itemReviewed` 개체 유형 오류도 “수정 결과 확인”을 눌렀고, `유효성 검사 상태: 시작됨`, `시작된 날짜: 26. 6. 9.`로 바뀐 것을 확인했다.
+  - 잦은 문의 사항 `FAQPage` 중복 오류와 프로필 페이지 `mainEntity` 개체 유형 오류는 GSC UI에서 이미 `문제 없음`으로 표시됨을 확인했다.
+  - 이미지 메타데이터 `copyrightNotice` 경고는 “수정 결과 확인”을 눌렀고, 요약 화면에서 상태가 `시작됨`으로 바뀐 것을 확인했다.
+  - 이미지 메타데이터 `creditText` 경고도 “수정 결과 확인”을 눌렀고, 상세 화면에서 `유효성 검사 상태: 시작됨`, `시작된 날짜: 26. 6. 9.`로 바뀐 것을 확인했다.
+  - 이미지 메타데이터 경고 카운트는 Google 재크롤/재검증이 완료될 때까지 GSC에 남을 수 있으므로, 완료 후 감사 스크립트를 다시 실행해야 한다.
+
+---
+
+# GSC 개선사항 오류 전수 점검
+
+## 변경 사항
+
+- `scripts/gsc-rich-results-audit.js`를 추가해 GSC Search Analytics URL과 sitemap URL을 합친 뒤 URL Inspection API로 리치 결과 개선사항 오류/경고를 전수 검사하도록 했다.
+- `npm run gsc:rich-audit` 스크립트를 추가했다.
+- 검사 결과를 `reports/gsc-rich-results-audit-2026-06-09.json`과 `reports/gsc-rich-results-audit-2026-06-09.md`로 생성했다.
+- 단위 테스트로 route classification, severity priority, issue grouping, markdown rendering을 검증했다.
+
+## 감사 결과 요약
+
+- 검사 대상: 865 URL
+- 색인 URL: 724
+- Rich result PASS URL: 542
+- Rich result FAIL URL: 181
+- ERROR issue: 525
+- WARNING issue: 603
+- Inspection 실패/retry URL: 0
+
+## 주요 이슈
+
+- P1 Product snippets: `offers/review/aggregateRating` 중 하나 필요 — 371건, 매거진 글 중심
+- P1 FAQ: `Duplicate field "FAQPage"` — 106건, 작품 상세 중심
+- P1 Unknown rich result: `Invalid object type for field "mainEntity"` — 32건, 작가 페이지 중심
+- P1 Review snippets: `Invalid object type for field "itemReviewed"` — 15건, `/our-reality`
+- P2 Image Metadata: `creditText`, `copyrightNotice` 누락 — 각 199건, 작품 상세
+- P2 Merchant listings: `size`, `audience` object type 경고 — 28건, 작품 상세
+
+## 검증
+
+- `npm test -- --runInBand __tests__/scripts/gsc-rich-results-audit.test.js` 통과
+- `npm run gsc:rich-audit -- --dry-run --delay-ms 100 --concurrency 2` 통과
+- `npm run gsc:rich-audit -- --delay-ms 100 --concurrency 4 --progress-every 50` 통과
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 접근성 warning 46개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+
+---
+
+# GSC 제품 스니펫 Product mention 오류 수정
+
+## 변경 사항
+
+- 매거진 글의 `BlogPosting.mentions`에서 관련 작품을 `Product`가 아니라 `VisualArtwork`로 발행하도록 변경했다.
+- `BlogPostingMention` 타입 정의도 `VisualArtwork` 기반으로 정리해 이후 매거진 관련 작품 mention이 불완전한 Product 엔티티를 만들지 않게 했다.
+- schema 회귀 테스트를 추가해 `generateBlogPostingSchema`가 관련 작품 mention을 `VisualArtwork`로 내보내는지 확인한다.
+
+## 검증
+
+- `rg -n "type: 'Product'|Product' as const|\"@type\":\"Product\"|@type.*Product" app lib components __tests__`
+  - 앱/라이브러리 코드에는 Product mention 없음
+  - 남은 항목은 회귀 테스트의 금지 검증 문자열뿐
+- `npm test -- --runInBand __tests__/schemas/schema-validation.test.ts` 통과: 1 suite / 70 tests
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 접근성 warning 46개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+
+---
+
 # 관리자 이메일 발송 UX 전면 재정리
 
 ## 변경 파일
@@ -1184,3 +1361,64 @@
 
 - `npm run lint` 통과
 - `npm run type-check` 통과
+
+# GSC/GA4 실데이터 기반 유입·매출 개선
+
+## 변경 사항
+
+- GA4 구매 이벤트가 ecommerce `items` 배열을 포함하도록 `trackEvent`에 GA4 전용 payload 옵션을 추가했다.
+- Toss confirm API 응답에 `analyticsItem`을 추가해 결제 성공 페이지가 작품 ID, 작품명, 작가명, 작품금액, 배송비를 구매 이벤트에 실을 수 있게 했다.
+- 결제 성공 페이지의 `purchase` 이벤트에 GA4 item payload를 포함해 GA4 `Items purchased` 보고서가 채워질 수 있도록 보강했다.
+- GSC 최근 28일 저CTR 키워드 기준으로 `에디션 뜻`, `edition 뜻`, `리미티드 에디션 뜻`, `피그먼트 뜻`, `피그 먼트 뜻` 검색 문구를 story SEO override에 직접 반영했다.
+- 청원 페이지 retention 영역 문구를 작품 구매 흐름 중심으로 조정하고, 공통 CTA의 작품 구매 클릭을 `purchase_gallery_click` 이벤트로 추적하도록 추가했다.
+
+## 검증
+
+- `npm test -- __tests__/lib/analytics-track.test.ts __tests__/app/checkout-success-analytics.test.ts __tests__/seo/content-ctr-metadata.test.ts __tests__/app/petition-oh-yoon-conversion.test.ts` 통과
+- `npm test` 통과: 96 suites / 819 tests
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 접근성 warning 46개와 Browserslist/Babel deopt 경고는 남아 있으나 lint exit code는 0이다.
+
+## 추가 개선 (2026-06-05)
+
+- 국내 checkout의 `begin_checkout`, `add_payment_info` 이벤트에 GA4 ecommerce `items` payload를 추가했다.
+- 해외 checkout에도 `begin_checkout`, `add_payment_info` 이벤트와 GA4 `items` payload를 추가했다.
+- Google organic 사용자가 결제 퍼널에서 어느 작품 기준으로 이탈하는지 GA4 item funnel로 추적할 수 있게 했다.
+
+## 추가 검증
+
+- `npm test -- __tests__/app/checkout-funnel-analytics.test.ts __tests__/lib/analytics-track.test.ts __tests__/app/checkout-success-analytics.test.ts` 통과
+- `npm test` 통과: 97 suites / 821 tests
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 접근성 warning 46개와 Browserslist/Babel deopt 경고는 남아 있으나 lint exit code는 0이다.
+
+---
+
+# GSC/GA4 기반 작품판매 매출 개선
+
+## 변경 사항
+
+- 공통 `SalesArtworkSpotlight` 컴포넌트를 추가해 판매 가능한 작품 카드, 가격, 구매 가능 배지, 클릭 이벤트를 한 흐름으로 묶었다.
+- `/petition/oh-yoon`과 `/special/oh-yoon`에 오윤 판매 스포트라이트를 추가했다.
+  - 우선 작품: `무호도`, `대지`, `지리산2`, `춤2`, `칼노래`
+  - sold/reserved 작품은 자동 제외된다.
+- 작가 페이지 hero 직후 구매 가능 작품 스포트라이트를 추가했다.
+  - 오윤은 매출/checkout 신호 작품을 우선 노출한다.
+  - 다른 작가는 판매 가능 작품 중 낮은 가격대부터 진입점을 만든다.
+- GSC 기회 매거진 글(`에디션 뜻`, `피그먼트 뜻`, `넘버링 뜻`, `호수/사이즈`, 구매 가이드 계열)에 본문 진입부 작품 스포트라이트를 추가했다.
+- 국내/해외 checkout에 `checkout_error`, `checkout_cancel` 이벤트를 추가했다.
+  - 작품 ID, 작품명, 작가, 금액, 통화, payment type, error code/message를 primitive property로 송신한다.
+- Supabase commerce RPC 매출 기준을 정리했다.
+  - `is_revenue_order(status, paid_at)` helper 추가
+  - `cancelled`, `refunded`, `refund_requested`는 결제완료/매출 집계에서 제외
+  - funnel summary, top artwork funnel, daily revenue trend, artist dashboard, story attribution RPC에 동일 기준 적용
+
+## 검증
+
+- `npm test -- __tests__/app/petition-oh-yoon-conversion.test.ts __tests__/app/checkout-funnel-analytics.test.ts __tests__/app/sales-funnel-content-links.test.ts` 통과
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 접근성 warning 46개, Browserslist 오래됨 경고, generated artwork Babel deopt 경고는 남아 있으나 exit code는 0이다.
+- `git diff --check` 통과

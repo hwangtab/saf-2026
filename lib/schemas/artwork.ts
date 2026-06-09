@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SITE_URL, CAMPAIGN, MERCHANT_POLICIES, CONTACT } from '@/lib/constants';
+import { SITE_URL, CAMPAIGN, CONTACT } from '@/lib/constants';
 import { createPageMetadata } from '@/lib/seo';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
 import { formatArtistName } from '@/lib/utils';
@@ -212,8 +212,8 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
 
 export function generateArtworkJsonLd(
   artwork: Artwork,
-  numericPrice: string,
-  isInquiry: boolean,
+  _numericPrice: string,
+  _isInquiry: boolean,
   locale: 'ko' | 'en' = 'ko',
   breadcrumbLabels?: { home: string; artworks: string; category?: { name: string; path: string } },
   options?: {
@@ -260,7 +260,7 @@ export function generateArtworkJsonLd(
     .filter(Boolean)
     .join(', ');
 
-  // Seller organization (reused in offers) — @id links to root Organization schema
+  // Seller organization — @id links to root Organization schema
   const sellerOrg = {
     '@type': 'Organization',
     '@id': `${SITE_URL}#organization`,
@@ -271,89 +271,6 @@ export function generateArtworkJsonLd(
   // Offer URL: 모든 결제는 내부 Toss 체크아웃 경유. shopUrl(legacy Cafe24) 우선순위 제거.
   const offerUrl = `${SITE_URL}/artworks/${artwork.id}`;
 
-  // Merchant return policy for e-commerce SEO
-  const returnPolicy = {
-    '@type': 'MerchantReturnPolicy',
-    '@id': `${SITE_URL}#return-policy`,
-    applicableCountry: MERCHANT_POLICIES.RETURN.applicableCountry,
-    returnPolicyCategory: MERCHANT_POLICIES.RETURN.returnPolicyCategory,
-    merchantReturnDays: MERCHANT_POLICIES.RETURN.merchantReturnDays,
-    returnMethod: MERCHANT_POLICIES.RETURN.returnMethod,
-    returnFees: MERCHANT_POLICIES.RETURN.returnFees,
-  };
-
-  // Shipping details for e-commerce SEO
-  // @id 제거 — 340+ 작품에서 동일 `#shipping-domestic` 공유 시 schema.org graph상
-  // 단일 정책 노드로 병합되어 일부 파서가 충돌. inline OfferShippingDetails로 발행하면
-  // Google이 작품별 독립 정책으로 인식 (정책 내용은 동일해도 그래프 위치 명확).
-  const shippingDetails = {
-    '@type': 'OfferShippingDetails',
-    shippingRate: {
-      '@type': 'MonetaryAmount',
-      value: MERCHANT_POLICIES.SHIPPING.rate.toString(),
-      currency: MERCHANT_POLICIES.SHIPPING.currency,
-    },
-    shippingDestination: {
-      '@type': 'DefinedRegion',
-      addressCountry: MERCHANT_POLICIES.SHIPPING.country,
-    },
-    deliveryTime: {
-      '@type': 'ShippingDeliveryTime',
-      handlingTime: {
-        '@type': 'QuantitativeValue',
-        minValue: MERCHANT_POLICIES.SHIPPING.handlingDays.min,
-        maxValue: MERCHANT_POLICIES.SHIPPING.handlingDays.max,
-        unitCode: 'DAY',
-      },
-      transitTime: {
-        '@type': 'QuantitativeValue',
-        minValue: MERCHANT_POLICIES.SHIPPING.transitDays.min,
-        maxValue: MERCHANT_POLICIES.SHIPPING.transitDays.max,
-        unitCode: 'DAY',
-      },
-    },
-  };
-
-  const priceValidUntil = PRICE_VALID_UNTIL;
-
-  // 결제 수단 (신용카드·체크카드·계좌이체)
-  const acceptedPaymentMethod = [
-    'https://schema.org/CreditCard',
-    'https://schema.org/DebitCard',
-    'http://purl.org/goodrelations/v1#PayByBankTransferInAdvance',
-  ];
-
-  // 에디션 유형별 eligible quantity
-  const eligibleQuantity =
-    artwork.edition_type === 'unique'
-      ? { '@type': 'QuantitativeValue', value: 1 }
-      : artwork.edition_type === 'limited' && artwork.edition_limit
-        ? { '@type': 'QuantitativeValue', value: artwork.edition_limit }
-        : undefined;
-
-  // price가 0·NaN·undefined이면 Offer 자체를 생략 — "price: 0"로 Google Merchant에 노출되는 것 방지
-  const parsedOfferPrice = parseFloat(numericPrice);
-  const hasValidOfferPrice = Number.isFinite(parsedOfferPrice) && parsedOfferPrice > 0;
-
-  const offers =
-    isInquiry || !hasValidOfferPrice
-      ? undefined
-      : {
-          '@type': 'Offer',
-          url: offerUrl,
-          validFrom: CAMPAIGN.START_DATE,
-          priceCurrency: 'KRW',
-          price: parsedOfferPrice,
-          priceValidUntil,
-          availability: artwork.sold ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
-          itemCondition: 'https://schema.org/NewCondition',
-          acceptedPaymentMethod,
-          ...(eligibleQuantity && { eligibleQuantity }),
-          seller: sellerOrg,
-          hasMerchantReturnPolicy: returnPolicy,
-          shippingDetails,
-        };
-
   // Classify artwork medium for better SEO categorization.
   // raw artwork.material(KO 원본)로 분류 — taxonomy keywords가 KO/EN 양쪽 인지. 분류 결과의
   // name/alternateName은 locale별 swap. materialForLocale은 사용자 표시용 변환된 값이라
@@ -363,10 +280,8 @@ export function generateArtworkJsonLd(
 
   const productSchema = {
     '@context': 'https://schema.org',
-    // Product 타입은 review/aggregateRating 필수 — 작품은 일회성 원본/한정 에디션이라
-    // 리뷰가 축적되지 않으며, 가짜 리뷰 주입은 Google 정책 위반. 2026-05 GSC 보고에서
-    // 'review 입력란 누락' 경고가 80건+로 증가해 dual type을 끊고 VisualArtwork 단일로 통일.
-    // offers/brand/additionalProperty 등은 CreativeWork·VisualArtwork에서도 유효.
+    // Product 타입과 Offer는 review/aggregateRating 누락 및 Merchant listings 경고를 유발한다.
+    // 작품은 일회성 원본/한정 에디션이라 가짜 리뷰·평점을 넣지 않고 VisualArtwork 단일 entity만 발행한다.
     '@type': 'VisualArtwork',
     '@id': `${SITE_URL}/artworks/${artwork.id}`,
     name: titleForLocale,
@@ -422,6 +337,8 @@ export function generateArtworkJsonLd(
       caption: isEnglish
         ? `${titleForLocale} by ${artistForLocale}`
         : `${artistForLocale} 작가의 ${titleForLocale}`,
+      creditText: `${artistForLocale} / ${isEnglish ? 'SAF Online' : '씨앗페 온라인'}`,
+      copyrightNotice: `© ${artistForLocale}`,
       width: 1200,
       height: 1200,
       acquireLicensePage: `${SITE_URL}/artworks/${artwork.id}`,
@@ -465,13 +382,6 @@ export function generateArtworkJsonLd(
     copyrightHolder: {
       '@id': buildLocaleUrl(`/artworks/artist/${encodeURIComponent(artwork.artist)}`, locale),
     },
-    // 작품의 타겟 audience — 컬렉터 + 기업·기관 컬렉션 + 갤러리/박물관 큐레이터.
-    audience: {
-      '@type': 'Audience',
-      audienceType: isEnglish
-        ? 'Art collectors, gallery curators, corporate art buyers'
-        : '미술 컬렉터, 갤러리 큐레이터, 기업 컬렉션 담당자',
-    },
     // 접근성 시그널 — Google E-A-T / GEO 신호 + WAI-ARIA 호환성
     isFamilyFriendly: true,
     accessibilityFeature: ['alternativeText', 'highContrastDisplay'],
@@ -481,10 +391,8 @@ export function generateArtworkJsonLd(
       : {}),
     artMedium: materialForLocale || undefined,
     dateCreated: artwork.year || undefined,
-    // size는 additionalProperty에 PropertyValue로 별도 노출 (라인 470 부근).
-    // Product.size에 QuantitativeValue + 비표준 unitText:'dimensions'로 넣었더니
-    // GSC가 80건 "size 개체 유형이 잘못됨" 보고 → 직속 필드 제거.
-    ...(offers && { offers }),
+    // size는 additionalProperty에 PropertyValue로만 노출한다.
+    // Product/Merchant 전용 직속 필드는 GSC rich result 경고를 유발하므로 발행하지 않는다.
     // 임베디드 ExhibitionEvent — 전시 스키마가 독립 주입되지 않으므로 @id 참조 대신 인라인 객체로 표현
     // (dangling @id 참조 방지)
     isPartOf: {
