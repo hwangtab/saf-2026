@@ -1,3 +1,81 @@
+# Google Merchant API 상품 동기화 체크리스트
+
+- [x] Merchant API 공식 요구사항 확인
+- [x] 한국어 실행계획을 `implementation_plan.md`에 추가
+- [x] 작품 → Merchant `ProductInput` 매핑 테스트 추가
+- [x] 판매 불가/가격 없음/이미지 없음 작품 제외 로직 추가
+- [x] Merchant API REST client 추가
+- [x] dry-run 기본 동기화 스크립트 추가
+- [x] `--apply` 실제 insert/update 지원
+- [x] `--delete-id` 특정 상품 delete 지원
+- [x] `merchant:sync`, `merchant:sync:apply` npm script 추가
+- [x] dry-run 리포트 생성 확인
+- [x] 관련 테스트 통과
+- [x] `npm run type-check` 통과
+- [x] `npm run lint` 통과
+- [x] Merchant Center OAuth/env 설정 후 소수 상품 `--apply` 실행
+- [x] 전체 판매 가능 상품 Merchant API 등록 실행
+
+---
+
+# GSC 잔존 개선사항 정리 체크리스트
+
+- [x] GSC 감사 리포트 URL별 잔존 issue payload 확인
+- [x] `implementation_plan.md`에 실행계획 기록
+- [x] 작품 상세 Product/Merchant/FAQ rich-result 잔존 원인 회귀 테스트 추가
+- [x] 작가 페이지 `mainEntity` 오류 회귀 테스트 추가
+- [x] 현실 페이지 `Review` 오류 회귀 테스트 추가
+- [x] P1/P2 schema 수정
+- [x] 관련 테스트 통과
+- [x] `npm run type-check` 통과
+- [x] `npm run lint` 통과
+- [x] `walkthrough.md` 업데이트
+- [x] GSC 관련 production 파일만 분리한 임시 worktree에서 preview 배포 생성
+- [x] preview JSON-LD 샘플 검증
+- [x] production 배포 완료
+- [x] `saf2026.com`/`www.saf2026.com` production JSON-LD 샘플 검증
+- [x] 이전 GSC issue URL 409개 production live HTML 전수 재검사
+- [x] production live HTML 기준 잔존 schema 문제 0건 확인
+- [x] Search Console API로 `https://www.saf2026.com/sitemap.xml` 재제출
+- [x] in-app Playwright에서 GSC UI 접근 가능성 확인
+- [x] 로그인된 Chrome에서 GSC UI 잔존 카운트 확인
+- [x] GSC UI에서 Product snippets 주요 오류 수정 결과 확인 시작
+- [x] GSC UI에서 Review snippets 오류 수정 결과 확인 시작
+- [x] GSC UI에서 FAQ/Profile page 오류가 `문제 없음` 상태임을 확인
+- [x] GSC UI에서 Image Metadata `creditText` 경고 수정 결과 확인 시작
+- [x] Image Metadata `copyrightNotice` 수정 결과 확인 시작 상태 확인
+- [ ] Google 재크롤 후 GSC 감사 스크립트 재실행
+
+---
+
+# GSC 개선사항 오류 전수 점검 체크리스트
+
+- [x] GSC API URL Inspection 응답 구조 확인
+- [x] Search Analytics 최근 28일 URL 수집 구현
+- [x] sitemap URL 재귀 수집 구현
+- [x] rich result issue grouping / priority mapping / route classification 구현
+- [x] Markdown + JSON 리포트 생성 구현
+- [x] 단위 테스트 추가
+- [x] dry-run 검사 통과
+- [x] 전체 865개 URL 감사 리포트 생성
+- [x] retry URL 0개 확인
+- [x] `npm run type-check` 통과
+- [x] `npm run lint` 통과
+
+---
+
+# GSC 제품 스니펫 Product mention 오류 수정 체크리스트
+
+- [x] GSC 오류 원인 후보 조사
+- [x] 매거진 `BlogPosting.mentions`의 관련 작품 타입을 `Product`에서 `VisualArtwork`로 변경
+- [x] `BlogPostingMention` 타입을 `VisualArtwork` 기준으로 정리
+- [x] Product mention 회귀 테스트 추가
+- [x] `npm test -- --runInBand __tests__/schemas/schema-validation.test.ts` 통과
+- [x] `npm run type-check` 통과
+- [x] `npm run lint` 통과
+
+---
+
 # 관리자 이메일 발송 UX 전면 재정리 체크리스트
 
 - [x] `implementation_plan.md`에 전면 재정리 실행 계획 기록
@@ -183,4 +261,19 @@
 - [x] `content/artist-articles.ts` 반영
 - [x] 필요 시 `npm run lint`
 - [x] 필요 시 `npm run type-check`
+- [x] `walkthrough.md` 업데이트
+
+---
+
+# GSC/GA4 작품판매 매출 개선 체크리스트
+
+- [x] 공통 판매 작품 스포트라이트 컴포넌트 추가
+- [x] `/petition/oh-yoon`에 구매 가능한 오윤 판화 우선 노출
+- [x] `/special/oh-yoon`에 checkout 신호 작품 우선 노출
+- [x] 작가 페이지 hero 직후 구매 가능 작품/가격대 스포트라이트 추가
+- [x] GSC 기회 매거진 글에 검색 의도형 작품 스포트라이트 추가
+- [x] 국내/해외 checkout cancel/error 이벤트 추가
+- [x] 환불/취소 제외 매출 RPC 마이그레이션 추가
+- [x] 회귀 테스트 추가
+- [x] 테스트/린트/type-check 실행
 - [x] `walkthrough.md` 업데이트

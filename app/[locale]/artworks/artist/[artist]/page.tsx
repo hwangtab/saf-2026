@@ -717,7 +717,6 @@ async function renderArtistPage({ params }: Props) {
     url: artistPageUrl,
     isPartOf: { '@id': `${SITE_URL}#website` },
     inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
-    mainEntity: { '@id': `${artistPageUrl}#item-list` },
     author: { '@id': `${SITE_URL}#organization` },
     audience: {
       '@type': 'PeopleAudience',

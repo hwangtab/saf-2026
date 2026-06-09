@@ -174,8 +174,8 @@ export function generateNewsArticleSchema(article: NewsArticleSchemaInput) {
 }
 
 export interface BlogPostingMention {
-  /** schema.org @type — 'BlogPosting'(관련 매거진), 'Product'(작품) 등 */
-  type: 'BlogPosting' | 'Product' | 'Person';
+  /** schema.org @type — 'BlogPosting'(관련 매거진), 'VisualArtwork'(작품) 등 */
+  type: 'BlogPosting' | 'VisualArtwork' | 'Person';
   /** 표시 이름 */
   name: string;
   /** 절대 URL */

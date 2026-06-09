@@ -18,6 +18,7 @@ import {
   generateMemberJoinHowTo,
   generateQAPageSchema,
   generateSAFCoreQA,
+  generateBlogPostingSchema,
 } from '@/lib/schemas';
 import { getOurProofFaqSchema } from '@/lib/schemas/our-proof-faq';
 
@@ -321,11 +322,21 @@ describe('generateArtworkJsonLd', () => {
     images: ['/images/test.png'],
   };
 
-  it('should emit VisualArtwork only and omit offers for inquiry-priced artworks', () => {
-    const { productSchema } = generateArtworkJsonLd(baseArtwork, '', true, 'ko');
+  it('should emit VisualArtwork only and omit Product/Merchant listing trigger fields', () => {
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
 
     expect(productSchema['@type']).toBe('VisualArtwork');
     expect(productSchema).not.toHaveProperty('offers');
+    expect(productSchema).not.toHaveProperty('audience');
+    expect(productSchema).not.toHaveProperty('size');
+    expect(JSON.stringify(productSchema)).not.toContain('"@type":"Offer"');
+  });
+
+  it('should add Google Images credit and copyright metadata to artwork images', () => {
+    const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
+
+    expect(productSchema.image.creditText).toBe('테스트 작가 / 씨앗페 온라인');
+    expect(productSchema.image.copyrightNotice).toBe('© 테스트 작가');
   });
 
   it('should align isPartOf status and location before exhibition start', () => {
@@ -409,6 +420,35 @@ describe('generateArtworkJsonLd', () => {
       }
     );
     expect(b).not.toHaveProperty('subjectOf');
+  });
+});
+
+describe('generateBlogPostingSchema', () => {
+  it('should emit related artwork mentions as VisualArtwork, not Product', () => {
+    const schema = generateBlogPostingSchema({
+      title: '컬렉션 가이드',
+      description: '작품 구매를 돕는 매거진 글입니다.',
+      datePublished: '2026-06-09',
+      image: 'https://www.saf2026.com/images/og-default.jpg',
+      url: 'https://www.saf2026.com/stories/collection-guide',
+      locale: 'ko',
+      mentions: [
+        {
+          type: 'VisualArtwork',
+          name: '테스트 작품',
+          url: 'https://www.saf2026.com/artworks/9999',
+        },
+      ],
+    });
+
+    expect(schema.mentions).toEqual([
+      {
+        '@type': 'VisualArtwork',
+        name: '테스트 작품',
+        url: 'https://www.saf2026.com/artworks/9999',
+      },
+    ]);
+    expect(JSON.stringify(schema)).not.toContain('"@type":"Product"');
   });
 });
 
