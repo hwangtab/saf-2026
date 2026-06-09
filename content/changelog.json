@@ -1,5 +1,15 @@
 [
   {
+    "hash": "f5c944a8",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "안소현·박지혜·고자영·박소형·김주호 전용 작가 페이지 추가",
+    "summary": "매체 다양성 5인(도시 사진회화·회화/디지털·식물 판화·생태 조형·인물 조각) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- AnSohyeonFeature: CITY OASIS, 유영하는 도시의 몽환(배우·연출 겸업)\n- ParkJihyeFeature: Passing & Passage, 통과와 이행의 감각(회화·AI디자인)\n- GoJayeongFeature: 정원과 식물, 자아와 세상의 이치(판화)\n- ParkSohyeongFeature: 버섯포자와 AI, 과거의 파편과 미래의 조각(생태 조형)\n- KimJuhoFeature: 사람사이, 돌고 도는 사람들(조각)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(박지혜 '유화'→'회화' 교정, 박소형 AI 단정 명제 추측 톤 완화), 날조 1인칭 인용 0건",
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
     "hash": "b2c11d83",
     "type": "fix",
     "scope": null,
