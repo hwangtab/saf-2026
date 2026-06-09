@@ -52,4 +52,28 @@ describe('checkout funnel ecommerce analytics', () => {
     expect(koCheckout).toContain('transferTrustTitle');
     expect(enCheckout).toContain('transferTrustTitle');
   });
+
+  it('uses realistic artwork shipping timelines across checkout and guide copy', () => {
+    const koMessages = read('messages/ko.json');
+    const enMessages = read('messages/en.json');
+    const legal = read('lib/legal-documents.ts');
+    const qa = read('lib/schemas/qa-page.ts');
+    const guide = read('app/[locale]/stories/category/[category]/page.tsx');
+    const combined = [koMessages, enMessages, legal, qa, guide].join('\n');
+
+    expect(combined).not.toContain('영업일 기준 1~3일');
+    expect(combined).not.toContain('2~7일 내');
+    expect(combined).not.toContain('promptly after payment');
+    expect(combined).not.toContain('1–2 business days');
+    expect(combined).not.toContain('3–5 business days');
+
+    expect(koMessages).toContain('보통 1~2주 안에 발송');
+    expect(koMessages).toContain('액자 제작');
+    expect(koMessages).toContain('안전 포장');
+    expect(enMessages).toContain('Shipping usually begins within 1-2 weeks');
+    expect(enMessages).toContain('framing when needed');
+    expect(legal).toContain('보통 1~2주 안에 발송');
+    expect(qa).toContain('shipping usually begins within 1-2 weeks');
+    expect(guide).toContain('액자 제작');
+  });
 });
