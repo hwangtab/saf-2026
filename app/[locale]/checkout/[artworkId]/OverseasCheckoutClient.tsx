@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
@@ -22,6 +22,7 @@ import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
 import CheckoutTrustNotice from '@/components/features/CheckoutTrustNotice';
+import { trackEvent } from '@/lib/analytics/track';
 
 /**
  * 영문(en) 체크아웃 옵션. 결제수단별 buyer 자격이 다르므로 caption으로 명시:
@@ -101,6 +102,53 @@ interface Props {
   prefillEmail?: string;
 }
 
+function buildCheckoutGa4Params(input: {
+  artworkId: string;
+  artworkTitle: string;
+  artist: string;
+  value: number;
+  currency: 'KRW' | 'USD';
+  payment_type?: string;
+}) {
+  return {
+    value: input.value,
+    currency: input.currency,
+    ...(input.payment_type ? { payment_type: input.payment_type } : {}),
+    items: [
+      {
+        item_id: input.artworkId,
+        item_name: input.artworkTitle,
+        item_brand: input.artist,
+        item_category: 'artwork',
+        price: input.value,
+        quantity: 1,
+      },
+    ],
+  };
+}
+
+function buildCheckoutTrackingParams(input: {
+  artworkId: string;
+  artworkTitle: string;
+  artist: string;
+  value: number;
+  currency: 'KRW' | 'USD';
+  payment_type?: string;
+  error_code?: string;
+  error_message?: string;
+}) {
+  return {
+    value: input.value,
+    currency: input.currency,
+    artwork_id: input.artworkId,
+    artwork_title: input.artworkTitle,
+    artist: input.artist,
+    payment_type: input.payment_type ?? null,
+    error_code: input.error_code ?? null,
+    error_message: input.error_message ? input.error_message.slice(0, 120) : null,
+  };
+}
+
 /**
  * 영문(en) 체크아웃 클라이언트.
  *
@@ -140,6 +188,30 @@ export default function OverseasCheckoutClient({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfoHandle | null>(null);
+
+  useEffect(() => {
+    trackEvent(
+      'begin_checkout',
+      {
+        value: totalKrw,
+        currency: 'KRW',
+        artwork_id: artworkId,
+        artwork_title: artworkTitle,
+        artist,
+      },
+      {
+        ga4Params: buildCheckoutGa4Params({
+          artworkId,
+          artworkTitle,
+          artist,
+          value: totalKrw,
+          currency: 'KRW',
+        }),
+      }
+    );
+    // 마운트 1회 — artworkId 변경은 페이지 재마운트
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handlePayment() {
     setError(null);
@@ -185,6 +257,19 @@ export default function OverseasCheckoutClient({
           locale: 'en',
         });
         if (!result.success) {
+          trackEvent(
+            'checkout_error',
+            buildCheckoutTrackingParams({
+              artworkId,
+              artworkTitle,
+              artist,
+              value: totalKrw,
+              currency: 'KRW',
+              payment_type: paymentChoice,
+              error_code: 'bank_transfer_order_failed',
+              error_message: result.error,
+            })
+          );
           setError(result.error);
           setSubmitting(false);
           return;
@@ -215,6 +300,19 @@ export default function OverseasCheckoutClient({
       });
 
       if (!result.success) {
+        trackEvent(
+          'checkout_error',
+          buildCheckoutTrackingParams({
+            artworkId,
+            artworkTitle,
+            artist,
+            value: paymentChoice === 'PAYPAL' ? usdTotal : totalKrw,
+            currency: paymentChoice === 'PAYPAL' ? 'USD' : 'KRW',
+            payment_type: paymentChoice,
+            error_code: 'order_create_failed',
+            error_message: result.error,
+          })
+        );
         setError(result.error);
         setSubmitting(false);
         return;
@@ -225,6 +323,28 @@ export default function OverseasCheckoutClient({
 
       const successUrl = `${window.location.origin}/en/checkout/${artworkId}/success?currency=${successCurrency}`;
       const failUrl = `${window.location.origin}/en/checkout/${artworkId}/fail`;
+      const analyticsValue = paymentChoice === 'PAYPAL' ? krwToUsd(serverTotal) : serverTotal;
+      trackEvent(
+        'add_payment_info',
+        {
+          value: analyticsValue,
+          currency: successCurrency,
+          payment_type: paymentChoice,
+          artwork_id: artworkId,
+          artwork_title: artworkTitle,
+          artist,
+        },
+        {
+          ga4Params: buildCheckoutGa4Params({
+            artworkId,
+            artworkTitle,
+            artist,
+            value: analyticsValue,
+            currency: successCurrency,
+            payment_type: paymentChoice,
+          }),
+        }
+      );
 
       // PayPal 흐름: Toss saf202719y MID + USD + redirect
       if (paymentChoice === 'PAYPAL') {
@@ -243,6 +363,19 @@ export default function OverseasCheckoutClient({
         if (!payResult.success) {
           cancelPendingOrder(orderNo, buyerEmail).catch((err) =>
             console.error('[checkout] cancelPendingOrder failed:', err)
+          );
+          trackEvent(
+            'checkout_error',
+            buildCheckoutTrackingParams({
+              artworkId,
+              artworkTitle,
+              artist,
+              value: analyticsValue,
+              currency: successCurrency,
+              payment_type: paymentChoice,
+              error_code: 'payment_initiate_failed',
+              error_message: payResult.error,
+            })
           );
           setError(payResult.error);
           setSubmitting(false);
@@ -281,6 +414,21 @@ export default function OverseasCheckoutClient({
         );
       }
       const errorObj = err as { code?: string; message?: string };
+      const eventName = errorObj?.code === 'USER_CANCEL' ? 'checkout_cancel' : 'checkout_error';
+      const currency = paymentChoice === 'PAYPAL' ? 'USD' : 'KRW';
+      trackEvent(
+        eventName,
+        buildCheckoutTrackingParams({
+          artworkId,
+          artworkTitle,
+          artist,
+          value: paymentChoice === 'PAYPAL' ? usdTotal : totalKrw,
+          currency,
+          payment_type: paymentChoice,
+          error_code: errorObj?.code ?? 'unknown',
+          error_message: errorObj?.message,
+        })
+      );
       if (errorObj?.code !== 'USER_CANCEL') {
         setError(errorObj?.message ?? t('errorPayment'));
       }
@@ -366,7 +514,10 @@ export default function OverseasCheckoutClient({
 
         {/* Payment method selector — 한국어 페이지와 동일한 list rows 패턴 */}
         <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <h3 className="px-6 pt-6 pb-4 text-base font-semibold text-charcoal">
+          <h3 className="flex items-center gap-2 px-6 pt-6 pb-4 text-base font-semibold text-charcoal">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary-a11y">
+              3
+            </span>
             {t('paymentMethodSelect')}
           </h3>
 
@@ -441,6 +592,12 @@ export default function OverseasCheckoutClient({
           {/* PayPal 선택 시 USD 환산 안내 */}
           {paymentChoice === 'PAYPAL' && (
             <p className="px-6 pb-5 text-caption-meta text-charcoal-soft">{t('paypalUsdNotice')}</p>
+          )}
+          {paymentChoice === 'TRANSFER' && (
+            <div className="border-t border-primary/10 bg-primary-surface px-6 py-4 text-sm leading-relaxed text-charcoal-muted">
+              <p className="font-semibold text-charcoal">{t('transferTrustTitle')}</p>
+              <p className="mt-1">{t('transferTrustBody')}</p>
+            </div>
           )}
         </div>
 

@@ -63,6 +63,53 @@ interface Props {
   prefillEmail?: string;
 }
 
+function buildCheckoutGa4Params(input: {
+  artworkId: string;
+  artworkTitle: string;
+  artist: string;
+  value: number;
+  currency: 'KRW';
+  payment_type?: string;
+}) {
+  return {
+    value: input.value,
+    currency: input.currency,
+    ...(input.payment_type ? { payment_type: input.payment_type } : {}),
+    items: [
+      {
+        item_id: input.artworkId,
+        item_name: input.artworkTitle,
+        item_brand: input.artist,
+        item_category: 'artwork',
+        price: input.value,
+        quantity: 1,
+      },
+    ],
+  };
+}
+
+function buildCheckoutTrackingParams(input: {
+  artworkId: string;
+  artworkTitle: string;
+  artist: string;
+  value: number;
+  currency: 'KRW';
+  payment_type?: string;
+  error_code?: string;
+  error_message?: string;
+}) {
+  return {
+    value: input.value,
+    currency: input.currency,
+    artwork_id: input.artworkId,
+    artwork_title: input.artworkTitle,
+    artist: input.artist,
+    payment_type: input.payment_type ?? null,
+    error_code: input.error_code ?? null,
+    error_message: input.error_message ? input.error_message.slice(0, 120) : null,
+  };
+}
+
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'CARD', labelKey: 'methodCard', brand: null },
   { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
@@ -121,13 +168,25 @@ export default function CheckoutClient({
   const buyerInfoRef = useRef<BuyerInfoHandle | null>(null);
 
   useEffect(() => {
-    trackEvent('begin_checkout', {
-      value: totalAmount,
-      currency: 'KRW',
-      artwork_id: artworkId,
-      artwork_title: artworkTitle,
-      artist,
-    });
+    trackEvent(
+      'begin_checkout',
+      {
+        value: totalAmount,
+        currency: 'KRW',
+        artwork_id: artworkId,
+        artwork_title: artworkTitle,
+        artist,
+      },
+      {
+        ga4Params: buildCheckoutGa4Params({
+          artworkId,
+          artworkTitle,
+          artist,
+          value: totalAmount,
+          currency: 'KRW',
+        }),
+      }
+    );
     // 마운트 1회 — artworkId 변경은 페이지 재마운트
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -176,6 +235,19 @@ export default function CheckoutClient({
           locale: 'ko',
         });
         if (!result.success) {
+          trackEvent(
+            'checkout_error',
+            buildCheckoutTrackingParams({
+              artworkId,
+              artworkTitle,
+              artist,
+              value: totalAmount,
+              currency: 'KRW',
+              payment_type: paymentChoice,
+              error_code: 'bank_transfer_order_failed',
+              error_message: result.error,
+            })
+          );
           setError(result.error);
           setSubmitting(false);
           return;
@@ -200,6 +272,19 @@ export default function CheckoutClient({
       });
 
       if (!result.success) {
+        trackEvent(
+          'checkout_error',
+          buildCheckoutTrackingParams({
+            artworkId,
+            artworkTitle,
+            artist,
+            value: totalAmount,
+            currency: 'KRW',
+            payment_type: paymentChoice,
+            error_code: 'order_create_failed',
+            error_message: result.error,
+          })
+        );
         setError(result.error);
         setSubmitting(false);
         return;
@@ -221,11 +306,27 @@ export default function CheckoutClient({
       // 자체창 직행: PAYMENT_CHOICES의 cardOptions가 있으면 해당 간편결제 자체창으로 직행.
       // CARD는 cardOptions undefined → 통합결제창 (DEFAULT). requestPayment는 redirect 모드
       // (successUrl 동반) → void 반환, 사용자 취소·SDK 에러는 reject되어 catch에서 처리.
-      trackEvent('add_payment_info', {
-        value: serverTotal,
-        currency: 'KRW',
-        payment_type: paymentChoice,
-      });
+      trackEvent(
+        'add_payment_info',
+        {
+          value: serverTotal,
+          currency: 'KRW',
+          payment_type: paymentChoice,
+          artwork_id: artworkId,
+          artwork_title: artworkTitle,
+          artist,
+        },
+        {
+          ga4Params: buildCheckoutGa4Params({
+            artworkId,
+            artworkTitle,
+            artist,
+            value: serverTotal,
+            currency: 'KRW',
+            payment_type: paymentChoice,
+          }),
+        }
+      );
 
       const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
       await payment.requestPayment({
@@ -249,6 +350,20 @@ export default function CheckoutClient({
       }
       // SDK v2 에러는 { code, message } 형태. USER_CANCEL은 사용자가 결제창 닫은 경우라 에러 표시 생략.
       const errorObj = err as { code?: string; message?: string };
+      const eventName = errorObj?.code === 'USER_CANCEL' ? 'checkout_cancel' : 'checkout_error';
+      trackEvent(
+        eventName,
+        buildCheckoutTrackingParams({
+          artworkId,
+          artworkTitle,
+          artist,
+          value: totalAmount,
+          currency: 'KRW',
+          payment_type: paymentChoice,
+          error_code: errorObj?.code ?? 'unknown',
+          error_message: errorObj?.message,
+        })
+      );
       if (errorObj?.code !== 'USER_CANCEL') {
         setError(errorObj?.message ?? t('errorPayment'));
       }
@@ -330,7 +445,10 @@ export default function CheckoutClient({
             미술관 작품 라벨처럼 일관된 시각 리듬 + 좌측 selected indicator(primary 바)로
             현재 선택을 고정 위치에서 확인 가능. */}
         <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <h3 className="px-6 pt-6 pb-4 text-base font-semibold text-charcoal">
+          <h3 className="flex items-center gap-2 px-6 pt-6 pb-4 text-base font-semibold text-charcoal">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary-a11y">
+              3
+            </span>
             {t('paymentMethodSelect')}
           </h3>
 
@@ -399,6 +517,13 @@ export default function CheckoutClient({
               );
             })}
           </div>
+
+          {paymentChoice === 'TRANSFER' && (
+            <div className="border-t border-primary/10 bg-primary-surface px-6 py-4 text-sm leading-relaxed text-charcoal-muted">
+              <p className="font-semibold text-charcoal">{t('transferTrustTitle')}</p>
+              <p className="mt-1">{t('transferTrustBody')}</p>
+            </div>
+          )}
         </div>
 
         {/* Error */}

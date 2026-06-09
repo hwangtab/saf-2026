@@ -23,6 +23,7 @@ import PageHero from '@/components/ui/PageHero';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import RelatedArtworkCard from '@/components/features/RelatedArtworkCard';
+import SalesArtworkSpotlight from '@/components/features/SalesArtworkSpotlight';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import type { StoryCategory, Artwork } from '@/types';
@@ -60,6 +61,17 @@ const CATEGORY_LABELS_EN: Record<StoryCategory, string> = {
   'buying-guide': 'Buying Guide',
   'art-knowledge': 'Art Knowledge',
 };
+
+const SEARCH_TO_SALES_STORY_SLUGS = new Set([
+  'editions-explained',
+  'archival-pigment-print-photography',
+  'prints-vs-originals-and-edition-numbers',
+  'reading-art-sizes-ho-vs-cm',
+  'first-art-buyer-price-guide',
+  'gallery-vs-direct-buying',
+  'framing-and-mounting-artworks',
+  'moving-and-shipping-artworks',
+]);
 
 export async function generateStaticParams() {
   // slug만 필요 — body 제외 light fetch로 빌드 시 statement timeout 차단.
@@ -241,6 +253,8 @@ export default async function StoryDetailPage({ params }: Props) {
       .slice(0, 3);
     artworksSource = 'recent-fallback';
   }
+  const showSearchIntentSalesBlock =
+    SEARCH_TO_SALES_STORY_SLUGS.has(story.slug) && relatedArtworks.some((artwork) => !artwork.sold);
 
   const isClusterSpoke = Object.values(STORY_CLUSTERS).some((slugs) =>
     (slugs as readonly string[]).includes(story.slug)
@@ -336,7 +350,7 @@ export default async function StoryDetailPage({ params }: Props) {
           : undefined,
     mentions: [
       ...relatedArtworks.map((art) => ({
-        type: 'Product' as const,
+        type: 'VisualArtwork' as const,
         name: isEn && art.title_en ? art.title_en : art.title,
         url: buildLocaleUrl(`/artworks/${art.id}`, locale),
       })),
@@ -380,6 +394,28 @@ export default async function StoryDetailPage({ params }: Props) {
             <p className="mb-8 inline-block rounded-full border border-gray-200 bg-canvas-soft px-4 py-1.5 text-xs font-medium tracking-wide uppercase text-charcoal-muted">
               Korean original — English translation pending
             </p>
+          )}
+
+          {showSearchIntentSalesBlock && (
+            <div className="mb-10 motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.16s]">
+              <SalesArtworkSpotlight
+                artworks={relatedArtworks}
+                eyebrow={isEn ? 'Collector path' : '작품 구매로 이어지는 길'}
+                title={
+                  isEn ? 'Works to view after this guide' : '이 글을 읽는 분들이 함께 보는 작품'
+                }
+                description={
+                  isEn
+                    ? 'Use the guide below to understand the work, then compare available artworks in the gallery.'
+                    : '아래 가이드를 읽고 작품의 매체·가격·에디션을 이해한 뒤, 구매 가능한 작품을 비교해보세요.'
+                }
+                ctaLabel={isEn ? 'Browse available artworks' : '구매 가능한 작품 보기'}
+                allHref="/artworks"
+                source={`story-search-intent-${story.slug}`}
+                storySlug={story.slug}
+                placement="story_mid_intent"
+              />
+            </div>
           )}
 
           <div className="motion-safe:opacity-0 motion-safe:animate-fade-in-up [animation-delay:0.2s]">
@@ -449,6 +485,7 @@ export default async function StoryDetailPage({ params }: Props) {
                   storySlug={story.slug}
                   position={i}
                   source={artworksSource}
+                  placement="story_bottom_related"
                 />
               ))}
             </div>

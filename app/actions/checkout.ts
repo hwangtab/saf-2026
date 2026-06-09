@@ -96,7 +96,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   if (!artworkId || !buyerName || !buyerEmail || !buyerPhone) {
     return { success: false, error: apiError('required_buyer_info', buyerLocale) };
   }
-  if (!shippingAddress || !shippingPostalCode || !shippingAddressDetail) {
+  if (!shippingAddress || !shippingPostalCode) {
     return { success: false, error: apiError('required_shipping_info', buyerLocale) };
   }
 
@@ -230,7 +230,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         shipping_name: shippingName,
         shipping_phone: shippingPhone,
         shipping_address: shippingAddress,
-        shipping_address_detail: shippingAddressDetail ?? null,
+        shipping_address_detail: shippingAddressDetail?.trim() || null,
         shipping_postal_code: shippingPostalCode,
         shipping_memo: shippingMemo ?? null,
         item_amount: itemAmount,

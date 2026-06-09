@@ -235,6 +235,17 @@ describe('createOrder', () => {
     }
   });
 
+  it('상세주소가 없어도 주문 생성 성공', async () => {
+    setupSuccessfulArtwork();
+    const result = await createOrder({ ...validInput, shippingAddressDetail: '' });
+
+    expect(result.success).toBe(true);
+    expect(capturedInsertedRows[0]).toMatchObject({
+      shipping_address: validInput.shippingAddress,
+      shipping_address_detail: null,
+    });
+  });
+
   it('작품 조회 실패 시 에러 반환', async () => {
     mockArtworkResult = { data: null, error: { message: 'not found' } };
     const result = await createOrder(validInput);

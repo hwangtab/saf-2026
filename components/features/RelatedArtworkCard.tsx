@@ -24,6 +24,7 @@ interface Props {
    * tier별 CTR 차이로 매칭 알고리즘 효과 측정.
    */
   source: ArtworkSource;
+  placement?: string;
 }
 
 /**
@@ -37,7 +38,24 @@ interface Props {
  * conversion funnel 측정에 사용 — README가 짚은 "매거진 글 노출 0~3" 회귀 진단 후
  * 어떤 개선이 효과 있는지 측정 기반 의사결정을 위한 인프라.
  */
-export default function RelatedArtworkCard({ artwork, isEn, storySlug, position, source }: Props) {
+function getPriceBand(price: string | number | null | undefined): string {
+  const numeric = Number(String(price ?? '').replace(/[^\d]/g, ''));
+  if (!Number.isFinite(numeric) || numeric <= 0) return 'inquiry';
+  if (numeric < 500_000) return 'under_500k';
+  if (numeric < 1_000_000) return '500k_1m';
+  if (numeric < 3_000_000) return '1m_3m';
+  if (numeric < 10_000_000) return '3m_10m';
+  return 'over_10m';
+}
+
+export default function RelatedArtworkCard({
+  artwork,
+  isEn,
+  storySlug,
+  position,
+  source,
+  placement = 'story_bottom_related',
+}: Props) {
   const t = useTranslations('artworkCard');
   const artTitle = isEn && artwork.title_en ? artwork.title_en : artwork.title;
   const artArtist = isEn && artwork.artist_en ? artwork.artist_en : artwork.artist;
@@ -55,6 +73,8 @@ export default function RelatedArtworkCard({ artwork, isEn, storySlug, position,
       artist: artwork.artist,
       position,
       source,
+      placement,
+      price_band: getPriceBand(artwork.price),
     });
   }
 

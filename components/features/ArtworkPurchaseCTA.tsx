@@ -6,7 +6,19 @@ import LinkButton from '@/components/ui/LinkButton';
 import { trackEvent } from '@/lib/analytics/track';
 import TrustBadges from '@/components/features/TrustBadges';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
-import { Phone, Mail, CheckCircle, Clock, ArrowRight, ExternalLink } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  CheckCircle,
+  Clock,
+  ArrowRight,
+  ExternalLink,
+  BadgeCheck,
+  PackageCheck,
+  RotateCcw,
+  Landmark,
+  MessageCircle,
+} from 'lucide-react';
 
 interface ArtworkPurchaseCTAProps {
   artworkId: string;
@@ -42,6 +54,75 @@ function ContactButtons() {
         iconLayout="fixed-left"
       >
         <span className="text-sm font-bold text-center">{t('emailInquiry')}</span>
+      </LinkButton>
+    </div>
+  );
+}
+
+function PurchaseConfidenceStrip() {
+  const t = useTranslations('artworkDetail');
+  const items = [
+    { icon: PackageCheck, label: t('confidenceFreeShipping') },
+    { icon: RotateCcw, label: t('confidenceReturn') },
+    { icon: BadgeCheck, label: t('confidenceCertificate') },
+    { icon: Landmark, label: t('confidenceTransfer') },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-2 rounded-xl border border-primary/10 bg-primary-surface p-3">
+      {items.map(({ icon: Icon, label }) => (
+        <div key={label} className="flex items-center gap-2 text-xs font-semibold text-charcoal">
+          <Icon className="h-3.5 w-3.5 shrink-0 text-primary-a11y" aria-hidden="true" />
+          <span className="break-keep">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ConsultationButtons({
+  artworkId,
+  artworkTitle,
+  artist,
+}: {
+  artworkId: string;
+  artworkTitle: string;
+  artist: string;
+}) {
+  const t = useTranslations('artworkDetail');
+  const mailSubject = encodeURIComponent(`[씨앗페 작품 상담] ${artist} - ${artworkTitle}`);
+  const mailBody = encodeURIComponent(
+    `작품명: ${artworkTitle}\n작가: ${artist}\n작품 ID: ${artworkId}\n\n구매 상담을 요청합니다.`
+  );
+
+  function trackConsultation(channel: 'phone' | 'email') {
+    trackEvent('purchase_consult_click', {
+      artwork_id: artworkId,
+      artwork_title: artworkTitle,
+      artist,
+      channel,
+    });
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <LinkButton
+        href="tel:02-764-3114"
+        variant="outline"
+        leadingIcon={<Phone className="h-4 w-4" />}
+        iconLayout="fixed-left"
+        onClick={() => trackConsultation('phone')}
+      >
+        <span className="text-sm font-bold text-center">{t('phoneConsult')}</span>
+      </LinkButton>
+      <LinkButton
+        href={`mailto:contact@kosmart.org?subject=${mailSubject}&body=${mailBody}`}
+        variant="outline"
+        leadingIcon={<MessageCircle className="h-4 w-4" />}
+        iconLayout="fixed-left"
+        onClick={() => trackConsultation('email')}
+      >
+        <span className="text-sm font-bold text-center">{t('artworkConsult')}</span>
       </LinkButton>
     </div>
   );
@@ -158,6 +239,8 @@ export default function ArtworkPurchaseCTA({
       {/* A분기: toss 결제 모드 + DB 작품 — 내부 체크아웃 */}
       {isTossMode && hasActionablePrice && (
         <>
+          <PurchaseConfidenceStrip />
+
           <LinkButton
             href={`/checkout/${artworkId}`}
             variant="primary"
@@ -179,6 +262,8 @@ export default function ArtworkPurchaseCTA({
 
           <TrustBadges />
 
+          <ConsultationButtons artworkId={artworkId} artworkTitle={artworkTitle} artist={artist} />
+
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-charcoal-soft text-sm">{t('orContactDirectly')}</span>
@@ -194,6 +279,8 @@ export default function ArtworkPurchaseCTA({
       {/* A분기: legacy 작품 — 외부 링크 */}
       {!isTossMode && shopUrl && (
         <>
+          <PurchaseConfidenceStrip />
+
           <LinkButton
             href={`${shopUrl}${shopUrl.includes('?') ? '&' : '?'}utm_source=saf2026&utm_medium=web&utm_campaign=artwork&utm_content=${artworkId}`}
             variant="primary"
@@ -216,6 +303,8 @@ export default function ArtworkPurchaseCTA({
 
           <TrustBadges />
 
+          <ConsultationButtons artworkId={artworkId} artworkTitle={artworkTitle} artist={artist} />
+
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-charcoal-soft text-sm">{t('orContactDirectly')}</span>
@@ -231,6 +320,8 @@ export default function ArtworkPurchaseCTA({
       {/* B분기: shopUrl 없음 또는 가격 없음 — 문의 안내 */}
       {!isTossMode && !shopUrl && (
         <>
+          <PurchaseConfidenceStrip />
+
           <div className="rounded-xl bg-gray-50 p-4 text-center">
             <p className="text-sm text-gray-600 break-keep leading-relaxed">
               {t('noShopDescription')}
@@ -247,6 +338,8 @@ export default function ArtworkPurchaseCTA({
           </div>
 
           <ContactButtons />
+
+          <ConsultationButtons artworkId={artworkId} artworkTitle={artworkTitle} artist={artist} />
 
           <PurchaseGuide />
         </>
