@@ -84,4 +84,18 @@ describe('sendBatch — Idempotency-Key 헤더', () => {
     const body = JSON.parse((fetchMock as jest.Mock).mock.calls[0][1].body as string);
     expect(body[0].reply_to).toBe('hello+row1@saf2026.com');
   });
+
+  it('to를 Resend batch 예제와 같은 배열 payload로 보낸다', async () => {
+    process.env.RESEND_API_KEY = 're_test';
+    const fetchMock = jest.fn(async () => ({
+      ok: true,
+      json: async () => ({ data: [{ id: 'm1' }] }),
+    })) as unknown as typeof fetch;
+    global.fetch = fetchMock;
+
+    await sendBatch([{ from: 'a@x.com', to: 'b@y.com', subject: 's', html: '<p>h</p>' }]);
+
+    const body = JSON.parse((fetchMock as jest.Mock).mock.calls[0][1].body as string);
+    expect(body[0].to).toEqual(['b@y.com']);
+  });
 });

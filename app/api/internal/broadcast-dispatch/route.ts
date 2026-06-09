@@ -10,6 +10,7 @@ import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { hashEmail } from '@/lib/email/email-hash';
 import BroadcastEmail from '@/emails/broadcast';
 import { personalizeRichEmailHtml, personalizeRichEmailText } from '@/lib/email/rich-content';
+import { validateResendRecipientEmail } from '@/lib/email/resend-recipient';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -129,15 +130,37 @@ export async function GET(request: NextRequest) {
         break;
       }
 
+      const pendingRows = pending as Array<{
+        id: string;
+        email: string;
+        name: string | null;
+        locale: string;
+      }>;
+      const validRows: typeof pendingRows = [];
+      const invalidRows: Array<{ id: string; reason: string }> = [];
+
+      for (const row of pendingRows) {
+        const validation = validateResendRecipientEmail(row.email);
+        if (validation.valid) {
+          validRows.push(row);
+        } else {
+          invalidRows.push({ id: row.id, reason: validation.reason });
+        }
+      }
+
+      if (invalidRows.length > 0) {
+        await Promise.all(
+          invalidRows.map(({ id, reason }) =>
+            supabase
+              .from('email_broadcast_recipients')
+              .update({ status: 'failed', error: `invalid recipient email: ${reason}` })
+              .eq('id', id)
+          )
+        );
+      }
+
       const batchItems = await Promise.all(
-        (
-          pending as Array<{
-            id: string;
-            email: string;
-            name: string | null;
-            locale: string;
-          }>
-        ).map(async (r) => {
+        validRows.map(async (r) => {
           const bodyHtml = personalizeRichEmailHtml(broadcast.body_html as string, r.name);
           const bodyText = personalizeRichEmailText((broadcast.body_text as string) ?? '', r.name);
           const emailHash = hashEmail(r.email);
@@ -190,13 +213,15 @@ export async function GET(request: NextRequest) {
         })
       );
 
-      const pendingRows = pending as Array<{ id: string }>;
+      if (validRows.length === 0) {
+        continue;
+      }
 
       // 멱등 키: 같은 청크가 재발송돼도(크래시·타임아웃·상태업데이트 실패 후 다음 cron 재시도)
       // Resend가 중복 발송을 차단. row id 정렬 해시라 재발송 시 동일 청크에 안정적으로 매칭된다.
       const idempotencyKey = buildBatchIdempotencyKey(
         broadcast.id as string,
-        pendingRows.map((r) => r.id)
+        validRows.map((r) => r.id)
       );
       const result = await sendBatch(batchItems, { idempotencyKey });
 
@@ -204,10 +229,10 @@ export async function GET(request: NextRequest) {
       // 웹훅(app/api/webhooks/resend)이 resend_id로 바운스/컴플레인을 매칭하므로 수신자별로 저장.
       const sentAt = new Date().toISOString();
       const sentUpdates = result.ids.map((resendId, i) => ({
-        id: pendingRows[i].id,
+        id: validRows[i].id,
         resendId,
       }));
-      const failedIds = pendingRows.slice(result.ids.length).map((r) => r.id);
+      const failedIds = validRows.slice(result.ids.length).map((r) => r.id);
 
       // 각 UPDATE 결과를 명시 검사. supabase-js는 RLS/네트워크 에러 시 reject하지 않고
       // {error} 객체로 resolve — 이를 무시하면 row가 'pending'으로 남아 다음 cron이 같은

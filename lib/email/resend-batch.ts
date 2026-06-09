@@ -64,7 +64,7 @@ export async function sendBatch(
           'Content-Type': 'application/json',
           ...(options.idempotencyKey ? { 'Idempotency-Key': options.idempotencyKey } : {}),
         },
-        body: JSON.stringify(items),
+        body: JSON.stringify(items.map((item) => ({ ...item, to: [item.to] }))),
         signal: controller.signal,
       });
 
