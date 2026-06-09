@@ -1,5 +1,36 @@
 [
-  {    "hash": "0c16d7b7",
+  {
+    "hash": "b2c11d83",
+    "type": "fix",
+    "scope": null,
+    "subject": "improve content CTR metadata",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "b11ec2ce",
+    "type": "fix",
+    "scope": null,
+    "subject": "resolve GSC and residual app issues",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-04",
+    "author": "황경하"
+  },
+  {
+    "hash": "9d5d25ed",
+    "type": "feat",
+    "scope": "email",
+    "subject": "관리자 이메일 발송 시스템 전면 개편 및 배달성·컴플라이언스 하드닝",
+    "summary": "조잡하던 관리자 이메일 발송을 단일 캔버스 UI로 재설계하고 접근성·배달성·중복발송·수신자수 성능까지 전수 보강",
+    "body": "## 발송 UX 전면 개편\n- 438줄 모놀리식 BroadcastForm 해체 → 단일 캔버스(좌: 작성, 우: sticky 요약·실시간 미리보기)\n- mode(segment/search) 이분법·channel+isArtworkBuyer 합성 인코딩 제거 → RecipientSegment discriminated union 단일 모델로 분기 격리\n- 광고 여부 단일 출처(deriveIsAdvertisement) — 작품구매자 광고 배지 누락 버그·테스트/실발송 플래그 불일치 해소\n- 수신자 수 자동 디바운스 조회(race 가드) + 발송 요약 카드에 수신자 수 주입 확인\n- 발송 이력 콘솔화: 상태 배지·진행률 바·완료시각·individual 라벨·진행 중 폴링\n- 청원 진행/종료 배지, 템플릿 내용 채움 전용, 야간 광고 경고 정보통신망법 명시\n\n## 접근성·안전\n- raw 폼 컨트롤 키보드 포커스 링, 발송 결과·검색 결과 aria-live, 버튼 대비 AA\n- 직접 지정 임의 대량발송 500명 상한(서버+UI), 멱등 단락 경고 톤 표시\n- 연락처 검색 실시간화, {{name}} 본문 전용 안내\n\n## 배달성·컴플라이언스 백본\n- 웹훅 bounce 분류 보수화(case-insensitive permanent), to 누락 시 resend_id 역조회\n- List-Unsubscribe 원클릭 헤더, 광고 푸터 무료 수신거부 명시, unsubscribe rate-limit\n- 이메일 color-scheme=light(다크모드 강제반전 방지), 광고 제목 로케일 대응\n\n## dispatch 중복발송 방지·진행률\n- Resend Idempotency-Key(row id 정렬 해시)로 크래시/재시도 중복 차단(충돌 없어 드롭 안 함)\n- sent-update 2차 실패 circuit breaker, pending 조회 id 2차 정렬\n- 청크별 sent_count 재집계로 발송 중 라이브 진행률\n\n## 수신자수 count-only RPC\n- previewAudience를 count_*_audience 4개 함수로 대체(resolver 1:1 미러링, suppression anti-join)\n- RPC 실패 시 resolver 폴백, 프로덕션 검증 완료(member 40/customer 5/petition 11,668)\n- supabase/migrations/20260603160000 프로덕션 적용 완료\n\n검증: lint 0 · type-check · jest 804 · build 통과",
+    "date": "2026-06-03",
+    "author": "황경하"
+  },
+  {
+    "hash": "0c16d7b7",
     "type": "feat",
     "scope": "email",
     "subject": "관리자 이메일 발송 시스템 전면 개편 및 배달성·컴플라이언스 하드닝",
