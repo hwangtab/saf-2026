@@ -301,6 +301,7 @@ export function RichEmailEditor({ value, onChange, onDirty }: Props) {
         />
       </div>
       <EditorContent editor={editor} />
+      <p className="mt-1 text-xs text-charcoal-muted">JPG/PNG/GIF, 2MB 이하</p>
       {message && <p className="mt-1 text-xs text-danger-a11y">{message}</p>}
       {uploading && <p className="mt-1 text-xs text-charcoal-muted">이미지 업로드 중...</p>}
     </div>

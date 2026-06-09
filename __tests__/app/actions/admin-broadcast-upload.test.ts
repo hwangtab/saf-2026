@@ -58,4 +58,18 @@ describe('uploadEmailBroadcastImage', () => {
       expect.objectContaining({ contentType: 'image/png', upsert: false })
     );
   });
+
+  it('rejects images larger than 2MB', async () => {
+    const formData = new FormData();
+    const overLimit = new Uint8Array(2 * 1024 * 1024 + 1);
+    formData.append('file', new File([overLimit], 'large.png', { type: 'image/png' }));
+
+    const result = await uploadEmailBroadcastImage(formData);
+
+    expect(result).toEqual({
+      message: '이미지는 2MB 이하만 업로드할 수 있습니다.',
+      error: true,
+    });
+    expect(uploadMock).not.toHaveBeenCalled();
+  });
 });
