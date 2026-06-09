@@ -1,6 +1,7 @@
 'use client';
 
 import { BRAND_COLORS } from '@/lib/colors';
+import { sanitizeRichEmailHtml } from '@/lib/email/rich-content';
 
 interface Props {
   subject: string;
@@ -13,7 +14,12 @@ interface Props {
 // 발송 전 본문 구조를 빠르게 확인하는 경량 미리보기. 실제 이메일 디자인(폰트·여백·푸터)은
 // "나에게 테스트 보내기"로 확인한다 — 여기서는 제목/문단/CTA 형태만 근사한다.
 export function EmailPreviewCard({ subject, bodyHtml, ctaLabel, ctaUrl, isAdvertisement }: Props) {
-  const previewHtml = bodyHtml.replace(/\{\{\s*name\s*\}\}/g, '수신자');
+  const hasBody =
+    bodyHtml
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim().length > 0 || /<img\s/i.test(bodyHtml);
+  const previewHtml = sanitizeRichEmailHtml(bodyHtml).replace(/\{\{\s*name\s*\}\}/g, '수신자');
   const displaySubject = isAdvertisement ? `(광고) ${subject || '(제목 없음)'}` : subject;
   // 실제 메일은 라벨과 URL이 모두 있어야 CTA 버튼을 렌더한다(broadcast.tsx) — 미리보기도 동일 조건.
   const showCta = Boolean(ctaLabel && ctaUrl);
@@ -36,7 +42,7 @@ export function EmailPreviewCard({ subject, bodyHtml, ctaLabel, ctaUrl, isAdvert
         </div>
 
         <div className="space-y-2 text-sm leading-relaxed text-charcoal">
-          {previewHtml.replace(/<[^>]+>/g, '').trim().length > 0 ? (
+          {hasBody ? (
             <div className="rich-email-preview" dangerouslySetInnerHTML={{ __html: previewHtml }} />
           ) : (
             <p className="text-charcoal-soft">본문을 입력하면 여기에 표시됩니다.</p>
