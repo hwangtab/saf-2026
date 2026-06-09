@@ -110,7 +110,7 @@ export function RichEmailEditor({ value, onChange, onDirty }: Props) {
     editorProps: {
       attributes: {
         class:
-          'min-h-[260px] rounded-b-lg border border-t-0 border-gray-300 bg-white px-4 py-3 text-sm leading-7 text-charcoal outline-none',
+          'min-h-[260px] rounded-b-lg border border-t-0 border-gray-300 bg-white px-4 py-3 text-sm leading-7 text-charcoal outline-none [&_p]:mb-3 [&_p:last-child]:mb-0',
       },
     },
     onUpdate: ({ editor: current }) => {

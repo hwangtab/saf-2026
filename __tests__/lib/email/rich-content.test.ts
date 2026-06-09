@@ -55,4 +55,11 @@ describe('rich email content', () => {
       '제목\n\n첫 문단\n\n항목'
     );
   });
+
+  it('keeps blank paragraphs visible for intentional spacing', () => {
+    const result = sanitizeRichEmailHtml('<p>첫 문단</p><p></p><p><br></p><p>다음 문단</p>');
+
+    expect(result).toContain('<p style="margin:0 0 14px;font-size:14px;line-height:1.7;color:#555E67">&nbsp;</p>');
+    expect(result).toContain('<p style="margin:0 0 14px;font-size:14px;line-height:1.7;color:#555E67"><br /></p>');
+  });
 });

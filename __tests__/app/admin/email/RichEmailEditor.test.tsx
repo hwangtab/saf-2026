@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 
 import { RichEmailEditor } from '@/app/(portal)/admin/email/_components/RichEmailEditor';
 
+let capturedEditorConfig: { editorProps?: { attributes?: { class?: string } } } | null = null;
+
 const editorChain = {
   focus: jest.fn(() => editorChain),
   toggleBold: jest.fn(() => editorChain),
@@ -24,15 +26,18 @@ const editorChain = {
 
 jest.mock('@tiptap/react', () => ({
   EditorContent: () => <div data-testid="editor-content" />,
-  useEditor: () => ({
-    chain: () => editorChain,
-    can: () => ({ undo: () => true, redo: () => true }),
-    commands: { setContent: jest.fn() },
-    getAttributes: jest.fn(() => ({})),
-    getHTML: jest.fn(() => '<p></p>'),
-    getText: jest.fn(() => ''),
-    isActive: jest.fn(() => false),
-  }),
+  useEditor: (config: { editorProps?: { attributes?: { class?: string } } }) => {
+    capturedEditorConfig = config;
+    return {
+      chain: () => editorChain,
+      can: () => ({ undo: () => true, redo: () => true }),
+      commands: { setContent: jest.fn() },
+      getAttributes: jest.fn(() => ({})),
+      getHTML: jest.fn(() => '<p></p>'),
+      getText: jest.fn(() => ''),
+      isActive: jest.fn(() => false),
+    };
+  },
 }));
 
 jest.mock('@/app/actions/admin-broadcast', () => ({
@@ -40,9 +45,19 @@ jest.mock('@/app/actions/admin-broadcast', () => ({
 }));
 
 describe('RichEmailEditor', () => {
+  beforeEach(() => {
+    capturedEditorConfig = null;
+  });
+
   it('shows the email image upload file type and size limit', () => {
     render(<RichEmailEditor value="" onChange={jest.fn()} onDirty={jest.fn()} />);
 
     expect(screen.getByText('JPG/PNG/GIF, 2MB 이하')).toBeInTheDocument();
+  });
+
+  it('styles editor paragraphs so Enter-created spacing is visible while writing', () => {
+    render(<RichEmailEditor value="" onChange={jest.fn()} onDirty={jest.fn()} />);
+
+    expect(capturedEditorConfig?.editorProps?.attributes?.class).toContain('[&_p]:mb-3');
   });
 });

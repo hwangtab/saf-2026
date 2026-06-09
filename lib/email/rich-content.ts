@@ -155,7 +155,7 @@ function addEmailStyles(html: string): string {
 
 export function sanitizeRichEmailHtml(html: string): string {
   const sanitized = addEmailStyles(html);
-  return sanitized.trim();
+  return sanitized.replace(/<p([^>]*)><\/p>/gi, '<p$1>&nbsp;</p>').trim();
 }
 
 export function htmlToEmailText(html: string): string {
