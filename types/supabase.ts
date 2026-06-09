@@ -666,7 +666,8 @@ export type Database = {
       email_broadcasts: {
         Row: {
           audience_filter: Json;
-          body_md: string;
+          body_html: string;
+          body_text: string;
           channel: string;
           created_at: string;
           created_by: string | null;
@@ -687,7 +688,8 @@ export type Database = {
         };
         Insert: {
           audience_filter?: Json;
-          body_md: string;
+          body_html: string;
+          body_text: string;
           channel: string;
           created_at?: string;
           created_by?: string | null;
@@ -708,7 +710,8 @@ export type Database = {
         };
         Update: {
           audience_filter?: Json;
-          body_md?: string;
+          body_html?: string;
+          body_text?: string;
           channel?: string;
           created_at?: string;
           created_by?: string | null;

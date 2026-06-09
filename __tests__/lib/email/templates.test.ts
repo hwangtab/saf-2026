@@ -6,10 +6,11 @@ describe('BROADCAST_TEMPLATES', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('모든 템플릿이 필수 필드(subject·bodyMd·label)를 가진다', () => {
+  it('모든 템플릿이 필수 필드(subject·bodyHtml·bodyText·label)를 가진다', () => {
     for (const t of BROADCAST_TEMPLATES) {
       expect(t.subject.trim().length).toBeGreaterThan(0);
-      expect(t.bodyMd.trim().length).toBeGreaterThan(0);
+      expect(t.bodyHtml.trim().length).toBeGreaterThan(0);
+      expect(t.bodyText.trim().length).toBeGreaterThan(0);
       expect(t.label.trim().length).toBeGreaterThan(0);
     }
   });

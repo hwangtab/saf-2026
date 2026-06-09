@@ -23,6 +23,7 @@ import { TemplatePicker } from './TemplatePicker';
 import { LiveAudienceCount } from './LiveAudienceCount';
 import { SendSummaryCard } from './SendSummaryCard';
 import { EmailPreviewCard } from './EmailPreviewCard';
+import { RichEmailEditor } from './RichEmailEditor';
 import { useResolvedAudience } from './useResolvedAudience';
 import { FIELD_FOCUS } from './field-styles';
 
@@ -45,7 +46,8 @@ export function BroadcastComposer() {
 
   const [segment, setSegment] = useState<RecipientSegment>(defaultSegment('member'));
   const [subject, setSubject] = useState('');
-  const [bodyMd, setBodyMd] = useState('');
+  const [bodyHtml, setBodyHtml] = useState('');
+  const [bodyText, setBodyText] = useState('');
   const [ctaLabel, setCtaLabel] = useState('');
   const [ctaUrl, setCtaUrl] = useState('');
   const [confirmed, setConfirmed] = useState(false);
@@ -66,7 +68,13 @@ export function BroadcastComposer() {
   const audience = useResolvedAudience(segment);
   const isAdvertisement = deriveIsAdvertisement(segment);
   const blockReason = segmentBlockReason(segment, manualPending);
-  const content = { subject, bodyMd, ctaLabel: ctaLabel || undefined, ctaUrl: ctaUrl || undefined };
+  const content = {
+    subject,
+    bodyHtml,
+    bodyText,
+    ctaLabel: ctaLabel || undefined,
+    ctaUrl: ctaUrl || undefined,
+  };
 
   // 종류를 바꾸면 확인 체크는 초기화(다른 대상으로 보내는데 확인이 남아있지 않도록).
   const handleSegmentChange = (next: RecipientSegment) => {
@@ -79,20 +87,22 @@ export function BroadcastComposer() {
     setSubject(v);
     setConfirmed(false);
   };
-  const handleBodyChange = (v: string) => {
-    setBodyMd(v);
+  const handleBodyChange = (v: { html: string; text: string }) => {
+    setBodyHtml(v.html);
+    setBodyText(v.text);
     setConfirmed(false);
   };
 
   const applyTemplate = (t: BroadcastTemplate) => {
     if (
-      (subject.trim() || bodyMd.trim()) &&
+      (subject.trim() || bodyText.trim()) &&
       !window.confirm('이미 입력한 제목·본문이 있습니다. 템플릿 내용으로 덮어쓸까요?')
     ) {
       return;
     }
     setSubject(t.subject);
-    setBodyMd(t.bodyMd);
+    setBodyHtml(t.bodyHtml);
+    setBodyText(t.bodyText);
     setCtaLabel(t.ctaLabel ?? '');
     setCtaUrl(t.ctaUrl ?? '');
     setConfirmed(false);
@@ -100,7 +110,8 @@ export function BroadcastComposer() {
 
   const resetForm = () => {
     setSubject('');
-    setBodyMd('');
+    setBodyHtml('');
+    setBodyText('');
     setCtaLabel('');
     setCtaUrl('');
     setConfirmed(false);
@@ -126,7 +137,8 @@ export function BroadcastComposer() {
         ? await enqueueIndividualBroadcast({
             recipients: segment.contacts,
             subject,
-            bodyMd,
+            bodyHtml,
+            bodyText,
             ctaLabel: ctaLabel || undefined,
             ctaUrl: ctaUrl || undefined,
             isAdvertisement,
@@ -155,7 +167,8 @@ export function BroadcastComposer() {
       // 테스트 발송도 실제 발송과 동일한 광고 플래그를 사용 — "테스트 OK ≠ 실제"였던 불일치 제거.
       const r = await sendTestEmail({
         subject,
-        bodyMd,
+        bodyHtml,
+        bodyText,
         ctaLabel: ctaLabel || undefined,
         ctaUrl: ctaUrl || undefined,
         isAdvertisement,
@@ -163,7 +176,7 @@ export function BroadcastComposer() {
       if (r.error) setError(r.message);
       else setSuccess(r.message);
     });
-  }, [subject, bodyMd, ctaLabel, ctaUrl, isAdvertisement]);
+  }, [subject, bodyHtml, bodyText, ctaLabel, ctaUrl, isAdvertisement]);
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
@@ -213,16 +226,12 @@ export function BroadcastComposer() {
               htmlFor="broadcast-body"
               className="mb-1 block text-sm font-medium text-charcoal"
             >
-              본문 (마크다운)
+              본문
             </label>
-            <textarea
-              id="broadcast-body"
-              value={bodyMd}
-              onChange={(e) => handleBodyChange(e.target.value)}
-              required
-              rows={8}
-              placeholder="이메일 본문을 입력하세요. 빈 줄로 문단을 구분합니다."
-              className={`block w-full rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm ${FIELD_FOCUS}`}
+            <RichEmailEditor
+              value={bodyHtml}
+              onChange={handleBodyChange}
+              onDirty={() => setConfirmed(false)}
             />
             <p className="mt-1 text-xs text-charcoal-muted">
               본문에서 <code className="font-mono">{'{{name}}'}</code>은 수신자 이름으로 치환됩니다
@@ -287,7 +296,7 @@ export function BroadcastComposer() {
         />
         <EmailPreviewCard
           subject={subject}
-          bodyMd={bodyMd}
+          bodyHtml={bodyHtml}
           ctaLabel={ctaLabel || undefined}
           ctaUrl={ctaUrl || undefined}
           isAdvertisement={isAdvertisement}

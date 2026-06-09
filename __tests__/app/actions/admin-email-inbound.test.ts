@@ -1,4 +1,4 @@
-import { replyToInboundMessage } from '@/app/actions/admin-email-inbound';
+import { getInboundMessages, replyToInboundMessage } from '@/app/actions/admin-email-inbound';
 import { sendInboundReply } from '@/lib/email/inbound';
 import { logAdminAction } from '@/app/actions/activity-log-writer';
 
@@ -64,5 +64,55 @@ describe('replyToInboundMessage', () => {
       'inbound-1',
       { inbound_id: 'inbound-1' }
     );
+  });
+});
+
+describe('getInboundMessages', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('returns a counted page of inbound replies', async () => {
+    const query = {
+      select: jest.fn(() => query),
+      order: jest.fn(() => query),
+      range: jest.fn(async () => ({
+        data: [
+          {
+            id: 'inbound-26',
+            resend_email_id: 'recv_26',
+            message_id: '<msg-26@example.com>',
+            from_email: 'customer@example.com',
+            to_emails: ['hello@saf2026.com'],
+            cc_emails: [],
+            subject: 'Re: 문의',
+            text_body: '확인했습니다.',
+            html_body: null,
+            headers: {},
+            attachments: [],
+            status: 'new',
+            matched_broadcast_recipient_id: null,
+            received_at: '2026-06-09T00:00:00.000Z',
+            replied_at: null,
+            reply_resend_id: null,
+          },
+        ],
+        error: null,
+        count: 61,
+      })),
+    };
+    mockSupabase.from.mockReturnValue(query);
+
+    const result = await getInboundMessages({ page: 2, pageSize: 25 });
+
+    expect(query.select).toHaveBeenCalledWith(
+      'id, resend_email_id, message_id, from_email, to_emails, cc_emails, subject, text_body, html_body, headers, attachments, status, matched_broadcast_recipient_id, received_at, replied_at, reply_resend_id',
+      { count: 'exact' }
+    );
+    expect(query.range).toHaveBeenCalledWith(25, 49);
+    expect(result.total).toBe(61);
+    expect(result.page).toBe(2);
+    expect(result.pageSize).toBe(25);
+    expect(result.rows).toHaveLength(1);
   });
 });

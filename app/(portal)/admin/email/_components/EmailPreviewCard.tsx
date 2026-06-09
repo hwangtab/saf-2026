@@ -1,13 +1,12 @@
 'use client';
 
-import { splitAndPersonalize } from '@/lib/email/broadcast-body';
 import { BRAND_COLORS } from '@/lib/colors';
 
 const PREVIEW_NAME = '○○○';
 
 interface Props {
   subject: string;
-  bodyMd: string;
+  bodyHtml: string;
   ctaLabel?: string;
   ctaUrl?: string;
   isAdvertisement: boolean;
@@ -15,9 +14,9 @@ interface Props {
 
 // 발송 전 본문 구조를 빠르게 확인하는 경량 미리보기. 실제 이메일 디자인(폰트·여백·푸터)은
 // "나에게 테스트 보내기"로 확인한다 — 여기서는 제목/문단/CTA 형태만 근사한다.
-export function EmailPreviewCard({ subject, bodyMd, ctaLabel, ctaUrl, isAdvertisement }: Props) {
+export function EmailPreviewCard({ subject, bodyHtml, ctaLabel, ctaUrl, isAdvertisement }: Props) {
   // 그리팅과 본문 {{name}} 치환을 동일 표본 이름으로 맞춘다(실제 메일은 수신자별 이름으로 치환).
-  const paragraphs = splitAndPersonalize(bodyMd, PREVIEW_NAME);
+  const previewHtml = bodyHtml.replace(/\{\{\s*name\s*\}\}/g, PREVIEW_NAME);
   const displaySubject = isAdvertisement ? `(광고) ${subject || '(제목 없음)'}` : subject;
   // 실제 메일은 라벨과 URL이 모두 있어야 CTA 버튼을 렌더한다(broadcast.tsx) — 미리보기도 동일 조건.
   const showCta = Boolean(ctaLabel && ctaUrl);
@@ -41,12 +40,8 @@ export function EmailPreviewCard({ subject, bodyMd, ctaLabel, ctaUrl, isAdvertis
 
         <div className="space-y-2 text-sm leading-relaxed text-charcoal">
           <p className="text-charcoal-muted">{PREVIEW_NAME}님,</p>
-          {paragraphs.length > 0 ? (
-            paragraphs.map((p, i) => (
-              <p key={i} className="whitespace-pre-line">
-                {p}
-              </p>
-            ))
+          {previewHtml.replace(/<[^>]+>/g, '').trim().length > 0 ? (
+            <div className="rich-email-preview" dangerouslySetInnerHTML={{ __html: previewHtml }} />
           ) : (
             <p className="text-charcoal-soft">본문을 입력하면 여기에 표시됩니다.</p>
           )}

@@ -19,7 +19,7 @@ jest.mock('@react-email/render', () => ({
 const base = {
   recipientName: '홍길동',
   subject: '신작 안내',
-  bodyParagraphs: ['본문'],
+  bodyHtml: '<p>본문</p>',
   unsubscribeUrl: 'https://www.saf2026.com/api/email/unsubscribe?t=x',
   locale: 'ko' as const,
 };

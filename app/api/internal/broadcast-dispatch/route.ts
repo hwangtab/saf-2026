@@ -9,7 +9,7 @@ import { buildReplyFromAddress, buildReplyToAddress } from '@/lib/email/inbound'
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { hashEmail } from '@/lib/email/email-hash';
 import BroadcastEmail from '@/emails/broadcast';
-import { splitAndPersonalize } from '@/lib/email/broadcast-body';
+import { personalizeRichEmailHtml, personalizeRichEmailText } from '@/lib/email/rich-content';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -37,7 +37,9 @@ export async function GET(request: NextRequest) {
   // commit d0f39bba의 멱등 가드 정책과 동일 원칙.
   const { data: broadcasts } = await supabase
     .from('email_broadcasts')
-    .select('id, channel, subject, body_md, cta_label, cta_url, status, is_advertisement')
+    .select(
+      'id, channel, subject, body_html, body_text, cta_label, cta_url, status, is_advertisement'
+    )
     .in('status', ['queued', 'sending'])
     .gt('recipient_count', 0)
     .order('queued_at', { ascending: true })
@@ -136,7 +138,8 @@ export async function GET(request: NextRequest) {
             locale: string;
           }>
         ).map(async (r) => {
-          const bodyParagraphs = splitAndPersonalize(broadcast.body_md as string, r.name);
+          const bodyHtml = personalizeRichEmailHtml(broadcast.body_html as string, r.name);
+          const bodyText = personalizeRichEmailText((broadcast.body_text as string) ?? '', r.name);
           const emailHash = hashEmail(r.email);
           const unsubToken = generateUnsubscribeToken(
             emailHash,
@@ -151,7 +154,7 @@ export async function GET(request: NextRequest) {
             isAdvertisement: (broadcast.is_advertisement ?? false) as boolean,
             recipientName: r.name,
             subject: broadcast.subject as string,
-            bodyParagraphs,
+            bodyHtml,
             ctaLabel: broadcast.cta_label as string | null,
             ctaUrl: broadcast.cta_url as string | null,
             unsubscribeUrl,
@@ -180,6 +183,7 @@ export async function GET(request: NextRequest) {
             to: r.email,
             subject,
             html,
+            text: bodyText,
             reply_to: buildReplyToAddress(r.id),
             headers,
           };

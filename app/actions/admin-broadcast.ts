@@ -10,7 +10,12 @@ import { hashEmail, PETITION_SALT } from '@/lib/email/email-hash';
 import { sendBatch } from '@/lib/email/resend-batch';
 import { buildReplyFromAddress, buildReplyToAddress } from '@/lib/email/inbound';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
-import { splitAndPersonalize } from '@/lib/email/broadcast-body';
+import {
+  hasMeaningfulRichEmailBody,
+  personalizeRichEmailHtml,
+  personalizeRichEmailText,
+  prepareRichEmailContent,
+} from '@/lib/email/rich-content';
 import { ArtworkBuyerAudienceResolver } from '@/lib/email/audiences/artwork-buyer';
 import { CustomerAudienceResolver } from '@/lib/email/audiences/customer';
 import { MemberAudienceResolver } from '@/lib/email/audiences/member';
@@ -22,11 +27,13 @@ import { matchesAnySearch } from '@/lib/search-utils';
 import type { ActionState } from '@/types';
 import type { Json } from '@/types/supabase';
 import BroadcastEmail from '@/emails/broadcast';
+import { EMAIL_IMAGE_UPLOAD } from '@/lib/email/rich-content';
 
 export interface EnqueueBroadcastInput {
   channel: BroadcastChannel;
   subject: string;
-  bodyMd: string;
+  bodyHtml: string;
+  bodyText: string;
   ctaLabel?: string;
   ctaUrl?: string;
   petitionSlug?: string;
@@ -53,10 +60,15 @@ export async function enqueueBroadcast(
 
   const supabase = await requireAdminClient();
 
-  const { channel, subject, bodyMd, ctaLabel, ctaUrl, petitionSlug } = input;
+  const { channel, subject, ctaLabel, ctaUrl, petitionSlug } = input;
   const audienceFilter = input.audienceFilter ?? {};
 
-  if (!subject.trim() || !bodyMd.trim()) {
+  const content = prepareRichEmailContent({
+    bodyHtml: input.bodyHtml,
+    bodyText: input.bodyText,
+  });
+
+  if (!subject.trim() || !hasMeaningfulRichEmailBody(content.bodyHtml, content.bodyText)) {
     return { message: '제목과 본문은 필수입니다.', error: true };
   }
 
@@ -149,7 +161,8 @@ export async function enqueueBroadcast(
       channel,
       petition_slug: petitionSlug ?? null,
       subject,
-      body_md: bodyMd,
+      body_html: content.bodyHtml,
+      body_text: content.bodyText,
       cta_label: validatedCtaLabel,
       cta_url: validatedCtaUrl,
       audience_filter: audienceFilter as Json,
@@ -196,35 +209,70 @@ export async function enqueueBroadcast(
   };
 }
 
-export async function getBroadcasts() {
+export type EmailPageQuery = {
+  page?: number;
+  pageSize?: number;
+};
+
+export type EmailBroadcastRow = {
+  id: string;
+  channel: string;
+  subject: string;
+  status: string;
+  recipient_count: number | null;
+  sent_count: number | null;
+  failed_count: number | null;
+  created_at: string | null;
+  queued_at: string | null;
+  sent_at: string | null;
+};
+
+export type EmailPaginatedResult<T> = {
+  rows: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
+const DEFAULT_EMAIL_PAGE_SIZE = 25;
+const MAX_EMAIL_PAGE_SIZE = 100;
+
+function normalizeEmailPageQuery(query: EmailPageQuery = {}) {
+  const page = Math.max(1, Math.floor(Number(query.page) || 1));
+  const requestedPageSize = Math.floor(Number(query.pageSize) || DEFAULT_EMAIL_PAGE_SIZE);
+  const pageSize = Math.min(MAX_EMAIL_PAGE_SIZE, Math.max(1, requestedPageSize));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+  return { page, pageSize, from, to };
+}
+
+export async function getBroadcasts(
+  query: EmailPageQuery = {}
+): Promise<EmailPaginatedResult<EmailBroadcastRow>> {
   await requireAdmin();
 
   const supabase = await requireAdminClient();
+  const { page, pageSize, from, to } = normalizeEmailPageQuery(query);
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from('email_broadcasts')
     .select(
-      'id, channel, subject, status, recipient_count, sent_count, failed_count, created_at, queued_at, sent_at'
+      'id, channel, subject, status, recipient_count, sent_count, failed_count, created_at, queued_at, sent_at',
+      { count: 'exact' }
     )
     .order('created_at', { ascending: false })
-    .limit(50);
+    .range(from, to);
 
   if (error) {
     console.error('[get-broadcasts] error:', error);
-    return [];
+    return { rows: [], total: 0, page, pageSize };
   }
-  return (data ?? []) as Array<{
-    id: string;
-    channel: string;
-    subject: string;
-    status: string;
-    recipient_count: number | null;
-    sent_count: number | null;
-    failed_count: number | null;
-    created_at: string | null;
-    queued_at: string | null;
-    sent_at: string | null;
-  }>;
+  return {
+    rows: (data ?? []) as EmailBroadcastRow[],
+    total: typeof count === 'number' ? count : data?.length ?? 0,
+    page,
+    pageSize,
+  };
 }
 
 // 미리보기 수신자 수 — DB count 함수(count_*_audience)로 행 전송 없이 계산.
@@ -391,19 +439,58 @@ export async function searchBroadcastArtworks(
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? buildReplyFromAddress();
 
+export async function uploadEmailBroadcastImage(
+  formData: FormData
+): Promise<ActionState & { url?: string }> {
+  const admin = await requireAdmin();
+  const supabase = await requireAdminClient();
+  const file = formData.get('file');
+
+  if (!(file instanceof File)) {
+    return { message: '이미지 파일을 선택해주세요.', error: true };
+  }
+  if (!EMAIL_IMAGE_UPLOAD.allowedMimeTypes.includes(file.type as never)) {
+    return { message: 'JPG, PNG, GIF 이미지만 업로드할 수 있습니다.', error: true };
+  }
+  if (file.size > EMAIL_IMAGE_UPLOAD.maxBytes) {
+    return { message: '이미지는 2MB 이하만 업로드할 수 있습니다.', error: true };
+  }
+
+  const ext = file.type === 'image/png' ? 'png' : file.type === 'image/gif' ? 'gif' : 'jpg';
+  const path = `email-broadcasts/${admin.id}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from('assets').upload(path, file, {
+    cacheControl: '31536000',
+    contentType: file.type,
+    upsert: false,
+  });
+
+  if (error) {
+    console.error('[upload-email-broadcast-image] storage upload error:', error);
+    return { message: '이미지 업로드에 실패했습니다.', error: true };
+  }
+
+  const { data } = supabase.storage.from('assets').getPublicUrl(path);
+  return { message: '이미지를 업로드했습니다.', url: data.publicUrl };
+}
+
 export async function enqueueIndividualBroadcast(input: {
   recipients: Array<{ email: string; name: string | null }>;
   subject: string;
-  bodyMd: string;
+  bodyHtml: string;
+  bodyText: string;
   ctaLabel?: string;
   ctaUrl?: string;
   isAdvertisement: boolean;
 }): Promise<ActionState & { broadcastId?: string; deduped?: boolean }> {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
-  const { recipients, subject, bodyMd, ctaLabel, ctaUrl, isAdvertisement } = input;
+  const { recipients, subject, ctaLabel, ctaUrl, isAdvertisement } = input;
+  const content = prepareRichEmailContent({
+    bodyHtml: input.bodyHtml,
+    bodyText: input.bodyText,
+  });
 
-  if (!subject.trim() || !bodyMd.trim())
+  if (!subject.trim() || !hasMeaningfulRichEmailBody(content.bodyHtml, content.bodyText))
     return { message: '제목과 본문은 필수입니다.', error: true };
   if (recipients.length === 0) return { message: '수신자를 1명 이상 선택하세요.', error: true };
   // 임의 대량 발송(오발송·도메인 평판 훼손) 방어 — 한도 초과는 그룹 발송 채널로 유도.
@@ -470,7 +557,8 @@ export async function enqueueIndividualBroadcast(input: {
     .insert({
       channel: 'individual',
       subject,
-      body_md: bodyMd,
+      body_html: content.bodyHtml,
+      body_text: content.bodyText,
       cta_label: validatedCtaLabel,
       cta_url: validatedCtaUrl,
       audience_filter: { mode: 'search' } as Json,
@@ -510,14 +598,19 @@ export async function enqueueIndividualBroadcast(input: {
 // 작성 중인 내용으로 관리자 본인에게 테스트 1통 즉시 발송(큐 우회). 실전 0건 리스크 완화.
 export async function sendTestEmail(input: {
   subject: string;
-  bodyMd: string;
+  bodyHtml: string;
+  bodyText: string;
   ctaLabel?: string;
   ctaUrl?: string;
   isAdvertisement: boolean;
 }): Promise<ActionState> {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
-  if (!input.subject.trim() || !input.bodyMd.trim())
+  const content = prepareRichEmailContent({
+    bodyHtml: input.bodyHtml,
+    bodyText: input.bodyText,
+  });
+  if (!input.subject.trim() || !hasMeaningfulRichEmailBody(content.bodyHtml, content.bodyText))
     return { message: '제목과 본문은 필수입니다.', error: true };
 
   const { data: profile } = await supabase
@@ -554,7 +647,10 @@ export async function sendTestEmail(input: {
       isAdvertisement: input.isAdvertisement,
       recipientName: (profile?.name as string | null) ?? null,
       subject: input.subject,
-      bodyParagraphs: splitAndPersonalize(input.bodyMd, (profile?.name as string | null) ?? null),
+      bodyHtml: personalizeRichEmailHtml(
+        content.bodyHtml,
+        (profile?.name as string | null) ?? null
+      ),
       ctaLabel: validatedCtaLabel,
       ctaUrl: validatedCtaUrl,
       unsubscribeUrl,
@@ -565,7 +661,14 @@ export async function sendTestEmail(input: {
     ? `(광고) [테스트] ${input.subject}`
     : `[테스트] ${input.subject}`;
   const result = await sendBatch([
-    { from: FROM_EMAIL, to, subject, html, reply_to: buildReplyToAddress() },
+    {
+      from: FROM_EMAIL,
+      to,
+      subject,
+      html,
+      text: personalizeRichEmailText(content.bodyText, (profile?.name as string | null) ?? null),
+      reply_to: buildReplyToAddress(),
+    },
   ]);
   if (result.error || result.ids.length === 0) {
     return { message: `테스트 발송 실패: ${result.error ?? '알 수 없는 오류'}`, error: true };

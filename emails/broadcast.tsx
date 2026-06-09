@@ -10,7 +10,7 @@ export interface BroadcastEmailProps {
   isAdvertisement: boolean;
   recipientName: string | null;
   subject: string;
-  bodyParagraphs: string[];
+  bodyHtml: string;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
   unsubscribeUrl: string;
@@ -32,7 +32,7 @@ export default function BroadcastEmail({
   isAdvertisement,
   recipientName,
   subject,
-  bodyParagraphs,
+  bodyHtml,
   ctaLabel,
   ctaUrl,
   unsubscribeUrl,
@@ -73,11 +73,7 @@ export default function BroadcastEmail({
     >
       <Text style={greetingText}>{greeting}</Text>
 
-      {bodyParagraphs.map((para, i) => (
-        <Text key={i} style={bodyText}>
-          {para}
-        </Text>
-      ))}
+      <div dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
       {/* CTA URL은 admin-broadcast.ts의 validateUrl이 이미 검증하지만, 향후 DB 직접 수정/마이그레이션
           오류로 javascript:/data: URI가 들어올 수 있으므로 컴포넌트 레벨 2차 방어. */}
@@ -154,13 +150,6 @@ const greetingText: React.CSSProperties = {
   fontSize: '15px',
   fontWeight: 500,
   color: '#1F2428',
-};
-
-const bodyText: React.CSSProperties = {
-  margin: '0 0 14px',
-  fontSize: '14px',
-  lineHeight: '1.7',
-  color: '#555E67',
 };
 
 const ctaWrapperStyle: React.CSSProperties = {

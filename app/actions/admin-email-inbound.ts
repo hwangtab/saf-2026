@@ -27,24 +27,57 @@ export type InboundEmailRow = {
   reply_resend_id: string | null;
 };
 
-export async function getInboundMessages(): Promise<InboundEmailRow[]> {
+export type InboundEmailPageQuery = {
+  page?: number;
+  pageSize?: number;
+};
+
+export type InboundEmailPaginatedResult = {
+  rows: InboundEmailRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
+const DEFAULT_INBOUND_EMAIL_PAGE_SIZE = 25;
+const MAX_INBOUND_EMAIL_PAGE_SIZE = 100;
+
+function normalizeInboundEmailPageQuery(query: InboundEmailPageQuery = {}) {
+  const page = Math.max(1, Math.floor(Number(query.page) || 1));
+  const requestedPageSize = Math.floor(Number(query.pageSize) || DEFAULT_INBOUND_EMAIL_PAGE_SIZE);
+  const pageSize = Math.min(MAX_INBOUND_EMAIL_PAGE_SIZE, Math.max(1, requestedPageSize));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+  return { page, pageSize, from, to };
+}
+
+export async function getInboundMessages(
+  query: InboundEmailPageQuery = {}
+): Promise<InboundEmailPaginatedResult> {
   await requireAdmin();
   const supabase = await requireAdminClient();
+  const { page, pageSize, from, to } = normalizeInboundEmailPageQuery(query);
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from('email_inbound_messages')
     .select(
-      'id, resend_email_id, message_id, from_email, to_emails, cc_emails, subject, text_body, html_body, headers, attachments, status, matched_broadcast_recipient_id, received_at, replied_at, reply_resend_id'
+      'id, resend_email_id, message_id, from_email, to_emails, cc_emails, subject, text_body, html_body, headers, attachments, status, matched_broadcast_recipient_id, received_at, replied_at, reply_resend_id',
+      { count: 'exact' }
     )
     .order('received_at', { ascending: false })
-    .limit(50);
+    .range(from, to);
 
   if (error) {
     console.error('[get-inbound-messages] error:', error);
-    return [];
+    return { rows: [], total: 0, page, pageSize };
   }
 
-  return (data ?? []) as InboundEmailRow[];
+  return {
+    rows: (data ?? []) as InboundEmailRow[],
+    total: typeof count === 'number' ? count : data?.length ?? 0,
+    page,
+    pageSize,
+  };
 }
 
 export async function replyToInboundMessage(input: {

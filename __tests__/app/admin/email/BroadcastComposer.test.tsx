@@ -8,6 +8,7 @@ jest.mock('@/app/actions/admin-broadcast', () => ({
   enqueueBroadcast: jest.fn(),
   enqueueIndividualBroadcast: jest.fn(),
   sendTestEmail: jest.fn(),
+  uploadEmailBroadcastImage: jest.fn(),
   previewAudience: jest.fn(async () => ({ total: 0, breakdown: {} })),
   getPetitionOptions: jest.fn(async () => [
     { slug: 'oh-yoon', title: '오윤 청원', isActive: true },
@@ -16,6 +17,23 @@ jest.mock('@/app/actions/admin-broadcast', () => ({
 }));
 jest.mock('@/app/actions/admin-contact-search', () => ({
   searchContacts: jest.fn(async () => ({ results: [], truncated: false })),
+}));
+jest.mock('@/app/(portal)/admin/email/_components/RichEmailEditor', () => ({
+  RichEmailEditor: ({
+    value,
+    onChange,
+  }: {
+    value: string;
+    onChange: (next: { html: string; text: string }) => void;
+  }) => (
+    <textarea
+      aria-label="본문"
+      value={value}
+      onChange={(event) =>
+        onChange({ html: event.currentTarget.value, text: event.currentTarget.value })
+      }
+    />
+  ),
 }));
 
 async function renderComposer() {

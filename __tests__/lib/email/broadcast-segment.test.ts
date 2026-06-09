@@ -61,7 +61,13 @@ describe('segmentToPreviewArgs', () => {
 });
 
 describe('buildGroupInput — 기존 server action 계약 보존', () => {
-  const content = { subject: '제목', bodyMd: '본문', ctaLabel: '', ctaUrl: '' };
+  const content = {
+    subject: '제목',
+    bodyHtml: '<p>본문</p>',
+    bodyText: '본문',
+    ctaLabel: '',
+    ctaUrl: '',
+  };
 
   it('member는 channel member + subset 필터', () => {
     const input = buildGroupInput({ kind: 'member', subset: 'exhibitor' }, content);

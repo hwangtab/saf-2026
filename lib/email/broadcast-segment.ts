@@ -192,7 +192,8 @@ export function isDirectSegment(
 //   artwork → { subset, artworkId, mode:'artwork-buyer' }
 export interface BroadcastContent {
   subject: string;
-  bodyMd: string;
+  bodyHtml: string;
+  bodyText: string;
   ctaLabel?: string;
   ctaUrl?: string;
 }
@@ -200,7 +201,8 @@ export interface BroadcastContent {
 export interface GroupBroadcastInput {
   channel: BroadcastChannel;
   subject: string;
-  bodyMd: string;
+  bodyHtml: string;
+  bodyText: string;
   ctaLabel?: string;
   ctaUrl?: string;
   petitionSlug?: string;
@@ -215,7 +217,8 @@ export function buildGroupInput(
   const isAdvertisement = deriveIsAdvertisement(seg);
   const base = {
     subject: content.subject,
-    bodyMd: content.bodyMd,
+    bodyHtml: content.bodyHtml,
+    bodyText: content.bodyText,
     ctaLabel: content.ctaLabel || undefined,
     ctaUrl: content.ctaUrl || undefined,
     isAdvertisement,

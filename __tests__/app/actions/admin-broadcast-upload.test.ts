@@ -1,0 +1,61 @@
+import { uploadEmailBroadcastImage } from '@/app/actions/admin-broadcast';
+
+const uploadMock = jest.fn();
+const getPublicUrlMock = jest.fn();
+
+jest.mock('@/lib/auth/guards', () => ({
+  requireAdmin: jest.fn(async () => ({ id: 'admin-1' })),
+  requireAdminClient: jest.fn(async () => ({
+    storage: {
+      from: jest.fn(() => ({
+        upload: uploadMock,
+        getPublicUrl: getPublicUrlMock,
+      })),
+    },
+  })),
+}));
+
+jest.mock('@/app/actions/activity-log-writer', () => ({
+  logAdminAction: jest.fn(async () => {}),
+}));
+
+describe('uploadEmailBroadcastImage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    uploadMock.mockResolvedValue({ error: null });
+    getPublicUrlMock.mockReturnValue({
+      data: {
+        publicUrl:
+          'https://example.supabase.co/storage/v1/object/public/assets/email-broadcasts/admin-1/img.png',
+      },
+    });
+  });
+
+  it('rejects non-image files', async () => {
+    const formData = new FormData();
+    formData.append('file', new File(['x'], 'x.svg', { type: 'image/svg+xml' }));
+
+    const result = await uploadEmailBroadcastImage(formData);
+
+    expect(result).toEqual({
+      message: 'JPG, PNG, GIF 이미지만 업로드할 수 있습니다.',
+      error: true,
+    });
+    expect(uploadMock).not.toHaveBeenCalled();
+  });
+
+  it('uploads allowed images to the assets email-broadcasts path', async () => {
+    const formData = new FormData();
+    formData.append('file', new File(['x'], 'x.png', { type: 'image/png' }));
+
+    const result = await uploadEmailBroadcastImage(formData);
+
+    expect(result.error).toBeFalsy();
+    expect(result.url).toContain('/assets/email-broadcasts/admin-1/');
+    expect(uploadMock).toHaveBeenCalledWith(
+      expect.stringMatching(/^email-broadcasts\/admin-1\/.+\.png$/),
+      expect.any(File),
+      expect.objectContaining({ contentType: 'image/png', upsert: false })
+    );
+  });
+});
