@@ -175,7 +175,7 @@ export function generateSAFCoreQA(
         {
           question: 'What is the shipping and return policy for SAF Online artworks?',
           answer:
-            'Domestic shipping within Korea is free of charge. Orders are typically dispatched within 1–2 business days and delivered within 3–5 business days. Returns are accepted within 7 days of delivery for unused items in original condition. Contact contact@kosmart.org for return requests.',
+            'Domestic shipping within Korea is free of charge. After payment, artworks are inspected, framed when needed, and safely packed; shipping usually begins within 1-2 weeks. Returns are accepted within 7 days of delivery for unused items in original condition. Contact contact@kosmart.org for return requests.',
           url: `${SITE_URL}/en/artworks`,
         },
         {
