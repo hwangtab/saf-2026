@@ -186,49 +186,6 @@ export type Database = {
           },
         ];
       };
-      artwork_admin_tags: {
-        Row: {
-          artwork_id: string;
-          created_at: string;
-          created_by: string | null;
-          tag_id: string;
-        };
-        Insert: {
-          artwork_id: string;
-          created_at?: string;
-          created_by?: string | null;
-          tag_id: string;
-        };
-        Update: {
-          artwork_id?: string;
-          created_at?: string;
-          created_by?: string | null;
-          tag_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'artwork_admin_tags_artwork_id_fkey';
-            columns: ['artwork_id'];
-            isOneToOne: false;
-            referencedRelation: 'artworks';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'artwork_admin_tags_created_by_fkey';
-            columns: ['created_by'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'artwork_admin_tags_tag_id_fkey';
-            columns: ['tag_id'];
-            isOneToOne: false;
-            referencedRelation: 'admin_tags';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
       artist_applications: {
         Row: {
           artist_name: string;
@@ -383,6 +340,49 @@ export type Database = {
             columns: ['user_id'];
             isOneToOne: true;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      artwork_admin_tags: {
+        Row: {
+          artwork_id: string;
+          created_at: string;
+          created_by: string | null;
+          tag_id: string;
+        };
+        Insert: {
+          artwork_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          tag_id: string;
+        };
+        Update: {
+          artwork_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          tag_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'artwork_admin_tags_artwork_id_fkey';
+            columns: ['artwork_id'];
+            isOneToOne: false;
+            referencedRelation: 'artworks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'artwork_admin_tags_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'artwork_admin_tags_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'admin_tags';
             referencedColumns: ['id'];
           },
         ];
@@ -1582,6 +1582,7 @@ export type Database = {
           marketing_consent_at: string | null;
           marketing_consent_source: string | null;
           name: string | null;
+          phone: string | null;
           role: Database['public']['Enums']['user_role'] | null;
           status: Database['public']['Enums']['user_status'] | null;
           updated_at: string | null;
@@ -1595,6 +1596,7 @@ export type Database = {
           marketing_consent_at?: string | null;
           marketing_consent_source?: string | null;
           name?: string | null;
+          phone?: string | null;
           role?: Database['public']['Enums']['user_role'] | null;
           status?: Database['public']['Enums']['user_status'] | null;
           updated_at?: string | null;
@@ -1608,6 +1610,7 @@ export type Database = {
           marketing_consent_at?: string | null;
           marketing_consent_source?: string | null;
           name?: string | null;
+          phone?: string | null;
           role?: Database['public']['Enums']['user_role'] | null;
           status?: Database['public']['Enums']['user_status'] | null;
           updated_at?: string | null;
@@ -1677,6 +1680,115 @@ export type Database = {
         };
         Relationships: [];
       };
+      sms_broadcast_recipients: {
+        Row: {
+          broadcast_id: string;
+          created_at: string;
+          error: string | null;
+          id: string;
+          name: string | null;
+          phone: string;
+          provider_message_id: string | null;
+          segment: string | null;
+          sent_at: string | null;
+          status: string;
+        };
+        Insert: {
+          broadcast_id: string;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          name?: string | null;
+          phone: string;
+          provider_message_id?: string | null;
+          segment?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          broadcast_id?: string;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          name?: string | null;
+          phone?: string;
+          provider_message_id?: string | null;
+          segment?: string | null;
+          sent_at?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'sms_broadcast_recipients_broadcast_id_fkey';
+            columns: ['broadcast_id'];
+            isOneToOne: false;
+            referencedRelation: 'sms_broadcasts';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      sms_broadcasts: {
+        Row: {
+          audience_filter: Json;
+          body_text: string;
+          channel: string;
+          created_at: string;
+          created_by: string | null;
+          dispatch_lock_token: string | null;
+          dispatch_locked_until: string | null;
+          failed_count: number;
+          id: string;
+          is_advertisement: boolean;
+          queued_at: string | null;
+          recipient_count: number;
+          sent_at: string | null;
+          sent_count: number;
+          status: string;
+        };
+        Insert: {
+          audience_filter?: Json;
+          body_text: string;
+          channel: string;
+          created_at?: string;
+          created_by?: string | null;
+          dispatch_lock_token?: string | null;
+          dispatch_locked_until?: string | null;
+          failed_count?: number;
+          id?: string;
+          is_advertisement?: boolean;
+          queued_at?: string | null;
+          recipient_count?: number;
+          sent_at?: string | null;
+          sent_count?: number;
+          status?: string;
+        };
+        Update: {
+          audience_filter?: Json;
+          body_text?: string;
+          channel?: string;
+          created_at?: string;
+          created_by?: string | null;
+          dispatch_lock_token?: string | null;
+          dispatch_locked_until?: string | null;
+          failed_count?: number;
+          id?: string;
+          is_advertisement?: boolean;
+          queued_at?: string | null;
+          recipient_count?: number;
+          sent_at?: string | null;
+          sent_count?: number;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'sms_broadcasts_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       sms_logs: {
         Row: {
           created_at: string;
@@ -1713,6 +1825,30 @@ export type Database = {
           status?: string;
           to_phone?: string;
           type?: string;
+        };
+        Relationships: [];
+      };
+      sms_suppressions: {
+        Row: {
+          channel: string;
+          created_at: string;
+          id: string;
+          phone_hash: string;
+          reason: string | null;
+        };
+        Insert: {
+          channel: string;
+          created_at?: string;
+          id?: string;
+          phone_hash: string;
+          reason?: string | null;
+        };
+        Update: {
+          channel?: string;
+          created_at?: string;
+          id?: string;
+          phone_hash?: string;
+          reason?: string | null;
         };
         Relationships: [];
       };
@@ -1915,18 +2051,52 @@ export type Database = {
         Args: { p_broadcast_id: string; p_lease_seconds?: number };
         Returns: string;
       };
+      claim_sms_broadcast_dispatch: {
+        Args: { p_broadcast_id: string; p_lease_seconds?: number };
+        Returns: string;
+      };
       close_petition: { Args: { p_slug: string }; Returns: Json };
       close_petitions_due: { Args: never; Returns: Json };
+      count_artwork_buyer_audience: {
+        Args: { p_advertising: boolean; p_artwork_id: string; p_salt: string };
+        Returns: number;
+      };
+      count_customer_audience: { Args: { p_salt: string }; Returns: number };
+      count_member_audience: {
+        Args: { p_salt: string; p_subset: string };
+        Returns: number;
+      };
+      count_petition_audience: {
+        Args: { p_salt: string; p_slug: string };
+        Returns: number;
+      };
       create_and_attach_admin_tag_to_artwork: {
         Args: {
           p_admin_id?: string;
           p_artwork_id: string;
           p_color?: string;
-          p_description?: string | null;
+          p_description?: string;
           p_name: string;
           p_slug: string;
         };
-        Returns: Database['public']['Tables']['admin_tags']['Row'];
+        Returns: {
+          archived_at: string | null;
+          color: string;
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          id: string;
+          name: string;
+          slug: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'admin_tags';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       execute_sql: { Args: { sql: string }; Returns: undefined };
       extract_query_param: {
@@ -2368,6 +2538,10 @@ export type Database = {
       hash_email: { Args: { p_email: string; p_salt: string }; Returns: string };
       hash_ip: { Args: { p_ip: string; p_salt: string }; Returns: string };
       is_paid_status: { Args: { s: string }; Returns: boolean };
+      is_revenue_order: {
+        Args: { paid_at: string; s: string };
+        Returns: boolean;
+      };
       is_test_buyer_email: { Args: { email: string }; Returns: boolean };
       log_petition_audit: {
         Args: {
@@ -2388,6 +2562,14 @@ export type Database = {
       };
       purge_petitions_expired: { Args: never; Returns: Json };
       renew_broadcast_dispatch: {
+        Args: {
+          p_broadcast_id: string;
+          p_lease_seconds?: number;
+          p_token: string;
+        };
+        Returns: boolean;
+      };
+      renew_sms_broadcast_dispatch: {
         Args: {
           p_broadcast_id: string;
           p_lease_seconds?: number;
