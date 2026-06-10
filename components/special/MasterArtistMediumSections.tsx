@@ -35,6 +35,8 @@ interface MasterArtistMediumSectionsProps {
   isEnglish: boolean;
   returnTo: string;
   className?: string;
+  /** 갤러리 배경 톤. 기본 dark(흰 텍스트 헤더). 박생광처럼 흰 벽(light) 갤러리는 'light'. */
+  theme?: 'dark' | 'light';
 }
 
 const MasterArtistMediumSections = memo(function MasterArtistMediumSections({
@@ -42,8 +44,14 @@ const MasterArtistMediumSections = memo(function MasterArtistMediumSections({
   isEnglish,
   returnTo,
   className,
+  theme = 'dark',
 }: MasterArtistMediumSectionsProps) {
   if (!artworks || artworks.length === 0) return null;
+
+  // 갤러리 배경에 맞춘 섹션 헤더 색상. light(흰 벽) 갤러리는 charcoal로 대비 확보(WCAG AA).
+  const headingClass = theme === 'light' ? 'text-charcoal-deep' : 'text-white';
+  const countClass = theme === 'light' ? 'text-charcoal-muted' : 'text-white/70';
+  const dividerClass = theme === 'light' ? 'bg-charcoal/15' : 'bg-white/10';
 
   const grouped = new Map<string, ArtworkListItem[]>();
   artworks.forEach((a) => {
@@ -65,11 +73,11 @@ const MasterArtistMediumSections = memo(function MasterArtistMediumSections({
     return (
       <div className={className}>
         <div className="flex items-center gap-4 mb-10">
-          <h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase">
+          <h2 className={`text-lg md:text-xl font-bold ${headingClass} tracking-widest uppercase`}>
             {displayLabel}
           </h2>
-          <span className="text-sm text-white/70 font-mono tabular-nums">{artworks.length}</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <span className={`text-sm ${countClass} font-mono tabular-nums`}>{artworks.length}</span>
+          <div className={`flex-1 h-px ${dividerClass}`} />
         </div>
         <MasterArtistGallery artworks={artworks} returnTo={returnTo} />
       </div>
@@ -95,13 +103,15 @@ const MasterArtistMediumSections = memo(function MasterArtistMediumSections({
           return (
             <section key={categoryKey} aria-label={displayLabel}>
               <div className="flex items-center gap-4 mb-10">
-                <h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase">
+                <h2
+                  className={`text-lg md:text-xl font-bold ${headingClass} tracking-widest uppercase`}
+                >
                   {displayLabel}
                 </h2>
-                <span className="text-sm text-white/70 font-mono tabular-nums">
+                <span className={`text-sm ${countClass} font-mono tabular-nums`}>
                   {categoryArtworks.length}
                 </span>
-                <div className="flex-1 h-px bg-white/10" />
+                <div className={`flex-1 h-px ${dividerClass}`} />
               </div>
               <MasterArtistGallery artworks={categoryArtworks} returnTo={returnTo} />
             </section>

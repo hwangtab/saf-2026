@@ -1,5 +1,75 @@
 [
   {
+    "hash": "4e1490c7",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "collect profiles.phone in mypage (and signup if applicable)",
+    "summary": "마이페이지 프로필에 전화번호 수집 추가 (SMS 브로드캐스트 대상 확보)",
+    "body": "- updateMyProfile에 optional phone 인자, normalizeKoreanMobile 정규화·비-010 거부\n- ProfileTab 전화번호 입력 필드(i18n), 기존 회원은 phone null로 자연 제외",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "a39e1daf",
+    "type": "fix",
+    "scope": "sms",
+    "subject": "live audience count + history error state + confirm reset",
+    "summary": "코드리뷰 반영 — 발송 전 대상 수 표시, 이력 조회 실패 UI, 광고토글 시 확인 초기화",
+    "body": "- 세그먼트 변경 시 previewSmsAudience 디바운스 호출로 대상 인원 미리 표시(0명 포함) — 실수 대량발송 방지\n- SmsBroadcastHistory에 loadState==error 분기 + 다시 시도 버튼 추가\n- 광고 토글 변경 시 confirmed 체크 초기화",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "81976557",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "meet WCAG AA contrast on Byeon Gyeonghui note card",
+    "summary": "변경희 작가 페이지 안내문 색상 대비 AA 충족 (e2e-a11y 차단 해소)",
+    "body": "- 파치먼트 카드(bg-canvas-strong #F5F5F7) 위 text-charcoal-soft(#6A7378)는 4.44로 AA(4.5) 미달\n- 다른 마스터 작가 컴포넌트와 동일하게 text-charcoal-muted(6.60:1)로 변경\n- main 전체를 막던 e2e-a11y 실패 해소",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "b8746e4b",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add broadcast composer + history sections to /admin/sms",
+    "summary": "/admin/sms 페이지에 단체 문자 작성·발송 이력 섹션 추가 (PR-1 로그 뷰어와 통합)",
+    "body": "- email/page.tsx 구조 미러 (composer → history)\n- getSmsBroadcasts 서버 페치 후 initial 전달",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "76307f2f",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add SmsBroadcastHistory (polling + EmailPagination reuse)",
+    "summary": "SMS 브로드캐스트 발송 이력 컴포넌트 (BroadcastHistory 미러)",
+    "body": "- 동일 폴링·STATUS_META, EmailPagination 재사용\n- body_text 트렁케이트 표시 + (광고) 배지",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "e2a52936",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add SmsBroadcastComposer (textarea + byte counter + ad notice)",
+    "summary": "SMS 브로드캐스트 작성 컴포넌트 (받는사람·본문·바이트/세그먼트·테스트)",
+    "body": "- BroadcastComposer 미러(제목·CTA·리치에디터 제거)\n- {{name}} 치환 안내, 광고 시 (광고)·무료수신거부·야간 차단 고지\n- direct 번호 직접 입력 + 광고 토글",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "7ad13b25",
+    "type": "fix",
+    "scope": "sms",
+    "subject": "gate ad dispatch on KST night window (delivery-time §50)",
+    "summary": "최종 리뷰 반영 — 광고 브로드캐스트 디스패치를 야간(21~08시) 도달시각 기준으로 차단",
+    "body": "- dispatch 루프 각 청크 전 isNightInKst 재확인: 광고면 status를 queued로 되돌리고 락 해제 → 08시 이후 cron 재개\n- enqueue 차단만으로는 대량 발송이 21시 넘겨 도달하는 정통망법 위반 소지 → dispatch에서 도달시각 보장\n- admin-sms-broadcast: 미사용 PETITION_SALT import 제거",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "b0445665",
     "type": "feat",
     "scope": "artists",
@@ -10,12 +80,152 @@
     "author": "황경하"
   },
   {
+    "hash": "a40868bb",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add SMS broadcast dispatch cron with lease lock",
+    "summary": "SMS 브로드캐스트 디스패치 크론 추가 (lease lock + per-recipient 멱등)",
+    "body": "- claim/renew_sms_broadcast_dispatch 락, 100건 청크, pending 선두 재조회\n- pending→sent를 재조회 전 커밋(Solapi 멱등 헤더 부재 보완)\n- 광고+SMS_OPT_OUT_080 미설정 시 발송 거부(failed 마킹)\n- vercel.json maxDuration=300 + 매분 cron 등록",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "be0e65fe",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add SMS broadcast server actions (enqueue/individual/preview/test)",
+    "summary": "SMS 브로드캐스트 서버 액션 (큐 등록·개별·미리보기·테스트)",
+    "body": "- 5분 dedup(channel+body), 500 cap, customer 광고 강제\n- 광고 INSERT 전 §50 가드(야간 차단·(광고) 표기·무료수신거부 보정)\n- getSmsBroadcasts 페이지네이션 반환형(email 미러)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "3dfde8c8",
+    "type": "fix",
+    "scope": "sms",
+    "subject": "canonical (광고) assembly + night/opt-out boundary tests",
+    "summary": "코드리뷰 반영 — 광고 본문 조립 순서 정규화(중복 (광고) 방지), 야간/수신거부 경계 테스트 추가",
+    "body": "- buildAdvertisementText: 기존 (광고) strip 후 브랜드→prefix→수신거부 순 재조립(수동 입력 이중 부착 제거)\n- isNightInKst 21:00 정각 inclusive 테스트, SMS_OPT_OUT_080 미설정 placeholder 테스트 추가",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "94192d12",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "add Instagram/Threads social publishing tool",
+    "summary": "관리자 소셜 미디어 게시 도구(인스타그램/스레드) 추가",
+    "body": "- /admin/social 페이지: 작품 선택 → 캡션 자동 초안+편집 → 플랫폼 선택 → 게시\n- lib/social: 멀티 플랫폼 어댑터(instagram/threads), 캡션 생성, 공개 이미지 URL 해석\n- social_posts 테이블 + 게시 이력/재시도/삭제, 활동 로그 기록\n- 환경 변수 미설정 플랫폼은 UI 자동 비활성\n- 캡션은 씨앗페 연대 프레이밍 준수(피해자 프레이밍 금지)\n- 단위 테스트 28건(어댑터 2단계 호출·에러·토큰만료·캡션·레지스트리)\n\nnote: types/supabase.ts에 동일 브랜치 WIP(email body_html) 재생성분 포함",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "3a45a561",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add sendSolapiBatch (concurrency-capped per-item results)",
+    "summary": "다건 SMS 발송 헬퍼 (입력 순서 결과 배열, 동시성 캡 10, never throw)",
+    "body": "- Solapi엔 Idempotency-Key 없음 — 중복 방지는 dispatch lease lock에 의존\n- buildBatchIdempotencyKey는 로깅용 유지(email 미러)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "693fe8d0",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add broadcast body compliance guards (정보통신망법 §50)",
+    "summary": "SMS 광고 본문 가드 (광고 표기·무료수신거부·야간 차단·SMS/LMS 판정)",
+    "body": "- validateAdvertisementText: ^(광고) + 브랜드 + 무료수신거부 강제, 변칙 표기 차단\n- buildAdvertisementText: 멱등 자동 보정 (중복 prefix 방지)\n- isNightInKst: KST 21:00~08:00 광고 차단, personalizeSmsText({{name}})",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "e5a31ad2",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add SMS broadcast segment union + ad derivation",
+    "summary": "SMS 받는사람 discriminated union (email 미러, petition/artwork 제거)",
+    "body": "- member/customer/direct, deriveIsAdvertisement 단일 출처\n- MAX_DIRECT_RECIPIENTS=500, segmentBlockReason, buildGroupInput",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "d3b9c726",
     "type": "feat",
     "scope": "artists",
     "subject": "민병산·이동구·김지영·백금아·김정원 전용 작가 페이지 추가",
     "summary": "서예(추모)·도예·수채화·인물회화 5인 전용 큐레이션 작가 페이지 신규 제작(누적, 메인 일괄 반영 예정)",
     "body": "- MinByeongsanFeature: 거리의 철학자 — 민병산체와 『철학의 즐거움』(1928~1990 추모·유산 톤). DB 무근거 '1980년대 인사동' 단정 제거\n- LeeDongguFeature: 흙과 물레, 자기 이름의 공방 — 도예(서울과기대 도예과). 외부 검색 구체 수상명·연도는 동명이인 위험으로 배제\n- KimJiyeongFeature: 순 돋는 나무 — 자연주의 도예(82년생 김지영 등 동명이인 무혼입)\n- BaekGeumaFeature: 물은 빛을 기억한다 — 수채화(한국수채화협회·제주신화전, 개인전 연도 미상은 미단정)\n- KimJeongwonFeature: 손 모은 사람 — 일상 몸짓의 인물회화(김준권과 철자 구분)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 PASS(민병산 외삽 1건 수정 반영). type-check·build 통과",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "3d5eb356",
+    "type": "fix",
+    "scope": "sms",
+    "subject": "batch individual suppression query to avoid 1000-row truncation",
+    "summary": "코드리뷰 반영 — individual 수신거부 조회를 fetchAllInBatches로 감싸 1000건 초과 누락 방지",
+    "body": "- sms_suppressions 조회가 PostgREST 1000행 cap에 잘려 옵트아웃 번호로 발송될 위험 제거\n- member/customer 리졸버와 동일하게 .range 배치 + 실패 시 발송 중단(throw)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "8e6c6ed9",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add individual SMS recipient resolver (dedup+suppression)",
+    "summary": "직접 지정 SMS 수신자 정규화·중복제거·수신거부 차감 헬퍼",
+    "body": "- normalizeKoreanMobile 정규화, 비-010 제외\n- 광고 시 customer 채널 수신거부도 차감(email L513-529 미러)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "25f8386c",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add customer SMS audience resolver (consent ∪ recent buyers)",
+    "summary": "고객 마케팅 SMS 수신자 추출 (email customer 미러, 광고 대상)",
+    "body": "- profiles(marketing_consent=true).phone ∪ orders.buyer_phone(최근 6개월 결제)\n- normalizeKoreanMobile 정규화·중복제거, sms_suppressions(customer/all) 차감",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "0a3861ac",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add member SMS audience resolver (artist+exhibitor phones)",
+    "summary": "작가·출품자 SMS 수신자 추출 (email member 미러, 정보성·동의 불요)",
+    "body": "- artists.contact_phone ∪ exhibitor.phone, 010 정규화·중복제거\n- sms_suppressions(member/all) 차감",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "96453bca",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add SMS audience types (SmsRecipient/SmsAudienceResolver)",
+    "summary": "SMS 수신자 타입 추가 (phone/name/phoneHash, customer/member/individual 채널)",
+    "body": null,
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "9749a9b7",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add hashPhone with shared petition salt scheme",
+    "summary": "전화번호 해시 유틸 추가 (수신거부 매칭·로그 키)",
+    "body": "- normalizeKoreanMobile 정규화 후 sha256(PETITION_SALT + 정규형)\n- 하이픈·+82 변형 동일 해시로 수렴, email-hash salt 재사용",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "03ce4f55",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add broadcast SMS schema (5 migrations + types)",
+    "summary": "브로드캐스트 SMS용 DB 스키마 추가 — profiles.phone, sms_suppressions/broadcasts/recipients 테이블, lease-lock RPC",
+    "body": "- profiles.phone (nullable), sms_suppressions(phone_hash+channel)\n- sms_broadcasts(body_text·lease-lock·광고플래그), sms_broadcast_recipients(부분 인덱스)\n- claim/renew_sms_broadcast_dispatch RPC (PUBLIC 실행권한 회수, service_role 전용)\n- 이메일 브로드캐스트 스키마 미러, admin+service_role RLS. types/supabase.ts 재생성\n- production(khtunrybrzntlnowlahb) MCP apply_migration 적용 완료",
     "date": "2026-06-10",
     "author": "황경하"
   },
