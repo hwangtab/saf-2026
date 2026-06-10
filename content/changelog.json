@@ -1,5 +1,15 @@
 [
   {
+    "hash": "8f2dbed2",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "손장섭·이광수·신예리·이문형·변경희 전용 작가 페이지 추가(리서치 병행)",
+    "summary": "매체 다양성 5인(민중미술 회화·사진비평·화각공예·민화·점 입체) 거장급 큐레이션 작가 페이지 신규 제작. WebSearch 리서치를 적극 병행해 미술사 맥락 깊이 보강",
+    "body": "- SonJangseopFeature: 나무처럼, 역사의 현장을 목격한 풍경(1941-2021, 현실과 발언 창립회원·민족미협 초대 회장, 작고 작가 추모·계승 톤)\n- LeeGwangsuFeature: 비평가의 카메라, 한·중을 잇는 사진 교류(인도사 연구→사진비평, 동명이인 춘원 배제)\n- SinYeriFeature: 화각과 민화 사이, 쇠뿔에 새긴 빛(화각공예 기법·역사 보강)\n- LeeMunhyeongFeature: 민화의 비상, 전통 도상을 현대로(까치호랑이·책가도·십장생 보강)\n- ByeonGyeonghuiFeature: ●에서 점으로, 최소 단위가 그리는 관계(history 부재→작업론 중심)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(손장섭 「역사의 창」 1990년작-MMCA소장 미확인 결합 정정, 보강분 전부 신뢰 출처 교차확인, 동명이인 배제, 날조 1인칭 0건)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "d2a666f7",
     "type": "feat",
     "scope": "artists",
