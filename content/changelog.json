@@ -1,5 +1,15 @@
 [
   {
+    "hash": "14a2b859",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "김주희·최경선·한미영·정연수·림지언 전용 작가 페이지 추가",
+    "summary": "이미지 오버랩·자연 회화 등 5인 전용 큐레이션 작가 페이지 신규 제작(누적, 메인 일괄 반영 예정)",
+    "body": "- KimJuhuiFeature: 이미지 오버랩 — 그리다=그리워하다, 기억의 중첩(국현 소장·SeMA 선정, 개인전 36회)\n- ChoeGyeongseonFeature: 마음의 유영(遊泳) — 자연 소재 생동·슬픔·치유(개인전 9건 2001~2020)\n- HanMiyeongFeature: 회화의 신선한 에너지 — 일상의 정서(단국대 서양화, 신진 작업론 중심)\n- JeongYeonsuFeature: reflection(빛이 지나간 자리) — 사물을 보는 시각(history 부재→작업론)\n- LimJieonFeature: 일상의 순간과 자연의 결 — 〈모먼트〉·〈진달래 진달래〉·〈풀, 꽃!〉(전시 2건, 작업론 중심)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 PASS(날조·동명이인·프레이밍·JSON-LD 전수 점검). type-check·build 통과",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "db418fc0",
     "type": "feat",
     "scope": "artists",
