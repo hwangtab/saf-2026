@@ -1,5 +1,15 @@
 [
   {
+    "hash": "30dff3ff",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "김현철·고현주·리호·김우주 전용 작가 페이지 추가(리서치 병행)",
+    "summary": "매체 다양성 4인(전통 동양화·다큐 사진·동양화 확장·들꽃 회화) 거장급 큐레이션 작가 페이지 신규 제작. WebSearch 리서치를 적극 병행",
+    "body": "- KimHyeoncheolFeature: 진경과 전신, 쪽빛에 담은 전통의 현재성(금릉 김현철·최완수 사사·춘향영정·2025 겸재정선미술관 초대전)\n- GoHyeonjuFeature: 꿈꾸는 카메라·기억의 목소리, 사진으로 전하는 희망과 기억(1964-2022 작고, 제주 4·3 기록·고정희상, 추모 톤)\n- RihoFeature: 보이지 않는 프로젝트, 동양화의 매체를 확장하다\n- KimUjuFeature: Wildflower, 들꽃의 생멸을 그리다\n- page.tsx dispatch 4인 등록, e2e/a11y ROUTES 4경로 추가\n- 독립 fact-review 통과(고현주 2022 작고 언론 교차확인→추모 프레이밍, 김현철 동명이인 배제·겸재정선 초대전 검증, 날조 1인칭 0건)\n- 장경호는 DB bio('설치미술가·관훈미술관장')가 외부 신뢰 출처와 충돌·동일인 불확실 → 작가 약력 재확인 위해 이번 라운드 보류",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "8f2dbed2",
     "type": "feat",
     "scope": "artists",
