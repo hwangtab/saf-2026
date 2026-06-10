@@ -27,8 +27,8 @@ internal_links:
   - { text: '신학철 작가 인터뷰', href: '/stories/shin-hakchul-interview' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
-published_at: '2026-06-10'
-is_published: false
+published_at: '2026-06-09'
+is_published: true
 display_order: 12
 ---
 

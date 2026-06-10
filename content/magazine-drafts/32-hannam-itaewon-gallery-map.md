@@ -6,7 +6,8 @@ category: buying-guide
 excerpt: 페이스·가고시안·타데우스 로팍·화이트큐브·페로탱이 한남에 모인 이유. 리움미술관과 글로벌 갤러리 7곳을 하루에 잇는 한남·이태원 지도.
 excerpt_en: 'Why Pace, Gagosian, Thaddaeus Ropac, White Cube, and Perrotin all gathered in Hannam. A map linking Leeum and seven global galleries in a single day.'
 display_order: 32
-published_at: '2026-09-01'
+published_at: '2026-06-09'
+is_published: true
 tags:
   - 한남동
   - 이태원

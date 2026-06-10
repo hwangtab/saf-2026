@@ -4,6 +4,7 @@
  * Usage:
  *   npx tsx scripts/upload-magazine-drafts.ts
  *   npx tsx scripts/upload-magazine-drafts.ts --publish  # flips is_published=true after insert
+ *   npx tsx scripts/upload-magazine-drafts.ts --publish --only-slugs=slug1,slug2
  *
  * Requires: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local
  * (service-role key is needed to write to the stories table through RLS).
@@ -144,6 +145,12 @@ const SKIP_SLUGS = new Set(
     .map((s) => s.trim())
     .filter(Boolean)
 );
+const ONLY_SLUGS = new Set(
+  (process.argv.find((a) => a.startsWith('--only-slugs='))?.replace('--only-slugs=', '') ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+);
 
 const files = readdirSync(DRAFTS_DIR)
   .filter((f) => /^\d{2}-.+\.md$/.test(f))
@@ -172,6 +179,10 @@ for (const fileName of files) {
     continue;
   }
 
+  if (ONLY_SLUGS.size > 0 && !ONLY_SLUGS.has(meta.slug)) {
+    continue;
+  }
+
   const thumbnail = extractFirstImage(body);
 
   rows.push({
@@ -193,7 +204,9 @@ for (const fileName of files) {
 
 console.log(`Prepared ${rows.length} rows (is_published=${PUBLISH}, dry_run=${DRY_RUN})`);
 for (const row of rows)
-  console.log(` - ${row.slug} [${row.category}] body=${(row.body as string).length}자`);
+  console.log(
+    ` - ${row.slug} [${row.category}] published_at=${row.published_at} body=${(row.body as string).length}자`
+  );
 
 if (DRY_RUN) {
   console.log('\n🟡 DRY RUN — no DB writes performed. Re-run without --dry-run to upsert.');

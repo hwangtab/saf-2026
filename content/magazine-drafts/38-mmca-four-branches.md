@@ -6,7 +6,8 @@ category: buying-guide
 excerpt: 국립현대미술관(MMCA) 네 곳은 같은 기관이지만 성격이 완전히 다릅니다. 동시대·근대·근현대·수장형. 처음 가는 관람객을 위한 4관 비교 가이드.
 excerpt_en: "MMCA's four sites are one institution with completely different characters: contemporary, modern, modern-contemporary, and open storage. A comparison guide for first-time visitors."
 display_order: 38
-published_at: '2026-08-01'
+published_at: '2026-06-09'
+is_published: true
 tags:
   - 국립현대미술관
   - MMCA
