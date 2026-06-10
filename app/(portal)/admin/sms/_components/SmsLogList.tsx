@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import {
   AdminCard,
@@ -42,6 +42,16 @@ const STATUS_OPTIONS = [
   { value: 'failed', label: '발송 실패' },
 ];
 
+// 서버 resendSms의 RESENDABLE_TYPES와 일치 — virtual_account_issued는 계좌정보 미저장으로 재발송 불가
+const RESENDABLE_TYPES = new Set([
+  'payment_confirmed',
+  'deposit_confirmed',
+  'shipped',
+  'delivered',
+  'refunded',
+  'auto_cancelled',
+]);
+
 type Filters = { type: string; status: string; from: string; to: string; q: string };
 
 function formatKst(value: string | null) {
@@ -65,6 +75,12 @@ export function SmsLogList({
   const [confirmLogId, setConfirmLogId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isResending, startResend] = useTransition();
+
+  useEffect(() => {
+    if (!feedback) return;
+    const timer = setTimeout(() => setFeedback(null), 4000);
+    return () => clearTimeout(timer);
+  }, [feedback]);
 
   const loadPage = useCallback(
     async (nextPage: number, nextPageSize: number, nextFilters: Filters) => {
@@ -174,9 +190,7 @@ export function SmsLogList({
       </AdminCardHeader>
 
       {feedback && (
-        <p className="px-6 pt-4 text-sm text-charcoal-muted" role="status">
-          {feedback}
-        </p>
+        <output className="block px-6 pt-4 text-sm text-charcoal-muted">{feedback}</output>
       )}
 
       {loadState === 'error' ? (
@@ -216,7 +230,10 @@ export function SmsLogList({
                     label: log.status,
                     tone: 'default' as BadgeTone,
                   };
-                  const canResend = log.status === 'failed' && Boolean(log.order_no);
+                  const canResend =
+                    log.status === 'failed' &&
+                    Boolean(log.order_no) &&
+                    RESENDABLE_TYPES.has(log.type);
                   return (
                     <tr key={log.id} className="bg-white">
                       <td className="whitespace-nowrap px-4 py-3 text-charcoal">
