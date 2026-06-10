@@ -112,10 +112,10 @@ describe('resendSms', () => {
 
     mockFrom.mockImplementation((table: string) => {
       if (table === 'sms_logs')
-        return createSupabaseQueryMock({ data: [logRow], error: null }) as never;
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
       if (table === 'orders')
-        return createSupabaseQueryMock({ data: [orderRow], error: null }) as never;
-      return createSupabaseQueryMock({ data: [], error: null }) as never;
+        return createSupabaseQueryMock({ data: orderRow, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
     });
 
     const { logAdminAction } = jest.requireMock('@/app/actions/activity-log-writer') as {
@@ -147,7 +147,9 @@ describe('resendSms', () => {
   });
 
   it('로그를 찾지 못하면 ok:false', async () => {
-    mockFrom.mockImplementation(() => createSupabaseQueryMock({ data: [], error: null }) as never);
+    mockFrom.mockImplementation(
+      () => createSupabaseQueryMock({ data: null, error: null }) as never
+    );
     const result = await resendSms('missing');
     expect(result.ok).toBe(false);
     expect(result.error).toBeTruthy();
@@ -164,10 +166,28 @@ describe('resendSms', () => {
     };
     mockFrom.mockImplementation((table: string) => {
       if (table === 'sms_logs')
-        return createSupabaseQueryMock({ data: [logRow], error: null }) as never;
-      return createSupabaseQueryMock({ data: [], error: null }) as never;
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
     });
     const result = await resendSms('log-x');
+    expect(result.ok).toBe(false);
+    expect(mockSendBuyerSms).not.toHaveBeenCalled();
+  });
+
+  it('virtual_account_issued는 계좌정보 미저장으로 재발송 불가 ok:false', async () => {
+    const logRow = {
+      id: 'log-va',
+      order_no: 'SAF-VA',
+      to_phone: '01012345678',
+      type: 'virtual_account_issued',
+      status: 'failed',
+    };
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'sms_logs')
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
+    });
+    const result = await resendSms('log-va');
     expect(result.ok).toBe(false);
     expect(mockSendBuyerSms).not.toHaveBeenCalled();
   });

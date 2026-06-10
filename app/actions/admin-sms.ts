@@ -64,7 +64,10 @@ export async function getSmsLogs(params: SmsLogsParams = {}): Promise<SmsLogsRes
   if (params.from) query = query.gte('created_at', `${params.from}T00:00:00.000Z`);
   if (params.to) query = query.lte('created_at', `${params.to}T23:59:59.999Z`);
   if (params.q && params.q.trim()) {
-    const term = params.q.trim().replace(/[%,]/g, '');
+    const term = params.q
+      .trim()
+      .slice(0, 100)
+      .replace(/[,()"\\%_*]/g, '');
     query = query.or(`to_phone.ilike.%${term}%,order_no.ilike.%${term}%`);
   }
 
@@ -87,7 +90,8 @@ export async function getSmsLogs(params: SmsLogsParams = {}): Promise<SmsLogsRes
 
 const RESENDABLE_TYPES = new Set<BuyerSmsType>([
   'payment_confirmed',
-  'virtual_account_issued',
+  // virtual_account_issued 제외: 계좌 정보(은행/계좌번호/입금기한)가 orders에 저장되지 않아
+  // 재발송 시 깨진 본문(입금안내: / / ₩...)이 구매자에게 전송됨
   'deposit_confirmed',
   'shipped',
   'delivered',
@@ -110,7 +114,7 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
     .eq('id', logId)
     .maybeSingle();
 
-  const log = Array.isArray(logData) ? logData[0] : logData;
+  const log = logData;
   if (logError || !log) {
     return { ok: false, error: '발송 로그를 찾을 수 없습니다.' };
   }
@@ -129,7 +133,7 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
     .eq('order_no', log.order_no)
     .maybeSingle();
 
-  const order = Array.isArray(orderData) ? orderData[0] : orderData;
+  const order = orderData;
   if (orderError || !order) {
     return { ok: false, error: '원본 주문을 찾을 수 없습니다.' };
   }
