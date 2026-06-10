@@ -1,5 +1,95 @@
 [
   {
+    "hash": "d507c449",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "김상구·양운철·이홍원·칡뫼 김구·류준화 전용 작가 페이지 추가",
+    "summary": "매체·주제 다양성 5인(수공 목판화·종교철학 회화·한국적 정서 회화·민중미술·여성주의 미술) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- KimSangguFeature: 수공의 목판, 여백과 흑백의 미(1945~)\n- YangUncheolFeature: empty interval, 철학과 종교미술 사이\n- LeeHongwonFeature: 삶과 인간·숲속의 노래, 한국적 정서 40년\n- ChilmoeKimGuFeature: 황무지의 벌판, 시대의 비극을 새기다(2023 씨앗페 기금마련전 연대자)\n- RyuJunhwaFeature: 아방궁과 바리데기, 가려진 여성의 서사 복원(history 부재→주제 중심 구성)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(이홍원 '20년'→'십수 년' 정확화, 정치 서사 중립, 날조 1인칭 0건, 전 사실 DB 원문 대조)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "cc020b54",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "restore indexable magazine drafts",
+    "summary": "SEO 버그 수정",
+    "body": null,
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "b629359a",
+    "type": "fix",
+    "scope": "email",
+    "subject": "isolate invalid recipients before batch send",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
+    "hash": "f3060eec",
+    "type": "fix",
+    "scope": "email",
+    "subject": "render preview with sanitized spacing",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
+    "hash": "ce3a5e7e",
+    "type": "fix",
+    "scope": "email",
+    "subject": "preserve rich editor blank lines",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
+    "hash": "87f80f34",
+    "type": "fix",
+    "scope": "email",
+    "subject": "allow 2mb rich editor image uploads",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
+    "hash": "d256a790",
+    "type": "fix",
+    "scope": "email",
+    "subject": "remove automatic preview greeting",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
+    "hash": "0df4cf30",
+    "type": "fix",
+    "scope": "build",
+    "subject": "restore analytics and schema types",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
+    "hash": "04ed18cd",
+    "type": "feat",
+    "scope": "email",
+    "subject": "add rich editor and paginated reply operations",
+    "summary": "새 기능 추가",
+    "body": null,
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
     "hash": "61dcc47c",
     "type": "feat",
     "scope": "artists",
@@ -66,46 +156,6 @@
     "subject": "관리자 이메일 발송 시스템 전면 개편 및 배달성·컴플라이언스 하드닝",
     "summary": "조잡하던 관리자 이메일 발송을 단일 캔버스 UI로 재설계하고 접근성·배달성·중복발송·수신자수 성능까지 전수 보강",
     "body": "## 발송 UX 전면 개편\n- 438줄 모놀리식 BroadcastForm 해체 → 단일 캔버스(좌: 작성, 우: sticky 요약·실시간 미리보기)\n- mode(segment/search) 이분법·channel+isArtworkBuyer 합성 인코딩 제거 → RecipientSegment discriminated union 단일 모델로 분기 격리\n- 광고 여부 단일 출처(deriveIsAdvertisement) — 작품구매자 광고 배지 누락 버그·테스트/실발송 플래그 불일치 해소\n- 수신자 수 자동 디바운스 조회(race 가드) + 발송 요약 카드에 수신자 수 주입 확인\n- 발송 이력 콘솔화: 상태 배지·진행률 바·완료시각·individual 라벨·진행 중 폴링\n- 청원 진행/종료 배지, 템플릿 내용 채움 전용, 야간 광고 경고 정보통신망법 명시\n\n## 접근성·안전\n- raw 폼 컨트롤 키보드 포커스 링, 발송 결과·검색 결과 aria-live, 버튼 대비 AA\n- 직접 지정 임의 대량발송 500명 상한(서버+UI), 멱등 단락 경고 톤 표시\n- 연락처 검색 실시간화, {{name}} 본문 전용 안내\n\n## 배달성·컴플라이언스 백본\n- 웹훅 bounce 분류 보수화(case-insensitive permanent), to 누락 시 resend_id 역조회\n- List-Unsubscribe 원클릭 헤더, 광고 푸터 무료 수신거부 명시, unsubscribe rate-limit\n- 이메일 color-scheme=light(다크모드 강제반전 방지), 광고 제목 로케일 대응\n\n## dispatch 중복발송 방지·진행률\n- Resend Idempotency-Key(row id 정렬 해시)로 크래시/재시도 중복 차단(충돌 없어 드롭 안 함)\n- sent-update 2차 실패 circuit breaker, pending 조회 id 2차 정렬\n- 청크별 sent_count 재집계로 발송 중 라이브 진행률\n\n## 수신자수 count-only RPC\n- previewAudience를 count_*_audience 4개 함수로 대체(resolver 1:1 미러링, suppression anti-join)\n- RPC 실패 시 resolver 폴백, 프로덕션 검증 완료(member 40/customer 5/petition 11,668)\n- supabase/migrations/20260603160000 프로덕션 적용 완료\n\n검증: lint 0 · type-check · jest 804 · build 통과",
-    "date": "2026-06-03",
-    "author": "황경하"
-  },
-  {
-    "hash": "0c16d7b7",
-    "type": "feat",
-    "scope": "email",
-    "subject": "관리자 이메일 발송 시스템 전면 개편 및 배달성·컴플라이언스 하드닝",
-    "summary": "조잡하던 관리자 이메일 발송을 단일 캔버스 UI로 재설계하고 접근성·배달성·중복발송·수신자수 성능까지 전수 보강",
-    "body": "## 발송 UX 전면 개편\n- 438줄 모놀리식 BroadcastForm 해체 → 단일 캔버스(좌: 작성, 우: sticky 요약·실시간 미리보기)\n- mode(segment/search) 이분법·channel+isArtworkBuyer 합성 인코딩 제거 → RecipientSegment discriminated union 단일 모델로 분기 격리\n- 광고 여부 단일 출처(deriveIsAdvertisement) — 작품구매자 광고 배지 누락 버그·테스트/실발송 플래그 불일치 해소\n- 수신자 수 자동 디바운스 조회(race 가드) + 발송 요약 카드에 수신자 수 주입 확인\n- 발송 이력 콘솔화: 상태 배지·진행률 바·완료시각·individual 라벨·진행 중 폴링\n- 청원 진행/종료 배지, 템플릿 내용 채움 전용, 야간 광고 경고 정보통신망법 명시\n\n## 접근성·안전\n- raw 폼 컨트롤 키보드 포커스 링, 발송 결과·검색 결과 aria-live, 버튼 대비 AA\n- 직접 지정 임의 대량발송 500명 상한(서버+UI), 멱등 단락 경고 톤 표시\n- 연락처 검색 실시간화, {{name}} 본문 전용 안내\n\n## 배달성·컴플라이언스 백본\n- 웹훅 bounce 분류 보수화(case-insensitive permanent), to 누락 시 resend_id 역조회\n- List-Unsubscribe 원클릭 헤더, 광고 푸터 무료 수신거부 명시, unsubscribe rate-limit\n- 이메일 color-scheme=light(다크모드 강제반전 방지), 광고 제목 로케일 대응\n\n## dispatch 중복발송 방지·진행률\n- Resend Idempotency-Key(row id 정렬 해시)로 크래시/재시도 중복 차단(충돌 없어 드롭 안 함)\n- sent-update 2차 실패 circuit breaker, pending 조회 id 2차 정렬\n- 청크별 sent_count 재집계로 발송 중 라이브 진행률\n\n## 수신자수 count-only RPC\n- previewAudience를 count_*_audience 4개 함수로 대체(resolver 1:1 미러링, suppression anti-join)\n- RPC 실패 시 resolver 폴백, 프로덕션 검증 완료(member 40/customer 5/petition 11,668)\n- supabase/migrations/20260603160000 프로덕션 적용 완료\n\n검증: lint 0 · type-check · jest 804 · build 통과",
-    "date": "2026-06-03",
-    "author": "황경하"
-  },
-  {
-    "hash": "8613f094",
-    "type": "feat",
-    "scope": "email",
-    "subject": "발송 UX·배달성·컴플라이언스 하드닝 + 수신자수 count RPC",
-    "summary": "이메일 발송 시스템을 다단계 적대적 조사로 전수 점검해 UX·접근성·배달성·중복발송·수신자수 성능을 보강",
-    "body": "## 발송 UX·접근성 (관리자 화면)\n- 작품 구매자 기본 광고 false로 통일(직접 지정과 일관, 역설 해소)\n- 직접 지정 임의 대량발송 방어: 수신자 500명 상한(서버+UI)\n- 멱등 단락(5분 내 동일 캠페인)을 '성공'이 아닌 경고 톤으로 표시 + 폼 유지\n- raw 폼 컨트롤 키보드 포커스 링, 발송 결과·검색 결과 aria-live\n- 야간 광고 경고 강화(정보통신망법 사전동의 명시), {{name}} 본문 전용 안내\n- 청원 로딩/빈상태 구분, '발송 범위' 라벨, 테스트 대상·발송후 이력 유도\n- 발송 이력: 발송 중엔 가짜 0/N 대신 'N명 대상'(sent_count는 finalize에서만 갱신)\n- 수신자수 자동조회 디바운스 600ms\n\n## 수신자/배달성/컴플라이언스 백본\n- 웹훅 bounce 분류 보수화: case-insensitive permanent + type 누락 시 suppress(영구 바운스 오분류로 죽은 주소 반복발송 방지) + 테스트\n- 웹훅 to 누락 시 resend_id로 이메일 역조회(suppression 유실 방지)\n- 광고 메일 List-Unsubscribe/-Post 원클릭 헤더(Gmail/Apple 네이티브 수신거부, 스팸평판 개선)\n- 광고 푸터에 '무료 수신거부' 명시(정보통신망법)\n- unsubscribe POST에 IP rate-limit(분산)\n\n## dispatch 중복발송 방지\n- Resend Idempotency-Key(row id 정렬 해시) — 크래시/타임아웃/업데이트 실패 후 재발송돼도 중복 수신 차단. UUID 기반이라 충돌 없어 정당한 발송 드롭 안 함\n- sent-update 2차 재시도 실패 시 circuit breaker(failed 마킹)로 무한 재발송 루프 차단\n- pending 조회 id 2차 정렬(created_at 동순위 청크 경계 결정론화)\n\n## 수신자수 미리보기 count-only RPC (성능)\n- previewAudience가 전체 Recipient[] resolve 후 .length만 쓰던 낭비(청원 11k full-scan+행별 해시) 제거\n- count_*_audience 4개 함수가 각 resolver를 1:1 미러링(정규화·중복제거·suppression anti-join, 6개월=180일)\n- RPC 실패 시 resolver 폴백 — 미적용 환경에서도 안 깨짐. 미리보기 전용이라 발송 정확성 무관\n- 프로덕션 검증: 함수 반환값이 독립 ad-hoc 카운트와 일치(member 40/customer 5/petition 11,668)\n\n검증: lint 0 · type-check · jest 804 · build 통과 · 마이그레이션 프로덕션 적용+검증 완료",
-    "date": "2026-06-03",
-    "author": "황경하"
-  },
-  {
-    "hash": "d64b32ee",
-    "type": "fix",
-    "scope": "email",
-    "subject": "UX 전수 조사 후속 보정 — 직접 지정 광고 표기·실시간 검색·접근성·정합성",
-    "summary": "이메일 발송 UX를 3중 적대적 검토로 전수 조사해 실제 문제 11건을 보정",
-    "body": "- 직접 지정·작품 구매자 카드에서 광고 배지 제거 — 광고는 체크박스로만 결정(기본 정보성), 광고 고정 종류(고객=광고/작가·청원=정보성)만 배지 표시\n- 연락처(이름·이메일) 검색을 작품 검색처럼 실시간 디바운스로 전환(찾기 버튼 제거)\n- 수신자 수 조회 실패를 '0명'이 아닌 'error' 상태로 구분 — 일시적 실패가 정당한 발송을 영구 차단하던 문제 해소\n- 발송 결과·차단·에러 메시지와 검색 결과 영역에 aria-live 추가\n- raw 폼 컨트롤에 키보드 포커스 링 부여(전역 규칙이 a·button만 커버) + '입력한 이메일 추가' 버튼 대비 AA로 상향(text-primary→primary-strong)\n- 이메일 미리보기 정합성: BRAND_COLORS 참조, CTA는 라벨+URL 둘 다 있어야 표시(실제 발송과 일치), 그리팅·본문 토큰 표본 통일\n- 발송 이력 폴링: router.refresh 재시드를 sent_count 머지로 바꿔 진행률 후퇴 깜빡임 방지\n- 제목·본문·템플릿 변경 시 '내용 확인' 체크 리셋, 테스트·발송 버튼 교차 비활성, 검색 '결과 없음' 잔류 깜빡임 제거, 작품 검색 라벨 고아화 해소\n- 검토에서 의심된 resetForm 잔여·카운터 stale은 코드상 이미 방어돼 있음을 확인(헛수정 없음)",
-    "date": "2026-06-03",
-    "author": "황경하"
-  },
-  {
-    "hash": "29f81f2a",
-    "type": "feat",
-    "scope": "email",
-    "subject": "관리자 이메일 발송 UX 전면 개편",
-    "summary": "관리자 이메일 발송 화면을 단일 캔버스 + 실시간 미리보기로 재설계하고 광고·수신자 표시를 단일화",
-    "body": "- 받는 사람을 RecipientSegment 단일 모델(discriminated union)로 통합 — mode(segment/search) 이분법·channel+isArtworkBuyer 합성 인코딩 제거, 분기를 어댑터 한 곳으로 격리\n- 광고 여부 단일 출처(deriveIsAdvertisement)로 통일 — 작품 구매자 광고가 제목 배지에 안 뜨던 버그와 테스트-실제 발송 광고 플래그 불일치 해소\n- 수신자 수 자동 디바운스 조회 + 요청 id race 가드 도입(수동 \"미리보기\" 버튼·stale 결과 폐기), step1과 발송 요약이 한 결과 공유\n- 발송 요약/확인 카드: \"N명에게 (광고) 발송합니다\" 수신자 수 주입, 0명·미선택·로딩 구분, 실시간 이메일 미리보기\n- 발송 이력 콘솔화: 6상태 배지(색+텍스트), 진행률 바, 완료시각, individual 채널 라벨, 진행 중일 때만 폴링 후 자동 정지\n- 청원 드롭다운 [진행]/[종료] 배지로 종료 청원 오발송 방지\n- 야간 경고를 광고 발송 시에만 표시(기존 무조건 표시 수정)\n- 템플릿은 내용 채움 전용 + 덮어쓰기 확인(발송 모드 몰래 전환 부작용 제거)\n- 정통망법 (광고) 표기·suppression 차감·5분 멱등 가드·CTA URL 검증 등 백엔드 server action 무변경\n- 세그먼트 단위 테스트 + 컴포저 통합 테스트 추가, 직전 리빌드가 놓친 set-state-in-effect lint 2건 정리",
     "date": "2026-06-03",
     "author": "황경하"
   },
