@@ -338,6 +338,21 @@ import ChoeYeontaekFeature, {
 import RyuHosikFeature, {
   buildRyuHosikMetadata,
 } from '@/components/special/master-artists/RyuHosikFeature';
+import MinByeongsanFeature, {
+  buildMinByeongsanMetadata,
+} from '@/components/special/master-artists/MinByeongsanFeature';
+import LeeDongguFeature, {
+  buildLeeDongguMetadata,
+} from '@/components/special/master-artists/LeeDongguFeature';
+import KimJiyeongFeature, {
+  buildKimJiyeongMetadata,
+} from '@/components/special/master-artists/KimJiyeongFeature';
+import BaekGeumaFeature, {
+  buildBaekGeumaMetadata,
+} from '@/components/special/master-artists/BaekGeumaFeature';
+import KimJeongwonFeature, {
+  buildKimJeongwonMetadata,
+} from '@/components/special/master-artists/KimJeongwonFeature';
 
 // 거장 작가는 작가 페이지(/artworks/artist/<이름>) URL에서 큐레이션 feature를 렌더한다.
 // 일반 작가 페이지 로직 대신 거장 전용 컴포넌트로 분기 — 사용자는 작품 필터에서 작가 이름을
@@ -442,6 +457,11 @@ const MASTER_ARTIST_FEATURES = {
   장희진: { Component: JangHuijinFeature, buildMetadata: buildJangHuijinMetadata },
   최연택: { Component: ChoeYeontaekFeature, buildMetadata: buildChoeYeontaekMetadata },
   류호식: { Component: RyuHosikFeature, buildMetadata: buildRyuHosikMetadata },
+  민병산: { Component: MinByeongsanFeature, buildMetadata: buildMinByeongsanMetadata },
+  이동구: { Component: LeeDongguFeature, buildMetadata: buildLeeDongguMetadata },
+  김지영: { Component: KimJiyeongFeature, buildMetadata: buildKimJiyeongMetadata },
+  백금아: { Component: BaekGeumaFeature, buildMetadata: buildBaekGeumaMetadata },
+  김정원: { Component: KimJeongwonFeature, buildMetadata: buildKimJeongwonMetadata },
 } as const;
 
 type MasterArtistName = keyof typeof MASTER_ARTIST_FEATURES;
