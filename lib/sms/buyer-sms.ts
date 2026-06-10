@@ -22,8 +22,17 @@ export interface BuyerSmsData {
 
 const won = (n: number) => `₩${(n ?? 0).toLocaleString('ko-KR')}`;
 
-/** 타입별 정보성 SMS 본문. 모든 본문에 [씨앗페] 접두어. */
-export function buildSmsText(type: BuyerSmsType, data: BuyerSmsData): string {
+/**
+ * 타입별 정보성 SMS 본문.
+ * - ko: [씨앗페] 접두어. en: [Seed Art Festival] 접두어.
+ * - 금액은 원화 거래이므로 두 locale 모두 ₩ 유지.
+ */
+export function buildSmsText(
+  type: BuyerSmsType,
+  data: BuyerSmsData,
+  locale: 'ko' | 'en' = 'ko'
+): string {
+  if (locale === 'en') return buildSmsTextEn(type, data);
   switch (type) {
     case 'payment_confirmed':
       return `[씨앗페] ${data.buyerName}님, '${data.artworkTitle}' 결제(${won(data.amount)})가 완료되었습니다. 감사합니다.`;
@@ -53,10 +62,46 @@ export function buildSmsText(type: BuyerSmsType, data: BuyerSmsData): string {
   }
 }
 
+/** 영문 트랜잭션 SMS 본문. 접두어 [Seed Art Festival], 금액은 ₩ 유지 (원화 거래). */
+function buildSmsTextEn(type: BuyerSmsType, data: BuyerSmsData): string {
+  switch (type) {
+    case 'payment_confirmed':
+      return `[Seed Art Festival] ${data.buyerName}, your payment (${won(data.amount)}) for '${data.artworkTitle}' is complete. Thank you.`;
+    case 'virtual_account_issued': {
+      const va = data.virtualAccount ?? {};
+      const due = va.dueDate ? ` (due ${va.dueDate})` : '';
+      const greeting = data.buyerName ? `${data.buyerName}, ` : '';
+      return `[Seed Art Festival] ${greeting}Deposit: ${va.bankName ?? ''} ${va.accountNumber ?? ''} / ${won(data.amount)}${due}`;
+    }
+    case 'deposit_confirmed':
+      return `[Seed Art Festival] ${data.buyerName}, your deposit is confirmed. We're preparing your artwork.`;
+    case 'shipped': {
+      const carrier = data.carrier ? ` ${data.carrier}` : '';
+      const tracking = data.trackingNumber ? ` ${data.trackingNumber}` : '';
+      return `[Seed Art Festival] '${data.artworkTitle}' has shipped.${carrier}${tracking}`;
+    }
+    case 'delivered':
+      return `[Seed Art Festival] '${data.artworkTitle}' has been delivered.`;
+    case 'refunded':
+      return `[Seed Art Festival] Your refund of ${won(data.amount)} has been processed.`;
+    case 'auto_cancelled':
+      return `[Seed Art Festival] Your order has been automatically cancelled.`;
+    default: {
+      const _exhaustive: never = type;
+      return _exhaustive;
+    }
+  }
+}
+
+export type BuyerSmsSendResult = { ok: boolean; skipped: boolean; error?: string };
+
 /**
  * 구매자 트랜잭션 SMS를 한국 휴대폰으로 발송하고 sms_logs에 기록한다.
- * - en locale·비-KR 번호·전화번호 없음 → 조용히 스킵 (이메일은 별도로 발송됨)
- * - never throw — 결제/웹훅 플로우를 막지 않음
+ * - locale(ko/en)에 맞는 본문으로 발송. en+010 번호는 영문 본문으로 발송.
+ * - 비-010 번호·전화번호 없음 → 스킵 (skipped: true).
+ * - 국제(비-010) 발송은 범위 밖 — normalizeKoreanMobile가 null 반환 시 스킵.
+ * - never throw — 결제/웹훅 플로우를 막지 않음.
+ * - 반환값: { ok, skipped, error? } — 호출부는 void로 무시해도 무방 (fire-and-forget).
  */
 export async function sendBuyerSms(
   phone: string | null | undefined,
@@ -64,13 +109,12 @@ export async function sendBuyerSms(
   data: BuyerSmsData,
   locale: 'ko' | 'en' = 'ko',
   orderNo?: string
-): Promise<void> {
+): Promise<BuyerSmsSendResult> {
   try {
-    if (locale === 'en') return; // 1차는 한국어 본문만
     const to = normalizeKoreanMobile(phone);
-    if (!to) return;
+    if (!to) return { ok: false, skipped: true };
 
-    const text = buildSmsText(type, data);
+    const text = buildSmsText(type, data, locale);
     const result = await sendSolapiSms({ to, text });
 
     // best-effort 로그 — 실패해도 무시
@@ -89,7 +133,14 @@ export async function sendBuyerSms(
     } catch (logErr) {
       console.error(`[buyer-sms:${type}] log insert failed:`, logErr);
     }
+
+    return {
+      ok: result.ok,
+      skipped: false,
+      error: result.ok ? undefined : (result.error ?? 'send_failed'),
+    };
   } catch (err) {
     console.error(`[buyer-sms:${type}] send failed:`, err);
+    return { ok: false, skipped: false, error: 'exception' };
   }
 }

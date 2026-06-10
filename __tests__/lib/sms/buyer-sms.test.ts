@@ -72,14 +72,115 @@ describe('buildSmsText', () => {
       '[씨앗페] 주문이 자동취소되었습니다.'
     );
   });
+
+  it('en payment_confirmed: 영문 본문 + [Seed Art Festival] 접두어', () => {
+    const t = buildSmsText(
+      'payment_confirmed',
+      { buyerName: 'Jane', artworkTitle: 'Wildflowers', amount: 1500000 },
+      'en'
+    );
+    expect(t).toBe(
+      "[Seed Art Festival] Jane, your payment (₩1,500,000) for 'Wildflowers' is complete. Thank you."
+    );
+  });
+
+  it('en virtual_account_issued: 은행·계좌·금액·기한 (이름 없음)', () => {
+    const t = buildSmsText(
+      'virtual_account_issued',
+      {
+        buyerName: '',
+        artworkTitle: '',
+        amount: 50000,
+        virtualAccount: { bankName: 'IBK', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+      },
+      'en'
+    );
+    expect(t).toBe('[Seed Art Festival] Deposit: IBK 01012345678 / ₩50,000 (due 6/5 23:59)');
+  });
+
+  it('en virtual_account_issued: 이름이 있으면 인사말 포함', () => {
+    const t = buildSmsText(
+      'virtual_account_issued',
+      {
+        buyerName: 'Jane',
+        artworkTitle: '',
+        amount: 50000,
+        virtualAccount: { bankName: 'IBK', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+      },
+      'en'
+    );
+    expect(t).toBe('[Seed Art Festival] Jane, Deposit: IBK 01012345678 / ₩50,000 (due 6/5 23:59)');
+  });
+
+  it('en deposit_confirmed', () => {
+    expect(
+      buildSmsText('deposit_confirmed', { buyerName: 'Jane', artworkTitle: '', amount: 0 }, 'en')
+    ).toBe("[Seed Art Festival] Jane, your deposit is confirmed. We're preparing your artwork.");
+  });
+
+  it('en shipped: 작품명·택배사·운송장', () => {
+    const t = buildSmsText(
+      'shipped',
+      {
+        buyerName: '',
+        artworkTitle: 'Wildflowers',
+        amount: 0,
+        carrier: 'CJ Logistics',
+        trackingNumber: '123456789',
+      },
+      'en'
+    );
+    expect(t).toBe("[Seed Art Festival] 'Wildflowers' has shipped. CJ Logistics 123456789");
+  });
+
+  it('en delivered·refunded·auto_cancelled 본문', () => {
+    expect(
+      buildSmsText('delivered', { buyerName: '', artworkTitle: 'Wildflowers', amount: 0 }, 'en')
+    ).toBe("[Seed Art Festival] 'Wildflowers' has been delivered.");
+    expect(buildSmsText('refunded', { buyerName: '', artworkTitle: '', amount: 50000 }, 'en')).toBe(
+      '[Seed Art Festival] Your refund of ₩50,000 has been processed.'
+    );
+    expect(
+      buildSmsText('auto_cancelled', { buyerName: '', artworkTitle: '', amount: 0 }, 'en')
+    ).toBe('[Seed Art Festival] Your order has been automatically cancelled.');
+  });
 });
 
 describe('sendBuyerSms', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('en locale은 스킵 (발송·로그 없음)', async () => {
+  it('en+010 번호는 영문 본문으로 발송하고 sms_logs에 기록', async () => {
+    const { client, insert } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: true, messageId: 'M-EN', segment: 'SMS' });
+
     await sendBuyerSms(
-      '01012345678',
+      '010-1234-5678',
+      'payment_confirmed',
+      { buyerName: 'Jane', artworkTitle: 'Wildflowers', amount: 1500000 },
+      'en',
+      'SAF-EN-1'
+    );
+
+    expect(mockSend).toHaveBeenCalledWith({
+      to: '01012345678',
+      text: expect.stringContaining('[Seed Art Festival]'),
+    });
+    expect(insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        order_no: 'SAF-EN-1',
+        to_phone: '01012345678',
+        type: 'payment_confirmed',
+        status: 'sent',
+        provider_message_id: 'M-EN',
+        segment: 'SMS',
+      })
+    );
+  });
+
+  it('en+비-010 번호는 여전히 스킵 (국제 발송 범위 밖)', async () => {
+    await sendBuyerSms(
+      '02-123-4567',
       'payment_confirmed',
       { buyerName: 'A', artworkTitle: 'B', amount: 1 },
       'en'
@@ -130,11 +231,52 @@ describe('sendBuyerSms', () => {
     mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
     mockSend.mockResolvedValue({ ok: false, error: 'http_400' });
 
-    await expect(
-      sendBuyerSms('01012345678', 'refunded', { buyerName: '', artworkTitle: '', amount: 1 })
-    ).resolves.toBeUndefined();
+    const result = await sendBuyerSms('01012345678', 'refunded', {
+      buyerName: '',
+      artworkTitle: '',
+      amount: 1,
+    });
+    expect(result).toEqual({ ok: false, skipped: false, error: 'http_400' });
     expect(insert).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'failed', error: 'http_400' })
     );
+  });
+
+  it('성공 발송은 { ok: true, skipped: false } 반환', async () => {
+    const { client } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: true, messageId: 'M2', segment: 'SMS' });
+
+    const result = await sendBuyerSms(
+      '010-1234-5678',
+      'payment_confirmed',
+      { buyerName: 'A', artworkTitle: 'B', amount: 1 },
+      'ko',
+      'SAF-2'
+    );
+    expect(result).toEqual({ ok: true, skipped: false });
+  });
+
+  it('비-010 번호는 { ok: false, skipped: true } 반환', async () => {
+    const result = await sendBuyerSms('02-123-4567', 'payment_confirmed', {
+      buyerName: 'A',
+      artworkTitle: 'B',
+      amount: 1,
+    });
+    expect(result).toEqual({ ok: false, skipped: true });
+    expect(mockSend).not.toHaveBeenCalled();
+  });
+
+  it('Solapi 실패는 { ok: false, skipped: false, error } 반환', async () => {
+    const { client } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: false, error: 'X' });
+
+    const result = await sendBuyerSms('01012345678', 'payment_confirmed', {
+      buyerName: 'A',
+      artworkTitle: 'B',
+      amount: 1,
+    });
+    expect(result).toEqual({ ok: false, skipped: false, error: 'X' });
   });
 });

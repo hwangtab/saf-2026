@@ -79,7 +79,7 @@ export async function sendBuyerSms(
 
 동작:
 
-1. `locale === 'en'` 이면 스킵 (이메일로만 안내). 1차는 한국어 본문만.
+1. `locale === 'en'` + 010 번호이면 영문 본문으로 발송. 비-010 번호이면 스킵.
 2. `normalizeKoreanMobile(phone)` → null이면 조용히 스킵 (로그 없음).
 3. 타입별 한국어 본문 생성 (아래 표).
 4. `sendSms` 호출.
@@ -146,7 +146,7 @@ alter table public.sms_logs enable row level security;
 - env 미설정 시 no-op → dev/test에서 실제 발송·과금 없음.
 - never throw → 알림 실패가 결제·웹훅 처리를 막지 않음.
 - 5초 타임아웃 + 429/5xx 1회 재시도.
-- 비-KR 번호·전화번호 없음·en locale → 스킵.
+- 비-010 번호·전화번호 없음 → 스킵. en locale + 010 번호는 영문 본문으로 발송.
 
 ## 환경변수 (신규)
 
