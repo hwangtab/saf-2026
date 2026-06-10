@@ -1,5 +1,15 @@
 [
   {
+    "hash": "61dcc47c",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "라인석·김호성·김태균·이인철·예미킴 전용 작가 페이지 추가",
+    "summary": "매체 다양성 5인(촉각 사진·개념미술·영토 시각예술·민중회화·공학 미디어) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- RaInseokFeature: 반듯한 곡선, 휘어진 세계로부터(촉각적 사진)\n- KimHoseongFeature: 먼슬리 프로젝트, 경계를 넘는 개념미술\n- KimTaegyunFeature: 각색된 영토, 다층으로 재구성된 풍경(독일·한국)\n- LeeIncheolFeature: 우리들의 일상, 사회 현실을 기록하는 붓(민중미술)\n- YemikimFeature: 공학자의 시선, 피어나다(KAIST 출신 미디어)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(김태균 매체 오인 소지 중립화, 이인철·김태균 정치 서사 중립, 날조 1인칭 0건, 전 사실 DB 원문 대조)",
+    "date": "2026-06-09",
+    "author": "황경하"
+  },
+  {
     "hash": "12c1ddc3",
     "type": "feat",
     "scope": "artists",
