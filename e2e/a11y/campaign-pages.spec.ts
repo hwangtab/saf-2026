@@ -92,6 +92,7 @@ const ROUTES = [
   '/artworks/artist/이혜선',
   '/artworks/artist/오아',
   '/artworks/artist/김영서',
+  '/artworks/artist/장경호',
 ];
 
 for (const locale of ['ko', 'en'] as const) {
