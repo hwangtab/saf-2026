@@ -1,5 +1,15 @@
 [
   {
+    "hash": "6f60b2a8",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "아트만두·박수지·박영선·이재정·신연진 전용 작가 페이지 추가",
+    "summary": "매체 다양성 5인(시사만화 풍자·refresh 회화·국제 판화·신화 사진·콜라주 회화) 거장급 큐레이션 작가 페이지 신규 제작",
+    "body": "- AteumanduFeature: 비틀뉴스(Twisted News), 캐리커처의 칼끝\n- ParkSujiFeature: refresh, 일상을 새롭게 호명하다(무사시노)\n- ParkYeongseonFeature: 한국·중국·인도를 잇는 판화, 오로빌의 노동과 존엄(history 부재→이력 중심)\n- LeeJaejeongFeature: 신화와 일상 사이, 한국 사회를 횡단하는 카메라\n- SinYeonjinFeature: 일상적인 것들의 꼴라주\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(아트만두 영문 'Beautiful News'→'Twisted News' 의역 교정, 이재정 정치 서사 중립, 날조 1인칭 0건, 전 사실 DB 원문 대조)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "d507c449",
     "type": "feat",
     "scope": "artists",
