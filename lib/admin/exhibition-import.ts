@@ -267,6 +267,104 @@ export function getExhibitionArtworkOverride(
   };
 }
 
+export type SaleDedupKeyInput = {
+  artworkId: string;
+  soldAt: string;
+  salePrice: number;
+  quantity: number;
+  buyerName: string | null;
+};
+
+/**
+ * 판매 레코드의 "같은 판매" 판정 키. CSV 적재 경로(manual_csv)와 기존 경로
+ * (수동입력 manual, cafe24 legacy_csv)가 동일 판매를 중복 적재하는 사고를
+ * 막기 위해, source/batch와 무관하게 거래 본질(작품·시각·금액·수량·구매자)로
+ * 동일성을 비교한다. buyer_name은 공백 제거·NFC·소문자 정규화.
+ */
+export function buildSaleDedupKey(input: SaleDedupKeyInput): string {
+  const buyer = String(input.buyerName || '')
+    .normalize('NFC')
+    .replace(/\s+/g, '')
+    .toLowerCase();
+  return [input.artworkId, input.soldAt, input.salePrice, input.quantity, buyer].join('|');
+}
+
+export type SaleDedupPayload = {
+  artwork_id: string;
+  sold_at: string;
+  sale_price: number;
+  quantity: number;
+  buyer_name: string | null;
+  import_batch_id: string | null;
+  import_row_no: number;
+};
+
+export type ExistingSaleKeyRow = {
+  artworkId: string;
+  soldAt: string;
+  salePrice: number;
+  quantity: number;
+  buyerName: string | null;
+  importBatchId: string | null;
+};
+
+export type CrossBatchDuplicate = {
+  rowNo: number;
+  artworkId: string;
+  key: string;
+  existingBatchIds: string[];
+};
+
+/**
+ * 적재 대상 payload 중, 동일 판매가 "다른 배치/경로"로 이미 활성 존재하는 행을
+ * 찾는다. 같은 import_batch_id로 존재하는 경우는 upsert가 멱등 처리하므로 제외.
+ */
+export function findCrossBatchDuplicates(
+  payloads: SaleDedupPayload[],
+  existing: ExistingSaleKeyRow[]
+): CrossBatchDuplicate[] {
+  const batchesByKey = new Map<string, Set<string>>();
+  for (const row of existing) {
+    const key = buildSaleDedupKey({
+      artworkId: row.artworkId,
+      soldAt: row.soldAt,
+      salePrice: row.salePrice,
+      quantity: row.quantity,
+      buyerName: row.buyerName,
+    });
+    const label = row.importBatchId || '(none)';
+    const set = batchesByKey.get(key) ?? new Set<string>();
+    set.add(label);
+    batchesByKey.set(key, set);
+  }
+
+  const duplicates: CrossBatchDuplicate[] = [];
+  for (const payload of payloads) {
+    const key = buildSaleDedupKey({
+      artworkId: payload.artwork_id,
+      soldAt: payload.sold_at,
+      salePrice: payload.sale_price,
+      quantity: payload.quantity,
+      buyerName: payload.buyer_name,
+    });
+    const batches = batchesByKey.get(key);
+    if (!batches) continue;
+
+    const ownLabel = payload.import_batch_id || '(none)';
+    const otherBatches = [...batches].filter((label) => label !== ownLabel);
+    if (otherBatches.length > 0) {
+      duplicates.push({
+        rowNo: payload.import_row_no,
+        artworkId: payload.artwork_id,
+        key,
+        existingBatchIds: otherBatches,
+      });
+    }
+  }
+
+  return duplicates;
+}
+
 export function summarizeExhibitionRows(rows: ExhibitionSaleCsvRow[]): ExhibitionRowsSummary {
   const uniqueBuyers = new Set<string>();
   const channels: Record<string, number> = {};

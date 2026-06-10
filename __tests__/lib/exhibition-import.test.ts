@@ -1,4 +1,6 @@
 import {
+  buildSaleDedupKey,
+  findCrossBatchDuplicates,
   getExhibitionArtworkOverride,
   parseExhibitionSalesCsv,
   summarizeExhibitionCsvEligibility,
@@ -72,6 +74,73 @@ describe('exhibition import helpers', () => {
       rowNo: 169,
       purchaseDate: '1.26',
       soldAt: '2026-01-26T03:00:00.000Z',
+    });
+  });
+
+  describe('cross-batch duplicate guard', () => {
+    const payload = (overrides: Partial<Record<string, unknown>> = {}) => ({
+      artwork_id: 'art-1',
+      sale_price: 1200000,
+      quantity: 1,
+      sold_at: '2026-01-13T03:00:00.000Z',
+      buyer_name: '류경준',
+      import_batch_id: 'saf2026-exhibition-sales-202601',
+      import_row_no: 1,
+      ...overrides,
+    });
+
+    const existing = (overrides: Partial<Record<string, unknown>> = {}) => ({
+      artworkId: 'art-1',
+      salePrice: 1200000,
+      quantity: 1,
+      soldAt: '2026-01-13T03:00:00.000Z',
+      buyerName: '류경준',
+      importBatchId: null,
+      ...overrides,
+    });
+
+    it('builds an identical dedup key from snake_case payload and camelCase existing rows', () => {
+      const key = buildSaleDedupKey({
+        artworkId: 'art-1',
+        soldAt: '2026-01-13T03:00:00.000Z',
+        salePrice: 1200000,
+        quantity: 1,
+        buyerName: '류경준',
+      });
+
+      expect(key).toBe('art-1|2026-01-13T03:00:00.000Z|1200000|1|류경준');
+    });
+
+    it('flags a payload whose sale already exists under a different batch/path', () => {
+      const duplicates = findCrossBatchDuplicates([payload()], [existing({ importBatchId: null })]);
+
+      expect(duplicates).toHaveLength(1);
+      expect(duplicates[0]).toMatchObject({ rowNo: 1, artworkId: 'art-1' });
+      expect(duplicates[0].existingBatchIds).toEqual(['(none)']);
+    });
+
+    it('does not flag re-running the same batch (idempotent upsert)', () => {
+      const duplicates = findCrossBatchDuplicates(
+        [payload()],
+        [existing({ importBatchId: 'saf2026-exhibition-sales-202601' })]
+      );
+
+      expect(duplicates).toEqual([]);
+    });
+
+    it('does not flag a different buyer on the same artwork/date/price', () => {
+      const duplicates = findCrossBatchDuplicates(
+        [payload()],
+        [existing({ buyerName: '다른사람', importBatchId: null })]
+      );
+
+      expect(duplicates).toEqual([]);
+    });
+
+    it('returns empty when no existing sale matches', () => {
+      const duplicates = findCrossBatchDuplicates([payload()], []);
+
+      expect(duplicates).toEqual([]);
     });
   });
 
