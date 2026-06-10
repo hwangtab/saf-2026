@@ -72,6 +72,78 @@ describe('buildSmsText', () => {
       '[씨앗페] 주문이 자동취소되었습니다.'
     );
   });
+
+  it('en payment_confirmed: 영문 본문 + [Seed Art Festival] 접두어', () => {
+    const t = buildSmsText(
+      'payment_confirmed',
+      { buyerName: 'Jane', artworkTitle: 'Wildflowers', amount: 1500000 },
+      'en'
+    );
+    expect(t).toBe(
+      "[Seed Art Festival] Jane, your payment (₩1,500,000) for 'Wildflowers' is complete. Thank you."
+    );
+  });
+
+  it('en virtual_account_issued: 은행·계좌·금액·기한 (이름 없음)', () => {
+    const t = buildSmsText(
+      'virtual_account_issued',
+      {
+        buyerName: '',
+        artworkTitle: '',
+        amount: 50000,
+        virtualAccount: { bankName: 'IBK', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+      },
+      'en'
+    );
+    expect(t).toBe('[Seed Art Festival] Deposit: IBK 01012345678 / ₩50,000 (due 6/5 23:59)');
+  });
+
+  it('en virtual_account_issued: 이름이 있으면 인사말 포함', () => {
+    const t = buildSmsText(
+      'virtual_account_issued',
+      {
+        buyerName: 'Jane',
+        artworkTitle: '',
+        amount: 50000,
+        virtualAccount: { bankName: 'IBK', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+      },
+      'en'
+    );
+    expect(t).toBe('[Seed Art Festival] Jane, Deposit: IBK 01012345678 / ₩50,000 (due 6/5 23:59)');
+  });
+
+  it('en deposit_confirmed', () => {
+    expect(
+      buildSmsText('deposit_confirmed', { buyerName: 'Jane', artworkTitle: '', amount: 0 }, 'en')
+    ).toBe("[Seed Art Festival] Jane, your deposit is confirmed. We're preparing your artwork.");
+  });
+
+  it('en shipped: 작품명·택배사·운송장', () => {
+    const t = buildSmsText(
+      'shipped',
+      {
+        buyerName: '',
+        artworkTitle: 'Wildflowers',
+        amount: 0,
+        carrier: 'CJ Logistics',
+        trackingNumber: '123456789',
+      },
+      'en'
+    );
+    expect(t).toBe("[Seed Art Festival] 'Wildflowers' has shipped. CJ Logistics 123456789");
+  });
+
+  it('en delivered·refunded·auto_cancelled 본문', () => {
+    expect(
+      buildSmsText('delivered', { buyerName: '', artworkTitle: 'Wildflowers', amount: 0 }, 'en')
+    ).toBe("[Seed Art Festival] 'Wildflowers' has been delivered.");
+    expect(buildSmsText('refunded', { buyerName: '', artworkTitle: '', amount: 50000 }, 'en')).toBe(
+      '[Seed Art Festival] Your refund of ₩50,000 has been processed.'
+    );
+    expect(
+      buildSmsText('auto_cancelled', { buyerName: '', artworkTitle: '', amount: 0 }, 'en')
+    ).toBe('[Seed Art Festival] Your order has been automatically cancelled.');
+  });
 });
 
 describe('sendBuyerSms', () => {

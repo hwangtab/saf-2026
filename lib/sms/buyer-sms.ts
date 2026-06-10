@@ -22,8 +22,17 @@ export interface BuyerSmsData {
 
 const won = (n: number) => `₩${(n ?? 0).toLocaleString('ko-KR')}`;
 
-/** 타입별 정보성 SMS 본문. 모든 본문에 [씨앗페] 접두어. */
-export function buildSmsText(type: BuyerSmsType, data: BuyerSmsData): string {
+/**
+ * 타입별 정보성 SMS 본문.
+ * - ko: [씨앗페] 접두어. en: [Seed Art Festival] 접두어.
+ * - 금액은 원화 거래이므로 두 locale 모두 ₩ 유지.
+ */
+export function buildSmsText(
+  type: BuyerSmsType,
+  data: BuyerSmsData,
+  locale: 'ko' | 'en' = 'ko'
+): string {
+  if (locale === 'en') return buildSmsTextEn(type, data);
   switch (type) {
     case 'payment_confirmed':
       return `[씨앗페] ${data.buyerName}님, '${data.artworkTitle}' 결제(${won(data.amount)})가 완료되었습니다. 감사합니다.`;
@@ -46,6 +55,37 @@ export function buildSmsText(type: BuyerSmsType, data: BuyerSmsData): string {
       return `[씨앗페] ${won(data.amount)} 환불이 처리되었습니다.`;
     case 'auto_cancelled':
       return `[씨앗페] 주문이 자동취소되었습니다.`;
+    default: {
+      const _exhaustive: never = type;
+      return _exhaustive;
+    }
+  }
+}
+
+/** 영문 트랜잭션 SMS 본문. 접두어 [Seed Art Festival], 금액은 ₩ 유지 (원화 거래). */
+function buildSmsTextEn(type: BuyerSmsType, data: BuyerSmsData): string {
+  switch (type) {
+    case 'payment_confirmed':
+      return `[Seed Art Festival] ${data.buyerName}, your payment (${won(data.amount)}) for '${data.artworkTitle}' is complete. Thank you.`;
+    case 'virtual_account_issued': {
+      const va = data.virtualAccount ?? {};
+      const due = va.dueDate ? ` (due ${va.dueDate})` : '';
+      const greeting = data.buyerName ? `${data.buyerName}, ` : '';
+      return `[Seed Art Festival] ${greeting}Deposit: ${va.bankName ?? ''} ${va.accountNumber ?? ''} / ${won(data.amount)}${due}`;
+    }
+    case 'deposit_confirmed':
+      return `[Seed Art Festival] ${data.buyerName}, your deposit is confirmed. We're preparing your artwork.`;
+    case 'shipped': {
+      const carrier = data.carrier ? ` ${data.carrier}` : '';
+      const tracking = data.trackingNumber ? ` ${data.trackingNumber}` : '';
+      return `[Seed Art Festival] '${data.artworkTitle}' has shipped.${carrier}${tracking}`;
+    }
+    case 'delivered':
+      return `[Seed Art Festival] '${data.artworkTitle}' has been delivered.`;
+    case 'refunded':
+      return `[Seed Art Festival] Your refund of ${won(data.amount)} has been processed.`;
+    case 'auto_cancelled':
+      return `[Seed Art Festival] Your order has been automatically cancelled.`;
     default: {
       const _exhaustive: never = type;
       return _exhaustive;
