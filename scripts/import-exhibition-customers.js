@@ -7,6 +7,7 @@ const { createClient } = require('@supabase/supabase-js');
 const jiti = require('jiti')(__filename);
 
 const {
+  findCrossBatchDuplicates,
   getExhibitionArtworkOverride,
   normalizeArtworkKeyPart,
   parseExhibitionSalesCsv,
@@ -34,6 +35,7 @@ function parseArgs() {
     envPath: valueOf('--env', '.env.local'),
     importId: valueOf('--import-id', null),
     verbose: args.includes('--verbose'),
+    allowCrossDuplicates: args.includes('--allow-cross-duplicates'),
   };
 }
 
@@ -61,6 +63,30 @@ function chunk(values, size) {
     chunks.push(values.slice(i, i + size));
   }
   return chunks;
+}
+
+async function fetchExistingActiveSales(supabase, artworkIds) {
+  const existing = [];
+  for (const idChunk of chunk(artworkIds, 100)) {
+    const { data, error } = await supabase
+      .from('artwork_sales')
+      .select('artwork_id, sold_at, sale_price, quantity, buyer_name, import_batch_id')
+      .is('voided_at', null)
+      .in('artwork_id', idChunk);
+
+    if (error) throw new Error(`기존 판매 조회 실패: ${error.message}`);
+    for (const row of data || []) {
+      existing.push({
+        artworkId: row.artwork_id,
+        soldAt: row.sold_at,
+        salePrice: row.sale_price,
+        quantity: row.quantity,
+        buyerName: row.buyer_name,
+        importBatchId: row.import_batch_id,
+      });
+    }
+  }
+  return existing;
 }
 
 async function fetchArtworkIndex(supabase) {
@@ -236,6 +262,36 @@ async function main() {
 
   if (unresolved.length > 0) {
     throw new Error(`매칭 실패/중복 작품 ${unresolved.length}건이 있어 반영을 중단합니다.`);
+  }
+
+  // 교차 중복 가드: 동일 판매가 다른 경로(수동입력 manual, cafe24 legacy_csv)나
+  // 다른 배치로 이미 활성 존재하면 이중 적재(매출 2배) 사고가 난다. 2026-06-01 회귀 재발 방지.
+  const salePayloads = matched.map((match) => buildSalePayload(match, args.importId));
+  const artworkIds = [...new Set(salePayloads.map((payload) => payload.artwork_id))];
+  const existingActiveSales = await fetchExistingActiveSales(supabase, artworkIds);
+  const crossDuplicates = findCrossBatchDuplicates(salePayloads, existingActiveSales);
+
+  if (crossDuplicates.length > 0) {
+    console.error(`\n⚠️  교차 중복 ${crossDuplicates.length}건 감지 (이미 다른 경로/배치로 존재):`);
+    console.error(
+      JSON.stringify(
+        crossDuplicates.slice(0, args.verbose ? 50 : 10).map((dup) => ({
+          rowNo: dup.rowNo,
+          artworkId: dup.artworkId,
+          existingBatchIds: dup.existingBatchIds,
+        })),
+        null,
+        2
+      )
+    );
+
+    if (!args.allowCrossDuplicates) {
+      throw new Error(
+        '동일 판매가 다른 경로/배치로 이미 활성 존재합니다. 이중 적재(매출 2배)를 막기 위해 중단합니다. ' +
+          '의도된 재적재라면 --allow-cross-duplicates 플래그로 강제하세요.'
+      );
+    }
+    console.warn('--allow-cross-duplicates 지정 → 교차 중복 경고를 무시하고 진행합니다.');
   }
 
   await applyImport(supabase, matched, args.importId);
