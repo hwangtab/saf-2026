@@ -18,8 +18,9 @@ import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
-export const dynamic = 'force-static';
-export const revalidate = 600;
+// 거장 feature는 작가 페이지(/artworks/artist/오윤)에서 dispatch되어 렌더된다.
+// canonical/og/breadcrumb 모두 작가 페이지 URL을 가리켜 SEO 신호를 작가 페이지로 통합.
+const OH_YOON_PATH = `/artworks/artist/${encodeURIComponent('오윤')}`;
 
 const OH_YOON_ARTIST_KEYS = new Set(['오윤', 'oh yoon', 'ohyoon', 'o yoon', 'o-yoon']);
 
@@ -61,10 +62,10 @@ const PAGE_COPY = {
   },
 } as const;
 
-export async function generateMetadata({
+export async function buildOhYoonMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: string; artist: string }>;
 }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
@@ -72,7 +73,7 @@ export async function generateMetadata({
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const siteName = tSeo('siteTitle');
-  const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
+  const pageUrl = buildLocaleUrl(OH_YOON_PATH, locale);
 
   // 오윤 실제 작품 이미지로 OG 이미지 설정 — 소셜 공유 CTR 향상
   const allArtworks = await getSupabaseArtworksByArtist('오윤');
@@ -93,7 +94,7 @@ export async function generateMetadata({
       locale === 'en'
         ? "Oh Yoon artist, Korean people's art, minjung misul, woodblock prints, Oh Yoon exhibition, 40th anniversary"
         : '오윤 화가, 민중미술, 오윤 판화, 오윤 40주기, 오윤 특별전, 한국 목판화, 온라인 전시회, 특별 전시회',
-    alternates: createLocaleAlternates('/special/oh-yoon', locale),
+    alternates: createLocaleAlternates(OH_YOON_PATH, locale, true),
     openGraph: {
       type: 'website',
       url: pageUrl,
@@ -119,12 +120,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function OhYoonPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function OhYoonFeature({
+  params,
+}: {
+  params: Promise<{ locale: string; artist: string }>;
+}) {
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const isEnglish = locale === 'en';
-  const pageUrl = buildLocaleUrl('/special/oh-yoon', locale);
+  const pageUrl = buildLocaleUrl(OH_YOON_PATH, locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const allArtworks = await getSupabaseArtworksByArtist('오윤');
   const ohYoonFullArtworks = allArtworks.filter((artwork: Artwork) =>
@@ -137,7 +142,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
     OH_YOON_ARTWORKS.length
   );
 
-  // 오윤 관련 매거진 — SEO link equity를 /artworks/artist/오윤으로 집중 (CONTENT-STRATEGY §8)
+  // 오윤 관련 매거진 — SEO link equity를 작가 페이지(/artworks/artist/오윤)로 집중 (CONTENT-STRATEGY §8)
   const OH_YOON_STORY_SLUGS = [
     'oh-yun-40th-anniversary',
     'oh-yun-song-of-the-blade',
@@ -153,12 +158,13 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },
+    { name: tBreadcrumbs('artworks'), url: buildLocaleUrl('/artworks', locale) },
     { name: tBreadcrumbs('ohYoon'), url: pageUrl },
   ]);
 
   const ohYoonPerson = {
     '@type': 'Person',
-    '@id': `${SITE_URL}/special/oh-yoon#person-oh-yoon`,
+    '@id': `${SITE_URL}${OH_YOON_PATH}#person-oh-yoon`,
     name: isEnglish ? 'Oh Yoon' : '오윤',
     alternateName: isEnglish ? '오윤' : 'Oh Yoon',
     jobTitle: isEnglish ? 'Artist' : '화가',
@@ -638,7 +644,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               <MasterArtistMediumSections
                 artworks={OH_YOON_ARTWORKS}
                 isEnglish={isEnglish}
-                returnTo="/special/oh-yoon"
+                returnTo={OH_YOON_PATH}
               />
             ) : (
               <section className="py-24 text-center">
@@ -680,7 +686,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
           </div>
         </div>
 
-        {/* 함께 읽을 매거진 — 오윤 콘텐츠 클러스터 + 작가 갤러리 CTA */}
+        {/* 함께 읽을 매거진 — 오윤 콘텐츠 클러스터 */}
         <section className="py-16 md:py-24 bg-canvas-soft border-t border-gallery-divider">
           <div className="max-w-[1440px] mx-auto px-4">
             <header className="mb-10">
@@ -692,7 +698,7 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
               </h2>
             </header>
             {ohYoonStories.length > 0 && (
-              <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 list-none p-0 m-0">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 list-none p-0 m-0">
                 {ohYoonStories.map((story) => {
                   const storyTitle = isEnglish && story.title_en ? story.title_en : story.title;
                   const storyExcerpt =
@@ -732,17 +738,6 @@ export default async function OhYoonPage({ params }: { params: Promise<{ locale:
                 })}
               </ul>
             )}
-            <div className="flex justify-center">
-              <Link
-                href="/artworks/artist/오윤"
-                className="inline-flex items-center gap-2 rounded bg-primary-strong px-8 py-4 text-sm font-bold tracking-wide text-white transition-colors duration-300 hover:bg-primary"
-              >
-                {isEnglish ? 'View all works by Oh Yoon' : '오윤 작품 전체 보기'}
-                <span aria-hidden="true" className="text-base">
-                  →
-                </span>
-              </Link>
-            </div>
           </div>
         </section>
       </div>

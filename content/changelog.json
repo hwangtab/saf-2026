@@ -1,5 +1,15 @@
 [
   {
+    "hash": "b0445665",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "김태희·정재철·하선영·김유진·기조 전용 작가 페이지 추가",
+    "summary": "도예·추상회화·사진/회화·감정 풍경·목각채색 5인 전용 큐레이션 작가 페이지 신규 제작(누적, 메인 일괄 반영 예정)",
+    "body": "- KimTaehuiFeature: 원을 깨다 — 전통 도자 재해석·각진 형태·조각보(서울과기대 도예과)\n- JeongJaecheolFeature: Middle Ground — 쌓고 긁어내는 추상, 관계·갈등·타협(홍익대 회화)\n- HaSeonyeongFeature: 나무의 초상 — 회화에서 사진으로, 팬데믹의 위안(홍익대→아를국립사진학교)\n- KimYujinFeature: 폭발의 다음 — 감정이 담긴 풍경과 관계 속 외로움\n- GijoFeature: 평면과 부조 사이 — 갈등 이후의 잔여 감정(달천예술창작공간 입주)\n- 동명이인 차단: 배우 김태희·작고 설치미술가 정재철(1959~2020) 등 무혼입(전부 DB 범위)\n- fact-review 지적 반영: DB에 성별 근거 없는 4인의 영문 she/her/his 단정을 성중립으로 일괄 교정(메타·JSON-LD 포함), 김태희 영문 학위종류 단정 제거\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가. type-check·build 통과",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "d3b9c726",
     "type": "feat",
     "scope": "artists",
@@ -26,6 +36,96 @@
     "subject": "김주희·최경선·한미영·정연수·림지언 전용 작가 페이지 추가",
     "summary": "이미지 오버랩·자연 회화 등 5인 전용 큐레이션 작가 페이지 신규 제작(누적, 메인 일괄 반영 예정)",
     "body": "- KimJuhuiFeature: 이미지 오버랩 — 그리다=그리워하다, 기억의 중첩(국현 소장·SeMA 선정, 개인전 36회)\n- ChoeGyeongseonFeature: 마음의 유영(遊泳) — 자연 소재 생동·슬픔·치유(개인전 9건 2001~2020)\n- HanMiyeongFeature: 회화의 신선한 에너지 — 일상의 정서(단국대 서양화, 신진 작업론 중심)\n- JeongYeonsuFeature: reflection(빛이 지나간 자리) — 사물을 보는 시각(history 부재→작업론)\n- LimJieonFeature: 일상의 순간과 자연의 결 — 〈모먼트〉·〈진달래 진달래〉·〈풀, 꽃!〉(전시 2건, 작업론 중심)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 PASS(날조·동명이인·프레이밍·JSON-LD 전수 점검). type-check·build 통과",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "d254aa48",
+    "type": "fix",
+    "scope": "sms",
+    "subject": "surface resend outcome + guard already-sent resends",
+    "summary": "최종 리뷰 반영 — sendBuyerSms가 발송 결과 반환, resendSms가 실패를 정확히 보고",
+    "body": "- sendBuyerSms: Promise<void> → Promise<{ ok, skipped, error? }> (호출부 13곳 무영향, never throw 유지)\n- resendSms: 발송 결과를 확인해 실패 시 ok:false 반환(성공 시에만 활동 로그 기록)\n- resendSms: status !== 'failed' 서버 가드 추가(직접 호출로 인한 중복 발송 차단)\n- 기존 설계 문서의 en 스킵 기술을 현재 동작(en+010 영문 발송)으로 갱신",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "10312093",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "auto-dismiss resend feedback + gate resend button on type",
+    "summary": "코드리뷰 반영 — 재발송 안내문구 자동 사라짐, 재발송 버튼을 재발송 가능 유형으로 제한",
+    "body": "- feedback 메시지 4초 후 자동 해제 (이전 메시지 잔류 방지)\n- canResend에 RESENDABLE_TYPES 체크 추가 — virtual_account_issued 실패건은 버튼 비활성(항상 실패하는 발송 차단)\n- feedback <p role=\"status\"> → <output> 로 교체 (jsx-a11y/prefer-tag-over-role 경고 해소)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "c05a7a92",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "register /admin/sms in admin nav (ko/en 도구 group)",
+    "summary": "관리자 내비게이션 '도구' 그룹에 문자/SMS 메뉴 등록 (한/영)",
+    "body": "- ko: 문자/SMS, en: SMS — 이메일 발송 항목 바로 뒤\n- 내비 레이아웃은 그룹을 제네릭 순회하므로 추가 수정 불필요",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "562279be",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "add /admin/sms log viewer page with resend",
+    "summary": "SMS 발송 로그 조회 화면(/admin/sms) — 필터·페이지네이션·재발송 추가",
+    "body": "- page.tsx: requireAdmin + getSmsLogs(searchParams) → SmsLogList\n- SmsLogList: 필터바(유형/상태/기간/검색) + 테이블 + EmailPagination 재사용\n- 재발송 버튼은 실패 건만 활성, AdminConfirmModal로 확인",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "6e8d2ed9",
+    "type": "fix",
+    "scope": "admin",
+    "subject": "harden SMS log query and resend guards",
+    "summary": "코드리뷰 반영 — q 필터 sanitization 강화, maybeSingle 가드 정리, 가상계좌 재발송 제외",
+    "body": "- getSmsLogs q 필터: admin-orders 패턴 정렬([,()\"\\\\%_*] strip + 100자 제한)\n- resendSms: .maybeSingle() 배열 가드 제거(실제 클라이언트는 단일/null) + 테스트 mock 정정\n- virtual_account_issued는 계좌정보 미저장으로 RESENDABLE_TYPES에서 제외(깨진 본문 방지)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "e729c5b3",
+    "type": "feat",
+    "scope": "admin",
+    "subject": "add getSmsLogs paginated server action",
+    "summary": "sms_logs 조회용 getSmsLogs 서버 액션 추가 (필터·페이지네이션)",
+    "body": "- 반환형 { rows, total, page, pageSize } — EmailPagination 재사용 위해 getBroadcasts와 동일\n- 필터: type, status, 기간(from/to), q(전화번호·주문번호 ilike)\n- 기본 페이지 25, 최대 100 (admin-broadcast 규칙 미러)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "c4541f63",
+    "type": "fix",
+    "scope": "sales",
+    "subject": "guard exhibition CSV import against cross-batch duplicate sales",
+    "summary": "전시 판매 CSV 재적재 시 매출 2배 중복 사고 재발 방지 가드 추가",
+    "body": "2026-06-01 import-exhibition-customers.js가 1월 전시 판매를 saf2026-exhibition-sales-202601\n배치로 적재할 때, 이미 manual(수동입력)·cafe24 legacy_csv로 들어가 있던 동일 판매를\n정리하지 않고 추가해 과거 매출이 2배가 된 사고가 있었음. 기존 upsert onConflict는\n(import_batch_id, import_row_no)만 보므로 다른 경로/배치와의 교차 중복을 감지 못 함.\n\n- lib/admin/exhibition-import.ts: buildSaleDedupKey / findCrossBatchDuplicates 순수 함수 추가\n  (source/batch 무관하게 작품·시각·금액·수량·구매자로 동일 판매 판정)\n- scripts/import-exhibition-customers.js: --apply 직전 기존 활성 판매와 교차 중복 검사,\n  충돌 시 중단. 의도된 재적재는 --allow-cross-duplicates로만 강제\n- __tests__/lib/exhibition-import.test.ts: 가드 5개 케이스 (TDD)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "28d9acb9",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "deliver English SMS to en buyers with KR mobile numbers",
+    "summary": "en locale 구매자(국내 010 번호)에게 영문 트랜잭션 SMS 발송 활성화",
+    "body": "- sendBuyerSms의 en 내부 스킵 제거 → buildSmsText(type, data, locale)로 발송\n- 비-010 번호는 여전히 스킵 (normalizeKoreanMobile null → 국제 발송 범위 밖)\n- 시그니처 불변 — 13개 호출부 수정 불필요",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
+    "hash": "bb380248",
+    "type": "feat",
+    "scope": "sms",
+    "subject": "add en locale param + 7 English bodies to buildSmsText",
+    "summary": "구매자 트랜잭션 SMS 7종에 영문 본문 추가 (buildSmsText locale 파라미터)",
+    "body": "- buildSmsText(type, data, locale?) — locale 기본값 'ko'\n- en 접두어 [Seed Art Festival], 금액은 ₩ 유지 (원화 거래)\n- ko 본문/기존 테스트 불변 (locale 기본값으로 하위호환)",
     "date": "2026-06-10",
     "author": "황경하"
   },

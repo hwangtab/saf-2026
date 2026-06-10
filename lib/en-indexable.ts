@@ -33,8 +33,10 @@ export const EN_INDEXABLE_PAGES: ReadonlySet<string> = new Set([
   '/our-proof',
   '/transparency',
   '/petition/oh-yoon',
-  '/special/oh-yoon',
-  '/special/park-saenggwang',
+  // 오윤·박생광 특별전은 /artworks/artist/<이름>로 dispatch 통합 (영문 native 유지).
+  // 인코딩 형태로 sitemap staticPaths의 path와 정확히 매칭 → bilingual alternate 발행.
+  '/artworks/artist/%EC%98%A4%EC%9C%A4',
+  '/artworks/artist/%EB%B0%95%EC%83%9D%EA%B4%91',
   '/archive',
   '/archive/2023',
   '/archive/2026',

@@ -18,8 +18,9 @@ import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import type { Artwork, ArtworkListItem } from '@/types';
 
-export const dynamic = 'force-static';
-export const revalidate = 600;
+// 거장/중견 작가 feature는 작가 페이지(/artworks/artist/박생광)에서 dispatch되어 렌더된다.
+// canonical/og/breadcrumb 모두 작가 페이지 URL을 가리켜 SEO 신호를 작가 페이지로 통합.
+const PARK_SAENGGWANG_PATH = `/artworks/artist/${encodeURIComponent('박생광')}`;
 
 const PARK_SAENGGWANG_ARTIST_KEYS = new Set([
   '박생광',
@@ -84,10 +85,10 @@ const VENUE_LOCALITY_EN = 'Eunpyeong-gu';
 const HOURS_KO = '오전 11시 ~ 오후 8시';
 const HOURS_EN = '11:00 AM – 8:00 PM';
 
-export async function generateMetadata({
+export async function buildParkSaenggwangMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: string; artist: string }>;
 }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
@@ -95,7 +96,7 @@ export async function generateMetadata({
   const copy = PAGE_COPY[locale];
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const siteName = tSeo('siteTitle');
-  const pageUrl = buildLocaleUrl('/special/park-saenggwang', locale);
+  const pageUrl = buildLocaleUrl(PARK_SAENGGWANG_PATH, locale);
 
   // OG 이미지 — 박생광 실 작품(드로잉) 이미지 우선, 없으면 사이트 기본 OG.
   const allArtworks = await getSupabaseArtworksByArtist('박생광');
@@ -116,7 +117,7 @@ export async function generateMetadata({
       locale === 'en'
         ? 'Park Saeng-gwang, Korean drawings, pencil drawings, master painter, obangsaek, Korean art exhibition'
         : '박생광, 박생광 드로잉, 한국화 거장, 오방색, 채색화, 박생광 드로잉전, 박생광 특별전, 한국 현대미술',
-    alternates: createLocaleAlternates('/special/park-saenggwang', locale),
+    alternates: createLocaleAlternates(PARK_SAENGGWANG_PATH, locale, true),
     openGraph: {
       type: 'website',
       url: pageUrl,
@@ -135,16 +136,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function ParkSaenggwangPage({
+export default async function ParkSaenggwangFeature({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: string; artist: string }>;
 }) {
   const { locale: rawLocale } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
   const isEnglish = locale === 'en';
-  const pageUrl = buildLocaleUrl('/special/park-saenggwang', locale);
+  const pageUrl = buildLocaleUrl(PARK_SAENGGWANG_PATH, locale);
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
   const allArtworks = await getSupabaseArtworksByArtist('박생광');
@@ -165,7 +166,7 @@ export default async function ParkSaenggwangPage({
 
   const parkSaenggwangPerson = {
     '@type': 'Person',
-    '@id': `${SITE_URL}/special/park-saenggwang#person-park-saenggwang`,
+    '@id': `${SITE_URL}${PARK_SAENGGWANG_PATH}#person-park-saenggwang`,
     name: isEnglish ? 'Park Saeng-gwang' : '박생광',
     alternateName: isEnglish ? '박생광 (朴生光)' : 'Park Saeng-gwang (朴生光)',
     birthDate: '1904',
@@ -964,7 +965,7 @@ export default async function ParkSaenggwangPage({
               <MasterArtistMediumSections
                 artworks={drawings}
                 isEnglish={isEnglish}
-                returnTo="/special/park-saenggwang"
+                returnTo={PARK_SAENGGWANG_PATH}
               />
             ) : (
               <section className="py-24 text-center">
@@ -1009,7 +1010,7 @@ export default async function ParkSaenggwangPage({
           </div>
         </div>
 
-        {/* Retention — special 페이지 GA4 49 PV(7일) traffic 회수. 박생광 작가/한국화/민화 hub. */}
+        {/* Retention — 박생광 관련 한국화/민화 hub. (작가 페이지 자기 자신 링크는 제거) */}
         <div className="max-w-5xl mx-auto px-4 py-16 md:py-20">
           <h2 className="text-2xl md:text-3xl font-bold text-charcoal-deep mb-3 text-center break-keep">
             {isEnglish ? 'Explore Park Saeng-gwang Deeper' : '박생광을 더 깊이 만나기'}
@@ -1020,19 +1021,6 @@ export default async function ParkSaenggwangPage({
               : '박생광 작가의 다른 작품과 한국화·민화의 계보를 씨앗페에서 이어볼 수 있습니다.'}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link
-              href="/artworks/artist/박생광"
-              className="block rounded-2xl border border-charcoal/15 bg-white p-5 hover:bg-canvas-strong transition-colors"
-            >
-              <div className="text-xs font-semibold uppercase tracking-wider text-primary-strong mb-2">
-                {isEnglish ? 'Browse artworks' : '씨앗페에서 작품 보기'}
-              </div>
-              <div className="text-base font-medium text-charcoal-deep leading-snug break-keep">
-                {isEnglish
-                  ? "Park Saeng-gwang's collection — final 8-year transformation works"
-                  : '박생광 출품작 전체 — 마지막 8년 폭발적 변신 시기 작품'}
-              </div>
-            </Link>
             <Link
               href="/stories/park-saenggwang-last-transformation"
               className="block rounded-2xl border border-charcoal/15 bg-white p-5 hover:bg-canvas-strong transition-colors"

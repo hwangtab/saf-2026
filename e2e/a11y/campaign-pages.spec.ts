@@ -3,7 +3,6 @@ import AxeBuilder from '@axe-core/playwright';
 
 const ROUTES = [
   '/petition/oh-yoon',
-  '/special/oh-yoon',
   '/artworks/artist/신학철',
   '/artworks/artist/민정기',
   '/artworks/artist/이철수',
@@ -113,6 +112,8 @@ const ROUTES = [
   '/artworks/artist/하선영',
   '/artworks/artist/김유진',
   '/artworks/artist/기조',
+  '/artworks/artist/오윤',
+  '/artworks/artist/박생광',
 ];
 
 for (const locale of ['ko', 'en'] as const) {

@@ -104,18 +104,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
     },
     {
-      // Cycle 13: retention slot 추가 — lastModified 갱신으로 Googlebot recrawl 가속.
-      path: '/special/oh-yoon',
+      // 오윤 40주기 특별전 — /artworks/artist/오윤로 dispatch 통합 (/special/oh-yoon은 308 redirect).
+      // 인코딩 path: EN_INDEXABLE_PAGES 매칭 + bilingual(영문 native) 발행. 동적 artistPages에서는 제외됨.
+      path: '/artworks/artist/%EC%98%A4%EC%9C%A4',
       changeFrequency: 'weekly',
       priority: 0.9,
-      lastModified: new Date('2026-05-30'),
+      lastModified: new Date('2026-06-10'),
     },
     {
-      // Cycle 13: retention slot 4 cards 추가 — lastModified 갱신.
-      path: '/special/park-saenggwang',
+      // 박생광 드로잉전 — /artworks/artist/박생광로 dispatch 통합 (/special/park-saenggwang은 308 redirect).
+      path: '/artworks/artist/%EB%B0%95%EC%83%9D%EA%B4%91',
       changeFrequency: 'weekly',
       priority: 0.9,
-      lastModified: new Date('2026-05-30'),
+      lastModified: new Date('2026-06-10'),
     },
     {
       path: '/faq',
@@ -302,7 +303,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // Artist pages (한국어 로케일만 — 영어 아티스트 페이지는 한국어 콘텐츠만 있어 thin content)
-  const uniqueArtists = [...new Set(allArtworks.map((a) => a.artist))];
+  // 오윤·박생광은 영문 native 특별전이라 staticPaths에서 bilingual로 발행 → 동적 ko-only 생성에서 제외.
+  const uniqueArtists = [...new Set(allArtworks.map((a) => a.artist))].filter(
+    (artist) => artist !== '오윤' && artist !== '박생광'
+  );
   const artistPages: MetadataRoute.Sitemap = uniqueArtists.map((artist) => {
     const encodedArtist = encodeURIComponent(artist);
     const artistPath = `/artworks/artist/${encodedArtist}`;

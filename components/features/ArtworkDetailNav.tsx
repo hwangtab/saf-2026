@@ -11,10 +11,20 @@ interface ArtworkDetailNavProps {
   title: string;
 }
 
+// 오윤·박생광 특별전 큐레이션은 /artworks/artist/<이름>에서 dispatch 렌더된다.
+// 작품 상세에서 returnTo로 이 경로가 오면 "특별전으로 돌아가기" 링크를 복원한다.
+const SPECIAL_RETURN_TO = new Set(['/artworks/artist/오윤', '/artworks/artist/박생광']);
+
 function normalizeReturnTo(value: string | null): string | undefined {
   if (!value) return undefined;
   const normalized = value.replace(/\/+$/, '');
-  return normalized === '/special/oh-yoon' ? normalized : undefined;
+  let decoded = normalized;
+  try {
+    decoded = decodeURIComponent(normalized);
+  } catch {
+    decoded = normalized;
+  }
+  return SPECIAL_RETURN_TO.has(decoded) ? normalized : undefined;
 }
 
 export default function ArtworkDetailNav({ artist, title }: ArtworkDetailNavProps) {
