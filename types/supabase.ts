@@ -1852,6 +1852,59 @@ export type Database = {
         };
         Relationships: [];
       };
+      social_posts: {
+        Row: {
+          artwork_id: string | null;
+          caption: string;
+          created_at: string;
+          created_by: string | null;
+          error_message: string | null;
+          id: string;
+          image_url: string | null;
+          permalink: string | null;
+          platform: string;
+          platform_post_id: string | null;
+          published_at: string | null;
+          status: string;
+        };
+        Insert: {
+          artwork_id?: string | null;
+          caption: string;
+          created_at?: string;
+          created_by?: string | null;
+          error_message?: string | null;
+          id?: string;
+          image_url?: string | null;
+          permalink?: string | null;
+          platform: string;
+          platform_post_id?: string | null;
+          published_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          artwork_id?: string | null;
+          caption?: string;
+          created_at?: string;
+          created_by?: string | null;
+          error_message?: string | null;
+          id?: string;
+          image_url?: string | null;
+          permalink?: string | null;
+          platform?: string;
+          platform_post_id?: string | null;
+          published_at?: string | null;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'social_posts_artwork_id_fkey';
+            columns: ['artwork_id'];
+            isOneToOne: false;
+            referencedRelation: 'artworks';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       stories: {
         Row: {
           author: string | null;
