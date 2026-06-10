@@ -455,13 +455,17 @@ export default async function ParkSaenggwangFeature({
                   <>
                     From Jinju
                     <br />
-                    <span className="text-sun-strong">to the Grand Palais</span>
+                    <span className="text-charcoal-deep underline decoration-sun-strong decoration-4 underline-offset-4">
+                      to the Grand Palais
+                    </span>
                   </>
                 ) : (
                   <>
                     진주에서
                     <br />
-                    <span className="text-sun-strong">그랑팔레까지</span>
+                    <span className="text-charcoal-deep underline decoration-sun-strong decoration-4 underline-offset-4">
+                      그랑팔레까지
+                    </span>
                   </>
                 )}
               </h2>
@@ -936,13 +940,17 @@ export default async function ParkSaenggwangFeature({
               <p className="text-base sm:text-lg text-charcoal-muted font-medium">
                 {isEnglish ? (
                   <>
-                    <span className="text-sun-strong font-bold text-xl">{drawingCountLabel}</span>{' '}
+                    <span className="text-charcoal-deep font-bold text-xl">
+                      {drawingCountLabel}
+                    </span>{' '}
                     drawings are currently on view.
                   </>
                 ) : (
                   <>
                     총{' '}
-                    <span className="text-sun-strong font-bold text-xl">{drawingCountLabel}</span>
+                    <span className="text-charcoal-deep font-bold text-xl">
+                      {drawingCountLabel}
+                    </span>
                     점의 드로잉이 전시되어 있습니다.
                   </>
                 )}
@@ -966,6 +974,7 @@ export default async function ParkSaenggwangFeature({
                 artworks={drawings}
                 isEnglish={isEnglish}
                 returnTo={PARK_SAENGGWANG_PATH}
+                theme="light"
               />
             ) : (
               <section className="py-24 text-center">
