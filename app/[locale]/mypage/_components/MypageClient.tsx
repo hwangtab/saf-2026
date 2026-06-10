@@ -29,6 +29,9 @@ type Messages = {
   wishlistBrowse: string;
   profileName: string;
   profileEmail: string;
+  profilePhone: string;
+  profilePhonePlaceholder: string;
+  profileInvalidPhone: string;
   profileSave: string;
   profileSaved: string;
   profileMarketingConsent: string;
@@ -55,6 +58,7 @@ type State =
       wishlistIds: string[];
       role: string | null;
       marketingConsent: boolean;
+      phone: string | null;
     };
 
 export default function MypageClient({ messages }: MypageClientProps) {
@@ -113,7 +117,11 @@ export default function MypageClient({ messages }: MypageClientProps) {
           .select('artwork_id, created_at')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false }),
-        supabase.from('profiles').select('role, marketing_consent').eq('id', user.id).maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('role, marketing_consent, phone')
+          .eq('id', user.id)
+          .maybeSingle(),
       ]);
 
       if (cancelled) return;
@@ -123,9 +131,11 @@ export default function MypageClient({ messages }: MypageClientProps) {
       const profileRow = profileResult.data as {
         role: string | null;
         marketing_consent: boolean | null;
+        phone: string | null;
       } | null;
       const role = profileRow?.role ?? null;
       const marketingConsent = profileRow?.marketing_consent ?? false;
+      const phone = profileRow?.phone ?? null;
 
       setState({
         status: 'ready',
@@ -134,6 +144,7 @@ export default function MypageClient({ messages }: MypageClientProps) {
         wishlistIds,
         role,
         marketingConsent,
+        phone,
       });
     })();
 
@@ -164,6 +175,7 @@ export default function MypageClient({ messages }: MypageClientProps) {
       showArtistApply={showArtistApply}
       showExhibitorApply={showExhibitorApply}
       initialMarketingConsent={state.marketingConsent}
+      initialPhone={state.phone}
       messages={messages}
     />
   );

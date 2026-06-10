@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/auth/server';
 import { hashEmail } from '@/lib/email/email-hash';
+import { normalizeKoreanMobile } from '@/lib/sms/phone';
 
 const MAX_WISHLIST_BATCH = 200;
 const isValidArtworkId = (id: unknown): id is string =>
@@ -64,7 +65,7 @@ export async function bulkAddToWishlist(artworkIds: string[]): Promise<{ error?:
   return {};
 }
 
-export async function updateMyProfile(name: string): Promise<{ error?: string }> {
+export async function updateMyProfile(name: string, phone?: string): Promise<{ error?: string }> {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -78,6 +79,14 @@ export async function updateMyProfile(name: string): Promise<{ error?: string }>
   // max length 가드 — auth.users raw_user_meta_data JSON 비대화 + profiles 컬럼 bloat 방지
   if (trimmed.length > 100) return { error: 'name_too_long' };
 
+  // phone은 선택 — 입력 시 010 휴대폰만 허용(SMS 브로드캐스트 대상).
+  let normalizedPhone: string | undefined;
+  if (phone !== undefined && phone.trim() !== '') {
+    const np = normalizeKoreanMobile(phone);
+    if (!np) return { error: 'invalid_phone' };
+    normalizedPhone = np;
+  }
+
   const { error: authError } = await supabase.auth.updateUser({
     data: { full_name: trimmed, name: trimmed },
   });
@@ -85,7 +94,7 @@ export async function updateMyProfile(name: string): Promise<{ error?: string }>
 
   const { error: profileError } = await supabase
     .from('profiles')
-    .update({ name: trimmed })
+    .update(normalizedPhone ? { name: trimmed, phone: normalizedPhone } : { name: trimmed })
     .eq('id', user.id);
 
   if (profileError) return { error: profileError.message };

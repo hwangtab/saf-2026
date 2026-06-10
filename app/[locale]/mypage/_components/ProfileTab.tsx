@@ -8,6 +8,10 @@ interface ProfileTabProps {
   user: { id: string; email: string; name: string };
   nameLabel: string;
   emailLabel: string;
+  phoneLabel: string;
+  phonePlaceholder: string;
+  invalidPhoneMessage: string;
+  initialPhone: string | null;
   saveLabel: string;
   savedLabel: string;
   initialMarketingConsent: boolean;
@@ -20,6 +24,10 @@ export default function ProfileTab({
   user,
   nameLabel,
   emailLabel,
+  phoneLabel,
+  phonePlaceholder,
+  invalidPhoneMessage,
+  initialPhone,
   saveLabel,
   savedLabel,
   initialMarketingConsent,
@@ -28,6 +36,7 @@ export default function ProfileTab({
   marketingConsentSavedLabel,
 }: ProfileTabProps) {
   const [name, setName] = useState(user.name);
+  const [phone, setPhone] = useState(initialPhone ?? '');
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -51,9 +60,9 @@ export default function ProfileTab({
     setSaved(false);
 
     startTransition(async () => {
-      const result = await updateMyProfile(name);
+      const result = await updateMyProfile(name, phone.trim() !== '' ? phone : undefined);
       if (result.error) {
-        setError(result.error);
+        setError(result.error === 'invalid_phone' ? invalidPhoneMessage : result.error);
       } else {
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
@@ -82,6 +91,17 @@ export default function ProfileTab({
               value={user.email}
               disabled
               className="block w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-charcoal-muted"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-charcoal mb-1">{phoneLabel}</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder={phonePlaceholder}
+              autoComplete="tel"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary"
             />
           </div>
           {error && <p className="text-danger-a11y text-sm">{error}</p>}
