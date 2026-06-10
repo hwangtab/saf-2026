@@ -116,6 +116,50 @@ describe('sms-broadcast-dispatch GET', () => {
     ).toBe(true);
   });
 
+  it('광고 브로드캐스트이고 SMS_OPT_OUT_080 미설정이면 발송하지 않고 status를 failed로 마킹한다', async () => {
+    // 광고 broadcast 주입
+    mockBroadcastRow = {
+      id: 'b-ad-no080',
+      channel: 'customer',
+      body_text: '(광고)[씨앗페] 테스트',
+      status: 'queued',
+      is_advertisement: true,
+    };
+    // SMS_OPT_OUT_080 미설정 보장 (혹시 이전 테스트에서 남아있을 경우 대비)
+    const saved = process.env.SMS_OPT_OUT_080;
+    delete process.env.SMS_OPT_OUT_080;
+    // 야간 아님 — 야간 가드가 먼저 실행되어 경로를 가로채지 않도록
+    (isNightInKst as jest.Mock).mockReturnValue(false);
+
+    try {
+      const res = await GET(req());
+      const json = await res.json();
+
+      // Solapi는 호출되어선 안 됨
+      expect(sendSolapiBatch).not.toHaveBeenCalled();
+
+      // broadcast가 failed로 마킹됐는지 확인
+      const failUpdate = updates.find(
+        (u) =>
+          u.table === 'sms_broadcasts' &&
+          u.patch.status === 'failed' &&
+          u.patch.dispatch_locked_until === null &&
+          u.patch.dispatch_lock_token === null
+      );
+      expect(failUpdate).toBeDefined();
+
+      // dispatched 카운트는 0 (발송 없음)
+      expect(json.dispatched).toBe(0);
+    } finally {
+      // 환경변수 복원 (누출 방지)
+      if (saved !== undefined) {
+        process.env.SMS_OPT_OUT_080 = saved;
+      } else {
+        delete process.env.SMS_OPT_OUT_080;
+      }
+    }
+  });
+
   it('광고 브로드캐스트가 야간(isNightInKst=true)이면 발송하지 않고 status를 queued로 되돌린다', async () => {
     // 광고 broadcast 주입
     mockBroadcastRow = {
