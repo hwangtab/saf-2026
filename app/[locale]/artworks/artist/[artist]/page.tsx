@@ -305,6 +305,9 @@ import OaFeature, { buildOaMetadata } from '@/components/special/master-artists/
 import KimYeongseoFeature, {
   buildKimYeongseoMetadata,
 } from '@/components/special/master-artists/KimYeongseoFeature';
+import JangGyeonghoFeature, {
+  buildJangGyeonghoMetadata,
+} from '@/components/special/master-artists/JangGyeonghoFeature';
 
 // 거장 작가는 작가 페이지(/artworks/artist/<이름>) URL에서 큐레이션 feature를 렌더한다.
 // 일반 작가 페이지 로직 대신 거장 전용 컴포넌트로 분기 — 사용자는 작품 필터에서 작가 이름을
@@ -398,6 +401,7 @@ const MASTER_ARTIST_FEATURES = {
   이혜선: { Component: LeeHyeseonFeature, buildMetadata: buildLeeHyeseonMetadata },
   오아: { Component: OaFeature, buildMetadata: buildOaMetadata },
   김영서: { Component: KimYeongseoFeature, buildMetadata: buildKimYeongseoMetadata },
+  장경호: { Component: JangGyeonghoFeature, buildMetadata: buildJangGyeonghoMetadata },
 } as const;
 
 type MasterArtistName = keyof typeof MASTER_ARTIST_FEATURES;
