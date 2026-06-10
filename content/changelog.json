@@ -1,5 +1,15 @@
 [
   {
+    "hash": "d2a666f7",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "한애규·이채원·조이락·박은선·정금희 전용 작가 페이지 추가(리서치 병행)",
+    "summary": "매체 다양성 5인(테라코타 도예·미국 회화·고려불화 재현·국제 회화·부산 사진) 거장급 큐레이션 작가 페이지 신규 제작. WebSearch 리서치를 적극 병행해 작품 세계·미술사 맥락 깊이 보강",
+    "body": "- HanAegyuFeature: 흙의 여정, 테라코타에 새긴 여성과 대지(뉴시스·아트사이드 평론 보강)\n- LeeChaewonFeature: To Be Continued, 매릴랜드에서 이어지는 그림(MICA)\n- JoIrakFeature: 수월관음도, 700년의 아름다움을 되살리다(고려불화 미술사 보강)\n- ParkEunseonFeature: 한국·로마·인도를 잇는 회화(동명이인 조각가 완전 배제)\n- JeongGeumhuiFeature: 화락이토와 동해선, 사라지는 것의 시간을 기록하다\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 통과(한애규 전시명 '흙의 여정'→'형태의 여정' 공식명 교정, 보강분 전부 신뢰 출처 교차확인, 박은선 조각가 혼입 0건, 날조 1인칭 0건)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "6f60b2a8",
     "type": "feat",
     "scope": "artists",
