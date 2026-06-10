@@ -1294,6 +1294,9 @@
     "profile": {
       "name": "Name",
       "email": "Email",
+      "phone": "Phone number (optional)",
+      "phonePlaceholder": "010-0000-0000",
+      "invalidPhone": "Please enter a valid Korean mobile number starting with 010.",
       "save": "Save",
       "saved": "Saved",
       "marketingConsent": "Marketing Email Consent",

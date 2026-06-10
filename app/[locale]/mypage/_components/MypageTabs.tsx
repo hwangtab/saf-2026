@@ -35,6 +35,9 @@ type Messages = {
   wishlistBrowse: string;
   profileName: string;
   profileEmail: string;
+  profilePhone: string;
+  profilePhonePlaceholder: string;
+  profileInvalidPhone: string;
   profileSave: string;
   profileSaved: string;
   profileMarketingConsent: string;
@@ -55,6 +58,7 @@ interface MypageTabsProps {
   showArtistApply: boolean;
   showExhibitorApply: boolean;
   initialMarketingConsent: boolean;
+  initialPhone: string | null;
   messages: Messages;
 }
 
@@ -65,6 +69,7 @@ export default function MypageTabs({
   showArtistApply,
   showExhibitorApply,
   initialMarketingConsent,
+  initialPhone,
   messages,
 }: MypageTabsProps) {
   const searchParams = useSearchParams();
@@ -145,6 +150,10 @@ export default function MypageTabs({
             user={user}
             nameLabel={messages.profileName}
             emailLabel={messages.profileEmail}
+            phoneLabel={messages.profilePhone}
+            phonePlaceholder={messages.profilePhonePlaceholder}
+            invalidPhoneMessage={messages.profileInvalidPhone}
+            initialPhone={initialPhone}
             saveLabel={messages.profileSave}
             savedLabel={messages.profileSaved}
             initialMarketingConsent={initialMarketingConsent}
