@@ -25,8 +25,8 @@ internal_links:
   - { text: '진위·COA 체크리스트', href: '/stories/how-to-read-artwork-coa' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
-published_at: '2026-07-15'
-is_published: false
+published_at: '2026-06-09'
+is_published: true
 display_order: 36
 ---
 

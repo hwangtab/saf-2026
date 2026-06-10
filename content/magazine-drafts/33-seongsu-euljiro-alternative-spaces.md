@@ -6,7 +6,8 @@ category: buying-guide
 excerpt: 안국이 '한국 미술의 어제', 한남이 '글로벌 미술의 오늘'이라면 성수·을지로는 '한국 미술의 내일'. 신진 작가의 첫 개인전이 열리는 대안 공간을 찾아갑니다.
 excerpt_en: "If Anguk is Korean art's past and Hannam its global present, Seongsu and Euljiro are its tomorrow. We visit the alternative spaces where emerging artists hold their first solo shows."
 display_order: 33
-published_at: '2026-09-15'
+published_at: '2026-06-09'
+is_published: true
 tags:
   - 성수동
   - 을지로

@@ -1,11 +1,11 @@
 ---
 id: '23'
 slug: 'young-artist-first-solo'
-title: '청년 작가의 첫 개인전 준비기 — 6개월의 기록'
-title_en: 'A Young Artist Preparing Their First Solo Show'
+title: '청년 작가의 첫 개인전 준비 가이드 — 6개월 로드맵'
+title_en: 'Preparing a Young Artist First Solo Show: A Six-Month Roadmap'
 category: 'artist-story'
-excerpt: '작가 인생에서 첫 개인전은 특별한 문턱입니다. 작가 한 명이 6개월간 첫 개인전을 준비하는 과정을 따라가며, 한국 신진 작가의 현실을 기록합니다.'
-excerpt_en: "A first solo show is a singular threshold in an artist's life. We follow one artist through six months of preparing their debut, documenting the reality facing emerging Korean artists."
+excerpt: '작가 인생에서 첫 개인전은 특별한 문턱입니다. 여러 신진 작가 사례를 종합해, 6개월 동안 무엇을 준비해야 하는지와 한국 청년 작가가 마주하는 현실을 정리합니다.'
+excerpt_en: "A first solo show is a singular threshold in an artist's life. This guide synthesizes emerging artists' experiences into a six-month preparation roadmap."
 tags:
   - 청년 작가
   - 첫 개인전
@@ -17,34 +17,31 @@ secondary_keywords:
   - '작가 데뷔'
   - '개인전 비용'
   - '청년 작가 현실'
-meta_description: '한 청년 작가의 첫 개인전 6개월 준비 과정을 시간순으로 기록. 공간 섭외부터 오프닝까지, 한국 신진 작가가 마주하는 현실.'
+meta_description: '청년 작가 첫 개인전 준비 6개월 로드맵. 공간 섭외부터 예산·작품 제작·오프닝까지, 여러 신진 작가 사례를 종합한 현실 가이드.'
 internal_links:
   - { text: '신진 작가 작품 고르는 5가지 기준', href: '/stories/five-criteria-for-choosing-art' }
   - { text: '작업실 탐방 포맷', href: '/stories/studio-visit-template' }
   - { text: '127명이 작품을 내놓은 이유', href: '/stories/127-artists-solidarity' }
   - { text: '씨앗페 작품 둘러보기', href: '/artworks' }
 author: 'SAF 매거진 편집부'
-published_at: '2026-07-09'
-is_published: false
+published_at: '2026-06-09'
+is_published: true
 display_order: 23
 note_to_editor: |
-  이 글은 한 청년 작가의 첫 개인전 준비 과정을 6개월간 동행 취재한
-  다큐멘터리 형식을 상정한 템플릿입니다. 실제 발행을 위해서는
-  씨앗페 참여 청년 작가 1인을 섭외해 6개월간 월별로 인터뷰·관찰을
-  진행해야 합니다.
-
-  현재 버전은 실제 사례들을 종합해 재구성한 전형적 서사입니다.
+  이 글은 실제 단일 인물 동행 취재가 아니라 여러 신진 작가 사례를
+  종합한 준비 가이드입니다. 공개 발행 시 특정 개인의 실제 기록으로
+  오해되지 않도록 제목·요약·본문을 로드맵 형식으로 정리했습니다.
 ---
 
-_편집자 주: 이 글은 여러 청년 작가의 사례를 종합해 재구성한 전형적 서사이며, 특정 개인의 실제 기록이 아닙니다._
+_편집자 주: 이 글은 여러 청년 작가의 사례를 종합해 만든 준비 가이드이며, 특정 개인의 실제 동행 기록이 아닙니다._
 
-# 청년 작가의 첫 개인전 준비기 — 6개월의 기록
+# 청년 작가의 첫 개인전 준비 가이드 — 6개월 로드맵
 
 [![남진현, 〈한 점 부끄럼 없이〉, acrylic on canvas, 53x40.9cm — 첫 개인전 준비 중인 청년 작가의 한 점](https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/6f8d5f94-7dc3-4e41-aad5-45e270b07290/4a8d7d00-584e-4337-9005-629fb59df951.webp)](/artworks/4b6f8e69-54c8-4a0f-a535-2c1b6bc398e9)
 
 작가의 이력서에서 가장 중요한 한 줄은 **"첫 개인전"**입니다. 그룹전은 여러 번 해도 개인전 하나의 무게를 넘지 못합니다. 한 작가가 "나는 내 이름으로 공간을 채울 수 있다"고 공식적으로 선언하는 지점이 첫 개인전이기 때문입니다.
 
-이 글은 한 청년 작가가 첫 개인전을 준비하는 6개월의 과정을 시간순으로 따라간 기록입니다. 실제 여러 신진 작가의 경험을 종합해 하나의 서사로 재구성한 것입니다. 이 기록을 통해 한국 청년 작가가 마주하는 현실을 들여다볼 수 있습니다.
+이 글은 여러 신진 작가의 경험을 종합해 첫 개인전 준비 과정을 6개월 로드맵으로 재구성한 가이드입니다. 실제 단일 인물의 동행 취재가 아니라, 공간 섭외부터 오프닝 이후까지 한국 청년 작가가 반복해서 마주하는 선택과 비용을 정리한 글입니다.
 
 ## D-180일 — 전시 공간 섭외
 

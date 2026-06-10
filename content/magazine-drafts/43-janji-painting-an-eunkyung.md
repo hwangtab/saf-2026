@@ -6,7 +6,8 @@ category: art-knowledge
 excerpt: 장지(壯紙)는 한지를 여러 장 겹쳐 두껍게 만든 한국 전통 화면. 안은경 작가의 〈쉼표〉, 〈돌아보다〉, 〈잠시 머무는 순간〉을 통해 장지의 흡수·두께·정서적 효과를 읽습니다.
 excerpt_en: "Janji is a thick traditional Korean surface made by layering hanji. Through An Eunkyung's paintings, we read its absorption, thickness, and quiet emotional effect."
 display_order: 43
-published_at: '2026-11-01'
+published_at: '2026-06-09'
+is_published: true
 tags:
   - 장지
   - 안은경
