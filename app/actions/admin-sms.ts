@@ -124,6 +124,9 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
   if (!RESENDABLE_TYPES.has(log.type as BuyerSmsType)) {
     return { ok: false, error: `재발송할 수 없는 유형입니다: ${log.type}` };
   }
+  if (log.status !== 'failed') {
+    return { ok: false, error: '이미 발송된 건은 재발송할 수 없습니다.' };
+  }
 
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
@@ -149,11 +152,14 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
     trackingNumber: order.tracking_number ?? undefined,
   };
 
-  try {
-    await sendBuyerSms(order.buyer_phone, type, data, locale, order.order_no);
-  } catch (err) {
-    console.error('[resend-sms] send failed:', err);
-    return { ok: false, error: '재발송 중 오류가 발생했습니다.' };
+  const res = await sendBuyerSms(order.buyer_phone, type, data, locale, order.order_no);
+  if (!res.ok) {
+    return {
+      ok: false,
+      error: res.skipped
+        ? '발송 대상이 아닙니다 (번호 형식 확인).'
+        : (res.error ?? '재발송에 실패했습니다.'),
+    };
   }
 
   await logAdminAction('sms_resent', 'sms_log', logId, {

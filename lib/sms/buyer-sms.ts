@@ -93,11 +93,15 @@ function buildSmsTextEn(type: BuyerSmsType, data: BuyerSmsData): string {
   }
 }
 
+export type BuyerSmsSendResult = { ok: boolean; skipped: boolean; error?: string };
+
 /**
  * 구매자 트랜잭션 SMS를 한국 휴대폰으로 발송하고 sms_logs에 기록한다.
- * - locale(ko/en)에 맞는 본문으로 발송. 비-KR 번호·전화번호 없음 → 조용히 스킵.
+ * - locale(ko/en)에 맞는 본문으로 발송. en+010 번호는 영문 본문으로 발송.
+ * - 비-010 번호·전화번호 없음 → 스킵 (skipped: true).
  * - 국제(비-010) 발송은 범위 밖 — normalizeKoreanMobile가 null 반환 시 스킵.
- * - never throw — 결제/웹훅 플로우를 막지 않음
+ * - never throw — 결제/웹훅 플로우를 막지 않음.
+ * - 반환값: { ok, skipped, error? } — 호출부는 void로 무시해도 무방 (fire-and-forget).
  */
 export async function sendBuyerSms(
   phone: string | null | undefined,
@@ -105,10 +109,10 @@ export async function sendBuyerSms(
   data: BuyerSmsData,
   locale: 'ko' | 'en' = 'ko',
   orderNo?: string
-): Promise<void> {
+): Promise<BuyerSmsSendResult> {
   try {
     const to = normalizeKoreanMobile(phone);
-    if (!to) return;
+    if (!to) return { ok: false, skipped: true };
 
     const text = buildSmsText(type, data, locale);
     const result = await sendSolapiSms({ to, text });
@@ -129,7 +133,14 @@ export async function sendBuyerSms(
     } catch (logErr) {
       console.error(`[buyer-sms:${type}] log insert failed:`, logErr);
     }
+
+    return {
+      ok: result.ok,
+      skipped: false,
+      error: result.ok ? undefined : (result.error ?? 'send_failed'),
+    };
   } catch (err) {
     console.error(`[buyer-sms:${type}] send failed:`, err);
+    return { ok: false, skipped: false, error: 'exception' };
   }
 }

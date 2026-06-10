@@ -11,7 +11,7 @@ jest.mock('@/app/actions/activity-log-writer', () => ({
   logAdminAction: jest.fn(async () => {}),
 }));
 
-const mockSendBuyerSms = jest.fn(async () => {});
+const mockSendBuyerSms = jest.fn(async () => ({ ok: true, skipped: false }));
 jest.mock('@/lib/sms/buyer-sms', () => ({
   sendBuyerSms: (...args: unknown[]) => mockSendBuyerSms(...args),
 }));
@@ -190,5 +190,58 @@ describe('resendSms', () => {
     const result = await resendSms('log-va');
     expect(result.ok).toBe(false);
     expect(mockSendBuyerSms).not.toHaveBeenCalled();
+  });
+
+  it('이미 발송된(sent) 건은 재발송 불가 ok:false', async () => {
+    const logRow = {
+      id: 'log-s',
+      order_no: 'SAF-S',
+      to_phone: '01012345678',
+      type: 'shipped',
+      status: 'sent',
+    };
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'sms_logs')
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
+    });
+    const result = await resendSms('log-s');
+    expect(result.ok).toBe(false);
+    expect(mockSendBuyerSms).not.toHaveBeenCalled();
+  });
+
+  it('sendBuyerSms 실패 시 ok:false 반환 및 활동 로그 미기록', async () => {
+    const { logAdminAction } = jest.requireMock('@/app/actions/activity-log-writer') as {
+      logAdminAction: jest.Mock;
+    };
+    const logRow = {
+      id: 'log-f',
+      order_no: 'SAF-F',
+      to_phone: '01012345678',
+      type: 'shipped',
+      status: 'failed',
+    };
+    const orderRow = {
+      order_no: 'SAF-F',
+      buyer_name: 'Jane',
+      buyer_phone: '01012345678',
+      total_amount: 1000000,
+      shipping_carrier: null,
+      tracking_number: null,
+      metadata: { locale: 'ko' },
+      artworks: { title: 'Test' },
+    };
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'sms_logs')
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      if (table === 'orders')
+        return createSupabaseQueryMock({ data: orderRow, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
+    });
+    mockSendBuyerSms.mockResolvedValueOnce({ ok: false, skipped: false, error: 'send_failed' });
+
+    const result = await resendSms('log-f');
+    expect(result.ok).toBe(false);
+    expect(logAdminAction).not.toHaveBeenCalled();
   });
 });

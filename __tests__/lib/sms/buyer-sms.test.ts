@@ -231,11 +231,52 @@ describe('sendBuyerSms', () => {
     mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
     mockSend.mockResolvedValue({ ok: false, error: 'http_400' });
 
-    await expect(
-      sendBuyerSms('01012345678', 'refunded', { buyerName: '', artworkTitle: '', amount: 1 })
-    ).resolves.toBeUndefined();
+    const result = await sendBuyerSms('01012345678', 'refunded', {
+      buyerName: '',
+      artworkTitle: '',
+      amount: 1,
+    });
+    expect(result).toEqual({ ok: false, skipped: false, error: 'http_400' });
     expect(insert).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'failed', error: 'http_400' })
     );
+  });
+
+  it('성공 발송은 { ok: true, skipped: false } 반환', async () => {
+    const { client } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: true, messageId: 'M2', segment: 'SMS' });
+
+    const result = await sendBuyerSms(
+      '010-1234-5678',
+      'payment_confirmed',
+      { buyerName: 'A', artworkTitle: 'B', amount: 1 },
+      'ko',
+      'SAF-2'
+    );
+    expect(result).toEqual({ ok: true, skipped: false });
+  });
+
+  it('비-010 번호는 { ok: false, skipped: true } 반환', async () => {
+    const result = await sendBuyerSms('02-123-4567', 'payment_confirmed', {
+      buyerName: 'A',
+      artworkTitle: 'B',
+      amount: 1,
+    });
+    expect(result).toEqual({ ok: false, skipped: true });
+    expect(mockSend).not.toHaveBeenCalled();
+  });
+
+  it('Solapi 실패는 { ok: false, skipped: false, error } 반환', async () => {
+    const { client } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: false, error: 'X' });
+
+    const result = await sendBuyerSms('01012345678', 'payment_confirmed', {
+      buyerName: 'A',
+      artworkTitle: 'B',
+      amount: 1,
+    });
+    expect(result).toEqual({ ok: false, skipped: false, error: 'X' });
   });
 });
