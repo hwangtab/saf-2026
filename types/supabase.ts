@@ -666,7 +666,8 @@ export type Database = {
       email_broadcasts: {
         Row: {
           audience_filter: Json;
-          body_md: string;
+          body_html: string;
+          body_text: string;
           channel: string;
           created_at: string;
           created_by: string | null;
@@ -687,7 +688,8 @@ export type Database = {
         };
         Insert: {
           audience_filter?: Json;
-          body_md: string;
+          body_html: string;
+          body_text: string;
           channel: string;
           created_at?: string;
           created_by?: string | null;
@@ -708,7 +710,8 @@ export type Database = {
         };
         Update: {
           audience_filter?: Json;
-          body_md?: string;
+          body_html?: string;
+          body_text?: string;
           channel?: string;
           created_at?: string;
           created_by?: string | null;
@@ -1671,6 +1674,51 @@ export type Database = {
           rating?: number;
           role?: string | null;
           role_en?: string | null;
+        };
+        Relationships: [];
+      };
+      social_posts: {
+        Row: {
+          artwork_id: string | null;
+          caption: string;
+          created_at: string;
+          created_by: string | null;
+          error_message: string | null;
+          id: string;
+          image_url: string | null;
+          permalink: string | null;
+          platform: string;
+          platform_post_id: string | null;
+          published_at: string | null;
+          status: string;
+        };
+        Insert: {
+          artwork_id?: string | null;
+          caption: string;
+          created_at?: string;
+          created_by?: string | null;
+          error_message?: string | null;
+          id?: string;
+          image_url?: string | null;
+          permalink?: string | null;
+          platform: string;
+          platform_post_id?: string | null;
+          published_at?: string | null;
+          status?: string;
+        };
+        Update: {
+          artwork_id?: string | null;
+          caption?: string;
+          created_at?: string;
+          created_by?: string | null;
+          error_message?: string | null;
+          id?: string;
+          image_url?: string | null;
+          permalink?: string | null;
+          platform?: string;
+          platform_post_id?: string | null;
+          published_at?: string | null;
+          status?: string;
         };
         Relationships: [];
       };

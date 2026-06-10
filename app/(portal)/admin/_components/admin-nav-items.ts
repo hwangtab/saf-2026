@@ -48,6 +48,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       label: '도구',
       items: [
         { href: '/admin/email', label: '이메일 발송' },
+        { href: '/admin/social', label: '소셜 미디어' },
         { href: '/admin/feedback', label: '피드백' },
         { href: '/admin/logs', label: '활동 로그' },
         { href: '/admin/changelog', label: '개발 이력' },
@@ -96,6 +97,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       label: 'Tools',
       items: [
         { href: '/admin/email', label: 'Email Broadcast' },
+        { href: '/admin/social', label: 'Social Media' },
         { href: '/admin/feedback', label: 'Feedback' },
         { href: '/admin/logs', label: 'Activity Logs' },
         { href: '/admin/changelog', label: 'Dev Changelog' },
