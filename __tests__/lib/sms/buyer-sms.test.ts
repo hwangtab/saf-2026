@@ -149,9 +149,38 @@ describe('buildSmsText', () => {
 describe('sendBuyerSms', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('en locale은 스킵 (발송·로그 없음)', async () => {
+  it('en+010 번호는 영문 본문으로 발송하고 sms_logs에 기록', async () => {
+    const { client, insert } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: true, messageId: 'M-EN', segment: 'SMS' });
+
     await sendBuyerSms(
-      '01012345678',
+      '010-1234-5678',
+      'payment_confirmed',
+      { buyerName: 'Jane', artworkTitle: 'Wildflowers', amount: 1500000 },
+      'en',
+      'SAF-EN-1'
+    );
+
+    expect(mockSend).toHaveBeenCalledWith({
+      to: '01012345678',
+      text: expect.stringContaining('[Seed Art Festival]'),
+    });
+    expect(insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        order_no: 'SAF-EN-1',
+        to_phone: '01012345678',
+        type: 'payment_confirmed',
+        status: 'sent',
+        provider_message_id: 'M-EN',
+        segment: 'SMS',
+      })
+    );
+  });
+
+  it('en+비-010 번호는 여전히 스킵 (국제 발송 범위 밖)', async () => {
+    await sendBuyerSms(
+      '02-123-4567',
       'payment_confirmed',
       { buyerName: 'A', artworkTitle: 'B', amount: 1 },
       'en'

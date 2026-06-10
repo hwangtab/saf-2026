@@ -95,7 +95,8 @@ function buildSmsTextEn(type: BuyerSmsType, data: BuyerSmsData): string {
 
 /**
  * 구매자 트랜잭션 SMS를 한국 휴대폰으로 발송하고 sms_logs에 기록한다.
- * - en locale·비-KR 번호·전화번호 없음 → 조용히 스킵 (이메일은 별도로 발송됨)
+ * - locale(ko/en)에 맞는 본문으로 발송. 비-KR 번호·전화번호 없음 → 조용히 스킵.
+ * - 국제(비-010) 발송은 범위 밖 — normalizeKoreanMobile가 null 반환 시 스킵.
  * - never throw — 결제/웹훅 플로우를 막지 않음
  */
 export async function sendBuyerSms(
@@ -106,11 +107,10 @@ export async function sendBuyerSms(
   orderNo?: string
 ): Promise<void> {
   try {
-    if (locale === 'en') return; // 1차는 한국어 본문만
     const to = normalizeKoreanMobile(phone);
     if (!to) return;
 
-    const text = buildSmsText(type, data);
+    const text = buildSmsText(type, data, locale);
     const result = await sendSolapiSms({ to, text });
 
     // best-effort 로그 — 실패해도 무시
