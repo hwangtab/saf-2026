@@ -1,5 +1,15 @@
 [
   {
+    "hash": "d3b9c726",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "민병산·이동구·김지영·백금아·김정원 전용 작가 페이지 추가",
+    "summary": "서예(추모)·도예·수채화·인물회화 5인 전용 큐레이션 작가 페이지 신규 제작(누적, 메인 일괄 반영 예정)",
+    "body": "- MinByeongsanFeature: 거리의 철학자 — 민병산체와 『철학의 즐거움』(1928~1990 추모·유산 톤). DB 무근거 '1980년대 인사동' 단정 제거\n- LeeDongguFeature: 흙과 물레, 자기 이름의 공방 — 도예(서울과기대 도예과). 외부 검색 구체 수상명·연도는 동명이인 위험으로 배제\n- KimJiyeongFeature: 순 돋는 나무 — 자연주의 도예(82년생 김지영 등 동명이인 무혼입)\n- BaekGeumaFeature: 물은 빛을 기억한다 — 수채화(한국수채화협회·제주신화전, 개인전 연도 미상은 미단정)\n- KimJeongwonFeature: 손 모은 사람 — 일상 몸짓의 인물회화(김준권과 철자 구분)\n- page.tsx dispatch 5인 등록, e2e/a11y ROUTES 5경로 추가\n- 독립 fact-review 5인 PASS(민병산 외삽 1건 수정 반영). type-check·build 통과",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "79d4a105",
     "type": "feat",
     "scope": "artists",
