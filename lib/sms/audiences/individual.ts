@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 import { normalizeKoreanMobile } from '@/lib/sms/phone';
 import { hashPhone } from '@/lib/sms/phone-hash';
 
@@ -24,10 +25,12 @@ export async function resolveIndividualSmsRecipients(
   supabase: SupabaseClient<any, any, any>
 ): Promise<IndividualSmsRow[]> {
   const channels = isAdvertisement ? ['individual', 'customer', 'all'] : ['individual', 'all'];
-  const { data: suppressions } = await supabase
-    .from('sms_suppressions')
-    .select('phone_hash')
-    .in('channel', channels);
+  const { data: suppressions } = await fetchAllInBatches<{ phone_hash: string }>((from, to) =>
+    supabase.from('sms_suppressions').select('phone_hash').in('channel', channels).range(from, to)
+  ).catch((err) => {
+    console.error('[individual-sms] suppressions query error:', err);
+    throw new Error('수신거부 목록 조회 실패 — 발송을 중단합니다');
+  });
   const suppressed = new Set((suppressions ?? []).map((s: { phone_hash: string }) => s.phone_hash));
 
   const seen = new Set<string>();
