@@ -1,5 +1,15 @@
 [
   {
+    "hash": "db418fc0",
+    "type": "feat",
+    "scope": "artists",
+    "subject": "장경호(형상미술 대가) 전용 작가 페이지 추가",
+    "summary": "형상미술을 이끈 설치미술가·기획자 장경호 전용 큐레이션 페이지 신규 제작(보류 해제, 심화 리서치 병행)",
+    "body": "- JangGyeonghoFeature: 인간과 삶을 다시 화면으로 — 형상미술의 한 축을 이끈 작가이자 기획자\n- DB bio를 1차 진실로, 검증 가능한 형상미술 사조 맥락(1970s 중반 새로운 형상성→1980s 주류)만으로 깊이 확보\n- 미검증 개인정보(생몰·구체 전시연도·소장처·수상·학력) 날조 0건, JSON-LD에 birthDate/award/alumniOf 미포함\n- page.tsx dispatch 등록, e2e/a11y ROUTES 추가, type-check·build 통과\n- 독립 fact-review PASS(날조·동명이인·프레이밍·스키마 5항목 전수 통과)",
+    "date": "2026-06-10",
+    "author": "황경하"
+  },
+  {
     "hash": "b75fde44",
     "type": "feat",
     "scope": "artists",
