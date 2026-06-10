@@ -6,6 +6,7 @@ import {
   isNightInKst,
   validateAdvertisementText,
   buildAdvertisementText,
+  optOutNumber,
   AD_PREFIX,
 } from '@/lib/sms/broadcast-body';
 
@@ -43,6 +44,10 @@ describe('isNightInKst (광고 야간 차단 21:00–08:00)', () => {
   it('14:00 KST는 허용', () => {
     expect(isNightInKst(new Date('2026-06-10T05:00:00Z'))).toBe(false);
   });
+  it('21:00 KST 정각은 야간(inclusive 시작)', () => {
+    // 2026-06-10T12:00:00Z = 21:00 KST
+    expect(isNightInKst(new Date('2026-06-10T12:00:00Z'))).toBe(true);
+  });
 });
 
 describe('validateAdvertisementText', () => {
@@ -73,5 +78,24 @@ describe('buildAdvertisementText (자동 보정)', () => {
   it('이미 (광고)가 있으면 중복 부착하지 않음', () => {
     const out = buildAdvertisementText('(광고)[씨앗페] 기존본문', '080-123-4567');
     expect(out.match(/\(광고\)/g)).toHaveLength(1);
+  });
+  it('수동 (광고) + 브랜드 없음 입력에도 (광고) 중복 부착 안 함', () => {
+    const out = buildAdvertisementText('(광고) 브랜드 없는 본문', '080-123-4567');
+    // (광고)가 정확히 1번만
+    expect(out.match(/\(광고\)/g)?.length).toBe(1);
+    expect(out.startsWith('(광고)')).toBe(true);
+    expect(out).toContain('[씨앗페]');
+  });
+});
+
+describe('optOutNumber (수신거부 번호)', () => {
+  it('SMS_OPT_OUT_080 미설정 시 placeholder 080-000-0000 사용', () => {
+    const prev = process.env.SMS_OPT_OUT_080;
+    delete process.env.SMS_OPT_OUT_080;
+    try {
+      expect(optOutNumber()).toBe('080-000-0000');
+    } finally {
+      if (prev !== undefined) process.env.SMS_OPT_OUT_080 = prev;
+    }
   });
 });

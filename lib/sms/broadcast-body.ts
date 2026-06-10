@@ -62,10 +62,16 @@ export function validateAdvertisementText(text: string): AdValidation {
 }
 
 // 광고 본문 자동 보정: (광고) prefix + 브랜드 + 무료수신거부 080 라인을 멱등적으로 부착.
+// 조립 순서: strip 기존 prefix → brand → prefix → opt-out (이 순서를 바꾸면 이중 (광고) 버그 재발).
 export function buildAdvertisementText(body: string, optOut: string = optOutNumber()): string {
   let out = body.trim();
+  // 1. 기존 (광고) prefix가 있으면 제거 — 이후 재조립 시 중복 방지.
+  if (AD_PREFIX_RE.test(out)) out = out.slice(AD_PREFIX.length).trimStart();
+  // 2. 브랜드 태그 삽입.
   if (!out.includes(BRAND_TAG)) out = `${BRAND_TAG} ${out}`;
-  if (!AD_PREFIX_RE.test(out)) out = `${AD_PREFIX}${out}`;
+  // 3. (광고) prefix를 정확히 1회 선두에 부착.
+  out = `${AD_PREFIX}${out}`;
+  // 4. 무료수신거부 라인 부착 (이미 있으면 스킵).
   if (!FREE_OPT_OUT_RE.test(out)) out = `${out}\n무료수신거부 ${optOut}`;
   return out;
 }
