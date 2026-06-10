@@ -446,7 +446,7 @@ export default async function ByeonGyeonghuiFeature({
                     </span>
                   </li>
                 </ul>
-                <p className="mt-6 pt-4 border-t border-charcoal/15 text-charcoal-soft text-sm leading-relaxed break-keep">
+                <p className="mt-6 pt-4 border-t border-charcoal/15 text-charcoal-muted text-sm leading-relaxed break-keep">
                   {isEnglish
                     ? 'Specific years and venues beyond the 2025 exhibition are not listed here to avoid unverified detail.'
                     : '2025년 전시 외의 구체적인 연도·장소는 확인되지 않아 임의로 기재하지 않았습니다.'}
