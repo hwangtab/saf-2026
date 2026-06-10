@@ -2,7 +2,6 @@
 
 import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
-import { PETITION_SALT } from '@/lib/email/email-hash';
 import { CustomerSmsAudienceResolver } from '@/lib/sms/audiences/customer';
 import { MemberSmsAudienceResolver } from '@/lib/sms/audiences/member';
 import { resolveIndividualSmsRecipients } from '@/lib/sms/audiences/individual';
@@ -301,8 +300,6 @@ export async function previewSmsAudience(
 ): Promise<{ total: number; breakdown: Record<string, number> }> {
   await requireAdmin();
   // SMS는 email의 count_*_audience RPC가 없으므로 resolver로 직접 계산.
-  // (PETITION_SALT 재사용 — 향후 RPC 도입 시 인자 전달용으로 남겨둠)
-  void PETITION_SALT;
   if (channel === 'member') {
     const subset = filter?.subset ?? 'all';
     const total = (await new MemberSmsAudienceResolver().resolve({ subset })).length;

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { sendSolapiBatch, buildBatchIdempotencyKey } from '@/lib/sms/solapi-batch';
-import { personalizeSmsText } from '@/lib/sms/broadcast-body';
+import { isNightInKst, personalizeSmsText } from '@/lib/sms/broadcast-body';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -91,6 +91,21 @@ export async function GET(request: NextRequest) {
         break;
       }
       if (!renewed) break;
+
+      // 정통망법 §50 야간 도달시각 가드: 광고 브로드캐스트는 매 청크 발송 전 KST 시각을 재확인.
+      // enqueue 차단만으로는 대량 발송이 21:00을 넘겨 도달하는 위반 소지가 있음.
+      // 야간 진입 시 status를 queued로 되돌리고 락 해제 → 08:00 이후 cron이 재개.
+      if (isAd && isNightInKst()) {
+        console.warn(
+          `[sms-broadcast-dispatch] ad broadcast ${broadcast.id} paused at night window — reverting to queued`
+        );
+        await supabase
+          .from('sms_broadcasts')
+          .update({ status: 'queued', dispatch_locked_until: null, dispatch_lock_token: null })
+          .eq('id', broadcast.id)
+          .eq('dispatch_lock_token', lockToken);
+        break;
+      }
 
       // 처리된 행은 sent/failed로 빠지므로 항상 pending 선두 청크만 가져온다(offset 누적 금지).
       const { data: pending } = await supabase
