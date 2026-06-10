@@ -61,7 +61,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
   {
     slug: 'oh-yoon-40th',
     i18nKey: 'ohYoon40th',
-    href: '/special/oh-yoon',
+    href: '/artworks/artist/오윤',
     imageUrl: `${STORAGE}/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp`,
     startDate: '2026-04-01',
     // PM 확정: 오윤 40주기 commemoration 2026년 말일까지. 2027-01-01 자동 fallback (강석태 hero).
@@ -71,7 +71,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
   {
     slug: 'park-saenggwang-drawings',
     i18nKey: 'parkSaenggwang',
-    href: '/special/park-saenggwang',
+    href: '/artworks/artist/박생광',
     imageUrl: `${STORAGE}/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp`,
     // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-08(월) 폐막.
     // 장소: 갤러리 PEG (서울시 은평구 통일로 870 M타워 6층). 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)

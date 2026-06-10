@@ -104,7 +104,8 @@ const nextConfig = {
       { source: '/en/onboarding', destination: '/onboarding', permanent: true },
       { source: '/en/terms-consent', destination: '/terms-consent', permanent: true },
       // 거장 작가 — 별도 /special/<slug> 페이지를 운영하지 않고 작가 페이지로 통일.
-      // (오윤·박생광은 실제 특별전 이벤트라 /special 유지)
+      // 오윤·박생광도 dispatch 통합 — /special 큐레이션을 /artworks/artist/<이름>에서 렌더,
+      // /special/<slug>는 308 redirect로 SEO 허브(/artworks/artist/<이름>)에 정리.
       {
         source: '/special/min-joungki',
         destination: '/artworks/artist/%EB%AF%BC%EC%A0%95%EA%B8%B0',
@@ -133,6 +134,26 @@ const nextConfig = {
       {
         source: '/en/special/park-buldong',
         destination: '/en/artworks/artist/%EB%B0%95%EB%B6%88%EB%98%A5',
+        permanent: true,
+      },
+      {
+        source: '/special/oh-yoon',
+        destination: '/artworks/artist/%EC%98%A4%EC%9C%A4',
+        permanent: true,
+      },
+      {
+        source: '/en/special/oh-yoon',
+        destination: '/en/artworks/artist/%EC%98%A4%EC%9C%A4',
+        permanent: true,
+      },
+      {
+        source: '/special/park-saenggwang',
+        destination: '/artworks/artist/%EB%B0%95%EC%83%9D%EA%B4%91',
+        permanent: true,
+      },
+      {
+        source: '/en/special/park-saenggwang',
+        destination: '/en/artworks/artist/%EB%B0%95%EC%83%9D%EA%B4%91',
         permanent: true,
       },
     ];

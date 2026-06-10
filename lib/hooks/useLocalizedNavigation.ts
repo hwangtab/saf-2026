@@ -24,12 +24,12 @@ export function useLocalizedNavigation(): NavigationItem[] {
         },
         {
           name: t('ohYoon'),
-          href: '/special/oh-yoon',
+          href: '/artworks/artist/오윤',
           description: t('ohYoonDesc'),
         },
         {
           name: t('parkSaenggwang'),
-          href: '/special/park-saenggwang',
+          href: '/artworks/artist/박생광',
           description: t('parkSaenggwangNavDesc'),
         },
         {

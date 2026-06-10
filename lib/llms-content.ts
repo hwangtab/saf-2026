@@ -251,8 +251,8 @@ A: The offline exhibition ran January 14-26, 2026 at Insa Art Center, Seoul. The
 | News | \`/news\` | Press coverage from Korean media |
 | Archive 2026 | \`/archive/2026\` | Offline exhibition poster and records |
 | Archive 2023 | \`/archive/2023\` | First SAF exhibition records |
-| Special: Oh Yoon | \`/special/oh-yoon\` | Special exhibition of Oh Yoon (오윤), iconic Korean minjung artist |
-| Special: Park Saeng-gwang | \`/special/park-saenggwang\` | Special exhibition of Park Saeng-gwang (박생광, 1904–1985), master of obangsaek color |
+| Special: Oh Yoon | \`/artworks/artist/오윤\` | Special exhibition of Oh Yoon (오윤), iconic Korean minjung artist |
+| Special: Park Saeng-gwang | \`/artworks/artist/박생광\` | Special exhibition of Park Saeng-gwang (박생광, 1904–1985), master of obangsaek color |
 | Petition: Oh Yoon | \`/petition/oh-yoon\` | Petition to restore Oh Yoon estate print certification |
 
 English versions available at \`/en/\` prefix (e.g., \`/en/artworks\`).

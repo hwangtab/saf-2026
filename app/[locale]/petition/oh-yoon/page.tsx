@@ -38,7 +38,7 @@ export const revalidate = 60;
 const MAINTENANCE_MODE = false;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
-const OH_YOON_PERSON_ID = `${SITE_URL}/special/oh-yoon#person-oh-yoon`;
+const OH_YOON_PERSON_ID = `${SITE_URL}/artworks/artist/${encodeURIComponent('오윤')}#person-oh-yoon`;
 const MURAL_IMAGE_URL = `${SITE_URL}/images/petition-oh-yoon/mural-1.png`;
 
 async function fetchPetitionActive(): Promise<boolean> {
@@ -175,7 +175,7 @@ export default async function PetitionOhYoonPage({
     sameAs: [
       'https://ko.wikipedia.org/wiki/오윤_(화가)',
       'https://www.wikidata.org/wiki/Q18399737',
-      `${SITE_URL}/special/oh-yoon`,
+      `${SITE_URL}/artworks/artist/${encodeURIComponent('오윤')}`,
     ],
   };
 
@@ -634,7 +634,7 @@ export default async function PetitionOhYoonPage({
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 mt-auto pt-2">
                   <Link
-                    href="/special/oh-yoon"
+                    href="/artworks/artist/오윤"
                     className="inline-flex items-center justify-center rounded-lg bg-charcoal-deep hover:bg-charcoal text-white px-5 py-3 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     <span className="inline-flex items-center gap-2">
@@ -758,7 +758,7 @@ export default async function PetitionOhYoonPage({
               </div>
             </Link>
             <Link
-              href="/special/oh-yoon"
+              href="/artworks/artist/오윤"
               className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
             >
               <div className="text-eyebrow mb-2 text-primary-strong">스페셜 — 1985년의 오윤</div>

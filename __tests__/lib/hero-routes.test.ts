@@ -22,8 +22,6 @@ describe('isHeroRoute', () => {
       '/terms',
       '/refund-policy',
       '/petition/oh-yoon',
-      '/special/oh-yoon',
-      '/special/park-saenggwang',
       '/wishlist',
       '/changelog',
     ])('%s는 hero 경로', (path) => {
@@ -36,6 +34,9 @@ describe('isHeroRoute', () => {
       ['/stories/some-slug', true],
       ['/news/some-slug', true],
       ['/artworks/artist/kim-hyun', true],
+      // 오윤·박생광 특별전은 /artworks/artist/<이름>로 dispatch 통합 (/special/<slug>는 redirect).
+      ['/artworks/artist/오윤', true],
+      ['/artworks/artist/박생광', true],
       ['/artworks/category/painting', true],
       ['/terms/artist', true],
       ['/terms/exhibitor', true],
