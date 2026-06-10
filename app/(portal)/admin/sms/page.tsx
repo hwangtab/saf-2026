@@ -1,11 +1,14 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getSmsLogs } from '@/app/actions/admin-sms';
+import { getSmsBroadcasts } from '@/app/actions/admin-sms-broadcast';
 import {
   AdminPageHeader,
   AdminPageTitle,
   AdminPageDescription,
 } from '@/app/(portal)/admin/_components/admin-ui';
 import { SmsLogList } from './_components/SmsLogList';
+import { SmsBroadcastComposer } from './_components/SmsBroadcastComposer';
+import { SmsBroadcastHistory } from './_components/SmsBroadcastHistory';
 
 type Props = {
   searchParams: Promise<{
@@ -20,13 +23,16 @@ type Props = {
 export default async function AdminSmsPage({ searchParams }: Props) {
   await requireAdmin();
   const params = await searchParams;
-  const initial = await getSmsLogs({
-    type: params.type,
-    status: params.status,
-    from: params.from,
-    to: params.to,
-    q: params.q,
-  });
+  const [initial, broadcasts] = await Promise.all([
+    getSmsLogs({
+      type: params.type,
+      status: params.status,
+      from: params.from,
+      to: params.to,
+      q: params.q,
+    }),
+    getSmsBroadcasts(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -36,6 +42,16 @@ export default async function AdminSmsPage({ searchParams }: Props) {
           구매자 트랜잭션 SMS 발송 내역을 조회하고, 실패한 건을 재발송합니다.
         </AdminPageDescription>
       </AdminPageHeader>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-charcoal-deep">단체 문자 발송</h2>
+        <SmsBroadcastComposer />
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-charcoal-deep">단체 발송 이력</h2>
+        <SmsBroadcastHistory initial={broadcasts} />
+      </section>
 
       <SmsLogList
         initial={initial}
