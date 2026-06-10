@@ -89,6 +89,21 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
     return () => clearInterval(id);
   }, [hasActive, poll]);
 
+  if (loadState === 'error') {
+    return (
+      <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
+        <p className="text-sm text-danger-a11y">발송 이력을 불러오지 못했습니다.</p>
+        <button
+          type="button"
+          onClick={() => void loadPage(page, pageSize)}
+          className="mt-3 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-charcoal-deep hover:bg-canvas-soft"
+        >
+          다시 시도
+        </button>
+      </div>
+    );
+  }
+
   if (rows.length === 0) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-sm text-charcoal-muted">

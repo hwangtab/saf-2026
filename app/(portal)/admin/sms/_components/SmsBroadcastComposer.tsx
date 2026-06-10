@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import {
   enqueueSmsBroadcast,
   enqueueIndividualSmsBroadcast,
+  previewSmsAudience,
   sendTestSms,
 } from '@/app/actions/admin-sms-broadcast';
 import {
@@ -19,7 +20,15 @@ import {
   type SmsRecipientSegment,
 } from '@/lib/sms/broadcast-segment';
 import { smsByteLength, smsSegment } from '@/lib/sms/broadcast-body';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 import { AdminTextarea } from '@/app/(portal)/admin/_components/admin-ui';
+
+// 세그먼트에서 previewSmsAudience 호출 인자 키를 생성. direct는 서버 조회 불필요.
+function segmentPreviewKey(seg: SmsRecipientSegment): string | null {
+  if (seg.kind === 'direct') return null;
+  if (seg.kind === 'member') return JSON.stringify({ kind: 'member', subset: seg.subset });
+  return JSON.stringify({ kind: 'customer' });
+}
 
 export function SmsBroadcastComposer() {
   const router = useRouter();
@@ -39,6 +48,41 @@ export function SmsBroadcastComposer() {
   const blockReason = segmentBlockReason(segment, manualPending);
   const bytes = smsByteLength(bodyText);
   const seg = smsSegment(bodyText);
+
+  // Live audience count for group segments.
+  // Loading is derived from key mismatch (no synchronous setState in effect — cascading render 방지).
+  const argsKey = segmentPreviewKey(segment) ?? '';
+  const debouncedKey = useDebounce(argsKey, 400);
+  const [serverPreview, setServerPreview] = useState<{ key: string; total: number } | null>(null);
+  const reqIdRef = useRef(0);
+
+  useEffect(() => {
+    if (!debouncedKey) return; // direct segment — no server call
+    const reqId = ++reqIdRef.current;
+    const parsed = JSON.parse(debouncedKey) as {
+      kind: 'member' | 'customer';
+      subset?: 'all' | 'artist' | 'exhibitor';
+    };
+    const filter =
+      parsed.kind === 'member' && parsed.subset ? { subset: parsed.subset } : undefined;
+    previewSmsAudience(parsed.kind, filter)
+      .then((r) => {
+        if (reqId !== reqIdRef.current) return;
+        setServerPreview({ key: debouncedKey, total: r.total });
+      })
+      .catch(() => {
+        if (reqId !== reqIdRef.current) return;
+        setServerPreview({ key: debouncedKey, total: 0 });
+      });
+  }, [debouncedKey]);
+
+  // Resolved count + loading state derived from key matching (not from imperative setState).
+  const isDirect = isDirectSegment(segment);
+  const directCount = isDirect ? segment.contacts.length : 0;
+  const groupLoading = !isDirect && (serverPreview?.key !== argsKey || argsKey !== debouncedKey);
+  const groupCount = serverPreview?.total ?? 0;
+  const audienceCount = isDirect ? directCount : groupCount;
+  const audienceLoading = !isDirect && groupLoading;
 
   const handleKindChange = (kind: (typeof SMS_RECIPIENT_KINDS)[number]) => {
     setSegment(defaultSegment(kind));
@@ -137,6 +181,24 @@ export function SmsBroadcastComposer() {
             {SMS_RECIPIENT_KIND_META[segment.kind].description}
           </p>
 
+          {/* Live audience count */}
+          <p className="text-xs text-charcoal-muted">
+            대상{' '}
+            {audienceLoading ? (
+              <span className="text-charcoal-soft">계산 중…</span>
+            ) : (
+              <span
+                className={
+                  audienceCount === 0
+                    ? 'font-semibold text-danger-a11y'
+                    : 'font-semibold text-charcoal'
+                }
+              >
+                {audienceCount.toLocaleString('ko-KR')}명
+              </span>
+            )}
+          </p>
+
           {segment.kind === 'member' && (
             <select
               value={segment.subset}
@@ -179,7 +241,10 @@ export function SmsBroadcastComposer() {
                 <input
                   type="checkbox"
                   checked={segment.advertising}
-                  onChange={(e) => setSegment({ ...segment, advertising: e.target.checked })}
+                  onChange={(e) => {
+                    setSegment({ ...segment, advertising: e.target.checked });
+                    setConfirmed(false);
+                  }}
                 />
                 광고성 문자 (체크 시 (광고) 표기·무료수신거부·야간 차단 적용)
               </label>
