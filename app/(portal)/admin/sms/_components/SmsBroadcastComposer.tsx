@@ -20,6 +20,7 @@ import {
   type SmsRecipientSegment,
 } from '@/lib/sms/broadcast-segment';
 import { smsByteLength, smsSegment } from '@/lib/sms/broadcast-body';
+import { estimateBroadcastCost, SMS_UNIT_PRICE_KRW } from '@/lib/sms/pricing';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { AdminTextarea } from '@/app/(portal)/admin/_components/admin-ui';
 
@@ -198,6 +199,21 @@ export function SmsBroadcastComposer() {
               </span>
             )}
           </p>
+
+          {/* 예상 비용 = 대상 수 × 세그먼트(SMS/LMS) 단가 */}
+          {!audienceLoading && audienceCount > 0 && bodyText.trim().length > 0 && (
+            <p className="text-xs text-charcoal-muted">
+              예상 비용{' '}
+              <span className="font-semibold text-charcoal">
+                ≈ {estimateBroadcastCost(audienceCount, seg).toLocaleString('ko-KR')}원
+              </span>
+              <span className="text-charcoal-soft">
+                {' '}
+                ({seg} {SMS_UNIT_PRICE_KRW[seg].toLocaleString('ko-KR')}원 ×{' '}
+                {audienceCount.toLocaleString('ko-KR')}명, 부가세 별도)
+              </span>
+            </p>
+          )}
 
           {segment.kind === 'member' && (
             <select
