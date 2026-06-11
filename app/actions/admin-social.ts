@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { buildCaptionDraft } from '@/lib/social/caption';
+import { sortCandidatesForPublishing } from '@/lib/social/candidate-sort';
 import { resolvePublicImageUrl } from '@/lib/social/image-url';
 import { getAdapter, getPlatformConfigStatuses } from '@/lib/social/registry';
 import { isPlatform, SocialPublishError, type Platform } from '@/lib/social/types';
@@ -33,7 +34,73 @@ export interface PublishSocialPostInput {
   imageUrl?: string | null;
 }
 
+/** 작품 선택 시 캡션·가드·이력 신호를 한 번에 내려주는 초안. */
+export interface SocialDraft {
+  caption: string;
+  imageUrl: string | null;
+  status: string; // 'available' | 'reserved' | 'sold'
+  isHidden: boolean;
+  postCount: number;
+  lastPublishedAt: string | null;
+}
+
+/** 게시 후보 카드 한 건 (추천 패널). */
+export interface PublishCandidate {
+  id: string;
+  title: string | null;
+  artistName: string | null;
+  careerTier: string | null; // '신진' | '중견' | '거장'
+  category: string | null;
+  image: string | null; // images[0] (raw)
+  createdAt: string | null;
+  postCount: number;
+  lastPublishedAt: string | null;
+}
+
 const MAX_CAPTION_LENGTH = 2200; // Instagram caption 상한
+
+type AdminClient = Awaited<ReturnType<typeof requireAdminClient>>;
+
+interface PublishHistoryStat {
+  count: number;
+  lastPublishedAt: string | null;
+}
+
+/**
+ * social_posts(status='published') 집계 — artwork_id별 게시 횟수 + 마지막 게시 시각.
+ * 후보 패널과 prepareSocialDraft가 공유. (수백 행 규모 → JS reduce로 충분.)
+ */
+async function aggregatePublishHistory(
+  supabase: AdminClient,
+  artworkIds: string[]
+): Promise<Map<string, PublishHistoryStat>> {
+  const result = new Map<string, PublishHistoryStat>();
+  if (artworkIds.length === 0) return result;
+
+  const { data, error } = await supabase
+    .from('social_posts')
+    .select('artwork_id, published_at')
+    .eq('status', 'published')
+    .in('artwork_id', artworkIds);
+
+  if (error || !data) return result;
+
+  for (const row of data) {
+    if (!row.artwork_id) continue;
+    const ts = row.published_at;
+    const prev = result.get(row.artwork_id);
+    if (!prev) {
+      result.set(row.artwork_id, { count: 1, lastPublishedAt: ts });
+    } else {
+      prev.count += 1;
+      // ISO timestamptz 문자열(동일 +00 오프셋) → 사전식 비교로 최신 판정 가능
+      if (ts && (!prev.lastPublishedAt || ts > prev.lastPublishedAt)) {
+        prev.lastPublishedAt = ts;
+      }
+    }
+  }
+  return result;
+}
 
 function normalizePlatform(value: string): Platform {
   if (!isPlatform(value)) {
@@ -48,21 +115,28 @@ export async function getSocialConfigStatus() {
   return getPlatformConfigStatuses();
 }
 
-/** 작품 선택 시 캡션 초안 + 공개 이미지 URL을 생성. */
-export async function prepareSocialDraft(
-  artworkId: string
-): Promise<{ caption: string; imageUrl: string | null }> {
+/** 작품 선택 시 캡션 초안 + 공개 이미지 URL + 판매상태/게시이력(가드·배지용)을 생성. */
+export async function prepareSocialDraft(artworkId: string): Promise<SocialDraft> {
   await requireAdmin();
   const supabase = await requireAdminClient();
 
+  const empty: SocialDraft = {
+    caption: '',
+    imageUrl: null,
+    status: 'available',
+    isHidden: false,
+    postCount: 0,
+    lastPublishedAt: null,
+  };
+
   const { data, error } = await supabase
     .from('artworks')
-    .select('id, title, material, size, price, images, artists(name_ko)')
+    .select('id, title, material, size, price, images, status, is_hidden, artists(name_ko)')
     .eq('id', artworkId)
     .single();
 
   if (error || !data) {
-    return { caption: '', imageUrl: null };
+    return empty;
   }
 
   const artist = Array.isArray(data.artists) ? data.artists[0] : data.artists;
@@ -78,7 +152,58 @@ export async function prepareSocialDraft(
     price: data.price,
   });
 
-  return { caption, imageUrl: resolvePublicImageUrl(firstImage) };
+  const stat = (await aggregatePublishHistory(supabase, [artworkId])).get(artworkId);
+
+  return {
+    caption,
+    imageUrl: resolvePublicImageUrl(firstImage),
+    status: data.status ?? 'available',
+    isHidden: Boolean(data.is_hidden),
+    postCount: stat?.count ?? 0,
+    lastPublishedAt: stat?.lastPublishedAt ?? null,
+  };
+}
+
+/**
+ * 게시 후보 목록 — available + 미숨김 작품을 게시 이력으로 annotate.
+ * 정렬: 미게시 우선 → 가장 오래전 게시순(신선도) → 미게시끼리는 신착순.
+ */
+export async function listPublishCandidates(): Promise<PublishCandidate[]> {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select('id, title, category, images, created_at, artists(name_ko, career_tier)')
+    .eq('is_hidden', false)
+    .eq('status', 'available')
+    .limit(600);
+
+  if (error || !data) return [];
+
+  const history = await aggregatePublishHistory(
+    supabase,
+    data.map((a) => a.id)
+  );
+
+  const candidates: PublishCandidate[] = data.map((a) => {
+    const artist = Array.isArray(a.artists) ? a.artists[0] : a.artists;
+    const images = Array.isArray(a.images) ? a.images : [];
+    const stat = history.get(a.id);
+    return {
+      id: a.id,
+      title: a.title,
+      artistName: artist?.name_ko ?? null,
+      careerTier: artist?.career_tier ?? null,
+      category: a.category,
+      image: typeof images[0] === 'string' ? images[0] : null,
+      createdAt: a.created_at,
+      postCount: stat?.count ?? 0,
+      lastPublishedAt: stat?.lastPublishedAt ?? null,
+    };
+  });
+
+  return sortCandidatesForPublishing(candidates);
 }
 
 /**

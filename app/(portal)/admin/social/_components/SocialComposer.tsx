@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import SafeImage from '@/components/common/SafeImage';
@@ -14,6 +14,8 @@ import {
   AdminInput,
   AdminTextarea,
 } from '@/app/(portal)/admin/_components/admin-ui';
+import { PostHistoryBadge } from './PostHistoryBadge';
+import { SaleStatusGuard } from './SaleStatusGuard';
 
 const PLATFORM_LABELS: Record<Platform, string> = {
   instagram: 'Instagram',
@@ -31,13 +33,28 @@ interface ResultLine {
   error: boolean;
 }
 
-export function SocialComposer({ configStatus }: { configStatus: ConfigStatus[] }) {
+interface DraftMeta {
+  status: string;
+  isHidden: boolean;
+  postCount: number;
+  lastPublishedAt: string | null;
+}
+
+export function SocialComposer({
+  selectedArtworkId,
+  onArtworkChange,
+  configStatus,
+}: {
+  selectedArtworkId: string;
+  onArtworkChange: (id: string) => void;
+  configStatus: ConfigStatus[];
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const [artworkId, setArtworkId] = useState('');
   const [caption, setCaption] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [draftMeta, setDraftMeta] = useState<DraftMeta | null>(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState<Set<Platform>>(
     () => new Set(configStatus.filter((c) => c.configured).map((c) => c.platform))
   );
@@ -47,22 +64,38 @@ export function SocialComposer({ configStatus }: { configStatus: ConfigStatus[] 
   const configuredMap = new Map(configStatus.map((c) => [c.platform, c.configured]));
   const anyConfigured = configStatus.some((c) => c.configured);
 
-  const handleArtworkChange = (id: string) => {
-    setArtworkId(id);
+  // 선택 작품이 바뀌면 즉시 리셋 — effect 내 동기 setState(cascading render) 대신
+  // React 권장 "렌더 중 상태 조정" 패턴 사용(ArtworkSearchSelect와 동일).
+  const [prevArtworkId, setPrevArtworkId] = useState(selectedArtworkId);
+  if (selectedArtworkId !== prevArtworkId) {
+    setPrevArtworkId(selectedArtworkId);
+    setCaption('');
+    setImageUrl('');
+    setDraftMeta(null);
     setResults([]);
-    if (!id) {
-      setCaption('');
-      setImageUrl('');
-      return;
-    }
-    setDraftLoading(true);
-    startTransition(async () => {
-      const draft = await prepareSocialDraft(id);
+    setDraftLoading(Boolean(selectedArtworkId));
+  }
+
+  // 캡션·이미지·가드 데이터 비동기 로드(setState는 async 콜백 내에서만).
+  useEffect(() => {
+    if (!selectedArtworkId) return;
+    let ignore = false;
+    prepareSocialDraft(selectedArtworkId).then((draft) => {
+      if (ignore) return;
       setCaption(draft.caption);
       setImageUrl(draft.imageUrl ?? '');
+      setDraftMeta({
+        status: draft.status,
+        isHidden: draft.isHidden,
+        postCount: draft.postCount,
+        lastPublishedAt: draft.lastPublishedAt,
+      });
       setDraftLoading(false);
     });
-  };
+    return () => {
+      ignore = true;
+    };
+  }, [selectedArtworkId]);
 
   const togglePlatform = (platform: Platform) => {
     setSelectedPlatforms((prev) => {
@@ -84,7 +117,7 @@ export function SocialComposer({ configStatus }: { configStatus: ConfigStatus[] 
       for (const platform of platforms) {
         const res = await publishSocialPost({
           platform,
-          artworkId: artworkId || null,
+          artworkId: selectedArtworkId || null,
           caption,
           imageUrl: imageUrl || null,
         });
@@ -108,8 +141,18 @@ export function SocialComposer({ configStatus }: { configStatus: ConfigStatus[] 
 
       <div className="space-y-5">
         <div>
-          <ArtworkSearchSelect value={artworkId} onChange={handleArtworkChange} />
+          <ArtworkSearchSelect value={selectedArtworkId} onChange={onArtworkChange} />
         </div>
+
+        {selectedArtworkId && draftMeta && (
+          <div className="space-y-2">
+            <PostHistoryBadge
+              postCount={draftMeta.postCount}
+              lastPublishedAt={draftMeta.lastPublishedAt}
+            />
+            <SaleStatusGuard status={draftMeta.status} isHidden={draftMeta.isHidden} />
+          </div>
+        )}
 
         <div>
           <AdminFieldLabel htmlFor="social-caption">캡션</AdminFieldLabel>
