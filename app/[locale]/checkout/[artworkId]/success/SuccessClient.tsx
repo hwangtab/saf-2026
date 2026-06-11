@@ -26,6 +26,14 @@ interface Landing {
   currency: 'KRW' | 'USD';
 }
 
+interface PurchaseAnalyticsItem {
+  artworkId: string;
+  artworkTitle: string;
+  artistName: string;
+  itemAmount: number;
+  shippingAmount: number;
+}
+
 type PageState = 'loading' | 'success' | 'virtual' | 'bank_transfer' | 'error';
 
 function formatAmount(amount: number, currency: 'KRW' | 'USD'): string {
@@ -101,6 +109,7 @@ export default function SuccessClient() {
           alreadyPaid?: boolean;
           status?: string;
           virtualAccount?: VirtualAccount | null;
+          analyticsItem?: PurchaseAnalyticsItem | null;
           error?: string;
         };
 
@@ -116,10 +125,35 @@ export default function SuccessClient() {
           const purchaseKey = `purchase_fired_${orderId}`;
           if (!sessionGet<boolean>(purchaseKey)) {
             sessionSet(purchaseKey, true);
+            const analyticsItem = data.analyticsItem ?? null;
+            const itemAmount = analyticsItem?.itemAmount ?? Number(amount);
+            const shippingAmount = analyticsItem?.shippingAmount ?? 0;
             trackEvent('purchase', {
               transaction_id: orderId,
               value: Number(amount),
               currency,
+              artwork_id: analyticsItem?.artworkId ?? artworkId,
+              artwork_title: analyticsItem?.artworkTitle ?? artworkId,
+              artist: analyticsItem?.artistName ?? null,
+              item_amount: itemAmount,
+              shipping_amount: shippingAmount,
+            }, {
+              ga4Params: {
+                transaction_id: orderId,
+                value: Number(amount),
+                currency,
+                shipping: shippingAmount,
+                items: [
+                  {
+                    item_id: analyticsItem?.artworkId ?? artworkId,
+                    item_name: analyticsItem?.artworkTitle ?? artworkId,
+                    item_brand: analyticsItem?.artistName ?? undefined,
+                    item_category: 'artwork',
+                    price: itemAmount,
+                    quantity: 1,
+                  },
+                ],
+              },
             });
           }
           // localStorage 멱등 가드 — 다른 탭·시크릿 reopen 시 sessionStorage 우회로 중복 카운트 방지.

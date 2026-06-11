@@ -19,6 +19,23 @@ import { apiError, getRequestLocale } from '@/lib/api-locale';
 
 export const runtime = 'nodejs';
 
+type OrderNotificationInfo = Awaited<ReturnType<typeof getOrderNotificationInfo>>;
+
+function buildAnalyticsItem(
+  order: { artwork_id: string | null; total_amount: number },
+  notifyInfo: OrderNotificationInfo,
+  fallbackAmount: number
+) {
+  if (!order.artwork_id) return null;
+  return {
+    artworkId: order.artwork_id,
+    artworkTitle: notifyInfo?.artworkTitle || order.artwork_id,
+    artistName: notifyInfo?.artistName || '',
+    itemAmount: notifyInfo?.itemAmount ?? fallbackAmount,
+    shippingAmount: notifyInfo?.shippingAmount ?? Math.max(0, fallbackAmount - order.total_amount),
+  };
+}
+
 export async function POST(req: NextRequest) {
   const reqLocale = getRequestLocale(req);
 
@@ -78,7 +95,12 @@ export async function POST(req: NextRequest) {
   // Guard: pending_payment 상태에서만 승인 진행
   if (order.status !== 'pending_payment') {
     if (order.status === 'paid') {
-      return NextResponse.json({ success: true, alreadyPaid: true });
+      const paidNotifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
+      return NextResponse.json({
+        success: true,
+        alreadyPaid: true,
+        analyticsItem: buildAnalyticsItem(order, paidNotifyInfo, order.total_amount),
+      });
     }
     return NextResponse.json(
       { error: `${apiError('invalid_order_status', reqLocale)} (${order.status})` },
@@ -397,5 +419,6 @@ export async function POST(req: NextRequest) {
     success: true,
     status: tossResponse.status,
     virtualAccount: isVirtualAccount ? (tossResponse.virtualAccount ?? null) : null,
+    analyticsItem: isDone ? buildAnalyticsItem(order, notifyInfo, tossResponse.totalAmount) : null,
   });
 }
