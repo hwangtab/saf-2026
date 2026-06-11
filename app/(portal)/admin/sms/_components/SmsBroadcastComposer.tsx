@@ -20,8 +20,16 @@ import {
   SMS_RECIPIENT_KINDS,
   type SmsRecipientSegment,
 } from '@/lib/sms/broadcast-segment';
-import { smsByteLength, smsSegment } from '@/lib/sms/broadcast-body';
+import {
+  buildAdvertisementText,
+  isNightInKst,
+  smsByteLength,
+  smsSegment,
+} from '@/lib/sms/broadcast-body';
 import { estimateBroadcastCost, SMS_UNIT_PRICE_KRW } from '@/lib/sms/pricing';
+import type { SmsBroadcastTemplate } from '@/lib/sms/templates';
+import { SmsPreviewCard } from './SmsPreviewCard';
+import { SmsTemplatePicker } from './SmsTemplatePicker';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { AdminTextarea } from '@/app/(portal)/admin/_components/admin-ui';
 
@@ -68,8 +76,11 @@ export function SmsBroadcastComposer() {
   const isAdvertisement = deriveIsAdvertisement(segment);
   const manualPending = isDirectSegment(segment) && directInput.trim().length > 0;
   const blockReason = segmentBlockReason(segment, manualPending);
-  const bytes = smsByteLength(bodyText);
-  const seg = smsSegment(bodyText);
+  // 광고 발송의 실제 전송 본문 = buildAdvertisementText 적용 본문. 이 기준으로 바이트·세그먼트·비용 산출.
+  const adBody = isAdvertisement ? buildAdvertisementText(bodyText) : bodyText;
+  const bytes = smsByteLength(adBody);
+  const seg = smsSegment(adBody);
+  const isNight = isNightInKst();
 
   // Live audience count for group segments.
   // Loading is derived from key mismatch (no synchronous setState in effect — cascading render 방지).
@@ -132,6 +143,19 @@ export function SmsBroadcastComposer() {
     setDirectInput('');
     setConfirmed(false);
     setSegment(defaultSegment('member'));
+  };
+
+  // 템플릿 적용: 기존 본문이 있으면 덮어쓰기 확인 (email BroadcastComposer.applyTemplate 미러).
+  const applyTemplate = (template: SmsBroadcastTemplate) => {
+    if (bodyText.trim().length > 0) {
+      if (!window.confirm('현재 작성 중인 본문이 있습니다. 템플릿으로 덮어쓰시겠습니까?')) return;
+    }
+    setBodyText(template.bodyText);
+    // 광고 직접 지정 세그먼트에서만 advertising 플래그 동기화 (다른 세그먼트는 채널이 결정).
+    if (isDirectSegment(segment) && template.isAdvertisement !== undefined) {
+      setSegment({ ...segment, advertising: template.isAdvertisement });
+    }
+    setConfirmed(false);
   };
 
   const handleSend = () => {
@@ -338,6 +362,7 @@ export function SmsBroadcastComposer() {
               </span>
             )}
           </h3>
+          <SmsTemplatePicker kind={segment.kind} onSelect={applyTemplate} />
           <AdminTextarea
             value={bodyText}
             onChange={(e) => {
@@ -350,14 +375,30 @@ export function SmsBroadcastComposer() {
           <p className="text-xs tabular-nums text-charcoal-muted">
             {bytes}바이트 · {seg}
             {seg === 'LMS' && ' (90바이트 초과 → 장문)'}
+            {isAdvertisement && (
+              <span className="text-charcoal-soft"> — 광고 prefix 포함 실제 발송 기준</span>
+            )}
           </p>
         </section>
       </div>
 
       <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+        {/* 문자 미리보기 — 실제 전송 본문(광고 prefix 포함) */}
+        <SmsPreviewCard bodyText={bodyText} isAdvertisement={isAdvertisement} />
+
         <section className="space-y-3 rounded-xl border border-gray-200 bg-white p-5">
           <h3 className="text-sm font-semibold text-charcoal-deep">발송</h3>
           {blockReason && <p className="text-xs text-danger-a11y">{blockReason}</p>}
+
+          {/* 정보통신망법 야간 광고 경고 배너 */}
+          {isAdvertisement && isNight && (
+            <div className="rounded-lg bg-charcoal-deep/5 px-3 py-2.5 text-xs text-charcoal-deep">
+              ⚠️ 지금은 야간(21시~8시)입니다. 정보통신망법상 야간 광고 문자 발송은 수신자의 사전
+              동의가 필요하며 발송이 차단·지연될 수 있습니다. 동의를 확인하지 못했다면{' '}
+              <strong>주간에 발송하세요.</strong>
+            </div>
+          )}
+
           <label className="flex items-center gap-2 text-sm text-charcoal">
             <input
               type="checkbox"
