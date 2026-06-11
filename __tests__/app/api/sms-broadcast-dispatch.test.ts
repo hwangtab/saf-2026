@@ -35,6 +35,10 @@ let mockBroadcastRow = {
   is_advertisement: false,
 };
 
+// 청크마다 status 재조회(.single) 가 반환할 status 값.
+// 기본값 'sending' → 취소 감지 안 됨. 'cancelled'로 바꾸면 취소 경로로 진입.
+let mockStatusRecheckValue = 'sending';
+
 // supabase 어드민 스텁. pendingDrained는 createSupabaseAdminClient 호출마다 새로 생성.
 const updates: Array<{ table: string; patch: Record<string, unknown> }> = [];
 jest.mock('@/lib/auth/server', () => {
@@ -42,6 +46,11 @@ jest.mock('@/lib/auth/server', () => {
     const chain: Record<string, unknown> = {};
     const methods = ['select', 'eq', 'in', 'gt', 'order', 'limit'];
     for (const m of methods) chain[m] = jest.fn(() => chain);
+    // 청크마다 status 재조회 경로: .select('status').eq('id', ...).single()
+    chain.single = jest.fn(async () => ({
+      data: { status: mockStatusRecheckValue },
+      error: null,
+    }));
     chain.update = jest.fn((patch: Record<string, unknown>) => {
       updates.push({ table, patch });
       const u: Record<string, unknown> = {};
@@ -103,6 +112,8 @@ describe('sms-broadcast-dispatch GET', () => {
       is_advertisement: false,
     };
     (isNightInKst as jest.Mock).mockReturnValue(false);
+    // 기본값: 취소 감지 안 됨
+    mockStatusRecheckValue = 'sending';
   });
 
   it('claim→발송→sent 커밋 후 dispatched 반환', async () => {
@@ -195,5 +206,28 @@ describe('sms-broadcast-dispatch GET', () => {
 
     // 환경변수 복원
     delete process.env.SMS_OPT_OUT_080;
+  });
+
+  it('status 재조회가 cancelled를 반환하면 발송을 중단하고 락을 해제한다', async () => {
+    // status 재조회 시 cancelled 반환 → 취소 감지 경로 진입
+    mockStatusRecheckValue = 'cancelled';
+
+    const res = await GET(req());
+    const json = await res.json();
+
+    // Solapi는 호출되어선 안 됨
+    expect(sendSolapiBatch).not.toHaveBeenCalled();
+
+    // 락 해제 update가 sms_broadcasts에 기록됐는지
+    const lockClear = updates.find(
+      (u) =>
+        u.table === 'sms_broadcasts' &&
+        u.patch.dispatch_locked_until === null &&
+        u.patch.dispatch_lock_token === null
+    );
+    expect(lockClear).toBeDefined();
+
+    // dispatched 카운트 0 (발송 없음)
+    expect(json.dispatched).toBe(0);
   });
 });
