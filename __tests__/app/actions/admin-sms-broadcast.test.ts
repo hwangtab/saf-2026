@@ -2,6 +2,8 @@
 import {
   enqueueSmsBroadcast,
   enqueueIndividualSmsBroadcast,
+  retryFailedRecipients,
+  cancelBroadcast,
 } from '@/app/actions/admin-sms-broadcast';
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
@@ -180,5 +182,183 @@ describe('enqueueIndividualSmsBroadcast', () => {
     });
     expect(r.error).toBe(true);
     expect(r.message).toMatch(/최대 500/);
+  });
+});
+
+// ---
+// retryFailedRecipients / cancelBroadcast 테스트용 supabase 목 빌더.
+// from()이 호출된 테이블에 따라 다른 응답을 반환한다.
+function makeRetrySupabase(opts: {
+  broadcastStatus?: string;
+  failedCount?: number;
+  fetchError?: boolean;
+}) {
+  const { broadcastStatus = 'sent', failedCount = 3, fetchError = false } = opts;
+
+  // 테이블별 체인 빌더
+  function makeChain(singleData: unknown, updateError: unknown = null) {
+    const chain: Record<string, unknown> = {};
+    const fns = ['select', 'eq', 'in', 'update', 'order', 'limit'];
+    fns.forEach((fn) => {
+      chain[fn] = jest.fn(() => chain);
+    });
+    chain['single'] = jest.fn(async () => ({
+      data: fetchError ? null : singleData,
+      error: fetchError ? { message: 'not found' } : null,
+    }));
+    chain['update'] = jest.fn(() => {
+      const inner: Record<string, unknown> = {};
+      inner['eq'] = jest.fn(() => inner);
+      inner['then'] = jest.fn(async (cb: (v: unknown) => unknown) =>
+        cb({ data: null, error: updateError })
+      );
+      // make it thenable so await works
+      return {
+        eq: jest.fn(() => ({
+          eq: jest.fn(async () => ({ error: updateError })),
+          then: undefined,
+          // direct await returns the result
+        })),
+        // for single .eq() chains
+        then: undefined,
+      };
+    });
+    return chain;
+  }
+
+  const broadcastsChain = {
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn(async () => ({
+      data: fetchError
+        ? null
+        : { id: 'bcast-1', status: broadcastStatus, failed_count: failedCount },
+      error: fetchError ? { message: 'not found' } : null,
+    })),
+    update: jest.fn(() => ({
+      eq: jest.fn(async () => ({ error: null })),
+    })),
+  };
+
+  const recipientsChain = {
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    update: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        eq: jest.fn(async () => ({ error: null })),
+      })),
+    })),
+  };
+
+  const client = {
+    from: jest.fn((table: string) => {
+      if (table === 'sms_broadcasts') return broadcastsChain;
+      if (table === 'sms_broadcast_recipients') return recipientsChain;
+      return broadcastsChain;
+    }),
+  };
+
+  return { client, broadcastsChain, recipientsChain };
+}
+
+describe('retryFailedRecipients', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('failed_count=0이면 에러 반환', async () => {
+    const { client } = makeRetrySupabase({ broadcastStatus: 'sent', failedCount: 0 });
+    mockClient.mockResolvedValue(client as never);
+    const r = await retryFailedRecipients('bcast-1');
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/실패한 수신자가 없습니다/);
+  });
+
+  it('status=sending이면 에러 반환 (발송 완료 전 재시도 불가)', async () => {
+    const { client } = makeRetrySupabase({ broadcastStatus: 'sending', failedCount: 5 });
+    mockClient.mockResolvedValue(client as never);
+    const r = await retryFailedRecipients('bcast-1');
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/sent.*failed|발송이 완료된/);
+  });
+
+  it('sent 상태 + failed > 0: 수신자 pending 복원 + broadcast queued 설정', async () => {
+    const { client, broadcastsChain, recipientsChain } = makeRetrySupabase({
+      broadcastStatus: 'sent',
+      failedCount: 3,
+    });
+    mockClient.mockResolvedValue(client as never);
+    const r = await retryFailedRecipients('bcast-1');
+    expect(r.error).toBeFalsy();
+    expect(r.retried).toBe(3);
+    // recipients update 호출됨
+    expect(recipientsChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'pending' })
+    );
+    // broadcast update 호출됨
+    expect(broadcastsChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'queued', failed_count: 0 })
+    );
+  });
+
+  it('failed 상태 + failed > 0: 정상 재시도', async () => {
+    const { client } = makeRetrySupabase({ broadcastStatus: 'failed', failedCount: 7 });
+    mockClient.mockResolvedValue(client as never);
+    const r = await retryFailedRecipients('bcast-1');
+    expect(r.error).toBeFalsy();
+    expect(r.retried).toBe(7);
+  });
+
+  it('브로드캐스트 조회 실패 시 에러 반환', async () => {
+    const { client } = makeRetrySupabase({ fetchError: true });
+    mockClient.mockResolvedValue(client as never);
+    const r = await retryFailedRecipients('bcast-1');
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/찾을 수 없습니다/);
+  });
+});
+
+describe('cancelBroadcast', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('queued → cancelled 로 변경', async () => {
+    const { client, broadcastsChain } = makeRetrySupabase({ broadcastStatus: 'queued' });
+    mockClient.mockResolvedValue(client as never);
+    const r = await cancelBroadcast('bcast-1');
+    expect(r.error).toBeFalsy();
+    expect(broadcastsChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'cancelled' })
+    );
+  });
+
+  it('sending → cancelled 로 변경 (cron mid-run 취소)', async () => {
+    const { client, broadcastsChain } = makeRetrySupabase({ broadcastStatus: 'sending' });
+    mockClient.mockResolvedValue(client as never);
+    const r = await cancelBroadcast('bcast-1');
+    expect(r.error).toBeFalsy();
+    expect(broadcastsChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'cancelled' })
+    );
+  });
+
+  it('sent 상태면 에러 반환', async () => {
+    const { client } = makeRetrySupabase({ broadcastStatus: 'sent' });
+    mockClient.mockResolvedValue(client as never);
+    const r = await cancelBroadcast('bcast-1');
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/발송 완료.*취소|이미/);
+  });
+
+  it('cancelled 상태면 에러 반환', async () => {
+    const { client } = makeRetrySupabase({ broadcastStatus: 'cancelled' });
+    mockClient.mockResolvedValue(client as never);
+    const r = await cancelBroadcast('bcast-1');
+    expect(r.error).toBe(true);
+  });
+
+  it('브로드캐스트 조회 실패 시 에러 반환', async () => {
+    const { client } = makeRetrySupabase({ fetchError: true });
+    mockClient.mockResolvedValue(client as never);
+    const r = await cancelBroadcast('bcast-1');
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/찾을 수 없습니다/);
   });
 });

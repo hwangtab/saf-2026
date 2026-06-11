@@ -331,6 +331,128 @@ export async function previewSmsAudience(
   return { total: 0, breakdown: {} };
 }
 
+// 실패한 수신자를 다시 pending으로 되돌려 cron 재발송을 트리거한다.
+// 광고 §50 야간 차단 및 무료수신거부 검증은 dispatch cron이 재개 시 자동 재적용한다.
+export async function retryFailedRecipients(
+  broadcastId: string
+): Promise<ActionState & { retried?: number }> {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  // 브로드캐스트 상태 로드
+  const { data: broadcast, error: fetchError } = await supabase
+    .from('sms_broadcasts')
+    .select('id, status, failed_count')
+    .eq('id', broadcastId)
+    .single();
+
+  if (fetchError || !broadcast) {
+    return { message: '캠페인을 찾을 수 없습니다.', error: true };
+  }
+  if (!['sent', 'failed'].includes(broadcast.status)) {
+    return {
+      message: '발송이 완료된(sent/failed) 캠페인만 재시도할 수 있습니다.',
+      error: true,
+    };
+  }
+  const failedCount = broadcast.failed_count ?? 0;
+  if (failedCount === 0) {
+    return { message: '실패한 수신자가 없습니다.', error: true };
+  }
+
+  // 실패 수신자를 pending으로 복원 (error, provider_message_id, sent_at 초기화)
+  const { error: recipientsError } = await supabase
+    .from('sms_broadcast_recipients')
+    .update({
+      status: 'pending',
+      error: null,
+      provider_message_id: null,
+      sent_at: null,
+    })
+    .eq('broadcast_id', broadcastId)
+    .eq('status', 'failed');
+
+  if (recipientsError) {
+    console.error('[retry-failed-recipients] recipients update error:', recipientsError);
+    return { message: '수신자 상태 복원에 실패했습니다.', error: true };
+  }
+
+  // 브로드캐스트를 queued로 되돌려 cron이 재개하도록 한다.
+  // failed_count를 0으로 리셋 — cron이 청크 완료 후 재집계함.
+  // sent_count는 유지 (이미 발송된 건 보존).
+  const { error: broadcastError } = await supabase
+    .from('sms_broadcasts')
+    .update({
+      status: 'queued',
+      failed_count: 0,
+      dispatch_lock_token: null,
+      dispatch_locked_until: null,
+    })
+    .eq('id', broadcastId);
+
+  if (broadcastError) {
+    console.error('[retry-failed-recipients] broadcast update error:', broadcastError);
+    return { message: '캠페인 상태 업데이트에 실패했습니다.', error: true };
+  }
+
+  await logAdminAction('sms_broadcast_retry', 'sms_broadcast', broadcastId, {
+    retried: failedCount,
+  });
+
+  return {
+    message: `${failedCount.toLocaleString('ko-KR')}명에게 재발송을 시작했습니다.`,
+    retried: failedCount,
+  };
+}
+
+// 큐 대기 중이거나 발송 중인 캠페인을 취소한다.
+// sending 상태에서 취소 시 dispatch cron의 while 루프가 다음 청크에서 status를 재확인하고 중단한다.
+export async function cancelBroadcast(broadcastId: string): Promise<ActionState> {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { data: broadcast, error: fetchError } = await supabase
+    .from('sms_broadcasts')
+    .select('id, status')
+    .eq('id', broadcastId)
+    .single();
+
+  if (fetchError || !broadcast) {
+    return { message: '캠페인을 찾을 수 없습니다.', error: true };
+  }
+
+  if (!['queued', 'sending'].includes(broadcast.status)) {
+    return {
+      message:
+        '이미 발송 완료/취소된 캠페인입니다. 발송 대기(queued) 또는 발송 중(sending) 상태만 취소할 수 있습니다.',
+      error: true,
+    };
+  }
+
+  // sending 중이라면 lock token을 보유한 cron run이 있을 수 있다.
+  // dispatch cron의 while 루프가 다음 청크 시작 시 status를 재확인하고 중단하므로
+  // lock token 없이 status만 cancelled로 변경해도 안전하다.
+  const { error: updateError } = await supabase
+    .from('sms_broadcasts')
+    .update({
+      status: 'cancelled',
+      dispatch_lock_token: null,
+      dispatch_locked_until: null,
+    })
+    .eq('id', broadcastId);
+
+  if (updateError) {
+    console.error('[cancel-broadcast] update error:', updateError);
+    return { message: '캠페인 취소에 실패했습니다.', error: true };
+  }
+
+  await logAdminAction('sms_broadcast_cancel', 'sms_broadcast', broadcastId, {
+    previous_status: broadcast.status,
+  });
+
+  return { message: '캠페인 발송을 취소했습니다.' };
+}
+
 // 작성 중인 본문으로 관리자 본인 번호에 테스트 1통 즉시 발송(큐 우회).
 export async function sendTestSms(input: {
   bodyText: string;

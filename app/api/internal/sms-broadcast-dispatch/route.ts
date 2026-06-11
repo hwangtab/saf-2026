@@ -92,6 +92,29 @@ export async function GET(request: NextRequest) {
       }
       if (!renewed) break;
 
+      // 관리자 취소 감지: 매 청크 시작 시 DB에서 status를 재조회한다.
+      // cancelBroadcast 액션이 lock token 없이 'cancelled'로 설정할 수 있으므로
+      // lock 보유 여부와 무관하게 여기서 확인한다.
+      {
+        const { data: currentStatus } = await supabase
+          .from('sms_broadcasts')
+          .select('status')
+          .eq('id', broadcast.id)
+          .single();
+        if (currentStatus?.status === 'cancelled') {
+          console.warn(
+            `[sms-broadcast-dispatch] broadcast ${broadcast.id} was cancelled mid-run — stopping dispatch`
+          );
+          // 락 해제 (lock token 보유 시에만 반영되므로 다른 run과 충돌 없음)
+          await supabase
+            .from('sms_broadcasts')
+            .update({ dispatch_locked_until: null, dispatch_lock_token: null })
+            .eq('id', broadcast.id)
+            .eq('dispatch_lock_token', lockToken);
+          break;
+        }
+      }
+
       // 정통망법 §50 야간 도달시각 가드: 광고 브로드캐스트는 매 청크 발송 전 KST 시각을 재확인.
       // enqueue 차단만으로는 대량 발송이 21:00을 넘겨 도달하는 위반 소지가 있음.
       // 야간 진입 시 status를 queued로 되돌리고 락 해제 → 08:00 이후 cron이 재개.
