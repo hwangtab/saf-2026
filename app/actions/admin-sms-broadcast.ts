@@ -4,6 +4,7 @@ import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { CustomerSmsAudienceResolver } from '@/lib/sms/audiences/customer';
 import { MemberSmsAudienceResolver } from '@/lib/sms/audiences/member';
+import { PetitionSmsAudienceResolver } from '@/lib/sms/audiences/petition';
 import { resolveIndividualSmsRecipients } from '@/lib/sms/audiences/individual';
 import type { SmsBroadcastChannel, SmsRecipient } from '@/lib/sms/audiences/types';
 import { MAX_DIRECT_RECIPIENTS } from '@/lib/sms/broadcast-segment';
@@ -19,8 +20,9 @@ import type { ActionState } from '@/types';
 import type { Json } from '@/types/supabase';
 
 export interface EnqueueSmsBroadcastInput {
-  channel: SmsBroadcastChannel; // 'member' | 'customer'
+  channel: SmsBroadcastChannel; // 'member' | 'customer' | 'petition'
   bodyText: string;
+  petitionSlug?: string;
   audienceFilter?: Record<string, unknown>;
 }
 
@@ -59,6 +61,11 @@ export async function enqueueSmsBroadcast(
   } else if (channel === 'customer') {
     isAdvertisement = true; // 광범위 고객 마케팅 = 항상 광고(법적)
     resolver = new CustomerSmsAudienceResolver();
+  } else if (channel === 'petition') {
+    if (!input.petitionSlug) {
+      return { message: '청원 채널은 petitionSlug가 필요합니다.', error: true };
+    }
+    resolver = new PetitionSmsAudienceResolver(input.petitionSlug);
   } else {
     return { message: `채널 '${channel}'은 그룹 발송을 지원하지 않습니다.`, error: true };
   }
@@ -107,12 +114,18 @@ export async function enqueueSmsBroadcast(
     };
   }
 
+  // petition 채널은 petitionSlug를 audience_filter에 포함해 저장 (sms_broadcasts에 별도 컬럼 없음).
+  const finalAudienceFilter =
+    channel === 'petition' && input.petitionSlug
+      ? { ...audienceFilter, petitionSlug: input.petitionSlug }
+      : audienceFilter;
+
   const { data: broadcast, error: broadcastError } = await supabase
     .from('sms_broadcasts')
     .insert({
       channel,
       body_text: bodyText,
-      audience_filter: audienceFilter as Json,
+      audience_filter: finalAudienceFilter as Json,
       is_advertisement: isAdvertisement,
       status: 'queued',
       recipient_count: recipients.length,
@@ -296,7 +309,7 @@ export async function getSmsBroadcasts(
 
 export async function previewSmsAudience(
   channel: SmsBroadcastChannel,
-  filter?: { subset?: 'all' | 'artist' | 'exhibitor' }
+  filter?: { subset?: 'all' | 'artist' | 'exhibitor'; petitionSlug?: string }
 ): Promise<{ total: number; breakdown: Record<string, number> }> {
   await requireAdmin();
   // SMS는 email의 count_*_audience RPC가 없으므로 resolver로 직접 계산.
@@ -309,6 +322,11 @@ export async function previewSmsAudience(
   if (channel === 'customer') {
     const total = (await new CustomerSmsAudienceResolver().resolve()).length;
     return { total, breakdown: { '동의자·거래고객': total } };
+  }
+  if (channel === 'petition') {
+    if (!filter?.petitionSlug) return { total: 0, breakdown: { '(청원 선택 필요)': 0 } };
+    const total = (await new PetitionSmsAudienceResolver(filter.petitionSlug).resolve()).length;
+    return { total, breakdown: { 서명자: total } };
   }
   return { total: 0, breakdown: {} };
 }

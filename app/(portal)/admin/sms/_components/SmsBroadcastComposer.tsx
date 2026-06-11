@@ -9,6 +9,7 @@ import {
   previewSmsAudience,
   sendTestSms,
 } from '@/app/actions/admin-sms-broadcast';
+import { getPetitionOptions } from '@/app/actions/admin-broadcast';
 import {
   buildGroupInput,
   defaultSegment,
@@ -25,10 +26,21 @@ import { useDebounce } from '@/lib/hooks/useDebounce';
 import { AdminTextarea } from '@/app/(portal)/admin/_components/admin-ui';
 
 // 세그먼트에서 previewSmsAudience 호출 인자 키를 생성. direct는 서버 조회 불필요.
+// petition은 slug가 없으면 null(조회 안 함).
 function segmentPreviewKey(seg: SmsRecipientSegment): string | null {
   if (seg.kind === 'direct') return null;
   if (seg.kind === 'member') return JSON.stringify({ kind: 'member', subset: seg.subset });
+  if (seg.kind === 'petition')
+    return seg.petitionSlug
+      ? JSON.stringify({ kind: 'petition', petitionSlug: seg.petitionSlug })
+      : null;
   return JSON.stringify({ kind: 'customer' });
+}
+
+interface PetitionOption {
+  slug: string;
+  title: string;
+  isActive: boolean;
 }
 
 export function SmsBroadcastComposer() {
@@ -44,6 +56,15 @@ export function SmsBroadcastComposer() {
   const [notice, setNotice] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const [petitions, setPetitions] = useState<PetitionOption[]>([]);
+  const [petitionsLoaded, setPetitionsLoaded] = useState(false);
+  useEffect(() => {
+    getPetitionOptions().then((rows) => {
+      setPetitions(rows.map((p) => ({ slug: p.slug, title: p.title, isActive: p.isActive })));
+      setPetitionsLoaded(true);
+    });
+  }, []);
+
   const isAdvertisement = deriveIsAdvertisement(segment);
   const manualPending = isDirectSegment(segment) && directInput.trim().length > 0;
   const blockReason = segmentBlockReason(segment, manualPending);
@@ -58,14 +79,19 @@ export function SmsBroadcastComposer() {
   const reqIdRef = useRef(0);
 
   useEffect(() => {
-    if (!debouncedKey) return; // direct segment — no server call
+    if (!debouncedKey) return; // direct segment or petition without slug — no server call
     const reqId = ++reqIdRef.current;
     const parsed = JSON.parse(debouncedKey) as {
-      kind: 'member' | 'customer';
+      kind: 'member' | 'customer' | 'petition';
       subset?: 'all' | 'artist' | 'exhibitor';
+      petitionSlug?: string;
     };
-    const filter =
-      parsed.kind === 'member' && parsed.subset ? { subset: parsed.subset } : undefined;
+    let filter: { subset?: 'all' | 'artist' | 'exhibitor'; petitionSlug?: string } | undefined;
+    if (parsed.kind === 'member' && parsed.subset) {
+      filter = { subset: parsed.subset };
+    } else if (parsed.kind === 'petition' && parsed.petitionSlug) {
+      filter = { petitionSlug: parsed.petitionSlug };
+    }
     previewSmsAudience(parsed.kind, filter)
       .then((r) => {
         if (reqId !== reqIdRef.current) return;
@@ -230,6 +256,41 @@ export function SmsBroadcastComposer() {
               <option value="artist">작가만</option>
               <option value="exhibitor">출품자만</option>
             </select>
+          )}
+
+          {segment.kind === 'petition' && (
+            <div>
+              <label
+                htmlFor="sms-seg-petition"
+                className="mb-1 block text-xs font-medium text-charcoal"
+              >
+                청원 선택
+              </label>
+              <select
+                id="sms-seg-petition"
+                value={segment.petitionSlug}
+                disabled={!petitionsLoaded || petitions.length === 0}
+                onChange={(e) => {
+                  setSegment({ kind: 'petition', petitionSlug: e.target.value });
+                  setConfirmed(false);
+                }}
+                className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm disabled:bg-canvas-strong disabled:text-charcoal-soft"
+              >
+                <option value="">
+                  {!petitionsLoaded
+                    ? '청원 목록 불러오는 중…'
+                    : petitions.length === 0
+                      ? '등록된 청원이 없습니다'
+                      : '청원을 선택하세요'}
+                </option>
+                {petitions.map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.isActive ? '[진행] ' : '[종료] '}
+                    {p.title}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
 
           {isDirectSegment(segment) && (
