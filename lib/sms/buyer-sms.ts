@@ -1,6 +1,6 @@
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { normalizeKoreanMobile } from '@/lib/sms/phone';
-import { sendSolapiSms } from '@/lib/sms/solapi';
+import { sendSolapiAlimTalk, sendSolapiSms } from '@/lib/sms/solapi';
 
 export type BuyerSmsType =
   | 'payment_confirmed'
@@ -93,6 +93,68 @@ function buildSmsTextEn(type: BuyerSmsType, data: BuyerSmsData): string {
   }
 }
 
+/** BuyerSmsType → 알림톡 템플릿 ID env 변수명. Record로 7종 강제 (누락 시 컴파일 에러). */
+const ALIMTALK_TEMPLATE_ENV: Record<BuyerSmsType, string> = {
+  payment_confirmed: 'SOLAPI_KAKAO_TEMPLATE_PAYMENT_CONFIRMED',
+  virtual_account_issued: 'SOLAPI_KAKAO_TEMPLATE_VIRTUAL_ACCOUNT_ISSUED',
+  deposit_confirmed: 'SOLAPI_KAKAO_TEMPLATE_DEPOSIT_CONFIRMED',
+  shipped: 'SOLAPI_KAKAO_TEMPLATE_SHIPPED',
+  delivered: 'SOLAPI_KAKAO_TEMPLATE_DELIVERED',
+  refunded: 'SOLAPI_KAKAO_TEMPLATE_REFUNDED',
+  auto_cancelled: 'SOLAPI_KAKAO_TEMPLATE_AUTO_CANCELLED',
+};
+
+/** 타입에 매핑된 승인 알림톡 템플릿 ID. env 미설정이면 빈 문자열 → SMS 경로. */
+function alimTalkTemplateId(type: BuyerSmsType): string {
+  return process.env[ALIMTALK_TEMPLATE_ENV[type]] ?? '';
+}
+
+/**
+ * 알림톡 변수 맵 구성. 키는 #{name} 형태로 #{} 포함, 값은 문자열.
+ * 승인 템플릿의 변수명과 일치해야 함 — 운영자가 템플릿 등록 시 동일 변수명 사용.
+ */
+export function buildAlimTalkVariables(
+  type: BuyerSmsType,
+  data: BuyerSmsData
+): Record<string, string> {
+  switch (type) {
+    case 'payment_confirmed':
+      return {
+        '#{name}': data.buyerName,
+        '#{title}': data.artworkTitle,
+        '#{amount}': won(data.amount),
+      };
+    case 'virtual_account_issued': {
+      const va = data.virtualAccount ?? {};
+      return {
+        '#{name}': data.buyerName,
+        '#{bank}': va.bankName ?? '',
+        '#{account}': va.accountNumber ?? '',
+        '#{amount}': won(data.amount),
+        '#{due}': va.dueDate ?? '',
+      };
+    }
+    case 'deposit_confirmed':
+      return { '#{name}': data.buyerName };
+    case 'shipped':
+      return {
+        '#{title}': data.artworkTitle,
+        '#{carrier}': data.carrier ?? '',
+        '#{tracking}': data.trackingNumber ?? '',
+      };
+    case 'delivered':
+      return { '#{title}': data.artworkTitle };
+    case 'refunded':
+      return { '#{amount}': won(data.amount) };
+    case 'auto_cancelled':
+      return {};
+    default: {
+      const _exhaustive: never = type;
+      return _exhaustive;
+    }
+  }
+}
+
 export type BuyerSmsSendResult = { ok: boolean; skipped: boolean; error?: string };
 
 /**
@@ -115,7 +177,18 @@ export async function sendBuyerSms(
     if (!to) return { ok: false, skipped: true };
 
     const text = buildSmsText(type, data, locale);
-    const result = await sendSolapiSms({ to, text });
+    const templateId = alimTalkTemplateId(type);
+
+    // 템플릿 매핑 있으면 알림톡 우선(SMS 자동대체), 없으면 기존 SMS-only
+    const useAlimTalk = templateId.length > 0;
+    const result = useAlimTalk
+      ? await sendSolapiAlimTalk({
+          to,
+          text,
+          templateId,
+          variables: buildAlimTalkVariables(type, data),
+        })
+      : await sendSolapiSms({ to, text });
 
     // best-effort 로그 — 실패해도 무시
     try {
@@ -124,7 +197,7 @@ export async function sendBuyerSms(
         order_no: orderNo ?? null,
         to_phone: to,
         type,
-        provider: 'solapi',
+        provider: useAlimTalk ? 'kakao' : 'solapi',
         provider_message_id: result.messageId ?? null,
         status: result.ok ? 'sent' : 'failed',
         segment: result.segment ?? null,
