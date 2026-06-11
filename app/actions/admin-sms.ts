@@ -175,7 +175,7 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
 
 // ─── SMS 수신거부 관리 ───────────────────────────────────────────────────────
 
-type SmsChannel = 'all' | 'customer' | 'member' | 'individual';
+type SmsChannel = 'all' | 'customer' | 'member' | 'individual' | 'petition';
 
 /**
  * 전화번호를 수신거부 목록에 추가한다 (관리자 수동 등록).

@@ -10,13 +10,14 @@ import {
 } from '@/app/(portal)/admin/_components/admin-ui';
 import { addSmsSuppression, removeSmsSuppression, isSmsSuppressed } from '@/app/actions/admin-sms';
 
-type ChannelValue = 'all' | 'customer' | 'member' | 'individual';
+type ChannelValue = 'all' | 'customer' | 'member' | 'individual' | 'petition';
 
 const CHANNEL_LABELS: Record<ChannelValue, string> = {
   all: '전체',
   customer: '고객 마케팅',
   member: '작가·출품자',
   individual: '직접 지정',
+  petition: '청원 (petition)',
 };
 
 type StatusMsg = { type: 'ok' | 'error'; text: string } | null;
