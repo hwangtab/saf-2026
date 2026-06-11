@@ -1,4 +1,5 @@
 import { fetchPermalink, metaPost } from './meta-graph';
+import { resolveAccessToken } from './token-store';
 import {
   SocialPublishError,
   type PublishInput,
@@ -24,17 +25,22 @@ export const instagramAdapter: SocialAdapter = {
   },
 
   async publish({ caption, imageUrl }: PublishInput): Promise<PublishResult> {
-    const creds = getCredentials();
-    if (!creds) {
-      throw new SocialPublishError(
-        'Instagram 환경 변수(INSTAGRAM_USER_ID, INSTAGRAM_ACCESS_TOKEN)가 설정되지 않았습니다.'
-      );
+    const userId = process.env.INSTAGRAM_USER_ID;
+    if (!userId) {
+      throw new SocialPublishError('Instagram 환경 변수(INSTAGRAM_USER_ID)가 설정되지 않았습니다.');
     }
     if (!imageUrl) {
       throw new SocialPublishError('Instagram 게시에는 이미지가 필요합니다.');
     }
 
-    const { userId, accessToken } = creds;
+    // 토큰은 DB(cron 갱신본) 우선, 없으면 env fallback — 60일 만료 자동 회피.
+    const accessToken = await resolveAccessToken(
+      'instagram',
+      process.env.INSTAGRAM_ACCESS_TOKEN ?? null
+    );
+    if (!accessToken) {
+      throw new SocialPublishError('Instagram 액세스 토큰이 설정되지 않았습니다.');
+    }
 
     // 1) 미디어 컨테이너 생성
     const container = await metaPost(`${BASE_URL}/${userId}/media`, {

@@ -1,4 +1,5 @@
 import { fetchPermalink, metaGet, metaPost } from './meta-graph';
+import { resolveAccessToken } from './token-store';
 import {
   SocialPublishError,
   type PublishInput,
@@ -47,14 +48,20 @@ export const threadsAdapter: SocialAdapter = {
   },
 
   async publish({ caption, imageUrl }: PublishInput): Promise<PublishResult> {
-    const creds = getCredentials();
-    if (!creds) {
-      throw new SocialPublishError(
-        'Threads 환경 변수(THREADS_USER_ID, THREADS_ACCESS_TOKEN)가 설정되지 않았습니다.'
-      );
+    const userId = process.env.THREADS_USER_ID;
+    if (!userId) {
+      throw new SocialPublishError('Threads 환경 변수(THREADS_USER_ID)가 설정되지 않았습니다.');
     }
 
-    const { userId, accessToken } = creds;
+    // 토큰은 DB(cron 갱신본) 우선, 없으면 env fallback — 60일 만료 자동 회피.
+    const accessToken = await resolveAccessToken(
+      'threads',
+      process.env.THREADS_ACCESS_TOKEN ?? null
+    );
+    if (!accessToken) {
+      throw new SocialPublishError('Threads 액세스 토큰이 설정되지 않았습니다.');
+    }
+
     const mediaType = imageUrl ? 'IMAGE' : 'TEXT';
 
     if (mediaType === 'TEXT' && !caption.trim()) {
