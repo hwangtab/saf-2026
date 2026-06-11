@@ -33,7 +33,9 @@ export class SocialPublishError extends Error {
   constructor(
     message: string,
     /** 원본 에러/응답(로깅용, 노출 안 함). */
-    readonly cause?: unknown
+    readonly cause?: unknown,
+    /** Meta API error code (일시 오류 재시도 판별용). */
+    readonly code?: number
   ) {
     super(message);
     this.name = 'SocialPublishError';

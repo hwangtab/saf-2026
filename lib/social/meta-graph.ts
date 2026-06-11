@@ -44,9 +44,23 @@ async function parseMetaResponse(res: Response): Promise<MetaResponseBody> {
   }
 
   if (!res.ok || json.error) {
-    throw new SocialPublishError(toFriendlyMessage(json.error, res.status), json.error ?? text);
+    throw new SocialPublishError(
+      toFriendlyMessage(json.error, res.status),
+      json.error ?? text,
+      json.error?.code
+    );
   }
   return json;
+}
+
+// 일시 오류(재시도하면 풀릴 가능성) 코드. 24=미디어 처리 미완/일시적, 1·2=일시 장애, 4·17·32=레이트리밋.
+const RETRYABLE_CODES = new Set([1, 2, 4, 17, 24, 32]);
+
+/** 같은 요청을 재시도하면 성공할 수 있는 일시 오류인지 판별. */
+export function isRetryableMetaError(err: unknown): boolean {
+  if (!(err instanceof SocialPublishError)) return false;
+  if (err.code != null && RETRYABLE_CODES.has(err.code)) return true;
+  return /does not exist|찾을 수 없|temporarily|try again|transient/i.test(err.message);
 }
 
 export async function metaPost(

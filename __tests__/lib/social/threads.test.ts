@@ -5,6 +5,9 @@ jest.mock('@/lib/social/token-store', () => ({
   resolveAccessToken: jest.fn(async (_platform: string, envFallback: string | null) => envFallback),
 }));
 
+// 지연은 즉시 resolve — 폴링/세그먼트/재시도 delay로 테스트가 느려지지 않게.
+jest.mock('@/lib/social/sleep', () => ({ sleep: jest.fn(async () => {}) }));
+
 type MockResponse = { ok?: boolean; status?: number; body: unknown };
 
 function mockFetchSequence(responses: MockResponse[]) {
@@ -117,5 +120,36 @@ describe('threadsAdapter', () => {
     const seg2Body = String((fetchMock.mock.calls[3][1] as RequestInit).body);
     expect(seg2Body).toContain('reply_to_id=m1');
     expect(seg2Body).toContain('media_type=TEXT');
+  });
+
+  it('일시 오류(code 24)면 컨테이너를 새로 만들어 재시도 후 성공', async () => {
+    mockFetchSequence([
+      { body: { id: 'c1' } }, // 1차 create
+      { body: { status: 'FINISHED' } }, // 1차 status
+      // 1차 publish — 일시 오류(미디어 없음, code 24)
+      { ok: false, status: 400, body: { error: { message: 'does not exist', code: 24 } } },
+      { body: { id: 'c1b' } }, // 재시도 create
+      { body: { status: 'FINISHED' } }, // 재시도 status
+      { body: { id: 'm1' } }, // 재시도 publish 성공
+      { body: { permalink: 'https://www.threads.net/@x/post/1' } },
+    ]);
+
+    const result = await threadsAdapter.publish({ caption: '짧은 글', imageUrl: 'https://cdn/x.jpg' });
+    expect(result.platformPostId).toBe('m1');
+  });
+
+  it('컨테이너가 끝까지 FINISHED 안 되면 publish 안 하고 실패(안 익은 컨테이너 발행 금지)', async () => {
+    // 모든 status 폴링이 IN_PROGRESS → 재시도까지 모두 타임아웃
+    const inProgress = { body: { status: 'IN_PROGRESS' } };
+    const seq: MockResponse[] = [];
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      seq.push({ body: { id: `c${attempt}` } }); // create
+      for (let p = 0; p < 20; p += 1) seq.push(inProgress); // status 폴링(MAX_STATUS_CHECKS)
+    }
+    mockFetchSequence(seq);
+
+    await expect(
+      threadsAdapter.publish({ caption: '글', imageUrl: 'https://cdn/x.jpg' })
+    ).rejects.toThrow(/지연되어 게시하지 못/);
   });
 });
