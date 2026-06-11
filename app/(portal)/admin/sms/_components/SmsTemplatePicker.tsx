@@ -26,9 +26,16 @@ interface Props {
 // 현재 세그먼트에 맞는 SMS 템플릿만 노출. 적용은 bodyText·isAdvertisement만 채우고 수신자 종류는 바꾸지 않는다.
 export function SmsTemplatePicker({ kind, onSelect }: Props) {
   const allowed = allowedChannels(kind);
-  const templates = SMS_BROADCAST_TEMPLATES.filter(
-    (t) => !t.allowedChannels || t.allowedChannels.some((ch) => allowed.includes(ch))
-  );
+  const templates = SMS_BROADCAST_TEMPLATES.filter((t) => {
+    // 광고 템플릿: allowedChannels가 명시되어 있고 현재 채널을 포함할 때만 노출.
+    // allowedChannels가 없는 광고 템플릿은 어떤 채널에도 표시하지 않는다 (채널 누수 방지).
+    if (t.isAdvertisement) {
+      return t.allowedChannels?.some((ch) => allowed.includes(ch)) ?? false;
+    }
+    // 비광고 템플릿: allowedChannels가 없으면 채널-무관(모든 채널 허용).
+    // allowedChannels가 있으면 현재 채널 포함 여부로 판단.
+    return !t.allowedChannels || t.allowedChannels.some((ch) => allowed.includes(ch));
+  });
 
   if (templates.length === 0) return null;
 

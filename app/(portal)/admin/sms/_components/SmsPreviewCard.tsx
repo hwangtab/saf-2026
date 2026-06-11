@@ -36,7 +36,7 @@ export function SmsPreviewCard({ bodyText, isAdvertisement }: Props) {
             {hasBody ? (
               <span className="whitespace-pre-wrap">{preview}</span>
             ) : (
-              <span className="text-white/60">본문을 입력하면 미리보기가 표시됩니다</span>
+              <span className="text-white/80">본문을 입력하면 미리보기가 표시됩니다</span>
             )}
           </div>
         </div>

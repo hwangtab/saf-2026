@@ -12,7 +12,14 @@ export interface SmsBroadcastTemplate {
   description: string;
   bodyText: string;
   isAdvertisement?: boolean;
-  /** 이 템플릿이 적합한 채널. 미지정이면 모든 채널에 노출. */
+  /**
+   * 이 템플릿이 노출될 채널 목록.
+   * @remark 미지정 시 비광고 템플릿은 모든 채널에 노출됩니다.
+   * **광고 템플릿(`isAdvertisement: true`)은 반드시 명시해야 합니다** —
+   * 미지정 광고 템플릿은 어느 채널에도 노출되지 않습니다.
+   * 향후 새 템플릿 추가 시 이 필드를 생략하면 광고 여부와 무관하게
+   * 비광고 채널에 광고 문구가 노출되거나, 채널 부적합 문구가 자동(광고) 래핑될 수 있습니다.
+   */
   allowedChannels?: SmsBroadcastChannel[];
 }
 
