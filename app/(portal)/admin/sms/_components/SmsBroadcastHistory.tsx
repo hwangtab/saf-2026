@@ -1,9 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 import { AdminBadge } from '@/app/(portal)/admin/_components/admin-ui';
-import { getSmsBroadcasts } from '@/app/actions/admin-sms-broadcast';
+import { AdminConfirmModal } from '@/app/(portal)/admin/_components/AdminConfirmModal';
+import {
+  getSmsBroadcasts,
+  retryFailedRecipients,
+  cancelBroadcast,
+} from '@/app/actions/admin-sms-broadcast';
 import { EmailPagination } from '@/app/(portal)/admin/email/_components/EmailPagination';
 
 type BroadcastList = Awaited<ReturnType<typeof getSmsBroadcasts>>;
@@ -26,6 +31,8 @@ const CHANNEL_LABELS: Record<string, string> = {
 };
 
 const ACTIVE_STATUSES = new Set(['queued', 'sending']);
+const CANCELLABLE_STATUSES = new Set(['queued', 'sending']);
+const RETRYABLE_STATUSES = new Set(['sent', 'failed']);
 const POLL_INTERVAL_MS = 8000;
 
 function formatKst(value: string | null) {
@@ -33,12 +40,20 @@ function formatKst(value: string | null) {
   return new Date(value).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
 }
 
+type ActionModalState =
+  | { type: 'cancel'; broadcastId: string }
+  | { type: 'retry'; broadcastId: string; failedCount: number }
+  | null;
+
 export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
   const [rows, setRows] = useState<Broadcast[]>(initial.rows);
   const [total, setTotal] = useState(initial.total);
   const [page, setPage] = useState(initial.page);
   const [pageSize, setPageSize] = useState(initial.pageSize);
   const [loadState, setLoadState] = useState<'done' | 'loading' | 'error'>('done');
+  const [actionModal, setActionModal] = useState<ActionModalState>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [isActing, startAction] = useTransition();
   const fetchingRef = useRef(false);
 
   useEffect(() => {
@@ -89,6 +104,42 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
     return () => clearInterval(id);
   }, [hasActive, poll]);
 
+  useEffect(() => {
+    if (!feedback) return;
+    const timer = setTimeout(() => setFeedback(null), 4000);
+    return () => clearTimeout(timer);
+  }, [feedback]);
+
+  function handleCancelConfirm() {
+    if (actionModal?.type !== 'cancel') return;
+    const { broadcastId } = actionModal;
+    startAction(async () => {
+      const result = await cancelBroadcast(broadcastId);
+      setActionModal(null);
+      setFeedback(
+        result.error
+          ? (result.message ?? '취소에 실패했습니다.')
+          : (result.message ?? '취소했습니다.')
+      );
+      await loadPage(page, pageSize);
+    });
+  }
+
+  function handleRetryConfirm() {
+    if (actionModal?.type !== 'retry') return;
+    const { broadcastId } = actionModal;
+    startAction(async () => {
+      const result = await retryFailedRecipients(broadcastId);
+      setActionModal(null);
+      setFeedback(
+        result.error
+          ? (result.message ?? '재발송에 실패했습니다.')
+          : (result.message ?? '재발송을 시작했습니다.')
+      );
+      await loadPage(page, pageSize);
+    });
+  }
+
   if (loadState === 'error') {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-8 text-center">
@@ -117,8 +168,9 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
       {loadState === 'loading' && (
         <p className="text-xs text-charcoal-muted">발송 이력을 불러오는 중입니다...</p>
       )}
+      {feedback && <output className="block text-sm text-charcoal-muted">{feedback}</output>}
       <div className="overflow-x-auto rounded-xl border border-gray-200">
-        <table className="w-full min-w-[760px] text-sm">
+        <table className="w-full min-w-[860px] text-sm">
           <thead>
             <tr className="bg-canvas-strong text-left text-xs text-charcoal-muted">
               <th className="px-4 py-3 font-medium">채널</th>
@@ -127,6 +179,7 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
               <th className="px-4 py-3 text-right font-medium">진행 (발송/대상)</th>
               <th className="px-4 py-3 text-right font-medium">실패</th>
               <th className="px-4 py-3 font-medium">완료/예약 시각</th>
+              <th className="px-4 py-3 text-right font-medium">작업</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gallery-divider">
@@ -138,6 +191,8 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
               const recipients = b.recipient_count ?? 0;
               const sent = b.sent_count ?? 0;
               const failed = b.failed_count ?? 0;
+              const canCancel = CANCELLABLE_STATUSES.has(b.status);
+              const canRetry = RETRYABLE_STATUSES.has(b.status) && failed > 0;
               return (
                 <tr key={b.id} className="bg-white">
                   <td className="whitespace-nowrap px-4 py-3 text-charcoal-muted">
@@ -165,6 +220,36 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
                   <td className="whitespace-nowrap px-4 py-3 text-xs text-charcoal-muted">
                     {b.status === 'sent' ? formatKst(b.sent_at) : formatKst(b.queued_at)}
                   </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      {canCancel && (
+                        <button
+                          type="button"
+                          disabled={isActing}
+                          onClick={() => setActionModal({ type: 'cancel', broadcastId: b.id })}
+                          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-charcoal-deep hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          취소
+                        </button>
+                      )}
+                      {canRetry && (
+                        <button
+                          type="button"
+                          disabled={isActing}
+                          onClick={() =>
+                            setActionModal({
+                              type: 'retry',
+                              broadcastId: b.id,
+                              failedCount: failed,
+                            })
+                          }
+                          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-charcoal-deep hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          실패분 재발송
+                        </button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               );
             })}
@@ -177,6 +262,32 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
         total={total}
         onPageChange={(next) => void loadPage(next, pageSize)}
         onPageSizeChange={(next) => void loadPage(1, next)}
+      />
+
+      <AdminConfirmModal
+        isOpen={actionModal?.type === 'cancel'}
+        onClose={() => setActionModal(null)}
+        onConfirm={handleCancelConfirm}
+        title="캠페인 발송 취소"
+        description="이 캠페인 발송을 취소합니다. 아직 발송되지 않은 수신자에게는 문자가 가지 않습니다. 계속하시겠습니까?"
+        confirmText="취소 확인"
+        variant="danger"
+        isLoading={isActing}
+      />
+
+      <AdminConfirmModal
+        isOpen={actionModal?.type === 'retry'}
+        onClose={() => setActionModal(null)}
+        onConfirm={handleRetryConfirm}
+        title="실패분 재발송"
+        description={
+          actionModal?.type === 'retry'
+            ? `실패한 ${actionModal.failedCount.toLocaleString('ko-KR')}건을 다시 발송합니다. 해당 건만 재과금됩니다. 계속하시겠습니까?`
+            : '실패한 수신자를 다시 발송합니다.'
+        }
+        confirmText="재발송"
+        variant="warning"
+        isLoading={isActing}
       />
     </div>
   );
