@@ -1,5 +1,5 @@
 /** @jest-environment node */
-import { sendSolapiSms, sendSolapiAlimTalk } from '@/lib/sms/solapi';
+import { sendSolapiSms, sendSolapiAlimTalk, fetchSolapiMessageStatuses } from '@/lib/sms/solapi';
 
 const ORIGINAL_ENV = { ...process.env };
 
@@ -174,5 +174,122 @@ describe('sendSolapiAlimTalk', () => {
     const r = await sendSolapiAlimTalk({ to: '01012345678', text: 'hi', templateId: 'TMPL_PAY' });
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     expect(r.ok).toBe(false);
+  });
+});
+
+describe('fetchSolapiMessageStatuses', () => {
+  beforeEach(() => {
+    process.env.SOLAPI_API_KEY = 'key';
+    process.env.SOLAPI_API_SECRET = 'secret';
+  });
+  afterEach(() => {
+    process.env = { ...ORIGINAL_ENV };
+    jest.restoreAllMocks();
+  });
+
+  it('env 미설정 시 no-op (fetch 미호출, {} 반환)', async () => {
+    delete process.env.SOLAPI_API_KEY;
+    const fetchSpy = jest.fn();
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    const r = await fetchSolapiMessageStatuses(['M1', 'M2']);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(r).toEqual({});
+  });
+
+  it('빈 배열 입력 시 no-op (fetch 미호출, {} 반환)', async () => {
+    const fetchSpy = jest.fn();
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    const r = await fetchSolapiMessageStatuses([]);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(r).toEqual({});
+  });
+
+  it('messageList(객체)에서 요청한 messageId의 status/statusCode를 매핑해 반환한다', async () => {
+    const fetchSpy = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () =>
+        JSON.stringify({
+          messageList: {
+            M1: { status: 'COMPLETE', statusCode: '4000' },
+            M2: { status: 'FAILED', statusCode: '3020', reason: '결번' },
+            M_OTHER: { status: 'COMPLETE', statusCode: '4000' }, // 요청 외
+          },
+          nextKey: null,
+        }),
+    });
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    const r = await fetchSolapiMessageStatuses(['M1', 'M2']);
+    expect(r['M1']).toEqual({ status: 'COMPLETE', statusCode: '4000', reason: undefined });
+    expect(r['M2']).toEqual({ status: 'FAILED', statusCode: '3020', reason: '결번' });
+    expect(r['M_OTHER']).toBeUndefined(); // 요청 외 messageId는 제외
+  });
+
+  it('COMPLETE+4000 메시지를 정확히 파싱한다 (delivered 매핑 기준)', async () => {
+    const fetchSpy = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () =>
+        JSON.stringify({
+          messageList: { M1: { status: 'COMPLETE', statusCode: '4000' } },
+          nextKey: null,
+        }),
+    });
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    const r = await fetchSolapiMessageStatuses(['M1']);
+    expect(r['M1'].status).toBe('COMPLETE');
+    expect(r['M1'].statusCode).toBe('4000');
+  });
+
+  it('fetch 오류 시 throw 없이 {} 반환 (never-throw 보장)', async () => {
+    const fetchSpy = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('network fail'))
+      .mockRejectedValueOnce(new Error('network fail')); // 재시도도 실패
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    const r = await fetchSolapiMessageStatuses(['M1']);
+    expect(r).toEqual({});
+  });
+
+  it('5xx 응답 시 1회 재시도 후 부분 결과 반환 (throw 없음)', async () => {
+    const fetchSpy = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 500, text: async () => 'err' })
+      .mockResolvedValueOnce({ ok: false, status: 500, text: async () => 'err' });
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    const r = await fetchSolapiMessageStatuses(['M1']);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(r).toEqual({}); // 실패 시 부분(빈) 맵 반환
+  });
+
+  it('nextKey가 있으면 페이지네이션 요청을 이어간다', async () => {
+    const fetchSpy = jest
+      .fn()
+      // 1페이지: nextKey 있음 (M1 없음)
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () =>
+          JSON.stringify({
+            messageList: { OTHER: { status: 'COMPLETE', statusCode: '4000' } },
+            nextKey: 'cursor-abc',
+          }),
+      })
+      // 2페이지: M1 있음, nextKey 없음
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () =>
+          JSON.stringify({
+            messageList: { M1: { status: 'FAILED', statusCode: '3020' } },
+          }),
+      });
+    global.fetch = fetchSpy as unknown as typeof fetch;
+    const r = await fetchSolapiMessageStatuses(['M1']);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    // 2페이지 요청에 startKey=cursor-abc가 포함됐는지 확인
+    const secondCallUrl = fetchSpy.mock.calls[1][0] as string;
+    expect(secondCallUrl).toContain('startKey=cursor-abc');
+    expect(r['M1']).toEqual({ status: 'FAILED', statusCode: '3020', reason: undefined });
   });
 });

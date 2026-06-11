@@ -20,6 +20,8 @@ const STATUS_META: Record<string, { label: string; tone: BadgeTone }> = {
   queued: { label: '발송 준비 중', tone: 'info' },
   sending: { label: '발송 중', tone: 'info' },
   sent: { label: '발송 완료', tone: 'success' },
+  delivered: { label: '수신 확인', tone: 'success' },
+  undelivered: { label: '미도달', tone: 'danger' },
   failed: { label: '발송 실패', tone: 'danger' },
   cancelled: { label: '취소됨', tone: 'default' },
 };
