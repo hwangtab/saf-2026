@@ -210,7 +210,7 @@ export function SmsBroadcastComposer() {
               <span className="text-charcoal-soft">
                 {' '}
                 ({seg} {SMS_UNIT_PRICE_KRW[seg].toLocaleString('ko-KR')}원 ×{' '}
-                {audienceCount.toLocaleString('ko-KR')}명, 부가세 별도)
+                {audienceCount.toLocaleString('ko-KR')}명, 부가세 포함)
               </span>
             </p>
           )}
