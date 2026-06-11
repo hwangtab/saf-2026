@@ -65,6 +65,14 @@ export default function CTAButtonGroup({
     });
   };
 
+  const handlePurchaseClick = () => {
+    trackEvent('purchase_gallery_click', {
+      position: trackingPosition,
+      destination: purchaseHref,
+      page_path: typeof window !== 'undefined' ? window.location.pathname : null,
+    });
+  };
+
   return (
     <div className={containerClasses}>
       <LinkButton
@@ -83,6 +91,7 @@ export default function CTAButtonGroup({
         variant="secondary"
         size={buttonSize}
         leadingIcon={<Palette className="h-5 w-5" />}
+        onClick={handlePurchaseClick}
       >
         {resolvedPurchaseText}
       </LinkButton>
