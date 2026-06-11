@@ -37,9 +37,9 @@ export default async function AdminSmsPage({ searchParams }: Props) {
   return (
     <div className="space-y-8">
       <AdminPageHeader>
-        <AdminPageTitle>문자/SMS 발송 로그</AdminPageTitle>
+        <AdminPageTitle>문자/SMS 발송</AdminPageTitle>
         <AdminPageDescription>
-          구매자 트랜잭션 SMS 발송 내역을 조회하고, 실패한 건을 재발송합니다.
+          단체 문자를 작성·발송하고, 단체 발송 이력과 트랜잭션 발송 로그를 조회합니다.
         </AdminPageDescription>
       </AdminPageHeader>
 
