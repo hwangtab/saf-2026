@@ -1,4 +1,5 @@
 import {
+  clampForSinglePost,
   splitIntoThreadSegments,
   stripThreadDelimiters,
   THREADS_MAX_LEN,
@@ -49,5 +50,36 @@ describe('stripThreadDelimiters', () => {
 
   it('구분자 없으면 trim만', () => {
     expect(stripThreadDelimiters('  내용  ')).toBe('내용');
+  });
+});
+
+describe('clampForSinglePost', () => {
+  it('상한 이하면 그대로', () => {
+    expect(clampForSinglePost('짧은 글', 2200)).toBe('짧은 글');
+  });
+
+  it('초과 시 상한 이하로 줄이고 … 표시', () => {
+    const text = 'A'.repeat(3000);
+    const out = clampForSinglePost(text, 2200);
+    expect(out.length).toBeLessThanOrEqual(2200);
+    expect(out.endsWith('…')).toBe(true);
+  });
+
+  it('끝의 링크·해시태그 블록은 보존하고 본문 중간을 줄임', () => {
+    const body = '본문 '.repeat(1000); // 매우 김
+    const text = `${body}\n\n작품 보기 → https://www.saf2026.com/ko/artworks/42\n\n#씨앗페 #SAF2026`;
+    const out = clampForSinglePost(text, 2200);
+    expect(out.length).toBeLessThanOrEqual(2200);
+    expect(out).toContain('#씨앗페');
+    expect(out).toContain('작품 보기 → https://www.saf2026.com/ko/artworks/42');
+    expect(out).toContain('…');
+  });
+
+  it('단어 중간이 아니라 공백/경계에서 자른다', () => {
+    const text = `${'단어 '.repeat(2000)}\n\n#태그`;
+    const out = clampForSinglePost(text, 2200);
+    // … 직전이 공백 정리된 상태(단어 깨짐 없이)
+    const beforeEllipsis = out.split('…')[0];
+    expect(beforeEllipsis.endsWith('단어')).toBe(true);
   });
 });

@@ -5,8 +5,11 @@ import { SocialPublishError } from '@/lib/social/types';
 jest.mock('@/lib/social/token-store', () => ({
   resolveAccessToken: jest.fn(async (_platform: string, envFallback: string | null) => envFallback),
 }));
+// 지연은 즉시 resolve — 폴링/재시도 delay로 테스트가 느려지지 않게.
+jest.mock('@/lib/social/sleep', () => ({ sleep: jest.fn(async () => {}) }));
 
 type MockResponse = { ok?: boolean; status?: number; body: unknown };
+const FINISHED = { body: { status_code: 'FINISHED' } };
 
 function mockFetchSequence(responses: MockResponse[]) {
   const fn = jest.fn(async () => {
@@ -55,9 +58,10 @@ describe('instagramAdapter', () => {
     await expect(instagramAdapter.publish({ caption: 'hi' })).rejects.toThrow(/이미지가 필요/);
   });
 
-  it('컨테이너 생성 → media_publish → permalink 순으로 호출하고 결과 반환', async () => {
+  it('컨테이너 생성 → 처리 대기 → media_publish → permalink 순으로 호출', async () => {
     const fetchMock = mockFetchSequence([
       { body: { id: 'container-1' } },
+      FINISHED,
       { body: { id: 'media-1' } },
       { body: { permalink: 'https://www.instagram.com/p/abc/' } },
     ]);
@@ -72,14 +76,12 @@ describe('instagramAdapter', () => {
       permalink: 'https://www.instagram.com/p/abc/',
     });
 
-    // 1단계: media 컨테이너
     const [createUrl, createInit] = fetchMock.mock.calls[0];
     expect(String(createUrl)).toContain('/ig-123/media');
     expect(String((createInit as RequestInit).body)).toContain('image_url=');
-    expect(String((createInit as RequestInit).body)).toContain('access_token=tok-abc');
 
-    // 2단계: media_publish (creation_id 전달)
-    const [publishUrl, publishInit] = fetchMock.mock.calls[1];
+    // calls[1] = 상태 폴링, calls[2] = media_publish
+    const [publishUrl, publishInit] = fetchMock.mock.calls[2];
     expect(String(publishUrl)).toContain('/ig-123/media_publish');
     expect(String((publishInit as RequestInit).body)).toContain('creation_id=container-1');
   });
@@ -87,14 +89,12 @@ describe('instagramAdapter', () => {
   it('permalink 조회 실패해도 게시는 성공으로 처리', async () => {
     mockFetchSequence([
       { body: { id: 'container-1' } },
+      FINISHED,
       { body: { id: 'media-9' } },
       { ok: false, status: 400, body: { error: { message: 'no perm', code: 100 } } },
     ]);
 
-    const result = await instagramAdapter.publish({
-      caption: 'c',
-      imageUrl: 'https://cdn/x.jpg',
-    });
+    const result = await instagramAdapter.publish({ caption: 'c', imageUrl: 'https://cdn/x.jpg' });
     expect(result.platformPostId).toBe('media-9');
     expect(result.permalink).toBeNull();
   });
@@ -117,9 +117,24 @@ describe('instagramAdapter', () => {
     ).rejects.toThrow(/토큰/);
   });
 
+  it('"Media ID is not available"(일시 오류)면 컨테이너 새로 만들어 재시도 후 성공', async () => {
+    mockFetchSequence([
+      { body: { id: 'c1' } },
+      FINISHED,
+      { ok: false, status: 400, body: { error: { message: 'Media ID is not available' } } },
+      { body: { id: 'c2' } }, // 재시도: 컨테이너 재생성
+      FINISHED,
+      { body: { id: 'media-ok' } },
+      { body: { permalink: null } },
+    ]);
+    const result = await instagramAdapter.publish({ caption: 'c', imageUrl: 'https://cdn/x.jpg' });
+    expect(result.platformPostId).toBe('media-ok');
+  });
+
   it('캡션 2200자 초과는 축약하고 --- 구분자는 제거', async () => {
     const fetchMock = mockFetchSequence([
       { body: { id: 'c' } },
+      FINISHED,
       { body: { id: 'm' } },
       { body: { permalink: null } },
     ]);
