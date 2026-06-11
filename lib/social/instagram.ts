@@ -1,4 +1,5 @@
 import { fetchPermalink, metaPost } from './meta-graph';
+import { stripThreadDelimiters } from './thread-split';
 import { resolveAccessToken } from './token-store';
 import {
   SocialPublishError,
@@ -9,6 +10,7 @@ import {
 
 const GRAPH_VERSION = 'v21.0';
 const BASE_URL = `https://graph.instagram.com/${GRAPH_VERSION}`;
+const IG_CAPTION_MAX = 2200; // Instagram caption 상한
 
 function getCredentials(): { userId: string; accessToken: string } | null {
   const userId = process.env.INSTAGRAM_USER_ID;
@@ -42,10 +44,15 @@ export const instagramAdapter: SocialAdapter = {
       throw new SocialPublishError('Instagram 액세스 토큰이 설정되지 않았습니다.');
     }
 
+    // 캡션 정리: 스레드 구분자(---) 제거 + Instagram 상한(2200자) 축약.
+    const cleaned = stripThreadDelimiters(caption);
+    const igCaption =
+      cleaned.length > IG_CAPTION_MAX ? `${cleaned.slice(0, IG_CAPTION_MAX - 1)}…` : cleaned;
+
     // 1) 미디어 컨테이너 생성
     const container = await metaPost(`${BASE_URL}/${userId}/media`, {
       image_url: imageUrl,
-      caption,
+      caption: igCaption,
       access_token: accessToken,
     });
     const creationId = typeof container.id === 'string' ? container.id : null;

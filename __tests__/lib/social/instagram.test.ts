@@ -117,6 +117,21 @@ describe('instagramAdapter', () => {
     ).rejects.toThrow(/토큰/);
   });
 
+  it('캡션 2200자 초과는 축약하고 --- 구분자는 제거', async () => {
+    const fetchMock = mockFetchSequence([
+      { body: { id: 'c' } },
+      { body: { id: 'm' } },
+      { body: { permalink: null } },
+    ]);
+    const long = `${'A'.repeat(2500)}\n---\n${'B'.repeat(100)}`;
+    await instagramAdapter.publish({ caption: long, imageUrl: 'https://cdn/x.jpg' });
+
+    const body = String((fetchMock.mock.calls[0][1] as RequestInit).body);
+    const sent = new URLSearchParams(body).get('caption') ?? '';
+    expect(sent.length).toBeLessThanOrEqual(2200);
+    expect(sent).not.toContain('---');
+  });
+
   it('SocialPublishError 타입으로 throw', async () => {
     mockFetchSequence([{ ok: false, status: 500, body: {} }]);
     await expect(

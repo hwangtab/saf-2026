@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import { ArtworkSearchSelect } from '@/app/(portal)/admin/email/_components/ArtworkSearchSelect';
 import { prepareSocialDraft, publishSocialPost } from '@/app/actions/admin-social';
 import { SOCIAL_PLATFORMS, type Platform } from '@/lib/social/types';
+import { splitIntoThreadSegments } from '@/lib/social/thread-split';
 import {
   AdminCard,
   AdminFieldLabel,
@@ -165,7 +166,14 @@ export function SocialComposer({
               draftLoading ? '캡션 초안을 불러오는 중…' : '작품을 선택하면 캡션 초안이 채워집니다.'
             }
           />
-          <p className="mt-1 text-xs text-charcoal-soft">{caption.length} / 2200자</p>
+          <p className="mt-1 text-xs text-charcoal-soft">
+            {caption.length}자 · Threads{' '}
+            {caption.trim() ? splitIntoThreadSegments(caption).length : 0}개 글로 분할 · Instagram
+            1개 글(2200자 초과 시 자동 축약)
+          </p>
+          <p className="mt-0.5 text-xs text-charcoal-soft">
+            팁: <code>---</code>만 있는 줄을 넣으면 Threads에서 그 지점부터 새 글로 나뉩니다.
+          </p>
         </div>
 
         <div>

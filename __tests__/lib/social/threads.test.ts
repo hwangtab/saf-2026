@@ -88,7 +88,34 @@ describe('threadsAdapter', () => {
     ).rejects.toThrow(/처리에 실패/);
   });
 
-  it('텍스트 게시인데 본문이 비면 거부', async () => {
-    await expect(threadsAdapter.publish({ caption: '   ' })).rejects.toThrow(/본문이 필요/);
+  it('본문도 이미지도 없으면 거부', async () => {
+    await expect(threadsAdapter.publish({ caption: '   ' })).rejects.toThrow(
+      /본문 또는 이미지가 필요/
+    );
+  });
+
+  it('긴 글(--- 분할)은 답글 체인으로 게시: 둘째 글에 reply_to_id=첫 글 media id', async () => {
+    const fetchMock = mockFetchSequence([
+      { body: { id: 'c1' } }, // seg1 create
+      { body: { status: 'FINISHED' } }, // seg1 status
+      { body: { id: 'm1' } }, // seg1 publish
+      { body: { id: 'c2' } }, // seg2 create (reply)
+      { body: { status: 'FINISHED' } }, // seg2 status
+      { body: { id: 'm2' } }, // seg2 publish
+      { body: { permalink: 'https://www.threads.net/@x/post/1' } }, // permalink(첫 글)
+    ]);
+
+    const result = await threadsAdapter.publish({ caption: '첫 글\n---\n둘째 글' });
+
+    // 스레드 첫 글 media id가 대표값
+    expect(result.platformPostId).toBe('m1');
+
+    const seg1Body = String((fetchMock.mock.calls[0][1] as RequestInit).body);
+    expect(seg1Body).toContain('text=');
+    expect(seg1Body).not.toContain('reply_to_id');
+
+    const seg2Body = String((fetchMock.mock.calls[3][1] as RequestInit).body);
+    expect(seg2Body).toContain('reply_to_id=m1');
+    expect(seg2Body).toContain('media_type=TEXT');
   });
 });
