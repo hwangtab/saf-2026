@@ -34,7 +34,8 @@ export function ArtworkSearchSelect({ value, onChange }: Props) {
   const [prevValue, setPrevValue] = useState(value);
   if (value !== prevValue) {
     setPrevValue(value);
-    if (!value) setSelected(null);
+    // 외부에서 value가 비워지거나 다른 작품 id로 채워질 때(예: 후보 카드 클릭) 내부 선택 동기화.
+    if (value !== selected?.id) setSelected(null);
   }
 
   const selectedArtworkId = selected?.id ?? value;
