@@ -55,9 +55,10 @@ export function SmsSuppressionManager({ initialCount }: Props) {
   function handleRemove() {
     setRemoveStatus(null);
     startRemove(async () => {
-      const res = await removeSmsSuppression(phone.trim(), channel === 'all' ? undefined : channel);
+      // 해제는 항상 모든 채널의 수신거부를 풉니다 — channel 인자 없이 phone_hash 전체 삭제
+      const res = await removeSmsSuppression(phone.trim());
       if (res.ok) {
-        setRemoveStatus({ type: 'ok', text: '수신거부가 해제되었습니다.' });
+        setRemoveStatus({ type: 'ok', text: '모든 채널의 수신거부가 해제되었습니다.' });
         setCount((prev) => Math.max(0, prev - 1));
         setSuppressedChannels(null);
       } else {
@@ -158,14 +159,17 @@ export function SmsSuppressionManager({ initialCount }: Props) {
           >
             {isChecking ? '조회 중…' : '차단 여부 확인'}
           </button>
-          <button
-            type="button"
-            onClick={handleRemove}
-            disabled={isPhoneEmpty || isPending}
-            className="rounded-lg border border-[var(--admin-border)] bg-white px-4 py-2 text-sm font-semibold text-charcoal-deep transition hover:bg-canvas-strong disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isRemoving ? '해제 중…' : '수신거부 해제'}
-          </button>
+          <div className="flex flex-col gap-1">
+            <button
+              type="button"
+              onClick={handleRemove}
+              disabled={isPhoneEmpty || isPending}
+              className="rounded-lg border border-[var(--admin-border)] bg-white px-4 py-2 text-sm font-semibold text-charcoal-deep transition hover:bg-canvas-strong disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isRemoving ? '해제 중…' : '모든 채널 수신거부 해제'}
+            </button>
+            <span className="text-xs text-charcoal-soft">해제는 모든 채널의 수신거부를 풉니다</span>
+          </div>
         </div>
 
         {/* 피드백 */}
