@@ -1905,6 +1905,39 @@ export type Database = {
           },
         ];
       };
+      social_tokens: {
+        Row: {
+          access_token: string;
+          created_at: string;
+          expires_at: string | null;
+          platform: string;
+          raw_response: Json;
+          refreshed_at: string;
+          token_type: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          access_token: string;
+          created_at?: string;
+          expires_at?: string | null;
+          platform: string;
+          raw_response?: Json;
+          refreshed_at?: string;
+          token_type?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          access_token?: string;
+          created_at?: string;
+          expires_at?: string | null;
+          platform?: string;
+          raw_response?: Json;
+          refreshed_at?: string;
+          token_type?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       stories: {
         Row: {
           author: string | null;

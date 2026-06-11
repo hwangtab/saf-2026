@@ -1,5 +1,10 @@
 import { threadsAdapter } from '@/lib/social/threads';
 
+// 토큰은 DB-first 해석 — 테스트에선 DB를 건너뛰고 env fallback을 그대로 사용.
+jest.mock('@/lib/social/token-store', () => ({
+  resolveAccessToken: jest.fn(async (_platform: string, envFallback: string | null) => envFallback),
+}));
+
 type MockResponse = { ok?: boolean; status?: number; body: unknown };
 
 function mockFetchSequence(responses: MockResponse[]) {
