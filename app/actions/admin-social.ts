@@ -7,7 +7,8 @@ import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { buildCaptionDraft } from '@/lib/social/caption';
 import { sortCandidatesForPublishing } from '@/lib/social/candidate-sort';
 import { resolvePublicImageUrl } from '@/lib/social/image-url';
-import { getAdapter, getPlatformConfigStatuses } from '@/lib/social/registry';
+import { aggregatePublishHistory, executePublish } from '@/lib/social/publish-core';
+import { getPlatformConfigStatuses } from '@/lib/social/registry';
 import { isPlatform, SocialPublishError, type Platform } from '@/lib/social/types';
 import type { ActionState } from '@/types';
 
@@ -60,49 +61,6 @@ export interface PublishCandidate {
 // 안전 상한(abuse 방지). Instagram은 어댑터가 2200자로 축약, Threads는 답글 체인으로 분할하므로
 // 길이 자체는 막지 않는다(긴 작가 소개/설명 허용).
 const MAX_CAPTION_LENGTH = 20000;
-
-type AdminClient = Awaited<ReturnType<typeof requireAdminClient>>;
-
-interface PublishHistoryStat {
-  count: number;
-  lastPublishedAt: string | null;
-}
-
-/**
- * social_posts(status='published') 집계 — artwork_id별 게시 횟수 + 마지막 게시 시각.
- * 후보 패널과 prepareSocialDraft가 공유. (수백 행 규모 → JS reduce로 충분.)
- */
-async function aggregatePublishHistory(
-  supabase: AdminClient,
-  artworkIds: string[]
-): Promise<Map<string, PublishHistoryStat>> {
-  const result = new Map<string, PublishHistoryStat>();
-  if (artworkIds.length === 0) return result;
-
-  const { data, error } = await supabase
-    .from('social_posts')
-    .select('artwork_id, published_at')
-    .eq('status', 'published')
-    .in('artwork_id', artworkIds);
-
-  if (error || !data) return result;
-
-  for (const row of data) {
-    if (!row.artwork_id) continue;
-    const ts = row.published_at;
-    const prev = result.get(row.artwork_id);
-    if (!prev) {
-      result.set(row.artwork_id, { count: 1, lastPublishedAt: ts });
-    } else {
-      prev.count += 1;
-      // ISO timestamptz 문자열(동일 +00 오프셋) → 사전식 비교로 최신 판정 가능
-      if (ts && (!prev.lastPublishedAt || ts > prev.lastPublishedAt)) {
-        prev.lastPublishedAt = ts;
-      }
-    }
-  }
-  return result;
-}
 
 function normalizePlatform(value: string): Platform {
   if (!isPlatform(value)) {
@@ -243,77 +201,34 @@ export async function publishSocialPost(
     return { message: 'Instagram 게시에는 이미지가 필요합니다.', error: true };
   }
 
-  // 1) 이력 행 생성 (publishing)
-  const { data: inserted, error: insertError } = await supabase
-    .from('social_posts')
-    .insert({
-      platform,
-      artwork_id: input.artworkId ?? null,
-      caption,
-      image_url: imageUrl,
-      status: 'publishing',
-      created_by: admin.id,
-    })
-    .select('id')
-    .single();
+  // 게시 코어(이력 INSERT → 발송 → UPDATE)는 cron과 공유.
+  const result = await executePublish(supabase, {
+    platform,
+    artworkId: input.artworkId ?? null,
+    caption,
+    imageUrl,
+    createdBy: admin.id,
+  });
 
-  if (insertError || !inserted) {
-    console.error('[admin-social] insert error:', insertError);
-    return { message: '게시 이력 생성에 실패했습니다.', error: true };
-  }
-
-  const postId = inserted.id;
-
-  // 2) 발송
-  try {
-    const adapter = getAdapter(platform);
-    const result = await adapter.publish({ caption, imageUrl: imageUrl ?? undefined });
-
-    await supabase
-      .from('social_posts')
-      .update({
-        status: 'published',
-        platform_post_id: result.platformPostId,
-        permalink: result.permalink,
-        published_at: new Date().toISOString(),
-        error_message: null,
-      })
-      .eq('id', postId);
-
-    await logAdminAction('social_publish', 'social_post', postId, {
+  if (result.ok && result.postId) {
+    await logAdminAction('social_publish', 'social_post', result.postId, {
       platform,
       artworkId: input.artworkId ?? null,
-      platformPostId: result.platformPostId,
     });
-
-    revalidatePath('/admin/social');
-    return {
-      message: `${platform === 'instagram' ? 'Instagram' : 'Threads'}에 게시했습니다.`,
-      postId,
-      permalink: result.permalink,
-    };
-  } catch (err) {
-    const errorMessage =
-      err instanceof SocialPublishError
-        ? err.message
-        : err instanceof Error
-          ? err.message
-          : '알 수 없는 오류로 게시에 실패했습니다.';
-    console.error('[admin-social] publish failed:', err);
-
-    await supabase
-      .from('social_posts')
-      .update({ status: 'failed', error_message: errorMessage })
-      .eq('id', postId);
-
-    await logAdminAction('social_publish_failed', 'social_post', postId, {
+  } else if (result.postId) {
+    await logAdminAction('social_publish_failed', 'social_post', result.postId, {
       platform,
-      error: errorMessage,
+      error: result.message,
     });
-
-    revalidatePath('/admin/social');
-    return { message: errorMessage, error: true, postId };
   }
+
+  revalidatePath('/admin/social');
+  return {
+    message: result.message,
+    error: !result.ok,
+    postId: result.postId,
+    permalink: result.permalink,
+  };
 }
 
 /** 실패/완료 게시를 같은 입력으로 재발송 (원본 이력은 유지, 새 행 생성). */
