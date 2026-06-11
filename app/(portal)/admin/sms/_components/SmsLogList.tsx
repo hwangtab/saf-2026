@@ -18,6 +18,8 @@ type BadgeTone = 'default' | 'info' | 'success' | 'warning' | 'danger';
 
 const STATUS_META: Record<string, { label: string; tone: BadgeTone }> = {
   sent: { label: '발송 완료', tone: 'success' },
+  delivered: { label: '수신 확인', tone: 'success' },
+  undelivered: { label: '미도달', tone: 'danger' },
   failed: { label: '발송 실패', tone: 'danger' },
 };
 
@@ -39,6 +41,8 @@ const TYPE_OPTIONS = [
 const STATUS_OPTIONS = [
   { value: '', label: '전체 상태' },
   { value: 'sent', label: '발송 완료' },
+  { value: 'delivered', label: '수신 확인' },
+  { value: 'undelivered', label: '미도달' },
   { value: 'failed', label: '발송 실패' },
 ];
 
