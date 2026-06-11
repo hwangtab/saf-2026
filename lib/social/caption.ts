@@ -7,6 +7,9 @@ export interface CaptionArtwork {
   medium?: string | null;
   size?: string | null;
   price?: string | null;
+  description?: string | null; // 작품 설명
+  quote?: string | null; // 작가 코멘트
+  bio?: string | null; // 작가 소개
 }
 
 const DEFAULT_HASHTAGS = [
@@ -47,6 +50,28 @@ export function buildCaptionDraft(artwork: CaptionArtwork): string {
     lines.push('');
     if (specParts.length > 0) lines.push(specParts.join(' · '));
     if (price) lines.push(price);
+  }
+
+  // 작가 코멘트 (작품에 대한 작가의 말)
+  const quote = clean(artwork.quote);
+  if (quote) {
+    lines.push('');
+    lines.push(`💬 ${quote}`);
+  }
+
+  // 작품 설명
+  const description = clean(artwork.description);
+  if (description) {
+    lines.push('');
+    lines.push(description);
+  }
+
+  // 작가 소개
+  const bio = clean(artwork.bio);
+  if (bio) {
+    lines.push('');
+    lines.push(artist ? `🎨 ${artist} 작가 이야기` : '🎨 작가 이야기');
+    lines.push(bio);
   }
 
   lines.push('');

@@ -42,4 +42,23 @@ describe('buildCaptionDraft', () => {
     const caption = buildCaptionDraft({ id: '1', title: null, artistName: null });
     expect(caption.startsWith('무제')).toBe(true);
   });
+
+  it('작품 설명·작가 코멘트·작가 소개가 있으면 캡션에 포함', () => {
+    const caption = buildCaptionDraft({
+      ...FULL,
+      description: '점으로 그린 풍경입니다.',
+      quote: '점 하나하나가 관계예요.',
+      bio: '변경희는 점을 이용한 입체적 표현을 탐구하는 작가.',
+    });
+    expect(caption).toContain('점으로 그린 풍경입니다.');
+    expect(caption).toContain('점 하나하나가 관계예요.');
+    expect(caption).toContain('변경희는 점을 이용한 입체적 표현을 탐구하는 작가.');
+    expect(caption).toContain('작가 이야기');
+  });
+
+  it('설명·코멘트·소개가 없으면 해당 섹션 생략(기존 동작 유지)', () => {
+    const caption = buildCaptionDraft(FULL);
+    expect(caption).not.toContain('작가 이야기');
+    expect(caption).not.toContain('💬');
+  });
 });

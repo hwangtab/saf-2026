@@ -57,7 +57,9 @@ export interface PublishCandidate {
   lastPublishedAt: string | null;
 }
 
-const MAX_CAPTION_LENGTH = 2200; // Instagram caption 상한
+// 안전 상한(abuse 방지). Instagram은 어댑터가 2200자로 축약, Threads는 답글 체인으로 분할하므로
+// 길이 자체는 막지 않는다(긴 작가 소개/설명 허용).
+const MAX_CAPTION_LENGTH = 20000;
 
 type AdminClient = Awaited<ReturnType<typeof requireAdminClient>>;
 
@@ -131,7 +133,9 @@ export async function prepareSocialDraft(artworkId: string): Promise<SocialDraft
 
   const { data, error } = await supabase
     .from('artworks')
-    .select('id, title, material, size, price, images, status, is_hidden, artists(name_ko)')
+    .select(
+      'id, title, material, size, price, description, quote, images, status, is_hidden, artists(name_ko, bio)'
+    )
     .eq('id', artworkId)
     .single();
 
@@ -150,6 +154,9 @@ export async function prepareSocialDraft(artworkId: string): Promise<SocialDraft
     medium: data.material,
     size: data.size,
     price: data.price,
+    description: data.description,
+    quote: data.quote,
+    bio: artist?.bio ?? null,
   });
 
   const stat = (await aggregatePublishHistory(supabase, [artworkId])).get(artworkId);
