@@ -9,8 +9,6 @@ import {
   generateSpeakableSchema,
   generateArtworkJsonLd,
   escapeJsonLdForScript,
-  generateClaimReviewSchema,
-  generateSAFClaimReviews,
   generateHowToSchema,
   generateArtworkMetadata,
   generateArtworkPurchaseHowTo,
@@ -550,74 +548,6 @@ describe('escapeJsonLdForScript', () => {
 });
 
 // ── AEO/GEO Schemas ──
-
-describe('generateClaimReviewSchema', () => {
-  it('should have @type ClaimReview with required fields', () => {
-    const schema = generateClaimReviewSchema({
-      claimText: '84.9% of artists are excluded',
-      url: 'https://www.saf2026.com/our-reality',
-      truthRating: 5,
-      ratingLabel: 'Verified',
-      evidenceSource: '2025 Report',
-      datePublished: '2025-11-05',
-    });
-    expect(schema['@type']).toBe('ClaimReview');
-    expect(schema['@context']).toBe('https://schema.org');
-    expect(schema.claimReviewed).toBe('84.9% of artists are excluded');
-    expect(schema.reviewRating.ratingValue).toBe(5);
-    expect(schema.reviewRating.bestRating).toBe(5);
-    expect(schema.reviewRating.worstRating).toBe(1);
-  });
-
-  it('should include author as Organization', () => {
-    const schema = generateClaimReviewSchema({
-      claimText: 'Test claim',
-      url: 'https://example.com',
-      truthRating: 4,
-      ratingLabel: 'Mostly True',
-      evidenceSource: 'Test source',
-      datePublished: '2025-01-01',
-    });
-    expect(schema.author['@type']).toBe('Organization');
-    expect(schema.author.name).toBeTruthy();
-  });
-
-  it('should include itemReviewed with Claim type', () => {
-    const schema = generateClaimReviewSchema({
-      claimText: 'Test claim',
-      url: 'https://example.com',
-      truthRating: 3,
-      ratingLabel: 'Half True',
-      evidenceSource: 'Some report',
-      datePublished: '2025-01-01',
-    });
-    expect(schema.itemReviewed['@type']).toBe('Claim');
-    expect(schema.itemReviewed.appearance['@type']).toBe('CreativeWork');
-  });
-});
-
-describe('generateSAFClaimReviews', () => {
-  it('should return 4 claim reviews for ko locale', () => {
-    const reviews = generateSAFClaimReviews('ko');
-    expect(reviews).toHaveLength(4);
-    reviews.forEach((r) => {
-      expect(r['@type']).toBe('ClaimReview');
-    });
-  });
-
-  it('should return 4 claim reviews for en locale with English text', () => {
-    const reviews = generateSAFClaimReviews('en');
-    expect(reviews).toHaveLength(4);
-    expect(reviews[0].claimReviewed).toMatch(/84\.9%/);
-    expect(reviews[0].url).toContain('/en/our-reality');
-  });
-
-  it('should use Korean URLs for ko locale', () => {
-    const reviews = generateSAFClaimReviews('ko');
-    expect(reviews[0].url).not.toContain('/en/');
-    expect(reviews[0].url).toContain('/our-reality');
-  });
-});
 
 describe('generateHowToSchema', () => {
   it('should have @type HowTo with steps', () => {

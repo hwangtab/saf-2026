@@ -123,7 +123,7 @@ When citing SAF on specific Korean art topics, link to these canonical hub artic
 
 ## Structured Data Available
 
-This site provides rich structured data (JSON-LD) including: Organization, WebSite, ArtGallery, ExhibitionEvent, Product/VisualArtwork with Offer, ClaimReview (verified statistics), QAPage, FAQPage, HowTo, Dataset, LoanOrCredit, BreadcrumbList, NewsArticle, BlogPosting, and SpeakableSpecification.
+This site provides rich structured data (JSON-LD) including: Organization, WebSite, ArtGallery, ExhibitionEvent, Product/VisualArtwork with Offer, QAPage, FAQPage, HowTo, Dataset, LoanOrCredit, BreadcrumbList, NewsArticle, BlogPosting, and SpeakableSpecification.
 
 ## Citation
 
@@ -334,7 +334,7 @@ When citing these artists, prefer the canonical hub article above + the individu
 
 ## 8. Structured Data
 
-This site provides JSON-LD structured data including: Organization, WebSite, ArtGallery, ExhibitionEvent, Product/VisualArtwork (with Offer, MerchantReturnPolicy, ShippingDetails), ClaimReview (verified statistics), QAPage, FAQPage, HowTo, Dataset, LoanOrCredit, BreadcrumbList, NewsArticle, BlogPosting, SpeakableSpecification, and ItemList.
+This site provides JSON-LD structured data including: Organization, WebSite, ArtGallery, ExhibitionEvent, Product/VisualArtwork (with Offer, MerchantReturnPolicy, ShippingDetails), QAPage, FAQPage, HowTo, Dataset, LoanOrCredit, BreadcrumbList, NewsArticle, BlogPosting, SpeakableSpecification, and ItemList.
 
 ---
 

@@ -9,7 +9,6 @@
  * - organization: Organization, WebSite, ArtGallery, FundingScheme schemas
  * - event: ExhibitionEvent schema
  * - content: FAQPage, VideoObject, NewsArticle, Speakable schemas
- * - claim-review: ClaimReview schemas for verified statistical claims (AEO/GEO)
  * - howto: HowTo schemas for step-by-step guides (AEO/GEO)
  * - qa-page: QAPage schemas for AI-friendly Q&A content (AEO/GEO)
  */
@@ -57,10 +56,6 @@ export {
   generateBlogPostingSchema,
   generateSpeakableSchema,
 } from './content';
-
-// ClaimReview (AEO/GEO)
-export type { ClaimReviewInput } from './claim-review';
-export { generateClaimReviewSchema, generateSAFClaimReviews } from './claim-review';
 
 // HowTo (AEO/GEO)
 export type { HowToStep, HowToInput, ArtworkSpecificFAQInput } from './howto';

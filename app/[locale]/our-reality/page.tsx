@@ -21,7 +21,6 @@ import {
 } from '@/components/features/charts/DynamicCharts';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
-import { generateSAFClaimReviews } from '@/lib/schemas/claim-review';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
@@ -151,7 +150,6 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
       cssSelector: ['#stage1-description', '#stage2-description', '#stage3-description'],
     },
   };
-  const claimReviews = generateSAFClaimReviews(locale);
   const datasetSchema = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -212,7 +210,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
 
   return (
     <>
-      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema, ...claimReviews]} />
+      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, datasetSchema]} />
       <PageHero
         customBackgroundImage={getHeroOverride('our-reality')}
         title={isEnglish ? 'Our Reality' : '우리의 현실'}
