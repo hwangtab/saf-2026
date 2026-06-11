@@ -94,12 +94,7 @@ export async function fetchSolapiMessageStatuses(
       if (!raw) return result;
 
       let parsed: {
-        messageList?: Array<{
-          messageId?: string;
-          status?: string;
-          statusCode?: string;
-          reason?: string;
-        }>;
+        messageList?: Record<string, { status?: string; statusCode?: string; reason?: string }>;
         nextKey?: string;
       } = {};
       try {
@@ -109,10 +104,10 @@ export async function fetchSolapiMessageStatuses(
         return result;
       }
 
-      const messages = parsed.messageList ?? [];
-      for (const msg of messages) {
-        if (msg.messageId && targetSet.has(msg.messageId)) {
-          result[msg.messageId] = {
+      const messageListObj = parsed.messageList ?? {};
+      for (const [msgId, msg] of Object.entries(messageListObj)) {
+        if (targetSet.has(msgId)) {
+          result[msgId] = {
             status: msg.status ?? '',
             statusCode: msg.statusCode ?? '',
             reason: msg.reason,
@@ -158,20 +153,15 @@ export async function sendSolapiSms(opts: { to: string; text: string }): Promise
   const body = JSON.stringify({ message: { to: opts.to, from, text: opts.text } });
 
   for (let attempt = 0; attempt < 2; attempt++) {
-    const date = new Date().toISOString();
-    const salt = crypto.randomBytes(32).toString('hex');
-    const signature = crypto
-      .createHmac('sha256', apiSecret)
-      .update(date + salt)
-      .digest('hex');
-    const authorization = `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`;
-
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
     try {
       const res = await fetch(SOLAPI_ENDPOINT, {
         method: 'POST',
-        headers: { Authorization: authorization, 'Content-Type': 'application/json' },
+        headers: {
+          Authorization: makeSolapiAuthHeader(apiKey, apiSecret),
+          'Content-Type': 'application/json',
+        },
         body,
         signal: controller.signal,
       });
@@ -277,20 +267,15 @@ export async function sendSolapiAlimTalk(opts: {
   });
 
   for (let attempt = 0; attempt < 2; attempt++) {
-    const date = new Date().toISOString();
-    const salt = crypto.randomBytes(32).toString('hex');
-    const signature = crypto
-      .createHmac('sha256', apiSecret)
-      .update(date + salt)
-      .digest('hex');
-    const authorization = `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`;
-
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
     try {
       const res = await fetch(SOLAPI_ENDPOINT, {
         method: 'POST',
-        headers: { Authorization: authorization, 'Content-Type': 'application/json' },
+        headers: {
+          Authorization: makeSolapiAuthHeader(apiKey, apiSecret),
+          'Content-Type': 'application/json',
+        },
         body,
         signal: controller.signal,
       });

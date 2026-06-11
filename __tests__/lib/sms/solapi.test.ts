@@ -204,17 +204,18 @@ describe('fetchSolapiMessageStatuses', () => {
     expect(r).toEqual({});
   });
 
-  it('messageList에서 요청한 messageId의 status/statusCode를 매핑해 반환한다', async () => {
+  it('messageList(객체)에서 요청한 messageId의 status/statusCode를 매핑해 반환한다', async () => {
     const fetchSpy = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
       text: async () =>
         JSON.stringify({
-          messageList: [
-            { messageId: 'M1', status: 'COMPLETE', statusCode: '4000' },
-            { messageId: 'M2', status: 'FAILED', statusCode: '3020', reason: '결번' },
-            { messageId: 'M_OTHER', status: 'COMPLETE', statusCode: '4000' }, // 요청 외
-          ],
+          messageList: {
+            M1: { status: 'COMPLETE', statusCode: '4000' },
+            M2: { status: 'FAILED', statusCode: '3020', reason: '결번' },
+            M_OTHER: { status: 'COMPLETE', statusCode: '4000' }, // 요청 외
+          },
+          nextKey: null,
         }),
     });
     global.fetch = fetchSpy as unknown as typeof fetch;
@@ -230,7 +231,8 @@ describe('fetchSolapiMessageStatuses', () => {
       status: 200,
       text: async () =>
         JSON.stringify({
-          messageList: [{ messageId: 'M1', status: 'COMPLETE', statusCode: '4000' }],
+          messageList: { M1: { status: 'COMPLETE', statusCode: '4000' } },
+          nextKey: null,
         }),
     });
     global.fetch = fetchSpy as unknown as typeof fetch;
@@ -269,7 +271,7 @@ describe('fetchSolapiMessageStatuses', () => {
         status: 200,
         text: async () =>
           JSON.stringify({
-            messageList: [{ messageId: 'OTHER', status: 'COMPLETE', statusCode: '4000' }],
+            messageList: { OTHER: { status: 'COMPLETE', statusCode: '4000' } },
             nextKey: 'cursor-abc',
           }),
       })
@@ -279,7 +281,7 @@ describe('fetchSolapiMessageStatuses', () => {
         status: 200,
         text: async () =>
           JSON.stringify({
-            messageList: [{ messageId: 'M1', status: 'FAILED', statusCode: '3020' }],
+            messageList: { M1: { status: 'FAILED', statusCode: '3020' } },
           }),
       });
     global.fetch = fetchSpy as unknown as typeof fetch;

@@ -12,7 +12,6 @@ export const maxDuration = 120;
 // 참고: https://developers.solapi.com/references/messages/status-codes
 // 보수적으로 적용 — 명백한 번호/단말 영구 오류만 포함. 일시적 오류(네트워크 등)는 제외.
 const PERMANENT_FAILURE_CODES = new Set([
-  '2000', // 실제로는 성공이지만 방어용 (매핑 로직상 이 분기에 오지 않음)
   '3020', // 결번
   '3021', // 결번
   '3022', // 결번
