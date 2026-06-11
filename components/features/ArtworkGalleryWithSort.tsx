@@ -69,7 +69,8 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
   return (
     <div>
-      {/* FilterBar — 데스크톱에선 헤더 아래 sticky, 모바일에선 normal scroll로 chrome stack 최소화 */}
+      {/* Sticky 영역은 검색 + 정렬만 — sticky 바를 얇게 유지해 스크롤 중 화면 가림 최소화.
+          카테고리·가격·사이즈 필터는 아래 일반 스크롤 영역으로 분리(스크롤하면 자연스럽게 사라짐). */}
       <div className="md:sticky md:top-[calc(4rem+env(safe-area-inset-top,0px))] left-0 right-0 z-30 bg-gray-50 border-b border-gray-200/50">
         <div className="container-max">
           {/* Search & Sort Controls - Single row on desktop, stacked on mobile */}
@@ -89,44 +90,51 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
               setSortOption={setSortOption}
             />
           </div>
-
-          {/* Category Filter — 모바일에선 숨김 (ArtistNavigation과 동일 정책, 768px 미만 chrome 단순화) */}
-          {categoryCounts.length > 0 && (
-            <div className="hidden md:block pb-3">
-              <CategoryFilter
-                categories={categoryCounts}
-                selected={categoryFilter}
-                onSelect={setCategoryFilter}
-                totalCount={artworks.length}
-              />
-            </div>
-          )}
-
-          {/* Price Range Filter — 모바일에선 숨김 */}
-          {totalPricedCount > 0 && (
-            <div className="hidden md:block pb-3">
-              <PriceRangeFilter
-                buckets={priceBucketCounts}
-                selected={priceBucket}
-                onSelect={setPriceBucket}
-                totalCount={totalPricedCount}
-              />
-            </div>
-          )}
-
-          {/* Size Bucket Filter — 모바일에선 숨김. 0건 구간은 동적 숨김 */}
-          {sizeBucketCounts.length > 0 && (
-            <div className="hidden md:block pb-3">
-              <SizeBucketFilter
-                buckets={sizeBucketCounts}
-                selected={sizeBucket}
-                onSelect={setSizeBucket}
-                totalCount={artworks.length}
-              />
-            </div>
-          )}
         </div>
       </div>
+
+      {/* 카테고리·가격·사이즈 필터 — sticky 아님(일반 스크롤). 모바일에선 숨김(768px 미만 chrome 단순화). */}
+      {(categoryCounts.length > 0 || totalPricedCount > 0 || sizeBucketCounts.length > 0) && (
+        <div className="hidden md:block bg-gray-50 border-b border-gray-200/50">
+          <div className="container-max pt-3">
+            {/* Category Filter */}
+            {categoryCounts.length > 0 && (
+              <div className="pb-3">
+                <CategoryFilter
+                  categories={categoryCounts}
+                  selected={categoryFilter}
+                  onSelect={setCategoryFilter}
+                  totalCount={artworks.length}
+                />
+              </div>
+            )}
+
+            {/* Price Range Filter */}
+            {totalPricedCount > 0 && (
+              <div className="pb-3">
+                <PriceRangeFilter
+                  buckets={priceBucketCounts}
+                  selected={priceBucket}
+                  onSelect={setPriceBucket}
+                  totalCount={totalPricedCount}
+                />
+              </div>
+            )}
+
+            {/* Size Bucket Filter — 0건 구간은 동적 숨김 */}
+            {sizeBucketCounts.length > 0 && (
+              <div className="pb-3">
+                <SizeBucketFilter
+                  buckets={sizeBucketCounts}
+                  selected={sizeBucket}
+                  onSelect={setSizeBucket}
+                  totalCount={artworks.length}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Content below sticky FilterBar */}
       <div>
