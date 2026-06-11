@@ -1,13 +1,17 @@
 /** @jest-environment node */
 import { buildSmsText, sendBuyerSms } from '@/lib/sms/buyer-sms';
 
-import { sendSolapiSms } from '@/lib/sms/solapi';
+import { sendSolapiSms, sendSolapiAlimTalk } from '@/lib/sms/solapi';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 
-jest.mock('@/lib/sms/solapi', () => ({ sendSolapiSms: jest.fn() }));
+jest.mock('@/lib/sms/solapi', () => ({
+  sendSolapiSms: jest.fn(),
+  sendSolapiAlimTalk: jest.fn(),
+}));
 jest.mock('@/lib/auth/server', () => ({ createSupabaseAdminClient: jest.fn() }));
 
 const mockSend = sendSolapiSms as jest.MockedFunction<typeof sendSolapiSms>;
+const mockAlimTalk = sendSolapiAlimTalk as jest.MockedFunction<typeof sendSolapiAlimTalk>;
 const mockAdmin = createSupabaseAdminClient as jest.MockedFunction<
   typeof createSupabaseAdminClient
 >;
@@ -278,5 +282,154 @@ describe('sendBuyerSms', () => {
       amount: 1,
     });
     expect(result).toEqual({ ok: false, skipped: false, error: 'X' });
+  });
+});
+
+describe('sendBuyerSms — alimtalk routing', () => {
+  const ENV = { ...process.env };
+  beforeEach(() => {
+    jest.clearAllMocks();
+    process.env = { ...ENV };
+  });
+  afterEach(() => {
+    process.env = { ...ENV };
+  });
+
+  it('템플릿 env 설정 시 알림톡 경로 (provider kakao 로그, #{} 변수)', async () => {
+    process.env.SOLAPI_KAKAO_TEMPLATE_PAYMENT_CONFIRMED = 'TMPL_PAY';
+    const { client, insert } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockAlimTalk.mockResolvedValue({ ok: true, messageId: 'K1', segment: 'ATA' });
+
+    await sendBuyerSms(
+      '010-1234-5678',
+      'payment_confirmed',
+      { buyerName: '홍길동', artworkTitle: '들꽃', amount: 1500000 },
+      'ko',
+      'SAF-9'
+    );
+
+    expect(mockAlimTalk).toHaveBeenCalledWith({
+      to: '01012345678',
+      text: "[씨앗페] 홍길동님, '들꽃' 결제(₩1,500,000)가 완료되었습니다. 감사합니다.",
+      templateId: 'TMPL_PAY',
+      variables: {
+        '#{name}': '홍길동',
+        '#{title}': '들꽃',
+        '#{amount}': '₩1,500,000',
+      },
+    });
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        order_no: 'SAF-9',
+        to_phone: '01012345678',
+        type: 'payment_confirmed',
+        provider: 'kakao',
+        provider_message_id: 'K1',
+        status: 'sent',
+        segment: 'ATA',
+      })
+    );
+  });
+
+  it('템플릿 env 미설정 시 SMS 경로 (provider solapi)', async () => {
+    delete process.env.SOLAPI_KAKAO_TEMPLATE_PAYMENT_CONFIRMED;
+    const { client, insert } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: true, messageId: 'M1', segment: 'SMS' });
+
+    await sendBuyerSms(
+      '010-1234-5678',
+      'payment_confirmed',
+      { buyerName: '홍길동', artworkTitle: '들꽃', amount: 1500000 },
+      'ko',
+      'SAF-10'
+    );
+
+    expect(mockSend).toHaveBeenCalledWith({
+      to: '01012345678',
+      text: "[씨앗페] 홍길동님, '들꽃' 결제(₩1,500,000)가 완료되었습니다. 감사합니다.",
+    });
+    expect(mockAlimTalk).not.toHaveBeenCalled();
+    expect(insert).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: 'solapi', provider_message_id: 'M1', segment: 'SMS' })
+    );
+  });
+
+  it('en locale도 알림톡 본문은 en buildSmsText (PR-1에서 en 스킵 제거됨)', async () => {
+    process.env.SOLAPI_KAKAO_TEMPLATE_DELIVERED = 'TMPL_DLV';
+    const { client } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockAlimTalk.mockResolvedValue({ ok: true, messageId: 'K2', segment: 'ATA' });
+
+    await sendBuyerSms(
+      '01012345678',
+      'delivered',
+      { buyerName: 'A', artworkTitle: 'Wildflowers', amount: 0 },
+      'en'
+    );
+
+    expect(mockAlimTalk).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: '01012345678',
+        templateId: 'TMPL_DLV',
+        text: expect.stringContaining('Wildflowers'),
+      })
+    );
+  });
+
+  it('shipped: 운송장 변수 매핑', async () => {
+    process.env.SOLAPI_KAKAO_TEMPLATE_SHIPPED = 'TMPL_SHIP';
+    const { client } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockAlimTalk.mockResolvedValue({ ok: true, messageId: 'K3', segment: 'ATA' });
+
+    await sendBuyerSms('01012345678', 'shipped', {
+      buyerName: '',
+      artworkTitle: '들꽃',
+      amount: 0,
+      carrier: 'CJ대한통운',
+      trackingNumber: '123456789',
+    });
+
+    expect(mockAlimTalk).toHaveBeenCalledWith(
+      expect.objectContaining({
+        templateId: 'TMPL_SHIP',
+        variables: expect.objectContaining({
+          '#{title}': '들꽃',
+          '#{carrier}': 'CJ대한통운',
+          '#{tracking}': '123456789',
+        }),
+      })
+    );
+  });
+
+  it('알림톡 실패해도 throw하지 않고 failed 로그 (provider kakao)', async () => {
+    process.env.SOLAPI_KAKAO_TEMPLATE_REFUNDED = 'TMPL_REF';
+    const { client, insert } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockAlimTalk.mockResolvedValue({ ok: false, error: 'http_400' });
+
+    const result = await sendBuyerSms('01012345678', 'refunded', {
+      buyerName: '',
+      artworkTitle: '',
+      amount: 50000,
+    });
+    expect(result).toEqual({ ok: false, skipped: false, error: 'http_400' });
+    expect(insert).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: 'kakao', status: 'failed', error: 'http_400' })
+    );
+  });
+
+  it('비-KR 번호는 알림톡 경로에서도 스킵', async () => {
+    process.env.SOLAPI_KAKAO_TEMPLATE_PAYMENT_CONFIRMED = 'TMPL_PAY';
+    await sendBuyerSms('02-123-4567', 'payment_confirmed', {
+      buyerName: 'A',
+      artworkTitle: 'B',
+      amount: 1,
+    });
+    expect(mockAlimTalk).not.toHaveBeenCalled();
+    expect(mockSend).not.toHaveBeenCalled();
   });
 });
