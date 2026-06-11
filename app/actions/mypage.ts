@@ -3,6 +3,7 @@
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/auth/server';
 import { hashEmail } from '@/lib/email/email-hash';
 import { normalizeKoreanMobile } from '@/lib/sms/phone';
+import { hashPhone } from '@/lib/sms/phone-hash';
 
 const MAX_WISHLIST_BATCH = 200;
 const isValidArtworkId = (id: unknown): id is string =>
@@ -120,16 +121,17 @@ export async function updateMarketingConsent(consent: boolean): Promise<{ error?
 
   if (error) return { error: error.message };
 
-  // 수신거부 시 email_suppressions에도 반영
+  // 수신거부 시 email_suppressions + sms_suppressions에 반영
   if (!consent) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('email')
+      .select('email, phone')
       .eq('id', user.id)
       .single();
 
+    const adminSupabase = createSupabaseAdminClient();
+
     if (profile?.email) {
-      const adminSupabase = createSupabaseAdminClient();
       await adminSupabase.from('email_suppressions').upsert(
         {
           email_hash: hashEmail(profile.email as string),
@@ -138,6 +140,20 @@ export async function updateMarketingConsent(consent: boolean): Promise<{ error?
         },
         { onConflict: 'email_hash,channel', ignoreDuplicates: true }
       );
+    }
+
+    if (profile?.phone) {
+      const normalizedPhone = normalizeKoreanMobile(profile.phone as string);
+      if (normalizedPhone) {
+        await adminSupabase.from('sms_suppressions').upsert(
+          {
+            phone_hash: hashPhone(normalizedPhone),
+            channel: 'customer',
+            reason: 'unsubscribe',
+          },
+          { onConflict: 'phone_hash,channel', ignoreDuplicates: true }
+        );
+      }
     }
   }
 

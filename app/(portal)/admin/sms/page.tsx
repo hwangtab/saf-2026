@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/auth/guards';
-import { getSmsLogs } from '@/app/actions/admin-sms';
+import { getSmsLogs, getSmsSuppressionCount } from '@/app/actions/admin-sms';
 import { getSmsBroadcasts } from '@/app/actions/admin-sms-broadcast';
 import {
   AdminPageHeader,
@@ -9,6 +9,7 @@ import {
 import { SmsLogList } from './_components/SmsLogList';
 import { SmsBroadcastComposer } from './_components/SmsBroadcastComposer';
 import { SmsBroadcastHistory } from './_components/SmsBroadcastHistory';
+import { SmsSuppressionManager } from './_components/SmsSuppressionManager';
 
 type Props = {
   searchParams: Promise<{
@@ -23,7 +24,7 @@ type Props = {
 export default async function AdminSmsPage({ searchParams }: Props) {
   await requireAdmin();
   const params = await searchParams;
-  const [initial, broadcasts] = await Promise.all([
+  const [initial, broadcasts, suppressionCount] = await Promise.all([
     getSmsLogs({
       type: params.type,
       status: params.status,
@@ -32,6 +33,7 @@ export default async function AdminSmsPage({ searchParams }: Props) {
       q: params.q,
     }),
     getSmsBroadcasts(),
+    getSmsSuppressionCount(),
   ]);
 
   return (
@@ -51,6 +53,11 @@ export default async function AdminSmsPage({ searchParams }: Props) {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-charcoal-deep">단체 발송 이력</h2>
         <SmsBroadcastHistory initial={broadcasts} />
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-charcoal-deep">수신거부 관리</h2>
+        <SmsSuppressionManager initialCount={suppressionCount} />
       </section>
 
       <SmsLogList

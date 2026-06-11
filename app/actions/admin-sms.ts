@@ -3,6 +3,8 @@
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { sendBuyerSms, type BuyerSmsType, type BuyerSmsData } from '@/lib/sms/buyer-sms';
+import { normalizeKoreanMobile } from '@/lib/sms/phone';
+import { hashPhone } from '@/lib/sms/phone-hash';
 
 export type SmsLogRow = {
   id: string;
@@ -169,4 +171,132 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
   });
 
   return { ok: true };
+}
+
+// ─── SMS 수신거부 관리 ───────────────────────────────────────────────────────
+
+type SmsChannel = 'all' | 'customer' | 'member' | 'individual';
+
+/**
+ * 전화번호를 수신거부 목록에 추가한다 (관리자 수동 등록).
+ * channel 미지정 시 'all' — 모든 발송 유형 차단.
+ */
+export async function addSmsSuppression(
+  phone: string,
+  channel: SmsChannel = 'all'
+): Promise<{ ok: boolean; error?: string }> {
+  await requireAdmin();
+
+  const normalized = normalizeKoreanMobile(phone);
+  if (!normalized) {
+    return { ok: false, error: '010으로 시작하는 11자리 한국 휴대폰 번호만 등록할 수 있습니다.' };
+  }
+
+  const phoneHash = hashPhone(normalized);
+  const supabase = await requireAdminClient();
+
+  const { error } = await supabase
+    .from('sms_suppressions')
+    .upsert(
+      { phone_hash: phoneHash, channel, reason: 'manual' },
+      { onConflict: 'phone_hash,channel', ignoreDuplicates: true }
+    );
+
+  if (error) {
+    console.error('[add-sms-suppression] error:', error);
+    return { ok: false, error: '수신거부 등록에 실패했습니다.' };
+  }
+
+  await logAdminAction('sms_suppression_added', 'sms_suppression', phoneHash.slice(0, 16), {
+    channel,
+    phone_masked: normalized.slice(0, 3) + '****' + normalized.slice(-4),
+  });
+
+  return { ok: true };
+}
+
+/**
+ * 수신거부 목록에서 전화번호를 제거한다.
+ * channel 미지정 시 해당 전화번호의 모든 채널 행을 삭제.
+ */
+export async function removeSmsSuppression(
+  phone: string,
+  channel?: SmsChannel
+): Promise<{ ok: boolean; error?: string }> {
+  await requireAdmin();
+
+  const normalized = normalizeKoreanMobile(phone);
+  if (!normalized) {
+    return { ok: false, error: '010으로 시작하는 11자리 한국 휴대폰 번호만 조작할 수 있습니다.' };
+  }
+
+  const phoneHash = hashPhone(normalized);
+  const supabase = await requireAdminClient();
+
+  let query = supabase.from('sms_suppressions').delete().eq('phone_hash', phoneHash);
+  if (channel) {
+    query = query.eq('channel', channel);
+  }
+
+  const { error } = await query;
+
+  if (error) {
+    console.error('[remove-sms-suppression] error:', error);
+    return { ok: false, error: '수신거부 해제에 실패했습니다.' };
+  }
+
+  await logAdminAction('sms_suppression_removed', 'sms_suppression', phoneHash.slice(0, 16), {
+    channel: channel ?? 'all_channels',
+    phone_masked: normalized.slice(0, 3) + '****' + normalized.slice(-4),
+  });
+
+  return { ok: true };
+}
+
+/**
+ * 해당 전화번호가 수신거부 상태인지 채널별로 조회한다.
+ */
+export async function isSmsSuppressed(
+  phone: string
+): Promise<{ suppressed: boolean; channels: string[] }> {
+  await requireAdmin();
+
+  const normalized = normalizeKoreanMobile(phone);
+  if (!normalized) {
+    return { suppressed: false, channels: [] };
+  }
+
+  const phoneHash = hashPhone(normalized);
+  const supabase = await requireAdminClient();
+
+  const { data, error } = await supabase
+    .from('sms_suppressions')
+    .select('channel')
+    .eq('phone_hash', phoneHash);
+
+  if (error || !data) {
+    return { suppressed: false, channels: [] };
+  }
+
+  const channels = data.map((row: { channel: string }) => row.channel);
+  return { suppressed: channels.length > 0, channels };
+}
+
+/**
+ * 수신거부 목록의 총 등록 건수를 반환한다 (개인정보 보호 — 전화번호 목록은 조회 불가).
+ */
+export async function getSmsSuppressionCount(): Promise<number> {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+
+  const { count, error } = await supabase
+    .from('sms_suppressions')
+    .select('*', { count: 'exact', head: true });
+
+  if (error) {
+    console.error('[get-sms-suppression-count] error:', error);
+    return 0;
+  }
+
+  return count ?? 0;
 }
