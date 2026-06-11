@@ -38,7 +38,7 @@ const PAGE_COPY = {
   ko: {
     title: '김영서 — 사라지는 것들의 아름다움을 기록하는 동양화가',
     description:
-      '사라지는 것들에 깃든 시간의 결을 동양화의 언어로 기록하는 중견 작가 김영서. 장지에 옅은 먹을 여러 번 쌓아 올리는 적묵(積墨)으로 기억과 노스탤지어의 깊이를 그린다. 흔적의 깊이, 고운 기록 — 일상의 미세한 결을 사색하는 김영서의 작품을 씨앗페 온라인에서 감상하고 소장하세요.',
+      '사라지는 것들에 깃든 시간의 결을 동양화의 언어로 기록하는 신진 작가 김영서. 장지에 옅은 먹을 여러 번 쌓아 올리는 적묵(積墨)으로 기억과 노스탤지어의 깊이를 그린다. 흔적의 깊이, 고운 기록 — 일상의 미세한 결을 사색하는 김영서의 작품을 씨앗페 온라인에서 감상하고 소장하세요.',
     ogDescription:
       '사라지는 것들의 아름다움 — 장지에 옅은 먹을 겹겹이 쌓아 기억과 시간의 결을 기록하는 동양화가 김영서.',
     ogAlt: '김영서 대표 작품',
@@ -50,7 +50,7 @@ const PAGE_COPY = {
   en: {
     title: 'Kim Yeong-seo — Painter Recording the Beauty of Vanishing Things',
     description:
-      'Selected works by Kim Yeong-seo, a mid-career Korean ink painter who records the grain of time embedded in vanishing things. Through accumulated ink (jeongmuk) — layering thin washes of ink over and over on jangji paper — she paints the depth of memory and nostalgia. The depth of traces, a tender record of the fine grain of the everyday. View and collect her works at SAF Online.',
+      'Selected works by Kim Yeong-seo, an emerging Korean ink painter who records the grain of time embedded in vanishing things. Through accumulated ink (jeongmuk) — layering thin washes of ink over and over on jangji paper — she paints the depth of memory and nostalgia. The depth of traces, a tender record of the fine grain of the everyday. View and collect her works at SAF Online.',
     ogDescription:
       'The beauty of vanishing things — Kim Yeong-seo layers thin ink washes on jangji paper to record memory and the grain of time.',
     ogAlt: 'Kim Yeong-seo — featured work',
@@ -146,8 +146,8 @@ export default async function KimYeongseoFeature({
     alternateName: isEnglish ? '김영서' : 'Kim Yeong-seo',
     jobTitle: isEnglish ? 'Artist' : '화가',
     description: isEnglish
-      ? 'Kim Yeong-seo is a mid-career Korean ink painter who records the grain of time embedded in vanishing things, layering thin washes of ink on jangji paper to paint the depth of memory and nostalgia.'
-      : '김영서는 사라지는 것들에 깃든 시간의 결을 동양화의 언어로 기록하는 중견 작가로, 장지에 옅은 먹을 겹겹이 쌓아 기억과 노스탤지어의 깊이를 그립니다.',
+      ? 'Kim Yeong-seo is an emerging Korean ink painter who records the grain of time embedded in vanishing things, layering thin washes of ink on jangji paper to paint the depth of memory and nostalgia.'
+      : '김영서는 사라지는 것들에 깃든 시간의 결을 동양화의 언어로 기록하는 신진 작가로, 장지에 옅은 먹을 겹겹이 쌓아 기억과 노스탤지어의 깊이를 그립니다.',
     alumniOf: {
       '@type': 'EducationalOrganization',
       name: isEnglish
@@ -279,7 +279,7 @@ export default async function KimYeongseoFeature({
                 {isEnglish ? (
                   <>
                     <p>
-                      Kim Yeong-seo is a mid-career Korean ink painter who completed her
+                      Kim Yeong-seo is an emerging Korean ink painter who completed her
                       master&apos;s degree in the Department of Oriental Painting at the Hongik
                       University Graduate School. Her practice begins from a single, patient
                       premise: that what is disappearing carries a beauty all its own, and that the
@@ -321,7 +321,7 @@ export default async function KimYeongseoFeature({
                 ) : (
                   <>
                     <p>
-                      김영서는 홍익대학교 일반대학원 동양화과에서 석사 과정을 마친 중견 작가다. 그의
+                      김영서는 홍익대학교 일반대학원 동양화과에서 석사 과정을 마친 신진 작가다. 그의
                       작업은 하나의 차분한 전제에서 출발한다 — 사라지는 것에는 그 나름의 아름다움이
                       깃들어 있으며, 그림이 할 일은 거기 새겨진{' '}
                       <strong className="font-bold text-charcoal-deep">시간의 결</strong>을 기록하는

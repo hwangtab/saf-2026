@@ -295,9 +295,9 @@ export default async function LeeHongwonFeature({
                       with international showings in LA, New York, Sarajevo, Peru, China, and Japan.
                     </p>
                     <p>
-                      Beyond his exhibition practice, he produced the official portrait of the
-                      independence activist Danjae Shin Chae-ho and a presidential record painting
-                      at Cheongnamdae — both commissioned works of public record. His paintings are
+                      Beyond his exhibition practice, he produced a portrait of the independence
+                      activist Danjae Shin Chae-ho and a presidential record painting at
+                      Cheongnamdae — both commissioned works of public record. His paintings are
                       held in the MMCA Art Bank, the Cheongju Museum of Art, the Chungbuk Provincial
                       Office, the Chungbuk Office of Education, and the SK Guest House.
                     </p>
@@ -511,7 +511,7 @@ export default async function LeeHongwonFeature({
                     <span className="shrink-0 mt-[5px] w-2 h-2 bg-primary rotate-45" />
                     <span className="text-charcoal text-base leading-snug break-keep">
                       {isEnglish
-                        ? 'Public-record commission: official portrait of the independence activist Danjae Shin Chae-ho.'
+                        ? 'Public-record commission: portrait of the independence activist Danjae Shin Chae-ho.'
                         : '공공 기록 의뢰: 독립운동가 단재 신채호 영정 제작.'}
                     </span>
                   </li>
@@ -661,8 +661,8 @@ export default async function LeeHongwonFeature({
                     <>
                       <p>
                         Alongside his exhibition practice, Lee Hongwon undertook two commissioned
-                        works of public record. He produced the official portrait (yeongjeong) of
-                        the independence activist Danjae Shin Chae-ho, and a presidential record
+                        works of public record. He produced a portrait (yeongjeong) of the
+                        independence activist Danjae Shin Chae-ho, and a presidential record
                         painting at Cheongnamdae depicting Roh Tae-woo. Both are documentary
                         commissions — works made for the public archive rather than the gallery
                         wall.
