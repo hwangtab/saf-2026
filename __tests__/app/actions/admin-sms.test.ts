@@ -1,5 +1,13 @@
-import { getSmsLogs, resendSms } from '@/app/actions/admin-sms';
+import {
+  getSmsLogs,
+  resendSms,
+  addSmsSuppression,
+  removeSmsSuppression,
+  isSmsSuppressed,
+  getSmsSuppressionCount,
+} from '@/app/actions/admin-sms';
 import { createSupabaseQueryMock } from '@/lib/test-utils/email-audience-mock';
+import { hashPhone } from '@/lib/sms/phone-hash';
 
 const mockFrom = jest.fn();
 
@@ -243,5 +251,165 @@ describe('resendSms', () => {
     const result = await resendSms('log-f');
     expect(result.ok).toBe(false);
     expect(logAdminAction).not.toHaveBeenCalled();
+  });
+});
+
+describe('addSmsSuppression', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('010 번호를 정규화하여 hashPhone 해시로 upsert한다', async () => {
+    const query = createSupabaseQueryMock({ data: null, error: null });
+    mockFrom.mockReturnValue(query);
+
+    const result = await addSmsSuppression('010-1234-5678');
+
+    expect(result.ok).toBe(true);
+    expect(mockFrom).toHaveBeenCalledWith('sms_suppressions');
+    const q = query as unknown as Record<string, jest.Mock>;
+    expect(q.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        phone_hash: hashPhone('01012345678'),
+        channel: 'all',
+        reason: 'manual',
+      }),
+      expect.objectContaining({ onConflict: 'phone_hash,channel', ignoreDuplicates: true })
+    );
+  });
+
+  it('channel 파라미터를 전달하면 해당 채널로 upsert한다', async () => {
+    const query = createSupabaseQueryMock({ data: null, error: null });
+    mockFrom.mockReturnValue(query);
+
+    const result = await addSmsSuppression('01099998888', 'customer');
+
+    expect(result.ok).toBe(true);
+    const q = query as unknown as Record<string, jest.Mock>;
+    expect(q.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        phone_hash: hashPhone('01099998888'),
+        channel: 'customer',
+        reason: 'manual',
+      }),
+      expect.anything()
+    );
+  });
+
+  it('비-010 번호는 ok:false를 반환하고 DB를 건드리지 않는다', async () => {
+    const result = await addSmsSuppression('02-1234-5678');
+
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/010/);
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+
+  it('DB 오류 시 ok:false를 반환한다', async () => {
+    const query = createSupabaseQueryMock({ data: null, error: { message: 'db error' } });
+    mockFrom.mockReturnValue(query);
+
+    const result = await addSmsSuppression('01012345678');
+
+    expect(result.ok).toBe(false);
+    expect(result.error).toBeTruthy();
+  });
+});
+
+describe('removeSmsSuppression', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('channel 미지정 시 phone_hash 일치 행 전체 삭제', async () => {
+    const query = createSupabaseQueryMock({ data: null, error: null });
+    mockFrom.mockReturnValue(query);
+
+    const result = await removeSmsSuppression('01012345678');
+
+    expect(result.ok).toBe(true);
+    expect(mockFrom).toHaveBeenCalledWith('sms_suppressions');
+    const q = query as unknown as Record<string, jest.Mock>;
+    expect(q.delete).toHaveBeenCalled();
+    expect(q.eq).toHaveBeenCalledWith('phone_hash', hashPhone('01012345678'));
+    // channel eq는 호출되지 않아야 함
+    const eqCalls = (q.eq as jest.Mock).mock.calls;
+    expect(eqCalls.every((c: string[]) => c[0] !== 'channel')).toBe(true);
+  });
+
+  it('channel 지정 시 해당 채널 행만 삭제한다', async () => {
+    const query = createSupabaseQueryMock({ data: null, error: null });
+    mockFrom.mockReturnValue(query);
+
+    const result = await removeSmsSuppression('01012345678', 'customer');
+
+    expect(result.ok).toBe(true);
+    const q = query as unknown as Record<string, jest.Mock>;
+    expect(q.eq).toHaveBeenCalledWith('channel', 'customer');
+  });
+
+  it('비-010 번호는 ok:false 반환', async () => {
+    const result = await removeSmsSuppression('not-a-phone');
+    expect(result.ok).toBe(false);
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+});
+
+describe('isSmsSuppressed', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('차단 채널이 있으면 suppressed:true와 채널 목록을 반환한다', async () => {
+    const rows = [{ channel: 'customer' }, { channel: 'all' }];
+    const query = createSupabaseQueryMock({ data: rows, error: null });
+    mockFrom.mockReturnValue(query);
+
+    const result = await isSmsSuppressed('01012345678');
+
+    expect(result.suppressed).toBe(true);
+    expect(result.channels).toEqual(['customer', 'all']);
+    const q = query as unknown as Record<string, jest.Mock>;
+    expect(q.eq).toHaveBeenCalledWith('phone_hash', hashPhone('01012345678'));
+  });
+
+  it('차단 행이 없으면 suppressed:false와 빈 배열을 반환한다', async () => {
+    const query = createSupabaseQueryMock({ data: [], error: null });
+    mockFrom.mockReturnValue(query);
+
+    const result = await isSmsSuppressed('01012345678');
+
+    expect(result.suppressed).toBe(false);
+    expect(result.channels).toEqual([]);
+  });
+
+  it('비-010 번호는 조회 없이 suppressed:false를 반환한다', async () => {
+    const result = await isSmsSuppressed('not-valid');
+
+    expect(result.suppressed).toBe(false);
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+});
+
+describe('getSmsSuppressionCount', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('총 행 수를 반환한다', async () => {
+    const query = createSupabaseQueryMock({ data: null, error: null, count: 42 } as unknown as {
+      data: null;
+      error: null;
+    });
+    mockFrom.mockReturnValue(query);
+
+    const result = await getSmsSuppressionCount();
+
+    expect(result).toBe(42);
+    expect(mockFrom).toHaveBeenCalledWith('sms_suppressions');
+  });
+
+  it('DB 오류 시 0을 반환한다', async () => {
+    const query = createSupabaseQueryMock({
+      data: null,
+      error: { message: 'error' },
+      count: null,
+    } as unknown as { data: null; error: { message: string } });
+    mockFrom.mockReturnValue(query);
+
+    const result = await getSmsSuppressionCount();
+
+    expect(result).toBe(0);
   });
 });
