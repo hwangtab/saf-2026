@@ -22,6 +22,11 @@ jest.mock('@/lib/sms/audiences/customer', () => ({
     resolve: async () => [{ phone: '01033334444', name: 'B', phoneHash: 'h2' }],
   })),
 }));
+jest.mock('@/lib/sms/audiences/petition', () => ({
+  PetitionSmsAudienceResolver: jest.fn().mockImplementation(() => ({
+    resolve: async () => [{ phone: '01055556666', name: 'C', phoneHash: 'h3' }],
+  })),
+}));
 // 야간 차단 테스트: isNightInKst를 제어
 jest.mock('@/lib/sms/broadcast-body', () => {
   const actual = jest.requireActual('@/lib/sms/broadcast-body');
@@ -112,6 +117,46 @@ describe('enqueueSmsBroadcast', () => {
     });
     expect(r.deduped).toBe(true);
     expect(r.broadcastId).toBe('old-1');
+  });
+
+  it('petition 채널: petitionSlug 없으면 에러 반환', async () => {
+    const { client } = makeSupabase();
+    mockClient.mockResolvedValue(client as never);
+    const r = await enqueueSmsBroadcast({
+      channel: 'petition',
+      bodyText: '청원 진행 안내',
+      // petitionSlug 미전달
+    });
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/petitionSlug/);
+  });
+
+  it('petition 채널: 빈 petitionSlug도 에러 반환', async () => {
+    const { client } = makeSupabase();
+    mockClient.mockResolvedValue(client as never);
+    const r = await enqueueSmsBroadcast({
+      channel: 'petition',
+      bodyText: '청원 진행 안내',
+      petitionSlug: '',
+    });
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/petitionSlug/);
+  });
+
+  it('petition 채널: 정보성(is_advertisement=false)으로 큐 등록, audience_filter에 petitionSlug 포함', async () => {
+    const { client, inserted } = makeSupabase();
+    mockClient.mockResolvedValue(client as never);
+    const r = await enqueueSmsBroadcast({
+      channel: 'petition',
+      bodyText: '청원 서명 감사합니다. 결과를 알려드립니다.',
+      petitionSlug: 'test-petition-2026',
+    });
+    expect(r.error).toBeFalsy();
+    expect(r.broadcastId).toBe('bcast-1');
+    expect(inserted.is_advertisement).toBe(false);
+    expect((inserted.audience_filter as Record<string, unknown>).petitionSlug).toBe(
+      'test-petition-2026'
+    );
   });
 });
 

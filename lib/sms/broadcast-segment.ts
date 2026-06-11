@@ -17,11 +17,12 @@ export type SmsMemberSubset = 'all' | 'artist' | 'exhibitor';
 export type SmsRecipientSegment =
   | { kind: 'member'; subset: SmsMemberSubset }
   | { kind: 'customer' }
+  | { kind: 'petition'; petitionSlug: string }
   | { kind: 'direct'; contacts: SmsSelectedContact[]; advertising: boolean };
 
 export type SmsRecipientKind = SmsRecipientSegment['kind'];
 
-export const SMS_RECIPIENT_KINDS: SmsRecipientKind[] = ['member', 'customer', 'direct'];
+export const SMS_RECIPIENT_KINDS: SmsRecipientKind[] = ['member', 'customer', 'petition', 'direct'];
 
 export function defaultSegment(kind: SmsRecipientKind): SmsRecipientSegment {
   switch (kind) {
@@ -29,6 +30,8 @@ export function defaultSegment(kind: SmsRecipientKind): SmsRecipientSegment {
       return { kind: 'member', subset: 'all' };
     case 'customer':
       return { kind: 'customer' };
+    case 'petition':
+      return { kind: 'petition', petitionSlug: '' };
     case 'direct':
       return { kind: 'direct', contacts: [], advertising: false };
   }
@@ -54,6 +57,12 @@ export const SMS_RECIPIENT_KIND_META: Record<SmsRecipientKind, SmsRecipientKindM
     description: '마케팅 동의·최근 거래 고객에게 신작·전시 홍보 (광고)',
     advertising: 'always',
   },
+  petition: {
+    kind: 'petition',
+    label: '청원 서명자',
+    description: '서명자에게 진행 상황·결과 보고 (정보성)',
+    advertising: 'never',
+  },
   direct: {
     kind: 'direct',
     label: '직접 지정',
@@ -70,6 +79,7 @@ export function deriveIsAdvertisement(seg: SmsRecipientSegment): boolean {
     case 'direct':
       return seg.advertising;
     case 'member':
+    case 'petition':
       return false;
   }
 }
@@ -80,6 +90,8 @@ export function segmentBlockReason(
   manualPending: boolean
 ): string | null {
   switch (seg.kind) {
+    case 'petition':
+      return seg.petitionSlug ? null : '청원 캠페인 알림은 청원을 먼저 선택해야 합니다.';
     case 'direct':
       if (manualPending) {
         return '입력 중인 번호가 아직 추가되지 않았습니다. "입력한 번호 추가" 버튼을 눌러주세요.';
@@ -108,6 +120,7 @@ export interface SmsBroadcastContent {
 export interface SmsGroupBroadcastInput {
   channel: SmsBroadcastChannel;
   bodyText: string;
+  petitionSlug?: string;
   audienceFilter: Record<string, unknown>;
   isAdvertisement: boolean;
 }
@@ -123,5 +136,12 @@ export function buildGroupInput(
       return { ...base, channel: 'member', audienceFilter: { subset: seg.subset } };
     case 'customer':
       return { ...base, channel: 'customer', audienceFilter: {} };
+    case 'petition':
+      return {
+        ...base,
+        channel: 'petition',
+        petitionSlug: seg.petitionSlug,
+        audienceFilter: {},
+      };
   }
 }

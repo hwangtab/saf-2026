@@ -1,4 +1,4 @@
-export type SmsBroadcastChannel = 'customer' | 'member' | 'individual';
+export type SmsBroadcastChannel = 'customer' | 'member' | 'individual' | 'petition';
 
 export interface SmsRecipient {
   phone: string; // normalizeKoreanMobile 정규형 (01012345678)

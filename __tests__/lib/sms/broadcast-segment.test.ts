@@ -6,6 +6,7 @@ import {
   isDirectSegment,
   buildGroupInput,
   defaultSegment,
+  SMS_RECIPIENT_KINDS,
   type SmsRecipientSegment,
 } from '@/lib/sms/broadcast-segment';
 
@@ -16,9 +17,10 @@ describe('SMS broadcast-segment', () => {
     expect(MAX_DIRECT_RECIPIENTS).toBe(500);
   });
 
-  it('deriveIsAdvertisement: customer=true, member=false, direct=토글', () => {
+  it('deriveIsAdvertisement: customer=true, member=false, petition=false, direct=토글', () => {
     expect(deriveIsAdvertisement({ kind: 'customer' })).toBe(true);
     expect(deriveIsAdvertisement({ kind: 'member', subset: 'all' })).toBe(false);
+    expect(deriveIsAdvertisement({ kind: 'petition', petitionSlug: 'oh-yoon' })).toBe(false);
     expect(deriveIsAdvertisement({ kind: 'direct', contacts: [], advertising: true })).toBe(true);
     expect(deriveIsAdvertisement({ kind: 'direct', contacts: [], advertising: false })).toBe(false);
   });
@@ -65,6 +67,26 @@ describe('SMS broadcast-segment', () => {
 
   it('defaultSegment는 깨끗한 기본값', () => {
     expect(defaultSegment('member')).toEqual({ kind: 'member', subset: 'all' });
+    expect(defaultSegment('petition')).toEqual({ kind: 'petition', petitionSlug: '' });
     expect(defaultSegment('direct')).toEqual({ kind: 'direct', contacts: [], advertising: false });
+  });
+
+  it('segmentBlockReason: petition slug 없으면 차단', () => {
+    expect(segmentBlockReason({ kind: 'petition', petitionSlug: '' }, false)).toMatch(/청원/);
+    expect(segmentBlockReason({ kind: 'petition', petitionSlug: 'oh-yoon' }, false)).toBeNull();
+  });
+
+  it('buildGroupInput: petition은 channel=petition + petitionSlug + isAdvertisement=false', () => {
+    const out = buildGroupInput({ kind: 'petition', petitionSlug: 'oh-yoon' }, content);
+    expect(out).toMatchObject({
+      channel: 'petition',
+      petitionSlug: 'oh-yoon',
+      isAdvertisement: false,
+      bodyText: '안녕하세요',
+    });
+  });
+
+  it('SMS_RECIPIENT_KINDS에 petition 포함', () => {
+    expect(SMS_RECIPIENT_KINDS).toContain('petition');
   });
 });
