@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { getTranslations } from 'next-intl/server';
 import { getSupabaseArtworkById } from '@/lib/supabase-data';
-import { parseArtworkPrice } from '@/lib/schemas/utils';
+import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { getCategoryLabel } from '@/lib/artwork-category';
 import { BRAND_COLORS } from '@/lib/colors';
 
@@ -44,7 +44,12 @@ export default async function Image({ params }: Props) {
   const categoryLabel = category ? getCategoryLabel(category, isEn ? 'en' : 'ko') : '';
   const price = formatPrice(artwork?.price);
   const isSold = artwork?.sold ?? false;
-  const imageUrl = artwork?.images?.[0];
+  // ⚠️ raw object URL(92%가 .webp) 직결 금지 — Satori(@vercel/og)는 png/apng/jpeg/gif/svg만
+  // 지원해 webp 임베드 시 'Unsupported image type' throw로 라우트 전체가 500이 된다
+  // (2026-06-12 라이브 실측). Supabase render 엔드포인트는 format 미지정 시 jpeg로
+  // 트랜스코드해 반환하므로 SEO 이미지 해상 함수를 경유한다.
+  const rawImageUrl = artwork?.images?.[0];
+  const imageUrl = rawImageUrl ? resolveSeoArtworkImageUrl(rawImageUrl) : undefined;
 
   const fontPath = path.join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf');
   const fontData = fs.readFileSync(fontPath);
@@ -59,13 +64,26 @@ export default async function Image({ params }: Props) {
     try {
       const res = await fetch(imageUrl, { next: { revalidate: 3600 } });
       if (res.ok) {
-        const buf = await res.arrayBuffer();
-        const b64 = Buffer.from(buf).toString('base64');
         const mime = res.headers.get('content-type') ?? 'image/jpeg';
-        artworkImageData = `data:${mime};base64,${b64}`;
+        const buf = Buffer.from(await res.arrayBuffer());
+        if (mime.includes('webp') || mime.includes('avif')) {
+          // Satori 미지원 포맷은 sharp로 jpeg 트랜스코드 — render 엔드포인트가
+          // NEXT_PUBLIC_SUPABASE_RENDER_TRANSFORM 미설정 환경에서 raw webp를 그대로
+          // 반환해도 카드 이미지가 조용히 소실되지 않도록 (2026-06-12 리뷰).
+          const sharp = (await import('sharp')).default;
+          // 840px(카드 표시폭 420px의 2x)로 리사이즈 — render 엔드포인트 미경유 시 수 MB
+          // 원본이 올 수 있어, 풀해상도 트랜스코드+base64 임베드의 CPU/메모리를 bound (2차 리뷰)
+          const jpeg = await sharp(buf)
+            .resize({ width: 840, withoutEnlargement: true })
+            .jpeg({ quality: 80 })
+            .toBuffer();
+          artworkImageData = `data:image/jpeg;base64,${jpeg.toString('base64')}`;
+        } else {
+          artworkImageData = `data:${mime};base64,${buf.toString('base64')}`;
+        }
       }
     } catch {
-      // Fallback: no artwork image
+      // Fallback: no artwork image (sharp 실패 포함 — 텍스트 카드로 폴백)
     }
   }
 

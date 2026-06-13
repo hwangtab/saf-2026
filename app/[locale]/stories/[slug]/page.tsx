@@ -123,17 +123,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       // SNS/Facebook Article schema 매칭 + Knowledge Graph entity 보강. KO tags는 EN locale에서도 노출
       // (Facebook은 entity name 정규화 처리).
       tags: story.tags && story.tags.length > 0 ? story.tags.slice(0, 6) : undefined,
-      // images 미명시 — Next.js 컨벤션 파일(opengraph-image.tsx)이 자동 emit.
+      // images 키 부재 — Next.js 컨벤션 파일(opengraph-image.tsx)이 자동 emit.
       // 카테고리별 색상 + SAF Magazine 브랜딩 + title이 그려진 1200x630 ImageResponse가
       // raw story thumbnail(작품 도판 이미지)보다 SNS/카카오 미리보기에서 매거진 entity를 명확히 노출.
-      images: undefined,
+      // ⚠️ `images: undefined`로 명시하면 Next.js 16이 hasOwnProperty('images')로 판정해
+      // 컨벤션 주입을 스킵하고 og:image가 0개가 된다 — 키 자체를 쓰지 말 것 (2026-06-12 감사).
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
       // twitter-image.tsx 컨벤션 부재 시 Next.js가 opengraph-image.tsx로 자동 fallback.
-      images: undefined,
+      // images 키를 undefined로도 명시하지 말 것 — 위 openGraph 주석과 동일한 회귀.
     },
     ...(() => {
       const enRobots = resolveEnRobots(locale, isEnIndexable);
@@ -447,7 +448,15 @@ export default async function StoryDetailPage({ params }: Props) {
             </div>
             <div className="flex items-center gap-3">
               <span className="text-sm text-charcoal-muted">{tStory('share')}</span>
-              <ShareButtonsWrapper title={title} description={excerpt} url={pageUrl} />
+              {/* 카카오 공유는 OG 스크랩이 아닌 명시적 imageUrl 파라미터를 쓰므로 미전달 시
+                  generic 사이트 이미지로 전송됨 (2026-06-12 감사). Sprint 70 설계 의도대로
+                  디자인 OG 카드 라우트(카테고리 색+SAF Magazine 브랜딩)를 전달한다. */}
+              <ShareButtonsWrapper
+                title={title}
+                description={excerpt}
+                url={pageUrl}
+                imageUrl={`${pageUrl.replace(/\/$/, '')}/opengraph-image`}
+              />
             </div>
           </div>
         </article>

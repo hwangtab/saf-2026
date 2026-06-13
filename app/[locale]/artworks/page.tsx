@@ -97,14 +97,23 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
   const tNav = await getTranslations({ locale, namespace: 'nav' });
   const artworks = await getSupabaseArtworks();
+  // RSC payload 다이어트 (2026-06-12 감사): 450여 점 전체가 클라이언트 컴포넌트로 직렬화되어
+  // HTML 1.3MB(flight 820KB)에 달했음. 카드(ArtworkGridCard)·필터(useArtworkFilter)가 쓰지
+  // 않는 무거운 optional 필드(description_en/quote/quote_en/shopUrl/tone)를 제거하고
+  // images는 카드가 쓰는 첫 1장만 전달. 치수(width_cm 등)·description(검색용)은 유지.
   const listArtworks: ArtworkListItem[] = artworks.map(
     ({
       profile: _profile,
       history: _history,
       profile_en: _pe,
       history_en: _he,
+      description_en: _de,
+      quote: _q,
+      quote_en: _qe,
+      shopUrl: _shop,
+      tone: _tone,
       ...rest
-    }: Artwork) => rest
+    }: Artwork) => ({ ...rest, images: rest.images.slice(0, 1) })
   );
   const breadcrumbItems = [
     { name: tBreadcrumbs('home'), url: buildLocaleUrl('/', locale) },

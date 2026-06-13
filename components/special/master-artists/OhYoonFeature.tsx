@@ -13,6 +13,7 @@ import {
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
+import { resolveEnRobots } from '@/lib/en-indexable';
 import { getSupabaseArtworksByArtist, getSupabaseStoriesLight } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
@@ -94,7 +95,15 @@ export async function buildOhYoonMetadata({
       locale === 'en'
         ? "Oh Yoon artist, Korean people's art, minjung misul, woodblock prints, Oh Yoon exhibition, 40th anniversary"
         : '오윤 화가, 민중미술, 오윤 판화, 오윤 40주기, 오윤 특별전, 한국 목판화, 온라인 전시회, 특별 전시회',
-    alternates: createLocaleAlternates(OH_YOON_PATH, locale, true),
+    // koOnly=false: EN 특별전은 영문 native 콘텐츠(EN_INDEXABLE_PAGES 등재 + sitemap
+    // bilingual 발행)이므로 self-canonical + 양방향 hreflang으로 sitemap과 신호 일치.
+    // koOnly=true였을 때 "sitemap은 색인 요청 / 헤더는 noindex / canonical은 KO"
+    // 3중 충돌로 EN 색인이 영구 차단됐다 (2026-06-12 감사).
+    alternates: createLocaleAlternates(OH_YOON_PATH, locale, false),
+    ...(() => {
+      const enRobots = resolveEnRobots(locale, true);
+      return enRobots ? { robots: enRobots } : {};
+    })(),
     openGraph: {
       type: 'website',
       url: pageUrl,
@@ -193,8 +202,8 @@ export default async function OhYoonFeature({
       : '민중미술의 거장 오윤 화백의 40주기를 기념하는 온라인 특별전. 씨앗페 온라인에 소장된 오윤 작품들을 선보입니다.',
     url: pageUrl,
     // EventCompleted/EventInProgress는 schema.org EventStatusType enum에 없는 값.
-    // 본 전시(event.ts)와 동일하게 EventMovedOnline 적용 — 오프라인 종료 후 온라인 지속.
-    eventStatus: 'https://schema.org/EventMovedOnline',
+    // 본 전시(event.ts)와 동일하게 EventScheduled 유지 — 종료 행사도 상태 변경 없이 과거 일자로 표현 (Google 권장).
+    eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
     location: {
       '@type': 'VirtualLocation',

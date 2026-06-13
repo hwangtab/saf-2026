@@ -64,3 +64,31 @@ jobs:
           else
             echo "::notice::All ${#urls[@]} URLs warmed successfully."
           fi
+
+      # 작품 상세는 generateStaticParams가 빈 배열(빌드 안정성 트레이드오프 — 페이지당
+      # Supabase 쿼리 9건)이라 배포마다 ~900 URL(451점 × 2 locale)이 전부 cold로 리셋된다.
+      # sitemap에서 작품 URL 상위 N건을 뽑아 동시 4개로 워밍 — 구매 전환 핵심 페이지의
+      # 첫 방문 TTFB(cold ~2-4s)를 hit 캐시로 전환 (2026-06-12 감사).
+      # 순차 실행이면 cold 60건 × 2-4s ≈ 2-4분(최악 30분)이라 -P4 병렬 + step timeout으로 bound.
+      - name: Warm artwork detail pages (top of sitemap)
+        timeout-minutes: 8
+        run: |
+          set -u
+          LIMIT=60
+          echo "→ Fetching sitemap for artwork URLs (limit $LIMIT)"
+          curl -fsSL --max-time 30 'https://www.saf2026.com/sitemap.xml' \
+            | grep -o '<loc>https://www.saf2026.com/artworks/[0-9a-f-]\{36\}</loc>' \
+            | sed -e 's|</\?loc>||g' \
+            | head -n "$LIMIT" > artwork-urls.txt
+          count=$(wc -l < artwork-urls.txt)
+          echo "  found $count artwork URLs"
+          if [ "$count" -eq 0 ]; then
+            echo "::warning::no artwork URLs found in sitemap — warm pass is a no-op (sitemap fetch/grep 확인 필요)"
+          fi
+          # 실패는 개별 URL 단위로만 보고 (전체 step은 계속) — || true로 xargs 종료코드 흡수
+          xargs -P 4 -n 1 -I{} curl -fsSL -o /dev/null \
+            -w "  HTTP %{http_code} · TTFB %{time_starttransfer}s · {}\n" \
+            -A 'GitHub-Action-CacheWarm/1.0 (saf-2026 post-deploy)' \
+            --max-time 30 \
+            "{}" < artwork-urls.txt || echo "::warning::some artwork URL(s) failed to warm."
+          echo "::notice::artwork warm pass finished ($count URLs attempted)."

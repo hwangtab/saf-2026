@@ -13,6 +13,7 @@ import {
   generateGalleryAggregateOffer,
 } from '@/lib/seo-utils';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
+import { resolveEnRobots } from '@/lib/en-indexable';
 import { getSupabaseArtworksByArtist } from '@/lib/supabase-data';
 import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
@@ -117,7 +118,14 @@ export async function buildParkSaenggwangMetadata({
       locale === 'en'
         ? 'Park Saeng-gwang, Korean drawings, pencil drawings, master painter, obangsaek, Korean art exhibition'
         : '박생광, 박생광 드로잉, 한국화 거장, 오방색, 채색화, 박생광 드로잉전, 박생광 특별전, 한국 현대미술',
-    alternates: createLocaleAlternates(PARK_SAENGGWANG_PATH, locale, true),
+    // koOnly=false: EN 특별전은 영문 native 콘텐츠(EN_INDEXABLE_PAGES 등재 + sitemap
+    // bilingual 발행)이므로 self-canonical + 양방향 hreflang으로 sitemap과 신호 일치.
+    // (오윤 특별전과 동일한 3중 신호 충돌 해소 — 2026-06-12 감사)
+    alternates: createLocaleAlternates(PARK_SAENGGWANG_PATH, locale, false),
+    ...(() => {
+      const enRobots = resolveEnRobots(locale, true);
+      return enRobots ? { robots: enRobots } : {};
+    })(),
     openGraph: {
       type: 'website',
       url: pageUrl,

@@ -36,6 +36,7 @@ import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
 import { getCategoryLabel } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
+import ProductMetaTags from '@/components/common/ProductMetaTags';
 import SupportMessage from '@/components/features/SupportMessage';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import ArtworkGridCard from '@/components/features/ArtworkGridCard';
@@ -43,6 +44,7 @@ import { shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import ArtworkPurchaseStickyMobile from '@/components/features/ArtworkPurchaseStickyMobile';
+import { getPaymentMode } from '@/lib/integrations/toss/config';
 import TrustBadges from '@/components/features/TrustBadges';
 import PosthumousPrintDetails from '@/components/features/PosthumousPrintDetails';
 import WishlistHeartButton from '@/components/features/WishlistHeartButton';
@@ -302,6 +304,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const displayTitle = locale === 'en' && artwork.title_en ? artwork.title_en : artwork.title;
   const displayArtist = locale === 'en' && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const hasActionablePrice = parsedPrice !== Infinity;
+  // 결제 모드 단일 출처 (2026-06-12 감사): CTA는 NEXT_PUBLIC_PAYMENT_MODE 환경변수,
+  // 체크아웃 페이지는 Toss 키 존재(getPaymentMode)로 각각 판정해 어긋날 수 있었다 —
+  // 변수 누락 시 키가 있어도 CTA 전체가 '연동 준비 중'으로 강등되거나, 반대로 404 체크아웃
+  // 링크가 노출됨. 서버에서 getPaymentMode() 하나로 판정해 prop으로 내린다.
+  const isTossEnabled = getPaymentMode() === 'toss';
 
   // 매뉴얼 5.8 매체별 진품 라벨 — 11개 매체 전체 처리.
   const mediumLabel = getMediumLabel({
@@ -352,6 +359,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
   return (
     <>
       <JsonLdScript data={[productSchema, breadcrumbSchema, webPageSchema]} />
+      {/* product:* OG 확장 — metadata.other는 name=으로 렌더되어 파서가 무시하므로
+          property= 직접 렌더 (React 19 head hoisting) */}
+      <ProductMetaTags artwork={artwork} locale={locale} />
       <Section
         variant="white"
         prevVariant="canvas"
@@ -385,8 +395,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
         <article className="container-max pt-12 md:pt-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-            {/* Left Column: Image & CTA */}
-            <div className="space-y-8">
+            {/* Left Column: Image & CTA — lg 이상에서 sticky (2026-06-12 감사).
+                우측 컬럼(작가 프로필·이력·매거진)과 하단 섹션이 매우 길어, sticky가 없으면
+                하단에서 구매를 결심한 데스크탑 사용자가 최상단까지 되스크롤해야 했다.
+                (grid가 items-start라 self-start와 함께 정상 동작) */}
+            <div className="space-y-8 lg:sticky lg:top-24 lg:self-start">
               <ArtworkImage
                 images={artwork.images}
                 title={displayTitle}
@@ -425,6 +438,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 displayPrice={localizedPrice}
                 category={artwork.category ?? undefined}
                 hasSameCategoryWorks={sameCategoryWorks.length > 0}
+                isTossEnabled={isTossEnabled}
+                priceAmount={hasActionablePrice ? parsedPrice : null}
               />
 
               {(artwork.sold || artwork.reserved) && soldAlternativeWorks.length > 0 && (
@@ -854,7 +869,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
             </div>
           )}
 
-          {/* 모바일 하단 sticky CTA — 매뉴얼 7.2 [4] · 11. md 이상에서는 사이드바 CTA 노출. */}
+          {/* 모바일·태블릿 하단 sticky CTA — 매뉴얼 7.2 [4] · 11. lg 이상에서는 사이드바 CTA 노출. */}
           <ArtworkPurchaseStickyMobile
             artworkId={artwork.id}
             artworkTitle={artwork.title}
@@ -864,6 +879,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
             reserved={artwork.reserved}
             hasActionablePrice={hasActionablePrice}
             displayPrice={localizedPrice}
+            isTossEnabled={isTossEnabled}
           />
 
           {/* Recently Sold Section */}

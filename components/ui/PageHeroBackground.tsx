@@ -15,28 +15,18 @@ interface PageHeroBackgroundProps {
  * 단일 출처를 공유 — PageHero의 자동 preload가 같은 URL을 가리킴.
  *
  * 분기:
- * - 모바일 (<768px): slider preset (400w / quality 75) — LCP 빠르게
- * - 데스크탑 (≥768px): 1x=1200w, 2x(Retina)=1920w (quality 80)
+ * - 모바일 (<768px): mobile preset (600w) / 로컬 자산 w=828·q=60 — LCP 빠르게
+ * - 데스크탑 (≥768px): 1x=1200w, 2x(Retina)=1920w
+ *
+ * 로컬 자산도 동일한 <picture> 마크업 사용 (2026-06-12 감사) — 과거 background-image
+ * div 분기는 srcset/포맷 협상이 불가능해 원본 1MB JPG를 모바일까지 내려보냈다.
+ * getHeroImageUrls가 로컬 경로를 /_next/image 변환 URL로 발급하므로 분기 불필요.
  *
  * 서버 컴포넌트. animate-hero-breathing은 motion-reduce에서 자동 비활성.
  */
 export default function PageHeroBackground({ customImage, alt }: PageHeroBackgroundProps) {
   const urls = getHeroImageUrls(customImage);
   if (!urls) return null;
-
-  const isLocal = !customImage.startsWith('http');
-
-  if (isLocal) {
-    // 로컬 자산(/images/...). 단일 URL을 background-image로.
-    return (
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 animate-hero-breathing transform-gpu will-change-transform motion-reduce:!animate-none motion-reduce:!scale-100 motion-reduce:!transition-none bg-cover bg-center"
-          style={{ backgroundImage: `url(${urls.mobile})` }}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="absolute inset-0">

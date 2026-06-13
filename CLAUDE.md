@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm install              # Install dependencies
 npm run dev              # Development server (http://localhost:3000)
-npm run build            # Production build (runs next-image-export-optimizer after)
+npm run build            # Production build (generate-changelog → sync-site-stats → next build → verify:i18n-placeholders)
 npm run lint             # ESLint check
 npm run type-check       # TypeScript strict mode check
 npm run format           # Prettier format all files
@@ -243,7 +243,7 @@ types/
 ```typescript
 // 1. React/Next.js
 import { useState } from 'react';
-// ⚠️ Do NOT use 'next/image' directly — use ExportedImage or SafeImage (see Key Patterns)
+// ⚠️ Do NOT use 'next/image' directly — use SafeImage (see Key Patterns)
 
 // 2. External packages
 import { useInView } from 'react-intersection-observer';

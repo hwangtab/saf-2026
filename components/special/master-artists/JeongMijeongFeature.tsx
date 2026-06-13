@@ -177,7 +177,7 @@ export default async function JeongMijeongFeature({
       ? 'Selected works by Jeong Mijeong from the SAF Online collection.'
       : '씨앗페 온라인에 소장된 정미정 작품들을 소개합니다.',
     url: pageUrl,
-    eventStatus: 'https://schema.org/EventMovedOnline',
+    eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
     location: { '@type': 'VirtualLocation', url: pageUrl },
     startDate: '2026-01-14',

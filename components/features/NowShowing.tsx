@@ -40,7 +40,7 @@ export default async function NowShowing({ locale }: { locale: string }) {
           <p className="mt-3 text-body-large text-charcoal-muted">{t('subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-          {cards.map(({ item, derivedStatus, status, title, desc, cta }, idx) => (
+          {cards.map(({ item, derivedStatus, status, title, desc, cta }) => (
             <ShowingCard
               key={item.slug}
               item={item}
@@ -50,7 +50,10 @@ export default async function NowShowing({ locale }: { locale: string }) {
               desc={desc}
               cta={cta}
               preparing={preparing}
-              priority={idx === 0}
+              // priority 미부여 (2026-06-12 감사) — NowShowing은 hero(70-85svh) 아래 fold-below
+              // 섹션인데 첫 카드가 hero와 동일 슬라이드 이미지라, priority를 주면 같은 작품
+              // 이미지를 q60(hero)·q75(카드) 두 벌로 critical window에서 이중 다운로드한다.
+              priority={false}
             />
           ))}
         </div>

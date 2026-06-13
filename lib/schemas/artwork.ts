@@ -17,11 +17,37 @@ import {
   EXHIBITION_START_DATE,
   getExhibitionSchemaState,
 } from '@/lib/schemas/event';
+import { SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 
 // 빌드/렌더 시점 기준 +1년 동적 계산 — 만료로 인한 Shopping 노출 중단 방지
 const PRICE_VALID_UNTIL = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
   .toISOString()
   .slice(0, 10);
+
+// 판매 상태 3분류 — JSON-LD offers·product:* 메타가 각자 매핑하면 다음 상태 추가 시
+// 한쪽만 갱신되어 피드-페이지 불일치가 생긴다 (2026-06-12 리뷰: 단일 출처화).
+type ArtworkAvailability = 'sold' | 'reserved' | 'available';
+
+function resolveArtworkAvailability(artwork: Artwork): ArtworkAvailability {
+  if (artwork.sold) return 'sold';
+  if (artwork.reserved) return 'reserved';
+  return 'available';
+}
+
+const SCHEMA_ORG_AVAILABILITY: Record<ArtworkAvailability, string> = {
+  sold: 'https://schema.org/OutOfStock',
+  reserved: 'https://schema.org/LimitedAvailability',
+  available: 'https://schema.org/InStock',
+};
+
+// OG product:availability — Facebook/Pinterest 파서의 공통 enum에는 'reserved'에 정확히
+// 대응하는 값이 없다 ('pending'은 일부 파서만 인식). 일시 보류 작품이 소셜 카탈로그에서
+// 구매 가능으로 오인되지 않도록 보수적으로 out of stock 처리.
+const OG_PRODUCT_AVAILABILITY: Record<ArtworkAvailability, string> = {
+  sold: 'out of stock',
+  reserved: 'out of stock',
+  available: 'in stock',
+};
 
 export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 'ko'): Metadata {
   const resolvedImageUrl = resolveSeoArtworkImageUrl(artwork.images[0] ?? '');
@@ -99,20 +125,40 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       ];
 
   const numericPriceValue = parseArtworkPrice(artwork.price);
-  const hasFixedPrice = numericPriceValue !== null;
   const isSold = artwork.sold === true;
-  // 가격을 메타 description에 포함 — 구매 의도 검색 CTR 향상
+  // 가격을 메타 description에 포함 — 구매 의도 검색 CTR 향상.
+  // '무료 배송'은 SHIPPING_THRESHOLD(20만원) 이상에만 표기 — 미만 작품은 결제 단계에서
+  // 배송비 4,000원이 부과되므로 검색 스니펫/공유 카드의 허위 약속이 된다 (2026-06-12 리뷰,
+  // CTA의 PurchaseConfidenceStrip 분기와 동일 정책).
+  const freeShippingSnippet =
+    numericPriceValue !== null && numericPriceValue >= SHIPPING_THRESHOLD
+      ? isEnglish
+        ? ' · Free shipping.'
+        : ' · 무료 배송.'
+      : '';
   const priceSnippet = isSold
     ? isEnglish
       ? ' · Sold.'
       : ' · 판매 완료.'
     : numericPriceValue !== null
-      ? ` · ₩${numericPriceValue.toLocaleString('ko-KR')}${isEnglish ? ' · Free shipping.' : ' · 무료 배송.'}`
+      ? ` · ₩${numericPriceValue.toLocaleString('ko-KR')}${freeShippingSnippet}`
       : isEnglish
         ? ' · Inquiry for price.'
         : ' · 가격 문의.';
 
-  const seoDescription = (seoDescriptionBase.substring(0, 140) + priceSnippet).substring(0, 160);
+  // 접미부(가격·배송)는 항상 온전히 보존하고 본문만 단어 경계로 절단 (2026-06-12 감사:
+  // 전체 문자열 이중 substring이 '…무료 배'처럼 단어 중간 하드컷되어 카카오/소셜 카드에
+  // 그대로 노출되던 회귀).
+  const DESC_LIMIT = 160;
+  const bodyLimit = Math.max(40, DESC_LIMIT - priceSnippet.length);
+  let descBody = seoDescriptionBase;
+  if (descBody.length > bodyLimit) {
+    const lastSpace = descBody.lastIndexOf(' ', bodyLimit - 1);
+    // 단어 경계가 너무 앞이면(공백 없는 긴 문자열) 한도에서 절단
+    const cutAt = lastSpace > bodyLimit - 30 ? lastSpace : bodyLimit - 1;
+    descBody = `${descBody.slice(0, cutAt).trimEnd()}…`;
+  }
+  const seoDescription = descBody + priceSnippet;
 
   // Title에 가격/판매상태를 포함해 CTR 개선 — GSC 실측상 작품 상세가 8,883노출/1.8% CTR로 가장 큰 개선 레버.
   // SOLD 작품은 'Sold'/'판매 완료'가 SERP에서 desperate 인상으로 click 떨어뜨림 — '원본' positive 워딩으로 교체.
@@ -147,6 +193,14 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     locale
   );
 
+  // ⚠️ images 키는 destructure로 "키 자체를 제거"해야 한다. `images: undefined` 명시는
+  // Next.js 16 mergeStaticMetadata가 hasOwnProperty('images')로 판정해 컨벤션 파일
+  // (opengraph-image.tsx) 주입을 스킵시키고, 값마저 undefined라 og:image가 0개가 되는
+  // 회귀를 만든다 (Sprint 69 59cdbaf5 → 라이브 전 작품 og:image 소실, 2026-06-12 감사 확인).
+  // createPageMetadata가 채운 generic 이미지도 함께 제외해야 컨벤션 카드가 발행된다.
+  const { images: _omitOgImages, ...baseOpenGraph } = baseMetadata.openGraph ?? {};
+  const { images: _omitTwitterImages, ...baseTwitter } = baseMetadata.twitter ?? {};
+
   return {
     ...baseMetadata,
     // koOnly=true: KO canonical 통합 — EN 작품 페이지(noindex)가 en-US hreflang으로
@@ -158,36 +212,24 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
     // 한국어 작품 detail은 index 유지 (검색 트래픽 핵심).
     ...(isEnglish ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
-      ...baseMetadata.openGraph,
+      ...baseOpenGraph,
       type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
       siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
-      // images 필드 미명시 — Next.js 컨벤션 파일(app/[locale]/artworks/[id]/opengraph-image.tsx)이
-      // 자동 emit. 명시 override 시 ImageResponse(가격+SOLD 배지+SAF 브랜딩 디자인 카드)가 raw
-      // Supabase URL에 덮어쓰여져 SNS/카카오/Discover 미리보기에서 디자인 카드 미노출 회귀가 발생.
-      // baseMetadata.openGraph.images에 generic OG_IMAGE가 들어가 있더라도 컨벤션 파일이 우선 적용됨.
-      images: undefined,
+      // images 키 부재 → Next.js 컨벤션 파일(app/[locale]/artworks/[id]/opengraph-image.tsx)이
+      // 가격+SOLD 배지+SAF 브랜딩 디자인 카드를 og:image로 자동 emit.
     },
     twitter: {
-      ...baseMetadata.twitter,
+      ...baseTwitter,
       card: 'summary_large_image',
       // twitter-image.tsx 컨벤션 파일이 없으면 Next.js가 opengraph-image.tsx로 자동 fallback.
-      images: undefined,
     },
-    // Facebook/Instagram/Pinterest 제품 메타 태그 — 소셜 공유 시 가격 정보 노출
-    // og:type은 openGraph.type의 'website'를 유지 — 'product'로 override하면 중복 송출되어 파서 혼란
-    // product:* 메타태그만으로 Facebook Merchant Catalog·Pinterest Product Rich Pin 충분히 인식
+    // ⚠️ product:* OG 확장 태그를 metadata.other에 넣지 말 것 — Next.js Metadata API는
+    // other 항목을 전부 name= 속성으로 렌더하는데 product:*는 RDFa property= 속성 기준이라
+    // Facebook Merchant Catalog·Pinterest Rich Pin 파서가 읽지 못한다 (2026-06-12 감사 실측).
+    // → components/common/ProductMetaTags.tsx가 페이지 JSX에서 property=로 직접 렌더
+    //   (React 19 head hoisting). twitter:*·author는 name=이 올바른 규격이라 여기 유지.
     other: {
-      ...(hasFixedPrice && {
-        'product:price:amount': String(numericPriceValue),
-        'product:price:currency': 'KRW',
-        'product:availability': isSold ? 'out of stock' : 'in stock',
-        'product:condition': 'new',
-        'product:retailer_item_id': `SAF2026-${artwork.id}`,
-        // Facebook Merchant Catalog 추가 필드 — 카탈로그 매칭 정확도 강화
-        'product:brand': isEnglish ? 'SAF Online' : '씨앗페 온라인',
-        ...(categoryForLocale && { 'product:category': categoryForLocale }),
-      }),
       // 작가 크레딧 메타 — 이미지 검색·Pinterest에서 작가 귀속 지원
       author: artistForLocale,
       // Twitter/X Product Card 라벨 — 카드에 가격·상태 직접 표시
@@ -210,10 +252,44 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   };
 }
 
+export interface ProductMetaEntry {
+  property: string;
+  content: string;
+}
+
+/**
+ * product:* Open Graph 확장 태그 데이터 — RDFa property= 속성으로 렌더해야
+ * Facebook Merchant Catalog·Pinterest Rich Pin 파서가 인식한다.
+ * metadata.other(name= 렌더)에 넣으면 송출은 되지만 파서가 전부 무시 — 반드시
+ * components/common/ProductMetaTags.tsx를 페이지 JSX에 렌더해 소비할 것.
+ */
+export function buildArtworkProductMeta(
+  artwork: Artwork,
+  locale: 'ko' | 'en' = 'ko'
+): ProductMetaEntry[] {
+  const numericPriceValue = parseArtworkPrice(artwork.price);
+  if (numericPriceValue === null) return [];
+  const isEnglish = locale === 'en';
+  const categoryForLocale = artwork.category ? getCategoryLabel(artwork.category, locale) : null;
+  return [
+    { property: 'product:price:amount', content: String(numericPriceValue) },
+    { property: 'product:price:currency', content: 'KRW' },
+    {
+      property: 'product:availability',
+      content: OG_PRODUCT_AVAILABILITY[resolveArtworkAvailability(artwork)],
+    },
+    { property: 'product:condition', content: 'new' },
+    { property: 'product:retailer_item_id', content: `SAF2026-${artwork.id}` },
+    // Facebook Merchant Catalog 추가 필드 — 카탈로그 매칭 정확도 강화
+    { property: 'product:brand', content: isEnglish ? 'SAF Online' : '씨앗페 온라인' },
+    ...(categoryForLocale ? [{ property: 'product:category', content: categoryForLocale }] : []),
+  ];
+}
+
 export function generateArtworkJsonLd(
   artwork: Artwork,
-  _numericPrice: string,
-  _isInquiry: boolean,
+  numericPrice: string,
+  isInquiry: boolean,
   locale: 'ko' | 'en' = 'ko',
   breadcrumbLabels?: { home: string; artworks: string; category?: { name: string; path: string } },
   options?: {
@@ -280,9 +356,12 @@ export function generateArtworkJsonLd(
 
   const productSchema = {
     '@context': 'https://schema.org',
-    // Product 타입과 Offer는 review/aggregateRating 누락 및 Merchant listings 경고를 유발한다.
-    // 작품은 일회성 원본/한정 에디션이라 가짜 리뷰·평점을 넣지 않고 VisualArtwork 단일 entity만 발행한다.
-    '@type': 'VisualArtwork',
+    // Product + VisualArtwork dual-type (2026-06-12 감사에서 복원).
+    // 한때 GSC "review/aggregateRating 누락" 경고(P2 WARNING)를 이유로 Product/offers를
+    // 제거했으나, 이는 organic SERP의 가격·재고 rich result 자격과 Merchant Center
+    // 랜딩페이지 검증(피드-페이지 가격 일치)까지 포기하는 과잉 대응이었음.
+    // 작품은 일회성 원본/한정 에디션이라 가짜 리뷰·평점은 넣지 않는다 — 경고는 무시 가능.
+    '@type': ['Product', 'VisualArtwork'],
     '@id': `${SITE_URL}/artworks/${artwork.id}`,
     name: titleForLocale,
     // BCP 47 형식 (en-US, ko-KR) — ItemPage 노드(line ~555)와 일관성 통일.
@@ -339,8 +418,8 @@ export function generateArtworkJsonLd(
         : `${artistForLocale} 작가의 ${titleForLocale}`,
       creditText: `${artistForLocale} / ${isEnglish ? 'SAF Online' : '씨앗페 온라인'}`,
       copyrightNotice: `© ${artistForLocale}`,
-      width: 1200,
-      height: 1200,
+      // width/height 미발행 — 실제 이미지는 resize='contain'으로 종횡비가 보존되는
+      // 비정방형이 대부분이라 1200×1200 하드코딩은 허위 메타데이터였음 (파서가 실측).
       acquireLicensePage: `${SITE_URL}/artworks/${artwork.id}`,
       representativeOfPage: true,
       // creator + copyrightHolder — Google Images, AI 학습 시 작가 entity 귀속 시그널.
@@ -359,8 +438,22 @@ export function generateArtworkJsonLd(
       license: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
     },
     description: schemaDescription.substring(0, 500),
-    // sku·mpn·countryOfOrigin은 Product 전용 필드. 2026-05 Product type 제거 이후
-    // VisualArtwork 단일 타입에서는 무시되므로 함께 제거 (코드 노이즈 청소).
+    // Offer 발행 — 가격·재고·판매자 구조화 데이터. 가격 미정(문의) 작품은 offers 생략.
+    ...(!isInquiry && numericPrice
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: numericPrice,
+            priceCurrency: 'KRW',
+            availability: SCHEMA_ORG_AVAILABILITY[resolveArtworkAvailability(artwork)],
+            url: offerUrl,
+            priceValidUntil: PRICE_VALID_UNTIL,
+            itemCondition: 'https://schema.org/NewCondition',
+            seller: sellerOrg,
+          },
+        }
+      : {}),
+    // brand는 Product 타입에서 유효 (dual-type 복원으로 schema.org range 충족)
     brand: {
       '@type': 'Brand',
       name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
@@ -394,30 +487,43 @@ export function generateArtworkJsonLd(
     // size는 additionalProperty에 PropertyValue로만 노출한다.
     // Product/Merchant 전용 직속 필드는 GSC rich result 경고를 유발하므로 발행하지 않는다.
     // 임베디드 ExhibitionEvent — 전시 스키마가 독립 주입되지 않으므로 @id 참조 대신 인라인 객체로 표현
-    // (dangling @id 참조 방지)
-    isPartOf: {
-      '@type': 'ExhibitionEvent',
-      name: isEnglish
-        ? 'SAF Online - Special Exhibition for Artist Mutual Aid'
-        : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
-      startDate: EXHIBITION_START_DATE,
-      endDate: EXHIBITION_END_DATE,
-      eventStatus: exhibitionSchemaState.eventStatus,
-      eventAttendanceMode: exhibitionSchemaState.eventAttendanceMode,
-      location: exhibitionSchemaState.location,
-      organizer: sellerOrg,
-      // superEvent — SAF 캠페인(3년 누적, 2023부터) EventSeries 상위로 연결.
-      // Knowledge Graph가 작품 → 2026 전시 → SAF 시리즈 전체 entity cluster 인식.
-      superEvent: {
-        '@type': 'EventSeries',
+    // (dangling @id 참조 방지).
+    // ⚠️ isPartOf(range: CreativeWork)에 Event를 넣으면 schema.org range 위반 —
+    // subjectOf(range: CreativeWork | Event)로 발행하고 매거진 Article과 배열 병합 (2026-06-12 감사).
+    subjectOf: [
+      {
+        '@type': 'ExhibitionEvent',
         name: isEnglish
-          ? 'Seed Art Festival (SAF) — Artist Mutual Aid Series'
-          : '씨앗페(SAF) — 예술인 상호부조 시리즈',
-        startDate: '2023-03-21',
-        url: SITE_URL,
+          ? 'SAF Online - Special Exhibition for Artist Mutual Aid'
+          : '씨앗페 온라인 - 예술인 상호부조 기금 마련 특별전',
+        startDate: EXHIBITION_START_DATE,
+        endDate: EXHIBITION_END_DATE,
+        eventStatus: exhibitionSchemaState.eventStatus,
+        eventAttendanceMode: exhibitionSchemaState.eventAttendanceMode,
+        location: exhibitionSchemaState.location,
         organizer: sellerOrg,
+        // superEvent — SAF 캠페인(3년 누적, 2023부터) EventSeries 상위로 연결.
+        // Knowledge Graph가 작품 → 2026 전시 → SAF 시리즈 전체 entity cluster 인식.
+        superEvent: {
+          '@type': 'EventSeries',
+          name: isEnglish
+            ? 'Seed Art Festival (SAF) — Artist Mutual Aid Series'
+            : '씨앗페(SAF) — 예술인 상호부조 시리즈',
+          startDate: '2023-03-21',
+          url: SITE_URL,
+          organizer: sellerOrg,
+        },
       },
-    },
+      ...(options?.mentionedInStories ?? []).map((s) => {
+        const storyUrl = buildLocaleUrl(`/stories/${s.slug}`, locale);
+        return {
+          '@type': 'Article',
+          '@id': storyUrl,
+          headline: isEnglish && s.titleEn ? s.titleEn : s.title,
+          url: storyUrl,
+        };
+      }),
+    ],
     additionalProperty: [
       materialForLocale && {
         '@type': 'PropertyValue',
@@ -452,17 +558,9 @@ export function generateArtworkJsonLd(
       },
     ].filter(Boolean),
     ...(options?.mentionedInStories?.length && {
-      subjectOf: options.mentionedInStories.map((s) => {
-        const storyUrl = buildLocaleUrl(`/stories/${s.slug}`, locale);
-        return {
-          '@type': 'Article',
-          '@id': storyUrl,
-          headline: isEnglish && s.titleEn ? s.titleEn : s.title,
-          url: storyUrl,
-        };
-      }),
       // mentions — schema.org CreativeWork 표준 필드, 작품이 매거진에서 언급된 관계.
-      // subjectOf(작품이 매거진의 주제)와 분리해 양방향 entity 시그널 강화. AI Overview/KG 매칭 두 슬롯 모두 cite 가능.
+      // subjectOf(작품이 매거진의 주제 — 위 배열에 병합됨)와 분리해 양방향 entity 시그널 강화.
+      // AI Overview/KG 매칭 두 슬롯 모두 cite 가능.
       mentions: options.mentionedInStories.map((s) => {
         const storyUrl = buildLocaleUrl(`/stories/${s.slug}`, locale);
         return {
@@ -601,9 +699,13 @@ export function generateGalleryAggregateOffer(
 ) {
   const isEnglish = locale === 'en';
   const availableArtworks = artworks.filter((a) => !a.sold);
+  // 하한 1만원 — 결제 테스트용 더미 작품(₩100 등)이 갤러리 AggregateOffer의 lowPrice를
+  // 오염시켜 LocalBusiness priceRange와 모순되던 회귀 방지 (2026-06-12 감사).
+  // 실 판매 작품 최저가는 ₩50,000 — 정상 데이터에는 영향 없음.
+  const MIN_PLAUSIBLE_PRICE = 10_000;
   const availablePrices = availableArtworks
     .map((a) => parseArtworkPrice(a.price))
-    .filter((p): p is number => p !== null && p > 0);
+    .filter((p): p is number => p !== null && p >= MIN_PLAUSIBLE_PRICE);
 
   // 판매 중인 작품이 없으면 가격 범위 없음 — null 반환
   if (availablePrices.length === 0) return null;

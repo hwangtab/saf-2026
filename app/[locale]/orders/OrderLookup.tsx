@@ -294,7 +294,7 @@ function EditShippingForm({ order, buyerEmail, onSaved, onCancel }: EditShipping
           type="button"
           onClick={handleSave}
           disabled={loading}
-          className="flex-1 rounded-lg bg-primary py-2 text-sm font-bold text-white hover:bg-primary-strong transition-colors disabled:opacity-50"
+          className="flex-1 rounded-lg bg-primary-strong py-2 text-sm font-bold text-white hover:bg-primary-strong/90 transition-colors disabled:opacity-50"
         >
           {loading ? t('saving') : t('saveChanges')}
         </button>

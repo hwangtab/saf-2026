@@ -199,6 +199,20 @@ const nextConfig = {
         source: '/en/news/:path+',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, follow' }],
       },
+      // EN 특별전(오윤 40주기·박생광 드로잉전)은 영문 native 콘텐츠로 EN_INDEXABLE_PAGES에
+      // 등재되고 sitemap에 bilingual hreflang으로 발행되는 색인 대상 — 바로 위
+      // '/en/artworks/:path+' blanket noindex가 이 두 경로까지 덮어 "sitemap 제출 + 헤더
+      // noindex" 신호 충돌로 색인이 영구 차단되던 회귀(2026-06-12 감사)를 해제한다.
+      // Next.js headers는 동일 경로·동일 key 매칭 시 마지막 규칙이 우선하므로 반드시
+      // blanket 규칙 "뒤"에 둘 것. 대문자/소문자 percent-encoding과 디코딩 표기를 모두
+      // 매칭 (RFC 3986상 소문자 hex도 동등 — 외부 백링크/중계기가 만들 수 있음).
+      // ⚠️ EN_INDEXABLE_PAGES(lib/en-indexable.ts)에 특별전 작가를 추가하면 이 규칙에도
+      // 반드시 함께 추가할 것 — 빠지면 sitemap 제출 + noindex 헤더 충돌이 재발한다.
+      {
+        source:
+          '/en/artworks/artist/:name(%EC%98%A4%EC%9C%A4|%EB%B0%95%EC%83%9D%EA%B4%91|%ec%98%a4%ec%9c%a4|%eb%b0%95%ec%83%9d%ea%b4%91|오윤|박생광)',
+        headers: [{ key: 'X-Robots-Tag', value: 'index, follow' }],
+      },
       // 공개 페이지의 Cache-Control에서 `no-store` 제거해 bfcache(뒤로가기 즉시 복원) 허용.
       // 동적 라우트(getLocale 등) 기본값 `private, no-cache, no-store, max-age=0, must-revalidate`은
       // bfcache를 차단(Lighthouse: "Page prevented back/forward cache restoration", score 0).
@@ -211,9 +225,14 @@ const nextConfig = {
       // 규칙이 `private, no-cache`로 덮어쓰면 Vercel Edge가 prerender 캐시(PRERENDER hit)는
       // 활용하지만 **클라이언트/봇은 매 요청 origin re-validate**라 LLM 봇 부하·TTFB·
       // s-maxage 모두 무효화됨. 4개 경로는 negative lookahead로 명시 제외.
+      //
+      // ⚠ `fonts|images|favicon.ico|manifest.webmanifest`도 반드시 제외 — 빠뜨리면 이
+      // catch-all이 위 폰트(1년 immutable)·이미지(7일 SWR) 캐시 규칙을 no-cache로 덮어써
+      // 92개 폰트 서브셋과 모든 로컬 이미지가 재방문마다 재검증되고, Vercel optimizer가
+      // upstream no-cache를 /_next/image 변환본에까지 전파한다 (2026-06-12 감사 회귀).
       {
         source:
-          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|forgot-password|reset-password|api|_next|llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|feed\\.xml|en/llms\\.txt|en/llms-full\\.txt).*)',
+          '/((?!admin|dashboard|exhibitor|onboarding|login|signup|auth|terms-consent|forgot-password|reset-password|api|_next|fonts|images|favicon\\.ico|manifest\\.webmanifest|llms\\.txt|llms-full\\.txt|robots\\.txt|sitemap\\.xml|feed\\.xml|en/llms\\.txt|en/llms-full\\.txt).*)',
         headers: [
           {
             key: 'Cache-Control',

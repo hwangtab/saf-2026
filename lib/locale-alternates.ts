@@ -39,6 +39,13 @@ export function createLocaleAlternates(path: string, locale: LocaleCode = 'ko', 
   const canonicalUrl = koOnly ? koUrl : locale === 'en' ? enUrl : koUrl;
   return {
     canonical: canonicalUrl,
+    // RSS 자동발견 링크 — layout.tsx의 alternates.types 선언은 페이지별 alternates가
+    // 키 단위 shallow replace로 통째로 덮어쓰므로 (2026-06-12 감사: 전 페이지에서
+    // <link rel="alternate" type="application/rss+xml"> 소실), 단일 출처인 여기에 포함시켜
+    // createPageMetadata 경유 모든 공개 페이지에서 항상 발행되게 한다.
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
     languages: koOnly
       ? {
           'ko-KR': koUrl,

@@ -16,15 +16,15 @@ const resolveExhibitionState = (now: number = Date.now()): ExhibitionState => {
   return 'scheduled';
 };
 
-const resolveEventStatus = (state: ExhibitionState): string => {
+const resolveEventStatus = (_state: ExhibitionState): string => {
   // schema.org EventStatusType enum 정식 값: EventScheduled / EventCancelled /
   // EventPostponed / EventRescheduled / EventMovedOnline. EventCompleted /
   // EventInProgress는 사양에 존재하지 않아 검사기가 "유효하지 않음" 보고.
   //
-  // 우리 전시 의미 매핑:
-  // - scheduled / inProgress → EventScheduled (정상 일정 진행)
-  // - completed → EventMovedOnline (오프라인 일정 종료, 온라인 갤러리는 계속 운영)
-  if (state === 'completed') return 'https://schema.org/EventMovedOnline';
+  // 우리 전시 의미 매핑: 모든 상태 → EventScheduled.
+  // ⚠️ completed에 EventMovedOnline을 쓰지 말 것 (2026-06-12 감사) — 이 값은 "예정된
+  // 오프라인 행사가 온라인으로 전환됨"이라는 사전 공지용 상태라, 정상 개최 후 종료된
+  // 전시에 붙이면 의미 왜곡. Google 권장은 종료 행사도 EventScheduled + 과거 일자 유지.
   return 'https://schema.org/EventScheduled';
 };
 

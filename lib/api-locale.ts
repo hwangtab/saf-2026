@@ -39,6 +39,7 @@ export type ApiErrorCode =
   | 'invalid_redirect_url'
   | 'artwork_not_found'
   | 'artwork_sold_out'
+  | 'artwork_temporarily_held'
   | 'artwork_price_invalid'
   | 'availability_check_failed'
   | 'order_creation_failed'
@@ -67,6 +68,10 @@ const ERROR_MESSAGES: Record<ApiLocale, Record<ApiErrorCode, string>> = {
     invalid_redirect_url: '잘못된 결제 URL입니다.',
     artwork_not_found: '작품을 찾을 수 없습니다.',
     artwork_sold_out: '이미 판매된 작품입니다.',
+    // ⚠️ 구체적 시간 약속 금지 — 카드결제 hold는 30분이지만 가상계좌(awaiting_deposit)
+    // hold는 최대 24시간이라 '최대 30분' 표기는 허위 약속이 됨 (2026-06-12 리뷰).
+    artwork_temporarily_held:
+      '다른 분이 이 작품의 결제를 진행 중입니다. 잠시 후 다시 시도해 주세요. 결제가 완료되지 않으면 자동으로 다시 구매 가능해집니다.',
     artwork_price_invalid: '작품 가격 정보를 확인할 수 없습니다.',
     availability_check_failed: '재고 확인 중 오류가 발생했습니다.',
     order_creation_failed: '주문 생성 중 오류가 발생했습니다.',
@@ -94,6 +99,8 @@ const ERROR_MESSAGES: Record<ApiLocale, Record<ApiErrorCode, string>> = {
     invalid_redirect_url: 'Invalid payment redirect URL.',
     artwork_not_found: 'Artwork not found.',
     artwork_sold_out: 'This artwork has already been sold.',
+    artwork_temporarily_held:
+      'Another collector is completing payment for this artwork. Please try again later — it becomes available again automatically if their payment is not completed.',
     artwork_price_invalid: 'Unable to verify artwork price.',
     availability_check_failed: 'An error occurred while checking availability.',
     order_creation_failed: 'An error occurred while creating the order.',

@@ -128,33 +128,37 @@ export default function SuccessClient() {
             const analyticsItem = data.analyticsItem ?? null;
             const itemAmount = analyticsItem?.itemAmount ?? Number(amount);
             const shippingAmount = analyticsItem?.shippingAmount ?? 0;
-            trackEvent('purchase', {
-              transaction_id: orderId,
-              value: Number(amount),
-              currency,
-              artwork_id: analyticsItem?.artworkId ?? artworkId,
-              artwork_title: analyticsItem?.artworkTitle ?? artworkId,
-              artist: analyticsItem?.artistName ?? null,
-              item_amount: itemAmount,
-              shipping_amount: shippingAmount,
-            }, {
-              ga4Params: {
+            trackEvent(
+              'purchase',
+              {
                 transaction_id: orderId,
                 value: Number(amount),
                 currency,
-                shipping: shippingAmount,
-                items: [
-                  {
-                    item_id: analyticsItem?.artworkId ?? artworkId,
-                    item_name: analyticsItem?.artworkTitle ?? artworkId,
-                    item_brand: analyticsItem?.artistName ?? undefined,
-                    item_category: 'artwork',
-                    price: itemAmount,
-                    quantity: 1,
-                  },
-                ],
+                artwork_id: analyticsItem?.artworkId ?? artworkId,
+                artwork_title: analyticsItem?.artworkTitle ?? artworkId,
+                artist: analyticsItem?.artistName ?? null,
+                item_amount: itemAmount,
+                shipping_amount: shippingAmount,
               },
-            });
+              {
+                ga4Params: {
+                  transaction_id: orderId,
+                  value: Number(amount),
+                  currency,
+                  shipping: shippingAmount,
+                  items: [
+                    {
+                      item_id: analyticsItem?.artworkId ?? artworkId,
+                      item_name: analyticsItem?.artworkTitle ?? artworkId,
+                      item_brand: analyticsItem?.artistName ?? undefined,
+                      item_category: 'artwork',
+                      price: itemAmount,
+                      quantity: 1,
+                    },
+                  ],
+                },
+              }
+            );
           }
           // localStorage 멱등 가드 — 다른 탭·시크릿 reopen 시 sessionStorage 우회로 중복 카운트 방지.
           // storageGet/storageSet 사용: Safari 시크릿 모드에서 raw localStorage.setItem이
@@ -266,6 +270,9 @@ export default function SuccessClient() {
   }
 
   if (state === 'error') {
+    // 확인 실패가 곧 결제 실패는 아니다 — Toss 결제창에서 이미 승인됐고 웹훅으로 추후
+    // paid 처리될 수 있다. '작품 목록으로' 단일 출구는 돈이 빠져나간 구매자를 이중결제
+    // 불안 속에 방치하는 dead end였음 (2026-06-12 감사): 안심 문구 + 주문조회 + 고객센터 추가.
     return (
       <div
         className={`min-h-screen bg-canvas-soft flex items-center justify-center pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
@@ -274,10 +281,25 @@ export default function SuccessClient() {
           <div className="rounded-2xl border border-danger/20 bg-white p-10 shadow-sm">
             <p className="text-4xl mb-4">!</p>
             <h1 className="text-xl font-bold text-charcoal mb-2">{t('confirmationFailed')}</h1>
-            <p className="text-sm text-gray-600 mb-6">{errorMessage}</p>
-            <LinkButton href="/artworks" variant="primary" size="sm">
-              {t('backToArtworks')}
-            </LinkButton>
+            <p className="text-sm text-gray-600 mb-3">{errorMessage}</p>
+            <p className="text-xs text-charcoal-soft mb-6 break-keep">
+              {t('confirmErrorReassure')}
+            </p>
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+              <LinkButton
+                href={orderId ? `/orders?orderNo=${encodeURIComponent(orderId)}` : '/orders'}
+                variant="primary"
+                size="sm"
+              >
+                {tOrder('viewOrders')}
+              </LinkButton>
+              <LinkButton href="/artworks" variant="outline" size="sm">
+                {t('backToArtworks')}
+              </LinkButton>
+            </div>
+            <p className="mt-6 text-xs text-charcoal-soft">
+              {t('supportContact', { phone: '02-764-3114', email: 'contact@kosmart.org' })}
+            </p>
           </div>
         </div>
       </div>

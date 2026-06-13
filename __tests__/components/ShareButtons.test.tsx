@@ -11,11 +11,6 @@ jest.mock('../../lib/hooks/useKakaoSDK', () => ({
   })),
 }));
 
-jest.mock('next-image-export-optimizer', () => ({
-  __esModule: true,
-  default: ({ alt, ...props }: any) => <img alt={alt} {...props} />,
-}));
-
 Object.assign(navigator, {
   clipboard: {
     writeText: jest.fn(),

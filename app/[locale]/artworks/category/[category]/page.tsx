@@ -152,9 +152,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ],
       }),
     },
-    other: {
-      'product:availability': availableCount > 0 ? 'in stock' : 'out of stock',
-    },
+    // product:availability를 metadata.other에 넣지 않는다 — name=으로 렌더되어 RDFa
+    // property= 기준인 소셜 파서가 무시하고, 목록 페이지는 product 단위 개체도 아니라
+    // 의미가 없음 (2026-06-12 감사에서 제거).
     // 영어 카테고리 페이지는 한국어 콘텐츠만 있어 thin content — 색인 제외
     ...(isEnglish ? { robots: { index: false, follow: true } } : {}),
   };

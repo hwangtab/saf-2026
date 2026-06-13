@@ -19,17 +19,10 @@ import { LOAN_COUNT } from '@/lib/site-stats';
 import { getLiveStats } from '@/lib/live-stats';
 import {
   generateExhibitionSchema,
-  generateFAQSchema,
   generateCampaignSchema,
   createBreadcrumbSchema,
 } from '@/lib/seo-utils';
-import {
-  generateArtworkPurchaseHowTo,
-  generateMemberJoinHowTo,
-  generateExhibitionEnjoyHowTo,
-  generateMechanismHowTo,
-} from '@/lib/schemas/howto';
-import { generateSAFCoreQA } from '@/lib/schemas/qa-page';
+import { generateMechanismHowTo } from '@/lib/schemas/howto';
 import { getSupabaseArtworksByCategories, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
@@ -247,13 +240,12 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       />
       <JsonLdScript data={generateExhibitionSchema([], locale, { artistCount })} />
       <JsonLdScript data={generateCampaignSchema(locale)} />
-      <JsonLdScript data={generateArtworkPurchaseHowTo(locale, { artistCount })} />
-      <JsonLdScript data={generateMemberJoinHowTo(locale)} />
-      <JsonLdScript data={generateExhibitionEnjoyHowTo(locale, { artistCount, artworkCount })} />
+      {/* HowTo는 MechanismHowTo만 발행 (2026-06-12 감사) — 4단계 플로우가 MechanismSection으로
+          화면에 실제 렌더되는 유일한 HowTo. 구매 가이드·조합원 가입·전시 즐기기 HowTo와
+          QAPage(generateSAFCoreQA)는 본문에 존재하지 않는 invisible 콘텐츠라 Google 구조화
+          데이터 가이드라인 위반(QAPage는 사용자 답변형 페이지 전용이기도 함) → 제거.
+          해당 Q&A 콘텐츠의 AEO 가치는 llms.txt 채널이 유지한다. */}
       <JsonLdScript data={generateMechanismHowTo(locale)} />
-      <JsonLdScript
-        data={generateSAFCoreQA(locale, { artistCount, artworkCount, loanCount: LOAN_COUNT })}
-      />
 
       {/* Share buttons (hidden, for metadata) */}
       <div className="hidden">
@@ -342,7 +334,8 @@ async function HomeFAQSection({ locale }: { locale: 'ko' | 'en' }) {
   return (
     <>
       <FAQList items={faqs} />
-      {faqs.length > 0 && <JsonLdScript data={generateFAQSchema(faqs, locale)} />}
+      {/* FAQPage JSON-LD는 /faq 한 곳에서만 발행 (2026-06-12 감사) — 동일 FAQ 목록을
+          홈·/faq 두 페이지에 중복 마크업하면 Google FAQ 가이드라인 위반 (단일 페이지 원칙). */}
     </>
   );
 }

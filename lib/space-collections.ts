@@ -31,6 +31,13 @@ export interface SpaceCollection {
   slug: string;
   titleKo: string;
   titleEn: string;
+  /**
+   * 검색 결과용 SEO <title> — 구매 의도 쿼리 키워드('거실 그림 추천' 등) + 브랜드 포함.
+   * H1·카드에는 titleKo/titleEn(감성 카피)을 그대로 쓰고, <title>/OG만 이 값을 쓴다.
+   * (titleTemplate이 '%s'라 suffix 자동 부착이 없음 — 브랜드를 여기 직접 포함, 2026-06-12 감사)
+   */
+  seoTitleKo: string;
+  seoTitleEn: string;
   /** 한 줄 부제 (카드·hero) */
   subtitleKo: string;
   subtitleEn: string;
@@ -50,6 +57,8 @@ export const SPACE_COLLECTIONS: SpaceCollection[] = [
     slug: 'living-room',
     titleKo: '거실에 걸 한 점',
     titleEn: 'A Statement Piece for the Living Room',
+    seoTitleKo: '거실 그림 추천 — 거실에 걸 대형 원본 작품 | 씨앗페 온라인 갤러리',
+    seoTitleEn: 'Living Room Art — Large Original Korean Artworks | SAF Online Gallery',
     subtitleKo: '공간을 압도하는 대작·대형 작품',
     subtitleEn: 'Large works that anchor the room',
     descriptionKo:
@@ -64,6 +73,8 @@ export const SPACE_COLLECTIONS: SpaceCollection[] = [
     slug: 'bedroom',
     titleKo: '침실의 정제된 한 점',
     titleEn: 'A Quiet Piece for the Bedroom',
+    seoTitleKo: '침실 그림 추천 — 차분한 중·소형 원본 작품 | 씨앗페 온라인 갤러리',
+    seoTitleEn: 'Bedroom Art — Calm Original Works in Modest Sizes | SAF Online Gallery',
     subtitleKo: '차분하고 절제된 중·소형 작품',
     subtitleEn: 'Calm, restrained works in modest sizes',
     descriptionKo:
@@ -81,6 +92,8 @@ export const SPACE_COLLECTIONS: SpaceCollection[] = [
     slug: 'entrance',
     titleKo: '현관을 여는 작은 그림',
     titleEn: 'A Small Work to Greet You',
+    seoTitleKo: '현관 그림 추천 — 좁은 벽에 어울리는 원화 소품 | 씨앗페 온라인 갤러리',
+    seoTitleEn: 'Entryway Art — Small Original Works for Narrow Walls | SAF Online Gallery',
     subtitleKo: '좁은 벽에 어울리는 소품',
     subtitleEn: 'Petite works for narrow walls',
     descriptionKo:
@@ -95,6 +108,8 @@ export const SPACE_COLLECTIONS: SpaceCollection[] = [
     slug: 'study',
     titleKo: '서재·작업실의 한 점',
     titleEn: 'A Piece for the Study',
+    seoTitleKo: '서재·작업실 그림 추천 — 사색적인 중형 원본 작품 | 씨앗페 온라인 갤러리',
+    seoTitleEn: 'Study & Studio Art — Contemplative Mid-size Originals | SAF Online Gallery',
     subtitleKo: '집중을 돕는 사색적인 중형 작품',
     subtitleEn: 'Contemplative mid-size works',
     descriptionKo:
@@ -112,6 +127,8 @@ export const SPACE_COLLECTIONS: SpaceCollection[] = [
     slug: 'first-piece',
     titleKo: '첫 그림으로 좋은 작품',
     titleEn: 'A Great First Artwork',
+    seoTitleKo: '첫 그림 구매 가이드 — 30만원 이하 입문 원화 | 씨앗페 온라인 갤러리',
+    seoTitleEn: 'Buy Your First Artwork — Originals under ₩300,000 | SAF Online Gallery',
     subtitleKo: '부담 없는 가격의 입문 소품',
     subtitleEn: 'Approachable works to start your collection',
     descriptionKo:
@@ -126,6 +143,8 @@ export const SPACE_COLLECTIONS: SpaceCollection[] = [
     slug: 'gift',
     titleKo: '선물하기 좋은 작품',
     titleEn: 'Artworks to Give',
+    seoTitleKo: '그림 선물 추천 — 10만~70만원대 원화 선물 | 씨앗페 온라인 갤러리',
+    seoTitleEn: 'Art Gifts — Original Korean Artworks ₩100k–700k | SAF Online Gallery',
     subtitleKo: '마음을 전하는 적정가의 한 점',
     subtitleEn: 'Thoughtful pieces at a giftable price',
     descriptionKo:

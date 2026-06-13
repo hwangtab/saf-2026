@@ -31,11 +31,6 @@ interface ImageProps {
   [key: string]: any;
 }
 
-jest.mock('next-image-export-optimizer', () => ({
-  __esModule: true,
-  default: ({ fill, priority, ...props }: ImageProps) => <img {...props} alt={props.alt || ''} />,
-}));
-
 jest.mock('../../components/common/Header/DesktopNav', () => ({
   __esModule: true,
   default: () => <div data-testid="desktop-nav">DesktopNav</div>,

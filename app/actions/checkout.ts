@@ -177,7 +177,13 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   const isAvailable = Array.isArray(availResult) && availResult[0]?.is_available === true;
   if (!isAvailable) {
-    return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
+    // 작품 status가 여전히 available인데 RPC가 막았다면 타인의 미결제 주문(pending_payment
+    // 30분 / awaiting_deposit 24시간)이 잠근 "일시 보류" 상태다. '이미 판매된 작품'으로
+    // 안내하면 영구 품절로 오인해 구매자가 영영 이탈한다 (2026-06-12 감사) — 별도 코드로
+    // 잠시 후 재시도를 안내한다.
+    const availabilityErrorCode =
+      artwork.status === 'available' ? 'artwork_temporarily_held' : 'artwork_sold_out';
+    return { success: false, error: apiError(availabilityErrorCode, buyerLocale) };
   }
 
   // Parse price server-side

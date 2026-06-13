@@ -23,7 +23,9 @@ export function generateOrganizationSchema(locale: 'ko' | 'en' = 'ko') {
     url: SITE_URL,
     foundingDate: '2020',
     taxID: CONTACT.BUSINESS_REGISTRATION_NUMBER,
-    logo: `${SITE_URL}/images/og-image2.png`,
+    // 정사각형 512×512 — Google Organization logo 가이드라인(112px+ 정사각 권장).
+    // 과거 og-image2.png(800×400 가로 배너)는 가이드 미충족 (2026-06-12 감사).
+    logo: `${SITE_URL}/images/icons/icon-512.png`,
     description: isEnglish
       ? 'Korea Smart Cooperative is a social cooperative providing mutual-aid financial services and cultural programs for Korean artists.'
       : '한국스마트협동조합은 예술인을 위한 상호부조 금융 서비스와 문화 프로그램을 제공하는 사회적 협동조합입니다.',

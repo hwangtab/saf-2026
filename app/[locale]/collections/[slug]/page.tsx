@@ -43,7 +43,8 @@ export async function generateMetadata({
   const collection = getSpaceCollectionBySlug(slug);
   if (!collection) return {};
   const isEn = locale === 'en';
-  const title = isEn ? collection.titleEn : collection.titleKo;
+  // <title>/OG는 구매 쿼리 키워드+브랜드가 포함된 SEO 타이틀, H1은 감성 카피(titleKo) 유지
+  const title = isEn ? collection.seoTitleEn : collection.seoTitleKo;
   const description = isEn ? collection.descriptionEn : collection.descriptionKo;
 
   // limit 없이 호출해 본문(page)과 동일 react cache 키 공유 → OG 이미지 = 페이지 첫 작품 일치.

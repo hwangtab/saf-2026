@@ -2,12 +2,6 @@ import { render, screen } from '@testing-library/react';
 import ArtworkCard from '@/components/ui/ArtworkCard';
 import { Artwork } from '@/types';
 
-// Mock ExportedImage since it requires complex next/image mocking
-jest.mock('next-image-export-optimizer', () => ({
-  __esModule: true,
-  default: ({ fill, ...props }: any) => <img {...props} alt={props.alt} />,
-}));
-
 const mockArtwork: Artwork = {
   id: '123',
   title: 'Test Artwork',

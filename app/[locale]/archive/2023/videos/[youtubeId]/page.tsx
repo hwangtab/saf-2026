@@ -118,6 +118,9 @@ export async function generateMetadata({
   const pageUrl = buildLocaleUrl(pagePath, locale);
 
   const base = createStandardPageMetadata(pageTitle, pageDescription, pageUrl, pagePath, locale);
+  // KO도 koOnly alternates로 통일 (2026-06-12 감사) — base(createStandardPageMetadata)는
+  // en-US hreflang을 포함하는데 /en 변형이 noindex + KO canonical이라, KO 페이지가
+  // noindex 페이지를 hreflang 대상으로 선언하는 비대칭(무효) 클러스터가 됐었다.
   if (locale === 'en') {
     return {
       ...base,
@@ -125,7 +128,10 @@ export async function generateMetadata({
       robots: { index: false, follow: true },
     };
   }
-  return base;
+  return {
+    ...base,
+    alternates: createLocaleAlternates(pagePath, locale, true),
+  };
 }
 
 export default async function Archive2023VideoWatchPage({

@@ -98,7 +98,9 @@
     "noResultsDesc": "Try a different keyword or browse all artworks.",
     "resetButton": "View all artworks",
     "resultPrefix": "Results:",
-    "resultSuffix": ""
+    "resultSuffix": "",
+    "filtersShow": "Filters",
+    "filtersHide": "Hide filters"
   },
   "globalSearch": {
     "placeholder": "Search artworks and artists",
@@ -178,10 +180,22 @@
     "heroGallerySubtitle": "Original works from {artistCount} artists at accessible prices",
     "mechanism": {
       "title": "What one work sets in motion",
-      "step1": { "label": "Buy Artwork", "note": "100% of price" },
-      "step2": { "label": "Fund Forms", "note": "10% of price" },
-      "step3": { "label": "Finance Partner", "note": "10× leverage" },
-      "step4": { "label": "Artist Loan", "note": "100% credit line" },
+      "step1": {
+        "label": "Buy Artwork",
+        "note": "100% of price"
+      },
+      "step2": {
+        "label": "Fund Forms",
+        "note": "10% of price"
+      },
+      "step3": {
+        "label": "Finance Partner",
+        "note": "10× leverage"
+      },
+      "step4": {
+        "label": "Artist Loan",
+        "note": "100% credit line"
+      },
       "counter": {
         "loansLabel": "Loans",
         "loansValue": "{loanCount}",
@@ -218,7 +232,8 @@
     "entryLevel": {
       "title": "Start Your First Collection — Under ₩300,000",
       "subtitle": "Accessible originals starting from ₩100,000. Prints, fine art prints, drawings, and small paintings — your first encounter with Korean contemporary art.",
-      "viewAll": "Browse all works"
+      "viewAll": "Browse all works",
+      "viewCollection": "Browse the first-artwork collection"
     },
     "emergingArtists": {
       "title": "Discover Them First",
@@ -337,6 +352,7 @@
     "phoneConsult": "Call to Consult",
     "artworkConsult": "Ask About This Work",
     "confidenceFreeShipping": "Free shipping",
+    "confidenceShippingFee": "Free shipping over ₩{threshold, number}",
     "confidenceReturn": "7-day returns",
     "confidenceCertificate": "Certificate included",
     "confidenceTransfer": "Bank transfer available",
@@ -525,6 +541,7 @@
   },
   "collections": {
     "landingTitle": "Find Art by Space",
+    "landingSeoTitle": "Art by Space — Living Room, Bedroom, Study & Gift Collections | SAF Online Gallery",
     "landingSubtitle": "Living room, bedroom, entrance, study — find the right piece for your space",
     "artworkCount": "{count, plural, =1 {1 work} other {# works}}",
     "exploreOthers": "Explore other spaces",
@@ -929,6 +946,7 @@
     "addressLabel": "Address",
     "confirmingPayment": "Confirming your payment...",
     "confirmationFailed": "Payment Confirmation Failed",
+    "confirmErrorReassure": "You will not be double-charged. If your payment was approved, we will email you as soon as it is confirmed — please check your order status first.",
     "confirmationError": "Payment confirmation failed.",
     "networkError": "A network error occurred.",
     "depositInstructions": "Please deposit to the virtual account below. Your order will be confirmed upon receipt.",

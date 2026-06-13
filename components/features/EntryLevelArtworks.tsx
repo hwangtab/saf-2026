@@ -53,13 +53,16 @@ export default async function EntryLevelArtworks({ locale }: { locale: string })
             />
           ))}
         </div>
-        {/* viewAll CTA — ArtworkCategoryGrid 카테고리 섹션과 동일 rounded-full 버튼 톤으로 정합. */}
+        {/* viewAll CTA — ArtworkCategoryGrid 카테고리 섹션과 동일 rounded-full 버튼 톤으로 정합.
+            목적지는 무필터 전체 갤러리(451점)가 아닌 첫 구매자 큐레이션 컬렉션
+            (/collections/first-piece: 30만원 이하 입문 소품) — '30만원 이하 첫 그림' 섹션의
+            가격 맥락이 끊기던 동선 수정 (2026-06-12 감사). */}
         <div className="mt-10 md:mt-12 flex justify-center">
           <Link
-            href="/artworks"
+            href="/collections/first-piece"
             className="group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm md:text-base font-semibold border border-charcoal/20 text-charcoal bg-white hover:bg-canvas hover:-translate-y-0.5 hover:shadow-md transition-[transform,box-shadow,background-color] duration-300"
           >
-            {t('viewAll')}
+            {t('viewCollection')}
             <ArrowRight
               aria-hidden="true"
               className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"

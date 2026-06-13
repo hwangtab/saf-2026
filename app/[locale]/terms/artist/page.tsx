@@ -42,6 +42,9 @@ export async function generateMetadata({
   const tSeo = await getTranslations({ locale, namespace: 'seo' });
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   const base = createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH, locale);
+  // KO도 koOnly alternates로 통일 (2026-06-12 감사) — base(createStandardPageMetadata)는
+  // en-US hreflang을 포함하는데 /en 변형이 noindex + KO canonical이라, KO 페이지가
+  // noindex 페이지를 hreflang 대상으로 선언하는 비대칭(무효) 클러스터가 됐었다.
   if (locale === 'en') {
     return {
       ...base,
@@ -49,7 +52,10 @@ export async function generateMetadata({
       robots: { index: false, follow: true },
     };
   }
-  return base;
+  return {
+    ...base,
+    alternates: createLocaleAlternates(PAGE_PATH, locale, true),
+  };
 }
 
 export default async function ArtistTermsPage({ params }: { params: Promise<{ locale: string }> }) {

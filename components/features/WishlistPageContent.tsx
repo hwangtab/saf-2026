@@ -77,7 +77,7 @@ export default function WishlistPageContent({
         <p className="text-sm text-charcoal-muted mb-8 max-w-xs">{t('pageEmptyDesc')}</p>
         <Link
           href="/artworks"
-          className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-primary text-white hover:bg-primary-strong transition-colors"
+          className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-primary-strong text-white hover:bg-primary-strong/90 transition-colors"
         >
           {t('browseArtworks')}
         </Link>
@@ -101,7 +101,7 @@ export default function WishlistPageContent({
         <p className="text-lg font-semibold text-charcoal mb-4">{t('fetchError')}</p>
         <button
           onClick={() => fetchArtworks(ids)}
-          className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-primary text-white hover:bg-primary-strong transition-colors"
+          className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-primary-strong text-white hover:bg-primary-strong/90 transition-colors"
         >
           {t('retryLoad')}
         </button>

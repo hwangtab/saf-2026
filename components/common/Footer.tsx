@@ -270,7 +270,11 @@ export default async function Footer({ locale }: { locale: string }) {
                 {MASTER_ARTISTS.filter((a) => a.specialSlug && !a.footerHidden).map((artist) => (
                   <Link
                     key={artist.artistName}
-                    href={`/special/${artist.specialSlug}`}
+                    // 정규 작가 페이지 직링크 (2026-06-12 감사) — /special/<slug>는 작가
+                    // 페이지로 308 redirect되는 별칭이라, 전 페이지 공통 푸터가 redirect
+                    // 경유 내부 링크를 수백 페이지에 깔던 낭비. /special/*은 외부 백링크
+                    // 보존용으로만 유지.
+                    href={`/artworks/artist/${encodeURIComponent(artist.artistName)}`}
                     prefetch={false}
                     className="text-gray-300 hover:text-white transition-colors"
                   >

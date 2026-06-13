@@ -186,7 +186,7 @@ export default async function SonJangseopFeature({
       ? 'Selected works by Son Jangseop from the SAF Online collection.'
       : '씨앗페 온라인에 소장된 손장섭 작품들을 소개합니다.',
     url: pageUrl,
-    eventStatus: 'https://schema.org/EventMovedOnline',
+    eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
     location: { '@type': 'VirtualLocation', url: pageUrl },
     startDate: '2026-01-14',

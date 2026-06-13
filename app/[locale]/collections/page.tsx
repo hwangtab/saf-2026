@@ -25,7 +25,8 @@ export async function generateMetadata({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'collections' });
   const base = createPageMetadata(
-    t('landingTitle'),
+    // <title>/OG는 구매 쿼리 키워드+브랜드 포함 SEO 타이틀, H1은 landingTitle(감성 카피) 유지
+    t('landingSeoTitle'),
     t('landingSubtitle'),
     '/collections',
     OG_IMAGE.url,

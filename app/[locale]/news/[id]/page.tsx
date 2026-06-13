@@ -9,6 +9,7 @@ import { OG_IMAGE } from '@/lib/constants';
 import { resolveLocale } from '@/lib/server-locale';
 import { localizeNewsSource } from '@/lib/news-source';
 import SafeImage from '@/components/common/SafeImage';
+import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
 import Section from '@/components/ui/Section';
 import LinkButton from '@/components/ui/LinkButton';
 import PageHero from '@/components/ui/PageHero';
@@ -222,6 +223,16 @@ export default async function NewsArticlePage({ params }: Props) {
                 </>
               )}
             </p>
+          </div>
+          {/* 공유 버튼 — 언론 보도는 캠페인 신뢰의 사회적 증거라 공유 가치가 높은데
+              상세에만 공유 수단이 없었다 (2026-06-12 감사, 목록 페이지와 비대칭 해소) */}
+          <div className="mt-8 flex items-center gap-3">
+            <ShareButtonsWrapper
+              url={buildLocaleUrl(`/news/${article.id}`, locale)}
+              title={localizedTitle}
+              description={description}
+              imageUrl={article.thumbnail ?? undefined}
+            />
           </div>
           <div className="mt-6">
             <Link href="/news" className="text-sm text-charcoal-muted hover:underline">

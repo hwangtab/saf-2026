@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
 import { trackEvent } from '@/lib/analytics/track';
+import { SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 import TrustBadges from '@/components/features/TrustBadges';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
 import {
@@ -32,6 +33,15 @@ interface ArtworkPurchaseCTAProps {
   displayPrice?: string | null;
   category?: string;
   hasSameCategoryWorks?: boolean;
+  /** 서버에서 getPaymentMode()로 판정 — 결제 모드 단일 출처 (2026-06-12 감사) */
+  isTossEnabled: boolean;
+  /**
+   * 서버에서 raw artwork.price를 파싱한 숫자 가격 (문의 작품은 null) — 배송비 분기용.
+   * ⚠️ displayPrice(로케일 변환된 표시 문자열)에서 역파싱하지 말 것: EN 로케일은
+   * 한글 포함 가격을 번역 라벨로 치환해 파싱이 null이 되고 무료배송으로 오표기된다
+   * (2026-06-12 리뷰).
+   */
+  priceAmount: number | null;
 }
 
 function ContactButtons() {
@@ -59,10 +69,19 @@ function ContactButtons() {
   );
 }
 
-function PurchaseConfidenceStrip() {
+function PurchaseConfidenceStrip({ priceAmount }: { priceAmount: number | null }) {
   const t = useTranslations('artworkDetail');
+  // 20만원(SHIPPING_THRESHOLD) 미만 작품은 결제 단계에서 배송비 4,000원이 부과되는데
+  // 무조건 '무료 배송'으로 표기하면 체크아웃에서 신뢰가 깨진다 (2026-06-12 감사).
+  // 가격 미상(문의)은 기존 문구 유지.
+  const isFreeShipping = priceAmount === null || priceAmount >= SHIPPING_THRESHOLD;
   const items = [
-    { icon: PackageCheck, label: t('confidenceFreeShipping') },
+    {
+      icon: PackageCheck,
+      label: isFreeShipping
+        ? t('confidenceFreeShipping')
+        : t('confidenceShippingFee', { threshold: SHIPPING_THRESHOLD }),
+    },
     { icon: RotateCcw, label: t('confidenceReturn') },
     { icon: BadgeCheck, label: t('confidenceCertificate') },
     { icon: Landmark, label: t('confidenceTransfer') },
@@ -140,9 +159,10 @@ export default function ArtworkPurchaseCTA({
   displayPrice,
   category,
   hasSameCategoryWorks,
+  isTossEnabled,
+  priceAmount,
 }: ArtworkPurchaseCTAProps) {
   const t = useTranslations('artworkDetail');
-  const paymentMode = process.env.NEXT_PUBLIC_PAYMENT_MODE;
 
   useEffect(() => {
     trackEvent('view_item', {
@@ -158,24 +178,27 @@ export default function ArtworkPurchaseCTA({
   const isDbArtwork = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
     artworkId
   );
-  const isTossMode = paymentMode === 'toss' && isDbArtwork;
+  const isTossMode = isTossEnabled && isDbArtwork;
 
   // E분기: reserved — 예약 중 안내
   if (reserved && !sold) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-gallery-card">
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-gallery-card space-y-4">
         <div className="text-center">
           <Clock className="w-10 h-10 text-charcoal-muted mx-auto mb-3" />
           <p className="text-lg font-bold text-charcoal-deep mb-1">{t('reservedNotice')}</p>
           <p className="text-sm text-charcoal-soft mb-1">{t('reservedExplore')}</p>
-          <p className="text-xs text-charcoal-soft mb-4">{t('reservedHint')}</p>
-          <LinkButton href="/artworks" variant="outline" className="w-full">
-            <span className="inline-flex items-center gap-1">
-              {t('soldExploreAll')}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </span>
-          </LinkButton>
+          <p className="text-xs text-charcoal-soft">{t('reservedHint')}</p>
         </div>
+        {/* 예약 해제 알림·구매 가능 여부 문의 동선 — 과거 일반 텍스트 전화번호뿐이라 모바일에서
+            탭 연결이 불가능했다 (2026-06-12 감사). tel:/mailto: 상담 버튼 노출. */}
+        <ConsultationButtons artworkId={artworkId} artworkTitle={artworkTitle} artist={artist} />
+        <LinkButton href="/artworks" variant="outline" className="w-full">
+          <span className="inline-flex items-center gap-1">
+            {t('soldExploreAll')}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </span>
+        </LinkButton>
       </div>
     );
   }
@@ -239,7 +262,7 @@ export default function ArtworkPurchaseCTA({
       {/* A분기: toss 결제 모드 + DB 작품 — 내부 체크아웃 */}
       {isTossMode && hasActionablePrice && (
         <>
-          <PurchaseConfidenceStrip />
+          <PurchaseConfidenceStrip priceAmount={priceAmount} />
 
           <LinkButton
             href={`/checkout/${artworkId}`}
@@ -279,7 +302,7 @@ export default function ArtworkPurchaseCTA({
       {/* A분기: legacy 작품 — 외부 링크 */}
       {!isTossMode && shopUrl && (
         <>
-          <PurchaseConfidenceStrip />
+          <PurchaseConfidenceStrip priceAmount={priceAmount} />
 
           <LinkButton
             href={`${shopUrl}${shopUrl.includes('?') ? '&' : '?'}utm_source=saf2026&utm_medium=web&utm_campaign=artwork&utm_content=${artworkId}`}
@@ -320,7 +343,7 @@ export default function ArtworkPurchaseCTA({
       {/* B분기: shopUrl 없음 또는 가격 없음 — 문의 안내 */}
       {!isTossMode && !shopUrl && (
         <>
-          <PurchaseConfidenceStrip />
+          <PurchaseConfidenceStrip priceAmount={priceAmount} />
 
           <div className="rounded-xl bg-gray-50 p-4 text-center">
             <p className="text-sm text-gray-600 break-keep leading-relaxed">

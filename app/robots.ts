@@ -11,11 +11,15 @@ export const dynamic = 'force-static';
 // 공개 콘텐츠 쿼리 변형(`/artworks?sort=`, `/stories?category=`, `/news?utm_`, `/artworks/:id?returnTo=`)
 // 과 공개 페이지 tracking query는 proxy.ts에서 308 정규화해 크롤러가 canonical URL로 합류하도록 한다.
 const COMMON_DISALLOW = [
-  // Next.js 빌드 산출물 — 페이지 콘텐츠 아니라 JS/CSS/폰트/이미지 변형.
-  // ?dpl=... deployment hash가 빌드마다 변경되어 무한 신규 URL 발생 → crawl budget 낭비.
-  // GSC "감수중 2,382 / 색인되지 않음 251" 알림의 직접 원인 (2026-05-11 PDF).
-  '/_next/static/',
-  '/_next/image',
+  // ⚠️ '/_next/static/'·'/_next/image'를 여기서 차단하지 말 것 (2026-06-12 감사에서 제거).
+  // Googlebot·Yeti의 렌더링 엔진은 서브리소스 fetch에도 robots.txt를 적용하므로 CSS/JS와
+  // 페이지 내 모든 작품 이미지(/_next/image?url=...)가 렌더 단계에서 차단되어 "렌더링 차단 =
+  // 랭킹 직접 악영향" 패턴이었음.
+  // - /_next/static의 ?dpl=... 쿼리 변형 GSC 노이즈는 next.config.js의
+  //   X-Robots-Tag: noindex(/_next/static/:path*)가 처리 (색인만 막고 렌더 fetch는 허용).
+  // - /_next/image는 noindex 헤더를 붙일 수 없지만(Vercel optimizer 엔드포인트에는 custom
+  //   headers 미적용) 의도적으로 크롤 허용 — 페이지 img src의 이미지 색인(구글 이미지 검색)
+  //   에 필요하며, 이미지 URL은 웹문서로 색인되지 않으므로 GSC 웹 색인 노이즈와 무관.
   // 영문 artworks/news 하위 URL은 next.config.js의 X-Robots-Tag: noindex, follow로 색인 제외.
   // robots.txt에서 막으면 Google이 noindex 헤더를 확인하지 못하므로 여기서는 차단하지 않는다.
   // /en/stories/는 차단하지 않음 — EN_INDEXABLE_STORY_SLUGS 3편(2026-05 i18n
@@ -28,11 +32,12 @@ const COMMON_DISALLOW = [
   '/admin/',
   '/dashboard/',
   '/exhibitor/',
-  '/checkout/',
-  '/login',
-  '/signup',
-  '/onboarding',
-  '/terms-consent',
+  // ⚠️ '/checkout/'·'/login'·'/signup'·'/onboarding'·'/terms-consent'는 차단하지 않는다
+  // (2026-06-12 감사). 이 라우트들은 페이지 자체에 noindex 메타가 있는데 robots로 크롤을
+  // 막으면 크롤러가 noindex를 영영 못 읽어 "차단됐지만 색인됨"(URL-only) 패턴이 성립하고
+  // (/checkout은 전 작품 상세가 내부 링크), '/checkout/'은 '/en/checkout/'을 매칭하지 못해
+  // locale별 비대칭도 있었다. /mypage·/orders·/wishlist와 동일한 '크롤 허용 + noindex 메타'
+  // 단일 패턴으로 통일.
 ];
 
 export default function robots(): MetadataRoute.Robots {

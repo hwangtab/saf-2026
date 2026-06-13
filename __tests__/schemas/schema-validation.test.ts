@@ -198,11 +198,12 @@ describe('generateExhibitionSchema', () => {
     expect(schema.endDate).toBeTruthy();
   });
 
-  it('should compute eventStatus as EventMovedOnline since exhibition dates have passed', () => {
+  it('should keep eventStatus as EventScheduled even after exhibition dates have passed', () => {
     // Exhibition: 2026-01-14 to 2026-01-26 (offline ended), online gallery continues.
-    // schema.org EventStatusType enum에 EventCompleted/EventInProgress 없음 → MovedOnline 매핑.
+    // EventMovedOnline은 "예정 오프라인 행사의 온라인 전환" 사전 공지용 상태라 종료 전시에
+    // 쓰면 의미 왜곡 — Google 권장대로 EventScheduled + 과거 일자 유지 (2026-06-12 감사).
     const schema = generateExhibitionSchema();
-    expect(schema.eventStatus).toBe('https://schema.org/EventMovedOnline');
+    expect(schema.eventStatus).toBe('https://schema.org/EventScheduled');
   });
 
   it('should include valid location schema for current event phase', () => {
@@ -258,7 +259,7 @@ describe('generateExhibitionSchema', () => {
     const schema = generateExhibitionSchema();
     nowSpy.mockRestore();
 
-    expect(schema.eventStatus).toBe('https://schema.org/EventMovedOnline');
+    expect(schema.eventStatus).toBe('https://schema.org/EventScheduled');
     expect(schema.eventAttendanceMode).toBe('https://schema.org/OnlineEventAttendanceMode');
     expect(schema.location['@type']).toBe('VirtualLocation');
   });
@@ -320,14 +321,41 @@ describe('generateArtworkJsonLd', () => {
     images: ['/images/test.png'],
   };
 
-  it('should emit VisualArtwork only and omit Product/Merchant listing trigger fields', () => {
+  it('should emit Product+VisualArtwork dual type with offers but no fake reviews', () => {
     const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
 
-    expect(productSchema['@type']).toBe('VisualArtwork');
-    expect(productSchema).not.toHaveProperty('offers');
+    expect(productSchema['@type']).toEqual(['Product', 'VisualArtwork']);
+    expect(productSchema.offers['@type']).toBe('Offer');
+    expect(productSchema.offers.price).toBe('100000');
+    expect(productSchema.offers.priceCurrency).toBe('KRW');
+    expect(productSchema.offers.availability).toBe('https://schema.org/InStock');
+    expect(productSchema.offers.seller['@type']).toBe('Organization');
     expect(productSchema).not.toHaveProperty('audience');
     expect(productSchema).not.toHaveProperty('size');
-    expect(JSON.stringify(productSchema)).not.toContain('"@type":"Offer"');
+    // 작품은 일회성 원본 — 가짜 리뷰·평점을 넣지 않는 원칙 유지 (GSC 경고는 무시 가능)
+    expect(productSchema).not.toHaveProperty('review');
+    expect(productSchema).not.toHaveProperty('aggregateRating');
+  });
+
+  it('should omit offers for inquiry-priced artworks and map sold/reserved availability', () => {
+    const { productSchema: inquiry } = generateArtworkJsonLd(baseArtwork, '', true, 'ko');
+    expect(inquiry).not.toHaveProperty('offers');
+
+    const { productSchema: sold } = generateArtworkJsonLd(
+      { ...baseArtwork, sold: true },
+      '100000',
+      false,
+      'ko'
+    );
+    expect(sold.offers.availability).toBe('https://schema.org/OutOfStock');
+
+    const { productSchema: reserved } = generateArtworkJsonLd(
+      { ...baseArtwork, reserved: true },
+      '100000',
+      false,
+      'ko'
+    );
+    expect(reserved.offers.availability).toBe('https://schema.org/LimitedAvailability');
   });
 
   it('should add Google Images credit and copyright metadata to artwork images', () => {
@@ -337,59 +365,60 @@ describe('generateArtworkJsonLd', () => {
     expect(productSchema.image.copyrightNotice).toBe('© 테스트 작가');
   });
 
-  it('should align isPartOf status and location before exhibition start', () => {
+  // 전시 이벤트는 isPartOf(range: CreativeWork — Event는 위반)가 아니라
+  // subjectOf(range: CreativeWork | Event) 배열의 첫 원소로 발행한다 (2026-06-12 감사).
+  it('should align exhibition event status and location before exhibition start', () => {
     const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-01-10T00:00:00+09:00'));
     const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
     nowSpy.mockRestore();
 
-    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventScheduled');
-    expect(productSchema.isPartOf.eventAttendanceMode).toBe(
-      'https://schema.org/MixedEventAttendanceMode'
-    );
-    expect(productSchema.isPartOf.location['@type']).toBe('Place');
+    const exhibition = productSchema.subjectOf[0];
+    expect(exhibition['@type']).toBe('ExhibitionEvent');
+    expect(exhibition.eventStatus).toBe('https://schema.org/EventScheduled');
+    expect(exhibition.eventAttendanceMode).toBe('https://schema.org/MixedEventAttendanceMode');
+    expect(exhibition.location['@type']).toBe('Place');
   });
 
-  it('should align isPartOf status and location after exhibition end', () => {
+  it('should align exhibition event status and location after exhibition end', () => {
     const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-02-10T00:00:00+09:00'));
     const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
     nowSpy.mockRestore();
 
-    // 오프라인 종료 → EventMovedOnline (EventCompleted는 schema.org enum에 없음)
-    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventMovedOnline');
-    expect(productSchema.isPartOf.eventAttendanceMode).toBe(
-      'https://schema.org/OnlineEventAttendanceMode'
-    );
-    expect(productSchema.isPartOf.location['@type']).toBe('VirtualLocation');
+    // 종료 후에도 EventScheduled 유지 (EventMovedOnline은 사전 공지용 상태라 의미 왜곡)
+    const exhibition = productSchema.subjectOf[0];
+    expect(exhibition.eventStatus).toBe('https://schema.org/EventScheduled');
+    expect(exhibition.eventAttendanceMode).toBe('https://schema.org/OnlineEventAttendanceMode');
+    expect(exhibition.location['@type']).toBe('VirtualLocation');
   });
 
-  it('should align isPartOf status and location during exhibition in-progress', () => {
+  it('should align exhibition event status and location during exhibition in-progress', () => {
     const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-01-20T12:00:00+09:00'));
     const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
     nowSpy.mockRestore();
 
-    // 진행 중 → EventScheduled (EventInProgress는 schema.org enum에 없음)
-    expect(productSchema.isPartOf.eventStatus).toBe('https://schema.org/EventScheduled');
-    expect(productSchema.isPartOf.eventAttendanceMode).toBe(
-      'https://schema.org/MixedEventAttendanceMode'
-    );
-    expect(productSchema.isPartOf.location['@type']).toBe('Place');
+    const exhibition = productSchema.subjectOf[0];
+    expect(exhibition.eventStatus).toBe('https://schema.org/EventScheduled');
+    expect(exhibition.eventAttendanceMode).toBe('https://schema.org/MixedEventAttendanceMode');
+    expect(exhibition.location['@type']).toBe('Place');
   });
 
-  it('should emit subjectOf Article entries from mentionedInStories option', () => {
+  it('should append subjectOf Article entries after the exhibition event', () => {
     const { productSchema } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko', undefined, {
       mentionedInStories: [
         { slug: 'spring-curation-saf', title: '봄 큐레이션', titleEn: 'Spring Curation' },
         { slug: 'minjung-art-intro', title: '민중미술이란', titleEn: null },
       ],
     });
-    expect(productSchema.subjectOf).toHaveLength(2);
-    expect(productSchema.subjectOf[0]).toEqual({
+    // [0] = ExhibitionEvent, [1..] = 매거진 Article
+    expect(productSchema.subjectOf).toHaveLength(3);
+    expect(productSchema.subjectOf[0]['@type']).toBe('ExhibitionEvent');
+    expect(productSchema.subjectOf[1]).toEqual({
       '@type': 'Article',
       '@id': 'https://www.saf2026.com/stories/spring-curation-saf',
       headline: '봄 큐레이션',
       url: 'https://www.saf2026.com/stories/spring-curation-saf',
     });
-    expect(productSchema.subjectOf[1].headline).toBe('민중미술이란');
+    expect(productSchema.subjectOf[2].headline).toBe('민중미술이란');
   });
 
   it('should localize subjectOf headline and URL when locale is en', () => {
@@ -398,15 +427,17 @@ describe('generateArtworkJsonLd', () => {
         { slug: 'spring-curation-saf', title: '봄 큐레이션', titleEn: 'Spring Curation' },
       ],
     });
-    expect(productSchema.subjectOf[0].headline).toBe('Spring Curation');
-    expect(productSchema.subjectOf[0]['@id']).toBe(
+    expect(productSchema.subjectOf[1].headline).toBe('Spring Curation');
+    expect(productSchema.subjectOf[1]['@id']).toBe(
       'https://www.saf2026.com/en/stories/spring-curation-saf'
     );
   });
 
-  it('should omit subjectOf when mentionedInStories is empty or missing', () => {
+  it('should keep only the exhibition event in subjectOf when mentionedInStories is empty', () => {
     const { productSchema: a } = generateArtworkJsonLd(baseArtwork, '100000', false, 'ko');
-    expect(a).not.toHaveProperty('subjectOf');
+    expect(a.subjectOf).toHaveLength(1);
+    expect(a.subjectOf[0]['@type']).toBe('ExhibitionEvent');
+    expect(a).not.toHaveProperty('mentions');
     const { productSchema: b } = generateArtworkJsonLd(
       baseArtwork,
       '100000',
@@ -417,7 +448,7 @@ describe('generateArtworkJsonLd', () => {
         mentionedInStories: [],
       }
     );
-    expect(b).not.toHaveProperty('subjectOf');
+    expect(b.subjectOf).toHaveLength(1);
   });
 });
 

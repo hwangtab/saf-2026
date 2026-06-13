@@ -16,14 +16,14 @@ const LEGACY_ARTWORK_PATH = /^\/(?:(ko|en)\/)?artworks\/(\d+)\/?$/;
 // stories 정적화 후 server-side query 필터 제거. 외부 백링크나 직접 입력으로 들어온 query URL이
 // 색인되면 /stories(전체 매거진)와 중복 색인 위험. 정적 카테고리 라우트로 흡수해 단일 정규 URL 보장.
 const STORIES_LIST_PATH = /^\/(en\/)?stories\/?$/;
-const NEWS_LIST_PATH = /^\/(en\/)?news\/?$/;
 const VALID_STORY_CATEGORIES = new Set(['artist-story', 'buying-guide', 'art-knowledge']);
 
-// 공개 작품 URL의 query 변형은 SEO 중복 URL로만 작동한다. 필터/정렬 공유 URL은 검색엔진에
-// 노출하지 않고, 작품 상세 returnTo 등 UX 힌트는 정규 detail URL로 흡수한다.
-const ARTWORKS_LIST_PATH = /^\/(en\/)?artworks\/?$/;
+// 작품 상세의 비추적 query(returnTo 등)만 정규 detail URL로 308 정규화한다.
+// ⚠️ 목록 페이지(/artworks 등)의 query는 더 이상 제거하지 않는다 (2026-06-12 감사):
+// page/q/category/price 등은 Pagination·useArtworkFilter·GlobalSearchDialog가 생성하는
+// 기능적 URL 상태라, 일괄 308이 페이지네이션 크롤·필터 공유·북마크·새로고침을 전부
+// 무필터 1페이지로 초기화하는 회귀였다. 중복 색인은 각 페이지의 self-canonical이 해소.
 const ARTWORK_DETAIL_PATH = /^\/(?:(ko|en)\/)?artworks\/[^/?]+\/?$/;
-const SEARCHLESS_LIST_QUERY_PATHS = [STORIES_LIST_PATH, NEWS_LIST_PATH, ARTWORKS_LIST_PATH];
 const TRACKING_QUERY_PARAMS = new Set(['fbclid', 'gclid', 'msclkid']);
 
 const intlProxy = createMiddleware(routing);
@@ -74,10 +74,13 @@ function canonicalizeSearchlessUrl(pathname: string, requestUrl: string): URL {
   return url;
 }
 
-function hasTrackingSearchParam(searchParams: URLSearchParams): boolean {
-  return Array.from(searchParams.keys()).some(
-    (key) => key.startsWith('utm_') || TRACKING_QUERY_PARAMS.has(key)
-  );
+// ⚠️ 추적 파라미터(utm_*, fbclid, gclid, msclkid)는 어떤 경우에도 redirect로 제거하지
+// 않는다 (2026-06-12 감사). GA4·Vercel Analytics는 클라이언트에서 landing URL을 읽어
+// 캠페인을 귀속시키는데, 서버 308이 먼저 제거하면 소셜 캠페인(인스타그램/스레드/카카오)
+// 유입 측정과 admin UTM 대시보드가 구조적으로 무력화된다. Google은 utm 변형의 중복
+// 색인을 rel=canonical로 처리하라고 권장하며 모든 공개 페이지가 self-canonical 발행 중.
+function isTrackingParam(key: string): boolean {
+  return key.startsWith('utm_') || TRACKING_QUERY_PARAMS.has(key);
 }
 
 export async function proxy(request: NextRequest) {
@@ -116,14 +119,27 @@ export async function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 404 });
   }
 
-  // 공개 콘텐츠 목록/상세의 query URL은 canonical HTML과 동일한 중복 URL이다.
+  // 작품 상세의 알 수 없는 query만 정규 detail URL로 흡수한다. 보존 대상:
+  // - 추적 파라미터(utm_* 등): 어트리뷰션 (isTrackingParam 주석 참조)
+  // - returnTo: ArtworkDetailNav가 소비하는 기능 파라미터 ("특별전/컬렉션으로 돌아가기"
+  //   복원). 과거 일괄 308이 이 기능을 죽이고 있었다 (2026-06-12 감사). 중복 색인은
+  //   self-canonical이 해소.
   // legacy 숫자 ID는 위 UUID redirect가 우선되어야 하므로 이 블록은 legacy 처리 뒤에 둔다.
-  if (
-    searchParams.size > 0 &&
-    (SEARCHLESS_LIST_QUERY_PATHS.some((pattern) => pattern.test(pathname)) ||
-      ARTWORK_DETAIL_PATH.test(pathname))
-  ) {
-    return NextResponse.redirect(canonicalizeSearchlessUrl(pathname, request.url), 308);
+  if (searchParams.size > 0 && ARTWORK_DETAIL_PATH.test(pathname)) {
+    const isPreservedParam = (key: string) => isTrackingParam(key) || key === 'returnTo';
+    const hasFunctionalParam = Array.from(searchParams.keys()).some(
+      (key) => !isPreservedParam(key)
+    );
+    if (hasFunctionalParam) {
+      // redirect 목적지에서 기본 locale prefix(/ko)도 함께 제거 — 유지하면 아래
+      // /ko 정규화 블록이 한 번 더 308을 보내 2-hop 체인이 된다 (2026-06-12 리뷰)
+      const canonicalPath = pathname.replace(/^\/ko(?=\/)/, '');
+      const url = canonicalizeSearchlessUrl(canonicalPath, request.url);
+      searchParams.forEach((value, key) => {
+        if (isPreservedParam(key)) url.searchParams.append(key, value);
+      });
+      return NextResponse.redirect(url, 308);
+    }
   }
 
   // Admin redirect
@@ -151,9 +167,21 @@ export async function proxy(request: NextRequest) {
     return await updateSession(request);
   }
 
-  // 공개 페이지의 광고·추적 query는 robots 차단 대신 정규 URL 308로 흡수한다.
-  if (searchParams.size > 0 && hasTrackingSearchParam(searchParams)) {
-    return NextResponse.redirect(canonicalizeSearchlessUrl(pathname, request.url), 308);
+  // 공개 페이지의 광고·추적 query를 308로 제거하던 블록은 삭제됨 (2026-06-12 감사) —
+  // isTrackingParam 주석 참조. 중복 색인은 self-canonical이 처리한다.
+
+  // 기본 locale prefix 정규화를 next-intl(307 임시 redirect)보다 먼저 308(영구)로 처리한다
+  // (2026-06-12 감사) — 기본 locale의 prefix 제거는 영구 정책이므로 크롤러에 영구 신호.
+  // 포털/정적 경로는 위 분기들이 이미 처리했으므로 여기 도달하는 것은 공개 페이지뿐.
+  // prefix는 routing.defaultLocale에서 파생 — 'ko' 하드코딩 시 locale 정책 변경과 어긋나면
+  // 308(브라우저/CDN에 영구 캐시)이 잘못된 redirect를 오래 남긴다 (2026-06-12 리뷰).
+  const defaultLocalePrefix = `/${routing.defaultLocale}`;
+  if (pathname === defaultLocalePrefix || pathname.startsWith(`${defaultLocalePrefix}/`)) {
+    const strippedPath =
+      pathname === defaultLocalePrefix ? '/' : pathname.slice(defaultLocalePrefix.length) || '/';
+    const url = new URL(strippedPath, request.url);
+    url.search = request.nextUrl.search;
+    return NextResponse.redirect(url, 308);
   }
 
   // Public pages: handle i18n locale routing

@@ -22,29 +22,26 @@ describe('stories indexing guards', () => {
     expect(proxySource).toMatch(/308/);
   });
 
-  it('proxy는 공개 작품 목록/상세 쿼리 URL을 searchless canonical URL로 308 리다이렉트', () => {
-    expect(proxySource).toContain('ARTWORKS_LIST_PATH');
+  // 2026-06-12 감사로 정책 전환: 목록 페이지 query(page/q/category/price 등)는 기능적
+  // URL 상태이므로 308로 제거하지 않는다 (페이지네이션 크롤·필터 공유·북마크 회귀 방지).
+  // 작품 상세만 비추적 query를 정규화하되 추적 파라미터(utm_* 등)는 보존한다.
+  it('proxy는 목록 query를 보존하고 작품 상세의 비보존 query만 308 정규화한다', () => {
+    expect(proxySource).not.toContain('SEARCHLESS_LIST_QUERY_PATHS');
+    expect(proxySource).not.toContain('ARTWORKS_LIST_PATH');
     expect(proxySource).toContain('ARTWORK_DETAIL_PATH');
-    expect(proxySource).toContain('canonicalizeSearchlessUrl');
-    expect(proxySource).toMatch(
-      /SEARCHLESS_LIST_QUERY_PATHS\s*=\s*\[[^\]]*ARTWORKS_LIST_PATH[^\]]*\]/
-    );
     expect(proxySource).toMatch(/ARTWORK_DETAIL_PATH\.test\(pathname\)/);
-    expect(proxySource).toMatch(/searchParams\.size\s*>\s*0/);
-    expect(proxySource).toMatch(
-      /NextResponse\.redirect\(canonicalizeSearchlessUrl\(pathname, request\.url\), 308\)/
-    );
+    expect(proxySource).toMatch(/hasFunctionalParam/);
+    // 추적 파라미터(utm 등)와 returnTo(특별전/컬렉션 복귀 기능)는 redirect 시에도 보존
+    expect(proxySource).toMatch(/isTrackingParam\(key\) \|\| key === 'returnTo'/);
+    expect(proxySource).toMatch(/if \(isPreservedParam\(key\)\) url\.searchParams\.append/);
   });
 
-  it('proxy는 공개 콘텐츠 목록 쿼리 URL을 robots 차단 대신 308 정규화한다', () => {
-    expect(proxySource).toContain('NEWS_LIST_PATH');
-    expect(proxySource).toContain('SEARCHLESS_LIST_QUERY_PATHS');
-    expect(proxySource).toContain('hasTrackingSearchParam');
-    expect(proxySource).toMatch(
-      /SEARCHLESS_LIST_QUERY_PATHS\.some\(\(pattern\) => pattern\.test\(pathname\)\)/
-    );
-    expect(proxySource).toMatch(
-      /NextResponse\.redirect\(canonicalizeSearchlessUrl\(pathname, request\.url\), 308\)/
+  it('proxy는 추적 파라미터(utm/fbclid/gclid)를 어떤 경로에서도 308로 제거하지 않는다', () => {
+    expect(proxySource).toContain('isTrackingParam');
+    expect(proxySource).not.toContain('hasTrackingSearchParam(searchParams)');
+    // 추적 파라미터 단독 요청을 redirect하는 블록이 없어야 GA4 어트리뷰션이 보존된다
+    expect(proxySource).not.toMatch(
+      /hasTrackingSearchParam\(searchParams\)[\s\S]{0,120}NextResponse\.redirect/
     );
   });
 

@@ -65,6 +65,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getSupabaseStoriesLight(),
   ]);
   const now = new Date();
+  const exhibitionEndDate = new Date(CAMPAIGN.END_DATE);
+
+  // lastModified는 실데이터 파생값 사용 (2026-06-12 감사) — 'now'를 박으면 revalidate(1시간)
+  // 마다 작가·카테고리·컬렉션 등 143개 entry의 lastmod가 일괄 갱신되는 가짜 신선도가 되어
+  // 검색엔진이 사이트 전체의 lastmod 신호를 불신하게 된다. 작품 파생 페이지는 max(sold_at),
+  // 스토리 파생 페이지는 max(updated_at ?? published_at) 기준. 홈·/changelog처럼 실제로
+  // 자주 바뀌는 페이지만 예외적으로 now 유지.
+  const toDate = (value: string | null | undefined): Date | null => {
+    if (!value) return null;
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+  const maxDate = (dates: Array<Date | null>, fallback: Date): Date =>
+    dates.reduce<Date>((max, d) => (d && d > max ? d : max), fallback);
+
+  const latestArtworkActivity = maxDate(
+    allArtworks.map((a) => toDate(a.sold_at)),
+    exhibitionEndDate
+  );
+  const latestStoryActivity = maxDate(
+    allStories.map((s) => toDate(s.updated_at ?? s.published_at)),
+    exhibitionEndDate
+  );
+  const latestNewsActivity = maxDate(
+    allNews.map((n) => toDate(n.date)),
+    exhibitionEndDate
+  );
 
   const staticPaths: Array<{
     path: string;
@@ -147,26 +174,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       path: '/artworks',
       changeFrequency: 'weekly',
       priority: 0.9,
-      lastModified: now,
+      lastModified: latestArtworkActivity,
     },
     {
       // Phase 3: 공간·용도 큐레이션 컬렉션 랜딩 + 개별 (규칙 기반 자동 큐레이션)
       path: '/collections',
       changeFrequency: 'weekly',
       priority: 0.8,
-      lastModified: now,
+      lastModified: latestArtworkActivity,
     },
     ...SPACE_COLLECTIONS.map((c) => ({
       path: `/collections/${c.slug}`,
       changeFrequency: 'weekly' as const,
       priority: 0.75,
-      lastModified: now,
+      lastModified: latestArtworkActivity,
     })),
     {
       path: '/artworks/artist',
       changeFrequency: 'weekly',
       priority: 0.7,
-      lastModified: now,
+      lastModified: latestArtworkActivity,
     },
     {
       path: '/archive',
@@ -178,19 +205,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       path: '/news',
       changeFrequency: 'weekly',
       priority: 0.85,
-      lastModified: now,
+      lastModified: latestNewsActivity,
     },
     {
       path: '/stories',
       changeFrequency: 'weekly',
       priority: 0.65,
-      lastModified: now,
+      lastModified: latestStoryActivity,
     },
     {
       path: '/stories/guide',
       changeFrequency: 'monthly',
       priority: 0.7,
-      lastModified: now,
+      lastModified: latestStoryActivity,
     },
   ];
 
@@ -268,7 +295,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic artwork detail pages (both locales)
   // lastModified: 전시 종료일 고정 (updated_at 미제공 — 빌드마다 false freshness 방지)
-  const exhibitionEndDate = new Date(CAMPAIGN.END_DATE);
   const artworkPages: MetadataRoute.Sitemap = allArtworks.flatMap((artwork) => {
     const artworkPath = `/artworks/${artwork.id}`;
     const isAvailable = !artwork.sold;
@@ -322,9 +348,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return {
       url: koUrl(baseUrl, artistPath),
-      // Cycle 15: artist 페이지 SEO override 30개 보강 효과 빠른 반영을 위해
-      // lastModified 'now' 갱신, priority 0.65→0.75 상향. Googlebot recrawl 우선순위.
-      lastModified: now,
+      // 해당 작가 작품의 최근 판매(sold_at) 기준 — 'now' 일괄 갱신은 가짜 신선도 (2026-06-12 감사).
+      lastModified: maxDate(
+        artistWorks.map((a) => toDate(a.sold_at)),
+        exhibitionEndDate
+      ),
       changeFrequency: 'weekly' as const,
       priority: 0.75,
       alternates: koAlternates(baseUrl, artistPath),
@@ -363,8 +391,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return {
       url: koUrl(baseUrl, categoryPath),
-      // Cycle 15: categoryPage title i18n 강화(Cycle 5) 효과 빠른 반영 위해 lastModified now.
-      lastModified: now,
+      // 해당 카테고리 작품의 최근 판매(sold_at) 기준 — 'now' 일괄 갱신은 가짜 신선도.
+      lastModified: maxDate(
+        categoryWorks.map((a) => toDate(a.sold_at)),
+        exhibitionEndDate
+      ),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
       alternates: koAlternates(baseUrl, categoryPath),
@@ -377,9 +408,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Story category landing pages (SEO: 토픽 클러스터 — "작가 인터뷰", "미술 구매 가이드" 등)
   const storyCategoryPages: MetadataRoute.Sitemap = STORY_CATEGORIES.map((category) => {
     const categoryPath = `/stories/category/${category}`;
+    const categoryStories = allStories.filter((st) => st.category === category);
     return {
       url: koUrl(baseUrl, categoryPath),
-      lastModified: now,
+      // 해당 카테고리 글의 최근 발행/수정 기준 — 'now' 일괄 갱신은 가짜 신선도.
+      lastModified: maxDate(
+        categoryStories.map((st) => toDate(st.updated_at ?? st.published_at)),
+        exhibitionEndDate
+      ),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
       alternates: koAlternates(baseUrl, categoryPath),

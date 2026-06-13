@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 import fs from 'fs';
 import path from 'path';
 import { getSupabaseArtworksByArtist } from '@/lib/supabase-data';
-import { parseArtworkPrice } from '@/lib/schemas/utils';
+import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
 import { BRAND_COLORS } from '@/lib/colors';
 
@@ -59,20 +59,34 @@ export default async function Image({ params }: Props) {
 
   // 대표 작품 이미지 — 판매 중 우선
   const repArtwork = artworks.find((a) => !a.sold && a.images?.[0]) || artworks[0];
-  const imageUrl = repArtwork?.images?.[0];
+  // ⚠️ raw object URL(92%가 .webp) 직결 금지 — Satori(@vercel/og)는 webp 미지원이라
+  // 임베드 시 라우트 전체가 500. render 엔드포인트(jpeg 트랜스코드) 경유 + 포맷 가드.
+  const rawImageUrl = repArtwork?.images?.[0];
+  const imageUrl = rawImageUrl ? resolveSeoArtworkImageUrl(rawImageUrl) : undefined;
 
   let artworkImageData: string | null = null;
   if (imageUrl) {
     try {
       const res = await fetch(imageUrl, { next: { revalidate: 3600 } });
       if (res.ok) {
-        const buf = await res.arrayBuffer();
-        const b64 = Buffer.from(buf).toString('base64');
         const mime = res.headers.get('content-type') ?? 'image/jpeg';
-        artworkImageData = `data:${mime};base64,${b64}`;
+        const buf = Buffer.from(await res.arrayBuffer());
+        if (mime.includes('webp') || mime.includes('avif')) {
+          // Satori 미지원 포맷은 sharp로 jpeg 트랜스코드 (2026-06-12 리뷰 — 환경변수
+          // 미설정으로 raw webp가 와도 카드 이미지가 조용히 소실되지 않도록)
+          const sharp = (await import('sharp')).default;
+          // 840px(카드 표시폭의 2x)로 리사이즈 — 풀해상도 트랜스코드 CPU/메모리 bound (2차 리뷰)
+          const jpeg = await sharp(buf)
+            .resize({ width: 840, withoutEnlargement: true })
+            .jpeg({ quality: 80 })
+            .toBuffer();
+          artworkImageData = `data:image/jpeg;base64,${jpeg.toString('base64')}`;
+        } else {
+          artworkImageData = `data:${mime};base64,${buf.toString('base64')}`;
+        }
       }
     } catch {
-      // fallthrough
+      // fallthrough (sharp 실패 포함 — 텍스트 카드로 폴백)
     }
   }
 

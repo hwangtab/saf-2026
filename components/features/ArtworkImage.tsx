@@ -5,11 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
 import Button from '@/components/ui/Button';
 import dynamic from 'next/dynamic';
-import {
-  resolveArtworkImageUrl,
-  resolveArtworkImageUrlForPreset,
-  resolveOptimizedArtworkImageUrl,
-} from '@/lib/utils';
+import { resolveArtworkImageUrl, resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { toRoomDimensions, describeSize } from '@/lib/artwork-size';
 import { buildArtworkAlt } from '@/lib/artwork-alt';
 
@@ -160,11 +156,6 @@ export default function ArtworkImage({
   const alt = buildArtworkAlt({ title, artist, material, year }, locale === 'en' ? 'en' : 'ko');
   const currentImage = safeImages[currentIndex] || '';
   const src = resolveArtworkImageUrlForPreset(currentImage, 'detail');
-  const mobileSrc = resolveArtworkImageUrlForPreset(currentImage, 'slider');
-  // DPR 2x (Retina) 대응 — detail(1600w)을 1x, hero(1920w)를 2x
-  const desktop1x = src;
-  const desktop2x = resolveOptimizedArtworkImageUrl(currentImage, { width: 1920, quality: 80 });
-  const isRemoteImage = src.startsWith('http');
   const resolvedImages = safeImages.map((img) => resolveArtworkImageUrl(img));
   // LCP 보존: 첫 번째 이미지(index=0)만 priority/eager — 다른 인덱스는 lazy로
   const isLcpImage = currentIndex === 0;
@@ -190,39 +181,24 @@ export default function ArtworkImage({
           onTouchEnd={handleTouchEnd}
           aria-label={copy.zoomImage}
         >
-          {isRemoteImage ? (
-            // LCP 최적화: 첫 이미지만 eager+high. carousel 이동 시 src 교체로 layout shift 0.
-            // SafeImage 대신 raw <picture>+<img>를 쓰는 이유: <source media srcset>로 모바일/데스크톱
-            // 별도 URL을 제공해 LCP critical path에서 viewport별 최적 이미지를 즉시 받기 위함.
-            // SafeImage(next/image)는 모바일/데스크톱 srcset이 동일 base URL의 size 변형이라 같은
-            // 효과를 낼 수 없음. URL은 이미 resolveArtworkImageUrlForPreset로 Supabase render →
-            // Vercel optimize 호환 형태로 변환된 상태라 SafeImage의 toRawSupabaseUrl 변환도 불필요.
-            <picture key={currentIndex}>
-              <source media="(min-width: 768px)" srcSet={`${desktop1x} 1x, ${desktop2x} 2x`} />
-              {}
-              {}
-              <img
-                src={mobileSrc}
-                alt={alt}
-                width={1600}
-                height={2000}
-                loading={isLcpImage ? 'eager' : 'lazy'}
-                fetchPriority={isLcpImage ? 'high' : 'auto'}
-                decoding={isLcpImage ? 'sync' : 'async'}
-                className="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-              />
-            </picture>
-          ) : (
-            <SafeImage
-              key={currentIndex}
-              src={src}
-              alt={alt}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-              priority={isLcpImage}
-            />
-          )}
+          {/* 원격/로컬 공통 SafeImage (2026-06-12 감사) — 과거 원격 분기의 raw <picture>는
+              Supabase render 엔드포인트 직결이라 CDN 캐시 BYPASS(no-cache)·jpeg 강제
+              트랜스코드·모바일 400w 고정·srcset 부재로 구매 전환 핵심 페이지의 LCP를
+              망쳤다 (SafeImage.tsx 주석의 "cf-cache MISS 시 LCP 9.6s" 회귀와 동일 경로).
+              SafeImage(=Vercel Image Optimization)가 render URL을 raw로 정규화하고
+              deviceSizes 기반 srcset·AVIF·30일 immutable 캐시를 자동 처리한다.
+              모바일/데스크톱은 동일 이미지의 크기 차이일 뿐이라 sizes로 충분 —
+              art-direction용 <source media>가 필요 없다. */}
+          <SafeImage
+            key={currentIndex}
+            src={src}
+            alt={alt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            quality={85}
+            className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+            priority={isLcpImage}
+          />
 
           {/* Zoom Hint Overlay */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/10 pointer-events-none">

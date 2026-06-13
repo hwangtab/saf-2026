@@ -78,9 +78,15 @@ export function getTossWidgetClientKey(): string | null {
 
 /**
  * Payment mode is 'toss' if any provider is configured, else 'disabled'.
- * Used by checkout page guard to 404 when nothing is set up.
+ * Used by checkout page guard (404) and artwork detail CTA gating — 단일 출처.
+ *
+ * 운영 kill switch: NEXT_PUBLIC_PAYMENT_MODE='disabled'를 명시하면 Toss 키 존재와
+ * 무관하게 비활성. 결제 사고/전시 종료 시 키를 지우지 않고도(키 삭제는 진행 중 주문의
+ * confirm/cancel/웹훅까지 깨뜨림) 신규 구매 동선만 내릴 수 있다 (2026-06-12 리뷰:
+ * CTA의 환경변수 직접 판정을 제거하면서 kill switch가 사라지지 않도록 여기에 흡수).
  */
 export function getPaymentMode(): 'toss' | 'disabled' {
+  if (process.env.NEXT_PUBLIC_PAYMENT_MODE === 'disabled') return 'disabled';
   return getTossConfig('domestic') ||
     getTossConfig('overseas') ||
     getTossConfig('widget') ||

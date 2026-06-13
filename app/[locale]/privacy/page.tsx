@@ -42,6 +42,9 @@ export async function generateMetadata({
   const title = `${copy.title} | ${tSeo('siteTitle')}`;
   const base = createStandardPageMetadata(title, copy.description, PAGE_URL, PAGE_PATH, locale);
   // 영어 법적 페이지는 "한국어 원문 참조" 안내만 있어 thin content — 색인 제외
+  // KO도 koOnly alternates로 통일 (2026-06-12 감사) — base(createStandardPageMetadata)는
+  // en-US hreflang을 포함하는데 /en 변형이 noindex + KO canonical이라, KO 페이지가
+  // noindex 페이지를 hreflang 대상으로 선언하는 비대칭(무효) 클러스터가 됐었다.
   if (locale === 'en') {
     return {
       ...base,
@@ -49,7 +52,10 @@ export async function generateMetadata({
       robots: { index: false, follow: true },
     };
   }
-  return base;
+  return {
+    ...base,
+    alternates: createLocaleAlternates(PAGE_PATH, locale, true),
+  };
 }
 
 export default async function PrivacyPolicyPage({

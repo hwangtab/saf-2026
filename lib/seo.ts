@@ -5,6 +5,9 @@ import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates'
 // URL 확장자 → MIME 추론 (쿼리 스트링 제거). Supabase transform 등 포맷 변환이 개입할 수 있지만
 // og:image:type은 힌트일 뿐이라 파서는 실제 바이트로 결정함 — 정확한 확장자 케이스만 매핑
 function inferImageMime(url: string): string {
+  // Supabase render 엔드포인트는 format 미지정 시 jpeg로 트랜스코드해 반환 —
+  // 확장자가 .webp여도 실제 바이트는 jpeg (og:image:type 허위 힌트 방지, 2026-06-12 감사)
+  if (url.includes('/storage/v1/render/image/')) return 'image/jpeg';
   const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
   if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
   if (ext === 'png') return 'image/png';
@@ -33,21 +36,29 @@ export function createPageMetadata(
       url: finalUrl,
       secureUrl: finalUrl.startsWith('https://') ? finalUrl : undefined,
       type: inferImageMime(finalUrl),
-      width: imageUrl ? 1200 : OG_IMAGE.width,
-      height: imageUrl ? 630 : OG_IMAGE.height,
+      // 호출처가 넘기는 작품 이미지는 임의 비율(정사각·세로형)이라 1200x630 고정 선언이
+      // 허위 메타데이터였음 — 치수를 모르면 생략해 파서가 실측하게 한다 (2026-06-12 감사).
+      // 기본 OG 이미지는 실제 치수를 아는 자산이므로 명시 유지.
+      ...(imageUrl ? {} : { width: OG_IMAGE.width, height: OG_IMAGE.height }),
       alt: ogAlt,
     },
   ];
 
-  // title: layout template '%s | 씨앗페 2026' handles the suffix for <title> tag
-  // OG/Twitter: no template applied, so we add the suffix manually
+  // <title>: layout titleTemplate이 '%s'(suffix 없음)라 호출처가 브랜드 포함 여부를 결정한다.
+  // OG/Twitter: template 미적용이므로 suffix를 수동 부착하되, 호출처 title에 이미 브랜드
+  // suffix가 들어있으면(컬렉션 seoTitle, /artworks seoTitle 등) 이중 부착하지 않는다
+  // (2026-06-12 감사: "… | 씨앗페 온라인 | 씨앗페 온라인 갤러리" 이중 suffix 회귀).
+  // ⚠️ 판정은 "| 브랜드" suffix 패턴으로 — 단순 includes(브랜드명)는 본문에서 브랜드를
+  // 언급만 한 제목('씨앗페 온라인 특별전 개막' 등)까지 suffix를 생략시킨다 (2026-06-12 리뷰).
+  const hasBrandSuffix = title.includes(`| ${siteTitle}`) || title.includes(`| ${siteName}`);
+  const ogTitle = hasBrandSuffix ? title : `${title} | ${siteTitle}`;
   return {
     title,
     description,
     alternates: createLocaleAlternates(path, locale),
     openGraph: {
       type: 'website',
-      title: `${title} | ${siteTitle}`,
+      title: ogTitle,
       description,
       url,
       locale: ogLocale,
@@ -56,7 +67,7 @@ export function createPageMetadata(
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} | ${siteTitle}`,
+      title: ogTitle,
       description,
       images: [{ url: images[0].url, alt: ogAlt }],
     },

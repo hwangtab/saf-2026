@@ -98,7 +98,9 @@
     "noResultsDesc": "다른 키워드로 검색해보거나, 모든 작품을 둘러보세요.",
     "resetButton": "전체 목록 보기",
     "resultPrefix": "검색 결과:",
-    "resultSuffix": "개"
+    "resultSuffix": "개",
+    "filtersShow": "필터",
+    "filtersHide": "필터 닫기"
   },
   "globalSearch": {
     "placeholder": "작품명, 작가명으로 검색",
@@ -178,10 +180,22 @@
     "heroGallerySubtitle": "{artistCount}명 작가의 작품을 합리적 가격에",
     "mechanism": {
       "title": "작품 한 점이 만드는 일",
-      "step1": { "label": "작품 구매", "note": "거래액 100%" },
-      "step2": { "label": "기금 형성", "note": "거래액 10%" },
-      "step3": { "label": "금융 협약", "note": "10배 레버리지" },
-      "step4": { "label": "예술인 대출", "note": "한도 100%" },
+      "step1": {
+        "label": "작품 구매",
+        "note": "거래액 100%"
+      },
+      "step2": {
+        "label": "기금 형성",
+        "note": "거래액 10%"
+      },
+      "step3": {
+        "label": "금융 협약",
+        "note": "10배 레버리지"
+      },
+      "step4": {
+        "label": "예술인 대출",
+        "note": "한도 100%"
+      },
       "counter": {
         "loansLabel": "대출",
         "loansValue": "{loanCount}건",
@@ -218,7 +232,8 @@
     "entryLevel": {
       "title": "첫 그림을 시작하는 분께 — 30만원 이하",
       "subtitle": "10만원대부터 시작하는 진입 가능한 가격대의 원본 작품. 판화·아트프린트·드로잉·작은 회화로 처음 만나는 한국 현대미술.",
-      "viewAll": "전체 작품 보기"
+      "viewAll": "전체 작품 보기",
+      "viewCollection": "첫 그림 컬렉션 전체 보기"
     },
     "emergingArtists": {
       "title": "먼저 발견하는 작품",
@@ -337,6 +352,7 @@
     "phoneConsult": "전화로 구매 상담",
     "artworkConsult": "이 작품 상담하기",
     "confidenceFreeShipping": "무료 배송",
+    "confidenceShippingFee": "₩{threshold, number} 이상 무료 배송",
     "confidenceReturn": "7일 반품",
     "confidenceCertificate": "작품 보증",
     "confidenceTransfer": "계좌이체 가능",
@@ -525,6 +541,7 @@
   },
   "collections": {
     "landingTitle": "공간으로 찾는 작품",
+    "landingSeoTitle": "공간별 그림 추천 컬렉션 — 거실·침실·서재·선물 원화 | 씨앗페 온라인 갤러리",
     "landingSubtitle": "거실·침실·현관·서재 — 당신의 공간에 어울리는 한 점을 찾아보세요",
     "artworkCount": "{count}점의 작품",
     "exploreOthers": "다른 공간도 둘러보기",
@@ -932,6 +949,7 @@
     "addressLabel": "주소",
     "confirmingPayment": "결제를 확인하는 중...",
     "confirmationFailed": "결제 확인 실패",
+    "confirmErrorReassure": "결제가 이중 청구되는 일은 없습니다. 결제가 정상 승인된 경우 확인되는 대로 이메일로 안내드리니, 먼저 주문 조회에서 상태를 확인해 주세요.",
     "confirmationError": "결제 확인에 실패했습니다.",
     "networkError": "네트워크 오류가 발생했습니다.",
     "depositInstructions": "아래 가상 계좌로 입금해주세요. 입금이 확인되면 주문이 완료됩니다.",

@@ -15,13 +15,17 @@ interface ArtworkPurchaseStickyMobileProps {
   reserved?: boolean;
   hasActionablePrice: boolean;
   displayPrice?: string | null;
+  /** 서버에서 getPaymentMode()로 판정 — 결제 모드 단일 출처 (2026-06-12 감사) */
+  isTossEnabled: boolean;
 }
 
 /**
- * 모바일 전용 하단 fixed sticky CTA — 매뉴얼 7.2 [4] · 11.
+ * 모바일·태블릿 하단 fixed sticky CTA — 매뉴얼 7.2 [4] · 11.
  *
- * `md:hidden` — 태블릿·데스크탑에서는 사이드바 ArtworkPurchaseCTA가 스크롤과 함께 항상 노출되므로
- * 중복 표시 방지. 모바일에서만 fold-below 스크롤 시 CTA가 뷰포트 밖으로 벗어나는 문제 해결.
+ * `lg:hidden` — 상세 grid가 lg:grid-cols-2이므로 lg 미만(모바일+태블릿)은 단일 컬럼이라
+ * 스크롤 시 CTA가 뷰포트 밖으로 벗어남 → 하단 sticky 바가 필요. lg 이상은 좌측 컬럼이
+ * lg:sticky로 따라오므로 중복 표시 방지 (2026-06-12 감사: 과거 md:hidden은 md~lg 태블릿
+ * 구간에서 사이드바도 sticky 바도 없는 사각지대를 만들었다).
  *
  * z-30 — 헤더(z-30 sticky) 아래에 위치하도록. 이미지 모달이나 overlay보다는 낮게.
  * safe-area-inset-bottom — iOS Safari 홈 인디케이터 영역 침범 방지.
@@ -37,16 +41,16 @@ export default function ArtworkPurchaseStickyMobile({
   reserved,
   hasActionablePrice,
   displayPrice,
+  isTossEnabled,
 }: ArtworkPurchaseStickyMobileProps) {
   const t = useTranslations('artworkDetail');
-  const paymentMode = process.env.NEXT_PUBLIC_PAYMENT_MODE;
 
   if (sold || reserved || !hasActionablePrice) return null;
 
   const isDbArtwork = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
     artworkId
   );
-  const isTossMode = paymentMode === 'toss' && isDbArtwork;
+  const isTossMode = isTossEnabled && isDbArtwork;
 
   if (!isTossMode && !shopUrl) return null;
 
@@ -65,7 +69,7 @@ export default function ArtworkPurchaseStickyMobile({
 
   return (
     <div
-      className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-[0_-4px_16px_rgba(0,0,0,0.08)]"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-[0_-4px_16px_rgba(0,0,0,0.08)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex items-center gap-3 px-4 py-3">
