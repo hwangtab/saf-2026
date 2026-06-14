@@ -15,6 +15,7 @@ import {
   getOrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { recordOrderArtworkSales } from '@/lib/orders/record-artwork-sales';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
 
@@ -285,23 +286,25 @@ export async function POST(req: NextRequest) {
 
   // 가상계좌 발급 시 artwork 예약 처리 — unique edition만 reserved 잠금.
   // limited/open은 여러 구매자가 동시 진행 가능하므로 입금 대기 중 잠그면 안 됨.
-  if (isVirtualAccount && updatedOrders && updatedOrders.length > 0 && order.artwork_id) {
-    const { data: artworkEdition } = await supabase
-      .from('artworks')
-      .select('edition_type')
-      .eq('id', order.artwork_id)
-      .maybeSingle();
-
-    if (artworkEdition?.edition_type === 'unique') {
-      await supabase
+  if (isVirtualAccount && updatedOrders && updatedOrders.length > 0) {
+    for (const item of lineItems) {
+      const { data: artworkEdition } = await supabase
         .from('artworks')
-        .update({ status: 'reserved' })
-        .eq('id', order.artwork_id)
-        .eq('status', 'available');
-      revalidatePublicArtworkSurfaces();
-      revalidatePath(`/artworks/${order.artwork_id}`);
-      revalidatePath(`/en/artworks/${order.artwork_id}`);
+        .select('edition_type')
+        .eq('id', item.artwork_id)
+        .maybeSingle();
+
+      if (artworkEdition?.edition_type === 'unique') {
+        await supabase
+          .from('artworks')
+          .update({ status: 'reserved' })
+          .eq('id', item.artwork_id)
+          .eq('status', 'available');
+        revalidatePath(`/artworks/${item.artwork_id}`);
+        revalidatePath(`/en/artworks/${item.artwork_id}`);
+      }
     }
+    revalidatePublicArtworkSurfaces();
   }
 
   // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불
@@ -330,31 +333,29 @@ export async function POST(req: NextRequest) {
   // If fully paid, insert artwork_sales record
   // (DB trigger update_artwork_status_on_sale will mark artwork as sold)
   if (isDone && updatedOrders && updatedOrders.length > 0) {
-    const { error: salesInsertError } = await supabase.from('artwork_sales').insert({
-      artwork_id: order.artwork_id,
-      sale_price: order.total_amount,
-      quantity: 1,
+    const salesResult = await recordOrderArtworkSales(supabase, {
+      orderId: order.id,
+      orderNo: order.order_no,
+      lineItems,
       source: 'toss',
-      source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
-      order_id: order.id,
-      external_order_id: order.order_no,
-      buyer_name: order.buyer_name,
-      buyer_phone: order.buyer_phone,
-      sold_at: new Date().toISOString(),
+      sourceDetail: provider === 'widget' ? 'toss_widget' : 'toss_api',
+      buyerName: order.buyer_name,
+      buyerPhone: order.buyer_phone,
+      soldAt: new Date().toISOString(),
     });
 
-    if (salesInsertError) {
-      console.error('[confirm] artwork_sales INSERT 실패:', salesInsertError);
+    if (salesResult.inserted === false && salesResult.reason === 'error') {
+      console.error('[confirm] artwork_sales INSERT 실패:', salesResult.error);
       void notifyEmail('error', '결제 후 판매 기록 생성 실패', {
         주문번호: orderId,
-        에러: salesInsertError.message,
-        참고: '결제+주문 완료, 판매 기록만 누락 — reconciliation cron이 보정 예정',
+        에러: salesResult.error,
+        참고: '결제+주문 완료, 판매 기록 누락 — reconciliation cron 보정 예정',
       });
     }
 
     // BUG 40: DB 트리거 실패 대비 방어적으로 artwork 상태 동기화
-    if (order.artwork_id) {
-      await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+    for (const item of lineItems) {
+      await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
     }
   }
 
@@ -362,10 +363,12 @@ export async function POST(req: NextRequest) {
   const notifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
 
   // 결제 완료 시 공개 작품 페이지 캐시 무효화
-  if (isDone && order.artwork_id) {
+  if (isDone) {
+    for (const item of lineItems) {
+      revalidatePath(`/artworks/${item.artwork_id}`);
+      revalidatePath(`/en/artworks/${item.artwork_id}`);
+    }
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${order.artwork_id}`);
-    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
 
   // 결제 성공 알림 — fire-and-forget: 응답 전송 후 백그라운드 처리
