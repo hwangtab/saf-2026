@@ -63,6 +63,16 @@ let mockInsertResultsQueue: MockResult[] = [];
 let mockUpdateResult: MockResult = { data: null, error: null };
 let mockAuthUserResult: MockResult = { data: { user: null }, error: null };
 let mockOrderItemsInsertResult: MockResult = { data: null, error: null };
+// createBankTransferOrder가 order_items를 다시 조회해 전 품목을 예약 처리하므로
+// (.select('artwork_id, artworks(...)').eq('order_id', ...)) 그 결과를 모킹.
+let mockOrderItemsSelectResult: MockResult = { data: null, error: null };
+// artworks UPDATE 캡처 — reserve/restore가 어떤 작품에 어떤 status로 갔는지 검증용
+const capturedArtworkUpdates: Array<{
+  patch: Record<string, unknown>;
+  filters: Array<{ column: string; value: unknown }>;
+}> = [];
+// 특정 artwork id의 UPDATE 결과를 개별 지정 (race 시나리오: 2번째 작품 0건 matched)
+let mockArtworkUpdateById: Record<string, MockResult> = {};
 const capturedInsertedRows: Array<Record<string, unknown>> = [];
 const capturedOrderItemsInserts: Array<Array<Record<string, unknown>>> = [];
 const capturedOrderDeletes: Array<{ column: string; value: unknown }> = [];
@@ -109,13 +119,32 @@ jest.mock('@/lib/auth/server', () => ({
         chain.single.mockImplementation(() => mockArtworkResult);
         return {
           select: chain.select,
-          update: jest.fn(() => {
-            const selectFn: jest.Mock = jest.fn(() => mockUpdateResult);
-            const eqChain: jest.Mock = jest.fn(() => ({
-              eq: eqChain,
-              select: selectFn,
-              ...mockUpdateResult,
-            }));
+          update: jest.fn((patch: Record<string, unknown>) => {
+            // .eq() 필터를 누적해 어떤 작품에 어떤 status 패치가 갔는지 캡처.
+            // reserve 결과는 매칭된 id별로 다르게 줄 수 있어야 race 시나리오 테스트 가능.
+            const call = {
+              patch,
+              filters: [] as Array<{ column: string; value: unknown }>,
+            };
+            capturedArtworkUpdates.push(call);
+            const resolveResult = () => {
+              const idFilter = call.filters.find((f) => f.column === 'id');
+              const id = idFilter?.value as string | undefined;
+              if (id && mockArtworkUpdateById[id]) return mockArtworkUpdateById[id];
+              return mockUpdateResult;
+            };
+            const selectFn: jest.Mock = jest.fn(() => resolveResult());
+            const eqChain: jest.Mock = jest.fn((column: string, value: unknown) => {
+              call.filters.push({ column, value });
+              return {
+                eq: eqChain,
+                select: selectFn,
+                get then() {
+                  const r = resolveResult();
+                  return (resolve: (value: MockResult) => unknown) => resolve(r);
+                },
+              };
+            });
             return { eq: eqChain };
           }),
         };
@@ -167,6 +196,10 @@ jest.mock('@/lib/auth/server', () => ({
             capturedOrderItemsInserts.push(rows);
             return mockOrderItemsInsertResult;
           }),
+          // .select('artwork_id, artworks(...)').eq('order_id', ...) → await로 resolve
+          select: jest.fn(() => ({
+            eq: jest.fn(() => mockOrderItemsSelectResult),
+          })),
         };
       }
       return {
@@ -246,6 +279,11 @@ function setupSuccessfulArtwork() {
   mockRpcResult = { data: [{ is_available: true }], error: null };
   mockInsertResult = { data: { id: 'order-1' }, error: null };
   mockUpdateResult = { data: [{ id: 'art-1' }], error: null };
+  // createBankTransferOrder의 전 품목 예약 루프가 참조 (단건 unique 작품)
+  mockOrderItemsSelectResult = {
+    data: [{ artwork_id: 'art-1', artworks: { edition_type: 'unique', status: 'available' } }],
+    error: null,
+  };
 }
 
 // ---------- Tests ----------
@@ -277,6 +315,9 @@ beforeEach(async () => {
   mockUpdateResult = { data: null, error: null };
   mockAuthUserResult = { data: { user: null }, error: null };
   mockOrderItemsInsertResult = { data: null, error: null };
+  mockOrderItemsSelectResult = { data: null, error: null };
+  mockArtworkUpdateById = {};
+  capturedArtworkUpdates.length = 0;
   capturedInsertedRows.length = 0;
   capturedOrderUpdates.length = 0;
   capturedOrderItemsInserts.length = 0;
@@ -368,6 +409,82 @@ describe('createOrder', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error).toContain('이미 판매된');
+    }
+  });
+
+  it('FIX-7: limited edition 잔여 재고 초과 수량은 차단한다', async () => {
+    // edition_limit=5, sold=3, pending=1 → 잔여 1. qty=3 요청 시 (3+1+3=7 > 5) 차단.
+    mockArtworkResult = {
+      data: {
+        id: 'art-1',
+        title: '한정판',
+        price: '₩1,000,000',
+        status: 'available',
+        edition_type: 'limited',
+        edition_limit: 5,
+        artists: { name_ko: '김작가' },
+      },
+      error: null,
+    };
+    mockRpcResult = {
+      data: [
+        {
+          is_available: true,
+          artwork_edition_type: 'limited',
+          artwork_edition_limit: 5,
+          sold_count: 3,
+          pending_count: 1,
+        },
+      ],
+      error: null,
+    };
+    const result = await createOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [{ artworkId: 'art-1', quantity: 3 }],
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.unavailable).toEqual(['art-1']);
+    }
+  });
+
+  it('FIX-7: limited edition 잔여 재고 이내 수량은 허용한다', async () => {
+    // edition_limit=5, sold=1, pending=0 → 잔여 4. qty=3 요청 시 (1+0+3=4 <= 5) 허용.
+    mockArtworkResult = {
+      data: {
+        id: 'art-1',
+        title: '한정판',
+        price: '₩1,000,000',
+        status: 'available',
+        edition_type: 'limited',
+        edition_limit: 5,
+        artists: { name_ko: '김작가' },
+      },
+      error: null,
+    };
+    mockRpcResult = {
+      data: [
+        {
+          is_available: true,
+          artwork_edition_type: 'limited',
+          artwork_edition_limit: 5,
+          sold_count: 1,
+          pending_count: 0,
+        },
+      ],
+      error: null,
+    };
+    mockInsertResult = { data: { id: 'order-1' }, error: null };
+    const result = await createOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [{ artworkId: 'art-1', quantity: 3 }],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      // 단가 100만 × 3 = 300만 (배송비 4000 — 20만 미만 아님이라 무료? 300만이므로 무료)
+      expect(result.totalAmount).toBe(3_000_000);
     }
   });
 
@@ -859,5 +976,141 @@ describe('createBankTransferOrder', () => {
     expect((manualUpdate?.patch.metadata as Record<string, unknown>).checkout_token_hash).toEqual(
       expect.any(String)
     );
+  });
+
+  it('FIX-5: 다품목 무통장 주문은 모든 unique 작품을 reserved 처리한다', async () => {
+    // 카트(다품목) 무통장 — createOrder 정규화 결과를 흉내내기 위해 일괄 조회/RPC를 다품목으로 셋업.
+    mockArtworkResult = {
+      data: [
+        {
+          id: 'art-1',
+          title: '봄의 정원',
+          price: '₩5,000,000',
+          status: 'available',
+          edition_type: 'unique',
+          edition_limit: null,
+          artists: { name_ko: '김작가' },
+        },
+        {
+          id: 'art-2',
+          title: '여름의 바다',
+          price: '₩3,000,000',
+          status: 'available',
+          edition_type: 'unique',
+          edition_limit: null,
+          artists: { name_ko: '이작가' },
+        },
+      ],
+      error: null,
+    };
+    mockRpcResultsQueue = [
+      { data: [{ is_available: true }], error: null },
+      { data: [{ is_available: true }], error: null },
+    ];
+    mockInsertResult = { data: { id: 'order-1' }, error: null };
+    mockUpdateResult = { data: [{ id: 'reserved' }], error: null };
+    // createBankTransferOrder가 다시 조회하는 order_items — 두 unique 작품
+    mockOrderItemsSelectResult = {
+      data: [
+        { artwork_id: 'art-1', artworks: { edition_type: 'unique', status: 'available' } },
+        { artwork_id: 'art-2', artworks: { edition_type: 'unique', status: 'available' } },
+      ],
+      error: null,
+    };
+
+    await expect(
+      createBankTransferOrder({
+        ...validInput,
+        artworkId: undefined,
+        items: [{ artworkId: 'art-1' }, { artworkId: 'art-2' }],
+        cartCheckout: true,
+      })
+    ).rejects.toThrow(/NEXT_REDIRECT:/);
+
+    // 두 작품 모두 reserved 패치 + available 가드가 적용됐는지 검증
+    const reserveCalls = capturedArtworkUpdates.filter((c) => c.patch.status === 'reserved');
+    const reservedIds = reserveCalls.map(
+      (c) => c.filters.find((f) => f.column === 'id')?.value as string
+    );
+    expect(reservedIds).toEqual(expect.arrayContaining(['art-1', 'art-2']));
+    for (const c of reserveCalls) {
+      expect(c.filters).toEqual(expect.arrayContaining([{ column: 'status', value: 'available' }]));
+    }
+
+    // 카트 결제는 /checkout/success 로 redirect
+    const redirect = jest.requireMock('next/navigation').redirect as jest.Mock;
+    const redirectedTo = redirect.mock.calls.at(-1)?.[0] as string;
+    expect(redirectedTo).toContain('/checkout/success');
+  });
+
+  it('FIX-5: 2번째 unique 작품 예약 실패(레이스) 시 1번째 작품을 롤백하고 주문 취소', async () => {
+    mockArtworkResult = {
+      data: [
+        {
+          id: 'art-1',
+          title: '봄의 정원',
+          price: '₩5,000,000',
+          status: 'available',
+          edition_type: 'unique',
+          edition_limit: null,
+          artists: { name_ko: '김작가' },
+        },
+        {
+          id: 'art-2',
+          title: '여름의 바다',
+          price: '₩3,000,000',
+          status: 'available',
+          edition_type: 'unique',
+          edition_limit: null,
+          artists: { name_ko: '이작가' },
+        },
+      ],
+      error: null,
+    };
+    mockRpcResultsQueue = [
+      { data: [{ is_available: true }], error: null },
+      { data: [{ is_available: true }], error: null },
+    ];
+    mockInsertResult = { data: { id: 'order-1' }, error: null };
+    mockOrderItemsSelectResult = {
+      data: [
+        { artwork_id: 'art-1', artworks: { edition_type: 'unique', status: 'available' } },
+        { artwork_id: 'art-2', artworks: { edition_type: 'unique', status: 'available' } },
+      ],
+      error: null,
+    };
+    // art-1 예약 성공(1건), art-2는 레이스로 0건 matched → abort 트리거
+    mockArtworkUpdateById = {
+      'art-1': { data: [{ id: 'art-1' }], error: null },
+      'art-2': { data: [], error: null },
+    };
+
+    const result = await createBankTransferOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [{ artworkId: 'art-1' }, { artworkId: 'art-2' }],
+      cartCheckout: true,
+    });
+
+    expect(result.success).toBe(false);
+
+    // art-1을 reserved로 바꾼 뒤, 롤백으로 available 복원 패치가 있어야 한다
+    const art1Reserve = capturedArtworkUpdates.find(
+      (c) =>
+        c.patch.status === 'reserved' &&
+        c.filters.some((f) => f.column === 'id' && f.value === 'art-1')
+    );
+    const art1Rollback = capturedArtworkUpdates.find(
+      (c) =>
+        c.patch.status === 'available' &&
+        c.filters.some((f) => f.column === 'id' && f.value === 'art-1') &&
+        c.filters.some((f) => f.column === 'status' && f.value === 'reserved')
+    );
+    expect(art1Reserve).toBeTruthy();
+    expect(art1Rollback).toBeTruthy();
+
+    // 주문은 cancelled 처리
+    const cancelled = capturedOrderUpdates.find((c) => c.patch.status === 'cancelled');
+    expect(cancelled).toBeTruthy();
   });
 });

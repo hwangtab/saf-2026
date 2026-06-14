@@ -576,15 +576,28 @@ export async function cancelBuyerOrder(
       return { success: false, error: 'ORDER_CANCEL_FAILED' };
     }
 
-    if (order.artwork_id) {
+    // 예약 해제 — order_items 라인별로 (legacy 단건은 artwork_id fallback).
+    // 다품목 무통장 취소 시 첫 작품만 풀면 나머지가 영구 reserved로 남는다.
+    // unique만 reserved 잠금되므로 `.eq('status','reserved')` 가드가 limited/open은 자동 skip.
+    const depositLineItems = extractLineItems(order);
+    const reservedArtworkIds =
+      depositLineItems.length > 0
+        ? depositLineItems.map((item) => item.artwork_id)
+        : order.artwork_id
+          ? [order.artwork_id]
+          : [];
+
+    for (const artworkId of reservedArtworkIds) {
       await adminClient
         .from('artworks')
         .update({ status: 'available', updated_at: now })
-        .eq('id', order.artwork_id)
+        .eq('id', artworkId)
         .eq('status', 'reserved');
+      revalidatePath(`/artworks/${artworkId}`);
+      revalidatePath(`/en/artworks/${artworkId}`);
+    }
+    if (reservedArtworkIds.length > 0) {
       revalidatePublicArtworkSurfaces();
-      revalidatePath(`/artworks/${order.artwork_id}`);
-      revalidatePath(`/en/artworks/${order.artwork_id}`);
     }
 
     await logBuyerAction(

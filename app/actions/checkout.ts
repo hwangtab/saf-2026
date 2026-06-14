@@ -20,7 +20,7 @@ import { normalizeOrderItems } from '@/lib/orders/normalize-items';
 import type { TossErrorResponse } from '@/lib/integrations/toss/types';
 import { rateLimit } from '@/lib/rate-limit';
 import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
-import { apiError, type ApiLocale } from '@/lib/api-locale';
+import { apiError, type ApiErrorCode, type ApiLocale } from '@/lib/api-locale';
 import { krwToUsd } from '@/lib/utils/currency';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
@@ -315,11 +315,24 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     if (availError) {
       return { success: false, error: apiError('availability_check_failed', buyerLocale) };
     }
-    const ok = Array.isArray(availResult) && availResult[0]?.is_available === true;
+    const availRow = Array.isArray(availResult) ? availResult[0] : null;
+    const ok = availRow?.is_available === true;
     const unitPrice = parsePrice(art.price);
     if (!ok || !Number.isFinite(unitPrice) || unitPrice <= 0) {
       unavailable.push(artworkId);
       continue;
+    }
+    // limited edition 수량 상한 검증 — RPC의 is_available은 "≥1 가능"만 보므로
+    // edition_limit보다 많은 수량을 한 번에 주문하면 오버셀된다. 남은 재고
+    // (edition_limit - sold - pending) 미만으로만 허용(초과 시 해당 항목 부분 차단).
+    // unique는 위에서 qty=1로 강제됐고, open은 상한 없음.
+    if (art.edition_type === 'limited' && typeof availRow?.artwork_edition_limit === 'number') {
+      const soldCount = Number(availRow.sold_count ?? 0);
+      const pendingCount = Number(availRow.pending_count ?? 0);
+      if (soldCount + pendingCount + qty > availRow.artwork_edition_limit) {
+        unavailable.push(artworkId);
+        continue;
+      }
     }
     itemAmount += unitPrice * qty;
     itemRows.push({ artwork_id: artworkId, quantity: qty, unit_price: unitPrice });
@@ -682,9 +695,10 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
  */
 export async function createBankTransferOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   const buyerLocale: ApiLocale = input.locale === 'en' ? 'en' : 'ko';
-  // 무통장 입금은 단건(바로구매) 한정. 단건 artworkId를 단일 출처로 확정한다.
-  const artworkId = input.artworkId ?? input.items?.[0]?.artworkId;
-  if (!artworkId) {
+  // 무통장은 단건/다건(장바구니) 모두 지원. createOrder가 단건(artworkId)·다건(items)을
+  // 정규화해 order_items까지 INSERT하므로 여기서는 redirect용 대표 artworkId만 확정한다.
+  const primaryArtworkId = input.artworkId ?? input.items?.[0]?.artworkId;
+  if (!primaryArtworkId) {
     return { success: false, error: apiError('required_buyer_info', buyerLocale) };
   }
   const result = await createOrder(input);
@@ -714,51 +728,82 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     return { success: false, error: apiError('order_state_update_failed', buyerLocale) };
   }
 
-  // reserved 잠금은 unique edition에서만 의미 있음. limited/open은 여러 구매자가 동시에
-  // 구매 가능하므로 입금 대기 중에도 다른 고객의 구매를 차단하면 안 됨.
-  // edition_type 조회 후 unique일 때만 reserved 처리.
-  const { data: artworkRow, error: editionFetchError } = await adminClient
-    .from('artworks')
-    .select('edition_type, status')
-    .eq('id', artworkId)
-    .maybeSingle();
+  // createOrder가 INSERT한 order_items를 단일 출처로 전 품목의 edition_type/status를 조회.
+  // 다품목 무통장 주문에서 첫 작품만 예약하면 나머지 unique 작품이 미예약 상태로 남아
+  // 이중판매가 발생한다(FIX-5).
+  const { data: orderItemRows, error: orderItemsError } = await adminClient
+    .from('order_items')
+    .select('artwork_id, artworks(edition_type, status)')
+    .eq('order_id', result.orderId);
 
-  if (editionFetchError || !artworkRow) {
+  // 예약 중 실패 시 롤백 — 이번 주문이 이미 reserved로 바꾼 작품들을 다시 available로 되돌리고
+  // 주문을 취소한다. (단건 주문은 reserved 0~1건이므로 기존과 동일한 net effect)
+  const reservedSoFar: string[] = [];
+  const abort = async (errorCode: ApiErrorCode): Promise<CreateOrderResult> => {
+    for (const id of reservedSoFar) {
+      await adminClient
+        .from('artworks')
+        .update({ status: 'available' })
+        .eq('id', id)
+        .eq('status', 'reserved');
+    }
     await adminClient
       .from('orders')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
       .eq('order_no', result.orderNo);
-    return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
+    if (reservedSoFar.length > 0) {
+      revalidatePublicArtworkSurfaces();
+      for (const id of reservedSoFar) {
+        revalidatePath(`/artworks/${id}`);
+        revalidatePath(`/en/artworks/${id}`);
+      }
+    }
+    return { success: false, error: apiError(errorCode, buyerLocale) };
+  };
+
+  if (orderItemsError || !orderItemRows || orderItemRows.length === 0) {
+    return abort('artwork_sold_out');
   }
 
-  if (artworkRow.edition_type === 'unique') {
-    const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
-      .from('artworks')
-      .update({ status: 'reserved' })
-      .eq('id', artworkId)
-      .eq('status', 'available')
-      .select('id');
-
-    // error이거나 0건 matched(동시 구매로 이미 상태 변경됨) → 주문 취소
-    if (artworkUpdateError || !reservedArtwork || reservedArtwork.length === 0) {
-      await adminClient
-        .from('orders')
-        .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-        .eq('order_no', result.orderNo);
-      return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
+  // 품목별 예약 — unique는 available 가드로 reserved, limited/open은 sold_out만 차단.
+  const revalidateArtworkIds: string[] = [];
+  for (const row of orderItemRows) {
+    const artworkRel = row.artworks as
+      | { edition_type: string | null; status: string | null }
+      | { edition_type: string | null; status: string | null }[]
+      | null;
+    const artworkRow = Array.isArray(artworkRel) ? artworkRel[0] : artworkRel;
+    if (!artworkRow) {
+      return abort('artwork_sold_out');
     }
 
-    // artwork available → reserved 반영하여 다른 사용자 구매 차단
+    if (artworkRow.edition_type === 'unique') {
+      const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
+        .from('artworks')
+        .update({ status: 'reserved' })
+        .eq('id', row.artwork_id)
+        .eq('status', 'available')
+        .select('id');
+
+      // error이거나 0건 matched(동시 구매로 이미 상태 변경됨) → 주문 취소 + 롤백
+      if (artworkUpdateError || !reservedArtwork || reservedArtwork.length === 0) {
+        return abort('artwork_sold_out');
+      }
+      reservedSoFar.push(row.artwork_id);
+      revalidateArtworkIds.push(row.artwork_id);
+    } else if (artworkRow.status !== 'available') {
+      // limited/open인데 이미 sold_out(전량 판매) 상태면 구매 차단
+      return abort('artwork_sold_out');
+    }
+  }
+
+  // 예약된 unique 작품 상태 반영 — 다른 사용자 구매 차단
+  if (revalidateArtworkIds.length > 0) {
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${artworkId}`);
-    revalidatePath(`/en/artworks/${artworkId}`);
-  } else if (artworkRow.status !== 'available') {
-    // limited/open인데 이미 sold_out(전량 판매) 상태면 구매 차단
-    await adminClient
-      .from('orders')
-      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-      .eq('order_no', result.orderNo);
-    return { success: false, error: apiError('artwork_sold_out', buyerLocale) };
+    for (const id of revalidateArtworkIds) {
+      revalidatePath(`/artworks/${id}`);
+      revalidatePath(`/en/artworks/${id}`);
+    }
   }
 
   // 이메일 발송 (fire-and-forget — 결제 흐름 차단 X)
@@ -838,7 +883,9 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   // localePrefix: 'as-needed' — ko 기본 locale은 prefix 없음, en만 /en/.
   // 장바구니 결제는 카트 success 페이지(/checkout/success)로 — 거기서 카트 비우기 +
   // 다건 안전 랜딩(verifyBankTransferLanding + clearCartOnce) 처리. 단건은 기존 그대로 작품 상세 success.
-  const successBase = input.cartCheckout ? '/checkout/success' : `/checkout/${artworkId}/success`;
+  const successBase = input.cartCheckout
+    ? '/checkout/success'
+    : `/checkout/${primaryArtworkId}/success`;
   const successPath =
     buyerLocale === 'en'
       ? `/en${successBase}?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW&checkoutToken=${encodeURIComponent(result.checkoutToken)}`
