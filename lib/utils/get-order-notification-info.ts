@@ -42,7 +42,8 @@ export async function getOrderNotificationInfo(
         shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo,
         item_amount, shipping_amount, total_amount,
         metadata,
-        artworks(title, artists(name_ko))
+        artworks(title, artists(name_ko)),
+        order_items(artworks(title, artists(name_ko)))
       `
     )
     .limit(1);
@@ -53,18 +54,62 @@ export async function getOrderNotificationInfo(
   const { data, error } = await filtered.maybeSingle();
   if (error || !data) return null;
 
-  const artworkRow = Array.isArray(data.artworks) ? data.artworks[0] : data.artworks;
-  const artistsRaw = artworkRow?.artists;
-  const artistName = Array.isArray(artistsRaw)
-    ? (artistsRaw[0]?.name_ko ?? '')
-    : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+  const metaLocale = (data.metadata as Record<string, unknown> | null)?.locale;
+  const locale: EmailLocale = metaLocale === 'en' ? 'en' : 'ko';
+
+  // order_items 우선 해석 — 다품목 주문 대응
+  // Supabase 임베드는 배열/객체 양쪽 가능 → unknown으로 받아 정규화
+  type OrderItemNormalized = {
+    artworks: {
+      title?: string;
+      artists?: { name_ko?: string } | Array<{ name_ko?: string }> | null;
+    } | null;
+  };
+  const orderItemsRaw: unknown = data.order_items;
+  const orderItemsArr: unknown[] = Array.isArray(orderItemsRaw)
+    ? orderItemsRaw
+    : orderItemsRaw != null
+      ? [orderItemsRaw]
+      : [];
+  // 각 item의 artworks도 배열/객체 양쪽 정규화
+  const orderItems: OrderItemNormalized[] = orderItemsArr.map((item) => {
+    const it = item as { artworks?: unknown };
+    const aw = Array.isArray(it.artworks) ? it.artworks[0] : it.artworks;
+    return { artworks: (aw as OrderItemNormalized['artworks']) ?? null };
+  });
+
+  let artworkTitle: string;
+  let artistName: string;
+
+  if (orderItems.length > 0) {
+    // order_items 기반 해석 (artworks는 이미 정규화된 단일 객체)
+    const repArtwork = orderItems[0].artworks;
+    const repTitle = repArtwork?.title ?? '';
+
+    const repArtistsRaw = repArtwork?.artists;
+    artistName = Array.isArray(repArtistsRaw)
+      ? (repArtistsRaw[0]?.name_ko ?? '')
+      : ((repArtistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+
+    if (orderItems.length >= 2) {
+      const rest = orderItems.length - 1;
+      artworkTitle = locale === 'en' ? `${repTitle} and ${rest} more` : `${repTitle} 외 ${rest}건`;
+    } else {
+      artworkTitle = repTitle;
+    }
+  } else {
+    // fallback: 기존 artworks join (단건 artwork_id 기반 주문)
+    const artworkRow = Array.isArray(data.artworks) ? data.artworks[0] : data.artworks;
+    const artistsRaw = artworkRow?.artists;
+    artistName = Array.isArray(artistsRaw)
+      ? (artistsRaw[0]?.name_ko ?? '')
+      : ((artistsRaw as { name_ko?: string } | null | undefined)?.name_ko ?? '');
+    artworkTitle = artworkRow?.title ?? '';
+  }
 
   const addressFull = [data.shipping_address, data.shipping_address_detail]
     .filter((s): s is string => !!s && s.trim().length > 0)
     .join(' ');
-
-  const metaLocale = (data.metadata as Record<string, unknown> | null)?.locale;
-  const locale: EmailLocale = metaLocale === 'en' ? 'en' : 'ko';
 
   return {
     orderId: data.id,
@@ -76,7 +121,7 @@ export async function getOrderNotificationInfo(
     shippingPhone: data.shipping_phone ?? '',
     shippingAddress: addressFull,
     shippingMemo: data.shipping_memo ?? '',
-    artworkTitle: artworkRow?.title ?? '',
+    artworkTitle,
     artistName,
     itemAmount: data.item_amount ?? 0,
     shippingAmount: data.shipping_amount ?? 0,
