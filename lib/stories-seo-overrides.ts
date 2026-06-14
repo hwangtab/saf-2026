@@ -90,6 +90,28 @@ export const STORIES_SEO_OVERRIDES: Record<string, StorySeoOverride> = {
     descriptionEn:
       'How archival pigment prints work, their longevity, photo edition numbering, and collector tips.',
   },
+  'gallery-vs-direct-buying': {
+    // GSC 2026-06-05~11: "그림 갤러리" 25 imp / pos 2.9 / CTR 0%, "그림 구매처" 류 구매 의도 쿼리.
+    // 본문 title "갤러리 vs 작가 직매"는 비교 프레임이라 "그림 갤러리" 검색자의 클릭 유인이 약함.
+    // 쿼리 단어를 title 앞에 배치하고 가격 차이를 후킹으로 노출.
+    titleKo: '그림 갤러리에서 살까, 작가에게 직접 살까 — 구매처별 가격 차이 비교',
+    titleEn: 'Art Gallery vs Buying Direct from the Artist — Price Differences Compared',
+    descriptionKo:
+      '같은 그림이 갤러리에선 300만원, 작가 직매로는 200만원. 그림 갤러리·화랑·작가 직거래·온라인 플랫폼 네 가지 구매처의 가격과 신뢰도를 솔직하게 비교합니다.',
+    descriptionEn:
+      'The same painting costs ₩3M at a gallery and ₩2M direct from the artist. Galleries, dealers, direct deals, online platforms — an honest comparison of price and trust across four channels.',
+  },
+  'first-art-buyer-price-guide': {
+    // GSC 2026-06-05~11: "그림 구매" 32 imp / pos 6.6 / CTR 0%, "신인 작가 그림 구매" 21 imp / 0 click.
+    // 본문 title이 "처음 그림을 사는 사람"으로 시작해 "그림 구매" 쿼리 매칭이 뒤로 밀림.
+    // 쿼리 단어 + 가격 앵커를 title 앞에 배치.
+    titleKo: '그림 구매 처음이라면 — 30만원부터 1000만원까지 가격대별 첫 그림 고르는 법',
+    titleEn: 'Buying Art for the First Time — A Price Guide from ₩300K to ₩10M',
+    descriptionKo:
+      '"얼마부터 시작할까요?" 그림 구매가 처음인 사람을 위한 가격대별 가이드. 30·100·300·1000만원 네 구간에서 신인 작가 작품부터 무엇을 어떻게 고를지 정리합니다.',
+    descriptionEn:
+      '"How much should I start with?" A price-tier guide for first-time art buyers — what to buy and how to choose at ₩300K, ₩1M, ₩3M, and ₩10M, from emerging artists up.',
+  },
   'meet-artist-kim-ju-ho': {
     // GSC: 85 imp / 0 click (CTR 0%) — story.title fallback "김주호: 흙과 불로 빚어내는 형상"이
     // 검색 의도("김주호 작가") 대비 매력도 낮음. 작가 정체성을 title 앞에 배치.
