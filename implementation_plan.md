@@ -1,3 +1,89 @@
+# 결제 흐름 보안 강화 실행 계획 (2026-06-14)
+
+## 추가 개선 계획 (2026-06-14)
+
+### 목표
+
+- Toss가 success/fail URL에 결제 파라미터를 붙이는 과정에서 기존 query와 충돌하지 않도록, 카드/간편결제/PayPal 콜백 URL 자체에는 checkout token query를 싣지 않는다.
+- 결제창 취소처럼 Toss가 `orderId`를 돌려주지 않는 실패 랜딩에서도, 같은 탭의 sessionStorage에 보관한 주문번호와 token으로 `pending_payment` 주문을 정리한다.
+- 토큰 도입 전 legacy 무통장 성공 랜딩 허용은 `metadata.payment_provider = "manual_bank_transfer"` 주문으로 제한한다.
+
+### 구현 범위
+
+1. 결제 클라이언트
+   - 주문 생성 직후 `orderNo`와 `checkoutToken`을 sessionStorage에 저장한다.
+   - Toss SDK/hosted checkout으로 전달하는 success/fail URL은 query 없는 canonical 경로로 유지한다.
+   - success/fail 랜딩은 URL query의 token을 우선 사용하되, 없으면 sessionStorage에서 `orderId` 기준 또는 작품별 최근 주문 기준으로 복구한다.
+
+2. 서버 액션
+   - `initiatePayment`가 Toss hosted checkout payload에 token query를 추가하지 않도록 조정한다.
+   - `verifyBankTransferLanding`의 legacy 허용을 manual bank transfer 주문으로 한정한다.
+
+3. 테스트
+   - Toss URL payload에 checkout token이 포함되지 않는지 검증한다.
+   - fail 랜딩이 token query 없이도 sessionStorage fallback으로 취소 액션을 호출하는지 정적 회귀 가드를 추가한다.
+   - legacy 무통장 검증이 `manual_bank_transfer` metadata에만 열려 있는지 검증한다.
+
+## 잔여 버그 개선 계획 (2026-06-14)
+
+### 목표
+
+- sessionStorage 저장 실패, 새 탭, 외부 브라우저 전환 등으로 client-side checkout session이 사라져도 정상 결제 confirm이 막히지 않도록 서버 쿠키 fallback을 추가한다.
+- `/fail` 직접 진입만으로 최신 pending 주문이 취소되지 않도록, orderId 없는 fallback 취소는 Toss 실패 신호가 있는 경우로 제한한다.
+
+### 구현 범위
+
+1. 서버 checkout session cookie
+   - `createOrder` 성공 시 `orderNo`별 checkout cookie와 작품별 latest checkout cookie를 저장한다.
+   - cookie에는 raw token과 필요한 최소 정보만 넣고, DB에는 계속 SHA-256 hash만 유지한다.
+   - `/api/payments/toss/confirm`은 request body token이 없을 때 order cookie에서 token을 복구한다.
+
+2. 실패 랜딩 취소
+   - `FailClient`는 URL의 `orderId`가 없을 때 Toss `code`가 있는 경우에만 latest fallback을 사용한다.
+   - sessionStorage가 없더라도 서버 액션이 latest checkout cookie에서 token/orderId를 복구해 취소할 수 있게 한다.
+
+3. 테스트
+   - confirm route가 token 없는 body에서도 order cookie fallback으로 Toss confirm을 진행하는지 검증한다.
+   - fail client가 code 없는 직접 진입에서 latest fallback 취소를 하지 않는지 정적 가드를 추가한다.
+
+## 목표
+
+- 주문번호만으로 `pending_payment` 주문을 취소하거나 결제 랜딩을 검증할 수 있는 흐름을 차단한다.
+- 주문 생성 시 1회성 checkout token을 발급하고, DB에는 원문이 아닌 SHA-256 해시만 `orders.metadata.checkout_token_hash`에 저장한다.
+- 결제 시작, Toss confirm, 실패 랜딩 취소, 계좌이체 성공 랜딩 검증에서 동일 token을 요구한다.
+
+## 구현 범위
+
+1. `app/actions/checkout.ts`
+   - checkout token 생성/해시/검증 헬퍼 추가
+   - `CreateOrderResult` 성공 타입에 `checkoutToken` 추가
+   - `createOrder` insert metadata에 `checkout_token_hash` 저장
+   - `initiatePayment` 입력에 `checkoutToken` 추가 및 Toss 세션 생성 전 검증
+   - `createBankTransferOrder` metadata update와 redirect URL에 token 반영
+   - `verifyBankTransferLanding(orderId, checkoutToken)`로 변경
+   - `cancelLandingOrder(orderId, checkoutToken)`로 변경
+
+2. 결제 클라이언트/confirm API
+   - 국내/해외 결제 success/fail URL에 `checkoutToken` query 추가
+   - PayPal `initiatePayment` 호출에 token 전달
+   - `SuccessClient`가 URL token을 읽어 confirm API와 계좌이체 검증에 전달
+   - `FailClient`가 token이 있을 때만 landing cancel 호출
+   - `/api/payments/toss/confirm` request body에 token을 요구하고 Toss confirm 전 검증
+
+3. 테스트
+   - 주문 생성 시 raw token 반환 및 hash 저장 검증
+   - token 없는/불일치 landing cancel 차단 검증
+   - token 불일치 `initiatePayment`가 Toss 호출 전 실패하는지 검증
+   - 랜딩 클라이언트의 token 전달 정적 회귀 테스트 추가
+
+## 검증 명령
+
+- `npm test -- --runTestsByPath __tests__/actions/checkout.test.ts __tests__/app/checkout-landing-client-search.test.ts __tests__/app/checkout-success-analytics.test.ts --runInBand`
+- `npm run lint -- --quiet`
+- 필요 시 `npm run type-check`
+
+---
+
 # Google Merchant API 상품 동기화 실행 계획 (2026-06-09)
 
 ## 목표

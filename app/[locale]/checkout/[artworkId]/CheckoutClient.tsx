@@ -37,6 +37,18 @@ type KoBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay'> | null;
 
 type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
 
+type PendingCheckoutSession = {
+  orderId: string;
+  checkoutToken: string;
+  currency: 'KRW' | 'USD';
+};
+
+function rememberPendingCheckout(artworkId: string, orderId: string, checkoutToken: string) {
+  const payload: PendingCheckoutSession = { orderId, checkoutToken, currency: 'KRW' };
+  sessionSet(`saf:checkout:${orderId}`, payload);
+  sessionSet(`saf:checkout:latest:${artworkId}`, payload);
+}
+
 interface CardOptions {
   flowMode: 'DIRECT';
   easyPay: EasyPayKo;
@@ -290,8 +302,9 @@ export default function CheckoutClient({
         return;
       }
 
-      const { orderNo, orderName, totalAmount: serverTotal } = result;
+      const { orderNo, orderName, totalAmount: serverTotal, checkoutToken } = result;
       createdOrderNo = orderNo;
+      rememberPendingCheckout(artworkId, orderNo, checkoutToken);
 
       const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;

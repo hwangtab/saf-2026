@@ -6,6 +6,7 @@
  */
 
 import { TextDecoder, TextEncoder } from 'util';
+import crypto from 'crypto';
 import type { CreateOrderInput } from '@/app/actions/checkout';
 
 if (typeof global.TextEncoder === 'undefined') {
@@ -20,15 +21,27 @@ if (typeof global.TextDecoder === 'undefined') {
 // --- Import SUT ---
 
 const mockHeadersGet = jest.fn();
+const mockCookieSet = jest.fn();
+const mockCookieGet = jest.fn();
 jest.mock('next/headers', () => ({
   headers: jest.fn(async () => ({
     get: mockHeadersGet,
+  })),
+  cookies: jest.fn(async () => ({
+    set: mockCookieSet,
+    get: mockCookieGet,
   })),
 }));
 
 jest.mock('next/cache', () => ({
   revalidatePath: jest.fn(),
   revalidateTag: jest.fn(),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn((url: string) => {
+    throw new Error(`NEXT_REDIRECT:${url}`);
+  }),
 }));
 
 // --- Mock: rate-limit ---
@@ -41,6 +54,7 @@ jest.mock('@/lib/rate-limit', () => ({
 type MockResult = { data: unknown; error: unknown };
 
 let mockArtworkResult: MockResult = { data: null, error: null };
+let mockOrderSelectResult: MockResult = { data: null, error: null };
 let mockRpcResult: MockResult = { data: null, error: null };
 let mockInsertResult: MockResult = { data: null, error: null };
 let mockInsertResultsQueue: MockResult[] = [];
@@ -58,12 +72,18 @@ const mockEq = jest.fn();
 const mockInsert = jest.fn();
 const mockUpdate = jest.fn();
 const mockRpc = jest.fn();
+const mockFetchWithTimeout = jest.fn();
 
 function buildChain(result: MockResult) {
   const single = jest.fn(() => result);
-  const eqChain: jest.Mock = jest.fn(() => ({ eq: eqChain, single, maybeSingle: single }));
-  const select = jest.fn(() => ({ eq: eqChain, single, maybeSingle: single }));
-  return { select, single, eqChain };
+  const chain = {
+    eq: jest.fn(() => chain),
+    in: jest.fn(() => chain),
+    single,
+    maybeSingle: single,
+  };
+  const select = jest.fn(() => chain);
+  return { select, single, eqChain: chain.eq };
 }
 
 jest.mock('@/lib/auth/server', () => ({
@@ -93,7 +113,7 @@ jest.mock('@/lib/auth/server', () => ({
         });
         const insertSelect = jest.fn(() => ({ single: insertSingle }));
         return {
-          select: buildChain(mockArtworkResult).select,
+          select: buildChain(mockOrderSelectResult).select,
           insert: jest.fn((row: Record<string, unknown>) => {
             capturedInsertedRows.push(row);
             return { select: insertSelect };
@@ -138,6 +158,15 @@ jest.mock('@/lib/auth/server', () => ({
 // --- Mock: toss config ---
 jest.mock('@/lib/integrations/toss/config', () => ({
   calculateShippingFee: jest.fn((amount: number) => (amount >= 200000 ? 0 : 4000)),
+  getTossConfig: jest.fn(() => ({
+    apiBaseUrl: 'https://api.tosspayments.test',
+    provider: 'domestic',
+  })),
+  getTossAuthHeader: jest.fn(() => 'Basic test-secret'),
+}));
+
+jest.mock('@/lib/integrations/toss/fetch-with-timeout', () => ({
+  fetchWithTimeout: (...args: unknown[]) => mockFetchWithTimeout(...args),
 }));
 
 // --- Mock: order number ---
@@ -188,12 +217,24 @@ function setupSuccessfulArtwork() {
 
 let createOrder: typeof import('@/app/actions/checkout').createOrder;
 let cancelPendingOrder: typeof import('@/app/actions/checkout').cancelPendingOrder;
+let cancelLandingOrder: typeof import('@/app/actions/checkout').cancelLandingOrder;
+let initiatePayment: typeof import('@/app/actions/checkout').initiatePayment;
+let createBankTransferOrder: typeof import('@/app/actions/checkout').createBankTransferOrder;
+let verifyBankTransferLanding: typeof import('@/app/actions/checkout').verifyBankTransferLanding;
+
+function hashCheckoutToken(token: string) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
 
 beforeEach(async () => {
   jest.resetModules();
   mockHeadersGet.mockReturnValue('127.0.0.1');
+  mockCookieSet.mockClear();
+  mockCookieGet.mockReset();
+  mockCookieGet.mockReturnValue(undefined);
   mockRateLimitResult = { success: true, remaining: 9 };
   mockArtworkResult = { data: null, error: null };
+  mockOrderSelectResult = { data: null, error: null };
   mockRpcResult = { data: null, error: null };
   mockInsertResult = { data: null, error: null };
   mockInsertResultsQueue = [];
@@ -201,10 +242,20 @@ beforeEach(async () => {
   mockAuthUserResult = { data: { user: null }, error: null };
   capturedInsertedRows.length = 0;
   capturedOrderUpdates.length = 0;
+  mockFetchWithTimeout.mockReset();
+  mockFetchWithTimeout.mockResolvedValue({
+    ok: true,
+    json: async () => ({ checkout: { url: 'https://checkout.tosspayments.test/pay' } }),
+  });
+  (jest.requireMock('next/navigation').redirect as jest.Mock).mockClear();
 
   const mod = await import('@/app/actions/checkout');
   createOrder = mod.createOrder;
   cancelPendingOrder = mod.cancelPendingOrder;
+  cancelLandingOrder = mod.cancelLandingOrder;
+  initiatePayment = mod.initiatePayment;
+  createBankTransferOrder = mod.createBankTransferOrder;
+  verifyBankTransferLanding = mod.verifyBankTransferLanding;
 });
 
 // ========== createOrder ==========
@@ -291,7 +342,27 @@ describe('createOrder', () => {
       expect(result.totalAmount).toBe(5_000_000); // 500만원 이상 → 배송비 무료
       expect(result.orderName).toContain('봄의 정원');
       expect(result.orderName).toContain('김작가');
+      expect(result.checkoutToken).toEqual(expect.any(String));
+      expect(result.checkoutToken.length).toBeGreaterThan(32);
     }
+  });
+
+  it('checkout token 원문은 응답하고 DB에는 해시만 저장한다', async () => {
+    setupSuccessfulArtwork();
+
+    const result = await createOrder(validInput);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const metadata = capturedInsertedRows[0].metadata as Record<string, unknown>;
+    expect(metadata.checkout_token_hash).toBe(hashCheckoutToken(result.checkoutToken));
+    expect(metadata.checkout_token_hash).not.toBe(result.checkoutToken);
+    expect(JSON.stringify(capturedInsertedRows[0])).not.toContain(result.checkoutToken);
+    expect(mockCookieSet).toHaveBeenCalledWith(
+      `saf_checkout_${result.orderNo}`,
+      expect.any(String),
+      expect.objectContaining({ httpOnly: true, sameSite: 'lax' })
+    );
   });
 
   it('기존 pending_payment 자동 정리는 30분 지난 주문만 대상으로 한다', async () => {
@@ -403,6 +474,117 @@ describe('cancelPendingOrder', () => {
   });
 });
 
+// ========== cancelLandingOrder ==========
+
+describe('cancelLandingOrder', () => {
+  it('토큰이 없으면 주문을 취소하지 않음', async () => {
+    await cancelLandingOrder('SAF-20260414-TEST', '');
+    expect(capturedOrderUpdates).toHaveLength(0);
+  });
+
+  it('토큰이 있으면 checkout_token_hash 조건을 함께 걸어 pending 주문만 취소', async () => {
+    await cancelLandingOrder('SAF-20260414-TEST', 'raw-token');
+
+    expect(capturedOrderUpdates).toHaveLength(1);
+    expect(capturedOrderUpdates[0].filters).toEqual(
+      expect.arrayContaining([
+        { op: 'eq', column: 'order_no', value: 'SAF-20260414-TEST' },
+        { op: 'eq', column: 'status', value: 'pending_payment' },
+        {
+          op: 'eq',
+          column: 'metadata->>checkout_token_hash',
+          value: hashCheckoutToken('raw-token'),
+        },
+      ])
+    );
+  });
+});
+
+// ========== initiatePayment ==========
+
+describe('initiatePayment', () => {
+  const paymentInput = {
+    method: 'CARD',
+    orderNo: 'SAF-20260414-TEST',
+    orderName: '봄의 정원 (김작가)',
+    totalAmount: 5_000_000,
+    buyerName: '홍길동',
+    buyerEmail: 'buyer@test.com',
+    checkoutToken: 'checkout-token',
+    successUrl: 'https://www.saf2026.com/checkout/art-1/success?foo=1',
+    failUrl: 'https://www.saf2026.com/checkout/art-1/fail',
+    locale: 'ko' as const,
+  };
+
+  it('checkout token 불일치 시 Toss API 호출 없이 실패', async () => {
+    mockOrderSelectResult = {
+      data: {
+        total_amount: 5_000_000,
+        status: 'pending_payment',
+        metadata: { checkout_token_hash: hashCheckoutToken('different-token') },
+      },
+      error: null,
+    };
+
+    const result = await initiatePayment(paymentInput);
+
+    expect(result.success).toBe(false);
+    expect(mockFetchWithTimeout).not.toHaveBeenCalled();
+  });
+
+  it('checkout token 일치 시 Toss redirect URL에 token을 싣지 않고 세션 생성', async () => {
+    mockOrderSelectResult = {
+      data: {
+        total_amount: 5_000_000,
+        status: 'pending_payment',
+        metadata: { checkout_token_hash: hashCheckoutToken(paymentInput.checkoutToken) },
+      },
+      error: null,
+    };
+
+    const result = await initiatePayment(paymentInput);
+
+    expect(result.success).toBe(true);
+    expect(mockFetchWithTimeout).toHaveBeenCalledTimes(1);
+    const [, init] = mockFetchWithTimeout.mock.calls[0];
+    const body = JSON.parse((init as { body: string }).body) as {
+      successUrl: string;
+      failUrl: string;
+    };
+    expect(body.successUrl).toContain('foo=1');
+    expect(body.successUrl).not.toContain('checkoutToken=');
+    expect(body.failUrl).not.toContain('checkoutToken=');
+  });
+});
+
+// ========== verifyBankTransferLanding ==========
+
+describe('verifyBankTransferLanding', () => {
+  it('checkout token 없는 legacy 주문은 manual_bank_transfer일 때만 허용', async () => {
+    mockOrderSelectResult = {
+      data: {
+        id: 'order-1',
+        metadata: { payment_provider: 'manual_bank_transfer' },
+      },
+      error: null,
+    };
+
+    await expect(verifyBankTransferLanding('SAF-20260414-TEST', '')).resolves.toBe(true);
+  });
+
+  it('checkout token 없는 legacy 카드 주문은 무통장 랜딩을 허용하지 않음', async () => {
+    mockOrderSelectResult = {
+      data: {
+        id: 'order-1',
+        metadata: { payment_provider: 'domestic' },
+      },
+      error: null,
+    };
+
+    await expect(verifyBankTransferLanding('SAF-20260414-TEST', '')).resolves.toBe(false);
+  });
+});
+
 // ========== createOrder — payment_provider metadata ==========
 
 describe('createOrder — payment_provider metadata', () => {
@@ -419,6 +601,7 @@ describe('createOrder — payment_provider metadata', () => {
     const meta = capturedInsertedRows[0].metadata as Record<string, unknown>;
     expect(meta.payment_provider).toBe('domestic');
     expect(meta.locale).toBe('ko');
+    expect(meta.checkout_token_hash).toEqual(expect.any(String));
   });
 
   it('stamps metadata.payment_provider = "overseas" for en orders', async () => {
@@ -433,5 +616,30 @@ describe('createOrder — payment_provider metadata', () => {
     const meta = capturedInsertedRows[0].metadata as Record<string, unknown>;
     expect(meta.payment_provider).toBe('overseas');
     expect(meta.locale).toBe('en');
+    expect(meta.checkout_token_hash).toEqual(expect.any(String));
+  });
+});
+
+// ========== createBankTransferOrder ==========
+
+describe('createBankTransferOrder', () => {
+  it('redirect success URL에 checkoutToken을 포함한다', async () => {
+    setupSuccessfulArtwork();
+    await expect(createBankTransferOrder(validInput)).rejects.toThrow(/NEXT_REDIRECT:/);
+
+    const redirect = jest.requireMock('next/navigation').redirect as jest.Mock;
+    const redirectedTo = redirect.mock.calls.at(-1)?.[0] as string;
+    expect(redirectedTo).toContain('method=BANK_TRANSFER');
+    expect(redirectedTo).toContain('checkoutToken=');
+
+    const manualUpdate = capturedOrderUpdates.find((call) =>
+      Boolean(
+        (call.patch.metadata as Record<string, unknown> | undefined)?.payment_provider ===
+          'manual_bank_transfer'
+      )
+    );
+    expect((manualUpdate?.patch.metadata as Record<string, unknown>).checkout_token_hash).toEqual(
+      expect.any(String)
+    );
   });
 });

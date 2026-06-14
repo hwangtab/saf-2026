@@ -26,6 +26,12 @@ interface Landing {
   currency: 'KRW' | 'USD';
 }
 
+interface PendingCheckoutSession {
+  orderId: string;
+  checkoutToken: string;
+  currency?: 'KRW' | 'USD';
+}
+
 interface PurchaseAnalyticsItem {
   artworkId: string;
   artworkTitle: string;
@@ -56,6 +62,17 @@ function formatDeadline(locale: string): string {
     minute: '2-digit',
     hour12: false,
   });
+}
+
+function restorePendingCheckout(orderId: string, artworkId: string): PendingCheckoutSession | null {
+  const byOrder = orderId ? sessionGet<PendingCheckoutSession>(`saf:checkout:${orderId}`) : null;
+  if (byOrder?.checkoutToken) return byOrder;
+
+  const latest = sessionGet<PendingCheckoutSession>(`saf:checkout:latest:${artworkId}`);
+  if (latest?.checkoutToken && (!orderId || latest.orderId === orderId)) {
+    return latest;
+  }
+  return null;
 }
 
 /**
@@ -91,6 +108,7 @@ export default function SuccessClient() {
       paymentKey: string,
       orderId: string,
       amount: string,
+      checkoutToken: string,
       currency: 'KRW' | 'USD'
     ) {
       try {
@@ -101,6 +119,7 @@ export default function SuccessClient() {
             paymentKey,
             orderId,
             amount: Number(amount),
+            checkoutToken,
           }),
         });
 
@@ -198,9 +217,11 @@ export default function SuccessClient() {
     const orderId = sp.get('orderId') ?? '';
     const amount = sp.get('amount') ?? '';
     const method = sp.get('method') ?? '';
+    const storedCheckout = restorePendingCheckout(orderId, artworkId);
+    const checkoutToken = sp.get('checkoutToken') ?? storedCheckout?.checkoutToken ?? '';
     const currencyParam = sp.get('currency');
-    // currency 쿼리 우선 — 영문 페이지에서 결제수단별로 다름 (PayPal=USD, 그 외=KRW).
-    // 쿼리 없을 때만 locale 기반 fallback. 무통장은 항상 KRW.
+    // currency 쿼리 우선. query가 없으면 결제 시작 시 sessionStorage에 저장한 통화를 사용하고,
+    // 저장소도 없을 때만 locale로 fallback한다. 무통장은 항상 KRW.
     const currency: 'KRW' | 'USD' =
       method === 'BANK_TRANSFER'
         ? 'KRW'
@@ -208,9 +229,13 @@ export default function SuccessClient() {
           ? 'USD'
           : currencyParam === 'KRW'
             ? 'KRW'
-            : locale === 'en'
+            : storedCheckout?.currency === 'USD'
               ? 'USD'
-              : 'KRW';
+              : storedCheckout?.currency === 'KRW'
+                ? 'KRW'
+                : locale === 'en'
+                  ? 'USD'
+                  : 'KRW';
 
     // 결제 식별자 누락 — 직접 진입/위조. 404 대신 작품 상세로 안내.
     if (!orderId || !amount) {
@@ -226,7 +251,7 @@ export default function SuccessClient() {
     // 실제 awaiting_deposit/paid 주문인지 server에서 검증.
     if (method === 'BANK_TRANSFER') {
       void (async () => {
-        const valid = await verifyBankTransferLanding(orderId).catch(() => false);
+        const valid = await verifyBankTransferLanding(orderId, checkoutToken).catch(() => false);
         if (!valid) {
           router.replace(`/artworks/${artworkId}`);
           return;
@@ -252,7 +277,7 @@ export default function SuccessClient() {
       return;
     }
 
-    void runConfirm(paymentKey, orderId, amount, currency);
+    void runConfirm(paymentKey, orderId, amount, checkoutToken, currency);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

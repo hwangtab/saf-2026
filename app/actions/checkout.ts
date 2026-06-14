@@ -1,6 +1,7 @@
 'use server';
 
-import { headers } from 'next/headers';
+import crypto from 'crypto';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
@@ -51,10 +52,26 @@ export type CreateOrderInput = {
 };
 
 export type CreateOrderResult =
-  | { success: true; orderId: string; orderNo: string; totalAmount: number; orderName: string }
+  | {
+      success: true;
+      orderId: string;
+      orderNo: string;
+      totalAmount: number;
+      orderName: string;
+      checkoutToken: string;
+    }
   | { success: false; error: string };
 
 const MAX_ORDER_NO_INSERT_RETRIES = 3;
+const CHECKOUT_TOKEN_BYTES = 32;
+const CHECKOUT_TOKEN_HASH_KEY = 'checkout_token_hash';
+const CHECKOUT_COOKIE_MAX_AGE_SECONDS = 60 * 60;
+
+type CheckoutCookiePayload = {
+  orderId: string;
+  checkoutToken: string;
+  currency?: 'KRW' | 'USD';
+};
 
 function isOrderNoUniqueViolation(error: unknown) {
   const typed = error as { code?: string; message?: string } | null;
@@ -65,6 +82,92 @@ function isOrderNoUniqueViolation(error: unknown) {
     typed.message?.includes('duplicate key value') ||
     false
   );
+}
+
+function generateCheckoutToken() {
+  return crypto.randomBytes(CHECKOUT_TOKEN_BYTES).toString('base64url');
+}
+
+function hashCheckoutToken(token: string) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+function getCheckoutTokenHash(metadata: unknown): string | null {
+  if (!metadata || typeof metadata !== 'object') return null;
+  const value = (metadata as Record<string, unknown>)[CHECKOUT_TOKEN_HASH_KEY];
+  return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+function isCheckoutTokenValid(metadata: unknown, checkoutToken: string) {
+  const storedHash = getCheckoutTokenHash(metadata);
+  if (!storedHash || !checkoutToken) return false;
+  const providedHash = hashCheckoutToken(checkoutToken);
+  const stored = Buffer.from(storedHash);
+  const provided = Buffer.from(providedHash);
+  return stored.length === provided.length && crypto.timingSafeEqual(stored, provided);
+}
+
+function checkoutCookieName(orderId: string) {
+  return `saf_checkout_${orderId}`;
+}
+
+function latestCheckoutCookieName(artworkId: string) {
+  const key = crypto.createHash('sha256').update(artworkId).digest('hex').slice(0, 32);
+  return `saf_checkout_latest_${key}`;
+}
+
+function encodeCheckoutCookie(payload: CheckoutCookiePayload) {
+  return Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
+}
+
+function decodeCheckoutCookie(value: string | undefined): CheckoutCookiePayload | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(Buffer.from(value, 'base64url').toString('utf8')) as unknown;
+    if (!parsed || typeof parsed !== 'object') return null;
+    const payload = parsed as Partial<CheckoutCookiePayload>;
+    if (typeof payload.orderId !== 'string' || typeof payload.checkoutToken !== 'string') {
+      return null;
+    }
+    return {
+      orderId: payload.orderId,
+      checkoutToken: payload.checkoutToken,
+      currency: payload.currency === 'USD' ? 'USD' : payload.currency === 'KRW' ? 'KRW' : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function rememberCheckoutCookie(
+  artworkId: string,
+  orderId: string,
+  checkoutToken: string,
+  currency: 'KRW' | 'USD'
+) {
+  const cookieStore = await cookies();
+  const value = encodeCheckoutCookie({ orderId, checkoutToken, currency });
+  const options = {
+    httpOnly: true,
+    sameSite: 'lax' as const,
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: CHECKOUT_COOKIE_MAX_AGE_SECONDS,
+  };
+  cookieStore.set(checkoutCookieName(orderId), value, options);
+  cookieStore.set(latestCheckoutCookieName(artworkId), value, options);
+}
+
+async function getCheckoutCookieByOrder(orderId: string) {
+  if (!orderId) return null;
+  const cookieStore = await cookies();
+  return decodeCheckoutCookie(cookieStore.get(checkoutCookieName(orderId))?.value);
+}
+
+async function getLatestCheckoutCookie(artworkId: string) {
+  if (!artworkId) return null;
+  const cookieStore = await cookies();
+  return decodeCheckoutCookie(cookieStore.get(latestCheckoutCookieName(artworkId))?.value);
 }
 
 export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
@@ -219,6 +322,8 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     id: string;
   } | null = null;
   let orderNo = '';
+  const checkoutToken = generateCheckoutToken();
+  const checkoutTokenHash = hashCheckoutToken(checkoutToken);
 
   for (let attempt = 1; attempt <= MAX_ORDER_NO_INSERT_RETRIES; attempt++) {
     orderNo = generateOrderNumber();
@@ -246,6 +351,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         metadata: {
           locale: buyerLocale,
           payment_provider: buyerLocale === 'en' ? 'overseas' : 'domestic',
+          [CHECKOUT_TOKEN_HASH_KEY]: checkoutTokenHash,
           // 영문 주문은 PayPal(USD) 결제이므로 환산 USD 금액을 시점 고정해서 저장.
           // confirm 시점에 Toss가 USD로 amount를 반환하면 이 값으로 검증.
           ...(buyerLocale === 'en' ? { usd_amount: krwToUsd(totalAmount) } : {}),
@@ -270,12 +376,20 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, error: apiError('order_creation_failed', buyerLocale) };
   }
 
+  await rememberCheckoutCookie(
+    artworkId,
+    orderNo,
+    checkoutToken,
+    buyerLocale === 'en' ? 'USD' : 'KRW'
+  );
+
   return {
     success: true,
     orderId: order.id,
     orderNo,
     totalAmount,
     orderName,
+    checkoutToken,
   };
 }
 
@@ -297,6 +411,7 @@ export type InitiatePaymentInput = {
   totalAmount: number;
   buyerName: string;
   buyerEmail: string;
+  checkoutToken: string;
   successUrl: string;
   failUrl: string;
   /** locale 기준으로 provider 결정 (ko → domestic, en → overseas) */
@@ -357,6 +472,9 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
   }
   if (dbOrder.total_amount !== input.totalAmount) {
     return { success: false, error: apiError('amount_mismatch', buyerLocale) };
+  }
+  if (!isCheckoutTokenValid(dbOrder.metadata, input.checkoutToken)) {
+    return { success: false, error: apiError('invalid_checkout_token', buyerLocale) };
   }
 
   // overseas 결제는 createOrder가 metadata.usd_amount를 미리 고정해두므로 그 값을 단일 출처로
@@ -500,6 +618,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
       metadata: {
         locale: buyerLocale,
         payment_provider: 'manual_bank_transfer',
+        [CHECKOUT_TOKEN_HASH_KEY]: hashCheckoutToken(result.checkoutToken),
       },
     })
     .eq('order_no', result.orderNo);
@@ -637,8 +756,8 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   // localePrefix: 'as-needed' — ko 기본 locale은 prefix 없음, en만 /en/.
   const successPath =
     buyerLocale === 'en'
-      ? `/en/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW`
-      : `/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}`;
+      ? `/en/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW&checkoutToken=${encodeURIComponent(result.checkoutToken)}`
+      : `/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&checkoutToken=${encodeURIComponent(result.checkoutToken)}`;
   redirect(successPath);
 }
 
@@ -670,17 +789,32 @@ export async function cancelPendingOrder(orderNo: string, buyerEmail: string): P
  * 임의 orderId로 SAF 브랜드 계좌 안내 화면을 위조하는 피싱을 막기 위해, 실제로
  * 입금대기/완료 상태로 존재하는 주문인지 server에서 확인한다.
  */
-export async function verifyBankTransferLanding(orderId: string): Promise<boolean> {
+export async function verifyBankTransferLanding(
+  orderId: string,
+  checkoutToken: string
+): Promise<boolean> {
   if (!orderId || typeof orderId !== 'string') return false;
   try {
+    const token = checkoutToken || (await getCheckoutCookieByOrder(orderId))?.checkoutToken || '';
     const adminClient = createSupabaseAdminClient();
     const { data } = await adminClient
       .from('orders')
-      .select('id')
+      .select('id, metadata')
       .eq('order_no', orderId)
       .in('status', ['awaiting_deposit', 'paid', 'preparing'])
       .maybeSingle();
-    return !!data;
+    if (!data) return false;
+
+    // 토큰 도입 전 생성된 계좌이체 주문의 재방문은 허용한다.
+    const storedHash = getCheckoutTokenHash(data.metadata);
+    if (!storedHash) {
+      const paymentProvider =
+        typeof data.metadata === 'object' && data.metadata !== null
+          ? (data.metadata as Record<string, unknown>).payment_provider
+          : null;
+      return paymentProvider === 'manual_bank_transfer';
+    }
+    return isCheckoutTokenValid(data.metadata, token);
   } catch {
     return false;
   }
@@ -694,8 +828,10 @@ export async function verifyBankTransferLanding(orderId: string): Promise<boolea
  * `status='pending_payment'`에만 동작하므로 임의 orderId 호출은 무해
  * (최악 = 정상 진행 중인 주문 강제 취소 → 사용자가 재시도, 수익 손실 없음).
  */
-export async function cancelLandingOrder(orderId: string): Promise<void> {
+export async function cancelLandingOrder(orderId: string, checkoutToken: string): Promise<void> {
   if (!orderId || typeof orderId !== 'string') return;
+  const token = checkoutToken || (await getCheckoutCookieByOrder(orderId))?.checkoutToken || '';
+  if (!token) return;
   const headersList = await headers();
   const ip = getClientIp(headersList);
   const rl = await rateLimit(`cancelLandingOrder:${ip}`, { limit: 10, windowMs: 60_000 });
@@ -706,8 +842,16 @@ export async function cancelLandingOrder(orderId: string): Promise<void> {
       .from('orders')
       .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
       .eq('order_no', orderId)
-      .eq('status', 'pending_payment');
+      .eq('status', 'pending_payment')
+      .eq(`metadata->>${CHECKOUT_TOKEN_HASH_KEY}`, hashCheckoutToken(token));
   } catch (err) {
     console.error('[cancelLandingOrder] failed:', err);
   }
+}
+
+export async function cancelLatestLandingOrder(artworkId: string): Promise<void> {
+  if (!artworkId || typeof artworkId !== 'string') return;
+  const latest = await getLatestCheckoutCookie(artworkId);
+  if (!latest) return;
+  await cancelLandingOrder(latest.orderId, latest.checkoutToken);
 }

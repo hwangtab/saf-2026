@@ -47,6 +47,23 @@ type EnBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay' | 'paypal'
 
 type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
 
+type PendingCheckoutSession = {
+  orderId: string;
+  checkoutToken: string;
+  currency: 'KRW' | 'USD';
+};
+
+function rememberPendingCheckout(
+  artworkId: string,
+  orderId: string,
+  checkoutToken: string,
+  currency: 'KRW' | 'USD'
+) {
+  const payload: PendingCheckoutSession = { orderId, checkoutToken, currency };
+  sessionSet(`saf:checkout:${orderId}`, payload);
+  sessionSet(`saf:checkout:latest:${artworkId}`, payload);
+}
+
 interface CardOptions {
   flowMode: 'DIRECT';
   easyPay: EasyPayKo;
@@ -318,12 +335,13 @@ export default function OverseasCheckoutClient({
         return;
       }
 
-      const { orderNo, orderName, totalAmount: serverTotal } = result;
+      const { orderNo, orderName, totalAmount: serverTotal, checkoutToken } = result;
       createdOrderNo = orderNo;
 
-      const successUrl = `${window.location.origin}/en/checkout/${artworkId}/success?currency=${successCurrency}`;
+      const successUrl = `${window.location.origin}/en/checkout/${artworkId}/success`;
       const failUrl = `${window.location.origin}/en/checkout/${artworkId}/fail`;
       const analyticsValue = paymentChoice === 'PAYPAL' ? krwToUsd(serverTotal) : serverTotal;
+      rememberPendingCheckout(artworkId, orderNo, checkoutToken, successCurrency);
       trackEvent(
         'add_payment_info',
         {
@@ -355,6 +373,7 @@ export default function OverseasCheckoutClient({
           totalAmount: serverTotal,
           buyerName,
           buyerEmail,
+          checkoutToken,
           successUrl,
           failUrl,
           locale: 'en',

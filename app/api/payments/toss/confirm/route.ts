@@ -1,6 +1,7 @@
 import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import crypto from 'crypto';
 
 import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
@@ -20,6 +21,42 @@ import { apiError, getRequestLocale } from '@/lib/api-locale';
 export const runtime = 'nodejs';
 
 type OrderNotificationInfo = Awaited<ReturnType<typeof getOrderNotificationInfo>>;
+const CHECKOUT_TOKEN_HASH_KEY = 'checkout_token_hash';
+
+function hashCheckoutToken(token: string) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+function checkoutCookieName(orderId: string) {
+  return `saf_checkout_${orderId}`;
+}
+
+function decodeCheckoutCookie(value: string | undefined): { checkoutToken: string } | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(Buffer.from(value, 'base64url').toString('utf8')) as unknown;
+    if (!parsed || typeof parsed !== 'object') return null;
+    const checkoutToken = (parsed as { checkoutToken?: unknown }).checkoutToken;
+    return typeof checkoutToken === 'string' && checkoutToken ? { checkoutToken } : null;
+  } catch {
+    return null;
+  }
+}
+
+function getCheckoutTokenHash(metadata: unknown): string | null {
+  if (!metadata || typeof metadata !== 'object') return null;
+  const value = (metadata as Record<string, unknown>)[CHECKOUT_TOKEN_HASH_KEY];
+  return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+function isCheckoutTokenValid(metadata: unknown, checkoutToken: string) {
+  const storedHash = getCheckoutTokenHash(metadata);
+  if (!storedHash || !checkoutToken) return false;
+  const providedHash = hashCheckoutToken(checkoutToken);
+  const stored = Buffer.from(storedHash);
+  const provided = Buffer.from(providedHash);
+  return stored.length === provided.length && crypto.timingSafeEqual(stored, provided);
+}
 
 function buildAnalyticsItem(
   order: { artwork_id: string | null; total_amount: number },
@@ -46,15 +83,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: apiError('invalid_json', reqLocale) }, { status: 400 });
   }
 
-  const { paymentKey, orderId, amount } = body as {
+  const { paymentKey, orderId, amount, checkoutToken } = body as {
     paymentKey?: unknown;
     orderId?: unknown;
     amount?: unknown;
+    checkoutToken?: unknown;
   };
 
-  if (typeof paymentKey !== 'string' || typeof orderId !== 'string' || typeof amount !== 'number') {
+  if (
+    typeof paymentKey !== 'string' ||
+    typeof orderId !== 'string' ||
+    typeof amount !== 'number' ||
+    (typeof checkoutToken !== 'undefined' && typeof checkoutToken !== 'string')
+  ) {
     return NextResponse.json({ error: apiError('missing_fields', reqLocale) }, { status: 400 });
   }
+
+  const resolvedCheckoutToken =
+    typeof checkoutToken === 'string' && checkoutToken
+      ? checkoutToken
+      : (decodeCheckoutCookie(req.cookies.get(checkoutCookieName(orderId))?.value)?.checkoutToken ??
+        '');
 
   const supabase = createSupabaseAdminClient();
 
@@ -78,6 +127,13 @@ export async function POST(req: NextRequest) {
     | undefined;
   const buyerLocale: 'ko' | 'en' =
     storedLocale === 'en' ? 'en' : storedLocale === 'ko' ? 'ko' : reqLocale;
+
+  if (!isCheckoutTokenValid(order.metadata, resolvedCheckoutToken)) {
+    return NextResponse.json(
+      { error: apiError('invalid_checkout_token', buyerLocale) },
+      { status: 400 }
+    );
+  }
 
   const provider = resolveOrderProvider(order.metadata);
 

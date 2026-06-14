@@ -25,6 +25,7 @@ export type ApiErrorCode =
   | 'missing_fields'
   | 'order_not_found'
   | 'amount_mismatch'
+  | 'invalid_checkout_token'
   | 'invalid_order_status'
   | 'payment_confirmation_failed'
   | 'server_error'
@@ -54,6 +55,7 @@ const ERROR_MESSAGES: Record<ApiLocale, Record<ApiErrorCode, string>> = {
     missing_fields: 'paymentKey, orderId, amount 값이 필요합니다.',
     order_not_found: '주문을 찾을 수 없습니다.',
     amount_mismatch: '결제 금액이 일치하지 않습니다.',
+    invalid_checkout_token: '결제 요청을 확인할 수 없습니다. 처음부터 다시 시도해주세요.',
     invalid_order_status: '현재 주문 상태에서는 결제를 진행할 수 없습니다.',
     payment_confirmation_failed: '결제 승인에 실패했습니다.',
     server_error: '서버 오류가 발생했습니다.',
@@ -85,6 +87,7 @@ const ERROR_MESSAGES: Record<ApiLocale, Record<ApiErrorCode, string>> = {
     missing_fields: 'paymentKey, orderId, and amount are required.',
     order_not_found: 'Order not found.',
     amount_mismatch: 'Payment amount does not match.',
+    invalid_checkout_token: 'Unable to verify this checkout request. Please start again.',
     invalid_order_status: 'Order cannot be paid in its current status.',
     payment_confirmation_failed: 'Payment confirmation failed.',
     server_error: 'A server error occurred.',

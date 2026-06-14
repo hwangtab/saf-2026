@@ -28,4 +28,14 @@ describe('checkout success purchase analytics', () => {
     expect(src).toContain('itemAmount');
     expect(src).toContain('shippingAmount');
   });
+
+  it('requires checkoutToken before calling Toss confirm', () => {
+    const src = read(CONFIRM_ROUTE);
+
+    expect(src).toContain('checkoutToken');
+    expect(src).toContain('decodeCheckoutCookie');
+    expect(src).toContain('resolvedCheckoutToken');
+    expect(src).toContain('invalid_checkout_token');
+    expect(src).toContain('isCheckoutTokenValid(order.metadata, resolvedCheckoutToken)');
+  });
 });

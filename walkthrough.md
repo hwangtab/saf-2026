@@ -1,3 +1,34 @@
+# 결제 흐름 checkout token 보안 강화 (2026-06-14)
+
+## 변경 사항
+
+- 주문 생성 시 32바이트 랜덤 checkout token을 발급하고, `orders.metadata.checkout_token_hash`에는 SHA-256 해시만 저장하도록 했다.
+- `CreateOrderResult` 성공 응답에 `checkoutToken`을 추가하고, 국내/해외 카드·간편결제·PayPal 흐름에서는 token을 URL query에 싣지 않고 같은 탭의 sessionStorage에 저장하도록 했다.
+- Toss success/fail URL은 query 없는 canonical 경로로 유지해, Toss가 붙이는 `paymentKey`/`orderId`/`amount`/오류 query와 충돌하지 않게 했다.
+- `initiatePayment`가 Toss hosted checkout URL을 만들기 전에 `order_no`, 금액, `pending_payment`, checkout token hash를 함께 검증하도록 했다.
+- `SuccessClient`가 URL token을 우선 사용하고, 없으면 sessionStorage의 `orderId` 기준 checkout token과 currency를 복구해 confirm API와 계좌이체 랜딩 검증에 전달하도록 했다.
+- `FailClient`는 Toss가 `orderId`를 돌려주지 않는 취소 케이스에서도 sessionStorage의 최근 주문 fallback으로 `cancelLandingOrder(orderId, checkoutToken)`을 호출한다.
+- `cancelLandingOrder`는 `metadata->>checkout_token_hash` 조건을 함께 걸어 토큰이 맞는 `pending_payment` 주문만 취소한다.
+- `/api/payments/toss/confirm`은 Toss confirm 호출 전에 `checkoutToken`을 필수 검증한다.
+- 계좌이체 주문의 manual metadata update에서도 checkout token hash를 유지하고, redirect URL에 token을 포함했다.
+- 토큰 도입 전 legacy 무통장 성공 랜딩 허용은 `metadata.payment_provider = "manual_bank_transfer"` 주문으로 제한했다.
+- sessionStorage 저장 실패/새 탭/외부 브라우저 전환에 대비해 `createOrder`가 httpOnly checkout cookie를 함께 저장하고, confirm API와 landing cancel 서버 액션이 cookie fallback으로 token을 복구하도록 했다.
+- `/fail` 직접 진입만으로 최신 pending 주문이 취소되지 않도록, orderId 없는 latest fallback 취소는 Toss 실패 `code`가 있는 경우로 제한했다.
+
+## 검증
+
+- `npm test -- --runTestsByPath __tests__/actions/checkout.test.ts __tests__/app/checkout-landing-client-search.test.ts __tests__/app/checkout-success-analytics.test.ts --runInBand` 통과
+  - 3 suites / 34 tests
+- `npm run type-check` 통과
+- `npm run lint -- --quiet` 통과
+  - 기존 접근성 warning 47개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+- 잔여 버그 개선 후 동일 회귀 검증 재실행 통과
+  - `npm test -- --runTestsByPath __tests__/actions/checkout.test.ts __tests__/app/checkout-landing-client-search.test.ts __tests__/app/checkout-success-analytics.test.ts --runInBand`
+  - `npm run type-check`
+  - `npm run lint -- --quiet`
+
+---
+
 # Google Merchant API 상품 동기화
 
 ## 변경 사항

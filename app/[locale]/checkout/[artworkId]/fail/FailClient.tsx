@@ -7,7 +7,24 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
-import { cancelLandingOrder } from '@/app/actions/checkout';
+import { cancelLandingOrder, cancelLatestLandingOrder } from '@/app/actions/checkout';
+import { sessionGet } from '@/lib/storage';
+
+interface PendingCheckoutSession {
+  orderId: string;
+  checkoutToken: string;
+}
+
+function restorePendingCheckout(orderId: string, artworkId: string): PendingCheckoutSession | null {
+  const byOrder = orderId ? sessionGet<PendingCheckoutSession>(`saf:checkout:${orderId}`) : null;
+  if (byOrder?.orderId && byOrder.checkoutToken) return byOrder;
+
+  const latest = sessionGet<PendingCheckoutSession>(`saf:checkout:latest:${artworkId}`);
+  if (latest?.orderId && latest.checkoutToken && (!orderId || latest.orderId === orderId)) {
+    return latest;
+  }
+  return null;
+}
 
 /**
  * 결제 실패/취소 페이지.
@@ -15,8 +32,8 @@ import { cancelLandingOrder } from '@/app/actions/checkout';
  * Toss가 사용자를 failUrl로 redirect할 때(결제창 X, PayPal 취소, 카드 거절 등) URL의
  * `code`/`message`/`orderId`를 **브라우저 URL에서 직접 읽는다**. Next.js 16의 미들웨어
  * rewrite가 default-locale 경로의 server `searchParams`를 떨구는 회귀 때문에 server
- * component에서는 받을 수 없다. orderId로 pending_payment 주문을 즉시 정리해야
- * check_artwork_availability가 unique 작품을 30분간 잠그는 결함을 막는다.
+ * component에서는 받을 수 없다. Toss가 orderId를 돌려주지 않는 취소 케이스는 결제 시작 시
+ * sessionStorage에 저장한 주문 정보를 사용해 pending_payment 주문을 정리한다.
  */
 export default function FailClient() {
   const t = useTranslations('checkout');
@@ -34,14 +51,26 @@ export default function FailClient() {
     cancelledRef.current = true;
     const sp = new URLSearchParams(window.location.search);
     const orderId = sp.get('orderId') ?? '';
+    const code = sp.get('code') ?? '';
+    const message = sp.get('message') ?? '';
+    const canUseLatestFallback = !orderId && Boolean(code);
+    const storedCheckout = restorePendingCheckout(orderId, canUseLatestFallback ? artworkId : '');
+    const landingOrderId = orderId || storedCheckout?.orderId || '';
+    const checkoutToken = sp.get('checkoutToken') ?? storedCheckout?.checkoutToken ?? '';
     // SSR엔 window가 없어 client mount 후에만 URL 파싱 가능 — effect 초기화가 정당.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setInfo({ code: sp.get('code') ?? '', message: sp.get('message') ?? '', orderId });
+    setInfo({
+      code,
+      message,
+      orderId: landingOrderId,
+    });
     // 페이지 진입 즉시 pending_payment 주문 자동 정리 — unique edition 차단 해소
-    if (orderId) {
-      void cancelLandingOrder(orderId).catch(() => {});
+    if (landingOrderId && checkoutToken) {
+      void cancelLandingOrder(landingOrderId, checkoutToken).catch(() => {});
+    } else if (canUseLatestFallback) {
+      void cancelLatestLandingOrder(artworkId).catch(() => {});
     }
-  }, []);
+  }, [artworkId]);
 
   const { code, message, orderId } = info;
 

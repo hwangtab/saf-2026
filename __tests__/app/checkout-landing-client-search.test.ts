@@ -25,6 +25,8 @@ const SUCCESS_PAGE = 'app/[locale]/checkout/[artworkId]/success/page.tsx';
 const FAIL_PAGE = 'app/[locale]/checkout/[artworkId]/fail/page.tsx';
 const SUCCESS_CLIENT = 'app/[locale]/checkout/[artworkId]/success/SuccessClient.tsx';
 const FAIL_CLIENT = 'app/[locale]/checkout/[artworkId]/fail/FailClient.tsx';
+const KO_CHECKOUT_CLIENT = 'app/[locale]/checkout/[artworkId]/CheckoutClient.tsx';
+const EN_CHECKOUT_CLIENT = 'app/[locale]/checkout/[artworkId]/OverseasCheckoutClient.tsx';
 
 describe('checkout landing pages must not depend on server searchParams', () => {
   it.each([SUCCESS_PAGE, FAIL_PAGE])('%s does not consume server searchParams', (rel) => {
@@ -36,5 +38,46 @@ describe('checkout landing pages must not depend on server searchParams', () => 
     const src = read(rel);
     expect(src).toMatch(/window\.location\.search/);
     expect(src.startsWith("'use client'")).toBe(true);
+  });
+
+  it('success client forwards checkoutToken to confirm and bank transfer verification', () => {
+    const src = read(SUCCESS_CLIENT);
+
+    expect(src).toContain("sp.get('checkoutToken')");
+    expect(src).toContain('restorePendingCheckout(orderId, artworkId)');
+    expect(src).toContain('verifyBankTransferLanding(orderId, checkoutToken)');
+  });
+
+  it('fail client cancels pending landing orders from URL or session fallback token', () => {
+    const src = read(FAIL_CLIENT);
+
+    expect(src).toContain("sp.get('checkoutToken')");
+    expect(src).toContain("restorePendingCheckout(orderId, canUseLatestFallback ? artworkId : '')");
+    expect(src).toContain('const canUseLatestFallback = !orderId && Boolean(code)');
+    expect(src).toContain('if (landingOrderId && checkoutToken)');
+    expect(src).toContain('cancelLandingOrder(landingOrderId, checkoutToken)');
+    expect(src).toContain('cancelLatestLandingOrder(artworkId)');
+  });
+
+  it('card and hosted checkout URLs do not carry checkoutToken query before Toss appends params', () => {
+    const koSrc = read(KO_CHECKOUT_CLIENT);
+    const enSrc = read(EN_CHECKOUT_CLIENT);
+
+    expect(koSrc).toContain('rememberPendingCheckout(artworkId, orderNo, checkoutToken)');
+    expect(enSrc).toContain(
+      'rememberPendingCheckout(artworkId, orderNo, checkoutToken, successCurrency)'
+    );
+    expect(koSrc).toContain(
+      'const successUrl = `${window.location.origin}/checkout/${artworkId}/success`;'
+    );
+    expect(koSrc).toContain(
+      'const failUrl = `${window.location.origin}/checkout/${artworkId}/fail`;'
+    );
+    expect(enSrc).toContain(
+      'const successUrl = `${window.location.origin}/en/checkout/${artworkId}/success`;'
+    );
+    expect(enSrc).toContain(
+      'const failUrl = `${window.location.origin}/en/checkout/${artworkId}/fail`;'
+    );
   });
 });
