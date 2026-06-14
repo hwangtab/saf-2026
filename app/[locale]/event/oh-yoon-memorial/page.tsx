@@ -13,7 +13,8 @@ import SeatStatusBar from './_components/SeatStatusBar';
 import EventSchedule from './_components/EventSchedule';
 import EventFAQ from './_components/EventFAQ';
 
-export const revalidate = 60;
+// 좌석 현황은 service_role RPC로 조회하는 실시간 데이터 → 요청 시 렌더(빌드 prerender 회피).
+export const dynamic = 'force-dynamic';
 
 const PAGE_URL = `${SITE_URL}${OH_YOON_MEMORIAL_PATH}`;
 
@@ -43,10 +44,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 async function fetchSeatStatus(): Promise<SeatStatus | null> {
-  const admin = createSupabaseAdminClient();
-  const { data, error } = await admin.rpc('event_seat_status', { p_slug: OH_YOON_MEMORIAL_SLUG });
-  if (error || !data) return null;
-  return data as unknown as SeatStatus;
+  try {
+    const admin = createSupabaseAdminClient();
+    const { data, error } = await admin.rpc('event_seat_status', { p_slug: OH_YOON_MEMORIAL_SLUG });
+    if (error || !data) return null;
+    return data as unknown as SeatStatus;
+  } catch (err) {
+    console.error('[event-page] seat status fetch failed:', err);
+    return null;
+  }
 }
 
 export default async function OhYoonMemorialEventPage({ params }: Props) {
