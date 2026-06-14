@@ -72,11 +72,7 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
 
   return (
     <main className="bg-canvas text-pretty">
-      <PageHero
-        title={t('heroTitle')}
-        description={t('heroSubtitle')}
-        customBackgroundImage="/images/petition-oh-yoon/mural-2.png"
-      >
+      <PageHero title={t('heroTitle')} description={t('heroSubtitle')}>
         <SeatStatusBar remaining={remaining} isOpen={isOpen} />
       </PageHero>
 

@@ -1408,12 +1408,12 @@
       "successBody": "We have sent confirmation via KakaoTalk (and email).",
       "errorGeneric": "Something went wrong. Please try again in a moment.",
       "faqTitle": "Frequently asked questions",
-      "faqQ1": "How do I pay the fee?",
-      "faqA1": "You pay the fee via Toss at the time of registration. It is KRW 30,000 per person.",
-      "faqQ2": "What happens when it is full?",
-      "faqA2": "After the 44 seats on the bus are filled, we take waitlist registrations and contact you in order if a seat opens.",
-      "faqQ3": "Is lunch included?",
-      "faqA3": "We have lunch together at Insadong Pungnyu-sarang after the ceremony. It is included in the fee.",
+      "faqQ1": "How do I pay the fee, and what does it cover?",
+      "faqA1": "The fee of KRW 30,000 per person covers the round-trip chartered bus, lunch at Insadong Pungnyu-sarang after the ceremony, and the running of the memorial. When you submit the form, a card payment window (Toss Payments) opens; your seat is confirmed once payment completes. We do not accept bank transfers or on-site payment.",
+      "faqQ2": "Can I register with companions?",
+      "faqA2": "Yes. Enter the total number of attendees including yourself under “Number of attendees.” The fee is summed accordingly and paid at once, and seats are secured for that many people. We do not collect companions’ names separately.",
+      "faqQ3": "What happens when it is full?",
+      "faqA3": "Seats fill first-come on a single 45-seat bus (44 seats). After that we take waitlist registrations. If a seat opens through a cancellation, we contact waitlisted applicants in order with a payment link, and your place is confirmed once you pay. No fee is charged at the waitlist stage.",
       "schedule": {
         "depart": "Depart next to Insadong Suun Hall",
         "ceremony": "Memorial ceremony",
@@ -1465,7 +1465,13 @@
       "printWork5Caption": "A singer pouring out a passage of pansori. For Oh Yoon, art was something heard before it was seen.",
       "printWork6Title": "Hands of Our Time",
       "printWork6Caption": "Hands gripping earth and tools. A portrait of those who held up an era from the very bottom.",
-      "printWorkAlt": "{title} · {year}"
+      "printWorkAlt": "{title} · {year}",
+      "faqQ4": "Can I cancel or get a refund?",
+      "faqA4": "Yes. If something comes up, please contact the office (contact@kosmart.org) before the event. Because of bus and meal reservations, refunds may be difficult very close to the date, so please let us know as early as possible so we can pass your seat to the next person on the waitlist.",
+      "faqQ5": "Where and when does the bus leave?",
+      "faqA5": "The bus departs at 9:30 a.m. on Sunday, July 5, next to Insadong Suun Hall. It leaves on time, so please arrive by 9:20. Staff will guide you on site.",
+      "faqQ6": "How will I receive confirmation?",
+      "faqA6": "Once payment is complete, we send confirmation by KakaoTalk and email (email only if you provided one). Your phone number is used for day-of contact and guidance."
     }
   }
 }

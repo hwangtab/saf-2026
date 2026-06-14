@@ -4,6 +4,9 @@ const FAQ_KEYS = [
   { q: 'faqQ1', a: 'faqA1' },
   { q: 'faqQ2', a: 'faqA2' },
   { q: 'faqQ3', a: 'faqA3' },
+  { q: 'faqQ4', a: 'faqA4' },
+  { q: 'faqQ5', a: 'faqA5' },
+  { q: 'faqQ6', a: 'faqA6' },
 ] as const;
 
 export default async function EventFAQ() {
