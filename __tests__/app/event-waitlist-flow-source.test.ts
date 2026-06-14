@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 const ROOT = process.cwd();
@@ -7,7 +7,7 @@ const read = (rel: string) => readFileSync(join(ROOT, rel), 'utf8');
 describe('event waitlist and locale payment flow source guards', () => {
   it('대기자 안내는 기존 행을 pending으로 승격하고 eventOrderNo 링크를 발송한다', () => {
     const action = read('app/actions/event-admin.ts');
-    const migration = read('supabase/migrations/20260614160000_event_waitlist_promotion.sql');
+    const migration = read('supabase/migrations/20260614190200_event_waitlist_promotion.sql');
 
     expect(action).toContain("'promote_waitlist_event_registration'");
     expect(action).toContain('eventOrderNo=');
@@ -16,7 +16,18 @@ describe('event waitlist and locale payment flow source guards', () => {
     expect(action).toContain("status: 'waitlist'");
     expect(action).toContain('order_no: null');
     expect(migration).toContain("v_reg.status <> 'waitlist'");
+    expect(migration).toContain("v_reg.status = 'pending'");
+    expect(migration).toContain('v_reg.hold_expires_at <= now()');
     expect(migration).toContain("SET status = 'pending'");
+  });
+
+  it('Supabase migration version timestamp는 중복되지 않는다', () => {
+    const files = readdirSync(join(ROOT, 'supabase/migrations')).filter((file) =>
+      file.endsWith('.sql')
+    );
+    const versions = files.map((file) => file.split('_')[0]);
+
+    expect(new Set(versions).size).toBe(versions.length);
   });
 
   it('행사 결제 URL은 현재 locale을 반영한다', () => {
@@ -46,6 +57,8 @@ describe('event waitlist and locale payment flow source guards', () => {
     expect(failClient).toContain('cancelEventPendingPayment(orderId, code)');
     expect(action).toContain('export async function cancelEventPendingPayment');
     expect(action).toContain(".eq('status', 'pending')");
+    expect(action).toContain(".select('id')");
+    expect(action).toContain('이미 처리되었거나 결제대기 상태가 아닙니다.');
     expect(action).toContain('hold_expires_at: null');
   });
 
@@ -65,6 +78,12 @@ describe('event waitlist and locale payment flow source guards', () => {
     expect(action).toContain('export async function resumeEventPayment');
     expect(action).toContain("console.error('[event-admin] resume payment error:', e)");
     expect(action).toContain("message: '결제 정보를 확인할 수 없습니다.'");
+    expect(action).toContain(
+      "console.error('[event-admin] expired payment restore error:', restoreError)"
+    );
+    expect(action).toContain("status: 'waitlist'");
+    expect(action).toContain('order_no: null');
+    expect(action).toContain('결제 가능 시간이 만료되어 대기 상태로 돌아갔습니다.');
   });
 
   it('확정자는 단순 취소가 아니라 환불 취소 액션을 사용한다', () => {
@@ -75,8 +94,13 @@ describe('event waitlist and locale payment flow source guards', () => {
 
     expect(adminClient).toContain('refundConfirmedRegistration');
     expect(adminClient).toContain('환불취소');
+    expect(adminClient).toContain('needsManualRefund');
+    expect(adminClient).toContain("r.status === 'expired' && Boolean(r.payment_key)");
+    expect(adminClient).toContain('수동 환불 필요');
     expect(adminClient).toContain("setNotice('요청 처리 중 오류가 발생했습니다.')");
     expect(action).toContain("in('status', ['pending', 'waitlist'])");
+    expect(action).toContain("in('status', ['confirmed', 'expired'])");
+    expect(action).toContain('환불 가능한 결제 상태가 아닙니다.');
     expect(action).toContain('cancelPayment(');
     expect(action).toContain("console.error('[event-admin] refund toss cancel error:', e)");
   });

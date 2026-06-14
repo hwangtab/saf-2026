@@ -56,7 +56,8 @@ export async function refundConfirmedRegistration(id: string): Promise<EventAdmi
     .single();
 
   if (error || !reg) return { ok: false, message: '대상 없음' };
-  if (reg.status !== 'confirmed') return { ok: false, message: '확정 결제자가 아닙니다.' };
+  const canRefund = reg.status === 'confirmed' || (reg.status === 'expired' && reg.payment_key);
+  if (!canRefund) return { ok: false, message: '환불 가능한 결제 상태가 아닙니다.' };
   if (!reg.payment_key) return { ok: false, message: '결제키가 없어 자동 환불할 수 없습니다.' };
 
   const now = new Date().toISOString();
@@ -80,13 +81,14 @@ export async function refundConfirmedRegistration(id: string): Promise<EventAdmi
     };
   }
 
-  const { error: updateError } = await db
+  const { data: updated, error: updateError } = await db
     .from('event_registrations')
     .update({ status: 'cancelled', updated_at: now })
     .eq('id', id)
-    .eq('status', 'confirmed');
+    .in('status', ['confirmed', 'expired'])
+    .select('id');
 
-  if (updateError) {
+  if (updateError || !updated || updated.length === 0) {
     console.error('[event-admin] refund status update error:', updateError);
     void notifyEmail('error', '추도식 환불 성공 후 상태 변경 실패', {
       신청자: reg.applicant_name,
@@ -188,7 +190,7 @@ export async function cancelEventPendingPayment(
 
   try {
     const db = createSupabaseAdminClient();
-    const { error } = await db
+    const { data: updated, error } = await db
       .from('event_registrations')
       .update({
         status: 'cancelled',
@@ -197,10 +199,14 @@ export async function cancelEventPendingPayment(
       })
       .eq('order_no', orderNo)
       .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
-      .eq('status', 'pending');
+      .eq('status', 'pending')
+      .select('id');
     if (error) {
       console.error('[event-admin] pending payment cancel error:', error);
       return { ok: false, message: '결제대기 취소 실패' };
+    }
+    if (!updated || updated.length === 0) {
+      return { ok: false, message: '이미 처리되었거나 결제대기 상태가 아닙니다.' };
     }
     revalidateEvent();
     return { ok: true };
@@ -227,46 +233,54 @@ export async function resumeEventPayment(orderNo: string): Promise<
     return { ok: false, message: '결제 링크가 올바르지 않습니다.' };
   }
 
-  let reg:
-    | {
-        applicant_name: string;
-        email: string | null;
-        amount: number;
-        status: string;
-        hold_expires_at: string | null;
-      }
-    | null
-    | undefined;
   try {
     const db = createSupabaseAdminClient();
-    const { data, error } = await db
+    const { data: reg, error } = await db
       .from('event_registrations')
       .select('applicant_name, email, amount, status, hold_expires_at')
       .eq('order_no', orderNo)
       .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
       .single();
-    if (error || !data) return { ok: false, message: '결제 대상을 찾을 수 없습니다.' };
-    reg = data;
+
+    if (error || !reg) return { ok: false, message: '결제 대상을 찾을 수 없습니다.' };
+    if (reg.status !== 'pending') return { ok: false, message: '결제 가능한 상태가 아닙니다.' };
+    if (reg.hold_expires_at && new Date(reg.hold_expires_at).getTime() <= Date.now()) {
+      const { data: restored, error: restoreError } = await db
+        .from('event_registrations')
+        .update({
+          status: 'waitlist',
+          order_no: null,
+          hold_expires_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('order_no', orderNo)
+        .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
+        .eq('status', 'pending')
+        .select('id');
+      if (restoreError) {
+        console.error('[event-admin] expired payment restore error:', restoreError);
+        return { ok: false, message: '결제 가능 시간이 만료되었습니다.' };
+      }
+      if (restored && restored.length > 0) {
+        revalidateEvent();
+      }
+      return { ok: false, message: '결제 가능 시간이 만료되어 대기 상태로 돌아갔습니다.' };
+    }
+
+    return {
+      ok: true,
+      payment: {
+        orderNo,
+        amount: reg.amount,
+        orderName: '오윤 40주기 추도식 회비',
+        customerName: reg.applicant_name,
+        ...(reg.email ? { customerEmail: reg.email } : {}),
+      },
+    };
   } catch (e) {
     console.error('[event-admin] resume payment error:', e);
     return { ok: false, message: '결제 정보를 확인할 수 없습니다.' };
   }
-
-  if (reg.status !== 'pending') return { ok: false, message: '결제 가능한 상태가 아닙니다.' };
-  if (reg.hold_expires_at && new Date(reg.hold_expires_at).getTime() <= Date.now()) {
-    return { ok: false, message: '결제 가능 시간이 만료되었습니다.' };
-  }
-
-  return {
-    ok: true,
-    payment: {
-      orderNo,
-      amount: reg.amount,
-      orderName: '오윤 40주기 추도식 회비',
-      customerName: reg.applicant_name,
-      ...(reg.email ? { customerEmail: reg.email } : {}),
-    },
-  };
 }
 
 /** 정원 조정. */

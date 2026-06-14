@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import Button from '@/components/ui/Button';
 import {
   cancelRegistration,
@@ -27,6 +27,8 @@ export interface EventRegistrationRow {
   party_size: number;
   amount: number;
   status: string;
+  payment_key: string | null;
+  hold_expires_at: string | null;
   paid_at: string | null;
   created_at: string;
 }
@@ -55,6 +57,12 @@ export default function EventAdminClient({
   const [pending, startTransition] = useTransition();
   const [capacityInput, setCapacityInput] = useState(String(capacity));
   const [notice, setNotice] = useState<string | null>(null);
+  const [nowMs, setNowMs] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setNowMs(Date.now()), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const confirmed = useMemo(
     () => registrations.filter((r) => r.status === 'confirmed'),
@@ -159,58 +167,74 @@ export default function EventAdminClient({
               </tr>
             </thead>
             <tbody>
-              {registrations.map((r) => (
-                <tr key={r.id} className="border-t border-gray-100">
-                  <td className="px-3 py-2">{r.applicant_name}</td>
-                  <td className="px-3 py-2">
-                    {r.phone}
-                    {r.email ? <span className="block text-charcoal-muted">{r.email}</span> : null}
-                  </td>
-                  <td className="px-3 py-2">{r.party_size}</td>
-                  <td className="px-3 py-2">{won(r.amount)}</td>
-                  <td className="px-3 py-2">{STATUS_LABEL[r.status] ?? r.status}</td>
-                  <td className="px-3 py-2">
-                    {r.status === 'waitlist' && (
-                      <button
-                        type="button"
-                        disabled={pending}
-                        className="mr-2 text-primary-strong underline"
-                        onClick={() =>
-                          run(
-                            () => sendWaitlistPaymentLink(r.id, '15분 이내'),
-                            '결제 안내를 발송했습니다'
-                          )
-                        }
-                      >
-                        결제안내
-                      </button>
-                    )}
-                    {r.status === 'confirmed' && (
-                      <button
-                        type="button"
-                        disabled={pending}
-                        className="text-danger underline"
-                        onClick={() => {
-                          if (!window.confirm('토스 환불 후 참가 신청을 취소할까요?')) return;
-                          run(() => refundConfirmedRegistration(r.id), '환불 취소되었습니다');
-                        }}
-                      >
-                        환불취소
-                      </button>
-                    )}
-                    {(r.status === 'waitlist' || r.status === 'pending') && (
-                      <button
-                        type="button"
-                        disabled={pending}
-                        className="text-danger underline"
-                        onClick={() => run(() => cancelRegistration(r.id), '취소되었습니다')}
-                      >
-                        취소
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {registrations.map((r) => {
+                const needsManualRefund = r.status === 'expired' && Boolean(r.payment_key);
+                const isExpiredPending =
+                  r.status === 'pending' &&
+                  Boolean(r.hold_expires_at) &&
+                  nowMs !== null &&
+                  new Date(r.hold_expires_at as string).getTime() <= nowMs;
+                const canSendWaitlistPayment = r.status === 'waitlist' || isExpiredPending;
+                return (
+                  <tr key={r.id} className="border-t border-gray-100">
+                    <td className="px-3 py-2">{r.applicant_name}</td>
+                    <td className="px-3 py-2">
+                      {r.phone}
+                      {r.email ? (
+                        <span className="block text-charcoal-muted">{r.email}</span>
+                      ) : null}
+                    </td>
+                    <td className="px-3 py-2">{r.party_size}</td>
+                    <td className="px-3 py-2">{won(r.amount)}</td>
+                    <td className="px-3 py-2">
+                      {STATUS_LABEL[r.status] ?? r.status}
+                      {needsManualRefund ? (
+                        <span className="block text-xs text-danger">수동 환불 필요</span>
+                      ) : null}
+                    </td>
+                    <td className="px-3 py-2">
+                      {canSendWaitlistPayment && (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          className="mr-2 text-primary-strong underline"
+                          onClick={() =>
+                            run(
+                              () => sendWaitlistPaymentLink(r.id, '15분 이내'),
+                              '결제 안내를 발송했습니다'
+                            )
+                          }
+                        >
+                          결제안내
+                        </button>
+                      )}
+                      {(r.status === 'confirmed' || needsManualRefund) && (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          className="text-danger underline"
+                          onClick={() => {
+                            if (!window.confirm('토스 환불 후 참가 신청을 취소할까요?')) return;
+                            run(() => refundConfirmedRegistration(r.id), '환불 취소되었습니다');
+                          }}
+                        >
+                          환불취소
+                        </button>
+                      )}
+                      {(r.status === 'waitlist' || r.status === 'pending') && (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          className="text-danger underline"
+                          onClick={() => run(() => cancelRegistration(r.id), '취소되었습니다')}
+                        >
+                          취소
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
               {registrations.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-3 py-6 text-center text-charcoal-muted">

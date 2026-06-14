@@ -31,7 +31,12 @@ BEGIN
   IF NOT FOUND THEN
     RETURN jsonb_build_object('ok', false, 'code', 'NOT_FOUND');
   END IF;
-  IF v_reg.status <> 'waitlist' THEN
+  IF v_reg.status <> 'waitlist'
+     AND NOT (
+       v_reg.status = 'pending'
+       AND v_reg.hold_expires_at IS NOT NULL
+       AND v_reg.hold_expires_at <= now()
+     ) THEN
     RETURN jsonb_build_object('ok', false, 'code', 'INVALID_STATE');
   END IF;
 

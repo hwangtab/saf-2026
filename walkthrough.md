@@ -5,25 +5,30 @@
 ### 변경 사항
 
 - 행사 결제 confirm API가 `pending`이 아닌 신청을 Toss 승인 전에 거부하도록 했다.
-- Toss 승인 후 DB 좌석 확정 RPC가 실패하거나 `INVALID_STATE`/`SOLD_OUT`을 반환하면 자동 환불을 시도하고, 신청 행에는 `cancelled` 상태와 `payment_key`를 남기도록 했다. 환불 API 자체가 실패하면 `auto_refund_failed`로 분리해 수동 확인이 필요한 상태를 숨기지 않게 했다.
+- Toss 승인 후 DB 좌석 확정 RPC가 실패하거나 `INVALID_STATE`/`SOLD_OUT`을 반환하면 자동 환불을 시도하고, 자동 환불 성공 시에는 `cancelled`, 자동 환불 실패 시에는 `expired + payment_key`로 남겨 수동 환불 필요 상태를 숨기지 않게 했다.
 - 관리자 단순 취소는 `pending`/`waitlist`에만 허용하고, `confirmed` 참가자는 별도 `환불취소` 액션으로 Toss 환불 후 취소되도록 분리했다.
+- 관리자 환불 액션은 확정 결제자뿐 아니라 자동환불 실패로 남은 `expired + payment_key` 행도 환불취소 대상으로 허용한다.
 - 대기자 결제 안내는 새 신청 페이지를 다시 보내지 않고, `promote_waitlist_event_registration` RPC로 기존 대기자 행을 `pending`으로 승격한 뒤 `eventOrderNo` 결제 재개 링크를 발송한다.
+- 만료된 대기자 결제 링크로 다시 진입하면 해당 `pending` hold를 `waitlist`로 복구해 관리자가 결제 안내를 재발송할 수 있게 했다.
+- 대기자 승격 RPC는 만료된 `pending` hold를 같은 행에서 다시 결제 안내할 수 있도록 허용한다.
 - 대기자 결제 안내는 SMS 발송 결과를 기다린 뒤 성공 처리하며, 문자 발송 실패 시 승격한 행을 다시 `waitlist`로 되돌린다.
 - 공개 신청 폼은 `eventOrderNo` 링크로 들어온 pending 결제를 조회해 “결제 진행” 버튼으로 이어갈 수 있게 했다.
 - 공개 신청/결제 재개 서버 액션은 타입 전용 export를 런타임 표면에서 제거하고, 잘못된 입력이나 서버 설정 오류가 페이지 전체 오류로 번지지 않도록 방어했다.
 - 결제 성공 랜딩은 정원 초과 자동환불, 확정 실패 자동환불, 자동환불 실패 수동확인을 서로 다른 안내로 표시한다.
-- 결제 실패/취소 랜딩은 Toss `orderId`와 실패 코드를 읽어 `pending` 좌석 hold를 `cancelled`로 정리하고, 실패 사유와 주문번호를 표시한다.
+- 결제 실패/취소 랜딩은 Toss `orderId`와 실패 코드를 읽어 `pending` 좌석 hold를 `cancelled`로 정리하고, 실제 변경된 행이 없으면 성공으로 오인하지 않게 했다.
 - 행사 결제 success/fail URL 생성 시 현재 locale을 반영해 `/en/event/...`에서 시작한 결제는 `/en` 랜딩으로 돌아오게 했다.
 - 관리자 환불 액션은 Toss 취소 API throw와 client action reject를 잡아 관리자 화면에 실패 메시지로 표시한다.
+- 행사 관련 Supabase migration version timestamp 중복을 제거하고, 중복 timestamp 회귀 테스트를 추가했다.
 - 새 행사 파일의 `role="status"` 접근성 warning 2건을 함께 정리했다.
 
 ### 검증
 
 - `npm test -- --runTestsByPath __tests__/app/event-payment-confirm-route.test.ts __tests__/app/event-waitlist-flow-source.test.ts __tests__/lib/event-format.test.ts --runInBand` 통과
-  - 3 suites / 21 tests
+  - 3 suites / 22 tests
 - `npm run type-check` 통과
 - `npm run lint -- --quiet` 통과
-  - 기존 전역 접근성 warning 47개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+  - 기존 전역 접근성 warning 49개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+- Supabase migration version timestamp 중복 검사 통과
 - Playwright headless 확인: `RegisterEventInput` 런타임 오류는 재현되지 않음
   - 로컬 Supabase 환경변수 부재(`AUTH_CFG_*`)로 전체 UI 스크린샷 검증은 제한됨
 

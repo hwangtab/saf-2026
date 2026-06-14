@@ -16,7 +16,9 @@ export default async function EventAdminPage() {
     db.rpc('event_seat_status', { p_slug: OH_YOON_MEMORIAL_SLUG }),
     db
       .from('event_registrations')
-      .select('id, applicant_name, phone, email, party_size, amount, status, paid_at, created_at')
+      .select(
+        'id, applicant_name, phone, email, party_size, amount, status, payment_key, hold_expires_at, paid_at, created_at'
+      )
       .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
       .order('created_at', { ascending: true }),
     db.from('events').select('capacity').eq('slug', OH_YOON_MEMORIAL_SLUG).maybeSingle(),

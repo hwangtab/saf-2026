@@ -116,8 +116,9 @@ export async function POST(req: NextRequest) {
     const { error: cancelUpdateError } = await supabase
       .from('event_registrations')
       .update({
-        status: 'cancelled',
+        status: refundSucceeded ? 'cancelled' : 'expired',
         payment_key: toss.paymentKey,
+        hold_expires_at: null,
         updated_at: new Date().toISOString(),
       })
       .eq('order_no', orderId);

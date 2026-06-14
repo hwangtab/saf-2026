@@ -149,7 +149,11 @@ describe('event payment confirm route', () => {
     expect(res.status).toBe(502);
     expect(json.error).toBe('auto_refund_failed');
     expect(mockUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'cancelled', payment_key: 'pay-key' })
+      expect.objectContaining({
+        status: 'expired',
+        payment_key: 'pay-key',
+        hold_expires_at: null,
+      })
     );
   });
 });
