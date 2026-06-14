@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .select(
-      'id, total_amount, status, artwork_id, order_no, buyer_name, buyer_phone, buyer_email, metadata'
+      'id, total_amount, status, artwork_id, order_no, buyer_name, buyer_phone, buyer_email, metadata, order_items(artwork_id, quantity, unit_price)'
     )
     .eq('order_no', orderId)
     .single();
@@ -169,12 +169,18 @@ export async function POST(req: NextRequest) {
   // 이 체크 이후 artwork_sales INSERT 사이의 잔여 윈도우는 짧지만 0은 아님 —
   // 완전한 원자성 보장을 위해서는 artwork_sales(artwork_id) WHERE voided_at IS NULL
   // partial UNIQUE constraint를 DB 마이그레이션으로 추가하는 것이 권장됨.
-  if (order.artwork_id) {
-    // 자기 자신(현재 confirm 중인 주문)은 pending_count에서 제외 — 그렇지 않으면
-    // unique edition 작품의 경우 (sold=0 + pending=1) >= 1로 즉시 unavailable 판정됨.
+  // order_items 전 품목을 순회하며 재확인 — 단건 주문은 order_items가 1행이므로
+  // 기존 동작과 동일하게 1회 재확인된다. 자기 주문(p_exclude_order_id)은 제외 —
+  // 그렇지 않으면 unique edition 작품의 경우 (sold=0 + pending=1) >= 1로 즉시
+  // unavailable 판정됨. (lineItems는 Task 6에서 artwork_sales·status 루프에 재사용)
+  const lineItems =
+    (order.order_items as Array<{ artwork_id: string; quantity: number; unit_price: number }>) ??
+    [];
+
+  for (const item of lineItems) {
     const { data: availResult, error: availError } = await supabase.rpc(
       'check_artwork_availability',
-      { p_artwork_id: order.artwork_id, p_exclude_order_id: order.id }
+      { p_artwork_id: item.artwork_id, p_exclude_order_id: order.id }
     );
     const isAvailable = Array.isArray(availResult) && availResult[0]?.is_available === true;
     if (availError || !isAvailable) {
