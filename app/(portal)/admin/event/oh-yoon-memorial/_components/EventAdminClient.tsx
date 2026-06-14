@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from 'react';
 import Button from '@/components/ui/Button';
 import {
   cancelRegistration,
+  refundConfirmedRegistration,
   sendWaitlistPaymentLink,
   updateCapacity,
   exportConfirmedCsv,
@@ -68,8 +69,12 @@ export default function EventAdminClient({
 
   function run(fn: () => Promise<{ ok: boolean; message?: string }>, okMsg: string) {
     startTransition(async () => {
-      const res = await fn();
-      setNotice(res.ok ? okMsg : (res.message ?? '실패'));
+      try {
+        const res = await fn();
+        setNotice(res.ok ? okMsg : (res.message ?? '실패'));
+      } catch {
+        setNotice('요청 처리 중 오류가 발생했습니다.');
+      }
     });
   }
 
@@ -95,9 +100,9 @@ export default function EventAdminClient({
       <header>
         <h1 className="text-2xl font-bold text-charcoal-deep">오윤 40주기 추도식 신청 운영</h1>
         {notice && (
-          <p className="mt-2 rounded-lg bg-canvas px-4 py-2 text-sm text-charcoal" role="status">
+          <output className="mt-2 block rounded-lg bg-canvas px-4 py-2 text-sm text-charcoal">
             {notice}
-          </p>
+          </output>
         )}
       </header>
 
@@ -172,7 +177,7 @@ export default function EventAdminClient({
                         className="mr-2 text-primary-strong underline"
                         onClick={() =>
                           run(
-                            () => sendWaitlistPaymentLink(r.id, '안내받은 기한'),
+                            () => sendWaitlistPaymentLink(r.id, '15분 이내'),
                             '결제 안내를 발송했습니다'
                           )
                         }
@@ -180,9 +185,20 @@ export default function EventAdminClient({
                         결제안내
                       </button>
                     )}
-                    {(r.status === 'confirmed' ||
-                      r.status === 'waitlist' ||
-                      r.status === 'pending') && (
+                    {r.status === 'confirmed' && (
+                      <button
+                        type="button"
+                        disabled={pending}
+                        className="text-danger underline"
+                        onClick={() => {
+                          if (!window.confirm('토스 환불 후 참가 신청을 취소할까요?')) return;
+                          run(() => refundConfirmedRegistration(r.id), '환불 취소되었습니다');
+                        }}
+                      >
+                        환불취소
+                      </button>
+                    )}
+                    {(r.status === 'waitlist' || r.status === 'pending') && (
                       <button
                         type="button"
                         disabled={pending}

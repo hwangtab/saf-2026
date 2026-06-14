@@ -1,5 +1,63 @@
 # 결제 흐름 보안 강화 실행 계획 (2026-06-14)
 
+## 추도식 행사 잔여 버그 수정 계획 (2026-06-14)
+
+### 목표
+
+- 대기자 결제 안내가 실제 문자 발송 시도 전에 성공으로 표시되지 않게 한다.
+- 행사 결제창 취소/실패 후 `pending` 좌석 hold가 15분간 남지 않게 한다.
+- 관리자 확정자 환불 중 Toss 설정/네트워크 예외가 화면 오류로 번지지 않게 한다.
+
+### 구현 범위
+
+1. 대기자 결제 안내
+   - `sendWaitlistPaymentLink`가 SMS 발송 결과를 기다린 뒤 성공을 반환한다.
+   - SMS 발송 실패 시 승격한 행을 다시 `waitlist`로 되돌리고, 관리자에게 실패 메시지를 반환한다.
+
+2. 행사 결제 실패 랜딩
+   - 실패 랜딩에서 Toss `orderId`/`code`/`message`를 브라우저 URL에서 읽는다.
+   - `orderId`가 있으면 공개 server action으로 해당 `pending` 행사 신청을 `cancelled`로 정리한다.
+   - 실패 사유와 주문번호를 사용자에게 표시한다.
+
+3. 관리자 환불 안정화
+   - `refundConfirmedRegistration`의 Toss cancel 호출을 `try/catch`로 감싼다.
+   - 관리자 client의 공통 `run()`도 action reject를 실패 메시지로 표시한다.
+
+4. 테스트
+   - 행사 fail client가 URL orderId를 읽고 pending 취소 액션을 호출하는지 정적 회귀 가드를 추가한다.
+   - 대기자 발송 실패 rollback과 관리자 환불 throw 처리 가드를 추가한다.
+
+## 추도식 행사 결제/대기자 운영 개선 계획 (2026-06-14)
+
+### 목표
+
+- 행사 결제 confirm에서 `pending`이 아닌 신청은 Toss 승인 전에 차단하고, 승인 이후 DB 확정이 실패한 경우에는 자동 환불을 시도한다.
+- 관리자 화면에서 확정 결제자를 단순 상태 변경으로 취소하지 못하게 하고, 확정자는 Toss 환불을 거친 취소 흐름으로 분리한다.
+- 대기자 결제 안내는 새 신청을 유도하지 않고 기존 대기자 행을 `pending`으로 승격해 동일 행에서 결제를 이어가게 한다.
+- 영문 행사 페이지에서 시작한 결제는 영문 success/fail 랜딩으로 돌아오게 한다.
+
+### 구현 범위
+
+1. DB RPC
+   - `promote_waitlist_event_registration(id, hold_minutes)` RPC를 추가해 대기자 행을 lock 후 `pending`으로 승격하고 `order_no`/hold를 발급한다.
+   - 기존 좌석 계산과 같은 advisory lock을 사용해 정원 초과 승격을 차단한다.
+
+2. 서버 액션/API
+   - 행사 confirm API는 `pending` 외 상태를 Toss confirm 전에 거부한다.
+   - Toss 승인 후 `confirm_event_registration`이 실패하면 자동 환불을 시도하고 신청 상태/`payment_key`를 운영 확인 가능하게 남긴다.
+   - 관리자 취소 액션은 `pending`/`waitlist`만 상태 취소하고, `confirmed`는 별도 환불 액션으로 처리한다.
+   - 대기자 결제 안내 액션은 승격 RPC를 호출한 뒤 `eventOrderNo`가 포함된 결제 재개 링크를 발송한다.
+   - 공개 페이지용 결제 재개 액션을 추가해 `eventOrderNo`로 pending 결제 정보를 조회한다.
+
+3. 클라이언트
+   - 행사 신청 폼은 locale을 반영해 success/fail URL을 만든다.
+   - `eventOrderNo` 링크로 들어온 사용자가 기존 pending 결제를 버튼으로 이어서 진행할 수 있게 한다.
+   - 관리자 화면은 확정자에게 환불 취소 버튼을 분리해 표시한다.
+
+4. 테스트
+   - 행사 confirm route의 상태 가드와 자동 환불 경로를 단위 테스트로 검증한다.
+   - 대기자 승격/결제 재개/locale URL은 정적 회귀 테스트로 검증한다.
+
 ## 추가 개선 계획 (2026-06-14)
 
 ### 목표

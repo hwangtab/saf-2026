@@ -12,27 +12,32 @@ import {
   OH_YOON_MEMORIAL_HOLD_MINUTES,
 } from '@/content/events/oh-yoon-memorial';
 
-export type { RegisterEventInput };
+function normalizeRegisterEventInput(input: unknown): RegisterEventInput {
+  const candidate =
+    input && typeof input === 'object'
+      ? (input as Partial<Record<keyof RegisterEventInput, unknown>>)
+      : {};
+  const rawPartySize = candidate.partySize;
+  const partySize =
+    typeof rawPartySize === 'number'
+      ? rawPartySize
+      : typeof rawPartySize === 'string'
+        ? Number(rawPartySize)
+        : 0;
 
-export type RegisterEventCode =
-  | 'OK_PENDING'
-  | 'OK_WAITLIST'
-  | 'INVALID_INPUT'
-  | 'RATE_LIMITED'
-  | 'EVENT_CLOSED'
-  | 'INTERNAL_ERROR';
-
-export interface RegisterEventResult {
-  ok: boolean;
-  code: RegisterEventCode;
-  errors?: Partial<Record<keyof RegisterEventInput, string>>;
-  message?: string;
-  /** pending(결제대기)일 때 토스 결제 진행용 */
-  payment?: { orderNo: string; amount: number; orderName: string };
+  return {
+    applicantName: typeof candidate.applicantName === 'string' ? candidate.applicantName : '',
+    phone: typeof candidate.phone === 'string' ? candidate.phone : '',
+    email: typeof candidate.email === 'string' ? candidate.email : '',
+    partySize: Number.isFinite(partySize) ? partySize : 0,
+    boardingConfirmed: candidate.boardingConfirmed === true,
+    agreedPrivacy: candidate.agreedPrivacy === true,
+  };
 }
 
-export async function registerEvent(input: RegisterEventInput): Promise<RegisterEventResult> {
-  const errors = validateEventInput(input);
+export async function registerEvent(input: unknown) {
+  const payload = normalizeRegisterEventInput(input);
+  const errors = validateEventInput(payload);
   if (Object.keys(errors).length > 0) {
     return { ok: false, code: 'INVALID_INPUT', errors, message: '입력을 확인해 주세요.' };
   }
@@ -44,9 +49,9 @@ export async function registerEvent(input: RegisterEventInput): Promise<Register
     return { ok: false, code: 'RATE_LIMITED', message: '잠시 후 다시 시도해 주세요.' };
   }
 
-  const name = input.applicantName.trim();
-  const phone = input.phone.trim();
-  const email = input.email?.trim() ?? '';
+  const name = payload.applicantName.trim();
+  const phone = payload.phone.trim();
+  const email = payload.email?.trim() ?? '';
 
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase.rpc('register_event_seat', {
@@ -55,9 +60,9 @@ export async function registerEvent(input: RegisterEventInput): Promise<Register
       applicant_name: name,
       phone,
       email,
-      party_size: input.partySize,
-      boarding_confirmed: input.boardingConfirmed,
-      agreed_privacy: input.agreedPrivacy,
+      party_size: payload.partySize,
+      boarding_confirmed: payload.boardingConfirmed,
+      agreed_privacy: payload.agreedPrivacy,
       hold_minutes: OH_YOON_MEMORIAL_HOLD_MINUTES,
       user_agent: meta.userAgent ?? null,
     },
@@ -90,13 +95,13 @@ export async function registerEvent(input: RegisterEventInput): Promise<Register
     // 대기자는 즉시 안내 (무료)
     void sendEventSms(phone, 'waitlist', {
       name,
-      partySize: input.partySize,
+      partySize: payload.partySize,
       amount: r.amount ?? 0,
     });
     if (email) {
       void sendEventEmail(email, 'waitlist', {
         name,
-        partySize: input.partySize,
+        partySize: payload.partySize,
         amount: r.amount ?? 0,
       });
     }

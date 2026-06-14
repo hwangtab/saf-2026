@@ -1,19 +1,24 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { useTranslations } from 'next-intl';
+import { useEffect, useState, useTransition } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
-import {
-  registerEvent,
-  type RegisterEventInput,
-  type RegisterEventResult,
-} from '@/app/actions/event-registration';
+import { registerEvent } from '@/app/actions/event-registration';
+import { resumeEventPayment } from '@/app/actions/event-admin';
 
 const INPUT_BASE =
   'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-charcoal-deep ' +
   'focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-gray-100';
 const LABEL_BASE = 'block text-sm font-semibold text-charcoal-deep mb-1.5';
 const ERROR_TEXT = 'mt-1.5 text-sm text-danger';
+type RegisterEventField =
+  | 'applicantName'
+  | 'phone'
+  | 'email'
+  | 'partySize'
+  | 'boardingConfirmed'
+  | 'agreedPrivacy';
+type RegisterEventResultState = Awaited<ReturnType<typeof registerEvent>>;
 
 interface Props {
   isOpen: boolean;
@@ -24,6 +29,7 @@ interface Props {
 
 export default function RegistrationForm({ isOpen, remaining, feePerPerson, clientKey }: Props) {
   const t = useTranslations('event.ohYoonMemorial');
+  const locale = useLocale();
   const [applicantName, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -33,7 +39,15 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
   const [boardingConfirmed, setBoarding] = useState(false);
   const [agreedPrivacy, setAgreed] = useState(false);
   const [pending, startTransition] = useTransition();
-  const [result, setResult] = useState<RegisterEventResult | null>(null);
+  const [result, setResult] = useState<RegisterEventResultState | null>(null);
+  const [resumePayment, setResumePayment] = useState<{
+    orderNo: string;
+    amount: number;
+    orderName: string;
+    customerName?: string;
+    customerEmail?: string;
+  } | null>(null);
+  const [resumeError, setResumeError] = useState<string | null>(null);
 
   const clampParty = (n: number) => Math.max(1, Math.min(20, n));
   const partySize = clampParty(parseInt(partyStr || '1', 10) || 1);
@@ -42,13 +56,20 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
   const amount = partySize * feePerPerson;
   const canSeat = isOpen && remaining >= partySize;
 
-  async function startTossPayment(payment: { orderNo: string; amount: number; orderName: string }) {
+  async function startTossPayment(payment: {
+    orderNo: string;
+    amount: number;
+    orderName: string;
+    customerName?: string;
+    customerEmail?: string;
+  }) {
     if (!clientKey) {
       setResult({ ok: false, code: 'INTERNAL_ERROR', message: t('errorGeneric') });
       return;
     }
-    const successUrl = `${window.location.origin}/event/oh-yoon-memorial/success`;
-    const failUrl = `${window.location.origin}/event/oh-yoon-memorial/fail`;
+    const localePrefix = locale === 'en' ? '/en' : '';
+    const successUrl = `${window.location.origin}${localePrefix}/event/oh-yoon-memorial/success`;
+    const failUrl = `${window.location.origin}${localePrefix}/event/oh-yoon-memorial/fail`;
     const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
     const tossPayments = await loadTossPayments(clientKey);
     const tossPayment = tossPayments.payment({ customerKey: payment.orderNo });
@@ -57,14 +78,36 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
       amount: { currency: 'KRW', value: payment.amount },
       orderId: payment.orderNo,
       orderName: payment.orderName,
-      customerName: applicantName,
-      ...(email ? { customerEmail: email } : {}),
+      customerName: payment.customerName ?? applicantName,
+      ...((payment.customerEmail ?? email)
+        ? { customerEmail: payment.customerEmail ?? email }
+        : {}),
       successUrl,
       failUrl,
     });
     // redirect 진행 중 — 페이지 unload까지 대기
     await new Promise(() => {});
   }
+
+  useEffect(() => {
+    const orderNo = new URLSearchParams(window.location.search).get('eventOrderNo');
+    if (!orderNo) return;
+    let cancelled = false;
+    startTransition(async () => {
+      const res = await resumeEventPayment(orderNo);
+      if (cancelled) return;
+      if (res.ok) {
+        setResumePayment(res.payment);
+        setResumeError(null);
+      } else {
+        setResumePayment(null);
+        setResumeError(res.message);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [startTransition]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -89,7 +132,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
     return (
       <div
         className="mt-6 rounded-xl border border-primary/30 bg-white px-6 py-10 text-center"
-        role="status"
+        aria-live="polite"
       >
         <h3 className="font-display text-2xl font-bold text-charcoal-deep">{t('waitlistTitle')}</h3>
         <p className="mt-3 text-charcoal">{t('waitlistBody')}</p>
@@ -97,8 +140,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
     );
   }
 
-  const err = (k: keyof RegisterEventInput) =>
-    result && !result.ok ? result.errors?.[k] : undefined;
+  const err = (k: RegisterEventField) => (result && !result.ok ? result.errors?.[k] : undefined);
 
   return (
     <form
@@ -224,6 +266,30 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
       <p className="text-right text-sm font-semibold text-charcoal-deep">
         {t('formFeeSummary', { amount: amount.toLocaleString('ko-KR') })}
       </p>
+
+      {(resumePayment || resumeError) && (
+        <div className="rounded-lg border border-primary/30 bg-canvas px-4 py-3 text-sm text-charcoal">
+          {resumePayment ? (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <span>
+                대기자 결제 안내 링크가 확인되었습니다. 회비{' '}
+                {resumePayment.amount.toLocaleString('ko-KR')}원을 결제해 주세요.
+              </span>
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                disabled={pending}
+                onClick={() => startTossPayment(resumePayment)}
+              >
+                결제 진행
+              </Button>
+            </div>
+          ) : (
+            <p role="alert">{resumeError}</p>
+          )}
+        </div>
+      )}
 
       {result && !result.ok && result.message && (
         <p

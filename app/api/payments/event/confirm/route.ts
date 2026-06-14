@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
+import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { notifyEmail } from '@/lib/notify';
 import { sendEventSms, sendEventEmail } from '@/lib/events/notify';
 import { OH_YOON_MEMORIAL_PATH } from '@/content/events/oh-yoon-memorial';
@@ -9,7 +10,7 @@ import { OH_YOON_MEMORIAL_PATH } from '@/content/events/oh-yoon-memorial';
 /**
  * 행사(추도식) 결제 confirm.
  * 토스 승인 → confirm_event_registration RPC로 좌석 확정(원자적, hold 만료 시 재확인) →
- * 정원 초과(SOLD_OUT) 시 자동 환불 → 알림톡/이메일 발송.
+ * 좌석 확정 실패 시 자동 환불 → 알림톡/이메일 발송.
  */
 export async function POST(req: NextRequest) {
   let body: { paymentKey?: string; orderId?: string; amount?: number };
@@ -43,6 +44,9 @@ export async function POST(req: NextRequest) {
   // 이미 확정된 신청 (success 페이지 재호출 등)
   if (reg.status === 'confirmed') {
     return NextResponse.json({ success: true, alreadyConfirmed: true });
+  }
+  if (reg.status !== 'pending') {
+    return NextResponse.json({ error: 'invalid_registration_status' }, { status: 409 });
   }
 
   // 토스 승인
@@ -82,31 +86,58 @@ export async function POST(req: NextRequest) {
   const c = confirmData as { ok: boolean; code?: string } | null;
 
   if (confErr || !c?.ok) {
-    // 정원 초과 → 자동 환불 + 신청 취소
-    if (c?.code === 'SOLD_OUT') {
-      const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
-      try {
-        await cancelPayment(
-          toss.paymentKey,
-          { cancelReason: '정원 초과 — 자동 환불' },
-          `event-refund-${orderId}`,
-          'domestic'
-        );
-      } catch (e) {
-        console.error('[event-confirm] auto-refund failed:', e);
+    // Toss 승인은 완료됐지만 좌석 확정이 실패한 상태이므로 자동 환불한다.
+    const reason =
+      c?.code === 'SOLD_OUT' ? '정원 초과 - 자동 환불' : '신청 상태 확정 실패 - 자동 환불';
+    let refundSucceeded = false;
+    try {
+      const cancelResult = await cancelPayment(
+        toss.paymentKey,
+        { cancelReason: reason },
+        `event-refund-${orderId}`,
+        'domestic'
+      );
+      if (cancelResult.success) {
+        refundSucceeded = true;
+      } else {
         void notifyEmail('error', '추도식 자동환불 실패(수동 확인 필요)', {
           주문번호: orderId,
           결제키: toss.paymentKey,
+          에러: cancelResult.error.message || cancelResult.error.code,
         });
       }
-      await supabase
-        .from('event_registrations')
-        .update({ status: 'cancelled', updated_at: new Date().toISOString() })
-        .eq('order_no', orderId);
-      return NextResponse.json({ error: 'sold_out_refunded' }, { status: 409 });
+    } catch (e) {
+      console.error('[event-confirm] auto-refund failed:', e);
+      void notifyEmail('error', '추도식 자동환불 실패(수동 확인 필요)', {
+        주문번호: orderId,
+        결제키: toss.paymentKey,
+      });
     }
-    console.error('[event-confirm] confirm rpc failed:', confErr ?? c?.code);
-    return NextResponse.json({ error: 'confirm_failed' }, { status: 400 });
+    const { error: cancelUpdateError } = await supabase
+      .from('event_registrations')
+      .update({
+        status: 'cancelled',
+        payment_key: toss.paymentKey,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('order_no', orderId);
+    if (cancelUpdateError) {
+      console.error('[event-confirm] cancelled status update failed:', cancelUpdateError);
+      void notifyEmail('error', '추도식 자동환불 후 상태 변경 실패', {
+        주문번호: orderId,
+        결제키: toss.paymentKey,
+      });
+    }
+    return NextResponse.json(
+      {
+        error: refundSucceeded
+          ? c?.code === 'SOLD_OUT'
+            ? 'sold_out_refunded'
+            : 'confirm_failed_refunded'
+          : 'auto_refund_failed',
+      },
+      { status: refundSucceeded ? 409 : 502 }
+    );
   }
 
   revalidatePath(OH_YOON_MEMORIAL_PATH);

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 
-type State = 'loading' | 'ok' | 'error';
+type State = 'loading' | 'ok' | 'soldOutRefunded' | 'refunded' | 'manualReview' | 'error';
 
 export default function SuccessClient() {
   const [state, setState] = useState<State>('loading');
@@ -24,8 +24,18 @@ export default function SuccessClient() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ paymentKey, orderId, amount }),
         });
-        const data = (await res.json()) as { success?: boolean };
-        setState(data.success ? 'ok' : 'error');
+        const data = (await res.json()) as { success?: boolean; error?: string };
+        if (data.success) {
+          setState('ok');
+        } else if (data.error === 'sold_out_refunded') {
+          setState('soldOutRefunded');
+        } else if (data.error === 'confirm_failed_refunded') {
+          setState('refunded');
+        } else if (data.error === 'auto_refund_failed') {
+          setState('manualReview');
+        } else {
+          setState('error');
+        }
       } catch {
         setState('error');
       }
@@ -57,6 +67,49 @@ export default function SuccessClient() {
           </h1>
           <p className="mt-3 text-charcoal">
             잠시 후에도 안내를 받지 못하면 사무국으로 연락 주세요.
+          </p>
+        </div>
+      )}
+      {state === 'soldOutRefunded' && (
+        <div>
+          <h1 className="font-display text-2xl font-bold text-charcoal-deep">
+            정원이 마감되어 결제를 취소했습니다
+          </h1>
+          <p className="mt-3 text-charcoal">
+            결제 승인은 자동 취소·환불 처리했습니다. 카드사 반영까지 시간이 걸릴 수 있습니다.
+          </p>
+          <Link
+            href="/event/oh-yoon-memorial"
+            className="mt-6 inline-block font-semibold text-primary-strong underline"
+          >
+            추도식 안내로 돌아가기
+          </Link>
+        </div>
+      )}
+      {state === 'refunded' && (
+        <div>
+          <h1 className="font-display text-2xl font-bold text-charcoal-deep">
+            신청 확정 중 문제가 있어 결제를 취소했습니다
+          </h1>
+          <p className="mt-3 text-charcoal">
+            결제 승인은 자동 취소·환불 처리했습니다. 잠시 후 다시 신청해 주세요.
+          </p>
+          <Link
+            href="/event/oh-yoon-memorial"
+            className="mt-6 inline-block font-semibold text-primary-strong underline"
+          >
+            추도식 안내로 돌아가기
+          </Link>
+        </div>
+      )}
+      {state === 'manualReview' && (
+        <div>
+          <h1 className="font-display text-2xl font-bold text-charcoal-deep">
+            결제 확인을 수동으로 처리 중입니다
+          </h1>
+          <p className="mt-3 text-charcoal">
+            신청 확정에 실패했고 자동환불도 완료되지 않았습니다. 사무국에서 결제 내역을
+            확인하겠습니다.
           </p>
         </div>
       )}

@@ -2835,6 +2835,10 @@ export type Database = {
       };
       purge_petitions_expired: { Args: never; Returns: Json };
       register_event_seat: { Args: { p_payload: Json }; Returns: Json };
+      promote_waitlist_event_registration: {
+        Args: { p_id: string; p_hold_minutes?: number };
+        Returns: Json;
+      };
       renew_broadcast_dispatch: {
         Args: {
           p_broadcast_id: string;
