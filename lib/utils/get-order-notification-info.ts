@@ -93,6 +93,8 @@ export async function getOrderNotificationInfo(
 
     if (orderItems.length >= 2) {
       const rest = orderItems.length - 1;
+      // 다품목 요약 라벨. admin 알림(한국어 전용)·구매자 이메일(locale) 공용이라 여기서 직접
+      // locale 분기. 구매자 이메일 카피 변경 시 messages/*.json이 아닌 이 줄을 함께 확인할 것.
       artworkTitle = locale === 'en' ? `${repTitle} and ${rest} more` : `${repTitle} 외 ${rest}건`;
     } else {
       artworkTitle = repTitle;
