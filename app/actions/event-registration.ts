@@ -109,7 +109,7 @@ export async function registerEvent(input: unknown) {
     // 관리자 알림 — 대기 신청도 접수 사실 통지
     void notifyEmail('info', '추도식 대기 신청 접수', {
       신청자: name,
-      인원: `${input.partySize}명`,
+      인원: `${payload.partySize}명`,
       연락처: phone,
       명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
     });
