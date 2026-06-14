@@ -47,7 +47,10 @@
     "artKnowledge": "미술 산책",
     "artKnowledgeDesc": "가볍게 즐기는 미술 이야기",
     "searchButton": "검색",
-    "artistsIndex": "작가별 보기"
+    "artistsIndex": "작가별 보기",
+    "ohYoon40th": "오윤 40주기",
+    "ohYoonMemorial": "추도식 신청",
+    "ohYoonMemorialDesc": "7월 5일 추도식 참가 신청 (선착순)"
   },
   "footer": {
     "links": "링크",
@@ -253,7 +256,7 @@
       "ohYoon40thCta": "전시 보러 가기",
       "parkSaenggwangStatus": "5/20 개막",
       "parkSaenggwangTitle": "박생광 드로잉전",
-      "parkSaenggwangDesc": "오방색의 거장이 연필로 잡아둔 첫 호흡들. 5/20(수)~6/8(월) · 갤러리 PEG(서울특별시 은평구 통일로 870 M타워 6층) · 오전 11시~오후 8시. 작가의 작품은 지금 만나보실 수 있습니다.",
+      "parkSaenggwangDesc": "오방색의 거장이 연필로 잡아둔 첫 호흡들. 5/20(수)~6/28(일) · 갤러리 PEG(서울특별시 은평구 통일로 870 M타워 6층) · 오전 11시~오후 8시. 작가의 작품은 지금 만나보실 수 있습니다.",
       "parkSaenggwangCta": "박생광 작가 페이지",
       "preparing": "준비 중"
     },

@@ -22,6 +22,7 @@ describe('isHeroRoute', () => {
       '/terms',
       '/refund-policy',
       '/petition/oh-yoon',
+      '/event/oh-yoon-memorial',
       '/wishlist',
       '/changelog',
     ])('%s는 hero 경로', (path) => {

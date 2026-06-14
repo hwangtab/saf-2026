@@ -40,6 +40,7 @@ const HERO_EXACT = new Set<string>([
   '/terms',
   '/refund-policy',
   '/petition/oh-yoon',
+  '/event/oh-yoon-memorial',
   '/faq',
   '/wishlist',
   '/changelog',

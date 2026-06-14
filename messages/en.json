@@ -47,7 +47,10 @@
     "artKnowledge": "Art Walk",
     "artKnowledgeDesc": "Enjoy art through bite-sized stories",
     "searchButton": "Search",
-    "artistsIndex": "Browse by Artist"
+    "artistsIndex": "Browse by Artist",
+    "ohYoon40th": "Oh Yoon 40th",
+    "ohYoonMemorial": "Memorial Sign-up",
+    "ohYoonMemorialDesc": "Register for the July 5 memorial (first-come)"
   },
   "footer": {
     "links": "Links",
@@ -253,7 +256,7 @@
       "ohYoon40thCta": "View the exhibition",
       "parkSaenggwangStatus": "Opens May 20",
       "parkSaenggwangTitle": "Park Saeng-gwang Drawings",
-      "parkSaenggwangDesc": "First breaths the master of five colors held in pencil. May 20 (Wed) – Jun 8 (Mon) · Gallery PEG, M-Tower 6F, Eunpyeong · 11am–8pm. The artist's works are available now.",
+      "parkSaenggwangDesc": "First breaths the master of five colors held in pencil. May 20 (Wed) – Jun 28 (Sun) · Gallery PEG, M-Tower 6F, Eunpyeong · 11am–8pm. The artist's works are available now.",
       "parkSaenggwangCta": "Park Saeng-gwang artist page",
       "preparing": "Coming soon"
     },
