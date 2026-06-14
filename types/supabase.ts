@@ -848,6 +848,110 @@ export type Database = {
         };
         Relationships: [];
       };
+      event_registrations: {
+        Row: {
+          amount: number;
+          agreed_privacy: boolean;
+          applicant_name: string;
+          boarding_confirmed: boolean;
+          created_at: string;
+          email: string | null;
+          event_slug: string;
+          hold_expires_at: string | null;
+          id: string;
+          ip_hash: string | null;
+          order_no: string | null;
+          paid_at: string | null;
+          party_size: number;
+          payment_key: string | null;
+          phone: string;
+          status: string;
+          updated_at: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          amount: number;
+          agreed_privacy: boolean;
+          applicant_name: string;
+          boarding_confirmed?: boolean;
+          created_at?: string;
+          email?: string | null;
+          event_slug: string;
+          hold_expires_at?: string | null;
+          id?: string;
+          ip_hash?: string | null;
+          order_no?: string | null;
+          paid_at?: string | null;
+          party_size: number;
+          payment_key?: string | null;
+          phone: string;
+          status: string;
+          updated_at?: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          amount?: number;
+          agreed_privacy?: boolean;
+          applicant_name?: string;
+          boarding_confirmed?: boolean;
+          created_at?: string;
+          email?: string | null;
+          event_slug?: string;
+          hold_expires_at?: string | null;
+          id?: string;
+          ip_hash?: string | null;
+          order_no?: string | null;
+          paid_at?: string | null;
+          party_size?: number;
+          payment_key?: string | null;
+          phone?: string;
+          status?: string;
+          updated_at?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'event_registrations_event_slug_fkey';
+            columns: ['event_slug'];
+            isOneToOne: false;
+            referencedRelation: 'events';
+            referencedColumns: ['slug'];
+          },
+        ];
+      };
+      events: {
+        Row: {
+          capacity: number;
+          created_at: string;
+          fee_per_person: number;
+          is_active: boolean;
+          registration_deadline: string | null;
+          slug: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          capacity: number;
+          created_at?: string;
+          fee_per_person: number;
+          is_active?: boolean;
+          registration_deadline?: string | null;
+          slug: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          capacity?: number;
+          created_at?: string;
+          fee_per_person?: number;
+          is_active?: boolean;
+          registration_deadline?: string | null;
+          slug?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       exhibition_sale_details: {
         Row: {
           artist_share: number;
@@ -2143,6 +2247,10 @@ export type Database = {
       };
       close_petition: { Args: { p_slug: string }; Returns: Json };
       close_petitions_due: { Args: never; Returns: Json };
+      confirm_event_registration: {
+        Args: { p_order_no: string; p_payment_key: string; p_amount: number };
+        Returns: Json;
+      };
       count_artwork_buyer_audience: {
         Args: { p_advertising: boolean; p_artwork_id: string; p_salt: string };
         Returns: number;
@@ -2184,6 +2292,8 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      event_occupied_seats: { Args: { p_slug: string }; Returns: number };
+      event_seat_status: { Args: { p_slug: string }; Returns: Json };
       execute_sql: { Args: { sql: string }; Returns: undefined };
       extract_query_param: {
         Args: { key: string; qs: string };
@@ -2647,6 +2757,7 @@ export type Database = {
         Returns: Json;
       };
       purge_petitions_expired: { Args: never; Returns: Json };
+      register_event_seat: { Args: { p_payload: Json }; Returns: Json };
       renew_broadcast_dispatch: {
         Args: {
           p_broadcast_id: string;
