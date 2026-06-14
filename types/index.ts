@@ -117,6 +117,15 @@ export interface ArtworkSale {
   void_reason?: string | null;
 }
 
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  artwork_id: string;
+  quantity: number;
+  unit_price: number;
+  created_at: string;
+}
+
 export interface Order {
   id: string;
   order_no: string;
@@ -145,6 +154,7 @@ export interface Order {
   metadata?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
+  items?: OrderItem[];
 }
 
 export interface Payment {
