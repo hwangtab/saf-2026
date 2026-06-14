@@ -179,10 +179,12 @@ export const ARTIST_SEO_OVERRIDES: Record<string, ArtistSeoOverride> = {
       'Lee Cheol-soo — From Minjung Prints to Zen Woodcuts, Korean Printmaking Master | SAF Online',
   },
   이호철: {
-    // GSC: 35 imp / 0 click / pos 14.3 — page-2라 CTR ceiling 낮으나 노출 큼. 1958년 서울,
-    // 홍익대, 1978 중앙미술대전 장려상. 서랍 속에 다른 세계가 펼쳐지는 초현실적 일상 회화.
-    titleKo: '이호철 — 서랍 속에 펼쳐진 또 다른 세계, 일상의 초현실 회화 | 씨앗페',
-    titleEn: 'Lee Ho-chul — Surreal Everyday Painting, Worlds Inside Open Drawers | SAF Online',
+    // GSC 2026-05~06: 35 imp / 0 click / pos 13 — 판매중 작품 15점(전 작가 최다)에 수요도 있으나
+    // 2페이지 정체. 원인은 동명이인 — 분단문학 대표 소설가 이호철(1932~2016)이 "이호철" SERP를
+    // 점유. 화가 엔티티로 명확화하려 title 첫머리에 "화가"를 붙여 소설가와 분리. (1958년 서울,
+    // 홍익대, 1978 중앙미술대전 장려상. 서랍 속에 다른 세계가 펼쳐지는 초현실적 일상 회화.)
+    titleKo: '화가 이호철 — 서랍 속 또 다른 세계를 그리는 초현실 일상 회화 | 씨앗페',
+    titleEn: 'Lee Ho-chul (Painter) — Surreal Everyday Scenes, Worlds Inside Open Drawers | SAF',
   },
   정채희: {
     // GSC: 9 imp / 0 click / pos 5.1 — 서울대 회화과·북경 중앙미술학원 벽화 석사,
