@@ -238,8 +238,11 @@ BEGIN
 END;
 $$;
 
+-- 모든 함수 service_role 전용(최소권한). 서버는 admin client(service_role)만 사용.
 REVOKE ALL ON FUNCTION public.register_event_seat(jsonb) FROM anon, authenticated, public;
 REVOKE ALL ON FUNCTION public.confirm_event_registration(text, text, integer) FROM anon, authenticated, public;
+REVOKE ALL ON FUNCTION public.event_seat_status(text) FROM anon, authenticated, public;
+REVOKE ALL ON FUNCTION public.event_occupied_seats(text) FROM anon, authenticated, public;
 GRANT EXECUTE ON FUNCTION public.register_event_seat(jsonb) TO service_role;
 GRANT EXECUTE ON FUNCTION public.confirm_event_registration(text, text, integer) TO service_role;
 GRANT EXECUTE ON FUNCTION public.event_seat_status(text) TO service_role;
