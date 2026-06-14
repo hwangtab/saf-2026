@@ -7,6 +7,7 @@ import { notifyEmail } from '@/lib/notify';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
+import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import type { Database, Json } from '@/types/supabase';
 
@@ -51,7 +52,9 @@ export async function GET(request: NextRequest) {
 
   const { data: staleOrders, error: fetchError } = await supabase
     .from('orders')
-    .select('id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata')
+    .select(
+      'id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata, order_items(artwork_id, quantity, unit_price)'
+    )
     .eq('status', 'pending_payment')
     .gt('created_at', minAge)
     .lt('created_at', maxAge);
@@ -145,43 +148,44 @@ export async function GET(request: NextRequest) {
           continue;
         }
 
-        // 3) artwork_sales 레코드가 없으면 생성 (중복 방지)
-        if (order.artwork_id) {
-          const { data: existingSale } = await supabase
-            .from('artwork_sales')
-            .select('id')
-            .eq('order_id', order.id)
-            .is('voided_at', null)
-            .maybeSingle();
+        // 3) artwork_sales 레코드가 없으면 생성 (중복 방지) — 다품목 지원.
+        // order_items가 있으면 라인별로, 비면(legacy 단건) order.artwork_id로 fallback.
+        // recordOrderArtworkSales는 내부 멱등(active 매출 존재 시 skip)이므로 수동 existingSale 가드 불필요.
+        const lineItems = extractLineItems(order);
+        const salesLines =
+          lineItems.length > 0
+            ? lineItems
+            : order.artwork_id
+              ? [{ artwork_id: order.artwork_id, quantity: 1, unit_price: order.total_amount }]
+              : [];
 
-          if (!existingSale) {
-            const { error: saleInsertError } = await supabase.from('artwork_sales').insert({
-              artwork_id: order.artwork_id,
-              sale_price: order.total_amount,
-              quantity: 1,
-              source: 'toss',
-              source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
-              order_id: order.id,
-              external_order_id: order.order_no,
-              buyer_name: order.buyer_name,
-              buyer_phone: order.buyer_phone,
-              sold_at: tossPayment.approvedAt ?? now,
-            });
+        if (salesLines.length > 0) {
+          const salesResult = await recordOrderArtworkSales(supabase, {
+            orderId: order.id,
+            orderNo: order.order_no,
+            lineItems: salesLines,
+            source: 'toss',
+            sourceDetail: provider === 'widget' ? 'toss_widget' : 'toss_api',
+            buyerName: order.buyer_name,
+            buyerPhone: order.buyer_phone,
+            soldAt: tossPayment.approvedAt ?? now,
+          });
 
-            if (saleInsertError) {
-              errors.push(
-                `${order.order_no}: artwork_sales insert failed: ${saleInsertError.message}`
-              );
-              continue;
-            }
+          if (salesResult.inserted === false && salesResult.reason === 'error') {
+            errors.push(`${order.order_no}: artwork_sales insert failed: ${salesResult.error}`);
+            continue;
           }
 
-          // artwork_sales 반영 후 작품 상태 동기화 + 공개 페이지 캐시 무효화.
+          // artwork_sales 반영 후 작품 상태 동기화 + 공개 페이지 캐시 무효화 — 전 품목 루프.
           // outer supabase가 이미 admin 클라이언트이므로 재사용 (루프마다 신규 client 생성 회피)
-          await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+          for (const item of salesLines) {
+            await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
+          }
           revalidatePublicArtworkSurfaces();
-          revalidatePath(`/artworks/${order.artwork_id}`);
-          revalidatePath(`/en/artworks/${order.artwork_id}`);
+          for (const item of salesLines) {
+            revalidatePath(`/artworks/${item.artwork_id}`);
+            revalidatePath(`/en/artworks/${item.artwork_id}`);
+          }
         }
 
         reconciled++;
@@ -248,25 +252,38 @@ export async function GET(request: NextRequest) {
           continue;
         }
 
-        // awaiting_deposit 전환 후 artwork 예약 처리 — unique edition만 잠금.
+        // awaiting_deposit 전환 후 artwork 예약 처리 — unique edition만 잠금. 다품목 지원.
         // limited/open은 여러 구매자가 동시에 진행 가능하므로 입금 대기 중 잠그면 안 됨.
-        if (order.artwork_id) {
+        // order_items가 있으면 라인별로, 비면(legacy 단건) order.artwork_id로 fallback (confirm route 패턴).
+        const depositLineItems = extractLineItems(order);
+        const reserveArtworkIds =
+          depositLineItems.length > 0
+            ? depositLineItems.map((item) => item.artwork_id)
+            : order.artwork_id
+              ? [order.artwork_id]
+              : [];
+
+        let anyReserved = false;
+        for (const artworkId of reserveArtworkIds) {
           const { data: artworkEdition } = await supabase
             .from('artworks')
             .select('edition_type')
-            .eq('id', order.artwork_id)
+            .eq('id', artworkId)
             .maybeSingle();
 
           if (artworkEdition?.edition_type === 'unique') {
             await supabase
               .from('artworks')
               .update({ status: 'reserved' })
-              .eq('id', order.artwork_id)
+              .eq('id', artworkId)
               .eq('status', 'available');
-            revalidatePublicArtworkSurfaces();
-            revalidatePath(`/artworks/${order.artwork_id}`);
-            revalidatePath(`/en/artworks/${order.artwork_id}`);
+            revalidatePath(`/artworks/${artworkId}`);
+            revalidatePath(`/en/artworks/${artworkId}`);
+            anyReserved = true;
           }
+        }
+        if (anyReserved) {
+          revalidatePublicArtworkSurfaces();
         }
 
         reconciled++;
