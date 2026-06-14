@@ -578,6 +578,41 @@ export type Database = {
           },
         ];
       };
+      cart_items: {
+        Row: {
+          artwork_id: string;
+          created_at: string;
+          id: string;
+          quantity: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          artwork_id: string;
+          created_at?: string;
+          id?: string;
+          quantity?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          artwork_id?: string;
+          created_at?: string;
+          id?: string;
+          quantity?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'cart_items_artwork_id_fkey';
+            columns: ['artwork_id'];
+            isOneToOne: false;
+            referencedRelation: 'artworks';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       customer_contact_overrides: {
         Row: {
           created_at: string;
@@ -850,8 +885,8 @@ export type Database = {
       };
       event_registrations: {
         Row: {
-          amount: number;
           agreed_privacy: boolean;
+          amount: number;
           applicant_name: string;
           boarding_confirmed: boolean;
           created_at: string;
@@ -870,8 +905,8 @@ export type Database = {
           user_agent: string | null;
         };
         Insert: {
-          amount: number;
           agreed_privacy: boolean;
+          amount: number;
           applicant_name: string;
           boarding_confirmed?: boolean;
           created_at?: string;
@@ -890,8 +925,8 @@ export type Database = {
           user_agent?: string | null;
         };
         Update: {
-          amount?: number;
           agreed_privacy?: boolean;
+          amount?: number;
           applicant_name?: string;
           boarding_confirmed?: boolean;
           created_at?: string;
@@ -1243,9 +1278,51 @@ export type Database = {
           },
         ];
       };
-      orders: {
+      order_items: {
         Row: {
           artwork_id: string;
+          created_at: string;
+          id: string;
+          order_id: string;
+          quantity: number;
+          unit_price: number;
+        };
+        Insert: {
+          artwork_id: string;
+          created_at?: string;
+          id?: string;
+          order_id: string;
+          quantity?: number;
+          unit_price: number;
+        };
+        Update: {
+          artwork_id?: string;
+          created_at?: string;
+          id?: string;
+          order_id?: string;
+          quantity?: number;
+          unit_price?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_items_artwork_id_fkey';
+            columns: ['artwork_id'];
+            isOneToOne: false;
+            referencedRelation: 'artworks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_items_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          artwork_id: string | null;
           buyer_email: string;
           buyer_name: string;
           buyer_phone: string;
@@ -1276,7 +1353,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          artwork_id: string;
+          artwork_id?: string | null;
           buyer_email: string;
           buyer_name: string;
           buyer_phone: string;
@@ -1307,7 +1384,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          artwork_id?: string;
+          artwork_id?: string | null;
           buyer_email?: string;
           buyer_name?: string;
           buyer_phone?: string;
@@ -2248,7 +2325,7 @@ export type Database = {
       close_petition: { Args: { p_slug: string }; Returns: Json };
       close_petitions_due: { Args: never; Returns: Json };
       confirm_event_registration: {
-        Args: { p_order_no: string; p_payment_key: string; p_amount: number };
+        Args: { p_amount: number; p_order_no: string; p_payment_key: string };
         Returns: Json;
       };
       count_artwork_buyer_audience: {

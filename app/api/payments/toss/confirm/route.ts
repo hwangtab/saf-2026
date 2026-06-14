@@ -15,6 +15,7 @@ import {
   getOrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
 
@@ -111,7 +112,7 @@ export async function POST(req: NextRequest) {
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .select(
-      'id, total_amount, status, artwork_id, order_no, buyer_name, buyer_phone, buyer_email, metadata'
+      'id, total_amount, status, artwork_id, order_no, buyer_name, buyer_phone, buyer_email, metadata, order_items(artwork_id, quantity, unit_price)'
     )
     .eq('order_no', orderId)
     .single();
@@ -169,12 +170,18 @@ export async function POST(req: NextRequest) {
   // 이 체크 이후 artwork_sales INSERT 사이의 잔여 윈도우는 짧지만 0은 아님 —
   // 완전한 원자성 보장을 위해서는 artwork_sales(artwork_id) WHERE voided_at IS NULL
   // partial UNIQUE constraint를 DB 마이그레이션으로 추가하는 것이 권장됨.
-  if (order.artwork_id) {
-    // 자기 자신(현재 confirm 중인 주문)은 pending_count에서 제외 — 그렇지 않으면
-    // unique edition 작품의 경우 (sold=0 + pending=1) >= 1로 즉시 unavailable 판정됨.
+  // order_items 전 품목을 순회하며 재확인 — 단건 주문은 order_items가 1행이므로
+  // 기존 동작과 동일하게 1회 재확인된다. 자기 주문(p_exclude_order_id)은 제외 —
+  // 그렇지 않으면 unique edition 작품의 경우 (sold=0 + pending=1) >= 1로 즉시
+  // unavailable 판정됨. (lineItems는 Task 6에서 artwork_sales·status 루프에 재사용)
+  // Supabase 1:N 임베드는 배열을 반환하지만, 비배열/null로 추론되는 엣지에서
+  // for...of가 throw하지 않도록 Array.isArray로 방어.
+  const lineItems = extractLineItems(order);
+
+  for (const item of lineItems) {
     const { data: availResult, error: availError } = await supabase.rpc(
       'check_artwork_availability',
-      { p_artwork_id: order.artwork_id, p_exclude_order_id: order.id }
+      { p_artwork_id: item.artwork_id, p_exclude_order_id: order.id }
     );
     const isAvailable = Array.isArray(availResult) && availResult[0]?.is_available === true;
     if (availError || !isAvailable) {
@@ -277,23 +284,25 @@ export async function POST(req: NextRequest) {
 
   // 가상계좌 발급 시 artwork 예약 처리 — unique edition만 reserved 잠금.
   // limited/open은 여러 구매자가 동시 진행 가능하므로 입금 대기 중 잠그면 안 됨.
-  if (isVirtualAccount && updatedOrders && updatedOrders.length > 0 && order.artwork_id) {
-    const { data: artworkEdition } = await supabase
-      .from('artworks')
-      .select('edition_type')
-      .eq('id', order.artwork_id)
-      .maybeSingle();
-
-    if (artworkEdition?.edition_type === 'unique') {
-      await supabase
+  if (isVirtualAccount && updatedOrders && updatedOrders.length > 0) {
+    for (const item of lineItems) {
+      const { data: artworkEdition } = await supabase
         .from('artworks')
-        .update({ status: 'reserved' })
-        .eq('id', order.artwork_id)
-        .eq('status', 'available');
-      revalidatePublicArtworkSurfaces();
-      revalidatePath(`/artworks/${order.artwork_id}`);
-      revalidatePath(`/en/artworks/${order.artwork_id}`);
+        .select('edition_type')
+        .eq('id', item.artwork_id)
+        .maybeSingle();
+
+      if (artworkEdition?.edition_type === 'unique') {
+        await supabase
+          .from('artworks')
+          .update({ status: 'reserved' })
+          .eq('id', item.artwork_id)
+          .eq('status', 'available');
+        revalidatePath(`/artworks/${item.artwork_id}`);
+        revalidatePath(`/en/artworks/${item.artwork_id}`);
+      }
     }
+    revalidatePublicArtworkSurfaces();
   }
 
   // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불
@@ -322,31 +331,37 @@ export async function POST(req: NextRequest) {
   // If fully paid, insert artwork_sales record
   // (DB trigger update_artwork_status_on_sale will mark artwork as sold)
   if (isDone && updatedOrders && updatedOrders.length > 0) {
-    const { error: salesInsertError } = await supabase.from('artwork_sales').insert({
-      artwork_id: order.artwork_id,
-      sale_price: order.total_amount,
-      quantity: 1,
+    const salesResult = await recordOrderArtworkSales(supabase, {
+      orderId: order.id,
+      orderNo: order.order_no,
+      lineItems,
       source: 'toss',
-      source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
-      order_id: order.id,
-      external_order_id: order.order_no,
-      buyer_name: order.buyer_name,
-      buyer_phone: order.buyer_phone,
-      sold_at: new Date().toISOString(),
+      sourceDetail: provider === 'widget' ? 'toss_widget' : 'toss_api',
+      buyerName: order.buyer_name,
+      buyerPhone: order.buyer_phone,
+      soldAt: new Date().toISOString(),
     });
 
-    if (salesInsertError) {
-      console.error('[confirm] artwork_sales INSERT 실패:', salesInsertError);
+    if (salesResult.inserted === false && salesResult.reason === 'error') {
+      console.error('[confirm] artwork_sales INSERT 실패:', salesResult.error);
       void notifyEmail('error', '결제 후 판매 기록 생성 실패', {
         주문번호: orderId,
-        에러: salesInsertError.message,
-        참고: '결제+주문 완료, 판매 기록만 누락 — reconciliation cron이 보정 예정',
+        에러: salesResult.error,
+        참고: '결제+주문 완료, 판매 기록 누락 — reconciliation cron 보정 예정',
+      });
+    } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
+      // 결제 완료(paid)인데 order_items가 비어 매출이 기록되지 않음 — 정상 흐름에선
+      // createOrder가 항상 order_items를 쓰므로 발생 불가. 발생 시 데이터 정합성 이상이라 알림.
+      console.error('[confirm] paid order with no order_items:', orderId);
+      void notifyEmail('error', '결제 완료 주문에 품목 없음 — 판매 기록 누락', {
+        주문번호: orderId,
+        참고: '결제+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
       });
     }
 
     // BUG 40: DB 트리거 실패 대비 방어적으로 artwork 상태 동기화
-    if (order.artwork_id) {
-      await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+    for (const item of lineItems) {
+      await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
     }
   }
 
@@ -354,10 +369,12 @@ export async function POST(req: NextRequest) {
   const notifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
 
   // 결제 완료 시 공개 작품 페이지 캐시 무효화
-  if (isDone && order.artwork_id) {
+  if (isDone) {
+    for (const item of lineItems) {
+      revalidatePath(`/artworks/${item.artwork_id}`);
+      revalidatePath(`/en/artworks/${item.artwork_id}`);
+    }
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${order.artwork_id}`);
-    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
 
   // 결제 성공 알림 — fire-and-forget: 응답 전송 후 백그라운드 처리

@@ -12,6 +12,8 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import ToastProvider from '@/components/providers/ToastProvider';
 import WishlistProvider from '@/components/providers/WishlistProvider';
+import CartProvider from '@/components/providers/CartProvider';
+import CartDrawer from '@/components/features/CartDrawer';
 import ReturningVisitorGreeting from '@/components/features/ReturningVisitorGreeting';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
@@ -231,20 +233,23 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={publicMessages}>
           <ToastProvider>
             <WishlistProvider>
-              <ReturningVisitorGreeting />
-              <a href="#main-content" className="skip-to-main">
-                {tA11y('skipToMain')}
-              </a>
-              <Header />
-              <main id="main-content" className="flex-1">
-                {children}
-              </main>
-              <Suspense fallback={null}>
-                <Footer locale={locale} />
-              </Suspense>
-              <JsonLdScript data={organizationSchema} />
-              <JsonLdScript data={websiteSchema} />
-              <JsonLdScript data={localBusinessSchema} />
+              <CartProvider>
+                <CartDrawer />
+                <ReturningVisitorGreeting />
+                <a href="#main-content" className="skip-to-main">
+                  {tA11y('skipToMain')}
+                </a>
+                <Header />
+                <main id="main-content" className="flex-1">
+                  {children}
+                </main>
+                <Suspense fallback={null}>
+                  <Footer locale={locale} />
+                </Suspense>
+                <JsonLdScript data={organizationSchema} />
+                <JsonLdScript data={websiteSchema} />
+                <JsonLdScript data={localBusinessSchema} />
+              </CartProvider>
             </WishlistProvider>
           </ToastProvider>
         </NextIntlClientProvider>

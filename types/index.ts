@@ -117,6 +117,27 @@ export interface ArtworkSale {
   void_reason?: string | null;
 }
 
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  artwork_id: string;
+  quantity: number;
+  unit_price: number;
+  created_at: string;
+}
+
+/**
+ * 주문 입력용 품목 shape (camelCase). DB row인 `OrderItem`(snake_case)과 구분된다.
+ * createOrder·장바구니가 공용으로 소비하므로 types에 위치.
+ */
+export type OrderItemInput = { artworkId: string; quantity: number };
+
+/** 클라이언트 장바구니 항목(localStorage·CartProvider). artworkId는 artworks.id(uuid). */
+export interface CartItem {
+  artworkId: string;
+  quantity: number;
+}
+
 export interface Order {
   id: string;
   order_no: string;
@@ -145,6 +166,7 @@ export interface Order {
   metadata?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
+  items?: OrderItem[];
 }
 
 export interface Payment {

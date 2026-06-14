@@ -8,6 +8,7 @@ import {
   type OrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 
 export const runtime = 'nodejs';
@@ -110,7 +111,9 @@ export async function GET(request: NextRequest) {
 
   const { data: expiredDeposit, error: depositFetchError } = await supabase
     .from('orders')
-    .select('id, artwork_id, buyer_email, buyer_name, order_no, total_amount, metadata')
+    .select(
+      'id, artwork_id, buyer_email, buyer_name, order_no, total_amount, metadata, order_items(artwork_id, quantity, unit_price)'
+    )
     .eq('status', 'awaiting_deposit')
     .eq('deposit_auto_cancel_paused', false) // 관리자가 자동취소 보류한 주문은 만료 제외
     .lt('created_at', depositCutoff);
@@ -178,11 +181,22 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 실제 취소된 주문의 artwork reserved→available 복원.
+    // 실제 취소된 주문의 artwork reserved→available 복원 — 다품목 지원.
+    // 각 주문의 order_items 전 품목을 복원 대상으로 수집. order_items가 비면(legacy 단건)
+    // o.artwork_id로 fallback.
     // Set 으로 dedupe — limited/open edition은 같은 artwork_id로 여러 awaiting_deposit 주문이
     // 동시에 만료될 수 있고, 중복 ID는 revalidatePath 중복 호출 등 redundant work를 유발.
     const artworkIds = Array.from(
-      new Set(actuallyCancelled.map((o) => o.artwork_id).filter((id): id is string => !!id))
+      new Set(
+        actuallyCancelled.flatMap((o) => {
+          const lineItems = extractLineItems(o);
+          return lineItems.length > 0
+            ? lineItems.map((item) => item.artwork_id)
+            : o.artwork_id
+              ? [o.artwork_id]
+              : [];
+        })
+      )
     );
 
     if (artworkIds.length > 0) {

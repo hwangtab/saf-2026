@@ -16,6 +16,7 @@ import { rateLimit } from '@/lib/rate-limit';
 import { hashEmail } from '@/lib/email/email-hash';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { getClientIp } from '@/lib/security/get-client-ip';
 import { logBuyerAction } from './activity-log-writer';
 import { createSupabaseServerClient } from '@/lib/auth/server';
@@ -544,7 +545,7 @@ export async function cancelBuyerOrder(
   const { data: order, error } = await adminClient
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, artwork_id, buyer_email, buyer_user_id, buyer_name, metadata'
+      'id, order_no, status, total_amount, artwork_id, buyer_email, buyer_user_id, buyer_name, metadata, order_items(artwork_id, quantity, unit_price)'
     )
     .eq('order_no', trimmedOrderNo)
     .maybeSingle();
@@ -575,15 +576,28 @@ export async function cancelBuyerOrder(
       return { success: false, error: 'ORDER_CANCEL_FAILED' };
     }
 
-    if (order.artwork_id) {
+    // 예약 해제 — order_items 라인별로 (legacy 단건은 artwork_id fallback).
+    // 다품목 무통장 취소 시 첫 작품만 풀면 나머지가 영구 reserved로 남는다.
+    // unique만 reserved 잠금되므로 `.eq('status','reserved')` 가드가 limited/open은 자동 skip.
+    const depositLineItems = extractLineItems(order);
+    const reservedArtworkIds =
+      depositLineItems.length > 0
+        ? depositLineItems.map((item) => item.artwork_id)
+        : order.artwork_id
+          ? [order.artwork_id]
+          : [];
+
+    for (const artworkId of reservedArtworkIds) {
       await adminClient
         .from('artworks')
         .update({ status: 'available', updated_at: now })
-        .eq('id', order.artwork_id)
+        .eq('id', artworkId)
         .eq('status', 'reserved');
+      revalidatePath(`/artworks/${artworkId}`);
+      revalidatePath(`/en/artworks/${artworkId}`);
+    }
+    if (reservedArtworkIds.length > 0) {
       revalidatePublicArtworkSurfaces();
-      revalidatePath(`/artworks/${order.artwork_id}`);
-      revalidatePath(`/en/artworks/${order.artwork_id}`);
     }
 
     await logBuyerAction(
@@ -698,36 +712,39 @@ export async function cancelBuyerOrder(
     // Toss 환불은 이미 처리되었으므로 주문 취소를 되돌리지 않음
   }
 
-  const { data: sale } = await adminClient
+  // 판매기록 void — 다품목 주문은 해당 order의 active 매출 전부 void (단건 주문은 1행만 영향)
+  const { error: voidError } = await adminClient
     .from('artwork_sales')
-    .select('id')
+    .update({ voided_at: now, void_reason: trimmedReason })
     .eq('order_id', order.id)
-    .is('voided_at', null)
-    .limit(1)
-    .maybeSingle();
-
-  if (sale) {
-    const { error: voidError } = await adminClient
-      .from('artwork_sales')
-      .update({ voided_at: now, void_reason: trimmedReason })
-      .eq('id', sale.id);
-    if (voidError) {
-      // 환불은 이미 처리됨 — 판매기록 void 실패 시 매출 과대계상되므로 운영팀 경보(매니저 수동 void 필요).
-      console.error('[cancelBuyerOrder] artwork_sales void failed:', voidError);
-      void notifyEmail('error', '구매자 취소 후 판매기록 void 실패 — 수동 처리 필요', {
-        주문번호: order.order_no,
-        주문ID: order.id,
-        판매기록ID: sale.id,
-        에러: voidError.message,
-      });
-    }
+    .is('voided_at', null);
+  if (voidError) {
+    // 환불은 이미 처리됨 — 판매기록 void 실패 시 매출 과대계상되므로 운영팀 경보(매니저 수동 void 필요).
+    console.error('[cancelBuyerOrder] artwork_sales void failed:', voidError);
+    void notifyEmail('error', '구매자 취소 후 판매기록 void 실패 — 수동 처리 필요', {
+      주문번호: order.order_no,
+      주문ID: order.id,
+      에러: voidError.message,
+    });
   }
 
-  if (order.artwork_id) {
-    await deriveAndSyncArtworkStatus(adminClient, order.artwork_id);
+  // 작품 상태 재동기화 — order_items 라인별로 (legacy 단건은 artwork_id fallback).
+  // void 이후 호출해야 활성 매출 없음 기준으로 sold→available 복원이 정확.
+  const lineItems = extractLineItems(order);
+  const artworkIds =
+    lineItems.length > 0
+      ? lineItems.map((item) => item.artwork_id)
+      : order.artwork_id
+        ? [order.artwork_id]
+        : [];
+
+  for (const artworkId of artworkIds) {
+    await deriveAndSyncArtworkStatus(adminClient, artworkId);
+    revalidatePath(`/artworks/${artworkId}`);
+    revalidatePath(`/en/artworks/${artworkId}`);
+  }
+  if (artworkIds.length > 0) {
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${order.artwork_id}`);
-    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
 
   // 구매자 셀프 취소 audit log — 관리자 환불(refundOrder)과 동등한 추적성 확보

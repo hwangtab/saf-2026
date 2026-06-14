@@ -1,8 +1,9 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { Link } from '@/i18n/navigation';
 import { usePathname } from '@/i18n/navigation';
+import { useCart } from '@/components/providers/CartProvider';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { ChevronDown, ExternalLink } from 'lucide-react';
@@ -42,6 +43,13 @@ export default function FullscreenMenu({
   const tA11y = useTranslations('a11y');
   const tSearch = useTranslations('globalSearch');
   const tWishlist = useTranslations('wishlist');
+  const tCart = useTranslations('cart');
+  const { openDrawer: openCartDrawer, count: cartCount, mounted: cartMounted } = useCart();
+
+  const handleCartOpen = useCallback(() => {
+    onClose();
+    openCartDrawer();
+  }, [onClose, openCartDrawer]);
 
   // body 스크롤 잠금 해제 및 위치 복원
   const restoreBodyScroll = (restorePosition = true) => {
@@ -231,9 +239,22 @@ export default function FullscreenMenu({
           </ul>
         </nav>
 
-        {/* 보조 알약 - 위시리스트 + 주문 조회 + 아티스트 메뉴 */}
+        {/* 보조 알약 - 카트 + 위시리스트 + 주문 조회 + 아티스트 메뉴 */}
         <div className="mt-6 border-t border-gray-100 py-5">
-          <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto">
+          <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto sm:grid-cols-4">
+            {/* 카트 — 드로어 open (메뉴 닫고 드로어 열기) */}
+            <button
+              type="button"
+              onClick={handleCartOpen}
+              className="relative inline-flex w-full items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-medium text-charcoal-muted transition-colors hover:border-gray-300 hover:bg-gray-100"
+            >
+              {tCart('headerLabel')}
+              {cartMounted && cartCount > 0 && (
+                <span className="ml-1.5 inline-flex min-w-[18px] h-[18px] px-1 items-center justify-center rounded-full bg-primary-strong text-white text-[10px] font-bold leading-none">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </button>
             <Link
               href="/wishlist"
               prefetch={false}

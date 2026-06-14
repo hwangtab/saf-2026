@@ -13,6 +13,7 @@ import {
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
+import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
@@ -161,55 +162,50 @@ export async function POST(req: NextRequest) {
           const { data: order } = await supabase
             .from('orders')
             .select(
-              'artwork_id, total_amount, order_no, buyer_name, buyer_phone, buyer_email, metadata'
+              'artwork_id, total_amount, order_no, buyer_name, buyer_phone, buyer_email, metadata, order_items(artwork_id, quantity, unit_price)'
             )
             .eq('id', paymentRecord.order_id)
             .single();
 
           if (order) {
-            // 멱등성: 동일 order에 대한 active artwork_sales가 이미 있으면 중복 INSERT 방지
-            // (DB UNIQUE constraint가 가장 확실하지만 그 전 코드 레벨 방어선)
-            const { data: existingSale } = await supabase
-              .from('artwork_sales')
-              .select('id')
-              .eq('order_id', paymentRecord.order_id)
-              .is('voided_at', null)
-              .maybeSingle();
-
-            const saleInsertError = existingSale
-              ? null
-              : (
-                  await supabase.from('artwork_sales').insert({
-                    artwork_id: order.artwork_id,
-                    sale_price: order.total_amount,
-                    quantity: 1,
-                    source: 'toss',
-                    source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
-                    order_id: paymentRecord.order_id,
-                    external_order_id: order.order_no,
-                    buyer_name: order.buyer_name,
-                    buyer_phone: order.buyer_phone,
-                    sold_at: new Date().toISOString(),
-                  })
-                ).error;
-
-            if (saleInsertError) {
+            const lineItems = extractLineItems(order);
+            const salesResult = await recordOrderArtworkSales(supabase, {
+              orderId: paymentRecord.order_id,
+              orderNo: order.order_no,
+              lineItems,
+              source: 'toss',
+              sourceDetail: provider === 'widget' ? 'toss_widget' : 'toss_api',
+              buyerName: order.buyer_name,
+              buyerPhone: order.buyer_phone,
+              soldAt: new Date().toISOString(),
+            });
+            if (salesResult.inserted === false && salesResult.reason === 'error') {
               console.error(
                 `[toss-webhook] artwork_sales INSERT failed: ${order.order_no}`,
-                saleInsertError
+                salesResult.error
               );
               void notifyEmail('error', '웹훅 판매 기록 생성 실패', {
                 주문번호: order.order_no,
-                에러: saleInsertError.message,
+                에러: salesResult.error,
+              });
+            } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
+              console.error(`[toss-webhook] paid deposit with no order_items: ${order.order_no}`);
+              void notifyEmail('error', '입금 완료 주문에 품목 없음 — 판매 기록 누락', {
+                주문번호: order.order_no ?? '',
+                참고: '입금+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
               });
             }
 
-            // artwork 상태 재계산 (reserved → sold)
-            if (order.artwork_id) {
-              await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+            // artwork 상태 재계산 (reserved → sold) — order_items 전 품목 루프
+            for (const item of lineItems) {
+              await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
+            }
+            if (lineItems.length > 0) {
               revalidatePublicArtworkSurfaces();
-              revalidatePath(`/artworks/${order.artwork_id}`);
-              revalidatePath(`/en/artworks/${order.artwork_id}`);
+              for (const item of lineItems) {
+                revalidatePath(`/artworks/${item.artwork_id}`);
+                revalidatePath(`/en/artworks/${item.artwork_id}`);
+              }
             }
           }
 
@@ -293,7 +289,7 @@ export async function POST(req: NextRequest) {
           .update({ status: 'cancelled', cancelled_at: now })
           .eq('id', paymentRecord.order_id)
           .eq('status', 'awaiting_deposit')
-          .select('artwork_id');
+          .select('id, artwork_id, order_items(artwork_id, quantity, unit_price)');
 
         if (cancelError) {
           console.error(
@@ -302,10 +298,18 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        // artwork reserved → available 복원
+        // artwork reserved → available 복원 — order_items 전 품목 루프
         if (cancelledOrders && cancelledOrders.length > 0) {
-          const artworkId = cancelledOrders[0].artwork_id;
-          if (artworkId) {
+          const cancelledOrder = cancelledOrders[0];
+          const lineItems = extractLineItems(cancelledOrder);
+          // order_items가 비면 legacy 단건 artwork_id로 fallback
+          const artworkIds =
+            lineItems.length > 0
+              ? lineItems.map((item) => item.artwork_id)
+              : cancelledOrder.artwork_id
+                ? [cancelledOrder.artwork_id]
+                : [];
+          for (const artworkId of artworkIds) {
             const { error: artworkError } = await supabase
               .from('artworks')
               .update({ status: 'available', updated_at: now })
@@ -314,9 +318,11 @@ export async function POST(req: NextRequest) {
             if (artworkError) {
               console.error('[toss-webhook] artwork reserved→available failed:', artworkError);
             }
-            revalidatePublicArtworkSurfaces();
             revalidatePath(`/artworks/${artworkId}`);
             revalidatePath(`/en/artworks/${artworkId}`);
+          }
+          if (artworkIds.length > 0) {
+            revalidatePublicArtworkSurfaces();
           }
         }
       }
@@ -487,7 +493,7 @@ export async function POST(req: NextRequest) {
       const { data: existingOrder } = await supabase
         .from('orders')
         .select(
-          'status, artwork_id, order_no, buyer_email, buyer_name, buyer_phone, total_amount, metadata'
+          'status, artwork_id, order_no, buyer_email, buyer_name, buyer_phone, total_amount, metadata, order_items(artwork_id, quantity, unit_price)'
         )
         .eq('id', paymentRow.order_id)
         .single();
@@ -514,43 +520,37 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        // artwork_sales INSERT — confirm route가 이미 INSERT했다면 existingSale로 skip (멱등)
-        if (updatedOrders && updatedOrders.length > 0 && existingOrder.artwork_id) {
-          const { data: existingSale } = await supabase
-            .from('artwork_sales')
-            .select('id')
-            .eq('order_id', paymentRow.order_id)
-            .is('voided_at', null)
-            .maybeSingle();
+        const lineItems = extractLineItems(existingOrder);
 
-          if (!existingSale) {
-            // source_detail은 order metadata에서 resolve한 provider 기준 — 위쪽 라인 322 패턴과 동일.
-            // 보고서에서 widget/api_v1 구분이 유지되도록 하드코딩 회피.
-            const { error: saleInsertError } = await supabase.from('artwork_sales').insert({
-              artwork_id: existingOrder.artwork_id,
-              sale_price: existingOrder.total_amount,
-              quantity: 1,
-              source: 'toss',
-              source_detail: provider === 'widget' ? 'toss_widget' : 'toss_api',
-              order_id: paymentRow.order_id,
-              external_order_id: existingOrder.order_no,
-              buyer_name: existingOrder.buyer_name,
-              buyer_phone: existingOrder.buyer_phone,
-              sold_at: now,
-            });
-
-            if (saleInsertError) {
-              console.error(
-                `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed: ${existingOrder.order_no}`,
-                saleInsertError
-              );
-            }
+        // artwork_sales INSERT — confirm route가 이미 INSERT했다면 헬퍼 내부 멱등으로 skip
+        if (updatedOrders && updatedOrders.length > 0 && lineItems.length > 0) {
+          // source_detail은 order metadata에서 resolve한 provider 기준.
+          // 보고서에서 widget/api_v1 구분이 유지되도록 하드코딩 회피.
+          const salesResult = await recordOrderArtworkSales(supabase, {
+            orderId: paymentRow.order_id,
+            orderNo: existingOrder.order_no,
+            lineItems,
+            source: 'toss',
+            sourceDetail: provider === 'widget' ? 'toss_widget' : 'toss_api',
+            buyerName: existingOrder.buyer_name,
+            buyerPhone: existingOrder.buyer_phone,
+            soldAt: now,
+          });
+          if (salesResult.inserted === false && salesResult.reason === 'error') {
+            console.error(
+              `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed: ${existingOrder.order_no}`,
+              salesResult.error
+            );
           }
 
-          await deriveAndSyncArtworkStatus(supabase, existingOrder.artwork_id);
+          for (const item of lineItems) {
+            await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
+          }
           revalidatePublicArtworkSurfaces();
-          revalidatePath(`/artworks/${existingOrder.artwork_id}`);
-          revalidatePath(`/en/artworks/${existingOrder.artwork_id}`);
+          for (const item of lineItems) {
+            revalidatePath(`/artworks/${item.artwork_id}`);
+            revalidatePath(`/en/artworks/${item.artwork_id}`);
+          }
 
           // confirm route가 실패해 webhook이 보정한 시나리오 — 운영팀 알림
           void notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
@@ -602,7 +602,7 @@ export async function POST(req: NextRequest) {
       const { data: existingOrder } = await supabase
         .from('orders')
         .select(
-          'status, artwork_id, order_no, buyer_email, buyer_name, buyer_phone, total_amount, metadata'
+          'status, artwork_id, order_no, buyer_email, buyer_name, buyer_phone, total_amount, metadata, order_items(artwork_id, quantity, unit_price)'
         )
         .eq('id', paymentRow.order_id)
         .single();
@@ -623,47 +623,49 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        // Void artwork_sales
-        const { data: sale } = await supabase
+        // Void artwork_sales — 다품목 주문은 해당 order의 active 매출 전부 void
+        const { error: voidError } = await supabase
           .from('artwork_sales')
-          .select('id')
+          .update({ voided_at: now, void_reason: 'Toss 웹훅 취소 자동 처리' })
           .eq('order_id', paymentRow.order_id)
-          .is('voided_at', null)
-          .limit(1)
-          .maybeSingle();
+          .is('voided_at', null);
 
-        if (sale) {
-          const { error: voidError } = await supabase
-            .from('artwork_sales')
-            .update({ voided_at: now, void_reason: 'Toss 웹훅 취소 자동 처리' })
-            .eq('id', sale.id);
-
-          if (voidError) {
-            console.error(`[toss-webhook] artwork_sales void failed: ${sale.id}`, voidError);
-          }
+        if (voidError) {
+          console.error(
+            `[toss-webhook] artwork_sales void failed: ${existingOrder.order_no}`,
+            voidError
+          );
         }
+
+        const lineItems = extractLineItems(existingOrder);
+        // order_items가 비면 legacy 단건 artwork_id로 fallback
+        const artworkIds =
+          lineItems.length > 0
+            ? lineItems.map((item) => item.artwork_id)
+            : existingOrder.artwork_id
+              ? [existingOrder.artwork_id]
+              : [];
 
         // 작품 상태 재동기화 — sale 유무와 무관하게 실행.
         // deriveAndSync는 활성 판매가 없으면 sold→available로 복원한다(confirm 실패로 sale 없이
         // sold만 된 작품이 환불 후 영구 잠기던 버그 방지). reserved→available은 deriveAndSync
         // 범위 밖(awaiting_deposit 취소 케이스)이라 별도 복원.
-        if (existingOrder.artwork_id) {
-          await deriveAndSyncArtworkStatus(supabase, existingOrder.artwork_id);
+        for (const artworkId of artworkIds) {
+          await deriveAndSyncArtworkStatus(supabase, artworkId);
 
           const { error: artworkError } = await supabase
             .from('artworks')
             .update({ status: 'available', updated_at: now })
-            .eq('id', existingOrder.artwork_id)
+            .eq('id', artworkId)
             .eq('status', 'reserved');
           if (artworkError) {
             console.error('[toss-webhook] artwork reserved→available failed:', artworkError);
           }
+          revalidatePath(`/artworks/${artworkId}`);
+          revalidatePath(`/en/artworks/${artworkId}`);
         }
-
-        if (existingOrder.artwork_id) {
+        if (artworkIds.length > 0) {
           revalidatePublicArtworkSurfaces();
-          revalidatePath(`/artworks/${existingOrder.artwork_id}`);
-          revalidatePath(`/en/artworks/${existingOrder.artwork_id}`);
         }
 
         const refundInfo = await getOrderNotificationInfo(supabase, {

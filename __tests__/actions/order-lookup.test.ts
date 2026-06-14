@@ -78,8 +78,16 @@ let mockOrdersSingleResult: MockResult = { data: null, error: null };
 let mockPhoneVerifiedResult: MockResult = { data: null, error: null };
 let mockPaymentResult: MockResult = { data: null, error: null };
 let mockSaleResult: MockResult = { data: null, error: null };
+let mockSaleVoidError: unknown = null;
 let mockOrderUpdateError: unknown = null;
 let mockPaymentUpdateError: unknown = null;
+// awaiting_deposit self-cancel: orders UPDATE .select('id') 결과(취소된 행)
+let mockOrderUpdateSelectRows: MockResult = { data: [{ id: 'ord-1' }], error: null };
+// artworks UPDATE 캡처 — 예약 해제(available 복원)가 어떤 작품에 갔는지 검증 (FIX-5b)
+const capturedArtworkRestores: Array<{
+  patch: Record<string, unknown>;
+  filters: Array<{ column: string; value: unknown }>;
+}> = [];
 
 // 호출 순서에 따라 다른 결과 반환을 위한 카운터
 let ordersSelectCallCount = 0;
@@ -97,6 +105,9 @@ jest.mock('@/lib/auth/server', () => ({
         }
         if (table === 'artwork_sales') {
           return createSalesMock();
+        }
+        if (table === 'artworks') {
+          return createArtworksMock();
         }
         return createDefaultMock();
       }),
@@ -141,11 +152,35 @@ function createOrdersMock() {
     }),
     update: jest.fn(() => {
       const inFn = jest.fn(() => ({ error: mockOrderUpdateError }));
+      // awaiting_deposit 취소는 .eq().eq().select('id') 로 취소된 행을 받는다.
+      const selectFn = jest.fn(() =>
+        mockOrderUpdateError
+          ? { data: null, error: mockOrderUpdateError }
+          : mockOrderUpdateSelectRows
+      );
       const eq: jest.Mock = jest.fn(() => ({
         eq,
         in: inFn,
+        select: selectFn,
         error: mockOrderUpdateError,
       }));
+      return { eq };
+    }),
+  };
+}
+
+function createArtworksMock() {
+  return {
+    update: jest.fn((patch: Record<string, unknown>) => {
+      const call = {
+        patch,
+        filters: [] as Array<{ column: string; value: unknown }>,
+      };
+      capturedArtworkRestores.push(call);
+      const eq: jest.Mock = jest.fn((column: string, value: unknown) => {
+        call.filters.push({ column, value });
+        return { eq, error: null };
+      });
       return { eq };
     }),
   };
@@ -187,7 +222,9 @@ function createSalesMock() {
       return { eq };
     }),
     update: jest.fn(() => {
-      const eq: jest.Mock = jest.fn(() => ({ eq }));
+      // void-all 경로: .update().eq('order_id', ...).is('voided_at', null) → { error }
+      const is = jest.fn(() => ({ error: mockSaleVoidError }));
+      const eq: jest.Mock = jest.fn(() => ({ eq, is, error: mockSaleVoidError }));
       return { eq };
     }),
   };
@@ -225,8 +262,11 @@ beforeEach(async () => {
   mockPhoneVerifiedResult = { data: null, error: null };
   mockPaymentResult = { data: null, error: null };
   mockSaleResult = { data: null, error: null };
+  mockSaleVoidError = null;
   mockOrderUpdateError = null;
   mockPaymentUpdateError = null;
+  mockOrderUpdateSelectRows = { data: [{ id: 'ord-1' }], error: null };
+  capturedArtworkRestores.length = 0;
   mockCancelResult = { success: true };
   ordersSelectCallCount = 0;
 
@@ -640,5 +680,63 @@ describe('cancelBuyerOrder', () => {
 
     const result = await cancelBuyerOrder('SAF-001', 'buyer@test.com', '단순변심');
     expect(result.success).toBe(true);
+  });
+
+  it('FIX-5b: awaiting_deposit 다품목 취소 시 모든 작품의 예약을 해제한다', async () => {
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-1',
+        order_no: 'SAF-001',
+        status: 'awaiting_deposit',
+        total_amount: 8000000,
+        artwork_id: null, // 다품목은 orders.artwork_id가 null, order_items가 단일 출처
+        buyer_email: 'buyer@test.com',
+        buyer_name: '홍길동',
+        order_items: [
+          { artwork_id: 'art-1', quantity: 1, unit_price: 5000000 },
+          { artwork_id: 'art-2', quantity: 1, unit_price: 3000000 },
+        ],
+      },
+      error: null,
+    };
+    mockOrderUpdateSelectRows = { data: [{ id: 'ord-1' }], error: null };
+
+    const result = await cancelBuyerOrder('SAF-001', 'buyer@test.com', '단순변심');
+    expect(result.success).toBe(true);
+
+    // 두 작품 모두 available 복원 패치 + reserved 가드가 적용됐는지 검증
+    const restoreCalls = capturedArtworkRestores.filter((c) => c.patch.status === 'available');
+    const restoredIds = restoreCalls.map(
+      (c) => c.filters.find((f) => f.column === 'id')?.value as string
+    );
+    expect(restoredIds).toEqual(expect.arrayContaining(['art-1', 'art-2']));
+    for (const c of restoreCalls) {
+      expect(c.filters).toEqual(expect.arrayContaining([{ column: 'status', value: 'reserved' }]));
+    }
+  });
+
+  it('FIX-5b: awaiting_deposit 단건(legacy artwork_id) 취소도 예약 해제', async () => {
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-1',
+        order_no: 'SAF-001',
+        status: 'awaiting_deposit',
+        total_amount: 5000000,
+        artwork_id: 'art-legacy', // order_items 없는 legacy 단건
+        buyer_email: 'buyer@test.com',
+        buyer_name: '홍길동',
+      },
+      error: null,
+    };
+
+    const result = await cancelBuyerOrder('SAF-001', 'buyer@test.com', '단순변심');
+    expect(result.success).toBe(true);
+
+    const restored = capturedArtworkRestores.find(
+      (c) =>
+        c.patch.status === 'available' &&
+        c.filters.some((f) => f.column === 'id' && f.value === 'art-legacy')
+    );
+    expect(restored).toBeTruthy();
   });
 });

@@ -10,6 +10,7 @@ import IdleMount from '@/components/common/IdleMount';
 import type { NavigationItem } from '@/types';
 import DesktopNavItem from './DesktopNavItem';
 import WishlistNavButton from './WishlistNavButton';
+import CartNavButton from './CartNavButton';
 
 // AuthButtons는 createSupabaseBrowserClient를 정적 import → 다이나믹 청크가 @supabase/ssr
 // 전체 SDK(~186KB raw / ~49KB gzip)를 포함. 모든 공개 페이지 헤더에서 fire되어
@@ -107,6 +108,9 @@ export default function DesktopNav({
 
         {/* 위시리스트 — 로그인 버튼 옆에 배치 */}
         <WishlistNavButton textColor={textColor} />
+
+        {/* 카트 — 위시리스트 옆에 배치, 클릭 시 드로어 open */}
+        <CartNavButton textColor={textColor} />
 
         <LanguageSwitcher className={textColor} compact inverse={isInverse} />
       </div>
