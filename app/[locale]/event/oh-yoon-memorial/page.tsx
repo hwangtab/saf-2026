@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
-import SectionTitle from '@/components/ui/SectionTitle';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL } from '@/lib/constants';
@@ -10,6 +10,8 @@ import { getTossDomesticClientKey } from '@/lib/integrations/toss/config';
 import { OH_YOON_MEMORIAL_SLUG, OH_YOON_MEMORIAL_PATH } from '@/content/events/oh-yoon-memorial';
 import RegistrationForm from './_components/RegistrationForm';
 import SeatStatusBar from './_components/SeatStatusBar';
+import EventStory from './_components/EventStory';
+import MuralGallery from './_components/MuralGallery';
 import EventSchedule from './_components/EventSchedule';
 import EventFAQ from './_components/EventFAQ';
 
@@ -69,32 +71,49 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
 
   return (
     <main className="bg-canvas text-pretty">
-      <section className="relative isolate overflow-hidden bg-charcoal-deep px-4 pb-20 pt-28 text-white md:pt-36">
-        <div className="container-max relative mx-auto max-w-3xl text-center">
-          <h1 className="font-display text-4xl font-black md:text-6xl">{t('heroTitle')}</h1>
-          <p className="mt-4 text-lg opacity-90 md:text-xl">{t('heroSubtitle')}</p>
-          <p className="mt-2 font-semibold text-sun">{t('feeNotice')}</p>
-          <SeatStatusBar remaining={remaining} isOpen={isOpen} />
-        </div>
-      </section>
+      <PageHero
+        title={t('heroTitle')}
+        description={t('heroSubtitle')}
+        customBackgroundImage="/images/petition-oh-yoon/mural-2.png"
+      >
+        <SeatStatusBar remaining={remaining} isOpen={isOpen} />
+      </PageHero>
 
-      <Section variant="white" className="py-16 md:py-20">
+      {/* 오윤 이야기 */}
+      <Section variant="white">
+        <EventStory />
+      </Section>
+
+      {/* 1974 구의동 벽화 */}
+      <Section variant="canvas-soft">
+        <MuralGallery />
+      </Section>
+
+      {/* 추도식 안내 */}
+      <Section variant="white">
         <EventSchedule />
       </Section>
 
-      <Section variant="canvas" className="py-16 md:py-20">
-        <div className="mx-auto max-w-xl">
-          <SectionTitle as="h2">{t('heroTitle')}</SectionTitle>
-          <RegistrationForm
-            isOpen={isOpen}
-            remaining={remaining}
-            feePerPerson={feePerPerson}
-            clientKey={clientKey}
-          />
+      {/* 참가 신청 */}
+      <Section variant="canvas" id="apply">
+        <div className="container-max">
+          <div className="mx-auto max-w-xl">
+            <h2 className="text-center font-display text-2xl font-bold text-charcoal-deep md:text-3xl">
+              {t('applyTitle')}
+            </h2>
+            <p className="mt-2 text-center text-charcoal-muted break-keep">{t('applyLead')}</p>
+            <RegistrationForm
+              isOpen={isOpen}
+              remaining={remaining}
+              feePerPerson={feePerPerson}
+              clientKey={clientKey}
+            />
+          </div>
         </div>
       </Section>
 
-      <Section variant="white" className="py-16 md:py-20">
+      {/* FAQ */}
+      <Section variant="white">
         <EventFAQ />
       </Section>
     </main>

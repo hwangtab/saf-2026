@@ -1390,7 +1390,32 @@
         "ceremony": "Memorial ceremony",
         "end": "Ceremony ends",
         "lunch": "Lunch at Insadong Pungnyu-sarang"
-      }
+      },
+      "memorialName": "Oh Yoon",
+      "memorialLife": "1946 — 1986",
+      "memorialEpithet": "Master of Korean Minjung art",
+      "storyQuote": "Art must be shared by many",
+      "storyP1": "In a brief life of forty years, Oh Yoon left over 400 works across painting, printmaking, and sculpture. He was posthumously awarded the Order of Cultural Merit in 2005, and a major retrospective was held at the National Museum of Modern and Contemporary Art in 2006.",
+      "storyP2": "The medium he devoted himself to most was the woodblock print. The hearty laughter of the market, the sweat of dock workers, buried sorrow turned into exuberant dance — he carved it all into wood with the tip of his knife. Without even a press, he rubbed prints by spoon and gave them freely to poetry covers, leaflets, and storybook illustrations.",
+      "storyP3": "In 2026, forty years after his passing, his conviction lives on. On July 5, those who remember him gather to hold a memorial.",
+      "portraitAlt": "Portrait of the artist Oh Yoon (1946–1986)",
+      "portraitCaption": "Oh Yoon (1946–1986) · Master of Korean Minjung art",
+      "muralTitle": "1974, the Guui-dong mural",
+      "muralCaption": "A double-sided terracotta relief that the 28-year-old Oh Yoon carved into the walls of a commercial bank branch in Guui-dong — a young laborer carving where laborers passed every day.",
+      "muralAlt1": "Oh Yoon 1974 Guui-dong terracotta mural — figural relief, front",
+      "muralAlt2": "Oh Yoon 1974 Guui-dong terracotta mural — figural relief detail",
+      "muralAlt3": "Oh Yoon 1974 Guui-dong terracotta mural — abstract relief side",
+      "infoTitle": "Memorial details",
+      "infoDateLabel": "Date",
+      "infoDateValue": "Sun, July 5, 2026 · departs 09:30",
+      "infoMeetLabel": "Meeting point",
+      "infoMeetValue": "Next to Insadong Suun Hall",
+      "infoBusLabel": "Transport",
+      "infoBusValue": "One 45-seat bus · first-come",
+      "infoFeeLabel": "Fee",
+      "infoFeeValue": "KRW 30,000 per person (lunch included)",
+      "applyTitle": "Register",
+      "applyLead": "Choose the number of attendees below and pay the fee to complete registration."
     }
   }
 }
