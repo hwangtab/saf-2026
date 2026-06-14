@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 
 import {
   searchBroadcastArtworks,
@@ -28,6 +28,7 @@ export function ArtworkSearchSelect({ value, onChange }: Props) {
   const [searched, setSearched] = useState(false);
   const [isPending, startTransition] = useTransition();
   const debouncedQuery = useDebounce(query, 300);
+  const reqIdRef = useRef(0);
 
   // 부모가 value를 외부에서 비우면(예: 받는 사람 종류 전환) 내부 선택도 초기화.
   // effect 안 setState(cascading render) 대신 React 권장 "렌더 중 상태 조정" 패턴 사용.
@@ -45,8 +46,10 @@ export function ArtworkSearchSelect({ value, onChange }: Props) {
   // 렌더에서 trimmedQuery 게이팅으로 막으므로 stale results 상태는 화면에 드러나지 않는다.
   useEffect(() => {
     if (!trimmedQuery) return;
+    const reqId = ++reqIdRef.current;
     startTransition(async () => {
       const response = await searchBroadcastArtworks(trimmedQuery);
+      if (reqId !== reqIdRef.current) return; // 최신 요청 응답만 반영 — out-of-order stale 결과 차단(L6)
       setResults(response.results);
       setSearched(true);
     });

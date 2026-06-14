@@ -268,12 +268,13 @@ export function SmsBroadcastComposer() {
           {segment.kind === 'member' && (
             <select
               value={segment.subset}
-              onChange={(e) =>
+              onChange={(e) => {
                 setSegment({
                   kind: 'member',
                   subset: e.target.value as 'all' | 'artist' | 'exhibitor',
-                })
-              }
+                });
+                setConfirmed(false); // 대상이 바뀌면 발송 확인 리셋(L4)
+              }}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
             >
               <option value="all">작가·출품자 전체</option>

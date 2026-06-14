@@ -23,6 +23,14 @@ function createQueryMock(result: unknown = { error: null }) {
 
 function createSupabaseMock() {
   const inbound = createQueryMock({ data: { id: 'inbound-1' }, error: null });
+  // upsert(payload, { ignoreDuplicates }).select('id') 를 await하면 신규 insert는 배열 1건 반환(M3).
+  const insertResult = { data: [{ id: 'inbound-1' }], error: null };
+  (inbound as unknown as { then: (r: (v: unknown) => void) => Promise<unknown> }).then = (
+    resolve
+  ) => {
+    resolve(insertResult);
+    return Promise.resolve(insertResult);
+  };
   const recipients = createQueryMock({ data: { id: 'recipient-1' }, error: null });
   recipients.maybeSingle = jest.fn(async () => ({ data: { id: 'recipient-1' }, error: null }));
 
@@ -142,6 +150,8 @@ describe('processInboundEmail', () => {
     const result = await processInboundEmail(receivedEvent, db.client);
 
     expect(result.id).toBe('inbound-1');
+    expect(result.isNew).toBe(true);
+    // 신규 insert에만 status='new' 적용 + 재시도 안전 위해 ignoreDuplicates(M3).
     expect(db.inbound.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
         resend_email_id: 'recv_123',
@@ -149,18 +159,20 @@ describe('processInboundEmail', () => {
         to_emails: ['hello+recipient-1@saf2026.com'],
         status: 'new',
       }),
-      expect.objectContaining({ onConflict: 'resend_email_id' })
+      expect.objectContaining({ onConflict: 'resend_email_id', ignoreDuplicates: true })
     );
-    expect(db.inbound.update).toHaveBeenCalledWith(
+    const updateArg = (db.inbound.update as jest.Mock).mock.calls[0][0];
+    expect(updateArg).toEqual(
       expect.objectContaining({
         text_body: '본문',
         html_body: '<p>본문</p>',
         in_reply_to: '<sent@example.com>',
         references_header: '<root@example.com>',
         matched_broadcast_recipient_id: 'recipient-1',
-        status: 'new',
       })
     );
+    // enrichment update에는 status를 넣지 않아 재처리 시 read/replied 상태가 보존된다(M3).
+    expect(updateArg).not.toHaveProperty('status');
   });
 });
 

@@ -49,7 +49,7 @@ describe('Resend webhook route', () => {
     process.env.RESEND_WEBHOOK_SECRET = secret;
     jest.clearAllMocks();
     mockCreateSupabaseAdminClient.mockReturnValue({ from: jest.fn() } as any);
-    mockProcessInboundEmail.mockResolvedValue({ id: 'inbound-1' });
+    mockProcessInboundEmail.mockResolvedValue({ id: 'inbound-1', isNew: true });
     mockNotifyInboundEmail.mockResolvedValue(undefined);
   });
 
@@ -80,6 +80,21 @@ describe('Resend webhook route', () => {
     expect(mockCreateSupabaseAdminClient).toHaveBeenCalledTimes(1);
     expect(mockProcessInboundEmail).toHaveBeenCalledWith(event, expect.anything());
     expect(mockNotifyInboundEmail).toHaveBeenCalledWith(event, 'inbound-1');
+  });
+
+  it('재처리(isNew=false)면 중복 알림을 보내지 않는다 (M3)', async () => {
+    mockProcessInboundEmail.mockResolvedValue({ id: 'inbound-1', isNew: false });
+
+    const response = await POST(
+      request({
+        type: 'email.received',
+        data: { email_id: 'recv_123', from: 'sender@example.com', to: ['reply@saf2026.com'] },
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockProcessInboundEmail).toHaveBeenCalled();
+    expect(mockNotifyInboundEmail).not.toHaveBeenCalled();
   });
 
   it('returns 500 for email.received processing failures so Resend can retry', async () => {

@@ -167,44 +167,52 @@ export async function GET(request: NextRequest) {
         pendingRows.map(async (row, i) => {
           const res = results[i];
           if (res?.ok) {
+            const messageId = res.messageId ?? null;
+            const segment = res.segment ?? null;
             const { error } = await supabase
               .from('sms_broadcast_recipients')
               .update({
                 status: 'sent',
                 sent_at: sentAt,
-                provider_message_id: res.messageId ?? null,
-                segment: res.segment ?? null,
+                provider_message_id: messageId,
+                segment,
               })
               .eq('id', row.id);
-            return { id: row.id, sent: true, error };
+            return { id: row.id, sent: true, error, messageId, segment };
           }
           const { error } = await supabase
             .from('sms_broadcast_recipients')
             .update({ status: 'failed', error: res?.error ?? 'send failed' })
             .eq('id', row.id);
-          return { id: row.id, sent: false, error };
+          return { id: row.id, sent: false, error, messageId: null, segment: null };
         })
       );
 
       // status update 자체가 실패한 sent row: Solapi는 이미 발송했으므로 'sent' 재시도.
       // (supabase-js는 RLS/네트워크 에러 시 reject 않고 {error}로 resolve — 무시하면 pending 잔존→재발송.)
-      const sentUpdateFailedIds = updateResults
+      // provider_message_id·segment를 함께 다시 기록해야 DLR 재조정에서 누락되지 않는다(L1).
+      const sentUpdateFailed = updateResults
         .filter((r) => r.sent && r.error)
         .map((r) => {
           console.error(
             `[sms-broadcast-dispatch] sent-update failed for ${r.id}:`,
             r.error?.message
           );
-          return r.id;
+          return r;
         });
-      if (sentUpdateFailedIds.length > 0) {
+      if (sentUpdateFailed.length > 0) {
         const retry = await Promise.all(
-          sentUpdateFailedIds.map(async (id) => {
+          sentUpdateFailed.map(async (r) => {
             const { error } = await supabase
               .from('sms_broadcast_recipients')
-              .update({ status: 'sent', sent_at: sentAt })
-              .eq('id', id);
-            return { id, error };
+              .update({
+                status: 'sent',
+                sent_at: sentAt,
+                provider_message_id: r.messageId,
+                segment: r.segment,
+              })
+              .eq('id', r.id);
+            return { id: r.id, error };
           })
         );
         const stillFailed = retry.filter((r) => r.error).map((r) => r.id);
@@ -226,7 +234,8 @@ export async function GET(request: NextRequest) {
         .from('sms_broadcast_recipients')
         .select('id', { count: 'exact', head: true })
         .eq('broadcast_id', broadcast.id)
-        .eq('status', 'sent');
+        // DLR이 sent→delivered/undelivered로 옮긴 행도 '발송됨'으로 집계 (L2: finalize 레이스 과소집계 방지).
+        .in('status', ['sent', 'delivered', 'undelivered']);
       const { count: failedSoFar } = await supabase
         .from('sms_broadcast_recipients')
         .select('id', { count: 'exact', head: true })
@@ -268,7 +277,8 @@ export async function GET(request: NextRequest) {
         .from('sms_broadcast_recipients')
         .select('id', { count: 'exact', head: true })
         .eq('broadcast_id', broadcast.id)
-        .eq('status', 'sent');
+        // DLR이 sent→delivered/undelivered로 옮긴 행도 '발송됨'으로 집계 (L2: finalize 레이스 과소집계 방지).
+        .in('status', ['sent', 'delivered', 'undelivered']);
       const { count: failedCount } = await supabase
         .from('sms_broadcast_recipients')
         .select('id', { count: 'exact', head: true })

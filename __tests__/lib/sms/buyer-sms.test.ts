@@ -290,6 +290,8 @@ describe('sendBuyerSms — alimtalk routing', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env = { ...ENV };
+    // 알림톡은 템플릿 + 발신프로필(pfId)이 모두 있어야 실제 사용(L3).
+    process.env.SOLAPI_KAKAO_PF_ID = 'KA01PF_TEST';
   });
   afterEach(() => {
     process.env = { ...ENV };
@@ -354,6 +356,28 @@ describe('sendBuyerSms — alimtalk routing', () => {
     expect(mockAlimTalk).not.toHaveBeenCalled();
     expect(insert).toHaveBeenCalledWith(
       expect.objectContaining({ provider: 'solapi', provider_message_id: 'M1', segment: 'SMS' })
+    );
+  });
+
+  it('템플릿 있어도 pfId 미설정이면 SMS 경로 + provider solapi (L3)', async () => {
+    process.env.SOLAPI_KAKAO_TEMPLATE_PAYMENT_CONFIRMED = 'TMPL_PAY';
+    delete process.env.SOLAPI_KAKAO_PF_ID; // 발신프로필 없음 → degrade
+    const { client, insert } = fakeAdminClient();
+    mockAdmin.mockReturnValue(client as unknown as ReturnType<typeof createSupabaseAdminClient>);
+    mockSend.mockResolvedValue({ ok: true, messageId: 'M-DG', segment: 'SMS' });
+
+    await sendBuyerSms(
+      '010-1234-5678',
+      'payment_confirmed',
+      { buyerName: '홍길동', artworkTitle: '들꽃', amount: 1500000 },
+      'ko',
+      'SAF-DG'
+    );
+
+    expect(mockAlimTalk).not.toHaveBeenCalled();
+    expect(mockSend).toHaveBeenCalled();
+    expect(insert).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: 'solapi', provider_message_id: 'M-DG', segment: 'SMS' })
     );
   });
 

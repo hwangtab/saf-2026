@@ -176,6 +176,7 @@ export function SmsSuppressionManager({ initialCount }: Props) {
         {/* 피드백 */}
         {addStatus && (
           <p
+            aria-live="polite"
             className={`text-sm ${addStatus.type === 'ok' ? 'text-success-a11y' : 'text-danger-a11y'}`}
           >
             {addStatus.text}
@@ -183,13 +184,14 @@ export function SmsSuppressionManager({ initialCount }: Props) {
         )}
         {removeStatus && (
           <p
+            aria-live="polite"
             className={`text-sm ${removeStatus.type === 'ok' ? 'text-success-a11y' : 'text-danger-a11y'}`}
           >
             {removeStatus.text}
           </p>
         )}
         {checkStatus && (
-          <div className="space-y-1.5">
+          <div className="space-y-1.5" aria-live="polite">
             <p
               className={`text-sm ${checkStatus.type === 'ok' ? 'text-success-a11y' : 'text-danger-a11y'}`}
             >

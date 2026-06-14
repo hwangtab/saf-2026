@@ -121,39 +121,73 @@ export async function updateMarketingConsent(consent: boolean): Promise<{ error?
 
   if (error) return { error: error.message };
 
-  // 수신거부 시 email_suppressions + sms_suppressions에 반영
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('email, phone')
+    .eq('id', user.id)
+    .single();
+
+  const adminSupabase = createSupabaseAdminClient();
+
+  // 프로필 이메일 + 과거 주문 buyer_email 모두 수집한다.
+  // 주문 이메일이 프로필과 달라도 동의 토글이 거래고객 arm까지 커버 (M6: 동의해제 우회 차단).
+  const { data: orderRows } = await adminSupabase
+    .from('orders')
+    .select('buyer_email')
+    .eq('buyer_user_id', user.id)
+    .not('buyer_email', 'is', null);
+
+  const emailHashes = new Set<string>();
+  if (profile?.email) {
+    emailHashes.add(hashEmail((profile.email as string).toLowerCase().trim()));
+  }
+  for (const o of orderRows ?? []) {
+    const e = (o.buyer_email as string | null)?.toLowerCase().trim();
+    if (e) emailHashes.add(hashEmail(e));
+  }
+
+  const normalizedPhone = profile?.phone ? normalizeKoreanMobile(profile.phone as string) : null;
+
   if (!consent) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('email, phone')
-      .eq('id', user.id)
-      .single();
-
-    const adminSupabase = createSupabaseAdminClient();
-
-    if (profile?.email) {
+    // 수신거부 시 모든 연락 채널을 customer 채널 suppression으로 차단.
+    if (emailHashes.size > 0) {
       await adminSupabase.from('email_suppressions').upsert(
-        {
-          email_hash: hashEmail(profile.email as string),
-          channel: 'customer',
+        [...emailHashes].map((email_hash) => ({
+          email_hash,
+          channel: 'customer' as const,
           reason: 'unsubscribe',
-        },
+        })),
         { onConflict: 'email_hash,channel', ignoreDuplicates: true }
       );
     }
-
-    if (profile?.phone) {
-      const normalizedPhone = normalizeKoreanMobile(profile.phone as string);
-      if (normalizedPhone) {
-        await adminSupabase.from('sms_suppressions').upsert(
-          {
-            phone_hash: hashPhone(normalizedPhone),
-            channel: 'customer',
-            reason: 'unsubscribe',
-          },
-          { onConflict: 'phone_hash,channel', ignoreDuplicates: true }
-        );
-      }
+    if (normalizedPhone) {
+      await adminSupabase.from('sms_suppressions').upsert(
+        {
+          phone_hash: hashPhone(normalizedPhone),
+          channel: 'customer',
+          reason: 'unsubscribe',
+        },
+        { onConflict: 'phone_hash,channel', ignoreDuplicates: true }
+      );
+    }
+  } else {
+    // 재동의(opt-in) 시 본인이 mypage에서 건 customer/unsubscribe suppression을 해제한다 (M1).
+    // bounce/complaint 등 channel='all' 영구차단은 의도적으로 보존 — 건드리지 않는다.
+    if (emailHashes.size > 0) {
+      await adminSupabase
+        .from('email_suppressions')
+        .delete()
+        .in('email_hash', [...emailHashes])
+        .eq('channel', 'customer')
+        .eq('reason', 'unsubscribe');
+    }
+    if (normalizedPhone) {
+      await adminSupabase
+        .from('sms_suppressions')
+        .delete()
+        .eq('phone_hash', hashPhone(normalizedPhone))
+        .eq('channel', 'customer')
+        .eq('reason', 'unsubscribe');
     }
   }
 

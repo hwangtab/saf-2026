@@ -19,77 +19,61 @@ jest.mock('@/lib/auth/server', () => ({
   })),
 }));
 
-// ── 헬퍼: supabase query builder chain mock ─────────────────────────────
-function makeUpdateChain(error: null | { message: string } = null) {
+// ── 헬퍼: 모든 메서드를 지원하고 awaitable한 범용 supabase chain ──────────
+// terminal 값(result)은 .single()/.maybeSingle() 및 직접 await(then) 모두에서 반환.
+function makeChain(result: { data?: unknown; error?: unknown } = { data: null, error: null }) {
   const chain: Record<string, jest.Mock> = {};
-  chain.update = jest.fn(() => chain);
-  chain.eq = jest.fn(() => chain);
-  chain.select = jest.fn(() => chain);
-  chain.single = jest.fn(async () => ({ data: null, error }));
-  // awaited directly → resolve { error }
-  (chain as unknown as Promise<{ error: typeof error }>).then = (
-    resolve: (v: { error: typeof error }) => void
+  for (const m of ['update', 'delete', 'select', 'eq', 'in', 'not']) {
+    chain[m] = jest.fn(() => chain);
+  }
+  chain.upsert = jest.fn(async () => result);
+  chain.single = jest.fn(async () => result);
+  chain.maybeSingle = jest.fn(async () => result);
+  (chain as unknown as { then: (r: (v: unknown) => void) => Promise<unknown> }).then = (
+    resolve
   ) => {
-    resolve({ error });
-    return Promise.resolve({ error });
+    resolve(result);
+    return Promise.resolve(result);
   };
   return chain;
 }
 
-function makeSelectSingleChain(
-  data: Record<string, unknown> | null,
-  error: null | { message: string } = null
-) {
-  const chain: Record<string, jest.Mock> = {};
-  chain.select = jest.fn(() => chain);
-  chain.eq = jest.fn(() => chain);
-  chain.single = jest.fn(async () => ({ data, error }));
-  return chain;
-}
-
-function makeUpsertChain(error: null | { message: string } = null) {
-  const chain: Record<string, jest.Mock> = {};
-  chain.upsert = jest.fn(async () => ({ error }));
-  return chain;
+// server client: 1번째 profiles 호출=update, 2번째=select(email,phone).
+function setupServer(profile: Record<string, unknown> | null) {
+  let n = 0;
+  mockServerFrom.mockImplementation((table: string) => {
+    if (table === 'profiles') {
+      n += 1;
+      return n === 1 ? makeChain({ error: null }) : makeChain({ data: profile, error: null });
+    }
+    return makeChain({ error: null });
+  });
 }
 
 describe('updateMarketingConsent', () => {
   beforeEach(() => jest.clearAllMocks());
 
   describe('동의 해제(consent=false)', () => {
-    it('010 번호가 있는 프로필 → sms_suppressions upsert 호출', async () => {
-      const profile = { email: 'test@example.com', phone: '01012345678' };
+    it('이메일+010+주문이메일 → email/sms_suppressions upsert (M6: 주문 이메일도 차단)', async () => {
+      setupServer({ email: 'test@example.com', phone: '01012345678' });
 
-      // server client: profiles.update → ok, profiles.select → profile 반환
-      let serverCallCount = 0;
-      mockServerFrom.mockImplementation((table: string) => {
-        if (table === 'profiles') {
-          serverCallCount += 1;
-          if (serverCallCount === 1) {
-            // 첫 번째 호출: update marketing_consent
-            return makeUpdateChain();
-          }
-          // 두 번째 호출: select phone/email
-          return makeSelectSingleChain(profile);
-        }
-        return makeUpdateChain();
+      const ordersChain = makeChain({
+        data: [{ buyer_email: 'order@example.com' }],
+        error: null,
       });
-
-      // admin client: email_suppressions upsert + sms_suppressions upsert
-      const emailUpsertChain = makeUpsertChain();
-      const smsUpsertChain = makeUpsertChain();
+      const emailUpsertChain = makeChain({ error: null });
+      const smsUpsertChain = makeChain({ error: null });
       mockAdminFrom.mockImplementation((table: string) => {
+        if (table === 'orders') return ordersChain;
         if (table === 'email_suppressions') return emailUpsertChain;
         if (table === 'sms_suppressions') return smsUpsertChain;
-        return makeUpsertChain();
+        return makeChain({ error: null });
       });
 
       const result = await updateMarketingConsent(false);
-
       expect(result.error).toBeUndefined();
 
       // sms_suppressions upsert가 정확한 shape으로 호출됐는지 검증
-      expect(mockAdminFrom).toHaveBeenCalledWith('sms_suppressions');
       expect(smsUpsertChain.upsert).toHaveBeenCalledWith(
         expect.objectContaining({
           phone_hash: hashPhone('01012345678'),
@@ -99,54 +83,58 @@ describe('updateMarketingConsent', () => {
         expect.objectContaining({ onConflict: 'phone_hash,channel', ignoreDuplicates: true })
       );
 
-      // email_suppressions upsert도 호출됐는지
-      expect(mockAdminFrom).toHaveBeenCalledWith('email_suppressions');
+      // email_suppressions는 프로필 + 주문 이메일을 모두 담은 배열로 upsert
       expect(emailUpsertChain.upsert).toHaveBeenCalledWith(
-        expect.objectContaining({
-          email_hash: hashEmail('test@example.com'),
-          channel: 'customer',
-          reason: 'unsubscribe',
-        }),
+        expect.arrayContaining([
+          expect.objectContaining({
+            email_hash: hashEmail('test@example.com'),
+            channel: 'customer',
+            reason: 'unsubscribe',
+          }),
+          expect.objectContaining({ email_hash: hashEmail('order@example.com') }),
+        ]),
         expect.anything()
       );
     });
 
     it('전화번호 없는 프로필 → sms_suppressions upsert 미호출', async () => {
-      const profile = { email: 'nophone@example.com', phone: null };
-
-      let serverCallCount = 0;
-      mockServerFrom.mockImplementation((table: string) => {
-        if (table === 'profiles') {
-          serverCallCount += 1;
-          if (serverCallCount === 1) return makeUpdateChain();
-          return makeSelectSingleChain(profile);
-        }
-        return makeUpdateChain();
-      });
-
-      const emailUpsertChain = makeUpsertChain();
+      setupServer({ email: 'nophone@example.com', phone: null });
       mockAdminFrom.mockImplementation((table: string) => {
-        if (table === 'email_suppressions') return emailUpsertChain;
-        return makeUpsertChain();
+        if (table === 'orders') return makeChain({ data: [], error: null });
+        return makeChain({ error: null });
       });
 
       const result = await updateMarketingConsent(false);
-
       expect(result.error).toBeUndefined();
-      // sms_suppressions는 건드리지 않아야 함
+
       const adminFromCalls = (mockAdminFrom as jest.Mock).mock.calls.map((c: string[]) => c[0]);
       expect(adminFromCalls).not.toContain('sms_suppressions');
     });
   });
 
   describe('동의 등록(consent=true)', () => {
-    it('수신거부 테이블 일절 건드리지 않음', async () => {
-      mockServerFrom.mockImplementation(() => makeUpdateChain());
+    it('본인이 mypage에서 건 customer/unsubscribe suppression을 해제(delete) — M1 재동의 복구', async () => {
+      setupServer({ email: 'reopt@example.com', phone: '01099998888' });
+
+      const emailChain = makeChain({ error: null });
+      const smsChain = makeChain({ error: null });
+      mockAdminFrom.mockImplementation((table: string) => {
+        if (table === 'orders') return makeChain({ data: [], error: null });
+        if (table === 'email_suppressions') return emailChain;
+        if (table === 'sms_suppressions') return smsChain;
+        return makeChain({ error: null });
+      });
 
       const result = await updateMarketingConsent(true);
-
       expect(result.error).toBeUndefined();
-      expect(mockAdminFrom).not.toHaveBeenCalled();
+
+      // 재동의 시에는 upsert가 아니라 delete가 호출돼야 한다.
+      expect(emailChain.delete).toHaveBeenCalled();
+      expect(emailChain.upsert).not.toHaveBeenCalled();
+      expect(smsChain.delete).toHaveBeenCalled();
+      // customer/unsubscribe로 스코프해 bounce/complaint(channel='all')는 건드리지 않음
+      expect(emailChain.eq).toHaveBeenCalledWith('channel', 'customer');
+      expect(emailChain.eq).toHaveBeenCalledWith('reason', 'unsubscribe');
     });
   });
 });
