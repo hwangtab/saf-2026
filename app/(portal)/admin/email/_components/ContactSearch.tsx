@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { searchContacts, type ContactSearchResult } from '@/app/actions/admin-contact-search';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import { FIELD_FOCUS } from './field-styles';
@@ -23,13 +23,16 @@ export function ContactSearch({ selected, onChange }: Props) {
   const [isPending, startTransition] = useTransition();
   const debouncedQuery = useDebounce(query, 300);
   const trimmedQuery = debouncedQuery.trim();
+  const reqIdRef = useRef(0);
 
   // 작품 검색과 동일하게 타이핑하면 실시간으로 후보를 조회한다(버튼 없음).
   // 빈 검색어면 조회하지 않고(effect 내 동기 setState 회피), 결과 노출은 trimmedQuery로 게이팅.
   useEffect(() => {
     if (!trimmedQuery) return;
+    const reqId = ++reqIdRef.current;
     startTransition(async () => {
       const r = await searchContacts(trimmedQuery);
+      if (reqId !== reqIdRef.current) return; // 최신 요청 응답만 반영 — out-of-order stale 결과 차단(L6)
       setResults(r.results);
       setTruncated(r.truncated);
       setSearched(true);

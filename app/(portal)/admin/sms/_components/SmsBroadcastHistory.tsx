@@ -65,7 +65,11 @@ export function SmsBroadcastHistory({ initial }: { initial: BroadcastList }) {
       const prevById = new Map(prev.map((r) => [r.id, r]));
       return initial.rows.map((r) => {
         const old = prevById.get(r.id);
-        return old && (old.sent_count ?? 0) > (r.sent_count ?? 0) ? old : r;
+        // sent_count 역행 시 깜빡임 방지로 old를 유지하되, status가 바뀌었으면 새 행을 따른다
+        // — 재시도/취소 직후 stale terminal status가 남던 문제 방지(L7).
+        return old && old.status === r.status && (old.sent_count ?? 0) > (r.sent_count ?? 0)
+          ? old
+          : r;
       });
     });
   }, [initial]);

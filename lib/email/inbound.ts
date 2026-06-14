@@ -132,7 +132,7 @@ async function findMatchedRecipientId(
 export async function processInboundEmail(
   event: ResendWebhookEvent,
   supabase: SupabaseLike
-): Promise<{ id: string }> {
+): Promise<{ id: string; isNew: boolean }> {
   if (event.type !== 'email.received') throw new Error(`Unsupported event type: ${event.type}`);
   const emailId = event.data.email_id;
   if (!emailId) throw new Error('Missing email_id');
@@ -152,13 +152,26 @@ export async function processInboundEmail(
     received_at: event.data.created_at ?? event.created_at ?? new Date().toISOString(),
   };
 
-  const { data: inserted, error: insertError } = await supabase
+  // status='new'는 신규 insert에서만 적용. 웹훅 재시도(at-least-once)로 같은 resend_email_id가
+  // 다시 들어와도 read/replied로 처리한 상태를 'new'로 되돌리지 않게 ON CONFLICT DO NOTHING (M3).
+  const { data: insertedRows, error: insertError } = await supabase
     .from('email_inbound_messages')
-    .upsert(basePayload, { onConflict: 'resend_email_id' })
-    .select('id')
-    .single();
-  if (insertError || !inserted?.id)
-    throw new Error(insertError?.message ?? 'Inbound upsert failed');
+    .upsert(basePayload, { onConflict: 'resend_email_id', ignoreDuplicates: true })
+    .select('id');
+  if (insertError) throw new Error(insertError.message ?? 'Inbound upsert failed');
+
+  const isNew = (insertedRows?.length ?? 0) > 0;
+  let inboundId = insertedRows?.[0]?.id as string | undefined;
+  if (!inboundId) {
+    // 충돌(이미 존재)으로 insert가 no-op이면 기존 행의 id를 다시 조회.
+    const { data: existing } = await supabase
+      .from('email_inbound_messages')
+      .select('id')
+      .eq('resend_email_id', emailId)
+      .maybeSingle();
+    inboundId = existing?.id as string | undefined;
+  }
+  if (!inboundId) throw new Error('Inbound upsert failed: no id');
 
   const content = await fetchReceivedEmail(emailId, apiKey);
   const headers = content.headers ?? {};
@@ -168,8 +181,10 @@ export async function processInboundEmail(
   const referencesHeader =
     normalizeHeaderValue(headers.references) ?? normalizeHeaderValue(headers.References);
 
+  // 본문/매칭 등 enrich. status는 의도적으로 제외 — 재처리 시 관리자 상태 보존(M3).
+  const { status: _status, ...baseWithoutStatus } = basePayload;
   const payload = {
-    ...basePayload,
+    ...baseWithoutStatus,
     message_id: event.data.message_id ?? content.message_id ?? null,
     in_reply_to: inReplyTo,
     references_header: referencesHeader,
@@ -184,10 +199,10 @@ export async function processInboundEmail(
   const { error: updateError } = await supabase
     .from('email_inbound_messages')
     .update(payload)
-    .eq('id', inserted.id);
+    .eq('id', inboundId);
   if (updateError) throw new Error(updateError.message ?? 'Inbound update failed');
 
-  return { id: inserted.id as string };
+  return { id: inboundId, isNew };
 }
 
 export async function notifyInboundEmail(

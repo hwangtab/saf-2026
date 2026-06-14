@@ -30,6 +30,15 @@ export interface EnqueueSmsBroadcastInput {
 function gateAdvertisementBody(
   bodyText: string
 ): { ok: true; body: string } | { ok: false; message: string } {
+  // 무료수신거부 번호(SMS_OPT_OUT_080) 미설정 시 본문에 placeholder가 박힌 채 통과돼
+  // 정통망법 위반 발송으로 이어질 수 있다. enqueue 단계에서 즉시 거부 (M7: placeholder escape 차단).
+  if (!process.env.SMS_OPT_OUT_080) {
+    return {
+      ok: false,
+      message:
+        '무료수신거부 번호(SMS_OPT_OUT_080)가 설정되지 않아 광고 문자를 발송할 수 없습니다. 운영자에게 080 번호 등록을 요청하세요.',
+    };
+  }
   if (isNightInKst()) {
     return {
       ok: false,
@@ -91,8 +100,10 @@ export async function enqueueSmsBroadcast(
   }
 
   // 멱등 가드: 같은 admin·channel·body로 최근 5분 내 큐/발송 중 캠페인이 있으면 기존 ID 반환.
+  // petition 채널은 slug까지 일치해야 dedup — 서로 다른 청원에 같은 본문을 보낼 때
+  // 두 번째가 첫 번째로 잘못 dedup되어 미발송되던 갭(M4) 방지.
   const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-  const { data: existing } = await supabase
+  let dedupQuery = supabase
     .from('sms_broadcasts')
     .select('id')
     .eq('created_by', admin.id)
@@ -100,7 +111,11 @@ export async function enqueueSmsBroadcast(
     .eq('body_text', bodyText)
     .in('status', ['queued', 'sending'])
     .gt('recipient_count', 0)
-    .gte('created_at', fiveMinAgo)
+    .gte('created_at', fiveMinAgo);
+  if (channel === 'petition' && input.petitionSlug) {
+    dedupQuery = dedupQuery.eq('audience_filter->>petitionSlug', input.petitionSlug);
+  }
+  const { data: existing } = await dedupQuery
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();

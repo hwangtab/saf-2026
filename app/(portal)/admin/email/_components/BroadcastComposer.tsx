@@ -92,6 +92,15 @@ export function BroadcastComposer() {
     setBodyText(v.text);
     setConfirmed(false);
   };
+  // CTA도 발송되는 메일의 일부 — 변경 시 발송 확인 리셋(L5).
+  const handleCtaLabelChange = (v: string) => {
+    setCtaLabel(v);
+    setConfirmed(false);
+  };
+  const handleCtaUrlChange = (v: string) => {
+    setCtaUrl(v);
+    setConfirmed(false);
+  };
 
   const applyTemplate = (t: BroadcastTemplate) => {
     if (
@@ -251,7 +260,7 @@ export function BroadcastComposer() {
                 id="broadcast-cta-label"
                 type="text"
                 value={ctaLabel}
-                onChange={(e) => setCtaLabel(e.target.value)}
+                onChange={(e) => handleCtaLabelChange(e.target.value)}
                 placeholder="자세히 보기"
                 className={`block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm ${FIELD_FOCUS}`}
               />
@@ -267,7 +276,7 @@ export function BroadcastComposer() {
                 id="broadcast-cta-url"
                 type="url"
                 value={ctaUrl}
-                onChange={(e) => setCtaUrl(e.target.value)}
+                onChange={(e) => handleCtaUrlChange(e.target.value)}
                 placeholder="https://www.saf2026.com/..."
                 className={`block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm ${FIELD_FOCUS}`}
               />

@@ -68,6 +68,7 @@ describe('enqueueSmsBroadcast', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockNight.mockReturnValue(false);
+    process.env.SMS_OPT_OUT_080 = '080-123-4567'; // 광고 가드 통과 전제(M7)
   });
 
   it('member 채널: 정보성으로 큐 등록, is_advertisement=false', async () => {
@@ -94,6 +95,19 @@ describe('enqueueSmsBroadcast', () => {
     });
     expect(r.error).toBe(true);
     expect(r.message).toMatch(/야간/);
+  });
+
+  it('customer 채널 광고: SMS_OPT_OUT_080 미설정이면 enqueue 거부(M7)', async () => {
+    delete process.env.SMS_OPT_OUT_080;
+    const { client } = makeSupabase();
+    mockClient.mockResolvedValue(client as never);
+    const r = await enqueueSmsBroadcast({
+      channel: 'customer',
+      bodyText: '신작이 도착했습니다',
+      audienceFilter: {},
+    });
+    expect(r.error).toBe(true);
+    expect(r.message).toMatch(/SMS_OPT_OUT_080/);
   });
 
   it('customer 채널 광고: (광고) 누락이면 자동 보정 후 등록', async () => {

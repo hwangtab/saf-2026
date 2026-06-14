@@ -179,8 +179,10 @@ export async function sendBuyerSms(
     const text = buildSmsText(type, data, locale);
     const templateId = alimTalkTemplateId(type);
 
-    // 템플릿 매핑 있으면 알림톡 우선(SMS 자동대체), 없으면 기존 SMS-only
-    const useAlimTalk = templateId.length > 0;
+    // 알림톡은 템플릿 + 발신프로필(pfId)이 모두 있어야 실제 사용. 하나라도 없으면 SMS로 degrade한다.
+    // 여기서 분기해야 sms_logs.provider가 실제 발송 채널과 일치 — pfId 미설정 시 'kakao' 오기록 방지(L3).
+    // (sendSolapiAlimTalk 내부 degrade도 동일하게 sendSolapiSms를 호출하므로 동작은 변하지 않는다.)
+    const useAlimTalk = templateId.length > 0 && Boolean(process.env.SOLAPI_KAKAO_PF_ID);
     const result = useAlimTalk
       ? await sendSolapiAlimTalk({
           to,

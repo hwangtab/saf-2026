@@ -22,6 +22,7 @@ import { MemberAudienceResolver } from '@/lib/email/audiences/member';
 import { PetitionAudienceResolver } from '@/lib/email/audiences/petition';
 import type { BroadcastChannel, Recipient } from '@/lib/email/audiences/types';
 import { MAX_DIRECT_RECIPIENTS } from '@/lib/email/broadcast-segment';
+import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 import { validateUrl, validateTextLength } from '@/lib/utils/input-validation';
 import { matchesAnySearch } from '@/lib/search-utils';
 import type { ActionState } from '@/types';
@@ -127,8 +128,10 @@ export async function enqueueBroadcast(
   // 멱등 가드: 같은 admin이 같은 channel+subject로 최근 5분 내 큐에 올린(또는 발송 중인)
   // 캠페인이 있으면 새 broadcast를 만들지 않고 기존 ID 반환.
   // 더블 클릭 + 슬로우 네트워크 경합으로 두 캠페인이 생성되어 같은 수신자에게 두 번 발송되는 사고 방지.
+  // petition 채널은 slug까지 일치해야 dedup — 서로 다른 청원에 같은 제목을 보낼 때
+  // 두 번째가 첫 번째로 잘못 dedup되어 미발송되던 갭(M4) 방지.
   const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-  const { data: existing, error: existingError } = await supabase
+  let dedupQuery = supabase
     .from('email_broadcasts')
     .select('id')
     .eq('created_by', admin.id)
@@ -136,7 +139,11 @@ export async function enqueueBroadcast(
     .eq('subject', subject)
     .in('status', ['queued', 'sending'])
     .gt('recipient_count', 0) // orphan broadcast(recipients INSERT 직전 crash) 제외
-    .gte('created_at', fiveMinAgo)
+    .gte('created_at', fiveMinAgo);
+  if (channel === 'petition' && petitionSlug) {
+    dedupQuery = dedupQuery.eq('petition_slug', petitionSlug);
+  }
+  const { data: existing, error: existingError } = await dedupQuery
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -269,7 +276,7 @@ export async function getBroadcasts(
   }
   return {
     rows: (data ?? []) as EmailBroadcastRow[],
-    total: typeof count === 'number' ? count : data?.length ?? 0,
+    total: typeof count === 'number' ? count : (data?.length ?? 0),
     page,
     pageSize,
   };
@@ -510,10 +517,17 @@ export async function enqueueIndividualBroadcast(input: {
     return { message: err instanceof Error ? err.message : 'CTA 입력 검증 실패', error: true };
   }
 
-  const { data: suppressions } = await supabase
-    .from('email_suppressions')
-    .select('email_hash')
-    .in('channel', isAdvertisement ? ['individual', 'customer', 'all'] : ['individual', 'all']);
+  // 수신거부 해시는 fetchAllInBatches로 — 다른 audience 경로와 동일하게 1000행 절단을 방지(M5).
+  const suppressionChannels = isAdvertisement
+    ? ['individual', 'customer', 'all']
+    : ['individual', 'all'];
+  const { data: suppressions } = await fetchAllInBatches<{ email_hash: string }>((from, to) =>
+    supabase
+      .from('email_suppressions')
+      .select('email_hash')
+      .in('channel', suppressionChannels)
+      .range(from, to)
+  );
   const suppressed = new Set((suppressions ?? []).map((s) => s.email_hash as string));
 
   const seen = new Set<string>();

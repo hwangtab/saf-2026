@@ -106,7 +106,7 @@ function ReplyForm({ row, onReplied }: { row: InboundEmailRow; onReplied: () => 
         placeholder="앱에서 같은 이메일 스레드로 답장합니다."
       />
       <div className="flex items-center justify-between gap-3">
-        <div className="text-xs">
+        <div className="text-xs" aria-live="polite">
           {error && <span className="text-danger-a11y">{error}</span>}
           {message && <span className="text-success-a11y">{message}</span>}
         </div>

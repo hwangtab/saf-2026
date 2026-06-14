@@ -72,9 +72,12 @@ export async function POST(req: NextRequest) {
   if (isReceived) {
     try {
       const inbound = await processInboundEmail(event, supabase);
-      await notifyInboundEmail(event, inbound.id).catch((err) => {
-        console.error('[resend-webhook] inbound notify failed:', err);
-      });
+      // 신규 수신일 때만 관리자 알림 — 웹훅 재시도로 중복 알림이 가지 않게 한다(M3).
+      if (inbound.isNew) {
+        await notifyInboundEmail(event, inbound.id).catch((err) => {
+          console.error('[resend-webhook] inbound notify failed:', err);
+        });
+      }
       return NextResponse.json({ ok: true, inbound_id: inbound.id });
     } catch (err) {
       console.error('[resend-webhook] inbound processing failed:', err);

@@ -27,15 +27,15 @@ const PERMANENT_FAILURE_CODES = new Set([
 /**
  * Solapi status + statusCode → DB 상태 매핑 (보수적).
  * - COMPLETE + '4000' → 'delivered' (수신완료 확인)
- * - FAILED + 영구 실패 코드 → 'undelivered'
- * - FAILED + 그 외 → 'undelivered' (명확한 실패)
+ * - COMPLETE + 그 외   → 'undelivered' (종료됐으나 미수신 — 'sent'로 영영 잔존하지 않게 종결, L9)
+ * - FAILED            → 'undelivered' (명확한 실패)
  * - PENDING / SENDING / 그 외 → null (아직 최종 상태 아님, 그대로 'sent')
  */
 function mapToDeliveryStatus(
   status: string,
   statusCode: string
 ): 'delivered' | 'undelivered' | null {
-  if (status === 'COMPLETE' && statusCode === '4000') return 'delivered';
+  if (status === 'COMPLETE') return statusCode === '4000' ? 'delivered' : 'undelivered';
   if (status === 'FAILED') return 'undelivered';
   // PENDING / SENDING 등 미결 상태 → null (아직 최종 아님)
   return null;
@@ -43,11 +43,11 @@ function mapToDeliveryStatus(
 
 /**
  * 영구 실패 코드인지 여부 (suppression 등록 판단용).
- * FAILED 상태 중에서도 일시 오류가 아닌 번호/단말 영구 오류만 suppression 대상으로 한정.
+ * 일시 오류(전원꺼짐·음영지역 등)를 영구 차단하지 않도록, 정규식 광역 매칭 없이
+ * 명시적으로 큐레이션한 번호/단말 영구 오류 집합만 suppression 대상으로 한정한다(M2).
  */
 function isPermanentFailure(statusCode: string): boolean {
-  // 30xx 계열: 결번/서비스정지/수신거부 — 명확한 영구 오류
-  return PERMANENT_FAILURE_CODES.has(statusCode) || /^30\d\d$/.test(statusCode);
+  return PERMANENT_FAILURE_CODES.has(statusCode);
 }
 
 export async function GET(request: NextRequest) {
