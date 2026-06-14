@@ -13,7 +13,7 @@ import {
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
-import { recordOrderArtworkSales } from '@/lib/orders/record-artwork-sales';
+import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
@@ -168,13 +168,7 @@ export async function POST(req: NextRequest) {
             .single();
 
           if (order) {
-            const lineItems = Array.isArray(order.order_items)
-              ? (order.order_items as Array<{
-                  artwork_id: string;
-                  quantity: number;
-                  unit_price: number;
-                }>)
-              : [];
+            const lineItems = extractLineItems(order);
             const salesResult = await recordOrderArtworkSales(supabase, {
               orderId: paymentRecord.order_id,
               orderNo: order.order_no,
@@ -193,6 +187,12 @@ export async function POST(req: NextRequest) {
               void notifyEmail('error', '웹훅 판매 기록 생성 실패', {
                 주문번호: order.order_no,
                 에러: salesResult.error,
+              });
+            } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
+              console.error(`[toss-webhook] paid deposit with no order_items: ${order.order_no}`);
+              void notifyEmail('error', '입금 완료 주문에 품목 없음 — 판매 기록 누락', {
+                주문번호: order.order_no ?? '',
+                참고: '입금+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
               });
             }
 
@@ -301,13 +301,7 @@ export async function POST(req: NextRequest) {
         // artwork reserved → available 복원 — order_items 전 품목 루프
         if (cancelledOrders && cancelledOrders.length > 0) {
           const cancelledOrder = cancelledOrders[0];
-          const lineItems = Array.isArray(cancelledOrder.order_items)
-            ? (cancelledOrder.order_items as Array<{
-                artwork_id: string;
-                quantity: number;
-                unit_price: number;
-              }>)
-            : [];
+          const lineItems = extractLineItems(cancelledOrder);
           // order_items가 비면 legacy 단건 artwork_id로 fallback
           const artworkIds =
             lineItems.length > 0
@@ -526,13 +520,7 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        const lineItems = Array.isArray(existingOrder.order_items)
-          ? (existingOrder.order_items as Array<{
-              artwork_id: string;
-              quantity: number;
-              unit_price: number;
-            }>)
-          : [];
+        const lineItems = extractLineItems(existingOrder);
 
         // artwork_sales INSERT — confirm route가 이미 INSERT했다면 헬퍼 내부 멱등으로 skip
         if (updatedOrders && updatedOrders.length > 0 && lineItems.length > 0) {
@@ -649,13 +637,7 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        const lineItems = Array.isArray(existingOrder.order_items)
-          ? (existingOrder.order_items as Array<{
-              artwork_id: string;
-              quantity: number;
-              unit_price: number;
-            }>)
-          : [];
+        const lineItems = extractLineItems(existingOrder);
         // order_items가 비면 legacy 단건 artwork_id로 fallback
         const artworkIds =
           lineItems.length > 0
