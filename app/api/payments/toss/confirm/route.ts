@@ -15,7 +15,7 @@ import {
   getOrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
-import { recordOrderArtworkSales } from '@/lib/orders/record-artwork-sales';
+import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
 
@@ -176,9 +176,7 @@ export async function POST(req: NextRequest) {
   // unavailable 판정됨. (lineItems는 Task 6에서 artwork_sales·status 루프에 재사용)
   // Supabase 1:N 임베드는 배열을 반환하지만, 비배열/null로 추론되는 엣지에서
   // for...of가 throw하지 않도록 Array.isArray로 방어.
-  const lineItems = Array.isArray(order.order_items)
-    ? (order.order_items as Array<{ artwork_id: string; quantity: number; unit_price: number }>)
-    : [];
+  const lineItems = extractLineItems(order);
 
   for (const item of lineItems) {
     const { data: availResult, error: availError } = await supabase.rpc(

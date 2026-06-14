@@ -4,6 +4,14 @@ import type { Database } from '@/types/supabase';
 
 export type ArtworkSaleLine = { artwork_id: string; quantity: number; unit_price: number };
 
+/**
+ * 주문 조회 결과의 order_items 임베드를 ArtworkSaleLine[]로 추출.
+ * Supabase 1:N 임베드는 배열이지만, 비배열/null로 추론되는 엣지에서 빈 배열로 방어.
+ */
+export function extractLineItems(order: { order_items?: unknown }): ArtworkSaleLine[] {
+  return Array.isArray(order.order_items) ? (order.order_items as ArtworkSaleLine[]) : [];
+}
+
 export type RecordSalesParams = {
   orderId: string;
   orderNo: string | null;
