@@ -11,7 +11,7 @@ import { OH_YOON_MEMORIAL_SLUG, OH_YOON_MEMORIAL_PATH } from '@/content/events/o
 import RegistrationForm from './_components/RegistrationForm';
 import SeatStatusBar from './_components/SeatStatusBar';
 import EventStory from './_components/EventStory';
-import MuralGallery from './_components/MuralGallery';
+import PrintGallery from './_components/PrintGallery';
 import EventMeaning from './_components/EventMeaning';
 import EventSchedule from './_components/EventSchedule';
 import EventFAQ from './_components/EventFAQ';
@@ -85,9 +85,9 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
         <EventStory />
       </Section>
 
-      {/* 1974 구의동 벽화 */}
+      {/* 오윤의 판화 — 민중적·예술적 의미 */}
       <Section variant="canvas-soft">
-        <MuralGallery />
+        <PrintGallery />
       </Section>
 
       {/* 추도식의 의의 */}
