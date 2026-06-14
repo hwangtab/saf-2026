@@ -707,10 +707,20 @@ export async function cancelBuyerOrder(
     .maybeSingle();
 
   if (sale) {
-    await adminClient
+    const { error: voidError } = await adminClient
       .from('artwork_sales')
       .update({ voided_at: now, void_reason: trimmedReason })
       .eq('id', sale.id);
+    if (voidError) {
+      // 환불은 이미 처리됨 — 판매기록 void 실패 시 매출 과대계상되므로 운영팀 경보(매니저 수동 void 필요).
+      console.error('[cancelBuyerOrder] artwork_sales void failed:', voidError);
+      void notifyEmail('error', '구매자 취소 후 판매기록 void 실패 — 수동 처리 필요', {
+        주문번호: order.order_no,
+        주문ID: order.id,
+        판매기록ID: sale.id,
+        에러: voidError.message,
+      });
+    }
   }
 
   if (order.artwork_id) {
