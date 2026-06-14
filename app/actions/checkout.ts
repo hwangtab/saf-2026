@@ -143,23 +143,39 @@ function decodeCheckoutCookie(value: string | undefined): CheckoutCookiePayload 
   }
 }
 
+/** 주문별 쿠키 단일 출처 헬퍼 — 쿠키 옵션/이름/인코딩이 한 곳에서 관리됨. */
+async function setOrderCheckoutCookie(
+  orderNo: string,
+  checkoutToken: string,
+  currency: 'KRW' | 'USD'
+) {
+  const cookieStore = await cookies();
+  const value = encodeCheckoutCookie({ orderId: orderNo, checkoutToken, currency });
+  cookieStore.set(checkoutCookieName(orderNo), value, {
+    httpOnly: true,
+    sameSite: 'lax' as const,
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: CHECKOUT_COOKIE_MAX_AGE_SECONDS,
+  });
+}
+
 async function rememberCheckoutCookie(
   artworkId: string,
   orderId: string,
   checkoutToken: string,
   currency: 'KRW' | 'USD'
 ) {
+  await setOrderCheckoutCookie(orderId, checkoutToken, currency);
   const cookieStore = await cookies();
   const value = encodeCheckoutCookie({ orderId, checkoutToken, currency });
-  const options = {
+  cookieStore.set(latestCheckoutCookieName(artworkId), value, {
     httpOnly: true,
     sameSite: 'lax' as const,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: CHECKOUT_COOKIE_MAX_AGE_SECONDS,
-  };
-  cookieStore.set(checkoutCookieName(orderId), value, options);
-  cookieStore.set(latestCheckoutCookieName(artworkId), value, options);
+  });
 }
 
 async function getCheckoutCookieByOrder(orderId: string) {
@@ -269,6 +285,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   // 동일 구매자의 각 작품에 대한 오래된 pending_payment 주문 자동 정리.
   // buyer_email은 본인 인증 수단이 아니므로, 현재 결제 가능성이 있는 최근 주문은 건드리지 않는다.
+  // 순차 처리 — 장바구니 품목 수는 작아 N+1 비용 미미(병렬화 불필요).
   const pendingPaymentCleanupCutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
   for (const id of artworkIds) {
     await adminClient
@@ -281,6 +298,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   }
 
   // 품목별 재고 재확인 + 금액 계산 + unique 강제(품절 부분 차단)
+  // 순차 처리 — 장바구니 품목 수는 작아 N+1 비용 미미(병렬화 불필요).
   const unavailable: string[] = [];
   let itemAmount = 0;
   const itemRows: Array<{ artwork_id: string; quantity: number; unit_price: number }> = [];
@@ -437,22 +455,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     );
   } else {
     // 다건: latest 쿠키 키 충돌 우려가 있으므로 주문별 쿠키만 설정
-    const cookieStore = await cookies();
-    cookieStore.set(
-      checkoutCookieName(orderNo),
-      encodeCheckoutCookie({
-        orderId: orderNo,
-        checkoutToken,
-        currency: buyerLocale === 'en' ? 'USD' : 'KRW',
-      }),
-      {
-        httpOnly: true,
-        sameSite: 'lax' as const,
-        secure: process.env.NODE_ENV === 'production',
-        path: '/',
-        maxAge: CHECKOUT_COOKIE_MAX_AGE_SECONDS,
-      }
-    );
+    await setOrderCheckoutCookie(orderNo, checkoutToken, buyerLocale === 'en' ? 'USD' : 'KRW');
   }
 
   return {

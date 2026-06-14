@@ -497,6 +497,46 @@ describe('createOrder', () => {
     }
     expect(orderNoMock).toHaveBeenCalledTimes(2);
   });
+
+  it('unique edition 작품을 quantity 3으로 주문해도 order_items에는 quantity 1로 강제된다', async () => {
+    const unitPrice = 3_000_000;
+    mockArtworkResult = {
+      data: {
+        id: 'art-1',
+        title: '유일작',
+        price: `₩${unitPrice.toLocaleString('ko-KR')}`,
+        status: 'available',
+        edition_type: 'unique',
+        edition_limit: null,
+        artists: { name_ko: '박작가' },
+      },
+      error: null,
+    };
+    mockRpcResult = { data: [{ is_available: true }], error: null };
+    mockInsertResult = { data: { id: 'order-unique-clamp' }, error: null };
+
+    const result = await createOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [{ artworkId: 'art-1', quantity: 3 }],
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    // order_items INSERT: quantity는 3이 아닌 1로 강제
+    expect(capturedOrderItemsInserts).toHaveLength(1);
+    expect(capturedOrderItemsInserts[0][0]).toMatchObject({
+      artwork_id: 'art-1',
+      quantity: 1,
+      unit_price: unitPrice,
+    });
+
+    // orders row의 item_amount = 단가 × 1 (× 3이 아님)
+    expect(capturedInsertedRows[0]).toMatchObject({
+      item_amount: unitPrice * 1,
+    });
+  });
 });
 
 // ========== createOrder — multi-item (items[]) ==========
