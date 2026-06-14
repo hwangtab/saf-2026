@@ -439,6 +439,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 category={artwork.category ?? undefined}
                 hasSameCategoryWorks={sameCategoryWorks.length > 0}
                 isTossEnabled={isTossEnabled}
+                editionType={artwork.edition_type}
                 priceAmount={hasActionablePrice ? parsedPrice : null}
               />
 

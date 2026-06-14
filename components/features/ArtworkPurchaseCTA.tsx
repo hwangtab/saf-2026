@@ -3,7 +3,9 @@
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import LinkButton from '@/components/ui/LinkButton';
+import AddToCartButton from '@/components/features/AddToCartButton';
 import { trackEvent } from '@/lib/analytics/track';
+import type { EditionType } from '@/types';
 import { SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 import TrustBadges from '@/components/features/TrustBadges';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
@@ -35,6 +37,8 @@ interface ArtworkPurchaseCTAProps {
   hasSameCategoryWorks?: boolean;
   /** 서버에서 getPaymentMode()로 판정 — 결제 모드 단일 출처 (2026-06-12 감사) */
   isTossEnabled: boolean;
+  /** 작품 에디션 유형 — unique이면 장바구니 담기 시 수량 1로 고정 */
+  editionType?: EditionType;
   /**
    * 서버에서 raw artwork.price를 파싱한 숫자 가격 (문의 작품은 null) — 배송비 분기용.
    * ⚠️ displayPrice(로케일 변환된 표시 문자열)에서 역파싱하지 말 것: EN 로케일은
@@ -160,9 +164,11 @@ export default function ArtworkPurchaseCTA({
   category,
   hasSameCategoryWorks,
   isTossEnabled,
+  editionType,
   priceAmount,
 }: ArtworkPurchaseCTAProps) {
   const t = useTranslations('artworkDetail');
+  const isUnique = editionType === 'unique';
 
   useEffect(() => {
     trackEvent('view_item', {
@@ -282,6 +288,8 @@ export default function ArtworkPurchaseCTA({
           >
             {t('buyOnline')}
           </LinkButton>
+
+          <AddToCartButton artworkId={artworkId} isUnique={isUnique} disabled={sold} />
 
           <TrustBadges />
 
