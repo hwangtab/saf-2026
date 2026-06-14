@@ -173,9 +173,11 @@ export async function POST(req: NextRequest) {
   // 기존 동작과 동일하게 1회 재확인된다. 자기 주문(p_exclude_order_id)은 제외 —
   // 그렇지 않으면 unique edition 작품의 경우 (sold=0 + pending=1) >= 1로 즉시
   // unavailable 판정됨. (lineItems는 Task 6에서 artwork_sales·status 루프에 재사용)
-  const lineItems =
-    (order.order_items as Array<{ artwork_id: string; quantity: number; unit_price: number }>) ??
-    [];
+  // Supabase 1:N 임베드는 배열을 반환하지만, 비배열/null로 추론되는 엣지에서
+  // for...of가 throw하지 않도록 Array.isArray로 방어.
+  const lineItems = Array.isArray(order.order_items)
+    ? (order.order_items as Array<{ artwork_id: string; quantity: number; unit_price: number }>)
+    : [];
 
   for (const item of lineItems) {
     const { data: availResult, error: availError } = await supabase.rpc(
