@@ -192,6 +192,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
       if (paymentChoice === 'TRANSFER') {
         const result = await createBankTransferOrder({
           items: orderItems,
+          cartCheckout: true,
           buyerName,
           buyerEmail,
           buyerPhone,

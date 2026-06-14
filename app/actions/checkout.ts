@@ -53,6 +53,8 @@ export type CreateOrderInput = {
   shippingPostalCode: string;
   shippingMemo?: string;
   locale?: 'ko' | 'en';
+  /** 장바구니 결제 경로. true면 무통장 redirect를 카트 success 페이지로 보낸다. */
+  cartCheckout?: boolean;
 };
 
 export type CreateOrderResult =
@@ -834,10 +836,13 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   // soft navigation이 일어나므로 흰 화면 깜빡임이 없고, 현재 라우트 자동 refresh로 인한
   // page.tsx reserved-guard 리다이렉트(→ 작품 상세 경유)와의 경쟁도 사라진다.
   // localePrefix: 'as-needed' — ko 기본 locale은 prefix 없음, en만 /en/.
+  // 장바구니 결제는 카트 success 페이지(/checkout/success)로 — 거기서 카트 비우기 +
+  // 다건 안전 랜딩(verifyBankTransferLanding + clearCartOnce) 처리. 단건은 기존 그대로 작품 상세 success.
+  const successBase = input.cartCheckout ? '/checkout/success' : `/checkout/${artworkId}/success`;
   const successPath =
     buyerLocale === 'en'
-      ? `/en/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW&checkoutToken=${encodeURIComponent(result.checkoutToken)}`
-      : `/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&checkoutToken=${encodeURIComponent(result.checkoutToken)}`;
+      ? `/en${successBase}?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW&checkoutToken=${encodeURIComponent(result.checkoutToken)}`
+      : `${successBase}?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&checkoutToken=${encodeURIComponent(result.checkoutToken)}`;
   redirect(successPath);
 }
 
