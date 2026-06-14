@@ -80,27 +80,7 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
         <SeatStatusBar remaining={remaining} isOpen={isOpen} />
       </PageHero>
 
-      {/* 오윤 이야기 */}
-      <Section variant="white">
-        <EventStory />
-      </Section>
-
-      {/* 오윤의 판화 — 민중적·예술적 의미 */}
-      <Section variant="canvas-soft">
-        <PrintGallery />
-      </Section>
-
-      {/* 추도식의 의의 */}
-      <Section variant="white">
-        <EventMeaning />
-      </Section>
-
-      {/* 추도식 안내 */}
-      <Section variant="canvas">
-        <EventSchedule />
-      </Section>
-
-      {/* 참가 신청 */}
+      {/* 참가 신청 — 상단 우선 노출 */}
       <Section variant="white" id="apply">
         <div className="container-max">
           <div className="mx-auto max-w-xl">
@@ -116,6 +96,26 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
             />
           </div>
         </div>
+      </Section>
+
+      {/* 추도식 안내 */}
+      <Section variant="canvas-soft">
+        <EventSchedule />
+      </Section>
+
+      {/* 오윤 이야기 */}
+      <Section variant="white">
+        <EventStory />
+      </Section>
+
+      {/* 오윤의 판화 — 민중적·예술적 의미 */}
+      <Section variant="canvas-soft">
+        <PrintGallery />
+      </Section>
+
+      {/* 추도식의 의의 */}
+      <Section variant="white">
+        <EventMeaning />
       </Section>
 
       {/* FAQ */}
