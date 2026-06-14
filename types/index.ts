@@ -132,6 +132,12 @@ export interface OrderItem {
  */
 export type OrderItemInput = { artworkId: string; quantity: number };
 
+/** 클라이언트 장바구니 항목(localStorage·CartProvider). artworkId는 artworks.id(uuid). */
+export interface CartItem {
+  artworkId: string;
+  quantity: number;
+}
+
 export interface Order {
   id: string;
   order_no: string;
