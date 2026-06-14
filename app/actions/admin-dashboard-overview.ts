@@ -1,6 +1,10 @@
 'use server';
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
+import {
+  getRepresentativeArtwork,
+  formatRepresentativeTitle,
+} from '@/lib/orders/representative-artwork';
 import type { FeedbackCategory, FeedbackStatus } from '@/types';
 
 const KST_PARTS_FORMATTER = new Intl.DateTimeFormat('en-CA', {
@@ -303,7 +307,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     supabase
       .from('orders')
       .select(
-        'id, order_no, buyer_name, total_amount, status, created_at, artworks(title, artists(name_ko))'
+        'id, order_no, buyer_name, total_amount, status, created_at, artworks(title, artists(name_ko)), order_items(artworks(title, artists(name_ko)))'
       )
       .order('created_at', { ascending: false })
       .limit(5),
@@ -477,9 +481,21 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     slaOverdueCount: slaOverdueCountResult.count ?? 0,
     escalatedCount: escalatedCountResult.count ?? 0,
     recentOrders: (recentOrdersResult.data ?? []).map((row) => {
-      const artwork = Array.isArray(row.artworks) ? row.artworks[0] : row.artworks;
-      const artistRow = artwork?.artists;
-      const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
+      // 다품목(orders.artwork_id NULL) 주문은 order_items 대표작품 "외 N건"으로 표시. 단건은 artworks fallback.
+      const rep = getRepresentativeArtwork(row.order_items);
+
+      const singleArtwork = Array.isArray(row.artworks) ? row.artworks[0] : row.artworks;
+      const singleArtistRow = singleArtwork?.artists;
+      const singleArtistName = Array.isArray(singleArtistRow)
+        ? singleArtistRow[0]?.name_ko
+        : singleArtistRow?.name_ko;
+
+      const artworkTitle =
+        rep.count > 0 && rep.title
+          ? formatRepresentativeTitle(rep.title, rep.count, 'ko')
+          : (singleArtwork?.title ?? null);
+      const artistName = rep.count > 0 ? rep.artistName : (singleArtistName ?? null);
+
       return {
         id: row.id,
         order_no: row.order_no,
@@ -487,8 +503,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
         total_amount: row.total_amount,
         status: row.status,
         created_at: row.created_at,
-        artwork_title: artwork?.title ?? null,
-        artist_name: artistName ?? null,
+        artwork_title: artworkTitle,
+        artist_name: artistName,
       };
     }),
   };

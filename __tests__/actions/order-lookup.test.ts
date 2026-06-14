@@ -41,10 +41,15 @@ jest.mock('@/app/actions/admin-artworks', () => ({
 }));
 
 // --- Mock: notify ---
+// extractBuyerLocale은 metadata.locale 기반 순수 함수 — 실제 구현을 그대로 사용해야
+// 다품목 표시의 locale 분기(외 N건 / and N more)를 테스트할 수 있다.
 jest.mock('@/lib/notify', () => ({
   notifyEmail: jest.fn(async () => {}),
   sendBuyerEmail: jest.fn(async () => {}),
-  extractBuyerLocale: jest.fn(() => 'ko'),
+  extractBuyerLocale: jest.fn((metadata: unknown) => {
+    if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return 'ko';
+    return (metadata as Record<string, unknown>).locale === 'en' ? 'en' : 'ko';
+  }),
 }));
 
 // --- Mock: get-order-notification-info ---
@@ -363,6 +368,121 @@ describe('lookupOrders', () => {
     }
   });
 
+  it('FIX-3: 다품목 주문은 order_items 대표작품 "외 N건"으로 표시 (ko)', async () => {
+    mockOrdersSelectResult = {
+      data: [
+        {
+          order_no: 'SAF-CART',
+          status: 'paid',
+          total_amount: 8000000,
+          created_at: '2026-04-03',
+          metadata: { locale: 'ko' },
+          // 다품목은 orders.artwork_id NULL → artworks 조인 없음, order_items가 단일 출처
+          artworks: null,
+          order_items: [
+            {
+              artworks: {
+                title: '봄의 정원',
+                images: ['spring.jpg'],
+                artists: { name_ko: '김작가' },
+              },
+            },
+            {
+              artworks: {
+                title: '여름 바다',
+                images: ['summer.jpg'],
+                artists: { name_ko: '이작가' },
+              },
+            },
+          ],
+        },
+      ],
+      error: null,
+    };
+    mockPhoneVerifiedResult = {
+      data: [{ order_no: 'SAF-CART', buyer_phone: '01012345678' }],
+      error: null,
+    };
+
+    const result = await lookupOrders('홍길동', 'test@test.com', '01012345678');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.orders).toHaveLength(1);
+      // 대표작품(첫 품목) + 외 N건
+      expect(result.orders[0].artworkTitle).toBe('봄의 정원 외 1건');
+      expect(result.orders[0].artworkImage).toBe('spring.jpg');
+    }
+  });
+
+  it('FIX-3: 다품목 주문 en locale은 "and N more"', async () => {
+    mockOrdersSelectResult = {
+      data: [
+        {
+          order_no: 'SAF-CART-EN',
+          status: 'paid',
+          total_amount: 9000000,
+          created_at: '2026-04-04',
+          metadata: { locale: 'en' },
+          artworks: null,
+          order_items: [
+            {
+              artworks: { title: 'Spring Garden', images: ['s.jpg'], artists: { name_ko: 'Kim' } },
+            },
+            { artworks: { title: 'B', images: [], artists: { name_ko: 'Lee' } } },
+            { artworks: { title: 'C', images: [], artists: { name_ko: 'Park' } } },
+          ],
+        },
+      ],
+      error: null,
+    };
+    mockPhoneVerifiedResult = {
+      data: [{ order_no: 'SAF-CART-EN', buyer_phone: '01012345678' }],
+      error: null,
+    };
+
+    const result = await lookupOrders('홍길동', 'test@test.com', '01012345678');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.orders[0].artworkTitle).toBe('Spring Garden and 2 more');
+    }
+  });
+
+  it('FIX-3: order_items 단건은 "외" 없이 작품명 그대로 (단건 보존)', async () => {
+    mockOrdersSelectResult = {
+      data: [
+        {
+          order_no: 'SAF-SINGLE',
+          status: 'paid',
+          total_amount: 5000000,
+          created_at: '2026-04-05',
+          metadata: { locale: 'ko' },
+          artworks: null,
+          order_items: [
+            {
+              artworks: {
+                title: '단독 작품',
+                images: ['solo.jpg'],
+                artists: { name_ko: '박작가' },
+              },
+            },
+          ],
+        },
+      ],
+      error: null,
+    };
+    mockPhoneVerifiedResult = {
+      data: [{ order_no: 'SAF-SINGLE', buyer_phone: '01012345678' }],
+      error: null,
+    };
+
+    const result = await lookupOrders('홍길동', 'test@test.com', '01012345678');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.orders[0].artworkTitle).toBe('단독 작품');
+      expect(result.orders[0].artworkImage).toBe('solo.jpg');
+    }
+  });
+
   it('+82 국제번호 정규화 처리', async () => {
     mockOrdersSelectResult = {
       data: [
@@ -473,6 +593,58 @@ describe('lookupOrderDetail', () => {
       expect(result.order.artistName).toBe('김작가');
       expect(result.order.totalAmount).toBe(5000000);
       expect(result.order.paymentMethod).toBe('카드');
+      expect(result.order.artworkImage).toBe('spring.jpg');
+    }
+  });
+
+  it('FIX-3: 다품목 상세는 order_items 대표작품 "외 N건" + 대표 이미지/작가', async () => {
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-cart',
+        order_no: 'SAF-CART',
+        status: 'paid',
+        buyer_email: 'buyer@test.com',
+        item_amount: 8000000,
+        shipping_amount: 0,
+        total_amount: 8000000,
+        paid_at: '2026-04-03T12:00:00Z',
+        created_at: '2026-04-03T11:00:00Z',
+        shipping_name: '홍길동',
+        shipping_phone: '01012345678',
+        shipping_address: '서울',
+        shipping_address_detail: null,
+        shipping_memo: null,
+        shipping_carrier: null,
+        tracking_number: null,
+        metadata: { locale: 'ko' },
+        // 다품목은 orders.artwork_id NULL → artworks 조인 없음
+        artworks: null,
+        order_items: [
+          {
+            artworks: {
+              title: '봄의 정원',
+              images: ['spring.jpg'],
+              artists: { name_ko: '김작가' },
+            },
+          },
+          {
+            artworks: {
+              title: '여름 바다',
+              images: ['summer.jpg'],
+              artists: { name_ko: '이작가' },
+            },
+          },
+        ],
+      },
+      error: null,
+    };
+    mockPaymentResult = { data: { method: '카드', confirm_response: null }, error: null };
+
+    const result = await lookupOrderDetail('SAF-CART', 'buyer@test.com');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.order.artworkTitle).toBe('봄의 정원 외 1건');
+      expect(result.order.artistName).toBe('김작가');
       expect(result.order.artworkImage).toBe('spring.jpg');
     }
   });
