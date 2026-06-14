@@ -351,6 +351,14 @@ export async function POST(req: NextRequest) {
         에러: salesResult.error,
         참고: '결제+주문 완료, 판매 기록 누락 — reconciliation cron 보정 예정',
       });
+    } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
+      // 결제 완료(paid)인데 order_items가 비어 매출이 기록되지 않음 — 정상 흐름에선
+      // createOrder가 항상 order_items를 쓰므로 발생 불가. 발생 시 데이터 정합성 이상이라 알림.
+      console.error('[confirm] paid order with no order_items:', orderId);
+      void notifyEmail('error', '결제 완료 주문에 품목 없음 — 판매 기록 누락', {
+        주문번호: orderId,
+        참고: '결제+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
+      });
     }
 
     // BUG 40: DB 트리거 실패 대비 방어적으로 artwork 상태 동기화

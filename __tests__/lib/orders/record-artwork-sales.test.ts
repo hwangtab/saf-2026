@@ -21,6 +21,7 @@ function buildSupabaseMock(opts: { idempotencyResult?: MockResult; insertResult?
   supabase: SupabaseClient<Database>;
   insertMock: jest.Mock;
   maybeSingleMock: jest.Mock;
+  selectChain: { eq: jest.Mock; is: jest.Mock; limit: jest.Mock; maybeSingle: jest.Mock };
 } {
   const idempotencyResult = opts.idempotencyResult ?? { data: null, error: null };
   const insertResult = opts.insertResult ?? { error: null, data: null };
@@ -44,6 +45,7 @@ function buildSupabaseMock(opts: { idempotencyResult?: MockResult; insertResult?
     supabase: { from } as unknown as SupabaseClient<Database>,
     insertMock,
     maybeSingleMock,
+    selectChain,
   };
 }
 
@@ -81,7 +83,7 @@ describe('recordOrderArtworkSales', () => {
   });
 
   it('lineItems 2건 정상 → 2행 INSERT, 각 행 sale_price === unit_price(단가, 배송 제외)', async () => {
-    const { supabase, insertMock } = buildSupabaseMock({});
+    const { supabase, insertMock, selectChain } = buildSupabaseMock({});
 
     const lineItems: ArtworkSaleLine[] = [
       { artwork_id: 'a1', quantity: 2, unit_price: 100000 },
@@ -107,6 +109,10 @@ describe('recordOrderArtworkSales', () => {
       sold_at: '2026-06-14T00:00:00.000Z',
     });
     expect(insertedRows[1]).toMatchObject({ artwork_id: 'a2', quantity: 1, sale_price: 50000 });
+
+    // 멱등 체크가 active(미void) 매출만 본다는 불변식 회귀 가드
+    expect(selectChain.eq).toHaveBeenCalledWith('order_id', 'order-1');
+    expect(selectChain.is).toHaveBeenCalledWith('voided_at', null);
   });
 
   it('INSERT 에러 → error reason + 메시지', async () => {
