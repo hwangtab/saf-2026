@@ -1,4 +1,4 @@
--- supabase/migrations/20260614120000_order_items.sql
+-- supabase/migrations/20260614123000_order_items.sql
 --
 -- 주문 다품목화: order_items 테이블 추가 + 기존 주문 백필.
 --
@@ -40,10 +40,15 @@ CREATE POLICY "Buyers can view own order items" ON public.order_items
   );
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.order_items TO service_role;
+-- 참고: authenticated 역할용 INSERT/UPDATE/DELETE 정책은 아직 없다. 주문 생성은
+-- service_role(서버 액션)이 수행하므로 현재 불필요. 장바구니 계획 2에서 cart_items를
+-- 다루되, order_items에 buyer-facing 쓰기 경로가 생기면 그때 정책을 추가한다.
 
 -- ----------------------------------------------------------------------------
 -- 3) 백필: 기존 주문 1건당 order_items 1행.
 --    unit_price = item_amount / quantity (정수 나눗셈; 단가 = 총액 ÷ 수량).
+--    기존 모든 orders는 quantity=1(createOrder가 항상 1로 INSERT, 스키마 DEFAULT 1)이라
+--    정수 나눗셈 손실 없음: unit_price = item_amount.
 --    GREATEST(quantity, 1): quantity가 0인 레거시 행을 0-division에서 보호.
 --    idempotent: order_id에 이미 행이 있으면 재삽입하지 않는다.
 -- ----------------------------------------------------------------------------
