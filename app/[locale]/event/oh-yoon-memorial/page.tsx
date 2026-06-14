@@ -12,6 +12,7 @@ import RegistrationForm from './_components/RegistrationForm';
 import SeatStatusBar from './_components/SeatStatusBar';
 import EventStory from './_components/EventStory';
 import PrintGallery from './_components/PrintGallery';
+import EventArtMeaning from './_components/EventArtMeaning';
 import EventMeaning from './_components/EventMeaning';
 import EventSchedule from './_components/EventSchedule';
 import EventFAQ from './_components/EventFAQ';
@@ -82,7 +83,11 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
 
   return (
     <main className="bg-canvas text-pretty">
-      <PageHero title={t('heroTitle')} description={t('heroSubtitle')}>
+      <PageHero
+        title={t('heroTitle')}
+        description={t('heroSubtitle')}
+        customBackgroundImage="/images/ohyoon.webp"
+      >
         <SeatStatusBar remaining={remaining} isOpen={isOpen} />
       </PageHero>
 
@@ -114,18 +119,23 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
         <EventStory />
       </Section>
 
-      {/* 오윤의 판화 — 민중적·예술적 의미 */}
+      {/* 오윤의 판화 — 작품 */}
       <Section variant="canvas-soft">
         <PrintGallery />
       </Section>
 
-      {/* 추도식의 의의 */}
+      {/* 작품 세계의 의의 — 민중적·예술적 */}
       <Section variant="white">
+        <EventArtMeaning />
+      </Section>
+
+      {/* 추도식의 의의 */}
+      <Section variant="canvas-soft">
         <EventMeaning />
       </Section>
 
       {/* FAQ */}
-      <Section variant="canvas-soft">
+      <Section variant="white">
         <EventFAQ />
       </Section>
     </main>

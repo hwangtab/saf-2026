@@ -27,11 +27,17 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
   const [applicantName, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [partySize, setPartySize] = useState(1);
+  // 인원은 편집 중 빈 문자열을 허용해야 '1'을 지우고 다시 입력할 수 있다(13 입력 버그 방지).
+  // 표시는 문자열, 계산/제출은 clamp한 숫자(partySize)를 사용.
+  const [partyStr, setPartyStr] = useState('1');
   const [boardingConfirmed, setBoarding] = useState(false);
   const [agreedPrivacy, setAgreed] = useState(false);
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<RegisterEventResult | null>(null);
+
+  const clampParty = (n: number) => Math.max(1, Math.min(20, n));
+  const partySize = clampParty(parseInt(partyStr || '1', 10) || 1);
+  const setParty = (n: number) => setPartyStr(String(clampParty(n)));
 
   const amount = partySize * feePerPerson;
   const canSeat = isOpen && remaining >= partySize;
@@ -153,16 +159,38 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
         <label htmlFor="ev-party" className={LABEL_BASE}>
           {t('formPartySizeLabel')} <span className="text-danger">*</span>
         </label>
-        <input
-          id="ev-party"
-          type="number"
-          min={1}
-          max={20}
-          value={partySize}
-          onChange={(e) => setPartySize(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-          required
-          className={INPUT_BASE}
-        />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setParty(partySize - 1)}
+            disabled={partySize <= 1}
+            aria-label="인원 줄이기"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-xl font-bold text-charcoal-deep transition hover:bg-canvas disabled:opacity-40"
+          >
+            −
+          </button>
+          <input
+            id="ev-party"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={partyStr}
+            onChange={(e) => setPartyStr(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))}
+            onBlur={() => setParty(parseInt(partyStr || '1', 10) || 1)}
+            required
+            className={`${INPUT_BASE} w-20 text-center`}
+          />
+          <button
+            type="button"
+            onClick={() => setParty(partySize + 1)}
+            disabled={partySize >= 20}
+            aria-label="인원 늘리기"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-xl font-bold text-charcoal-deep transition hover:bg-canvas disabled:opacity-40"
+          >
+            +
+          </button>
+          <span className="ml-1 text-sm text-charcoal-muted">명</span>
+        </div>
         {err('partySize') && <p className={ERROR_TEXT}>{err('partySize')}</p>}
       </div>
 
