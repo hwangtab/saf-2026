@@ -62,6 +62,16 @@ export async function POST(req: NextRequest) {
 
   const toss = confirmResult.data;
 
+  // 이 행사는 카드 즉시결제만 지원. 가상계좌(WAITING_FOR_DEPOSIT) 등 비-DONE 상태는
+  // 입금 전이므로 확정하지 않는다. (현 MID는 가상계좌 미계약이라 사실상 불발생 — 방어적 가드.)
+  if (toss.status !== 'DONE') {
+    void notifyEmail('warning', '추도식 비-DONE 결제 상태(미확정)', {
+      주문번호: orderId,
+      status: toss.status,
+    });
+    return NextResponse.json({ error: 'unsupported_payment_status' }, { status: 400 });
+  }
+
   // 좌석 확정(원자적). hold 만료 시 재확인 후 승격, 초과면 SOLD_OUT.
   const { data: confirmData, error: confErr } = await supabase.rpc('confirm_event_registration', {
     p_order_no: orderId,
