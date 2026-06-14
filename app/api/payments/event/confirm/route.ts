@@ -5,7 +5,7 @@ import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { notifyEmail } from '@/lib/notify';
 import { sendEventSms, sendEventEmail } from '@/lib/events/notify';
-import { OH_YOON_MEMORIAL_PATH } from '@/content/events/oh-yoon-memorial';
+import { OH_YOON_MEMORIAL_PATH, OH_YOON_MEMORIAL_SLUG } from '@/content/events/oh-yoon-memorial';
 
 /**
  * 행사(추도식) 결제 confirm.
@@ -144,11 +144,19 @@ export async function POST(req: NextRequest) {
   revalidatePath(OH_YOON_MEMORIAL_PATH);
   revalidatePath(`/en${OH_YOON_MEMORIAL_PATH}`);
 
+  // 현재 누적 좌석 현황 (관리자 알림에 "총 몇 석/잔여" 포함용)
+  const { data: seatNow } = await supabase.rpc('event_seat_status', {
+    p_slug: OH_YOON_MEMORIAL_SLUG,
+  });
+  const s = seatNow as { capacity: number; occupied: number; remaining: number } | null;
+
   // 발송 (fire-and-forget)
-  void notifyEmail('payment', '추도식 결제 완료', {
+  void notifyEmail('payment', '추도식 신청 접수(결제완료)', {
     신청자: reg.applicant_name,
-    인원: String(reg.party_size),
-    금액: String(reg.amount),
+    인원: `${reg.party_size}명`,
+    금액: `${reg.amount.toLocaleString('ko-KR')}원`,
+    현재누적: s ? `${s.occupied}/${s.capacity}석 (잔여 ${s.remaining}석)` : '-',
+    명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
   });
   void sendEventSms(
     reg.phone,

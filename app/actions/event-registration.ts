@@ -5,6 +5,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { rateLimit } from '@/lib/rate-limit';
 import { getRequestMetadata } from './request-metadata';
 import { sendEventSms, sendEventEmail } from '@/lib/events/notify';
+import { notifyEmail } from '@/lib/notify';
 import { validateEventInput, type RegisterEventInput } from '@/lib/events/format';
 import {
   OH_YOON_MEMORIAL_SLUG,
@@ -105,6 +106,13 @@ export async function registerEvent(input: unknown) {
         amount: r.amount ?? 0,
       });
     }
+    // 관리자 알림 — 대기 신청도 접수 사실 통지
+    void notifyEmail('info', '추도식 대기 신청 접수', {
+      신청자: name,
+      인원: `${input.partySize}명`,
+      연락처: phone,
+      명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+    });
     return { ok: true, code: 'OK_WAITLIST', message: '대기자로 등록되었습니다.' };
   }
 
