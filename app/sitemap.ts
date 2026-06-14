@@ -143,7 +143,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       path: '/artworks/artist/%EB%B0%95%EC%83%9D%EA%B4%91',
       changeFrequency: 'weekly',
       priority: 0.9,
-      lastModified: new Date('2026-06-10'),
+      lastModified: new Date('2026-06-14'),
     },
     {
       path: '/faq',

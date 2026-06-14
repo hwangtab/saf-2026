@@ -73,12 +73,12 @@ export const NOW_SHOWING: NowShowingItem[] = [
     i18nKey: 'parkSaenggwang',
     href: '/artworks/artist/박생광',
     imageUrl: `${STORAGE}/artworks/c8839e5b-46a9-490d-a142-74f6d2b99be7/273__original.webp`,
-    // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-08(월) 폐막.
+    // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-28(일) 폐막. (회기 연장: 6-08 → 6-28)
     // 장소: 갤러리 PEG (서울시 은평구 통일로 870 M타워 6층). 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)
     startDate: '2026-05-20',
-    endDate: '2026-06-08',
+    endDate: '2026-06-28',
     // status 미지정 — getCardStatus()가 startDate 기준 자동 derive.
-    // 5/20 이전엔 'coming-soon'(어두운 톤 배지), 5/20 ~ 6/8 동안 'on'(success 배지 + ping dot).
+    // 5/20 이전엔 'coming-soon'(어두운 톤 배지), 5/20 ~ 6/28 동안 'on'(success 배지 + ping dot).
     heroPriority: 5,
   },
 ];

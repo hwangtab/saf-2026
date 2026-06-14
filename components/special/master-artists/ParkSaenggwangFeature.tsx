@@ -53,9 +53,9 @@ const PAGE_COPY = {
   ko: {
     title: '박생광 드로잉전 — 오방색 거장의 연필화 | 씨앗페',
     description:
-      '오방색의 거장 박생광(1904–1985)의 연필화. 1950년 전쟁이 그 이전의 모든 작품을 소실시켰고, 이 연필화들이 현존하는 박생광의 가장 이른 그림들이다. 2023년 예술의전당 한가람미술관에서 100점이 처음 공개된 이래 첫 전문 전시. 2026년 5월 20일부터 6월 8일까지 갤러리 PEG(서울특별시 은평구 통일로 870 M타워 6층).',
+      '오방색의 거장 박생광(1904–1985)의 연필화. 1950년 전쟁이 그 이전의 모든 작품을 소실시켰고, 이 연필화들이 현존하는 박생광의 가장 이른 그림들이다. 2023년 예술의전당 한가람미술관에서 100점이 처음 공개된 이래 첫 전문 전시. 2026년 5월 20일부터 6월 28일까지 갤러리 PEG(서울특별시 은평구 통일로 870 M타워 6층).',
     ogDescription:
-      '전쟁이 모든 것을 태운 자리에서 연필로 다시 그린 박생광 — 현존 최초의 작품을 만나는 연필화 특별전. 5/20~6/8 갤러리 PEG · 서울특별시 은평구 통일로 870 M타워 6층.',
+      '전쟁이 모든 것을 태운 자리에서 연필로 다시 그린 박생광 — 현존 최초의 작품을 만나는 연필화 특별전. 5/20~6/28 갤러리 PEG · 서울특별시 은평구 통일로 870 M타워 6층.',
     ogAlt: '박생광 드로잉전 대표 이미지',
     twitterTitle: '박생광 드로잉전',
     twitterDescription: '전쟁이 모든 것을 태웠다. 연필이 남긴 것이 현존하는 가장 이른 박생광이다.',
@@ -63,9 +63,9 @@ const PAGE_COPY = {
   en: {
     title: 'Park Saeng-gwang Drawings',
     description:
-      'Pencil works by Park Saeng-gwang (1904–1985), master of obangsaek. The 1950 war destroyed his entire prior body of work; these pencil drawings are the earliest surviving traces of his hand. Following the 2023 Seoul Arts Center retrospective that first assembled 100 of these works publicly, this special exhibition presents them to collectors and viewers. May 20–June 8, 2026 at Gallery PEG (M-Tower 6F, Eunpyeong, Seoul).',
+      'Pencil works by Park Saeng-gwang (1904–1985), master of obangsaek. The 1950 war destroyed his entire prior body of work; these pencil drawings are the earliest surviving traces of his hand. Following the 2023 Seoul Arts Center retrospective that first assembled 100 of these works publicly, this special exhibition presents them to collectors and viewers. May 20–June 28, 2026 at Gallery PEG (M-Tower 6F, Eunpyeong, Seoul).',
     ogDescription:
-      'War erased everything that came before — these pencil works are the earliest Park Saeng-gwang that survives. Drawings exhibition, May 20–Jun 8, Gallery PEG, Eunpyeong, Seoul.',
+      'War erased everything that came before — these pencil works are the earliest Park Saeng-gwang that survives. Drawings exhibition, May 20–Jun 28, Gallery PEG, Eunpyeong, Seoul.',
     ogAlt: 'Park Saeng-gwang Drawings exhibition key visual',
     twitterTitle: 'Park Saeng-gwang Drawings',
     twitterDescription:
@@ -74,7 +74,7 @@ const PAGE_COPY = {
 } as const;
 
 const EXHIBITION_START = '2026-05-20';
-const EXHIBITION_END = '2026-06-08';
+const EXHIBITION_END = '2026-06-28';
 const VENUE_NAME_KO = '갤러리 PEG';
 const VENUE_NAME_EN = 'Gallery PEG';
 const VENUE_ADDRESS_KO = '서울특별시 은평구 통일로 870 M타워 6층';
@@ -287,7 +287,7 @@ export default async function ParkSaenggwangFeature({
                     everything before; these drawings are where his extant oeuvre begins.
                   </span>
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
-                    <span className="inline-block">May 20 – Jun 8, 2026</span>
+                    <span className="inline-block">May 20 – Jun 28, 2026</span>
                     <span className="mx-2 text-white/40" aria-hidden="true">
                       ·
                     </span>
@@ -305,7 +305,7 @@ export default async function ParkSaenggwangFeature({
                     이 연필화들이 실물로 현존하는 최초의 박생광이다.
                   </span>
                   <span className="mt-2 block text-base sm:text-lg md:text-xl text-white/70">
-                    <span className="inline-block">2026년 5월 20일 ~ 6월 8일</span>
+                    <span className="inline-block">2026년 5월 20일 ~ 6월 28일</span>
                     <span className="mx-2 text-white/40" aria-hidden="true">
                       ·
                     </span>
@@ -1094,12 +1094,12 @@ export default async function ParkSaenggwangFeature({
                 {isEnglish ? (
                   <>
                     <span className="block">May 20 (Wed)</span>
-                    <span className="block">— Jun 8 (Mon), 2026</span>
+                    <span className="block">— Jun 28 (Sun), 2026</span>
                   </>
                 ) : (
                   <>
                     <span className="block">2026. 5. 20 (수)</span>
-                    <span className="block">— 6. 8 (월)</span>
+                    <span className="block">— 6. 28 (일)</span>
                   </>
                 )}
               </p>
