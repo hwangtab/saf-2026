@@ -18,7 +18,8 @@ export default function CartPageContent() {
   const { items, setQuantity, remove, clear, mounted } = useCart();
 
   const [details, setDetails] = useState<CartArtworkInfo[]>([]);
-  const [loading, setLoading] = useState(false);
+  // 초기 true — 첫 fetch 완료 전 항목이 잠깐 '품절/없음'으로 깜빡이는 것 방지(missing 판정 억제).
+  const [loading, setLoading] = useState(true);
 
   const itemIds = items.map((i) => i.artworkId);
   const idsKey = itemIds.join(',');
@@ -27,6 +28,7 @@ export default function CartPageContent() {
     if (!mounted) return;
     if (itemIds.length === 0) {
       setDetails([]);
+      setLoading(false);
       return;
     }
     let cancelled = false;
