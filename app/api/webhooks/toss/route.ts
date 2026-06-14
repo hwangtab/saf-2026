@@ -179,14 +179,24 @@ export async function POST(req: NextRequest) {
               buyerPhone: order.buyer_phone,
               soldAt: new Date().toISOString(),
             });
-            if (salesResult.inserted === false && salesResult.reason === 'error') {
+            if (
+              salesResult.inserted === false &&
+              (salesResult.reason === 'error' || salesResult.reason === 'artwork_taken')
+            ) {
+              const errorMsg = salesResult.reason === 'error' ? salesResult.error : '';
+              const isTaken = salesResult.reason === 'artwork_taken';
               console.error(
-                `[toss-webhook] artwork_sales INSERT failed: ${order.order_no}`,
-                salesResult.error
+                `[toss-webhook] artwork_sales INSERT failed (${salesResult.reason}): ${order.order_no}`,
+                errorMsg
               );
               void notifyEmail('error', '웹훅 판매 기록 생성 실패', {
                 주문번호: order.order_no,
-                에러: salesResult.error,
+                ...(isTaken
+                  ? {
+                      사유: '동시 구매 경합 — 다른 주문이 unique 작품을 먼저 가져감',
+                      참고: '결제는 완료됐으나 작품 매출 미기록(타인 선점). 수동 환불 검토 필요.',
+                    }
+                  : { 에러: errorMsg }),
               });
             } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
               console.error(`[toss-webhook] paid deposit with no order_items: ${order.order_no}`);
@@ -536,11 +546,22 @@ export async function POST(req: NextRequest) {
             buyerPhone: existingOrder.buyer_phone,
             soldAt: now,
           });
-          if (salesResult.inserted === false && salesResult.reason === 'error') {
+          if (
+            salesResult.inserted === false &&
+            (salesResult.reason === 'error' || salesResult.reason === 'artwork_taken')
+          ) {
+            const isTaken = salesResult.reason === 'artwork_taken';
             console.error(
-              `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed: ${existingOrder.order_no}`,
-              salesResult.error
+              `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed (${salesResult.reason}): ${existingOrder.order_no}`,
+              salesResult.reason === 'error' ? salesResult.error : ''
             );
+            if (isTaken) {
+              void notifyEmail('error', '웹훅 판매 기록 실패 — 작품 타인 선점', {
+                주문번호: existingOrder.order_no ?? '',
+                paymentKey,
+                참고: '동시 구매 경합에서 다른 주문이 unique 작품을 먼저 가져감. 결제는 완료, 작품 매출 미기록 — 수동 환불 검토 필요.',
+              });
+            }
           }
 
           for (const item of lineItems) {

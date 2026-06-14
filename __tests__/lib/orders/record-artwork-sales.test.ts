@@ -125,4 +125,36 @@ describe('recordOrderArtworkSales', () => {
 
     expect(result).toEqual({ inserted: false, reason: 'error', error: 'insert boom' });
   });
+
+  it('UNIQUE_EDITION_TAKEN 메시지 → artwork_taken (다른 주문이 unique 작품 선점, 호출지 환불 신호)', async () => {
+    const { supabase } = buildSupabaseMock({
+      insertResult: {
+        error: {
+          // 트리거 RAISE EXCEPTION — Postgres P0001(raise_exception)이라 code는 23505 아님
+          code: 'P0001',
+          message: 'UNIQUE_EDITION_TAKEN: artwork a1 already has an active sale',
+        },
+        data: null,
+      },
+    });
+
+    const lineItems: ArtworkSaleLine[] = [{ artwork_id: 'a1', quantity: 1, unit_price: 100000 }];
+    const result = await recordOrderArtworkSales(supabase, { ...baseParams, lineItems });
+
+    expect(result).toEqual({ inserted: false, reason: 'artwork_taken' });
+  });
+
+  it('23505 (동일주문 부분 유니크 위반) → already_recorded (멱등, 환불 아님)', async () => {
+    const { supabase } = buildSupabaseMock({
+      insertResult: {
+        error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+        data: null,
+      },
+    });
+
+    const lineItems: ArtworkSaleLine[] = [{ artwork_id: 'a1', quantity: 1, unit_price: 100000 }];
+    const result = await recordOrderArtworkSales(supabase, { ...baseParams, lineItems });
+
+    expect(result).toEqual({ inserted: false, reason: 'already_recorded' });
+  });
 });
