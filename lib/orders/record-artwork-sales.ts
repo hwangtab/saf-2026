@@ -25,7 +25,7 @@ export type RecordSalesParams = {
 
 export type RecordSalesResult =
   | { inserted: true; rows: number }
-  | { inserted: false; reason: 'already_recorded' | 'no_line_items' }
+  | { inserted: false; reason: 'already_recorded' | 'no_line_items' | 'artwork_taken' }
   | { inserted: false; reason: 'error'; error: string };
 
 /**
@@ -81,6 +81,13 @@ export async function recordOrderArtworkSales(
   const { error: insertError } = await supabase.from('artwork_sales').insert(rows);
 
   if (insertError) {
+    // 더블셀 차단: enforce_unique_edition_single_active_sale 트리거가, 다른 주문이 이 unique
+    // 작품의 active 매출을 먼저 기록했을 때 INSERT를 막고 'UNIQUE_EDITION_TAKEN' 센티넬을 던진다.
+    // 동일주문 멱등 충돌(23505)과 의미가 다르다 — 이쪽은 작품을 줄 수 없으므로 결제 후라면
+    // 호출지가 환불해야 한다. (Postgres RAISE EXCEPTION이라 code는 P0001, 23505 아님 → 메시지로 식별.)
+    if (insertError.message.includes('UNIQUE_EDITION_TAKEN')) {
+      return { inserted: false, reason: 'artwork_taken' };
+    }
     // 동시기록 레이스: confirm·webhook·reconcile이 같은 주문을 동시에 기록하려 할 때,
     // 멱등 SELECT를 둘 다 통과한 뒤 한쪽 INSERT가 (order_id, artwork_id) 유니크 위반(23505)으로
     // 실패할 수 있다. 데이터는 이긴 쪽이 이미 기록했으므로 이는 실패가 아니라 already_recorded다.

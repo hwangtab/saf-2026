@@ -171,6 +171,16 @@ export async function GET(request: NextRequest) {
             soldAt: tossPayment.approvedAt ?? now,
           });
 
+          if (salesResult.inserted === false && salesResult.reason === 'artwork_taken') {
+            // 동시 구매 경합: 다른 주문이 이 unique 작품을 먼저 가져감. 결제는 완료됐으나
+            // 작품 매출을 기록할 수 없음. reconcile은 드문 failsafe라 자동 환불은 하지 않고
+            // 운영팀이 수동 환불하도록 에러로 보고 + 작품 상태 동기화 스킵.
+            errors.push(
+              `${order.order_no}: artwork already taken by another order (동시 구매 경합 — 수동 환불 검토 필요)`
+            );
+            continue;
+          }
+
           if (salesResult.inserted === false && salesResult.reason === 'error') {
             errors.push(`${order.order_no}: artwork_sales insert failed: ${salesResult.error}`);
             continue;
