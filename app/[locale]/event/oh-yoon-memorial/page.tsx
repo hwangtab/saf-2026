@@ -37,13 +37,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locale = resolveLocale(raw);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'event.ohYoonMemorial' });
-  return createStandardPageMetadata(
+  const base = createStandardPageMetadata(
     t('metaTitle'),
     t('metaDescription'),
     PAGE_URL,
     OH_YOON_MEMORIAL_PATH,
     locale
   );
+
+  // OG/트위터 이미지는 파일 기반 컨벤션(opengraph-image.tsx)이 자동 emit하도록 images 키를
+  // 제거. (createStandardPageMetadata가 기본 og-image.jpg를 넣어두므로 own-property 삭제 필수 —
+  // images: undefined로 두면 Next.js가 hasOwnProperty로 판정해 컨벤션 파일을 무시함.)
+  const openGraph = base.openGraph ? { ...base.openGraph } : undefined;
+  const twitter = base.twitter ? { ...base.twitter } : undefined;
+  if (openGraph) delete (openGraph as { images?: unknown }).images;
+  if (twitter) delete (twitter as { images?: unknown }).images;
+
+  return { ...base, openGraph, twitter };
 }
 
 async function fetchSeatStatus(): Promise<SeatStatus | null> {
