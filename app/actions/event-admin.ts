@@ -100,10 +100,17 @@ export async function exportConfirmedCsv(): Promise<{ ok: boolean; csv?: string 
     .eq('status', 'confirmed')
     .order('paid_at', { ascending: true });
 
+  // CSV 수식 인젝션 방지: =,+,-,@,탭,캐리지리턴 으로 시작하는 셀은 작은따옴표 prefix.
+  const csvCell = (c: unknown): string => {
+    const s = String(c ?? '');
+    const guarded = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+    return `"${guarded.replace(/"/g, '""')}"`;
+  };
+
   const header = '이름,휴대폰,이메일,인원,회비,결제시각';
   const rows = (data ?? []).map((r) =>
     [r.applicant_name, r.phone, r.email ?? '', r.party_size, r.amount, r.paid_at ?? '']
-      .map((c) => `"${String(c).replace(/"/g, '""')}"`)
+      .map(csvCell)
       .join(',')
   );
   return { ok: true, csv: [header, ...rows].join('\n') };
