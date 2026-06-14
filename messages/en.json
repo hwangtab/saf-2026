@@ -1395,9 +1395,9 @@
       "memorialLife": "1946 — 1986",
       "memorialEpithet": "Master of Korean Minjung art",
       "storyQuote": "Art must be shared by many",
-      "storyP1": "In a brief life of forty years, Oh Yoon left over 400 works across painting, printmaking, and sculpture. He was posthumously awarded the Order of Cultural Merit in 2005, and a major retrospective was held at the National Museum of Modern and Contemporary Art in 2006.",
-      "storyP2": "The medium he devoted himself to most was the woodblock print. The hearty laughter of the market, the sweat of dock workers, buried sorrow turned into exuberant dance — he carved it all into wood with the tip of his knife. Without even a press, he rubbed prints by spoon and gave them freely to poetry covers, leaflets, and storybook illustrations.",
-      "storyP3": "In 2026, forty years after his passing, his conviction lives on. On July 5, those who remember him gather to hold a memorial.",
+      "storyP1": "Born the son of the novelist Oh Young-su, Oh Yoon chose to record his era with the tip of a knife rather than with words. He took part in founding Reality and Utterance (1979) and stood at the heart of Korea’s Minjung art movement; the woodblock prints he carved passed hand to hand through campuses, factory walls, and market alleys.",
+      "storyP2": "The woodblock print he chose was a resolve that could not be undone once the knife met the wood — and the most democratic vessel of all, one he could rub out by the tens of thousands with a spoon, without even a press, and give away. The hearty laughter of a Busan market, the sweat of Guro factory workers, buried sorrow released as ecstatic spirit — he kept all of it alive within those rough cuts.",
+      "storyP3": "In an age when censorship silenced the direct voice, he entered the shaman’s rite, carving sword dances and goblins to resist from the deepest place. Then in July 1986, not long after his first solo exhibition, he passed away at forty. The works of that brief life still touch the most aching places of our time, forty years on.",
       "portraitAlt": "Portrait of the artist Oh Yoon (1946–1986)",
       "portraitCaption": "Oh Yoon (1946–1986) · Master of Korean Minjung art",
       "muralTitle": "1974, the Guui-dong mural",
@@ -1415,7 +1415,11 @@
       "infoFeeLabel": "Fee",
       "infoFeeValue": "KRW 30,000 per person (lunch included)",
       "applyTitle": "Register",
-      "applyLead": "Choose the number of attendees below and pay the fee to complete registration."
+      "applyLead": "Choose the number of attendees below and pay the fee to complete registration.",
+      "meaningEyebrow": "Why we gather",
+      "meaningTitle": "Forty summers since\nhe laid down the knife",
+      "meaningP1": "To remember Oh Yoon is more than to recall an artist. His belief that “art must be shared by many” lives on today — where the proceeds of a single work become another struggling artist’s next month, in a place of mutual aid.",
+      "meaningP2": "Forty years after the summer of 1986 when he set down his blade, on July 5 his friends, his juniors, and the citizens who loved him gather in Insadong to honor him. A place where remembering the departed keeps the living alive — we hope you will be there with us."
     }
   }
 }

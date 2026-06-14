@@ -12,6 +12,7 @@ import RegistrationForm from './_components/RegistrationForm';
 import SeatStatusBar from './_components/SeatStatusBar';
 import EventStory from './_components/EventStory';
 import MuralGallery from './_components/MuralGallery';
+import EventMeaning from './_components/EventMeaning';
 import EventSchedule from './_components/EventSchedule';
 import EventFAQ from './_components/EventFAQ';
 
@@ -89,13 +90,18 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
         <MuralGallery />
       </Section>
 
-      {/* 추도식 안내 */}
+      {/* 추도식의 의의 */}
       <Section variant="white">
+        <EventMeaning />
+      </Section>
+
+      {/* 추도식 안내 */}
+      <Section variant="canvas">
         <EventSchedule />
       </Section>
 
       {/* 참가 신청 */}
-      <Section variant="canvas" id="apply">
+      <Section variant="white" id="apply">
         <div className="container-max">
           <div className="mx-auto max-w-xl">
             <h2 className="text-center font-display text-2xl font-bold text-charcoal-deep md:text-3xl">
@@ -113,7 +119,7 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
       </Section>
 
       {/* FAQ */}
-      <Section variant="white">
+      <Section variant="canvas-soft">
         <EventFAQ />
       </Section>
     </main>
