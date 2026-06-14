@@ -1183,7 +1183,7 @@ export type Database = {
       };
       orders: {
         Row: {
-          artwork_id: string;
+          artwork_id: string | null;
           buyer_email: string;
           buyer_name: string;
           buyer_phone: string;
@@ -1214,7 +1214,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          artwork_id: string;
+          artwork_id?: string | null;
           buyer_email: string;
           buyer_name: string;
           buyer_phone: string;
@@ -1245,7 +1245,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          artwork_id?: string;
+          artwork_id?: string | null;
           buyer_email?: string;
           buyer_name?: string;
           buyer_phone?: string;
