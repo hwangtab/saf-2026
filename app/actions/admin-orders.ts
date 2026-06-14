@@ -7,6 +7,7 @@ import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
+import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
@@ -248,7 +249,7 @@ export async function refundOrder(input: RefundInput) {
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, artwork_id, buyer_name, buyer_phone, buyer_email, metadata'
+      'id, order_no, status, total_amount, artwork_id, buyer_name, buyer_phone, buyer_email, metadata, order_items(artwork_id, quantity, unit_price)'
     )
     .eq('id', orderId)
     .single();
@@ -361,35 +362,33 @@ export async function refundOrder(input: RefundInput) {
     }
   })();
 
-  // 5. Void artwork_sales record
-  const { data: sale } = await supabase
+  // 5. Void artwork_sales — 다품목 주문은 해당 order의 active 매출 전부 void (단건 주문은 1행만 영향)
+  const { error: voidError } = await supabase
     .from('artwork_sales')
-    .select('id')
+    .update({ voided_at: now, void_reason: cancelReason.trim() })
     .eq('order_id', orderId)
-    .is('voided_at', null)
-    .limit(1)
-    .maybeSingle();
-
-  if (sale) {
-    const { error: voidError } = await supabase
-      .from('artwork_sales')
-      .update({ voided_at: now, void_reason: cancelReason.trim() })
-      .eq('id', sale.id);
-    if (voidError) {
-      // 환불은 이미 완료(Toss 취소 + 주문 refunded). 판매기록 void 실패 시 매출이 과대 계상되므로 경보.
-      console.error('[refundOrder] artwork_sales void failed:', voidError);
-      void notifyEmail('error', '환불 후 판매기록 void 실패 — 수동 처리 필요', {
-        주문번호: order.order_no,
-        주문ID: orderId,
-        판매기록ID: sale.id,
-        에러: voidError.message,
-      });
-    }
+    .is('voided_at', null);
+  if (voidError) {
+    // 환불은 이미 완료(Toss 취소 + 주문 refunded). 판매기록 void 실패 시 매출이 과대 계상되므로 경보.
+    console.error('[refundOrder] artwork_sales void failed:', voidError);
+    void notifyEmail('error', '환불 후 판매기록 void 실패 — 수동 처리 필요', {
+      주문번호: order.order_no,
+      주문ID: orderId,
+      에러: voidError.message,
+    });
   }
 
-  // 6. Recalculate artwork status
-  if (order.artwork_id) {
-    await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+  // 6. Recalculate artwork status — order_items 라인별로 (legacy 단건은 artwork_id fallback).
+  // void 이후 호출해야 활성 매출 없음 기준으로 sold→available 복원이 정확.
+  const lineItems = extractLineItems(order);
+  const artworkIds =
+    lineItems.length > 0
+      ? lineItems.map((item) => item.artwork_id)
+      : order.artwork_id
+        ? [order.artwork_id]
+        : [];
+  for (const artworkId of artworkIds) {
+    await deriveAndSyncArtworkStatus(supabase, artworkId);
   }
 
   // 7. Log action
@@ -413,10 +412,12 @@ export async function refundOrder(input: RefundInput) {
     }
   );
 
-  if (order.artwork_id) {
+  for (const artworkId of artworkIds) {
+    revalidatePath(`/artworks/${artworkId}`);
+    revalidatePath(`/en/artworks/${artworkId}`);
+  }
+  if (artworkIds.length > 0) {
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${order.artwork_id}`);
-    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);

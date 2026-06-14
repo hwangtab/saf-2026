@@ -78,6 +78,7 @@ let mockOrdersSingleResult: MockResult = { data: null, error: null };
 let mockPhoneVerifiedResult: MockResult = { data: null, error: null };
 let mockPaymentResult: MockResult = { data: null, error: null };
 let mockSaleResult: MockResult = { data: null, error: null };
+let mockSaleVoidError: unknown = null;
 let mockOrderUpdateError: unknown = null;
 let mockPaymentUpdateError: unknown = null;
 
@@ -187,7 +188,9 @@ function createSalesMock() {
       return { eq };
     }),
     update: jest.fn(() => {
-      const eq: jest.Mock = jest.fn(() => ({ eq }));
+      // void-all 경로: .update().eq('order_id', ...).is('voided_at', null) → { error }
+      const is = jest.fn(() => ({ error: mockSaleVoidError }));
+      const eq: jest.Mock = jest.fn(() => ({ eq, is, error: mockSaleVoidError }));
       return { eq };
     }),
   };
@@ -225,6 +228,7 @@ beforeEach(async () => {
   mockPhoneVerifiedResult = { data: null, error: null };
   mockPaymentResult = { data: null, error: null };
   mockSaleResult = { data: null, error: null };
+  mockSaleVoidError = null;
   mockOrderUpdateError = null;
   mockPaymentUpdateError = null;
   mockCancelResult = { success: true };
