@@ -7,7 +7,7 @@ import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
-import { extractLineItems } from '@/lib/orders/record-artwork-sales';
+import { extractLineItems, recordOrderArtworkSales } from '@/lib/orders/record-artwork-sales';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
@@ -448,7 +448,9 @@ export async function updateOrderStatus(
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id, order_no, status, buyer_email, buyer_name, buyer_phone, artwork_id, metadata')
+    .select(
+      'id, order_no, status, buyer_email, buyer_name, buyer_phone, artwork_id, metadata, order_items(artwork_id, quantity, unit_price)'
+    )
     .eq('id', orderId)
     .single();
 
@@ -485,44 +487,60 @@ export async function updateOrderStatus(
     throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
   }
 
-  // paid → cancelled: artwork_sales void + 작품 상태 복원
+  // paid → cancelled: artwork_sales void + 작품 상태 복원 (다품목 카트 주문 지원)
   if (order.status === 'paid' && newStatus === 'cancelled') {
     const now = new Date().toISOString();
-    const { data: sale } = await supabase
-      .from('artwork_sales')
-      .select('id')
-      .eq('order_id', orderId)
-      .is('voided_at', null)
-      .limit(1)
-      .maybeSingle();
 
-    if (sale) {
-      await supabase
-        .from('artwork_sales')
-        .update({ voided_at: now, void_reason: 'admin_cancelled' })
-        .eq('id', sale.id);
+    // 해당 order의 active 매출 전부 void (단건 주문은 1행만 영향)
+    const { error: voidError } = await supabase
+      .from('artwork_sales')
+      .update({ voided_at: now, void_reason: 'admin_cancelled' })
+      .eq('order_id', orderId)
+      .is('voided_at', null);
+    if (voidError) {
+      console.error('[updateOrderStatus] artwork_sales void 실패:', voidError);
     }
 
-    if (order.artwork_id) {
-      await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+    // 작품 상태 재계산 — order_items 라인별 (legacy 단건은 artwork_id fallback).
+    // void 이후 호출해야 활성 매출 없음 기준으로 sold→available 복원이 정확.
+    const lineItems = extractLineItems(order);
+    const artworkIds =
+      lineItems.length > 0
+        ? lineItems.map((item) => item.artwork_id)
+        : order.artwork_id
+          ? [order.artwork_id]
+          : [];
+    for (const artworkId of artworkIds) {
+      await deriveAndSyncArtworkStatus(supabase, artworkId);
+      revalidatePath(`/artworks/${artworkId}`);
+      revalidatePath(`/en/artworks/${artworkId}`);
+    }
+    if (artworkIds.length > 0) {
       revalidatePublicArtworkSurfaces();
-      revalidatePath(`/artworks/${order.artwork_id}`);
-      revalidatePath(`/en/artworks/${order.artwork_id}`);
     }
   }
 
-  // awaiting_deposit → cancelled: artwork reserved→available 복원
+  // awaiting_deposit → cancelled: artwork reserved→available 복원 (다품목 카트 주문 지원)
   if (order.status === 'awaiting_deposit' && newStatus === 'cancelled') {
-    if (order.artwork_id) {
-      const now = new Date().toISOString();
+    const now = new Date().toISOString();
+    const lineItems = extractLineItems(order);
+    const artworkIds =
+      lineItems.length > 0
+        ? lineItems.map((item) => item.artwork_id)
+        : order.artwork_id
+          ? [order.artwork_id]
+          : [];
+    for (const artworkId of artworkIds) {
       await supabase
         .from('artworks')
         .update({ status: 'available', updated_at: now })
-        .eq('id', order.artwork_id)
-        .eq('status', 'reserved');
+        .eq('id', artworkId)
+        .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
+      revalidatePath(`/artworks/${artworkId}`);
+      revalidatePath(`/en/artworks/${artworkId}`);
+    }
+    if (artworkIds.length > 0) {
       revalidatePublicArtworkSurfaces();
-      revalidatePath(`/artworks/${order.artwork_id}`);
-      revalidatePath(`/en/artworks/${order.artwork_id}`);
     }
   }
 
@@ -667,7 +685,7 @@ export async function confirmDeposit(orderId: string) {
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, artwork_id, total_amount, buyer_name, buyer_phone, buyer_email, metadata'
+      'id, order_no, status, artwork_id, total_amount, buyer_name, buyer_phone, buyer_email, metadata, order_items(artwork_id, quantity, unit_price)'
     )
     .eq('id', orderId)
     .single();
@@ -692,26 +710,34 @@ export async function confirmDeposit(orderId: string) {
     throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
   }
 
-  // 2. artwork_sales 생성 — DB 트리거가 artwork reserved→sold 처리
-  if (order.artwork_id) {
-    const { error: salesError } = await supabase.from('artwork_sales').insert({
-      artwork_id: order.artwork_id,
-      sale_price: order.total_amount,
-      quantity: 1,
+  // 2. artwork_sales 생성 — order_items 라인별 멱등 INSERT (다품목 카트 주문 지원).
+  //    DB 트리거가 artwork reserved→sold 처리. order_items가 비면 legacy 단건 artwork_id fallback.
+  const lineItems = extractLineItems(order);
+  const salesLineItems =
+    lineItems.length > 0
+      ? lineItems
+      : order.artwork_id
+        ? [{ artwork_id: order.artwork_id, quantity: 1, unit_price: order.total_amount }]
+        : [];
+
+  if (salesLineItems.length > 0) {
+    const salesResult = await recordOrderArtworkSales(supabase, {
+      orderId: order.id,
+      orderNo: order.order_no,
+      lineItems: salesLineItems,
       source: 'manual',
-      source_detail: 'bank_transfer',
-      order_id: order.id,
-      external_order_id: order.order_no,
-      buyer_name: order.buyer_name,
-      buyer_phone: order.buyer_phone,
-      sold_at: now,
+      sourceDetail: 'bank_transfer',
+      buyerName: order.buyer_name,
+      buyerPhone: order.buyer_phone,
+      soldAt: now,
     });
-    if (salesError) {
-      console.error('[confirmDeposit] artwork_sales INSERT 실패:', salesError);
+
+    if (salesResult.inserted === false && salesResult.reason === 'error') {
+      console.error('[confirmDeposit] artwork_sales INSERT 실패:', salesResult.error);
       void notifyEmail('error', '입금 확인 후 판매 기록 생성 실패', {
         주문번호: order.order_no,
         주문ID: orderId,
-        에러: salesError.message,
+        에러: salesResult.error,
         참고: '주문은 paid 처리됨 — 판매 기록 수동 생성 필요',
       });
       throw new Error(
@@ -719,7 +745,11 @@ export async function confirmDeposit(orderId: string) {
       );
     }
 
-    await deriveAndSyncArtworkStatus(supabase, order.artwork_id);
+    // 작품 상태 재동기화 — order_items 전 품목 루프 (reserved → sold)
+    const artworkIds = salesLineItems.map((item) => item.artwork_id);
+    for (const artworkId of artworkIds) {
+      await deriveAndSyncArtworkStatus(supabase, artworkId);
+    }
   }
 
   // 3. 관리자 + 구매자 입금 확인 이메일 발송 (fire-and-forget)
@@ -788,10 +818,12 @@ export async function confirmDeposit(orderId: string) {
     }
   );
 
-  if (order.artwork_id) {
+  for (const item of salesLineItems) {
+    revalidatePath(`/artworks/${item.artwork_id}`);
+    revalidatePath(`/en/artworks/${item.artwork_id}`);
+  }
+  if (salesLineItems.length > 0) {
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${order.artwork_id}`);
-    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
@@ -869,7 +901,7 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, artwork_id, buyer_name, buyer_phone, buyer_email, total_amount, metadata'
+      'id, order_no, status, artwork_id, buyer_name, buyer_phone, buyer_email, total_amount, metadata, order_items(artwork_id, quantity, unit_price)'
     )
     .eq('id', orderId)
     .single();
@@ -894,13 +926,21 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
     throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
   }
 
-  // 2. artwork reserved→available 직접 복원
-  // artwork_sales 레코드가 없어 deriveAndSyncArtworkStatus가 reserved를 건드리지 않으므로 직접 업데이트
-  if (order.artwork_id) {
+  // 2. artwork reserved→available 직접 복원 — order_items 라인별 (다품목 카트 주문 지원).
+  // artwork_sales 레코드가 없어 deriveAndSyncArtworkStatus가 reserved를 건드리지 않으므로 직접 업데이트.
+  // order_items가 비면 legacy 단건 artwork_id fallback.
+  const reservedLineItems = extractLineItems(order);
+  const reservedArtworkIds =
+    reservedLineItems.length > 0
+      ? reservedLineItems.map((item) => item.artwork_id)
+      : order.artwork_id
+        ? [order.artwork_id]
+        : [];
+  for (const artworkId of reservedArtworkIds) {
     await supabase
       .from('artworks')
       .update({ status: 'available', updated_at: now })
-      .eq('id', order.artwork_id)
+      .eq('id', artworkId)
       .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
   }
 
@@ -961,10 +1001,12 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
     }
   );
 
-  if (order.artwork_id) {
+  for (const artworkId of reservedArtworkIds) {
+    revalidatePath(`/artworks/${artworkId}`);
+    revalidatePath(`/en/artworks/${artworkId}`);
+  }
+  if (reservedArtworkIds.length > 0) {
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${order.artwork_id}`);
-    revalidatePath(`/en/artworks/${order.artwork_id}`);
   }
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);

@@ -16,8 +16,8 @@ export type RecordSalesParams = {
   orderId: string;
   orderNo: string | null;
   lineItems: ArtworkSaleLine[];
-  source: 'toss';
-  sourceDetail: string; // 'toss_widget' | 'toss_api'
+  source: 'toss' | 'manual';
+  sourceDetail: string; // 'toss_widget' | 'toss_api' | 'bank_transfer'
   buyerName: string | null;
   buyerPhone: string | null;
   soldAt: string; // ISO
