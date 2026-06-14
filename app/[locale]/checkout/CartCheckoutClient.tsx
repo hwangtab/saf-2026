@@ -154,8 +154,15 @@ export default function CartCheckoutClient({ clientKey }: Props) {
   }, 0);
   const shippingFee = calculateShippingFee(subtotal);
   const estimatedTotal = subtotal + shippingFee;
+  // 결제 가능 = detail 존재 + isAvailable. 숨김/삭제된 작품은 getCartArtworks 결과에
+  // 아예 없으므로(detail 누락), 누락 id도 unavailable로 취급해 빈 행 + 결제활성 막다른길 방지.
+  // (전 항목 숨김이면 details가 []라 length===0 — loading 끝난 뒤에만 판정해 로드 중 오탐 방지)
   const soldOutIds = details.filter((d) => d.isAvailable === false).map((d) => d.id);
-  const hasSoldOut = soldOutIds.length > 0;
+  const missingIds = loading
+    ? []
+    : items.filter((i) => !detailById.has(i.artworkId)).map((i) => i.artworkId);
+  const isUnavailable = (id: string) => soldOutIds.includes(id) || missingIds.includes(id);
+  const hasSoldOut = soldOutIds.length > 0 || missingIds.length > 0;
 
   async function handlePayment() {
     setError(null);
@@ -345,7 +352,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
             {items.map((item) => {
               const info = detailById.get(item.artworkId);
               const soldOut =
-                info?.isAvailable === false || highlightUnavailable.includes(item.artworkId);
+                isUnavailable(item.artworkId) || highlightUnavailable.includes(item.artworkId);
               const imageSrc = info?.image ? resolveArtworkImageUrl(info.image) : '';
               return (
                 <li
@@ -370,7 +377,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                       <p className="text-xs text-charcoal-soft">{info.artistName}</p>
                     ) : null}
                     <p className="mt-0.5 truncate font-semibold text-charcoal">
-                      {info?.title ?? ' '}
+                      {info?.title || (soldOut ? tc('unavailableTitle') : ' ')}
                     </p>
                     <p className="mt-0.5 text-xs text-charcoal-soft">
                       {tc('quantity')}: {item.quantity}

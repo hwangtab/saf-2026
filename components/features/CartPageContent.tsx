@@ -77,7 +77,14 @@ export default function CartPageContent() {
     const info = detailById(item.artworkId);
     return sum + (info ? info.price * item.quantity : 0);
   }, 0);
-  const hasSoldOut = details.some((d) => d.isAvailable === false);
+  // 결제 가능 = detail 존재 + isAvailable. 숨김/삭제된 작품은 getCartArtworks 결과에 없으므로
+  // (detail 누락) 누락 id도 unavailable 취급 — 빈 행 + 결제활성 막다른길 방지. (로드 중엔 판정 보류)
+  const isUnavailable = (id: string) => {
+    const info = detailById(id);
+    if (info) return info.isAvailable === false;
+    return !loading;
+  };
+  const hasSoldOut = items.some((item) => isUnavailable(item.artworkId));
 
   const handleClear = () => {
     if (window.confirm(t('clearConfirm'))) clear();
@@ -89,7 +96,7 @@ export default function CartPageContent() {
       <ul className="divide-y divide-gallery-divider rounded-2xl border border-gallery-hairline bg-canvas-soft lg:col-span-2">
         {items.map((item) => {
           const info = detailById(item.artworkId);
-          const soldOut = info?.isAvailable === false;
+          const soldOut = isUnavailable(item.artworkId);
           const isUnique = info?.editionType === 'unique';
           const imageSrc = info?.image ? resolveArtworkImageUrl(info.image) : '';
 
@@ -118,7 +125,7 @@ export default function CartPageContent() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-artwork-title truncate text-base text-charcoal-deep">
-                      {info?.title ?? ' '}
+                      {info?.title || (soldOut ? t('unavailableTitle') : ' ')}
                     </p>
                     {info?.artistName ? (
                       <p className="text-caption-meta truncate">{info.artistName}</p>

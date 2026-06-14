@@ -1290,6 +1290,7 @@
     "itemCount": "{count} works",
     "soldOut": "Sold out",
     "soldOutNotice": "Remove sold-out works to continue to checkout",
+    "unavailableTitle": "Unavailable artwork",
     "uniqueQtyLocked": "Only one of this work can be purchased",
     "drawerTitle": "Cart"
   },
