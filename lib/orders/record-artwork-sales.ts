@@ -81,6 +81,13 @@ export async function recordOrderArtworkSales(
   const { error: insertError } = await supabase.from('artwork_sales').insert(rows);
 
   if (insertError) {
+    // 동시기록 레이스: confirm·webhook·reconcile이 같은 주문을 동시에 기록하려 할 때,
+    // 멱등 SELECT를 둘 다 통과한 뒤 한쪽 INSERT가 (order_id, artwork_id) 유니크 위반(23505)으로
+    // 실패할 수 있다. 데이터는 이긴 쪽이 이미 기록했으므로 이는 실패가 아니라 already_recorded다.
+    // (호출지에서 'error'로 처리하면 허위 에러 이메일/크론 알림이 발생.)
+    if (insertError.code === '23505') {
+      return { inserted: false, reason: 'already_recorded' };
+    }
     return { inserted: false, reason: 'error', error: insertError.message };
   }
 
