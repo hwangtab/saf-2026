@@ -41,14 +41,19 @@ export async function getCartArtworks(ids: string[]): Promise<CartArtworkInfo[]>
 
     const images = Array.isArray(a.images) ? (a.images as string[]) : [];
 
+    // parsePrice는 "확인 중"/"문의"/null 등 미가격을 Infinity로 반환 → 카트 UI가 "₩∞"를 렌더한다.
+    // 미가격 작품은 결제 불가(createOrder가 거부)이므로 표시상으로도 unavailable + price 0으로 정규화.
+    const parsedPrice = parsePrice(a.price);
+    const hasValidPrice = Number.isFinite(parsedPrice) && parsedPrice > 0;
+
     results.push({
       id: a.id,
       title: a.title ?? '',
       artistName,
-      price: parsePrice(a.price),
+      price: hasValidPrice ? parsedPrice : 0,
       image: images[0] ?? null,
       editionType: (a.edition_type as CartArtworkInfo['editionType']) ?? null,
-      isAvailable,
+      isAvailable: isAvailable && hasValidPrice,
     });
   }
   return results;
