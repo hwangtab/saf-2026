@@ -1139,6 +1139,48 @@ export type Database = {
           },
         ];
       };
+      order_items: {
+        Row: {
+          artwork_id: string;
+          created_at: string;
+          id: string;
+          order_id: string;
+          quantity: number;
+          unit_price: number;
+        };
+        Insert: {
+          artwork_id: string;
+          created_at?: string;
+          id?: string;
+          order_id: string;
+          quantity?: number;
+          unit_price: number;
+        };
+        Update: {
+          artwork_id?: string;
+          created_at?: string;
+          id?: string;
+          order_id?: string;
+          quantity?: number;
+          unit_price?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_items_artwork_id_fkey';
+            columns: ['artwork_id'];
+            isOneToOne: false;
+            referencedRelation: 'artworks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_items_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       orders: {
         Row: {
           artwork_id: string;
