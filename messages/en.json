@@ -1348,5 +1348,46 @@
     "pause": "Pause",
     "playAria": "Play related artworks slider",
     "pauseAria": "Pause related artworks slider"
+  },
+  "event": {
+    "ohYoonMemorial": {
+      "metaTitle": "Oh Yoon 40th Memorial — Registration",
+      "metaDescription": "Oh Yoon 40th memorial on July 5, 2026. Join the bus from Insadong. First-come, first-served.",
+      "heroTitle": "Oh Yoon 40th Memorial",
+      "heroSubtitle": "Sunday, July 5, 2026 · Departing from Insadong",
+      "feeNotice": "Fee KRW 30,000 per person · One 45-seat bus, first-come first-served",
+      "seatRemaining": "{remaining} seats left",
+      "seatClosed": "Fully booked (waitlist available)",
+      "scheduleTitle": "Schedule",
+      "formNameLabel": "Name",
+      "formPhoneLabel": "Mobile number",
+      "formEmailLabel": "Email",
+      "formEmailHelp": "Enter to receive a receipt and details (optional)",
+      "formPartySizeLabel": "Number of attendees (including you)",
+      "formBoardingLabel": "I agree to board next to Insadong Suun Hall at 09:30",
+      "formPrivacyLabel": "I agree to the collection and use of personal information (required)",
+      "formFeeSummary": "Total fee: KRW {amount}",
+      "submitPay": "Pay fee and register",
+      "submitWaitlist": "Join the waitlist",
+      "submitting": "Processing...",
+      "waitlistTitle": "You are on the waitlist",
+      "waitlistBody": "If a seat opens up, we will contact you in order for payment.",
+      "successTitle": "Registration complete",
+      "successBody": "We have sent confirmation via KakaoTalk (and email).",
+      "errorGeneric": "Something went wrong. Please try again in a moment.",
+      "faqTitle": "Frequently asked questions",
+      "faqQ1": "How do I pay the fee?",
+      "faqA1": "You pay the fee via Toss at the time of registration. It is KRW 30,000 per person.",
+      "faqQ2": "What happens when it is full?",
+      "faqA2": "After the 44 seats on the bus are filled, we take waitlist registrations and contact you in order if a seat opens.",
+      "faqQ3": "Is lunch included?",
+      "faqA3": "We have lunch together at Insadong Pungnyu-sarang after the ceremony. It is included in the fee.",
+      "schedule": {
+        "depart": "Depart next to Insadong Suun Hall",
+        "ceremony": "Memorial ceremony",
+        "end": "Ceremony ends",
+        "lunch": "Lunch at Insadong Pungnyu-sarang"
+      }
+    }
   }
 }

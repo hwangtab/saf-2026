@@ -1348,5 +1348,46 @@
     "pause": "일시정지",
     "playAria": "관련 작품 슬라이더 재생",
     "pauseAria": "관련 작품 슬라이더 일시정지"
+  },
+  "event": {
+    "ohYoonMemorial": {
+      "metaTitle": "오윤 40주기 추도식 참가 신청",
+      "metaDescription": "2026년 7월 5일(일) 오윤 40주기 추도식. 인사동 출발 버스 동행, 선착순 참가 신청.",
+      "heroTitle": "오윤 40주기 추도식",
+      "heroSubtitle": "2026년 7월 5일(일) · 인사동 출발",
+      "feeNotice": "회비 1인 30,000원 · 45인승 버스 1대 선착순",
+      "seatRemaining": "잔여 {remaining}석",
+      "seatClosed": "정원이 마감되었습니다 (대기 신청 가능)",
+      "scheduleTitle": "당일 일정",
+      "formNameLabel": "성함",
+      "formPhoneLabel": "휴대폰 번호",
+      "formEmailLabel": "이메일",
+      "formEmailHelp": "결제 영수증·안내를 받으시려면 입력해 주세요 (선택)",
+      "formPartySizeLabel": "참가 인원 (본인 포함)",
+      "formBoardingLabel": "인사동 수운회관 옆 09:30 출발 탑승에 동의합니다",
+      "formPrivacyLabel": "개인정보 수집·이용에 동의합니다 (필수)",
+      "formFeeSummary": "회비 합계: {amount}원",
+      "submitPay": "회비 결제하고 신청",
+      "submitWaitlist": "대기 신청하기",
+      "submitting": "처리 중...",
+      "waitlistTitle": "대기자로 등록되었습니다",
+      "waitlistBody": "자리가 나면 신청 순서대로 결제 안내를 드립니다.",
+      "successTitle": "신청이 완료되었습니다",
+      "successBody": "확인 안내를 알림톡(및 이메일)으로 보내드렸습니다.",
+      "errorGeneric": "신청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      "faqTitle": "자주 묻는 질문",
+      "faqQ1": "회비는 어떻게 결제하나요?",
+      "faqA1": "신청과 동시에 토스로 회비를 결제합니다. 인원수에 따라 1인 30,000원씩 합산됩니다.",
+      "faqQ2": "정원이 마감되면 어떻게 되나요?",
+      "faqA2": "45인승 버스 1대(44석) 선착순 마감 후에는 대기 신청을 받습니다. 취소로 자리가 나면 순서대로 결제 안내를 드립니다.",
+      "faqQ3": "점심도 포함되나요?",
+      "faqA3": "추도식 후 인사동 풍류사랑(구 낭만)에서 함께 점심을 합니다. 회비에 포함됩니다.",
+      "schedule": {
+        "depart": "인사동 수운회관 옆 출발",
+        "ceremony": "추도식 진행",
+        "end": "추도식 종료",
+        "lunch": "인사동 풍류사랑(구 낭만) 점심"
+      }
+    }
   }
 }
