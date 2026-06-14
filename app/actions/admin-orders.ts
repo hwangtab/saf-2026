@@ -8,6 +8,10 @@ import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
 import { extractLineItems, recordOrderArtworkSales } from '@/lib/orders/record-artwork-sales';
+import {
+  getRepresentativeArtwork,
+  formatRepresentativeTitle,
+} from '@/lib/orders/representative-artwork';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
@@ -34,7 +38,21 @@ export type AdminOrderListItem = {
   sla_overdue: boolean;
 };
 
+/**
+ * 다품목(cart) 주문의 개별 라인 아이템 — 배송 시 직원이 N개 작품 전체를 봐야 하므로 전 라인 반환.
+ * 단건 주문(order_items 1행 또는 legacy artwork_id)도 동일 구조로 표현.
+ */
+export type OrderLineItem = {
+  artwork_id: string | null;
+  artwork_title: string | null;
+  artist_name: string | null;
+  quantity: number;
+  unit_price: number | null;
+};
+
 export type OrderDetail = AdminOrderListItem & {
+  /** 전체 라인 아이템. 다품목은 N건, 단건은 1건. 빈 배열이면 legacy 단건(artwork_id) — UI는 artwork_title fallback. */
+  line_items: OrderLineItem[];
   shipping_name: string | null;
   shipping_phone: string | null;
   shipping_address: string | null;
@@ -77,7 +95,7 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
   let query = supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, escalated_at, artwork_id, artworks(title, images, artists(name_ko))'
+      'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, escalated_at, artwork_id, artworks(title, images, artists(name_ko)), order_items(artworks(title, images, artists(name_ko)))'
     )
     .order('created_at', { ascending: false })
     .limit(2000);
@@ -106,10 +124,21 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
   if (error) throw error;
 
   return (data || []).map((row) => {
+    // 다품목(orders.artwork_id NULL) 주문은 order_items 대표작품 "외 N건"으로 표시. 단건은 artworks fallback.
+    const rep = getRepresentativeArtwork(row.order_items);
+
     const artwork = Array.isArray(row.artworks) ? row.artworks[0] : row.artworks;
     const images = Array.isArray(artwork?.images) ? artwork.images : [];
     const artistRow = artwork?.artists;
-    const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
+    const singleArtistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
+
+    const artworkTitle =
+      rep.count > 0 && rep.title
+        ? formatRepresentativeTitle(rep.title, rep.count, 'ko')
+        : (artwork?.title ?? null);
+    const artworkImage = rep.count > 0 ? rep.image : (images[0] ?? null);
+    const artistName = rep.count > 0 ? rep.artistName : (singleArtistName ?? null);
+
     const status = row.status as OrderStatus;
     const sla_overdue =
       row.paid_at != null &&
@@ -126,9 +155,9 @@ export async function getOrders(filters: OrderFilters = {}): Promise<AdminOrderL
       created_at: row.created_at,
       paid_at: row.paid_at,
       artwork_id: row.artwork_id,
-      artwork_title: artwork?.title ?? null,
-      artwork_image: images[0] ?? null,
-      artist_name: artistName ?? null,
+      artwork_title: artworkTitle,
+      artwork_image: artworkImage,
+      artist_name: artistName,
       payment_method: null,
       escalated_at: (row.escalated_at as string | null) ?? null,
       sla_overdue,
@@ -146,7 +175,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const { data: order, error } = await supabase
     .from('orders')
     .select(
-      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, escalated_at, artwork_id, metadata, deposit_auto_cancel_paused, artworks(title, images, artists(name_ko))'
+      'id, order_no, status, total_amount, item_amount, shipping_amount, buyer_name, buyer_phone, shipping_name, shipping_phone, shipping_address, shipping_address_detail, shipping_memo, shipping_carrier, tracking_number, created_at, paid_at, cancelled_at, refunded_at, escalated_at, artwork_id, metadata, deposit_auto_cancel_paused, artworks(title, images, artists(name_ko)), order_items(quantity, unit_price, artwork_id, artworks(title, images, artists(name_ko)))'
     )
     .eq('id', orderId)
     .maybeSingle();
@@ -173,7 +202,38 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const artwork = Array.isArray(order.artworks) ? order.artworks[0] : order.artworks;
   const images = Array.isArray(artwork?.images) ? artwork.images : [];
   const artistRow = artwork?.artists;
-  const artistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
+  const singleArtistName = Array.isArray(artistRow) ? artistRow[0]?.name_ko : artistRow?.name_ko;
+
+  // 다품목(orders.artwork_id NULL) 주문: order_items 전 라인을 열거(배송 시 N개 작품 전부 필요).
+  // 단건은 order_items 1행(또는 비면 legacy artwork_id) → line_items 1건으로 표현.
+  const orderItems = Array.isArray(order.order_items)
+    ? order.order_items
+    : order.order_items != null
+      ? [order.order_items]
+      : [];
+  const lineItems: OrderLineItem[] = orderItems.map((item) => {
+    const itemArtwork = Array.isArray(item.artworks) ? item.artworks[0] : item.artworks;
+    const itemArtistRow = itemArtwork?.artists;
+    const itemArtistName = Array.isArray(itemArtistRow)
+      ? itemArtistRow[0]?.name_ko
+      : itemArtistRow?.name_ko;
+    return {
+      artwork_id: item.artwork_id ?? null,
+      artwork_title: itemArtwork?.title ?? null,
+      artist_name: itemArtistName ?? null,
+      quantity: typeof item.quantity === 'number' ? item.quantity : 1,
+      unit_price: typeof item.unit_price === 'number' ? item.unit_price : null,
+    };
+  });
+
+  // 대표작품: 목록 호환 필드(artwork_title/artist_name/artwork_image)는 다품목이면 "외 N건".
+  const rep = getRepresentativeArtwork(order.order_items);
+  const repArtworkTitle =
+    rep.count > 0 && rep.title
+      ? formatRepresentativeTitle(rep.title, rep.count, 'ko')
+      : (artwork?.title ?? null);
+  const repArtworkImage = rep.count > 0 ? rep.image : (images[0] ?? null);
+  const repArtistName = rep.count > 0 ? rep.artistName : (singleArtistName ?? null);
 
   const confirmResponse = (payment?.confirm_response as Record<string, unknown> | null) ?? null;
   const virtualAccount =
@@ -198,9 +258,10 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     cancelled_at: order.cancelled_at ?? null,
     refunded_at: order.refunded_at ?? null,
     artwork_id: order.artwork_id ?? null,
-    artwork_title: artwork?.title ?? null,
-    artwork_image: images[0] ?? null,
-    artist_name: artistName ?? null,
+    artwork_title: repArtworkTitle,
+    artwork_image: repArtworkImage,
+    artist_name: repArtistName,
+    line_items: lineItems,
     payment_key: payment?.payment_key ?? null,
     payment_status: payment?.status ?? null,
     payment_method: payment?.method ?? null,
@@ -391,6 +452,17 @@ export async function refundOrder(input: RefundInput) {
     await deriveAndSyncArtworkStatus(supabase, artworkId);
   }
 
+  // 6b. reserved 작품 해제 — 다품목 VA 주문에서 안 팔린 unique 작품이 reserved로 남는 재고누수 차단.
+  // deriveAndSyncArtworkStatus가 sold로 만든 작품(승자 소유)은 .eq('status','reserved') 가드로 제외됨.
+  // void→resync 후에 호출해야 안전. (awaiting_deposit→cancelled 분기와 동일 패턴)
+  for (const artworkId of artworkIds) {
+    await supabase
+      .from('artworks')
+      .update({ status: 'available', updated_at: now })
+      .eq('id', artworkId)
+      .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
+  }
+
   // 7. Log action
   await logAdminAction(
     'order_refunded',
@@ -512,6 +584,16 @@ export async function updateOrderStatus(
           : [];
     for (const artworkId of artworkIds) {
       await deriveAndSyncArtworkStatus(supabase, artworkId);
+    }
+    // reserved 작품 해제 — 다품목 VA 주문에서 안 팔린 unique 작품이 reserved로 남는 재고누수 차단.
+    // deriveAndSyncArtworkStatus가 sold로 만든 작품(승자 소유)은 .eq('status','reserved') 가드로 제외.
+    // void→resync 후에 호출해야 안전.
+    for (const artworkId of artworkIds) {
+      await supabase
+        .from('artworks')
+        .update({ status: 'available', updated_at: now })
+        .eq('id', artworkId)
+        .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
       revalidatePath(`/artworks/${artworkId}`);
       revalidatePath(`/en/artworks/${artworkId}`);
     }

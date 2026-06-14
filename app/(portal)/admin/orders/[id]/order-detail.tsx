@@ -701,24 +701,62 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
         <AdminCard>
           <AdminCardHeader>
             <span className="text-sm font-semibold text-gray-700">작품 정보</span>
+            {order.line_items.length > 1 && (
+              <span className="text-xs text-gray-500">{order.line_items.length}개 작품</span>
+            )}
           </AdminCardHeader>
           <dl className="space-y-3 p-5">
-            <InfoRow
-              label="작품명"
-              value={
-                order.artwork_id ? (
-                  <Link
-                    href={`/admin/artworks/${order.artwork_id}`}
-                    className="text-primary-a11y hover:underline"
+            {order.line_items.length > 1 ? (
+              // 다품목(cart) 주문 — 배송 시 직원이 전 작품을 봐야 하므로 모든 라인 열거
+              <div className="space-y-3">
+                {order.line_items.map((item, idx) => (
+                  <div
+                    key={item.artwork_id ?? idx}
+                    className="rounded-lg border border-[var(--admin-border-soft)] p-3"
                   >
-                    {order.artwork_title ?? order.artwork_id}
-                  </Link>
-                ) : (
-                  order.artwork_title
-                )
-              }
-            />
-            <InfoRow label="작가" value={order.artist_name ?? '—'} />
+                    <div className="text-sm font-medium text-gray-800">
+                      {item.artwork_id ? (
+                        <Link
+                          href={`/admin/artworks/${item.artwork_id}`}
+                          className="text-primary-a11y hover:underline"
+                        >
+                          {item.artwork_title ?? item.artwork_id}
+                        </Link>
+                      ) : (
+                        (item.artwork_title ?? '—')
+                      )}
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-500">
+                      <span>작가: {item.artist_name ?? '—'}</span>
+                      <span>수량: {item.quantity}</span>
+                      <span>
+                        단가: {item.unit_price != null ? formatKRW(item.unit_price) : '—'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // 단건 주문 — order_items 1행 또는 legacy artwork_id. 기존 표시 보존.
+              <>
+                <InfoRow
+                  label="작품명"
+                  value={
+                    order.artwork_id ? (
+                      <Link
+                        href={`/admin/artworks/${order.artwork_id}`}
+                        className="text-primary-a11y hover:underline"
+                      >
+                        {order.artwork_title ?? order.artwork_id}
+                      </Link>
+                    ) : (
+                      order.artwork_title
+                    )
+                  }
+                />
+                <InfoRow label="작가" value={order.artist_name ?? '—'} />
+              </>
+            )}
             {order.sale_id && (
               <InfoRow
                 label="판매 기록"
