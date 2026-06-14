@@ -267,10 +267,13 @@ export async function refundOrder(input: RefundInput) {
     .maybeSingle();
 
   const hasTossPayment = !!payment?.payment_key;
+  // 결제가 이미 Toss에서 취소된 경우(웹훅 선반영 등) 재취소 호출은 24h 이후 "이미 취소" 에러로
+  // 환불이 영구 차단된다. 이미 취소면 Toss 호출을 건너뛰고 DB 정리만 진행한다.
+  const tossAlreadyCanceled = payment?.status === 'CANCELED';
 
   const now = new Date().toISOString();
 
-  if (hasTossPayment) {
+  if (hasTossPayment && !tossAlreadyCanceled) {
     // 2a. Toss 결제 — Toss Cancel API 호출 (provider 매칭 시크릿 사용)
     const provider = resolveOrderProvider(order.metadata);
     const cancelResult = await cancelPayment(
@@ -368,10 +371,20 @@ export async function refundOrder(input: RefundInput) {
     .maybeSingle();
 
   if (sale) {
-    await supabase
+    const { error: voidError } = await supabase
       .from('artwork_sales')
       .update({ voided_at: now, void_reason: cancelReason.trim() })
       .eq('id', sale.id);
+    if (voidError) {
+      // 환불은 이미 완료(Toss 취소 + 주문 refunded). 판매기록 void 실패 시 매출이 과대 계상되므로 경보.
+      console.error('[refundOrder] artwork_sales void failed:', voidError);
+      void notifyEmail('error', '환불 후 판매기록 void 실패 — 수동 처리 필요', {
+        주문번호: order.order_no,
+        주문ID: orderId,
+        판매기록ID: sale.id,
+        에러: voidError.message,
+      });
+    }
   }
 
   // 6. Recalculate artwork status

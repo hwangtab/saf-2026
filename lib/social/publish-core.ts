@@ -145,8 +145,11 @@ export interface PublishHistoryStat {
 }
 
 /**
- * social_posts(status='published') 집계 — artwork_id별 게시 횟수 + 마지막 게시 시각.
+ * social_posts(published + 진행중 publishing) 집계 — artwork_id별 게시 횟수 + 마지막 게시 시각.
  * 후보 패널·prepareSocialDraft·자동게시가 공유. (수백 행 → JS reduce로 충분.)
+ * 'publishing'(insert 후 어댑터 완료 전 중단)도 포함 — cron이 maxDuration으로 죽어 멈춘 행을
+ * postCount=0으로 보고 다음 실행이 같은 작품을 재게시(SNS 중복 포스팅)하던 버그 방지.
+ * published_at은 'published'에만 있으므로 lastPublishedAt 계산은 영향 없음(null은 자동 제외).
  */
 export async function aggregatePublishHistory(
   supabase: Client,
@@ -158,7 +161,7 @@ export async function aggregatePublishHistory(
   const { data, error } = await supabase
     .from('social_posts')
     .select('artwork_id, published_at')
-    .eq('status', 'published')
+    .in('status', ['published', 'publishing'])
     .in('artwork_id', artworkIds);
 
   if (error || !data) return result;

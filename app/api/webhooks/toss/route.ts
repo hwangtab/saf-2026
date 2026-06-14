@@ -560,6 +560,40 @@ export async function POST(req: NextRequest) {
             참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
           });
         }
+
+        // confirm route 실패를 webhook이 보정한 경우, 구매자 결제완료 알림이 누락되지 않게 발송.
+        // (confirm route는 정상 경로에서 payment_confirmed를 보내지만, 그 단계에서 실패하면 미발송)
+        if (updatedOrders && updatedOrders.length > 0) {
+          const paidInfo = await getOrderNotificationInfo(supabase, { id: paymentRow.order_id });
+          const buyerLocale = extractBuyerLocale(existingOrder.metadata);
+          if (existingOrder.buyer_email) {
+            void sendBuyerEmail(
+              existingOrder.buyer_email,
+              'payment_confirmed',
+              {
+                orderNo: existingOrder.order_no ?? '',
+                buyerName: existingOrder.buyer_name ?? '',
+                artworkTitle: paidInfo?.artworkTitle ?? '',
+                artistName: paidInfo?.artistName ?? '',
+                amount: existingOrder.total_amount ?? 0,
+                itemAmount: paidInfo?.itemAmount,
+                shippingAmount: paidInfo?.shippingAmount,
+              },
+              buyerLocale
+            );
+          }
+          void sendBuyerSms(
+            existingOrder.buyer_phone,
+            'payment_confirmed',
+            {
+              buyerName: existingOrder.buyer_name ?? '',
+              artworkTitle: paidInfo?.artworkTitle ?? '',
+              amount: existingOrder.total_amount ?? 0,
+            },
+            buyerLocale,
+            existingOrder.order_no ?? undefined
+          );
+        }
       }
     }
 
@@ -607,14 +641,15 @@ export async function POST(req: NextRequest) {
           if (voidError) {
             console.error(`[toss-webhook] artwork_sales void failed: ${sale.id}`, voidError);
           }
-
-          if (existingOrder.artwork_id) {
-            await deriveAndSyncArtworkStatus(supabase, existingOrder.artwork_id);
-          }
         }
 
-        // artwork reserved → available 복원 (sale이 없는 경우도 처리)
+        // 작품 상태 재동기화 — sale 유무와 무관하게 실행.
+        // deriveAndSync는 활성 판매가 없으면 sold→available로 복원한다(confirm 실패로 sale 없이
+        // sold만 된 작품이 환불 후 영구 잠기던 버그 방지). reserved→available은 deriveAndSync
+        // 범위 밖(awaiting_deposit 취소 케이스)이라 별도 복원.
         if (existingOrder.artwork_id) {
+          await deriveAndSyncArtworkStatus(supabase, existingOrder.artwork_id);
+
           const { error: artworkError } = await supabase
             .from('artworks')
             .update({ status: 'available', updated_at: now })
