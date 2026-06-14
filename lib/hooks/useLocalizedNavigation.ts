@@ -23,19 +23,31 @@ export function useLocalizedNavigation(): NavigationItem[] {
           description: t('spaceCollectionsDesc'),
         },
         {
-          name: t('ohYoon'),
-          href: '/artworks/artist/오윤',
-          description: t('ohYoonDesc'),
-        },
-        {
           name: t('parkSaenggwang'),
           href: '/artworks/artist/박생광',
           description: t('parkSaenggwangNavDesc'),
+        },
+      ],
+    },
+    {
+      // 오윤 40주기 캠페인 묶음: 추도식(시기성 행동) + 청원(시민 행동) + 오윤 작품.
+      name: t('ohYoon40th'),
+      href: '/event/oh-yoon-memorial',
+      items: [
+        {
+          name: t('ohYoonMemorial'),
+          href: '/event/oh-yoon-memorial',
+          description: t('ohYoonMemorialDesc'),
         },
         {
           name: t('ohYoonPetition'),
           href: '/petition/oh-yoon',
           description: t('ohYoonPetitionDesc'),
+        },
+        {
+          name: t('ohYoon'),
+          href: '/artworks/artist/오윤',
+          description: t('ohYoonDesc'),
         },
       ],
     },
@@ -117,8 +129,8 @@ export function useLocalizedNavigation(): NavigationItem[] {
         },
       ],
     },
-    // 청원(/petition/oh-yoon)은 시민 행동 카테고리로, 큐레이션 전시(/special)와 본질이 다름.
-    // 헤더 메뉴에는 노출하지 않고 Now Showing 카드와 본문 인링크로만 진입.
+    // 오윤 청원·추도식은 '오윤 40주기' 그룹(위)으로 묶어 헤더에 노출.
+    // 추도식은 2026-07-05 행사 종료 후 메뉴에서 제거할 것.
   ];
 }
 

@@ -29,7 +29,10 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
     },
     {
       label: '캠페인',
-      items: [{ href: '/admin/petition/oh-yoon', label: '오윤 청원 운영' }],
+      items: [
+        { href: '/admin/petition/oh-yoon', label: '오윤 청원 운영' },
+        { href: '/admin/event/oh-yoon-memorial', label: '추도식 신청 운영' },
+      ],
     },
     {
       label: '주문',
@@ -79,7 +82,10 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
     },
     {
       label: 'Campaigns',
-      items: [{ href: '/admin/petition/oh-yoon', label: 'Oh Yoon Petition' }],
+      items: [
+        { href: '/admin/petition/oh-yoon', label: 'Oh Yoon Petition' },
+        { href: '/admin/event/oh-yoon-memorial', label: 'Oh Yoon Memorial' },
+      ],
     },
     {
       label: 'Orders',

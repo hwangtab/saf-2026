@@ -1,0 +1,146 @@
+import React from 'react';
+import { render } from '@react-email/render';
+import { sendSolapiAlimTalk, sendSolapiSms, type KakaoButton } from '@/lib/sms/solapi';
+import { normalizeKoreanMobile } from '@/lib/sms/phone';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
+import EventPaymentConfirmedEmail from '@/emails/event-payment-confirmed';
+import EventWaitlistEmail from '@/emails/event-waitlist';
+import EventWaitlistPaymentEmail from '@/emails/event-waitlist-payment';
+import {
+  EVENT_ALIMTALK_TEMPLATE_ENV,
+  buildEventAlimTalkVariables,
+  won,
+  type EventNotifyType,
+  type EventNotifyData,
+} from './format';
+
+export type { EventNotifyType, EventNotifyData };
+export { EVENT_ALIMTALK_TEMPLATE_ENV, buildEventAlimTalkVariables };
+
+function eventTemplateId(type: EventNotifyType): string {
+  return process.env[EVENT_ALIMTALK_TEMPLATE_ENV[type]] ?? '';
+}
+
+/** 알림톡 실패 시 자동대체될 SMS 본문(템플릿 미승인 기간 fallback). 카카오 템플릿과 동일 톤. */
+function buildEventSmsText(type: EventNotifyType, d: EventNotifyData): string {
+  switch (type) {
+    case 'payment_confirmed':
+      return `[씨앗페] ${d.name}님, 오윤 40주기 추도식 신청이 완료되었습니다. (인원 ${d.partySize}명 / 회비 ${won(d.amount)}원 결제완료) 7월 5일(일) 09:30 인사동 수운회관 옆 출발.`;
+    case 'waitlist':
+      return `[씨앗페] ${d.name}님, 오윤 40주기 추도식 대기 신청이 접수되었습니다. 자리가 나면 순서대로 결제 안내를 드립니다.`;
+    case 'waitlist_payment':
+      return `[씨앗페] ${d.name}님, 추도식에 자리가 생겼습니다. (인원 ${d.partySize}명 / 회비 ${won(d.amount)}원) ${d.deadline ?? ''}까지 결제하시면 확정됩니다: ${d.paymentUrl ?? ''}`;
+  }
+}
+
+/** 행사 알림톡(우선) → 미승인/미설정 시 SMS 자동대체. never throw. */
+export async function sendEventSms(
+  phone: string | null | undefined,
+  type: EventNotifyType,
+  data: EventNotifyData,
+  orderNo?: string
+): Promise<{ ok: boolean; skipped: boolean }> {
+  try {
+    const to = normalizeKoreanMobile(phone);
+    if (!to) return { ok: false, skipped: true };
+
+    const text = buildEventSmsText(type, data);
+    const templateId = eventTemplateId(type);
+    const useAlimTalk = templateId.length > 0 && Boolean(process.env.SOLAPI_KAKAO_PF_ID);
+
+    let buttons: KakaoButton[] | undefined;
+    if (type === 'waitlist_payment' && data.paymentUrl) {
+      buttons = [
+        {
+          buttonType: 'WL',
+          buttonName: '결제하기',
+          linkMo: data.paymentUrl,
+          linkPc: data.paymentUrl,
+        },
+      ];
+    }
+
+    const result = useAlimTalk
+      ? await sendSolapiAlimTalk({
+          to,
+          text,
+          templateId,
+          variables: buildEventAlimTalkVariables(type, data),
+          buttons,
+        })
+      : await sendSolapiSms({ to, text });
+
+    try {
+      const admin = createSupabaseAdminClient();
+      await admin.from('sms_logs').insert({
+        order_no: orderNo ?? null,
+        to_phone: to,
+        type: `event_${type}`,
+        provider: useAlimTalk ? 'kakao' : 'solapi',
+        provider_message_id: result.messageId ?? null,
+        status: result.ok ? 'sent' : 'failed',
+        segment: result.segment ?? null,
+        error: result.ok ? null : (result.error ?? 'unknown'),
+      });
+    } catch (logErr) {
+      console.error(`[event-sms:${type}] log insert failed:`, logErr);
+    }
+
+    return { ok: result.ok, skipped: false };
+  } catch (err) {
+    console.error(`[event-sms:${type}] failed:`, err);
+    return { ok: false, skipped: false };
+  }
+}
+
+const EVENT_EMAIL_SUBJECTS: Record<EventNotifyType, string> = {
+  payment_confirmed: '[씨앗페] 오윤 40주기 추도식 신청이 완료되었습니다',
+  waitlist: '[씨앗페] 오윤 40주기 추도식 대기 신청 접수',
+  waitlist_payment: '[씨앗페] 오윤 40주기 추도식 좌석 안내',
+};
+
+/** 행사 이메일(이메일 입력 시에만). never throw. */
+export async function sendEventEmail(
+  to: string | null | undefined,
+  type: EventNotifyType,
+  data: EventNotifyData
+): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from || !to) return;
+
+  try {
+    let el: React.ReactElement;
+    if (type === 'payment_confirmed') {
+      el = React.createElement(EventPaymentConfirmedEmail, {
+        name: data.name,
+        partySize: data.partySize,
+        amount: data.amount,
+      });
+    } else if (type === 'waitlist') {
+      el = React.createElement(EventWaitlistEmail, {
+        name: data.name,
+        partySize: data.partySize,
+        amount: data.amount,
+      });
+    } else {
+      el = React.createElement(EventWaitlistPaymentEmail, {
+        name: data.name,
+        partySize: data.partySize,
+        amount: data.amount,
+        deadline: data.deadline,
+        paymentUrl: data.paymentUrl,
+      });
+    }
+
+    const html = await render(el);
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to, subject: EVENT_EMAIL_SUBJECTS[type], html }),
+    });
+    if (!res.ok) console.error(`[event-email:${type}] resend ${res.status}`);
+  } catch (err) {
+    console.error(`[event-email:${type}] failed:`, err);
+  }
+}
