@@ -133,7 +133,7 @@ export default function CartPageContent() {
                       <p className="text-caption-meta truncate">{info.artistName}</p>
                     ) : null}
                     {soldOut ? (
-                      <span className="mt-1 inline-flex w-fit items-center rounded bg-danger/10 px-1.5 py-0.5 text-xs font-semibold text-danger">
+                      <span className="mt-1 inline-flex w-fit items-center rounded bg-danger/10 px-1.5 py-0.5 text-xs font-semibold text-danger-a11y">
                         {t('soldOut')}
                       </span>
                     ) : null}
@@ -142,7 +142,7 @@ export default function CartPageContent() {
                     type="button"
                     onClick={() => remove(item.artworkId)}
                     aria-label={t('remove')}
-                    className="inline-flex min-h-[36px] min-w-[36px] flex-shrink-0 items-center justify-center rounded-md text-charcoal-soft transition-colors hover:bg-gray-100 hover:text-danger"
+                    className="inline-flex min-h-[36px] min-w-[36px] flex-shrink-0 items-center justify-center rounded-md text-charcoal-soft transition-colors hover:bg-gray-100 hover:text-danger-a11y"
                   >
                     <svg
                       width="16"
@@ -197,7 +197,7 @@ export default function CartPageContent() {
                   )}
 
                   {/* 단가 × 수량 합 */}
-                  <span className="text-sm font-semibold text-sun-strong tabular-nums">
+                  <span className="text-sm font-semibold text-primary-a11y tabular-nums">
                     {info ? formatKRW(info.price * item.quantity) : ' '}
                   </span>
                 </div>
@@ -211,7 +211,7 @@ export default function CartPageContent() {
       <aside className="rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 lg:sticky lg:top-24">
         <div className="flex items-center justify-between text-sm">
           <span className="text-charcoal-muted">{t('subtotal')}</span>
-          <span className="font-bold text-sun-strong tabular-nums">
+          <span className="font-bold text-primary-a11y tabular-nums">
             {loading && details.length === 0 ? '…' : formatKRW(subtotal)}
           </span>
         </div>
@@ -221,7 +221,7 @@ export default function CartPageContent() {
         </div>
 
         {hasSoldOut ? (
-          <p className="mt-4 rounded-md bg-danger/10 px-3 py-2 text-xs text-danger">
+          <p className="mt-4 rounded-md bg-danger/10 px-3 py-2 text-xs text-danger-a11y">
             {t('soldOutNotice')}
           </p>
         ) : null}
@@ -236,7 +236,7 @@ export default function CartPageContent() {
           <button
             type="button"
             onClick={handleClear}
-            className="mt-1 inline-flex min-h-[44px] items-center justify-center rounded-lg text-sm font-medium text-charcoal-soft transition-colors hover:text-danger"
+            className="mt-1 inline-flex min-h-[44px] items-center justify-center rounded-lg text-sm font-medium text-charcoal-soft transition-colors hover:text-danger-a11y"
           >
             {t('clear')}
           </button>

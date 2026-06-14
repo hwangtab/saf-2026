@@ -385,7 +385,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                       {tc('quantity')}: {item.quantity}
                     </p>
                     {soldOut ? (
-                      <span className="mt-1 inline-flex items-center rounded bg-danger/10 px-1.5 py-0.5 text-xs font-semibold text-danger">
+                      <span className="mt-1 inline-flex items-center rounded bg-danger/10 px-1.5 py-0.5 text-xs font-semibold text-danger-a11y">
                         {tc('soldOut')}
                       </span>
                     ) : null}
@@ -398,7 +398,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                       <button
                         type="button"
                         onClick={() => remove(item.artworkId)}
-                        className="text-xs font-medium text-danger-a11y underline hover:text-danger"
+                        className="text-xs font-medium text-danger-a11y underline hover:text-danger-a11y"
                       >
                         {tc('remove')}
                       </button>
@@ -410,7 +410,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
           </ul>
 
           {hasSoldOut ? (
-            <p className="border-t border-danger/10 bg-danger/5 px-4 py-3 text-xs text-danger">
+            <p className="border-t border-danger/10 bg-danger/5 px-4 py-3 text-xs text-danger-a11y">
               {tc('soldOutNotice')}
             </p>
           ) : null}

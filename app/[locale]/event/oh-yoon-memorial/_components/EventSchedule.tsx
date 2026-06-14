@@ -23,12 +23,12 @@ export default async function EventSchedule() {
         {/* 핵심 정보 카드 */}
         <dl className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-gallery-hairline bg-gallery-hairline sm:grid-cols-2">
           {info.map(({ icon: Icon, label, value }) => (
-            <div key={label} className="flex items-start gap-3 bg-white p-5">
-              <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary-strong" aria-hidden="true" />
-              <div>
-                <dt className="text-eyebrow text-charcoal-muted">{label}</dt>
-                <dd className="mt-0.5 font-semibold text-charcoal-deep break-keep">{value}</dd>
-              </div>
+            <div key={label} className="bg-white p-5">
+              <dt className="flex items-center gap-3 text-eyebrow text-charcoal-muted">
+                <Icon className="h-5 w-5 shrink-0 text-primary-strong" aria-hidden="true" />
+                <span>{label}</span>
+              </dt>
+              <dd className="mt-1 pl-8 font-semibold text-charcoal-deep break-keep">{value}</dd>
             </div>
           ))}
         </dl>

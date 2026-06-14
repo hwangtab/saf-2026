@@ -1,3 +1,30 @@
+# CI e2e-a11y 실패 수정 계획 (2026-06-14)
+
+## 확인된 실패 범위
+
+- 최신 GitHub Actions `CI` run에서 기본 `ci` job은 통과했고, `e2e-a11y` job만 실패했다.
+- 실패 항목은 카트/체크아웃 a11y와 오윤 추도식 신청 a11y 경로였다.
+
+## 원인
+
+1. 카트 a11y 테스트 seed 작품 ID가 정적 fallback 데이터에 없어, CI placeholder Supabase 환경에서 실제 항목 UI가 안정적으로 렌더되지 않았다.
+2. `getCartArtworks`가 공개 카트 조회임에도 service-role admin client를 요구해 CI e2e 런타임에서 `AUTH_CFG_MISSING_ADMIN_KEY`가 발생했다.
+3. 카트 sold-out/가격 UI와 추도식 예술 의미 번호 텍스트가 WCAG AA 대비 기준에 못 미쳤다.
+4. 추도식 안내 카드의 `<dl>` 내부 `dt/dd`가 axe 규칙이 기대하는 그룹 구조에서 벗어나 있었다.
+5. CI e2e 환경에 Toss 키가 없어 `/checkout`이 결제 셸 대신 404를 렌더할 수 있었고, 테스트의 `networkidle` 대기가 이미지/외부 요청 상태에 취약했다.
+
+## 수정 계획
+
+1. `getCartArtworks`를 공개 Supabase anon client + 정적 fallback 기반으로 바꾸고, placeholder Supabase 환경에서는 즉시 fallback을 사용한다.
+2. a11y 카트 테스트 seed를 정적 fallback에도 존재하는 공개 작품 UUID로 교체한다.
+3. 카트 sold-out/가격/경고 텍스트와 추도식 번호 텍스트를 접근성 대비가 확보된 브랜드 토큰으로 교체한다.
+4. 추도식 안내 `<dl>` 구조를 axe가 허용하는 직접 `dt/dd` 그룹 구조로 정리한다.
+5. CI e2e job에 checkout 렌더용 Toss placeholder env를 추가한다.
+6. Playwright a11y 테스트는 `networkidle` 대신 실제 heading/seed 작품 렌더를 기다리도록 안정화한다.
+7. targeted Playwright a11y, lint/type-check/build/Jest/작품 검증을 실행하고 결과를 `walkthrough.md`에 정리한다.
+
+---
+
 # 결제 흐름 보안 강화 실행 계획 (2026-06-14)
 
 ## 추도식 행사 잔여 버그 2차 수정 계획 (2026-06-14)

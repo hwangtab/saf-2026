@@ -19,7 +19,7 @@ export default async function EventArtMeaning() {
         <ol className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
           {pillars.map((p, i) => (
             <li key={p.title} className="border-t-2 border-primary-strong/30 pt-5">
-              <span className="font-display text-3xl font-black text-primary-strong/40 tabular-nums">
+              <span className="font-display text-3xl font-black text-primary-a11y tabular-nums">
                 0{i + 1}
               </span>
               <h3 className="mt-2 font-display text-lg font-bold text-charcoal-deep break-keep">

@@ -1,3 +1,13 @@
+# CI 실패 수정 체크리스트
+
+- [x] 원격 CI 실패 로그와 Playwright 리포트 원인 확인
+- [x] 카트 데이터 조회와 테스트 seed 안정화
+- [x] 카트/추도식 색 대비 및 `<dl>` 구조 수정
+- [x] targeted a11y 및 정적 검증 실행
+- [x] walkthrough 작성
+
+---
+
 # Google Merchant API 상품 동기화 체크리스트
 
 - [x] Merchant API 공식 요구사항 확인

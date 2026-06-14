@@ -238,7 +238,7 @@ export default function CartDrawer() {
                           type="button"
                           onClick={() => remove(item.artworkId)}
                           aria-label={t('remove')}
-                          className="inline-flex min-h-[36px] min-w-[36px] flex-shrink-0 items-center justify-center rounded-md text-charcoal-soft transition-colors hover:bg-gray-100 hover:text-danger"
+                          className="inline-flex min-h-[36px] min-w-[36px] flex-shrink-0 items-center justify-center rounded-md text-charcoal-soft transition-colors hover:bg-gray-100 hover:text-danger-a11y"
                         >
                           <svg
                             width="16"
@@ -259,7 +259,7 @@ export default function CartDrawer() {
                       </div>
 
                       {soldOut ? (
-                        <span className="mt-1 inline-flex w-fit items-center rounded bg-danger/10 px-1.5 py-0.5 text-xs font-semibold text-danger">
+                        <span className="mt-1 inline-flex w-fit items-center rounded bg-danger/10 px-1.5 py-0.5 text-xs font-semibold text-danger-a11y">
                           {t('soldOut')}
                         </span>
                       ) : null}
@@ -304,7 +304,7 @@ export default function CartDrawer() {
                         )}
 
                         {/* Unit price */}
-                        <span className="text-sm font-semibold text-sun-strong tabular-nums">
+                        <span className="text-sm font-semibold text-primary-a11y tabular-nums">
                           {info ? formatKRW(info.price) : ' '}
                         </span>
                       </div>
@@ -318,7 +318,7 @@ export default function CartDrawer() {
             <div className="border-t border-gallery-hairline bg-canvas-soft px-5 py-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-charcoal-muted">{t('subtotal')}</span>
-                <span className="font-bold text-sun-strong tabular-nums">
+                <span className="font-bold text-primary-a11y tabular-nums">
                   {loading && details.length === 0 ? '…' : formatKRW(subtotal)}
                 </span>
               </div>
@@ -328,7 +328,7 @@ export default function CartDrawer() {
               </div>
 
               {hasSoldOut ? (
-                <p className="mt-3 rounded-md bg-danger/10 px-3 py-2 text-xs text-danger">
+                <p className="mt-3 rounded-md bg-danger/10 px-3 py-2 text-xs text-danger-a11y">
                   {t('soldOutNotice')}
                 </p>
               ) : null}

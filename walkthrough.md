@@ -1,3 +1,33 @@
+# CI e2e-a11y 실패 수정 (2026-06-14)
+
+## 변경 사항
+
+- `getCartArtworks`가 공개 카트 UI에서 admin Supabase key를 요구하지 않도록 공개 anon client + 정적 작품 fallback 구조로 바꿨다.
+- CI placeholder Supabase URL에서는 네트워크 조회를 시도하지 않고 바로 정적 fallback을 사용해, a11y 테스트가 안정적으로 실제 카트 항목을 렌더한다.
+- 카트 a11y seed를 정적 fallback에 존재하는 공개 작품 `dd0edcca-0e02-4cc1-a55c-bbef80223190`로 교체했다.
+- 카트/체크아웃/드로어의 sold-out 문구와 금액 텍스트를 WCAG 대비가 확보된 `text-danger-a11y`, `text-primary-a11y` 토큰으로 교체했다.
+- 오윤 추도식 페이지의 예술 의미 번호 대비를 올리고, 안내 `<dl>` 구조를 axe가 허용하는 `dt/dd` 그룹 구조로 정리했다.
+- GitHub Actions e2e-a11y job에 checkout 셸 렌더용 Toss placeholder env를 추가했다.
+- Playwright a11y 테스트는 `networkidle` 대신 실제 검사 대상 heading/seed 작품 렌더를 기다리도록 변경해 404나 이미지 요청 상태에 흔들리지 않게 했다.
+
+## 검증
+
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 전역 `jsx-a11y/prefer-tag-over-role` warning 49개와 Browserslist/Babel deopt 경고는 남아 있으나 exit code는 0
+- `NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder NEXT_PUBLIC_KAKAO_MAP_KEY=placeholder NEXT_PUBLIC_KAKAO_JS_KEY=placeholder NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY=test_ck_ci TOSS_PAYMENTS_DOMESTIC_SECRET_KEY=test_sk_ci npm run build` 통과
+  - placeholder Supabase fetch 실패 로그는 기존 fallback 검증 환경의 예상 로그이며 build exit code는 0
+- `CI=true PLAYWRIGHT_BASE_URL=http://localhost:3000 npx playwright test e2e/a11y/cart.spec.ts e2e/a11y/event-oh-yoon-memorial.spec.ts --project=chromium --workers=2` 통과
+  - 10 tests passed
+- `CI=true PLAYWRIGHT_BASE_URL=http://localhost:3000 npm run test:a11y` 통과
+  - 248 tests passed
+- `npm test -- --ci --passWithNoTests` 통과
+  - 147 suites / 1251 tests
+- `npm run validate-artworks` 통과
+  - 기존 작품 데이터 warning 63개 출력, exit code 0
+
+---
+
 # 결제 흐름 checkout token 보안 강화 (2026-06-14)
 
 ## 추도식 행사 결제/대기자 운영 개선 (2026-06-14)

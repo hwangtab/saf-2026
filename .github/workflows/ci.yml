@@ -84,6 +84,8 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
           NEXT_PUBLIC_KAKAO_MAP_KEY: placeholder
           NEXT_PUBLIC_KAKAO_JS_KEY: placeholder
+          NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY: test_ck_ci
+          TOSS_PAYMENTS_DOMESTIC_SECRET_KEY: test_sk_ci
 
       - name: Start server and run a11y tests
         run: |
@@ -93,6 +95,12 @@ jobs:
         env:
           CI: true
           PORT: 3000
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          NEXT_PUBLIC_KAKAO_MAP_KEY: placeholder
+          NEXT_PUBLIC_KAKAO_JS_KEY: placeholder
+          NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY: test_ck_ci
+          TOSS_PAYMENTS_DOMESTIC_SECRET_KEY: test_sk_ci
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
