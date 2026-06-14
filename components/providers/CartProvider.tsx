@@ -154,6 +154,9 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     }
   }, []);
 
+  const openDrawer = useCallback(() => setIsOpen(true), []);
+  const closeDrawer = useCallback(() => setIsOpen(false), []);
+
   return (
     <CartContext.Provider
       value={{
@@ -161,8 +164,8 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         count: cartCount(items),
         mounted,
         isOpen,
-        openDrawer: () => setIsOpen(true),
-        closeDrawer: () => setIsOpen(false),
+        openDrawer,
+        closeDrawer,
         setQuantity,
         addOne,
         remove,
