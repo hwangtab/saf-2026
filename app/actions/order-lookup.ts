@@ -17,6 +17,10 @@ import { hashEmail } from '@/lib/email/email-hash';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
+import {
+  getRepresentativeArtwork,
+  formatRepresentativeTitle,
+} from '@/lib/orders/representative-artwork';
 import { getClientIp } from '@/lib/security/get-client-ip';
 import { logBuyerAction } from './activity-log-writer';
 import { createSupabaseServerClient } from '@/lib/auth/server';
@@ -102,9 +106,16 @@ export async function lookupOrders(
       status,
       total_amount,
       created_at,
+      metadata,
       artworks (
         title,
         images
+      ),
+      order_items (
+        artworks (
+          title,
+          images
+        )
       )
     `
     )
@@ -138,13 +149,26 @@ export async function lookupOrders(
   const result: PublicOrderListItem[] = (orders ?? [])
     .filter((o) => verifiedOrderNos.has(o.order_no))
     .map((o) => {
-      const artwork = o.artworks as unknown as { title: string; images: string[] } | null;
-      const images = artwork?.images ?? [];
+      const locale = extractBuyerLocale(o.metadata);
+      const unknownLabel = locale === 'en' ? 'Unknown' : '알 수 없음';
+
+      // 다품목(orders.artwork_id NULL) 주문은 order_items 대표작품으로 표시. 단건/legacy는 artworks fallback.
+      const rep = getRepresentativeArtwork(o.order_items);
+      const singleArtwork = o.artworks as unknown as { title: string; images: string[] } | null;
+      const singleImages = singleArtwork?.images ?? [];
+
+      const artworkTitle =
+        rep.count > 0 && rep.title
+          ? formatRepresentativeTitle(rep.title, rep.count, locale)
+          : (singleArtwork?.title ?? unknownLabel);
+      const artworkImage =
+        rep.count > 0 ? rep.image : singleImages.length > 0 ? singleImages[0] : null;
+
       return {
         orderNo: o.order_no,
         status: o.status,
-        artworkTitle: artwork?.title ?? '알 수 없음',
-        artworkImage: images.length > 0 ? images[0] : null,
+        artworkTitle,
+        artworkImage,
         totalAmount: o.total_amount,
         createdAt: o.created_at,
       };
@@ -284,11 +308,21 @@ async function fetchOrderDetailRow(
       tracking_number,
       buyer_email,
       buyer_user_id,
+      metadata,
       artworks (
         title,
         images,
         artists (
           name_ko
+        )
+      ),
+      order_items (
+        artworks (
+          title,
+          images,
+          artists (
+            name_ko
+          )
         )
       )
     `
@@ -298,19 +332,32 @@ async function fetchOrderDetailRow(
 
   if (error || !order) return null;
 
+  const locale = extractBuyerLocale(order.metadata);
+  const unknownLabel = locale === 'en' ? 'Unknown' : '알 수 없음';
+
   const artworkRow = order.artworks as unknown as {
     title: string;
     images: string[];
     artists: { name_ko: string } | { name_ko: string }[] | null;
   } | null;
 
-  const artistRow = artworkRow?.artists;
-  const artistName = Array.isArray(artistRow)
-    ? (artistRow[0]?.name_ko ?? '알 수 없음')
-    : (artistRow?.name_ko ?? '알 수 없음');
+  // 다품목(orders.artwork_id NULL) 주문은 order_items 대표작품으로 표시. 단건/legacy는 artworks fallback.
+  const rep = getRepresentativeArtwork(order.order_items);
 
-  const images = artworkRow?.images ?? [];
-  const artworkImage = images.length > 0 ? images[0] : null;
+  const singleArtistRow = artworkRow?.artists;
+  const singleArtistName = Array.isArray(singleArtistRow)
+    ? singleArtistRow[0]?.name_ko
+    : singleArtistRow?.name_ko;
+
+  const artworkTitle =
+    rep.count > 0 && rep.title
+      ? formatRepresentativeTitle(rep.title, rep.count, locale)
+      : (artworkRow?.title ?? unknownLabel);
+  const artistName =
+    rep.count > 0 ? (rep.artistName ?? unknownLabel) : (singleArtistName ?? unknownLabel);
+
+  const singleImages = artworkRow?.images ?? [];
+  const artworkImage = rep.count > 0 ? rep.image : singleImages.length > 0 ? singleImages[0] : null;
 
   let paymentMethod: string | null = null;
   let virtualAccount: OrderPublicInfo['virtualAccount'] = null;
@@ -347,7 +394,7 @@ async function fetchOrderDetailRow(
     info: {
       orderNo: order.order_no,
       status: order.status,
-      artworkTitle: artworkRow?.title ?? '알 수 없음',
+      artworkTitle,
       artworkImage,
       artistName,
       itemAmount: order.item_amount,
