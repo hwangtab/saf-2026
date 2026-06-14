@@ -26,7 +26,9 @@ export type RecordSalesResult =
  * 멱등성: 동일 order_id에 active(voided_at IS NULL) 매출이 이미 있으면 skip.
  * 결제 confirm·webhook이 동일 주문에 대해 중복 호출돼도 매출이 두 번 기록되지 않도록 보장.
  *
- * sale_price는 라인 합계(`unit_price * quantity`, 배송비 제외)로 기록.
+ * sale_price는 **단가(per-unit)** 로 기록한다(배송비 제외). 코드베이스 전 매출 소비처가
+ * `sale_price * quantity`로 매출을 계산하는 관례를 따른다(admin 수동입력과 일치). 라인 합계를
+ * 저장하면 소비처에서 다시 ×quantity 되어 수량>1 매출이 이중계산되므로 단가로 저장해야 한다.
  */
 export async function recordOrderArtworkSales(
   supabase: SupabaseClient<Database>,
@@ -57,7 +59,7 @@ export async function recordOrderArtworkSales(
 
   const rows = lineItems.map((item) => ({
     artwork_id: item.artwork_id,
-    sale_price: item.unit_price * item.quantity,
+    sale_price: item.unit_price,
     quantity: item.quantity,
     source,
     source_detail: sourceDetail,

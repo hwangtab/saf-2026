@@ -80,7 +80,7 @@ describe('recordOrderArtworkSales', () => {
     expect(insertMock).not.toHaveBeenCalled();
   });
 
-  it('lineItems 2건 정상 → 2행 INSERT, 각 행 sale_price === unit_price*quantity', async () => {
+  it('lineItems 2건 정상 → 2행 INSERT, 각 행 sale_price === unit_price(단가, 배송 제외)', async () => {
     const { supabase, insertMock } = buildSupabaseMock({});
 
     const lineItems: ArtworkSaleLine[] = [
@@ -97,7 +97,7 @@ describe('recordOrderArtworkSales', () => {
     expect(insertedRows[0]).toMatchObject({
       artwork_id: 'a1',
       quantity: 2,
-      sale_price: 200000,
+      sale_price: 100000, // 단가(per-unit) — 소비처가 ×quantity 하므로 라인합계 아님
       source: 'toss',
       source_detail: 'toss_widget',
       order_id: 'order-1',
