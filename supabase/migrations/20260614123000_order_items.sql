@@ -17,7 +17,11 @@ CREATE TABLE IF NOT EXISTS public.order_items (
   artwork_id uuid        NOT NULL REFERENCES public.artworks(id),
   quantity   integer     NOT NULL DEFAULT 1 CHECK (quantity > 0),
   unit_price integer     NOT NULL CHECK (unit_price >= 0),
-  created_at timestamptz NOT NULL DEFAULT now()
+  created_at timestamptz NOT NULL DEFAULT now(),
+  -- 한 주문에 동일 작품은 1행만 (수량은 quantity로 표현). createOrder의
+  -- normalizeOrderItems가 앱 레벨에서 병합하지만, 재고 RPC가 order_items를
+  -- SUM(quantity)로 집계하므로 DB 레벨에서 중복 행을 막아 이중집계를 방지한다.
+  CONSTRAINT order_items_order_artwork_unique UNIQUE (order_id, artwork_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id  ON public.order_items(order_id);

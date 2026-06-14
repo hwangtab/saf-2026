@@ -40,6 +40,9 @@ BEGIN
     AND s.voided_at IS NULL;
 
   -- 변경점: orders.artwork_id 직접 비교 → order_items 조인 + 수량 합산.
+  -- COUNT(*)가 아닌 SUM(oi.quantity): limited edition의 다수량 라인을 정확히 반영
+  -- (unique는 createOrder가 quantity=1 강제라 기존 COUNT와 동치). order_items의
+  -- UNIQUE(order_id, artwork_id) 제약이 주문당 작품 1행을 보장 → 조인 fan-out 없음.
   SELECT COALESCE(SUM(oi.quantity), 0)
   INTO v_pending_count
   FROM public.orders o
