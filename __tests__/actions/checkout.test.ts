@@ -56,11 +56,16 @@ type MockResult = { data: unknown; error: unknown };
 let mockArtworkResult: MockResult = { data: null, error: null };
 let mockOrderSelectResult: MockResult = { data: null, error: null };
 let mockRpcResult: MockResult = { data: null, error: null };
+// 다품목 재고 확인은 품목마다 RPC를 호출하므로 큐가 있으면 순서대로 소비.
+let mockRpcResultsQueue: MockResult[] = [];
 let mockInsertResult: MockResult = { data: null, error: null };
 let mockInsertResultsQueue: MockResult[] = [];
 let mockUpdateResult: MockResult = { data: null, error: null };
 let mockAuthUserResult: MockResult = { data: { user: null }, error: null };
+let mockOrderItemsInsertResult: MockResult = { data: null, error: null };
 const capturedInsertedRows: Array<Record<string, unknown>> = [];
+const capturedOrderItemsInserts: Array<Array<Record<string, unknown>>> = [];
+const capturedOrderDeletes: Array<{ column: string; value: unknown }> = [];
 const capturedOrderUpdates: Array<{
   patch: Record<string, unknown>;
   filters: Array<{ op: 'eq' | 'lt'; column: string; value: unknown }>;
@@ -76,11 +81,13 @@ const mockFetchWithTimeout = jest.fn();
 
 function buildChain(result: MockResult) {
   const single = jest.fn(() => result);
+  // chain은 await로 직접 resolve(.in().eq() 일괄 조회)도, .single()/.maybeSingle()도 지원.
   const chain = {
     eq: jest.fn(() => chain),
     in: jest.fn(() => chain),
     single,
     maybeSingle: single,
+    then: (resolve: (value: MockResult) => unknown) => resolve(result),
   };
   const select = jest.fn(() => chain);
   return { select, single, eqChain: chain.eq };
@@ -90,7 +97,16 @@ jest.mock('@/lib/auth/server', () => ({
   createSupabaseAdminClient: jest.fn(() => ({
     from: jest.fn((table: string) => {
       if (table === 'artworks') {
-        const chain = buildChain(mockArtworkResult);
+        // 일괄 조회(.in().eq() await)는 배열을, 단건(.maybeSingle())은 객체를 반환.
+        // mockArtworkResult.data가 단일 객체면 await 경로에서 [object]로 래핑.
+        const bulkData = Array.isArray(mockArtworkResult.data)
+          ? mockArtworkResult.data
+          : mockArtworkResult.data
+            ? [mockArtworkResult.data]
+            : mockArtworkResult.data;
+        const chain = buildChain({ data: bulkData, error: mockArtworkResult.error });
+        // .maybeSingle()/.single()은 원본(객체) 반환 — createBankTransferOrder edition fetch용
+        chain.single.mockImplementation(() => mockArtworkResult);
         return {
           select: chain.select,
           update: jest.fn(() => {
@@ -137,6 +153,20 @@ jest.mock('@/lib/auth/server', () => ({
             };
             return chain;
           }),
+          delete: jest.fn(() => ({
+            eq: jest.fn((column: string, value: unknown) => {
+              capturedOrderDeletes.push({ column, value });
+              return mockUpdateResult;
+            }),
+          })),
+        };
+      }
+      if (table === 'order_items') {
+        return {
+          insert: jest.fn((rows: Array<Record<string, unknown>>) => {
+            capturedOrderItemsInserts.push(rows);
+            return mockOrderItemsInsertResult;
+          }),
         };
       }
       return {
@@ -146,7 +176,12 @@ jest.mock('@/lib/auth/server', () => ({
         update: jest.fn(() => ({ eq: jest.fn() })),
       };
     }),
-    rpc: jest.fn(() => mockRpcResult),
+    rpc: jest.fn(() => {
+      if (mockRpcResultsQueue.length > 0) {
+        return mockRpcResultsQueue.shift();
+      }
+      return mockRpcResult;
+    }),
   })),
   createSupabaseServerClient: jest.fn(async () => ({
     auth: {
@@ -236,12 +271,16 @@ beforeEach(async () => {
   mockArtworkResult = { data: null, error: null };
   mockOrderSelectResult = { data: null, error: null };
   mockRpcResult = { data: null, error: null };
+  mockRpcResultsQueue = [];
   mockInsertResult = { data: null, error: null };
   mockInsertResultsQueue = [];
   mockUpdateResult = { data: null, error: null };
   mockAuthUserResult = { data: { user: null }, error: null };
+  mockOrderItemsInsertResult = { data: null, error: null };
   capturedInsertedRows.length = 0;
   capturedOrderUpdates.length = 0;
+  capturedOrderItemsInserts.length = 0;
+  capturedOrderDeletes.length = 0;
   mockFetchWithTimeout.mockReset();
   mockFetchWithTimeout.mockResolvedValue({
     ok: true,
@@ -457,6 +496,145 @@ describe('createOrder', () => {
       expect(result.orderNo).toBe('SAF-20260414-COLLIDE2');
     }
     expect(orderNoMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+// ========== createOrder — multi-item (items[]) ==========
+
+describe('createOrder — multi-item', () => {
+  it('items 2건 정상 주문 → success, 합산 금액 + order_items INSERT', async () => {
+    // 두 작품 (limited라 수량 반영). art-1 가격 100,000 x2, art-2 가격 50,000 x3.
+    mockArtworkResult = {
+      data: [
+        {
+          id: 'art-1',
+          title: '소품 A',
+          price: '₩100,000',
+          status: 'available',
+          edition_type: 'limited',
+          edition_limit: 10,
+          artists: { name_ko: '김작가' },
+        },
+        {
+          id: 'art-2',
+          title: '소품 B',
+          price: '₩50,000',
+          status: 'available',
+          edition_type: 'limited',
+          edition_limit: 10,
+          artists: { name_ko: '이작가' },
+        },
+      ],
+      error: null,
+    };
+    mockRpcResult = { data: [{ is_available: true }], error: null };
+    mockInsertResult = { data: { id: 'order-multi' }, error: null };
+
+    const result = await createOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [
+        { artworkId: 'art-1', quantity: 2 },
+        { artworkId: 'art-2', quantity: 3 },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    // itemAmount = 100,000*2 + 50,000*3 = 350,000 (>= 200,000 → 배송비 0)
+    expect(result.totalAmount).toBe(350_000);
+    expect(result.orderName).toContain('외 1건');
+
+    // orders row: artwork_id null, quantity 총합(5)
+    expect(capturedInsertedRows[0]).toMatchObject({
+      artwork_id: null,
+      quantity: 5,
+      item_amount: 350_000,
+      total_amount: 350_000,
+    });
+
+    // order_items 2행 INSERT
+    expect(capturedOrderItemsInserts).toHaveLength(1);
+    expect(capturedOrderItemsInserts[0]).toEqual([
+      { order_id: 'order-multi', artwork_id: 'art-1', quantity: 2, unit_price: 100_000 },
+      { order_id: 'order-multi', artwork_id: 'art-2', quantity: 3, unit_price: 50_000 },
+    ]);
+  });
+
+  it('items 중 1건 품절 → success:false + unavailable에 해당 id', async () => {
+    mockArtworkResult = {
+      data: [
+        {
+          id: 'art-1',
+          title: '소품 A',
+          price: '₩100,000',
+          status: 'available',
+          edition_type: 'limited',
+          edition_limit: 10,
+          artists: { name_ko: '김작가' },
+        },
+        {
+          id: 'art-2',
+          title: '소품 B',
+          price: '₩50,000',
+          status: 'sold_out',
+          edition_type: 'limited',
+          edition_limit: 10,
+          artists: { name_ko: '이작가' },
+        },
+      ],
+      error: null,
+    };
+    // 품목별 RPC 호출 순서대로 결과 반환: art-1 available, art-2 unavailable
+    mockRpcResultsQueue = [
+      { data: [{ is_available: true }], error: null },
+      { data: [{ is_available: false }], error: null },
+    ];
+
+    const result = await createOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [
+        { artworkId: 'art-1', quantity: 1 },
+        { artworkId: 'art-2', quantity: 1 },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(result.unavailable).toEqual(['art-2']);
+    // 주문/품목이 생성되지 않아야 함
+    expect(capturedInsertedRows).toHaveLength(0);
+    expect(capturedOrderItemsInserts).toHaveLength(0);
+  });
+
+  it('order_items INSERT 실패 시 주문을 롤백한다', async () => {
+    mockArtworkResult = {
+      data: [
+        {
+          id: 'art-1',
+          title: '소품 A',
+          price: '₩300,000',
+          status: 'available',
+          edition_type: 'unique',
+          edition_limit: null,
+          artists: { name_ko: '김작가' },
+        },
+      ],
+      error: null,
+    };
+    mockRpcResult = { data: [{ is_available: true }], error: null };
+    mockInsertResult = { data: { id: 'order-rollback' }, error: null };
+    mockOrderItemsInsertResult = { data: null, error: { message: 'items insert failed' } };
+
+    const result = await createOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [{ artworkId: 'art-1', quantity: 1 }],
+    });
+
+    expect(result.success).toBe(false);
+    expect(capturedOrderDeletes).toEqual([{ column: 'id', value: 'order-rollback' }]);
   });
 });
 

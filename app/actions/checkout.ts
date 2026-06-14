@@ -16,6 +16,7 @@ import {
 } from '@/lib/integrations/toss/config';
 import { fetchWithTimeout } from '@/lib/integrations/toss/fetch-with-timeout';
 import { generateOrderNumber } from '@/lib/integrations/toss/order-number';
+import { normalizeOrderItems } from '@/lib/orders/normalize-items';
 import type { TossErrorResponse } from '@/lib/integrations/toss/types';
 import { rateLimit } from '@/lib/rate-limit';
 import { SITE_URL, SITE_URL_ALIAS } from '@/lib/constants';
@@ -38,7 +39,10 @@ const BANK_TRANSFER_INFO = {
 const DEPOSIT_DEADLINE_HOURS = 24;
 
 export type CreateOrderInput = {
-  artworkId: string;
+  /** 단건 바로구매(quantity 1). items가 있으면 무시됨. */
+  artworkId?: string;
+  /** 다품목(장바구니) 주문. 있으면 artworkId보다 우선. */
+  items?: Array<{ artworkId: string; quantity?: number }>;
   buyerName: string;
   buyerEmail: string;
   buyerPhone: string;
@@ -60,7 +64,7 @@ export type CreateOrderResult =
       orderName: string;
       checkoutToken: string;
     }
-  | { success: false; error: string };
+  | { success: false; error: string; unavailable?: string[] };
 
 const MAX_ORDER_NO_INSERT_RETRIES = 3;
 const CHECKOUT_TOKEN_BYTES = 32;
@@ -172,7 +176,6 @@ async function getLatestCheckoutCookie(artworkId: string) {
 
 export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   const {
-    artworkId,
     buyerName,
     buyerEmail,
     buyerPhone,
@@ -187,6 +190,12 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   const buyerLocale: ApiLocale = locale === 'en' ? 'en' : 'ko';
   const buyerEmailNorm = buyerEmail.trim().toLowerCase();
 
+  // 단건(artworkId) / 다건(items[]) 입력을 단일 OrderItemInput[]로 정규화
+  const orderItems = normalizeOrderItems({ artworkId: input.artworkId, items: input.items });
+  if (orderItems.length === 0) {
+    return { success: false, error: apiError('required_buyer_info', buyerLocale) };
+  }
+
   // Rate limiting — IP 기준 분당 10회
   const headersList = await headers();
   const ip = getClientIp(headersList);
@@ -196,7 +205,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   }
 
   // Basic validation
-  if (!artworkId || !buyerName || !buyerEmail || !buyerPhone) {
+  if (!buyerName || !buyerEmail || !buyerPhone) {
     return { success: false, error: apiError('required_buyer_info', buyerLocale) };
   }
   if (!shippingAddress || !shippingPostalCode) {
@@ -245,64 +254,87 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   const adminClient = createSupabaseAdminClient();
 
-  // Fetch artwork (parse price server-side — never trust client)
-  const { data: artwork, error: artworkError } = await adminClient
+  // Fetch artworks in bulk (parse price server-side — never trust client)
+  const artworkIds = orderItems.map((i) => i.artworkId);
+  const { data: artworks, error: artworkError } = await adminClient
     .from('artworks')
-    .select('id, title, price, status, artists(name_ko)')
-    .eq('id', artworkId)
-    .eq('is_hidden', false)
-    .single();
+    .select('id, title, price, status, edition_type, artists(name_ko)')
+    .in('id', artworkIds)
+    .eq('is_hidden', false);
 
-  if (artworkError || !artwork) {
+  if (artworkError || !artworks || artworks.length !== artworkIds.length) {
     return { success: false, error: apiError('artwork_not_found', buyerLocale) };
   }
+  const artworkById = new Map(artworks.map((a) => [a.id, a]));
 
-  // 동일 구매자의 같은 작품에 대한 오래된 pending_payment 주문 자동 정리.
+  // 동일 구매자의 각 작품에 대한 오래된 pending_payment 주문 자동 정리.
   // buyer_email은 본인 인증 수단이 아니므로, 현재 결제 가능성이 있는 최근 주문은 건드리지 않는다.
   const pendingPaymentCleanupCutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
-  await adminClient
-    .from('orders')
-    .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-    .eq('artwork_id', artworkId)
-    .eq('buyer_email', buyerEmailNorm)
-    .eq('status', 'pending_payment')
-    .lt('created_at', pendingPaymentCleanupCutoff);
-
-  // Check availability via RPC
-  const { data: availResult, error: availError } = await adminClient.rpc(
-    'check_artwork_availability',
-    { p_artwork_id: artworkId }
-  );
-
-  if (availError) {
-    return { success: false, error: apiError('availability_check_failed', buyerLocale) };
+  for (const id of artworkIds) {
+    await adminClient
+      .from('orders')
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+      .eq('artwork_id', id)
+      .eq('buyer_email', buyerEmailNorm)
+      .eq('status', 'pending_payment')
+      .lt('created_at', pendingPaymentCleanupCutoff);
   }
 
-  const isAvailable = Array.isArray(availResult) && availResult[0]?.is_available === true;
-  if (!isAvailable) {
-    // 작품 status가 여전히 available인데 RPC가 막았다면 타인의 미결제 주문(pending_payment
-    // 30분 / awaiting_deposit 24시간)이 잠근 "일시 보류" 상태다. '이미 판매된 작품'으로
-    // 안내하면 영구 품절로 오인해 구매자가 영영 이탈한다 (2026-06-12 감사) — 별도 코드로
-    // 잠시 후 재시도를 안내한다.
-    const availabilityErrorCode =
-      artwork.status === 'available' ? 'artwork_temporarily_held' : 'artwork_sold_out';
-    return { success: false, error: apiError(availabilityErrorCode, buyerLocale) };
+  // 품목별 재고 재확인 + 금액 계산 + unique 강제(품절 부분 차단)
+  const unavailable: string[] = [];
+  let itemAmount = 0;
+  const itemRows: Array<{ artwork_id: string; quantity: number; unit_price: number }> = [];
+  for (const { artworkId, quantity } of orderItems) {
+    const art = artworkById.get(artworkId)!;
+    const qty = art.edition_type === 'unique' ? 1 : quantity; // unique 강제
+    const { data: availResult, error: availError } = await adminClient.rpc(
+      'check_artwork_availability',
+      { p_artwork_id: artworkId }
+    );
+    // RPC 자체 실패는 '품절'과 구분 — 결제 가부를 알 수 없으므로 즉시 중단
+    if (availError) {
+      return { success: false, error: apiError('availability_check_failed', buyerLocale) };
+    }
+    const ok = Array.isArray(availResult) && availResult[0]?.is_available === true;
+    const unitPrice = parsePrice(art.price);
+    if (!ok || !Number.isFinite(unitPrice) || unitPrice <= 0) {
+      unavailable.push(artworkId);
+      continue;
+    }
+    itemAmount += unitPrice * qty;
+    itemRows.push({ artwork_id: artworkId, quantity: qty, unit_price: unitPrice });
+  }
+  if (unavailable.length > 0) {
+    // 단건 주문은 기존 UX 유지 — 작품 status가 여전히 available인데 RPC가 막았다면
+    // 타인의 미결제 주문(pending_payment 30분 / awaiting_deposit 24시간)이 잠근 "일시 보류"
+    // 상태다. '이미 판매됨'으로 안내하면 영구 품절로 오인해 이탈한다(2026-06-12 감사).
+    if (orderItems.length === 1) {
+      const heldArt = artworkById.get(unavailable[0]);
+      const availabilityErrorCode =
+        heldArt?.status === 'available' ? 'artwork_temporarily_held' : 'artwork_sold_out';
+      return {
+        success: false,
+        error: apiError(availabilityErrorCode, buyerLocale),
+        unavailable,
+      };
+    }
+    return { success: false, error: apiError('artwork_sold_out', buyerLocale), unavailable };
   }
 
-  // Parse price server-side
-  const itemAmount = parsePrice(artwork.price);
-  if (!Number.isFinite(itemAmount) || itemAmount <= 0) {
-    return { success: false, error: apiError('artwork_price_invalid', buyerLocale) };
-  }
-
+  // 배송료/총액 — 정책상 주문당 1회만 합산
   const shippingAmount = calculateShippingFee(itemAmount);
   const totalAmount = itemAmount + shippingAmount;
 
-  const artistRow = artwork.artists as { name_ko: string } | { name_ko: string }[] | null;
-  const artistName = Array.isArray(artistRow)
-    ? (artistRow[0]?.name_ko ?? 'Unknown Artist')
-    : (artistRow?.name_ko ?? 'Unknown Artist');
-  const orderName = `${artwork.title} (${artistName})`;
+  // orderName — 단건은 "제목 (작가)", 다건은 "제목 외 N건" (첫 itemRows 작품 기준)
+  const firstArtwork = artworkById.get(itemRows[0].artwork_id)!;
+  const firstArtistRow = firstArtwork.artists as { name_ko: string } | { name_ko: string }[] | null;
+  const firstArtistName = Array.isArray(firstArtistRow)
+    ? (firstArtistRow[0]?.name_ko ?? 'Unknown Artist')
+    : (firstArtistRow?.name_ko ?? 'Unknown Artist');
+  const orderName =
+    itemRows.length === 1
+      ? `${firstArtwork.title} (${firstArtistName})`
+      : `${firstArtwork.title} 외 ${itemRows.length - 1}건`;
 
   // Optionally resolve logged-in user
   let buyerUserId: string | null = null;
@@ -332,8 +364,13 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       .from('orders')
       .insert({
         order_no: orderNo,
-        artwork_id: artworkId,
-        quantity: 1,
+        // 단건은 기존과 동일하게 artwork_id/quantity 직접 기록.
+        // 다건은 artwork_id=null, quantity=총수량 — 품목 상세는 order_items에 기록.
+        artwork_id: itemRows.length === 1 ? itemRows[0].artwork_id : null,
+        quantity:
+          itemRows.length === 1
+            ? itemRows[0].quantity
+            : itemRows.reduce((s, i) => s + i.quantity, 0),
         buyer_name: buyerName,
         buyer_email: buyerEmailNorm,
         buyer_phone: buyerPhone,
@@ -376,12 +413,47 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, error: apiError('order_creation_failed', buyerLocale) };
   }
 
-  await rememberCheckoutCookie(
-    artworkId,
-    orderNo,
-    checkoutToken,
-    buyerLocale === 'en' ? 'USD' : 'KRW'
+  // order_items 일괄 INSERT — 실패 시 방금 만든 주문을 롤백해 고아 주문 방지
+  const { error: itemsInsertError } = await adminClient.from('order_items').insert(
+    itemRows.map((r) => ({
+      order_id: order!.id,
+      artwork_id: r.artwork_id,
+      quantity: r.quantity,
+      unit_price: r.unit_price,
+    }))
   );
+  if (itemsInsertError) {
+    await adminClient.from('orders').delete().eq('id', order.id);
+    return { success: false, error: apiError('order_creation_failed', buyerLocale) };
+  }
+
+  if (itemRows.length === 1) {
+    // 단건 바로구매: artworkId 기반 latest 쿠키 + 주문별 쿠키 (기존 동작)
+    await rememberCheckoutCookie(
+      itemRows[0].artwork_id,
+      orderNo,
+      checkoutToken,
+      buyerLocale === 'en' ? 'USD' : 'KRW'
+    );
+  } else {
+    // 다건: latest 쿠키 키 충돌 우려가 있으므로 주문별 쿠키만 설정
+    const cookieStore = await cookies();
+    cookieStore.set(
+      checkoutCookieName(orderNo),
+      encodeCheckoutCookie({
+        orderId: orderNo,
+        checkoutToken,
+        currency: buyerLocale === 'en' ? 'USD' : 'KRW',
+      }),
+      {
+        httpOnly: true,
+        sameSite: 'lax' as const,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: CHECKOUT_COOKIE_MAX_AGE_SECONDS,
+      }
+    );
+  }
 
   return {
     success: true,
@@ -605,6 +677,11 @@ export async function initiatePayment(input: InitiatePaymentInput): Promise<Init
  */
 export async function createBankTransferOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   const buyerLocale: ApiLocale = input.locale === 'en' ? 'en' : 'ko';
+  // 무통장 입금은 단건(바로구매) 한정. 단건 artworkId를 단일 출처로 확정한다.
+  const artworkId = input.artworkId ?? input.items?.[0]?.artworkId;
+  if (!artworkId) {
+    return { success: false, error: apiError('required_buyer_info', buyerLocale) };
+  }
   const result = await createOrder(input);
   if (!result.success) return result;
 
@@ -638,7 +715,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   const { data: artworkRow, error: editionFetchError } = await adminClient
     .from('artworks')
     .select('edition_type, status')
-    .eq('id', input.artworkId)
+    .eq('id', artworkId)
     .maybeSingle();
 
   if (editionFetchError || !artworkRow) {
@@ -653,7 +730,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     const { data: reservedArtwork, error: artworkUpdateError } = await adminClient
       .from('artworks')
       .update({ status: 'reserved' })
-      .eq('id', input.artworkId)
+      .eq('id', artworkId)
       .eq('status', 'available')
       .select('id');
 
@@ -668,8 +745,8 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
 
     // artwork available → reserved 반영하여 다른 사용자 구매 차단
     revalidatePublicArtworkSurfaces();
-    revalidatePath(`/artworks/${input.artworkId}`);
-    revalidatePath(`/en/artworks/${input.artworkId}`);
+    revalidatePath(`/artworks/${artworkId}`);
+    revalidatePath(`/en/artworks/${artworkId}`);
   } else if (artworkRow.status !== 'available') {
     // limited/open인데 이미 sold_out(전량 판매) 상태면 구매 차단
     await adminClient
@@ -756,8 +833,8 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   // localePrefix: 'as-needed' — ko 기본 locale은 prefix 없음, en만 /en/.
   const successPath =
     buyerLocale === 'en'
-      ? `/en/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW&checkoutToken=${encodeURIComponent(result.checkoutToken)}`
-      : `/checkout/${input.artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&checkoutToken=${encodeURIComponent(result.checkoutToken)}`;
+      ? `/en/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&currency=KRW&checkoutToken=${encodeURIComponent(result.checkoutToken)}`
+      : `/checkout/${artworkId}/success?method=BANK_TRANSFER&orderId=${result.orderNo}&amount=${result.totalAmount}&checkoutToken=${encodeURIComponent(result.checkoutToken)}`;
   redirect(successPath);
 }
 
