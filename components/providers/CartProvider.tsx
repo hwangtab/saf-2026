@@ -71,25 +71,40 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             return;
           }
 
-          // 첫 로그인(prevUserId === null): 게스트 카트 DB 병합 후 DB 로드
-          if (event === 'SIGNED_IN' && prevUserId === null) {
+          // 이벤트명(SIGNED_IN/INITIAL_SESSION/TOKEN_REFRESHED)이 아니라 user id 전이로 판정.
+          // 이미 로그인된 세션에서 구독 등록 시(새로고침·OAuth 콜백) 첫 이벤트는 INITIAL_SESSION이므로
+          // event === 'SIGNED_IN' 조건은 그 경로의 DB 로드를 영영 건너뛴다.
+
+          // 이 유저를 처음 인지(prevUserId === null): 게스트 카트 DB 병합 후 DB 로드.
+          if (newUserId && prevUserId === null) {
             const guest = getCart();
             import('@/app/actions/cart')
               .then(async ({ mergeGuestCart, getCartItems }) => {
-                if (guest.length > 0) await mergeGuestCart(guest).catch(() => {});
-                const { items: dbItems } = await getCartItems();
+                const merge = guest.length > 0 ? await mergeGuestCart(guest) : {};
+                const res = await getCartItems();
+                // 병합/로드 중 하나라도 에러면 clearCart 하지 말고 게스트 카트 보존 → 다음 로드에서 reconcile.
+                if (merge.error || res.error) return;
                 clearCart();
-                dbItems.forEach((i) => setCartQuantity(i.artworkId, i.quantity));
+                res.items.forEach((i) => setCartQuantity(i.artworkId, i.quantity));
                 if (!cancelled) setItems(getCart());
               })
               .catch(() => {});
             return;
           }
 
-          // 다른 계정으로 신원 변경: 이전 사용자 로컬 카트가 새 사용자로 새지 않게 비움
-          if (event === 'SIGNED_IN' && prevUserId !== null && prevUserId !== newUserId) {
+          // 다른 계정으로 신원 변경: 이전 사용자 로컬 카트가 새 사용자로 새지 않게 비우고,
+          // 새 유저의 DB 카트를 로드(이전 게스트 카트는 병합하지 않음 — 순수 DB 로드).
+          if (newUserId && prevUserId !== null && prevUserId !== newUserId) {
             clearCart();
             setItems([]);
+            import('@/app/actions/cart')
+              .then(async ({ getCartItems }) => {
+                const res = await getCartItems();
+                if (res.error) return;
+                res.items.forEach((i) => setCartQuantity(i.artworkId, i.quantity));
+                if (!cancelled) setItems(getCart());
+              })
+              .catch(() => {});
           }
         });
         unsubscribe = () => subscription.unsubscribe();
