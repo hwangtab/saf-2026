@@ -126,6 +126,12 @@ export interface OrderItem {
   created_at: string;
 }
 
+/**
+ * 주문 입력용 품목 shape (camelCase). DB row인 `OrderItem`(snake_case)과 구분된다.
+ * createOrder·장바구니가 공용으로 소비하므로 types에 위치.
+ */
+export type OrderItemInput = { artworkId: string; quantity: number };
+
 export interface Order {
   id: string;
   order_no: string;

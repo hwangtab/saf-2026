@@ -1,4 +1,6 @@
-export type OrderItemInput = { artworkId: string; quantity: number };
+import type { OrderItemInput } from '@/types';
+
+export type { OrderItemInput };
 
 type NormalizeInput = {
   artworkId?: string;
@@ -7,8 +9,8 @@ type NormalizeInput = {
 
 /**
  * createOrder 입력을 정규화된 OrderItemInput[]로 변환한다.
- * - 단건(artworkId)과 다건(items)을 통일
- * - 동일 작품 중복은 수량 합산
+ * - 단건(artworkId)과 다건(items)을 통일. items가 있으면 items 우선(artworkId 무시)
+ * - 단건 경로는 항상 quantity=1 (바로구매). 동일 작품 중복은 수량 합산
  * - quantity는 최소 1로 보정 (unique 강제는 서버 재고 검증 단계에서 처리)
  */
 export function normalizeOrderItems(input: NormalizeInput): OrderItemInput[] {
