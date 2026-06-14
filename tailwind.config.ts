@@ -63,6 +63,7 @@ const config: Config = {
         'hero-breathing': 'heroBreathing 40s ease-in-out infinite',
         'toast-in': 'toastIn 0.2s ease-out forwards',
         'toast-out': 'toastOut 0.2s ease-out forwards',
+        'slide-in-right': 'slideInRight 0.25s ease-out forwards',
       },
       keyframes: {
         shimmer: {
@@ -100,6 +101,10 @@ const config: Config = {
         toastOut: {
           '0%': { opacity: '1', transform: 'translateY(0) scale(1)' },
           '100%': { opacity: '0', transform: 'translateY(-20px) scale(0.95)' },
+        },
+        slideInRight: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
         },
       },
       transitionDuration: {

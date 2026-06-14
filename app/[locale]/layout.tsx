@@ -13,6 +13,7 @@ import Footer from '@/components/common/Footer';
 import ToastProvider from '@/components/providers/ToastProvider';
 import WishlistProvider from '@/components/providers/WishlistProvider';
 import CartProvider from '@/components/providers/CartProvider';
+import CartDrawer from '@/components/features/CartDrawer';
 import ReturningVisitorGreeting from '@/components/features/ReturningVisitorGreeting';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import GlobalAnalyticsGate from '@/components/common/GlobalAnalyticsGate';
@@ -233,6 +234,7 @@ export default async function LocaleLayout({
           <ToastProvider>
             <WishlistProvider>
               <CartProvider>
+                <CartDrawer />
                 <ReturningVisitorGreeting />
                 <a href="#main-content" className="skip-to-main">
                   {tA11y('skipToMain')}
