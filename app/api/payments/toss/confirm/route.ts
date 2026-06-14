@@ -74,6 +74,50 @@ function buildAnalyticsItem(
   };
 }
 
+type AnalyticsPurchaseItem = {
+  item_id: string;
+  item_name?: string;
+  price: number;
+  quantity: number;
+};
+
+type AnalyticsPurchase = {
+  value: number;
+  shipping: number;
+  items: AnalyticsPurchaseItem[];
+};
+
+/**
+ * 다품목(카트) 결제용 GA4 purchase 분석 payload. order_items의 라인별로 items[]를 구성한다.
+ * 단건 경로는 buildAnalyticsItem(별도 단일 shape)을 계속 쓰므로 무영향 — 이 함수는 카트
+ * SuccessClient가 소비하는 items[]+shipping 형태를 만든다.
+ *
+ * item_name은 confirm이 작품명을 라인별로 조회하지 않으므로 생략 가능(GA 매출은 item_id로
+ * 귀속됨). 다품목이 아닌 경우(라인 1개) notifyInfo의 대표 작품명을 채워 단건과 동등하게.
+ */
+function buildAnalyticsPurchase(
+  order: { total_amount: number },
+  lineItems: Array<{ artwork_id: string; quantity: number; unit_price: number }>,
+  notifyInfo: OrderNotificationInfo,
+  fallbackAmount: number
+): AnalyticsPurchase | null {
+  if (lineItems.length === 0) return null;
+
+  const items: AnalyticsPurchaseItem[] = lineItems.map((item) => ({
+    item_id: item.artwork_id,
+    // 단일 라인이면 notifyInfo 대표 작품명을 사용(다품목은 요약 라벨이라 라인별로 부정확 → 생략).
+    ...(lineItems.length === 1 && notifyInfo?.artworkTitle
+      ? { item_name: notifyInfo.artworkTitle }
+      : {}),
+    price: item.unit_price,
+    quantity: item.quantity,
+  }));
+
+  const shipping = notifyInfo?.shippingAmount ?? Math.max(0, fallbackAmount - order.total_amount);
+
+  return { value: fallbackAmount, shipping, items };
+}
+
 export async function POST(req: NextRequest) {
   const reqLocale = getRequestLocale(req);
 
@@ -157,6 +201,12 @@ export async function POST(req: NextRequest) {
         success: true,
         alreadyPaid: true,
         analyticsItem: buildAnalyticsItem(order, paidNotifyInfo, order.total_amount),
+        analyticsPurchase: buildAnalyticsPurchase(
+          order,
+          extractLineItems(order),
+          paidNotifyInfo,
+          order.total_amount
+        ),
       });
     }
     return NextResponse.json(
@@ -360,6 +410,26 @@ export async function POST(req: NextRequest) {
         console.error('[confirm] 경합 패배 주문 refunded 마킹 실패:', refundMarkError);
       }
 
+      // 재고 누수 방지: 이 주문의 다른(안 팔린) 라인 작품이 reserved로 남으면 해제한다.
+      // 승자 주문이 소유한 sold 작품은 .eq('status','reserved') 가드로 제외됨. (card 경로는
+      // reserved가 없어 no-op이지만 가상계좌·동시진행 케이스 대비 방어적으로 둠.)
+      const takenReleaseIds = lineItems.map((item) => item.artwork_id);
+      if (takenReleaseIds.length > 0) {
+        const { error: releaseError } = await supabase
+          .from('artworks')
+          .update({ status: 'available', updated_at: new Date().toISOString() })
+          .in('id', takenReleaseIds)
+          .eq('status', 'reserved');
+        if (releaseError) {
+          console.error('[confirm] 경합 패배 reserved→available 해제 실패:', releaseError);
+        }
+        for (const artworkId of takenReleaseIds) {
+          revalidatePath(`/artworks/${artworkId}`);
+          revalidatePath(`/en/artworks/${artworkId}`);
+        }
+        revalidatePublicArtworkSurfaces();
+      }
+
       // 자동 환불 + 결과별 알림 — 결제 응답을 블로킹하지 않도록 after()로 처리.
       // 환불 성공이 확인된 뒤에만 구매자에게 '환불' 안내(실패했는데 환불됐다고 잘못 알리는 것 방지).
       after(async () => {
@@ -381,6 +451,14 @@ export async function POST(req: NextRequest) {
         }
 
         if (refundOk) {
+          // 주문은 refunded인데 payments가 DONE으로 남는 불일치 해소.
+          const { error: paymentSyncError } = await supabase
+            .from('payments')
+            .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+            .eq('order_id', order.id);
+          if (paymentSyncError) {
+            console.error('[confirm] 경합 패배 payments status 정합 실패:', paymentSyncError);
+          }
           void notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
             주문번호: orderId,
             paymentKey,
@@ -403,7 +481,11 @@ export async function POST(req: NextRequest) {
           void sendBuyerSms(
             order.buyer_phone,
             'refunded',
-            { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: tossResponse.totalAmount },
+            {
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: '',
+              amount: tossResponse.totalAmount,
+            },
             buyerLocale,
             orderId
           );
@@ -578,5 +660,8 @@ export async function POST(req: NextRequest) {
     status: tossResponse.status,
     virtualAccount: isVirtualAccount ? (tossResponse.virtualAccount ?? null) : null,
     analyticsItem: isDone ? buildAnalyticsItem(order, notifyInfo, tossResponse.totalAmount) : null,
+    analyticsPurchase: isDone
+      ? buildAnalyticsPurchase(order, lineItems, notifyInfo, tossResponse.totalAmount)
+      : null,
   });
 }

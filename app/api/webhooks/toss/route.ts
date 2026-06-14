@@ -1,3 +1,4 @@
+import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 
@@ -167,6 +168,10 @@ export async function POST(req: NextRequest) {
             .eq('id', paymentRecord.order_id)
             .single();
 
+          // 동시 구매 경합 패배(artwork_taken) 시 자동 환불 분기로 빠지므로 플래그로 가드.
+          // 정상 입금완료 알림(admin 입금확인 + 구매자 deposit_confirmed)은 작품을 줄 수 있을 때만.
+          let contestLost = false;
+
           if (order) {
             const lineItems = extractLineItems(order);
             const salesResult = await recordOrderArtworkSales(supabase, {
@@ -179,24 +184,146 @@ export async function POST(req: NextRequest) {
               buyerPhone: order.buyer_phone,
               soldAt: new Date().toISOString(),
             });
-            if (
-              salesResult.inserted === false &&
-              (salesResult.reason === 'error' || salesResult.reason === 'artwork_taken')
-            ) {
-              const errorMsg = salesResult.reason === 'error' ? salesResult.error : '';
-              const isTaken = salesResult.reason === 'artwork_taken';
+
+            if (salesResult.inserted === false && salesResult.reason === 'artwork_taken') {
+              // 동시 구매 경합 패배: 다른 주문이 이 unique 작품의 active 매출을 먼저 기록했고
+              // (enforce_unique_edition_single_active_sale 트리거가 INSERT 차단), 이쪽은 입금이 이미
+              // 완료된 상태다. 작품을 줄 수 없으므로 자동 환불 + 주문 refunded 마킹.
+              // ⚠ confirm route의 artwork_taken 분기 미러 — deriveAndSyncArtworkStatus/추가 매출 금지
+              //   (이 주문엔 줄 작품이 없고, 작품은 승자 주문 소유라 건드리면 안 됨).
+              //   가상계좌(VA)는 입금된 실금액이므로 cancelPayment가 환불 처리(전액 취소).
+              contestLost = true;
               console.error(
-                `[toss-webhook] artwork_sales INSERT failed (${salesResult.reason}): ${order.order_no}`,
-                errorMsg
+                `[toss-webhook] DEPOSIT_CALLBACK DONE unique 작품 경합 패배 — 자동 환불 진행: ${order.order_no}`
+              );
+
+              // 주문 paid → refunded (optimistic lock: 방금 paid로 올린 이 주문만)
+              const { error: refundMarkError } = await supabase
+                .from('orders')
+                .update({ status: 'refunded', refunded_at: new Date().toISOString() })
+                .eq('id', paymentRecord.order_id)
+                .eq('status', 'paid');
+              if (refundMarkError) {
+                console.error(
+                  `[toss-webhook] 경합 패배 주문 refunded 마킹 실패: ${order.order_no}`,
+                  refundMarkError
+                );
+              }
+
+              // 재고 누수 방지: 이 주문의 다른(안 팔린) 라인 작품이 reserved로 남으면 해제한다.
+              // 승자 주문이 소유한 sold 작품은 .eq('status','reserved') 가드로 제외됨.
+              const takenReleaseIds = lineItems.map((item) => item.artwork_id);
+              if (takenReleaseIds.length > 0) {
+                const { error: releaseError } = await supabase
+                  .from('artworks')
+                  .update({ status: 'available', updated_at: new Date().toISOString() })
+                  .in('id', takenReleaseIds)
+                  .eq('status', 'reserved');
+                if (releaseError) {
+                  console.error(
+                    '[toss-webhook] DEPOSIT_CALLBACK 경합 패배 reserved→available 해제 실패:',
+                    releaseError
+                  );
+                }
+                for (const artworkId of takenReleaseIds) {
+                  revalidatePath(`/artworks/${artworkId}`);
+                  revalidatePath(`/en/artworks/${artworkId}`);
+                }
+                revalidatePublicArtworkSurfaces();
+              }
+
+              // 자동 환불 + 결과별 알림 — 웹훅 응답을 블로킹하지 않도록 after()로 처리.
+              // 환불 성공이 확인된 뒤에만 구매자에게 '환불' 안내(실패했는데 환불됐다고 잘못 알리는 것 방지).
+              const buyerEmail = order.buyer_email;
+              const buyerName = order.buyer_name ?? '';
+              const buyerPhone = order.buyer_phone;
+              const refundAmount = order.total_amount ?? 0;
+              const refundOrderNo = order.order_no ?? '';
+              const refundLocale = extractBuyerLocale(order.metadata);
+              const refundOrderId = paymentRecord.order_id;
+              after(async () => {
+                const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+                let refundOk = false;
+                try {
+                  const result = await cancelPayment(
+                    paymentKey,
+                    { cancelReason: '동시 구매 경합으로 작품이 이미 판매되어 자동 환불' },
+                    `auto-refund-taken-${refundOrderNo || paymentKey}`,
+                    provider
+                  );
+                  refundOk = result.success;
+                  if (!result.success) {
+                    console.error(
+                      '[toss-webhook] DEPOSIT_CALLBACK 경합 패배 자동 환불 거부:',
+                      result.error
+                    );
+                  }
+                } catch (err) {
+                  console.error('[toss-webhook] DEPOSIT_CALLBACK 경합 패배 자동 환불 실패:', err);
+                }
+
+                if (refundOk) {
+                  // 주문은 refunded인데 payments가 DONE으로 남는 불일치 해소.
+                  const { error: paymentSyncError } = await supabase
+                    .from('payments')
+                    .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+                    .eq('order_id', refundOrderId);
+                  if (paymentSyncError) {
+                    console.error(
+                      '[toss-webhook] DEPOSIT_CALLBACK 경합 패배 payments status 정합 실패:',
+                      paymentSyncError
+                    );
+                  }
+                  void notifyEmail('info', '동시 구매 경합 — 자동 환불 완료 (가상계좌 입금분)', {
+                    주문번호: refundOrderNo,
+                    paymentKey,
+                    참고: '다른 주문이 unique 작품을 먼저 가져가 입금분 자동 환불 완료.',
+                  });
+                  if (buyerEmail) {
+                    void sendBuyerEmail(
+                      buyerEmail,
+                      'refunded',
+                      {
+                        orderNo: refundOrderNo,
+                        buyerName,
+                        artworkTitle: '',
+                        artistName: '',
+                        amount: refundAmount,
+                      },
+                      refundLocale
+                    );
+                  }
+                  void sendBuyerSms(
+                    buyerPhone,
+                    'refunded',
+                    { buyerName, artworkTitle: '', amount: refundAmount },
+                    refundLocale,
+                    refundOrderNo || undefined
+                  );
+                } else {
+                  // 환불 실패 — 구매자에게 '환불' 안내하지 않고 운영팀에 즉시 수동환불 요청.
+                  // VA는 실입금분이라 refundReceiveAccount(환불 계좌)가 필요할 수 있어 자동 취소가
+                  // 거부될 수 있다 — 이 경우 운영팀이 수동으로 환불 계좌를 받아 처리해야 한다.
+                  void notifyEmail(
+                    'error',
+                    '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요 (가상계좌 입금분)',
+                    {
+                      주문번호: refundOrderNo,
+                      paymentKey,
+                      금액: `₩${refundAmount.toLocaleString('ko-KR')}`,
+                      참고: '가상계좌 입금 완료됐으나 작품은 타인 선점, 자동 환불 실패(환불 계좌 필요 가능성). 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
+                    }
+                  );
+                }
+              });
+            } else if (salesResult.inserted === false && salesResult.reason === 'error') {
+              console.error(
+                `[toss-webhook] artwork_sales INSERT failed (error): ${order.order_no}`,
+                salesResult.error
               );
               void notifyEmail('error', '웹훅 판매 기록 생성 실패', {
                 주문번호: order.order_no,
-                ...(isTaken
-                  ? {
-                      사유: '동시 구매 경합 — 다른 주문이 unique 작품을 먼저 가져감',
-                      참고: '결제는 완료됐으나 작품 매출 미기록(타인 선점). 수동 환불 검토 필요.',
-                    }
-                  : { 에러: errorMsg }),
+                에러: salesResult.error,
               });
             } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
               console.error(`[toss-webhook] paid deposit with no order_items: ${order.order_no}`);
@@ -206,75 +333,80 @@ export async function POST(req: NextRequest) {
               });
             }
 
-            // artwork 상태 재계산 (reserved → sold) — order_items 전 품목 루프
-            for (const item of lineItems) {
-              await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
-            }
-            if (lineItems.length > 0) {
-              revalidatePublicArtworkSurfaces();
+            // 정상 케이스만 artwork 상태 재계산(reserved → sold). 경합 패배는 작품을 건드리지 않음.
+            if (!contestLost) {
               for (const item of lineItems) {
-                revalidatePath(`/artworks/${item.artwork_id}`);
-                revalidatePath(`/en/artworks/${item.artwork_id}`);
+                await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
+              }
+              if (lineItems.length > 0) {
+                revalidatePublicArtworkSurfaces();
+                for (const item of lineItems) {
+                  revalidatePath(`/artworks/${item.artwork_id}`);
+                  revalidatePath(`/en/artworks/${item.artwork_id}`);
+                }
               }
             }
           }
 
-          const depositInfo = await getOrderNotificationInfo(supabase, {
-            id: paymentRecord.order_id,
-          });
-
-          if (depositInfo) {
-            void notifyEmail(
-              'payment',
-              '가상계좌 입금 확인',
-              buildAdminNotificationFields(depositInfo)
-            );
-          } else {
-            void notifyEmail('payment', '가상계좌 입금 확인', {
-              주문번호: order?.order_no ?? '',
-              금액: `₩${(order?.total_amount ?? 0).toLocaleString('ko-KR')}`,
+          // 정상 입금완료 알림은 작품을 줄 수 있을 때만. 경합 패배 시 거짓 "입금 확인/배송 예정" 안내 금지.
+          if (!contestLost) {
+            const depositInfo = await getOrderNotificationInfo(supabase, {
+              id: paymentRecord.order_id,
             });
-          }
 
-          if (order?.buyer_email) {
-            try {
-              void sendBuyerEmail(
-                order.buyer_email,
-                'deposit_confirmed',
-                {
-                  orderNo: order.order_no,
-                  buyerName: order.buyer_name ?? '',
-                  artworkTitle: depositInfo?.artworkTitle ?? '',
-                  artistName: depositInfo?.artistName ?? '',
-                  amount: order.total_amount,
-                  itemAmount: depositInfo?.itemAmount,
-                  shippingAmount: depositInfo?.shippingAmount,
-                  shipping: depositInfo
-                    ? {
-                        name: depositInfo.shippingName,
-                        phone: depositInfo.shippingPhone,
-                        address: depositInfo.shippingAddress,
-                        memo: depositInfo.shippingMemo,
-                      }
-                    : undefined,
-                },
-                extractBuyerLocale(order.metadata)
+            if (depositInfo) {
+              void notifyEmail(
+                'payment',
+                '가상계좌 입금 확인',
+                buildAdminNotificationFields(depositInfo)
               );
-            } catch (err) {
-              console.error('[toss-webhook] deposit email failed:', err);
+            } else {
+              void notifyEmail('payment', '가상계좌 입금 확인', {
+                주문번호: order?.order_no ?? '',
+                금액: `₩${(order?.total_amount ?? 0).toLocaleString('ko-KR')}`,
+              });
             }
+
+            if (order?.buyer_email) {
+              try {
+                void sendBuyerEmail(
+                  order.buyer_email,
+                  'deposit_confirmed',
+                  {
+                    orderNo: order.order_no,
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: depositInfo?.artworkTitle ?? '',
+                    artistName: depositInfo?.artistName ?? '',
+                    amount: order.total_amount,
+                    itemAmount: depositInfo?.itemAmount,
+                    shippingAmount: depositInfo?.shippingAmount,
+                    shipping: depositInfo
+                      ? {
+                          name: depositInfo.shippingName,
+                          phone: depositInfo.shippingPhone,
+                          address: depositInfo.shippingAddress,
+                          memo: depositInfo.shippingMemo,
+                        }
+                      : undefined,
+                  },
+                  extractBuyerLocale(order.metadata)
+                );
+              } catch (err) {
+                console.error('[toss-webhook] deposit email failed:', err);
+              }
+            }
+            void sendBuyerSms(
+              order?.buyer_phone,
+              'deposit_confirmed',
+              {
+                buyerName: order?.buyer_name ?? '',
+                artworkTitle: depositInfo?.artworkTitle ?? '',
+                amount: order?.total_amount ?? 0,
+              },
+              extractBuyerLocale(order?.metadata),
+              order?.order_no ?? undefined
+            );
           }
-          void sendBuyerSms(
-            order?.buyer_phone,
-            'deposit_confirmed',
-            {
-              buyerName: order?.buyer_name ?? '',
-              artworkTitle: depositInfo?.artworkTitle ?? '',
-              amount: order?.total_amount ?? 0,
-            },
-            extractBuyerLocale(order?.metadata),
-            order?.order_no ?? undefined
-          );
         }
       } else {
         // paymentRecord가 DB에 없는데 Toss에서 DONE 수신 — 심각한 정합성 문제
@@ -532,6 +664,10 @@ export async function POST(req: NextRequest) {
 
         const lineItems = extractLineItems(existingOrder);
 
+        // 동시 구매 경합 패배(artwork_taken) 시 자동 환불 분기로 빠지므로 플래그로 가드.
+        // 정상 결제완료 알림(구매자 payment_confirmed)은 작품을 줄 수 있을 때만.
+        let contestLost = false;
+
         // artwork_sales INSERT — confirm route가 이미 INSERT했다면 헬퍼 내부 멱등으로 skip
         if (updatedOrders && updatedOrders.length > 0 && lineItems.length > 0) {
           // source_detail은 order metadata에서 resolve한 provider 기준.
@@ -546,45 +682,173 @@ export async function POST(req: NextRequest) {
             buyerPhone: existingOrder.buyer_phone,
             soldAt: now,
           });
-          if (
-            salesResult.inserted === false &&
-            (salesResult.reason === 'error' || salesResult.reason === 'artwork_taken')
-          ) {
-            const isTaken = salesResult.reason === 'artwork_taken';
+
+          if (salesResult.inserted === false && salesResult.reason === 'artwork_taken') {
+            // 동시 구매 경합 패배: 다른 주문이 이 unique 작품의 active 매출을 먼저 기록했고
+            // (트리거가 INSERT 차단), 이쪽은 결제가 이미 캡처된 상태다. 작품을 줄 수 없으므로
+            // 자동 환불 + 주문 refunded 마킹. ⚠ confirm route의 artwork_taken 분기 미러 —
+            // deriveAndSyncArtworkStatus/추가 매출 금지(작품은 승자 주문 소유).
+            // 위에서 막 paid로 올렸으므로 refunded로 되돌린다.
+            contestLost = true;
             console.error(
-              `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed (${salesResult.reason}): ${existingOrder.order_no}`,
-              salesResult.reason === 'error' ? salesResult.error : ''
+              `[toss-webhook] STATUS_CHANGED DONE unique 작품 경합 패배 — 자동 환불 진행: ${existingOrder.order_no}`
             );
-            if (isTaken) {
-              void notifyEmail('error', '웹훅 판매 기록 실패 — 작품 타인 선점', {
-                주문번호: existingOrder.order_no ?? '',
-                paymentKey,
-                참고: '동시 구매 경합에서 다른 주문이 unique 작품을 먼저 가져감. 결제는 완료, 작품 매출 미기록 — 수동 환불 검토 필요.',
-              });
+
+            const { error: refundMarkError } = await supabase
+              .from('orders')
+              .update({ status: 'refunded', refunded_at: new Date().toISOString() })
+              .eq('id', paymentRow.order_id)
+              .eq('status', 'paid');
+            if (refundMarkError) {
+              console.error(
+                `[toss-webhook] 경합 패배 주문 refunded 마킹 실패: ${existingOrder.order_no}`,
+                refundMarkError
+              );
             }
+
+            // 재고 누수 방지: 이 주문의 다른(안 팔린) 라인 작품이 reserved로 남으면 해제한다.
+            // 승자 주문이 소유한 sold 작품은 .eq('status','reserved') 가드로 제외됨. (card 경로는
+            // reserved가 없어 no-op이지만 방어적으로 둠.)
+            const takenReleaseIds = lineItems.map((item) => item.artwork_id);
+            if (takenReleaseIds.length > 0) {
+              const { error: releaseError } = await supabase
+                .from('artworks')
+                .update({ status: 'available', updated_at: new Date().toISOString() })
+                .in('id', takenReleaseIds)
+                .eq('status', 'reserved');
+              if (releaseError) {
+                console.error(
+                  '[toss-webhook] STATUS_CHANGED 경합 패배 reserved→available 해제 실패:',
+                  releaseError
+                );
+              }
+              for (const artworkId of takenReleaseIds) {
+                revalidatePath(`/artworks/${artworkId}`);
+                revalidatePath(`/en/artworks/${artworkId}`);
+              }
+              revalidatePublicArtworkSurfaces();
+            }
+
+            // 자동 환불 + 결과별 알림 — 웹훅 응답을 블로킹하지 않도록 after()로 처리.
+            // 환불 성공이 확인된 뒤에만 구매자에게 '환불' 안내.
+            const buyerEmail = existingOrder.buyer_email;
+            const buyerName = existingOrder.buyer_name ?? '';
+            const buyerPhone = existingOrder.buyer_phone;
+            const refundAmount = existingOrder.total_amount ?? 0;
+            const refundOrderNo = existingOrder.order_no ?? '';
+            const refundLocale = extractBuyerLocale(existingOrder.metadata);
+            const refundOrderId = paymentRow.order_id;
+            after(async () => {
+              const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+              let refundOk = false;
+              try {
+                const result = await cancelPayment(
+                  paymentKey,
+                  { cancelReason: '동시 구매 경합으로 작품이 이미 판매되어 자동 환불' },
+                  `auto-refund-taken-${refundOrderNo || paymentKey}`,
+                  provider
+                );
+                refundOk = result.success;
+                if (!result.success) {
+                  console.error(
+                    '[toss-webhook] STATUS_CHANGED 경합 패배 자동 환불 거부:',
+                    result.error
+                  );
+                }
+              } catch (err) {
+                console.error('[toss-webhook] STATUS_CHANGED 경합 패배 자동 환불 실패:', err);
+              }
+
+              if (refundOk) {
+                // 주문은 refunded인데 payments가 DONE으로 남는 불일치 해소.
+                const { error: paymentSyncError } = await supabase
+                  .from('payments')
+                  .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+                  .eq('order_id', refundOrderId);
+                if (paymentSyncError) {
+                  console.error(
+                    '[toss-webhook] STATUS_CHANGED 경합 패배 payments status 정합 실패:',
+                    paymentSyncError
+                  );
+                }
+                void notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
+                  주문번호: refundOrderNo,
+                  paymentKey,
+                  참고: '다른 주문이 unique 작품을 먼저 가져가 자동 환불 완료.',
+                });
+                if (buyerEmail) {
+                  void sendBuyerEmail(
+                    buyerEmail,
+                    'refunded',
+                    {
+                      orderNo: refundOrderNo,
+                      buyerName,
+                      artworkTitle: '',
+                      artistName: '',
+                      amount: refundAmount,
+                    },
+                    refundLocale
+                  );
+                }
+                void sendBuyerSms(
+                  buyerPhone,
+                  'refunded',
+                  { buyerName, artworkTitle: '', amount: refundAmount },
+                  refundLocale,
+                  refundOrderNo || undefined
+                );
+              } else {
+                // 환불 실패 — 구매자 안내 보류, 운영팀 즉시 수동환불 요청.
+                // 가상계좌 입금분이면 환불 계좌(refundReceiveAccount)가 필요해 자동 취소가 거부될 수 있음.
+                void notifyEmail(
+                  'error',
+                  '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요',
+                  {
+                    주문번호: refundOrderNo,
+                    paymentKey,
+                    금액: `₩${refundAmount.toLocaleString('ko-KR')}`,
+                    참고: '결제는 캡처됐으나 작품은 타인 선점, 자동 환불 실패(가상계좌면 환불 계좌 필요 가능성). 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
+                  }
+                );
+              }
+            });
+          } else if (salesResult.inserted === false && salesResult.reason === 'error') {
+            console.error(
+              `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed (error): ${existingOrder.order_no}`,
+              salesResult.error
+            );
+            void notifyEmail('error', '웹훅 판매 기록 생성 실패 (STATUS_CHANGED)', {
+              주문번호: existingOrder.order_no ?? '',
+              paymentKey,
+              에러: salesResult.error,
+            });
           }
 
-          for (const item of lineItems) {
-            await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
-          }
-          revalidatePublicArtworkSurfaces();
-          for (const item of lineItems) {
-            revalidatePath(`/artworks/${item.artwork_id}`);
-            revalidatePath(`/en/artworks/${item.artwork_id}`);
-          }
+          // 정상 케이스만 artwork 상태 재계산. 경합 패배는 작품을 건드리지 않음.
+          if (!contestLost) {
+            for (const item of lineItems) {
+              await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
+            }
+            revalidatePublicArtworkSurfaces();
+            for (const item of lineItems) {
+              revalidatePath(`/artworks/${item.artwork_id}`);
+              revalidatePath(`/en/artworks/${item.artwork_id}`);
+            }
 
-          // confirm route가 실패해 webhook이 보정한 시나리오 — 운영팀 알림
-          void notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
-            주문번호: existingOrder.order_no ?? '',
-            paymentKey,
-            상태: newStatus,
-            참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
-          });
+            // confirm route가 실패해 webhook이 보정한 시나리오 — 운영팀 알림
+            void notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
+              주문번호: existingOrder.order_no ?? '',
+              paymentKey,
+              상태: newStatus,
+              참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
+            });
+          }
         }
 
         // confirm route 실패를 webhook이 보정한 경우, 구매자 결제완료 알림이 누락되지 않게 발송.
         // (confirm route는 정상 경로에서 payment_confirmed를 보내지만, 그 단계에서 실패하면 미발송)
-        if (updatedOrders && updatedOrders.length > 0) {
+        // 경합 패배(contestLost) 시에는 작품을 못 줬으므로 거짓 결제완료 안내 금지 — 위 환불 분기가 처리.
+        if (updatedOrders && updatedOrders.length > 0 && !contestLost) {
           const paidInfo = await getOrderNotificationInfo(supabase, { id: paymentRow.order_id });
           const buyerLocale = extractBuyerLocale(existingOrder.metadata);
           if (existingOrder.buyer_email) {

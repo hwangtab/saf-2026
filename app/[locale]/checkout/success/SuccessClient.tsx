@@ -32,6 +32,19 @@ interface PendingCheckoutSession {
   currency?: 'KRW' | 'USD';
 }
 
+interface PurchaseAnalyticsItem {
+  item_id: string;
+  item_name?: string;
+  price: number;
+  quantity: number;
+}
+
+interface PurchaseAnalytics {
+  value: number;
+  shipping: number;
+  items: PurchaseAnalyticsItem[];
+}
+
 type PageState = 'loading' | 'success' | 'virtual' | 'bank_transfer' | 'error';
 
 function formatAmount(amount: number, currency: 'KRW' | 'USD'): string {
@@ -119,6 +132,7 @@ export default function SuccessClient() {
           alreadyPaid?: boolean;
           status?: string;
           virtualAccount?: VirtualAccount | null;
+          analyticsPurchase?: PurchaseAnalytics | null;
           error?: string;
         };
 
@@ -133,11 +147,37 @@ export default function SuccessClient() {
           const purchaseKey = `purchase_fired_${orderId}`;
           if (!sessionGet<boolean>(purchaseKey)) {
             sessionSet(purchaseKey, true);
-            trackEvent('purchase', {
-              transaction_id: orderId,
-              value: Number(amount),
-              currency,
-            });
+            // 다품목 GA purchase: confirm이 order_items로 만든 items[]+shipping을 그대로 전달.
+            // payload가 없으면(legacy/누락) value만 보내 단건 fallback과 동일하게 동작.
+            const purchase = data.analyticsPurchase ?? null;
+            const shippingAmount = purchase?.shipping ?? 0;
+            trackEvent(
+              'purchase',
+              {
+                transaction_id: orderId,
+                value: Number(amount),
+                currency,
+                shipping_amount: shippingAmount,
+                item_count: purchase?.items.length ?? 0,
+              },
+              purchase
+                ? {
+                    ga4Params: {
+                      transaction_id: orderId,
+                      value: Number(amount),
+                      currency,
+                      shipping: shippingAmount,
+                      items: purchase.items.map((item) => ({
+                        item_id: item.item_id,
+                        item_name: item.item_name ?? item.item_id,
+                        item_category: 'artwork',
+                        price: item.price,
+                        quantity: item.quantity,
+                      })),
+                    },
+                  }
+                : {}
+            );
           }
           // localStorage 멱등 가드 — 다른 탭·시크릿 reopen 시 중복 카운트 방지.
           const countKey = `saf:purchaseCounted:${orderId}`;
