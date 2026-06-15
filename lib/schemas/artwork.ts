@@ -24,6 +24,33 @@ const PRICE_VALID_UNTIL = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
   .toISOString()
   .slice(0, 10);
 
+// Merchant listing 권장 필드 — GSC "hasMerchantReturnPolicy 누락"(P2 WARNING) 해소 +
+// 가격/재고 rich result 자격 강화. 실제 정책과 일치(단일 출처): 수령 후 7일 이내 단순변심
+// 청약철회, 반품 배송비는 구매자 부담(손상 시 무상 교환·환불), 국내(KR) 배송.
+const MERCHANT_RETURN_POLICY = {
+  '@type': 'MerchantReturnPolicy',
+  applicableCountry: 'KR',
+  returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+  merchantReturnDays: 7,
+  returnMethod: 'https://schema.org/ReturnByMail',
+  // 단순변심 반품 배송비 구매자 부담 (refundItem3) — FreeReturn 아님.
+  returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
+};
+
+// 무료 배송(국내) — OfferShippingDetails. 출고 배송비 0원, 배송지 KR.
+const OFFER_SHIPPING_DETAILS = {
+  '@type': 'OfferShippingDetails',
+  shippingRate: {
+    '@type': 'MonetaryAmount',
+    value: 0,
+    currency: 'KRW',
+  },
+  shippingDestination: {
+    '@type': 'DefinedRegion',
+    addressCountry: 'KR',
+  },
+};
+
 // 판매 상태 3분류 — JSON-LD offers·product:* 메타가 각자 매핑하면 다음 상태 추가 시
 // 한쪽만 갱신되어 피드-페이지 불일치가 생긴다 (2026-06-12 리뷰: 단일 출처화).
 type ArtworkAvailability = 'sold' | 'reserved' | 'available';
@@ -450,6 +477,9 @@ export function generateArtworkJsonLd(
             priceValidUntil: PRICE_VALID_UNTIL,
             itemCondition: 'https://schema.org/NewCondition',
             seller: sellerOrg,
+            // Merchant listing 권장 필드 (GSC WARNING 해소) — 실제 정책과 일치.
+            hasMerchantReturnPolicy: MERCHANT_RETURN_POLICY,
+            shippingDetails: OFFER_SHIPPING_DETAILS,
           },
         }
       : {}),
