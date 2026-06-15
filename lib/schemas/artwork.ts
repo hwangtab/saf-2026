@@ -49,6 +49,33 @@ const OFFER_SHIPPING_DETAILS = {
     '@type': 'DefinedRegion',
     addressCountry: 'KR',
   },
+  // 배송 소요 — 총 14영업일(Mon~Fri 기준). 작품은 검수·액자 제작·안전 포장(handling) 후
+  // 국내 택배 배송(transit). handling 0~12영업일 + transit 1~2영업일 = 최대 14영업일.
+  deliveryTime: {
+    '@type': 'ShippingDeliveryTime',
+    businessDays: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: [
+        'https://schema.org/Monday',
+        'https://schema.org/Tuesday',
+        'https://schema.org/Wednesday',
+        'https://schema.org/Thursday',
+        'https://schema.org/Friday',
+      ],
+    },
+    handlingTime: {
+      '@type': 'QuantitativeValue',
+      minValue: 0,
+      maxValue: 12,
+      unitCode: 'DAY',
+    },
+    transitTime: {
+      '@type': 'QuantitativeValue',
+      minValue: 1,
+      maxValue: 2,
+      unitCode: 'DAY',
+    },
+  },
 };
 
 // 판매 상태 3분류 — JSON-LD offers·product:* 메타가 각자 매핑하면 다음 상태 추가 시
