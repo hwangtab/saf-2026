@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
+import { HEADER_SAFE_TOP_PADDING } from '@/lib/header-safe-padding';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 
 type State = 'loading' | 'ok' | 'soldOutRefunded' | 'refunded' | 'manualReview' | 'error';
 
@@ -46,7 +48,9 @@ export default function SuccessClient() {
   }, []);
 
   return (
-    <main className="flex min-h-[60vh] items-center justify-center px-4 text-center">
+    <main
+      className={`flex min-h-screen items-center justify-center bg-canvas-soft px-4 text-center ${HEADER_SAFE_TOP_PADDING} ${SAWTOOTH_TOP_SAFE_PADDING}`}
+    >
       {state === 'loading' && <p className="text-charcoal">결제 확인 중입니다...</p>}
       {state === 'ok' && (
         <div>

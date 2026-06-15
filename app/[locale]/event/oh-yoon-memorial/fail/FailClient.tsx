@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { cancelEventPendingPayment } from '@/app/actions/event-admin';
+import { HEADER_SAFE_TOP_PADDING } from '@/lib/header-safe-padding';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 
 export default function FailClient() {
   const cancelledRef = useRef(false);
@@ -36,7 +38,9 @@ export default function FailClient() {
   }, []);
 
   return (
-    <main className="flex min-h-[60vh] items-center justify-center px-4 text-center">
+    <main
+      className={`flex min-h-screen items-center justify-center bg-canvas-soft px-4 text-center ${HEADER_SAFE_TOP_PADDING} ${SAWTOOTH_TOP_SAFE_PADDING}`}
+    >
       <div>
         <h1 className="font-display text-2xl font-bold text-charcoal-deep">
           결제가 취소되었습니다

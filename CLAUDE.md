@@ -226,6 +226,13 @@ types/
 - 훅/컴포넌트에서 `pathname.startsWith('/foo')` 하드코딩 금지. 대신 `isHeroRoute(pathname)` / `isArtworkDetail(pathname)` 호출
 - 새 hero 페이지 추가 후 [**tests**/lib/hero-routes.test.ts](__tests__/lib/hero-routes.test.ts)에 케이스 추가
 
+**Header 상단 클리어런스 규칙 (비-hero standalone 페이지)**: Header는 `fixed top-0 h-16`(64px)이고 layout `<main>`은 상단 패딩이 없습니다. **PageHero가 없는** standalone 페이지(checkout·orders·mypage·event success/fail/manage 등 터미널/유틸 페이지)는 루트 요소에 헤더를 비우는 상단 패딩을 직접 줘야 콘텐츠가 헤더에 가리지 않습니다.
+
+- 단일 출처 상수 [HEADER_SAFE_TOP_PADDING](lib/header-safe-padding.ts) (`pt-24`)을 루트에 적용. `pt-16`(=64px, 헤더와 동일해 여백 0) 금지 — `pt-20` 이상
+- 푸터 sawtooth가 아래에 있으면 하단은 `SAWTOOTH_TOP_SAFE_PADDING`도 함께 적용
+- PageHero를 쓰는 페이지(hero 라우트, `/cart` 등)는 hero가 헤더를 덮으므로 불필요
+- [**tests**/lib/page-header-clearance.test.ts](__tests__/lib/page-header-clearance.test.ts)가 모든 비-hero 페이지의 클리어런스를 정적 검사 — 회귀 사고: 2026-06-15 event success/fail/manage 상단 패딩 누락(모바일 헤더 가림)
+
 ## Code Style
 
 ### TypeScript (Strict)

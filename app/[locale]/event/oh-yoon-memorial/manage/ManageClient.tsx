@@ -3,6 +3,8 @@
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
+import { HEADER_SAFE_TOP_PADDING } from '@/lib/header-safe-padding';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import {
   requestEventRefundCode,
   verifyEventRefundCode,
@@ -88,7 +90,9 @@ export default function ManageClient() {
   }
 
   return (
-    <main className="flex min-h-[70vh] items-center justify-center bg-canvas px-4 py-16 text-pretty md:py-24">
+    <main
+      className={`flex min-h-[70vh] items-center justify-center bg-canvas px-4 pb-16 text-pretty md:pb-24 ${HEADER_SAFE_TOP_PADDING} ${SAWTOOTH_TOP_SAFE_PADDING}`}
+    >
       <div className="w-full max-w-md">
         <h1 className="text-center font-display text-3xl font-bold text-charcoal-deep">
           {t('manageTitle')}
