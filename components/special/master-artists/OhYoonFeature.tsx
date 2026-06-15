@@ -644,6 +644,31 @@ export default async function OhYoonFeature({
                   </>
                 )}
               </p>
+
+              {/* 희소성 — 1996 소량 발행, 30년 만 첫 공개, 재발행 없음 (사실 기반) */}
+              <div className="mt-5 flex flex-wrap gap-2">
+                {(isEnglish
+                  ? [
+                      '1996 posthumous edition',
+                      'First shown in 30 years',
+                      'Small, one-time edition',
+                    ]
+                  : ['1996 사후판화', '30년 만의 첫 공개', '재발행 없는 소량 발행']
+                ).map((label) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/5 px-3 py-1 text-xs font-medium text-white/85"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    {label}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-4 text-sm text-white/70 break-keep">
+                {isEnglish
+                  ? 'A finite set from 1996 — once a print finds its owner, it is not reprinted.'
+                  : '1996년의 유한한 작품들입니다. 한 점이 주인을 만나면 다시 찍어 채우지 않습니다.'}
+              </p>
             </div>
           </div>
 
