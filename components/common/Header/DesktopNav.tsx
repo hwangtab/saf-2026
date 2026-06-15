@@ -56,7 +56,11 @@ export default function DesktopNav({
 
   return (
     <>
-      <ul className="hidden lg:flex xl:absolute xl:left-1/2 xl:-translate-x-1/2 top-0 items-center gap-5 xl:gap-8 h-full m-0 p-0 list-none">
+      {/* 흐름(in-flow) 유지 — xl:absolute 중앙정렬은 공간을 reserve하지 않아 우측 유틸리티
+          클러스터(검색·주문조회·관리자 대시보드·위시·카트)가 넓어지면 마지막 nav 항목과 겹침
+          (관리자 로그인 시 재현). flex 흐름에 두면 nav·유틸리티가 서로 공간을 밀어내 겹침이
+          구조적으로 불가능. lg(1024~1279)에서 이미 흐름 배치로 정상 동작하던 방식을 xl로 확장. */}
+      <ul className="hidden lg:flex items-center gap-5 xl:gap-8 h-full m-0 p-0 list-none">
         {navigation.map((item) => (
           <DesktopNavItem key={item.name} item={item} isActive={isActive} textColor={textColor} />
         ))}
