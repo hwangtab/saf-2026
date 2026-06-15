@@ -80,8 +80,10 @@ export default async function PrintGallery() {
                       className="h-64 w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.03]"
                     />
                   </div>
-                  <h3 className="mt-3 text-artwork-title text-charcoal-deep">{title}</h3>
-                  <p className="text-caption-meta">
+                  <h3 className="mt-3 font-display text-lg font-semibold tracking-tight text-charcoal-deep group-hover:text-primary-strong">
+                    {title}
+                  </h3>
+                  <p className="text-caption-meta mt-0.5">
                     {w.year} · {w.size}
                   </p>
                 </Link>
