@@ -87,7 +87,7 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
       <PageHero
         title={t('heroTitle')}
         description={t('heroSubtitle')}
-        customBackgroundImage="/images/ohyoon.webp"
+        customBackgroundImage="https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/1006__original.webp"
       >
         <SeatStatusBar remaining={remaining} isOpen={isOpen} />
       </PageHero>
