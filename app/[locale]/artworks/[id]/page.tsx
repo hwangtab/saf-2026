@@ -563,6 +563,32 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 />
               )}
 
+              {/* 오윤 전용 희소성 — 1996 소량 발행·30년 만 첫 공개·재발행 없음 (사실 기반, 데이터 변경 없음) */}
+              {artwork.category === '사후판화' &&
+                artwork.artist?.normalize('NFC').trim() === '오윤' && (
+                  <div className="rounded-lg border border-primary/20 bg-primary-surface px-4 py-3">
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {(isEnglish
+                        ? ['1996 posthumous edition', 'First shown in 30 years', 'One-time edition']
+                        : ['1996 사후판화', '30년 만의 첫 공개', '재발행 없는 소량 발행']
+                      ).map((label) => (
+                        <span
+                          key={label}
+                          className="inline-flex items-center gap-1 rounded-full border border-primary/30 px-2.5 py-0.5 text-xs font-medium text-primary-strong"
+                        >
+                          <span className="h-1 w-1 rounded-full bg-primary" />
+                          {label}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-sm text-charcoal break-keep">
+                      {isEnglish
+                        ? 'A finite set from 1996 — once a print finds its owner, it is not reprinted.'
+                        : '1996년의 유한한 작품들입니다. 한 점이 주인을 만나면 다시 찍어 채우지 않습니다.'}
+                    </p>
+                  </div>
+                )}
+
               <div className="border-t border-b border-gray-100 py-6">
                 <div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 items-baseline">
                   {/* 분류 */}
