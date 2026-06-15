@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils/cn';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 
 interface ExpandableHistoryProps {
   history: string;
@@ -23,13 +24,14 @@ export default function ExpandableHistory({ history, className }: ExpandableHist
         {t('title')}
       </h3>
       <div className="relative">
-        <p
-          className={`text-gray-600 leading-relaxed text-sm whitespace-pre-line ${
-            !isExpanded && needsExpand ? 'line-clamp-3' : ''
-          }`}
-        >
-          {history}
-        </p>
+        <MarkdownRenderer
+          content={history}
+          compact
+          className={cn(
+            'text-gray-600 leading-relaxed text-sm',
+            !isExpanded && needsExpand && 'line-clamp-3'
+          )}
+        />
         {needsExpand && (
           <button
             type="button"

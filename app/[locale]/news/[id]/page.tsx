@@ -10,6 +10,7 @@ import { resolveLocale } from '@/lib/server-locale';
 import { localizeNewsSource } from '@/lib/news-source';
 import SafeImage from '@/components/common/SafeImage';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import Section from '@/components/ui/Section';
 import LinkButton from '@/components/ui/LinkButton';
 import PageHero from '@/components/ui/PageHero';
@@ -170,7 +171,12 @@ export default async function NewsArticlePage({ params }: Props) {
             </div>
           )}
           {localizedDescriptionRaw && (
-            <p className="text-lg leading-relaxed mb-8">{localizedDescriptionRaw}</p>
+            <MarkdownRenderer
+              content={localizedDescriptionRaw}
+              compact
+              locale={locale}
+              className="text-lg leading-relaxed mb-8"
+            />
           )}
           {article.link && (
             <LinkButton

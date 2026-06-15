@@ -75,6 +75,59 @@
     @apply text-lg text-charcoal max-w-none;
     line-height: 1.78;
   }
+
+  /* 컴팩트 마크다운 — 작품 소개·작가 약력·뉴스 본문 등 짧은 prose 필드.
+     글자크기/색은 부모에서 상속(article 스케일 강제 안 함). 문단·강조·링크·목록만 처리. */
+  .markdown-compact {
+    @apply max-w-none;
+  }
+  .markdown-compact > :first-child {
+    margin-top: 0;
+  }
+  .markdown-compact > :last-child {
+    margin-bottom: 0;
+  }
+  .markdown-compact p {
+    @apply mb-3 leading-relaxed;
+  }
+  .markdown-compact strong {
+    @apply font-semibold text-charcoal-deep;
+  }
+  .markdown-compact em {
+    font-style: italic;
+  }
+  .markdown-compact a {
+    @apply text-primary-strong underline underline-offset-2;
+  }
+  .markdown-compact ul {
+    @apply my-3 list-disc;
+    padding-inline-start: 1.3em;
+  }
+  .markdown-compact ol {
+    @apply my-3 list-decimal;
+    padding-inline-start: 1.3em;
+  }
+  .markdown-compact li {
+    @apply mb-1 leading-relaxed;
+  }
+  /* 짧은 필드에서 큰 헤딩은 과함 — 본문 강조 수준으로 절제 */
+  .markdown-compact h1,
+  .markdown-compact h2,
+  .markdown-compact h3,
+  .markdown-compact h4 {
+    @apply mb-2 mt-4 font-bold text-charcoal-deep;
+    font-size: 1.05em;
+    line-height: 1.4;
+  }
+  .markdown-compact h1:first-child,
+  .markdown-compact h2:first-child,
+  .markdown-compact h3:first-child,
+  .markdown-compact h4:first-child {
+    margin-top: 0;
+  }
+  .markdown-compact blockquote {
+    @apply my-3 border-l-2 border-primary/40 pl-4 text-charcoal-muted;
+  }
   .markdown-content > :first-child {
     margin-top: 0;
   }

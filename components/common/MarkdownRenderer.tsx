@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import clsx from 'clsx';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
@@ -176,22 +177,38 @@ interface Props {
   content: string;
   className?: string;
   locale?: string;
+  /**
+   * compact: 작품 소개·작가 약력·뉴스 본문 등 짧은 prose 필드용. article 스케일(.markdown-content)
+   * 대신 부모 글자크기를 상속하는 .markdown-compact 사용 + remark-breaks로 단일 개행을 <br>로
+   * 보존(기존 whitespace-pre-line 동작 유지). 매거진 본문(stories)은 기본(false)으로 둔다 —
+   * 본문은 \n\n 문단 기준이라 단일 개행 보존이 불필요하고 article 타이포가 맞다.
+   */
+  compact?: boolean;
 }
 
-export default function MarkdownRenderer({ content, className, locale = 'ko' }: Props) {
+export default function MarkdownRenderer({
+  content,
+  className,
+  locale = 'ko',
+  compact = false,
+}: Props) {
   return (
     <div
       // 모든 기존 prose-* modifier 정의는 globals.css의 .markdown-content 클래스로 이전.
       // @tailwindcss/typography 의존 제거 — 메인 페이지 CSS chunk에서 미사용 prose 정의
       // 31KB raw가 함께 번들되던 문제 해결.
-      className={clsx('markdown-content', className)}
+      className={clsx(compact ? 'markdown-compact' : 'markdown-content', className)}
     >
       <ReactMarkdown
         // singleTilde: false — GFM strict 모드. 단일 `~text~`를 strikethrough로 해석하지 않고
         // 일반 텍스트로 처리. 한국어 가격·연도 범위 표기("1970~80년대", "₩500만~900만",
         // "50만~150만원" 등)가 strikethrough 구분자로 잘못 잡히던 회귀 차단.
         // GFM 정식 strikethrough는 `~~text~~`(이중 tilde) 형태로만 동작.
-        remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+        remarkPlugins={
+          compact
+            ? [[remarkGfm, { singleTilde: false }], remarkBreaks]
+            : [[remarkGfm, { singleTilde: false }]]
+        }
         components={createMarkdownComponents(locale)}
       >
         {content}

@@ -28,6 +28,7 @@ import { pinPrimaryStory, getPrimaryStorySlug } from '@/lib/artist-story-map';
 import { getMediumHubSlug, getMediumCommerceHubSlug } from '@/lib/artwork-medium-hub';
 import ArtworkImage from '@/components/features/ArtworkImage';
 import ArtworkDetailNav from '@/components/features/ArtworkDetailNav';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import { parsePrice } from '@/lib/parsePrice';
 import { SITE_URL } from '@/lib/constants';
 import RelatedArticles from '@/components/features/RelatedArticles';
@@ -676,12 +677,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <h2 className="text-sm font-bold text-primary-strong uppercase tracking-wider mb-4">
                     {t('artistProfile')}
                   </h2>
-                  <p
-                    id="artist-profile"
-                    className="text-charcoal leading-relaxed text-sm whitespace-pre-line"
-                  >
-                    {localizedProfile}
-                  </p>
+                  <div id="artist-profile">
+                    <MarkdownRenderer
+                      content={localizedProfile}
+                      compact
+                      locale={locale}
+                      className="text-charcoal leading-relaxed text-sm [&_a]:break-words"
+                    />
+                  </div>
                 </div>
               )}
 
@@ -703,12 +706,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   <h2 className="text-sm font-bold text-charcoal-muted uppercase tracking-wider mb-4">
                     {t('artistNote')}
                   </h2>
-                  <p
-                    id="artist-note"
-                    className="text-charcoal leading-relaxed text-sm whitespace-pre-line"
-                  >
-                    {localizedDescription}
-                  </p>
+                  <div id="artist-note">
+                    <MarkdownRenderer
+                      content={localizedDescription}
+                      compact
+                      locale={locale}
+                      className="text-charcoal leading-relaxed text-sm [&_a]:break-words"
+                    />
+                  </div>
                 </div>
               )}
 

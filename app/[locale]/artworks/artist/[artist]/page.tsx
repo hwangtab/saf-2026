@@ -34,6 +34,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import { getArtistSeoOverride } from '@/lib/artist-seo-overrides';
 import { getPrimaryStorySlug, pinPrimaryStory } from '@/lib/artist-story-map';
 import { getMediumHubSlug, getMediumCommerceHubSlug } from '@/lib/artwork-medium-hub';
@@ -1123,7 +1124,12 @@ async function renderArtistPage({ params }: Props) {
               {isEnglish ? `About ${formattedName}` : `${formattedName} 작가 소개`}
             </h2>
             {bioProfile && (
-              <p className="whitespace-pre-wrap text-charcoal leading-relaxed">{bioProfile}</p>
+              <MarkdownRenderer
+                content={bioProfile}
+                compact
+                locale={locale}
+                className="text-charcoal leading-relaxed"
+              />
             )}
             {primaryStory && (
               <p className="mt-6">
@@ -1142,9 +1148,12 @@ async function renderArtistPage({ params }: Props) {
                 <summary className="cursor-pointer text-sm font-medium text-primary hover:text-primary-strong">
                   {isEnglish ? 'View biography & exhibitions' : '약력 및 전시 이력 보기'}
                 </summary>
-                <div className="mt-4 whitespace-pre-wrap text-sm text-charcoal-muted leading-relaxed">
-                  {bioHistory}
-                </div>
+                <MarkdownRenderer
+                  content={bioHistory}
+                  compact
+                  locale={locale}
+                  className="mt-4 text-sm text-charcoal-muted leading-relaxed"
+                />
               </details>
             )}
           </div>
