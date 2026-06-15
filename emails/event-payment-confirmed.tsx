@@ -38,6 +38,19 @@ export default function EventPaymentConfirmedEmail({
           연락드립니다.
         </Text>
       </Section>
+      <Section
+        style={{
+          marginTop: '16px',
+          paddingTop: '14px',
+          borderTop: '1px solid #E0E0E0',
+        }}
+      >
+        <Text style={{ color: '#8A929B', fontSize: '13px', lineHeight: '1.6', margin: 0 }}>
+          참가가 어려워지셨나요? 추도식 전에 사무국(contact@kosmart.org)으로 연락 주세요. 되도록
+          일찍 알려 주시면 환불을 도와드리고, 자리를 다음 대기자에게 넘겨 드릴 수 있습니다.
+          (버스·식사 예약 사정상 행사 임박 시점에는 환불이 어려울 수 있습니다.)
+        </Text>
+      </Section>
     </SAFEmailLayout>
   );
 }
