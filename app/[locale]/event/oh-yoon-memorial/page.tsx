@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import PageHero from '@/components/ui/PageHero';
+import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
@@ -105,6 +106,11 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
               feePerPerson={feePerPerson}
               clientKey={clientKey}
             />
+            <p className="mt-4 text-center text-sm text-charcoal-muted">
+              <Link href="/event/oh-yoon-memorial/manage" className="underline hover:text-primary">
+                {t('manageLink')}
+              </Link>
+            </p>
           </div>
         </div>
       </Section>

@@ -10,6 +10,8 @@ export interface EventNotifyData {
   deadline?: string;
   /** waitlist_payment 결제 버튼 링크 */
   paymentUrl?: string;
+  /** payment_confirmed 이메일에 주문번호·조회 링크 노출용 */
+  orderNo?: string;
 }
 
 export const won = (n: number): string => n.toLocaleString('ko-KR');

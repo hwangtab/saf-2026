@@ -116,6 +116,7 @@ export async function sendEventEmail(
         name: data.name,
         partySize: data.partySize,
         amount: data.amount,
+        orderNo: data.orderNo,
       });
     } else if (type === 'waitlist') {
       el = React.createElement(EventWaitlistEmail, {

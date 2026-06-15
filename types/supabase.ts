@@ -883,6 +883,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      event_phone_verifications: {
+        Row: {
+          attempts: number;
+          code: string;
+          consumed: boolean;
+          created_at: string;
+          event_slug: string;
+          expires_at: string;
+          id: string;
+          phone: string;
+        };
+        Insert: {
+          attempts?: number;
+          code: string;
+          consumed?: boolean;
+          created_at?: string;
+          event_slug: string;
+          expires_at: string;
+          id?: string;
+          phone: string;
+        };
+        Update: {
+          attempts?: number;
+          code?: string;
+          consumed?: boolean;
+          created_at?: string;
+          event_slug?: string;
+          expires_at?: string;
+          id?: string;
+          phone?: string;
+        };
+        Relationships: [];
+      };
       event_registrations: {
         Row: {
           agreed_privacy: boolean;

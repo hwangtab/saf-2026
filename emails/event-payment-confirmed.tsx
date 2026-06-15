@@ -6,15 +6,21 @@ export interface EventPaymentConfirmedProps {
   name: string;
   partySize: number;
   amount: number;
+  orderNo?: string;
 }
 
 export default function EventPaymentConfirmedEmail({
   name,
   partySize,
   amount,
+  orderNo,
 }: EventPaymentConfirmedProps) {
+  const manageUrl = orderNo
+    ? `https://www.saf2026.com/event/oh-yoon-memorial/manage?orderNo=${orderNo}`
+    : 'https://www.saf2026.com/event/oh-yoon-memorial/manage';
   const rows = [
     { label: '신청자', value: `${name}님` },
+    ...(orderNo ? [{ label: '주문번호', value: orderNo }] : []),
     { label: '인원', value: `${partySize}명` },
     { label: '회비', value: `${amount.toLocaleString('ko-KR')}원 (결제완료)`, bold: true },
     { label: '일시', value: '2026년 7월 5일(일) 09:30 출발' },
@@ -46,9 +52,12 @@ export default function EventPaymentConfirmedEmail({
         }}
       >
         <Text style={{ color: '#8A929B', fontSize: '13px', lineHeight: '1.6', margin: 0 }}>
-          참가가 어려워지셨나요? 추도식 전에 사무국(contact@kosmart.org)으로 연락 주세요. 되도록
-          일찍 알려 주시면 환불을 도와드리고, 자리를 다음 대기자에게 넘겨 드릴 수 있습니다.
-          (버스·식사 예약 사정상 행사 임박 시점에는 환불이 어려울 수 있습니다.)
+          참가가 어려워지셨나요? 행사 3일 전(7월 2일)까지는{' '}
+          <a href={manageUrl} style={{ color: '#0E4ECF', fontWeight: 700 }}>
+            신청 조회·취소
+          </a>{' '}
+          페이지에서 직접 환불하실 수 있습니다. 기한이 지난 뒤에는 사무국(contact@kosmart.org)으로
+          연락 주세요. (버스·식사 예약 사정상 행사 임박 시점에는 환불이 어려울 수 있습니다.)
         </Text>
       </Section>
     </SAFEmailLayout>

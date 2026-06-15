@@ -27,3 +27,11 @@ export const OH_YOON_MEMORIAL_SCHEDULE = [
 
 /** 행사일 ISO(KST). */
 export const OH_YOON_MEMORIAL_DATE = '2026-07-05' as const;
+
+/**
+ * 본인 자가환불 마감 — 행사 3일 전(7/2) 자정까지. 이후엔 사무국 문의.
+ * 버스·식사 예약 사정상 임박 취소는 환불 어려움.
+ */
+export const OH_YOON_MEMORIAL_REFUND_DEADLINE = '2026-07-02T23:59:59+09:00' as const;
+/** 환불 마감 표시용 라벨 (메시지 변수로 주입). */
+export const OH_YOON_MEMORIAL_REFUND_DEADLINE_LABEL = '7월 2일' as const;

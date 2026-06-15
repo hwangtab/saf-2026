@@ -7,6 +7,7 @@ type State = 'loading' | 'ok' | 'soldOutRefunded' | 'refunded' | 'manualReview' 
 
 export default function SuccessClient() {
   const [state, setState] = useState<State>('loading');
+  const [orderNo, setOrderNo] = useState<string | null>(null);
 
   useEffect(() => {
     async function confirm() {
@@ -14,6 +15,7 @@ export default function SuccessClient() {
       const paymentKey = p.get('paymentKey');
       const orderId = p.get('orderId');
       const amount = Number(p.get('amount'));
+      if (orderId) setOrderNo(orderId);
       if (!paymentKey || !orderId || !amount) {
         setState('error');
         return;
@@ -52,12 +54,27 @@ export default function SuccessClient() {
             신청이 완료되었습니다
           </h1>
           <p className="mt-3 text-charcoal">확인 안내를 알림톡(및 이메일)으로 보내드렸습니다.</p>
-          <Link
-            href="/event/oh-yoon-memorial"
-            className="mt-6 inline-block font-semibold text-primary-strong underline"
-          >
-            추도식 안내로 돌아가기
-          </Link>
+          {orderNo && (
+            <p className="mt-3 text-sm text-charcoal-muted">
+              주문번호 <span className="font-semibold text-charcoal-deep">{orderNo}</span>
+              <br />
+              <span className="text-xs">(문의 시 참고용)</span>
+            </p>
+          )}
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <Link
+              href="/event/oh-yoon-memorial"
+              className="font-semibold text-primary-strong underline"
+            >
+              추도식 안내로 돌아가기
+            </Link>
+            <Link
+              href="/event/oh-yoon-memorial/manage"
+              className="text-sm text-charcoal-muted underline"
+            >
+              신청 조회·취소 (휴대폰 인증)
+            </Link>
+          </div>
         </div>
       )}
       {state === 'error' && (

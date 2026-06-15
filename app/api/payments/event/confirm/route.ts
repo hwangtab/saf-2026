@@ -169,6 +169,7 @@ export async function POST(req: NextRequest) {
       name: reg.applicant_name,
       partySize: reg.party_size,
       amount: reg.amount,
+      orderNo: orderId,
     });
   }
 
