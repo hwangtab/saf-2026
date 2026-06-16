@@ -13,6 +13,7 @@ import { getMaterialLabel } from '@/lib/artwork-material';
 import { describeSize } from '@/lib/artwork-size';
 import { getMediumLabel } from '@/lib/medium-labels';
 import { buildArtworkAlt } from '@/lib/artwork-alt';
+import { isArtworkPurchasable } from '@/lib/artwork-purchasable';
 
 type ArtworkCardVariant = 'gallery' | 'slider';
 type ArtworkCardTheme = 'light' | 'dark';
@@ -269,12 +270,7 @@ function ArtworkCard({
   const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
   const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
   // 카드 장바구니 담기: 판매가능 + 정가일 때만 (위시 하트는 항상 노출).
-  const cartPurchasable =
-    !artwork.sold &&
-    !artwork.reserved &&
-    !!artwork.price &&
-    !isInquiryPrice(artwork.price) &&
-    !isPending(artwork.price);
+  const cartPurchasable = isArtworkPurchasable(artwork);
   return (
     <div
       className={cn(
