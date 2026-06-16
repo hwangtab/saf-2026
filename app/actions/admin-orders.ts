@@ -1,5 +1,6 @@
 'use server';
 
+import { after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
@@ -379,8 +380,8 @@ export async function refundOrder(input: RefundInput) {
   // 0행 = 이미 다른 경로에서 환불 처리됨 (동시 요청 등) — 중복 이메일 방지
   if (!updatedRows || updatedRows.length === 0) return;
 
-  // 4. 관리자 + 구매자 환불 이메일 발송 (fire-and-forget)
-  void (async () => {
+  // 4. 관리자 + 구매자 환불 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
+  after(async () => {
     try {
       const refundInfo = await getOrderNotificationInfo(supabase, { id: order.id });
 
@@ -421,7 +422,7 @@ export async function refundOrder(input: RefundInput) {
     } catch (err) {
       console.error('[refundOrder] email failed:', err);
     }
-  })();
+  });
 
   // 5. Void artwork_sales — 다품목 주문은 해당 order의 active 매출 전부 void (단건 주문은 1행만 영향)
   const { error: voidError } = await supabase
@@ -432,11 +433,13 @@ export async function refundOrder(input: RefundInput) {
   if (voidError) {
     // 환불은 이미 완료(Toss 취소 + 주문 refunded). 판매기록 void 실패 시 매출이 과대 계상되므로 경보.
     console.error('[refundOrder] artwork_sales void failed:', voidError);
-    void notifyEmail('error', '환불 후 판매기록 void 실패 — 수동 처리 필요', {
-      주문번호: order.order_no,
-      주문ID: orderId,
-      에러: voidError.message,
-    });
+    after(() =>
+      notifyEmail('error', '환불 후 판매기록 void 실패 — 수동 처리 필요', {
+        주문번호: order.order_no,
+        주문ID: orderId,
+        에러: voidError.message,
+      })
+    );
   }
 
   // 6. Recalculate artwork status — order_items 라인별로 (legacy 단건은 artwork_id fallback).
@@ -635,9 +638,9 @@ export async function updateOrderStatus(
     { summary: `주문 상태 변경: ${order.order_no} (${order.status} → ${newStatus})` }
   );
 
-  // 구매자 배송 이메일 발송 (fire-and-forget)
+  // 구매자 배송 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
   if (order.buyer_email && (newStatus === 'shipped' || newStatus === 'delivered')) {
-    void (async () => {
+    after(async () => {
       try {
         const info = await getOrderNotificationInfo(supabase, { id: order.id });
         const locale = extractBuyerLocale(order.metadata);
@@ -707,7 +710,7 @@ export async function updateOrderStatus(
       } catch (err) {
         console.error('[updateOrderStatus] email failed:', err);
       }
-    })();
+    });
   }
 
   revalidatePath('/admin/orders');
@@ -816,12 +819,14 @@ export async function confirmDeposit(orderId: string) {
 
     if (salesResult.inserted === false && salesResult.reason === 'error') {
       console.error('[confirmDeposit] artwork_sales INSERT 실패:', salesResult.error);
-      void notifyEmail('error', '입금 확인 후 판매 기록 생성 실패', {
-        주문번호: order.order_no,
-        주문ID: orderId,
-        에러: salesResult.error,
-        참고: '주문은 paid 처리됨 — 판매 기록 수동 생성 필요',
-      });
+      after(() =>
+        notifyEmail('error', '입금 확인 후 판매 기록 생성 실패', {
+          주문번호: order.order_no,
+          주문ID: orderId,
+          에러: salesResult.error,
+          참고: '주문은 paid 처리됨 — 판매 기록 수동 생성 필요',
+        })
+      );
       throw new Error(
         '입금은 확인되었으나 판매 기록 생성에 실패했습니다. 작품 판매 상태가 갱신되지 않았으니 수동 확인이 필요합니다.'
       );
@@ -834,8 +839,8 @@ export async function confirmDeposit(orderId: string) {
     }
   }
 
-  // 3. 관리자 + 구매자 입금 확인 이메일 발송 (fire-and-forget)
-  void (async () => {
+  // 3. 관리자 + 구매자 입금 확인 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
+  after(async () => {
     try {
       const info = await getOrderNotificationInfo(supabase, { id: order.id });
 
@@ -881,7 +886,7 @@ export async function confirmDeposit(orderId: string) {
     } catch (err) {
       console.error('[confirmDeposit] email failed:', err);
     }
-  })();
+  });
 
   // 4. 로그
   await logAdminAction(
@@ -1026,8 +1031,8 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
       .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
   }
 
-  // 3. 관리자 + 구매자 취소 이메일 발송 (fire-and-forget)
-  void (async () => {
+  // 3. 관리자 + 구매자 취소 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
+  after(async () => {
     try {
       const info = await getOrderNotificationInfo(supabase, { id: order.id });
 
@@ -1063,7 +1068,7 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
     } catch (err) {
       console.error('[cancelAwaitingOrder] email failed:', err);
     }
-  })();
+  });
 
   // 4. 로그
   await logAdminAction(

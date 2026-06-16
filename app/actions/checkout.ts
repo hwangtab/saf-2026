@@ -1,6 +1,7 @@
 'use server';
 
 import crypto from 'crypto';
+import { after } from 'next/server';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
@@ -806,10 +807,10 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     }
   }
 
-  // 이메일 발송 (fire-and-forget — 결제 흐름 차단 X)
+  // 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
   // - 구매자: virtual_account_issued 템플릿 재사용 (bankName/accountNumber/dueDate 동일 구조)
   // - 관리자: 입금 대기 알림
-  void (async () => {
+  after(async () => {
     try {
       const info = await getOrderNotificationInfo(adminClient, { id: result.orderId });
       const dueDate = new Date(Date.now() + DEPOSIT_DEADLINE_HOURS * 60 * 60 * 1000);
@@ -875,7 +876,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
     } catch (err) {
       console.error('[createBankTransferOrder] email failed:', err);
     }
-  })();
+  });
 
   // 서버 액션이 직접 success 페이지로 redirect. window.location.href 풀 리로드 대신
   // soft navigation이 일어나므로 흰 화면 깜빡임이 없고, 현재 라우트 자동 refresh로 인한

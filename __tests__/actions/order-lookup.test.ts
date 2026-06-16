@@ -23,6 +23,12 @@ jest.mock('next/cache', () => ({
   unstable_cache: (fn: unknown) => fn,
 }));
 
+// --- Mock: next/server ---
+// 테스트 환경에는 request scope가 없어 after()가 throw하므로, 콜백을 즉시 실행해 무력화
+jest.mock('next/server', () => ({
+  after: (cb: unknown) => (typeof cb === 'function' ? (cb as () => unknown)() : cb),
+}));
+
 // --- Mock: rate-limit ---
 let mockRateLimitResult = { success: true, remaining: 9 };
 jest.mock('@/lib/rate-limit', () => ({

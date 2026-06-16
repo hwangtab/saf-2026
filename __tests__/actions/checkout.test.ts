@@ -38,6 +38,12 @@ jest.mock('next/cache', () => ({
   revalidateTag: jest.fn(),
 }));
 
+// --- Mock: next/server ---
+// 테스트 환경에는 request scope가 없어 after()가 throw하므로, 콜백을 즉시 실행해 무력화
+jest.mock('next/server', () => ({
+  after: (cb: unknown) => (typeof cb === 'function' ? (cb as () => unknown)() : cb),
+}));
+
 jest.mock('next/navigation', () => ({
   redirect: jest.fn((url: string) => {
     throw new Error(`NEXT_REDIRECT:${url}`);

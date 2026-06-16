@@ -38,6 +38,11 @@ jest.mock('@/lib/events/notify', () => ({
   sendEventEmail: jest.fn(),
 }));
 jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }));
+// 테스트 환경에는 request scope가 없어 after()가 throw하므로, 콜백을 즉시 실행해 무력화
+jest.mock('next/server', () => ({
+  ...jest.requireActual('next/server'),
+  after: (cb: unknown) => (typeof cb === 'function' ? (cb as () => unknown)() : cb),
+}));
 
 function request(body: Record<string, unknown>) {
   return new NextRequest('https://www.saf2026.com/api/payments/event/confirm', {

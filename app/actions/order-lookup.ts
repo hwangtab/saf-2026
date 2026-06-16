@@ -1,5 +1,6 @@
 'use server';
 
+import { after } from 'next/server';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
@@ -666,7 +667,7 @@ export async function cancelBuyerOrder(
       }
     );
 
-    void (async () => {
+    after(async () => {
       try {
         const info = await getOrderNotificationInfo(adminClient, { id: order.id });
         if (info) {
@@ -704,7 +705,7 @@ export async function cancelBuyerOrder(
       } catch (err) {
         console.error('[cancelBuyerOrder] awaiting cancel email failed:', err);
       }
-    })();
+    });
 
     return { success: true };
   }
@@ -768,11 +769,13 @@ export async function cancelBuyerOrder(
   if (voidError) {
     // 환불은 이미 처리됨 — 판매기록 void 실패 시 매출 과대계상되므로 운영팀 경보(매니저 수동 void 필요).
     console.error('[cancelBuyerOrder] artwork_sales void failed:', voidError);
-    void notifyEmail('error', '구매자 취소 후 판매기록 void 실패 — 수동 처리 필요', {
-      주문번호: order.order_no,
-      주문ID: order.id,
-      에러: voidError.message,
-    });
+    after(() =>
+      notifyEmail('error', '구매자 취소 후 판매기록 void 실패 — 수동 처리 필요', {
+        주문번호: order.order_no,
+        주문ID: order.id,
+        에러: voidError.message,
+      })
+    );
   }
 
   // 작품 상태 재동기화 — order_items 라인별로 (legacy 단건은 artwork_id fallback).
@@ -814,8 +817,8 @@ export async function cancelBuyerOrder(
     }
   );
 
-  // 관리자 + 구매자 환불 이메일 발송 (fire-and-forget)
-  void (async () => {
+  // 관리자 + 구매자 환불 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
+  after(async () => {
     try {
       const info = await getOrderNotificationInfo(adminClient, { id: order.id });
 
@@ -857,7 +860,7 @@ export async function cancelBuyerOrder(
     } catch (err) {
       console.error('[cancelBuyerOrder] email failed:', err);
     }
-  })();
+  });
 
   return { success: true };
 }
