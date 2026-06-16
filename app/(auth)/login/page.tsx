@@ -344,10 +344,21 @@ export default function LoginPage() {
       return;
     }
 
+    // 계정 전환 안전장치: 이미 다른 계정 세션이 살아 있는 상태로 OAuth를 시작하면
+    // PKCE code_verifier 충돌로 교환이 실패하거나, 실패 시 이전 세션이 잔존해
+    // "다른 계정으로 로그인했는데 이전 계정(예: admin)으로 보이는" 사고가 난다.
+    // OAuth 시작 전 로컬 세션을 비우고, 구글에 항상 계정 선택을 강제한다.
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch {
+      // 세션이 없거나 정리 실패해도 OAuth는 진행 — prompt=select_account가 2차 방어.
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo,
+        queryParams: { prompt: 'select_account' },
       },
     });
 

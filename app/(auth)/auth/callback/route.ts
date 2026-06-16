@@ -97,6 +97,18 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // OAuth 교환이 실패하면, request에 실려온 이전 계정 세션(예: admin)이 그대로 살아남아
+    // "다른 계정으로 로그인 시도했는데 이전 계정으로 보이는" 사고가 난다. 실패 경로에서는
+    // 반드시 기존 세션 쿠키까지 정리한다. signOut({scope:'local'})은 setAll 콜백으로
+    // 세션 쿠키 삭제를 cookiesToPropagate에 쌓고, redirect 응답에 그대로 전파된다.
+    const clearStaleSession = async () => {
+      try {
+        await supabase.auth.signOut({ scope: 'local' });
+      } catch (e) {
+        console.error('[auth/callback] signOut during failure cleanup failed', e);
+      }
+    };
+
     const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (sessionError) {
@@ -105,6 +117,7 @@ export async function GET(request: NextRequest) {
         message: sessionError.message,
         status: sessionError.status,
       });
+      await clearStaleSession();
       return redirectWithOAuthStateCleared(`${origin}/login?error=session_exchange`);
     }
 
@@ -115,6 +128,7 @@ export async function GET(request: NextRequest) {
 
       if (!user) {
         console.error('[auth/callback] session exchange ok but getUser returned null');
+        await clearStaleSession();
         return redirectWithOAuthStateCleared(`${origin}/login?error=session_missing`);
       }
 

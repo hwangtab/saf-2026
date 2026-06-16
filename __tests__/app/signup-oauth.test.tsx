@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const mockSignInWithOAuth = jest.fn();
+const mockSignOut = jest.fn();
 const mockFetch = jest.fn();
 
 jest.mock('@/lib/auth/client', () => ({
@@ -8,6 +9,8 @@ jest.mock('@/lib/auth/client', () => ({
     auth: {
       signInWithOAuth: mockSignInWithOAuth,
       signUp: jest.fn(),
+      // 계정 전환 안전장치: OAuth 시작 전 로컬 세션 정리
+      signOut: mockSignOut,
       // SignUpPage useEffect가 getUser().then()으로 기로그인 사용자를 mypage로 보냄 — Promise 반환 필수
       getUser: jest.fn().mockResolvedValue({ data: { user: null } }),
     },
@@ -65,6 +68,7 @@ describe('SignUpPage OAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSignInWithOAuth.mockResolvedValue({ error: null });
+    mockSignOut.mockResolvedValue({ error: null });
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -74,7 +78,7 @@ describe('SignUpPage OAuth', () => {
     global.fetch = mockFetch as unknown as typeof fetch;
   });
 
-  it('passes redirectTo only when starting Google OAuth', async () => {
+  it('clears stale session and forces account selection when starting Google OAuth', async () => {
     render(<SignUpPage />);
 
     fireEvent.click(screen.getByRole('button', { name: '구글로 계속하기' }));
@@ -86,10 +90,13 @@ describe('SignUpPage OAuth', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: 'collector' }),
       });
+      // 계정 전환 안전장치: 이전 계정 세션을 먼저 비운 뒤 OAuth 시작
+      expect(mockSignOut).toHaveBeenCalledWith({ scope: 'local' });
       expect(mockSignInWithOAuth).toHaveBeenCalledWith({
         provider: 'google',
         options: {
           redirectTo: 'https://example.com/auth/callback?oauth_nonce=nonce-1',
+          queryParams: { prompt: 'select_account' },
         },
       });
     });

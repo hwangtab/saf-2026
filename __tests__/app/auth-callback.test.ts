@@ -13,6 +13,7 @@ import { GET } from '@/app/(auth)/auth/callback/route';
 
 const mockExchangeCodeForSession = jest.fn();
 const mockGetUser = jest.fn();
+const mockSignOut = jest.fn();
 const mockCookieStoreSet = jest.fn();
 
 jest.mock('next/headers', () => ({
@@ -24,6 +25,7 @@ jest.mock('@supabase/ssr', () => ({
     auth: {
       exchangeCodeForSession: mockExchangeCodeForSession,
       getUser: mockGetUser,
+      signOut: mockSignOut,
     },
     from: jest.fn(),
   })),
@@ -38,6 +40,7 @@ describe('auth callback route — session/cookie error guards', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSignOut.mockResolvedValue({ error: null });
     process.env = {
       ...ORIGINAL_ENV,
       NEXT_PUBLIC_SUPABASE_URL: 'https://project.supabase.co',
@@ -64,6 +67,8 @@ describe('auth callback route — session/cookie error guards', () => {
     expect(response.headers.get('location')).toBe(
       'https://example.com/login?error=session_exchange'
     );
+    // 잔존 세션(예: 이전 admin)이 남지 않도록 실패 경로에서 signOut 호출
+    expect(mockSignOut).toHaveBeenCalledWith({ scope: 'local' });
   });
 
   it('redirects with session_missing when exchange succeeds but getUser returns null', async () => {
@@ -74,6 +79,7 @@ describe('auth callback route — session/cookie error guards', () => {
     expect(response.headers.get('location')).toBe(
       'https://example.com/login?error=session_missing'
     );
+    expect(mockSignOut).toHaveBeenCalledWith({ scope: 'local' });
   });
 
   it('clears oauth_state cookie on every redirect (Max-Age=0)', async () => {
