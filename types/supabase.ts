@@ -2335,6 +2335,14 @@ export type Database = {
       };
     };
     Functions: {
+      cancel_stale_pending_orders_for_buyer_artworks: {
+        Args: {
+          p_artwork_ids: string[];
+          p_buyer_email: string;
+          p_cutoff: string;
+        };
+        Returns: number;
+      };
       check_artwork_availability: {
         Args: { p_artwork_id: string; p_exclude_order_id?: string };
         Returns: {
@@ -2496,6 +2504,32 @@ export type Database = {
           ctr: number;
           impressions: number;
           query: string;
+        }[];
+      };
+      get_home_cta_click_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          clickers: number;
+          clicks: number;
+          event_name: string;
+          section: string;
+        }[];
+      };
+      get_home_entry_funnel: {
+        Args: { since_ts: string };
+        Returns: {
+          detail_viewers: number;
+          home_clickers: number;
+          home_visitors: number;
+          purchase_clickers: number;
+        }[];
+      };
+      get_home_section_view_summary: {
+        Args: { since_ts: string };
+        Returns: {
+          section: string;
+          views: number;
+          visitors: number;
         }[];
       };
       get_locale_switch_pages: {
@@ -2868,16 +2902,16 @@ export type Database = {
         Returns: number;
       };
       parse_artwork_price: { Args: { price_text: string }; Returns: number };
+      promote_waitlist_event_registration: {
+        Args: { p_hold_minutes?: number; p_id: string };
+        Returns: Json;
+      };
       purge_petition_pii: {
         Args: { p_days?: number; p_slug: string };
         Returns: Json;
       };
       purge_petitions_expired: { Args: never; Returns: Json };
       register_event_seat: { Args: { p_payload: Json }; Returns: Json };
-      promote_waitlist_event_registration: {
-        Args: { p_id: string; p_hold_minutes?: number };
-        Returns: Json;
-      };
       renew_broadcast_dispatch: {
         Args: {
           p_broadcast_id: string;
