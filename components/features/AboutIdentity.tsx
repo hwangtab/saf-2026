@@ -29,8 +29,13 @@ export default async function AboutIdentity({ locale }: { locale: string }) {
         <h2 className="text-2xl md:text-4xl font-bold text-charcoal-deep mb-3 break-keep text-balance">
           {t('headline', { artistCount, artworkCount })}
         </h2>
-        <p className="text-base md:text-lg text-charcoal-muted mb-8 text-balance">
+        <p className="text-base md:text-lg text-charcoal-muted mb-6 text-balance">
           {t('subtitle')}
+        </p>
+        {/* 구매 신뢰 스트립 — PM 패널(2026-06-16) 합의: metaDescription이 약속한 '무료배송·7일반품'
+            신호를 홈 first-screen 인근에 노출(promise-mismatch 해소). 정적 텍스트라 CLS/LCP 영향 0. */}
+        <p className="mb-8 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs md:text-sm font-medium text-charcoal-soft">
+          {t('trustStrip')}
         </p>
         <div className="flex flex-row flex-wrap items-center justify-center gap-6 md:gap-12 mb-8">
           <div>

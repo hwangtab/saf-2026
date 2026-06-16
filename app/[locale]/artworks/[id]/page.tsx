@@ -446,6 +446,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 priceAmount={hasActionablePrice ? parsedPrice : null}
               />
 
+              {/* 구매 결정 지점 신뢰 신호 — 결제 CTA 바로 아래 동일 시야 노출 (PM 패널 2026-06-16 합의:
+                  진품·안전결제·반품 불안을 money-commit 직전 해소). 하단 전체폭 TrustBadges 박스는 보조 유지.
+                  구매 가능 상태에서만 노출. 정적 텍스트라 CLS 0. */}
+              {hasActionablePrice && !artwork.sold && !artwork.reserved && (
+                <p className="-mt-4 text-center text-xs md:text-sm font-medium text-charcoal-muted">
+                  {t('trustInline')}
+                </p>
+              )}
+
               {(artwork.sold || artwork.reserved) && soldAlternativeWorks.length > 0 && (
                 <div className="rounded-2xl border border-primary/10 bg-primary-surface p-5">
                   <p className="text-xs font-semibold uppercase tracking-wider text-primary-a11y">
