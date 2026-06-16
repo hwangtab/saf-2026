@@ -43,6 +43,8 @@ import { getCategorySeoContent } from '@/lib/category-seo-content';
 // 원천 차단한다. SEO 영향 없음(Googlebot 첫 hit SSR 200). artist 페이지도 동일 이유.
 // 잘못된 카테고리는 renderCategoryPage의 SUPPORTED_CATEGORIES 체크가 CategoryNotFoundView로
 // 처리하므로 dynamicParams=false 불필요. (회귀: 2026-06-16 force-static 시 segment-prefetch throw)
+// ⏳ 임시 우회 — 업스트림 버그 추적: https://github.com/vercel/next.js/issues/94840
+//    Next가 수정·릴리스하면 업그레이드 후 force-static + revalidate 복원할 것.
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
