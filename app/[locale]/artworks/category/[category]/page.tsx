@@ -35,12 +35,16 @@ import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { getCategorySeoContent } from '@/lib/category-seo-content';
 
-export const dynamic = 'force-static';
-export const revalidate = 600;
-// 카테고리는 사실상 CATEGORY_EN_MAP enum — generateStaticParams에 등록된 8종만 prerender.
-// dynamicParams=false 명시로 그 외 카테고리는 자동 404 (이전: default true → 첫 hit SSG 시
-// throw 후 ISR에 500 박힘. 사용자가 의도적으로 잘못된 URL 입력 시 발생하던 edge case 차단).
-export const dynamicParams = false;
+// force-dynamic — 'TypeError: Invalid character' 회귀 회피. Next.js 16.2.6의 compiled
+// 런타임 번들(dist/compiled/next-server/app-page*.runtime.prod.js)이 비-ASCII 라우트
+// 세그먼트(한글 카테고리명)에 btoa()를 raw 호출해 정적 segment-prefetch 생성 시 throw한다
+// (DOMException 'Invalid character'). 소스 패치는 minified 런타임 번들에 닿지 않아 비현실적·
+// 취약 — force-dynamic은 정적 prefetch(collectSegmentData) 경로를 아예 타지 않아 throw를
+// 원천 차단한다. SEO 영향 없음(Googlebot 첫 hit SSR 200). artist 페이지도 동일 이유.
+// 잘못된 카테고리는 renderCategoryPage의 SUPPORTED_CATEGORIES 체크가 CategoryNotFoundView로
+// 처리하므로 dynamicParams=false 불필요. (회귀: 2026-06-16 force-static 시 segment-prefetch throw)
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface Props {
   params: Promise<{ locale: string; category: string }>;
@@ -51,12 +55,6 @@ const SUPPORTED_CATEGORIES = Object.keys(CATEGORY_EN_MAP);
 
 function getCategoryEnName(category: string): string {
   return CATEGORY_EN_MAP[category] || category;
-}
-
-export async function generateStaticParams() {
-  return SUPPORTED_CATEGORIES.map((category) => ({
-    category,
-  }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
