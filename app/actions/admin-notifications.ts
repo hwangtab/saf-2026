@@ -100,6 +100,30 @@ async function fetchRegistrations(supabase: SupabaseClient): Promise<AdminNotifi
   return notifications;
 }
 
+async function fetchEventRegistrations(supabase: SupabaseClient): Promise<AdminNotification[]> {
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  const { data, error } = await supabase
+    .from('event_registrations')
+    .select('id, applicant_name, party_size, amount, order_no, paid_at')
+    .eq('status', 'confirmed')
+    .not('paid_at', 'is', null)
+    .gte('paid_at', sinceIso)
+    .order('paid_at', { ascending: false })
+    .limit(10);
+
+  if (error || !data) return [];
+
+  return data.map((row) => ({
+    id: `event:${row.id}`,
+    category: 'registration',
+    severity: 'success',
+    title: `추도식 신청 — ${row.applicant_name ?? '신청자'}`,
+    detail: `${row.party_size ?? 1}명${row.amount ? ` · ${formatKrw(row.amount)}` : ''}${row.order_no ? ` · #${row.order_no}` : ''}`,
+    href: '/admin/event/oh-yoon-memorial',
+    createdAt: row.paid_at as string,
+  }));
+}
+
 async function fetchActionNeeded(supabase: SupabaseClient): Promise<AdminNotification[]> {
   const SLA_THRESHOLD = new Date(Date.now() - 72 * 3600 * 1000).toISOString();
   const today = todayUtcIso();
@@ -276,10 +300,11 @@ export async function getAdminNotifications(): Promise<AdminNotification[]> {
   await requireAdmin();
   const supabase = await requireAdminClient();
 
-  const [purchasesResult, registrationsResult, actionNeededResult, analyticsResult] =
+  const [purchasesResult, registrationsResult, eventResult, actionNeededResult, analyticsResult] =
     await Promise.allSettled([
       fetchPurchases(supabase),
       fetchRegistrations(supabase),
+      fetchEventRegistrations(supabase),
       fetchActionNeeded(supabase),
       fetchAnalytics(supabase),
     ]);
@@ -287,6 +312,7 @@ export async function getAdminNotifications(): Promise<AdminNotification[]> {
   const all: AdminNotification[] = [
     ...(purchasesResult.status === 'fulfilled' ? purchasesResult.value : []),
     ...(registrationsResult.status === 'fulfilled' ? registrationsResult.value : []),
+    ...(eventResult.status === 'fulfilled' ? eventResult.value : []),
     ...(actionNeededResult.status === 'fulfilled' ? actionNeededResult.value : []),
     ...(analyticsResult.status === 'fulfilled' ? analyticsResult.value : []),
   ];
