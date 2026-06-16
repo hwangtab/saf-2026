@@ -14,7 +14,7 @@ import ArtistNoticeBanner from '@/components/features/ArtistNoticeBanner';
 import { getArtistExternalLinks } from '@/lib/artist-external-links';
 import { getArticleUrlsByArtist, getArticlesByArtist } from '@/content/artist-articles';
 import RelatedArticles from '@/components/features/RelatedArticles';
-import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
+import { CATEGORY_EN_MAP, getCategoryLabel, categorySlug } from '@/lib/artwork-category';
 import Section from '@/components/ui/Section';
 import PageHero from '@/components/ui/PageHero';
 import ShareButtonsWrapper from '@/components/common/ShareButtonsWrapper';
@@ -967,7 +967,7 @@ async function renderArtistPage({ params }: Props) {
           locale === 'en'
             ? CATEGORY_EN_MAP[dominantCategory] || dominantCategory
             : dominantCategory,
-        url: buildLocaleUrl(`/artworks/category/${encodeURIComponent(dominantCategory)}`, locale),
+        url: buildLocaleUrl(`/artworks/category/${categorySlug(dominantCategory)}`, locale),
       }
     : null;
   const breadcrumbItems = [
@@ -1175,7 +1175,7 @@ async function renderArtistPage({ params }: Props) {
           .map((cat) => ({
             cat,
             displayName: getCategoryLabel(cat, locale),
-            path: `/artworks/category/${encodeURIComponent(cat)}`,
+            path: `/artworks/category/${categorySlug(cat)}`,
             isPrimary: cat === primaryCategory,
           }))
           .filter((c) => availableCategories.includes(c.cat));

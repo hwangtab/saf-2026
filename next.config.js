@@ -70,7 +70,32 @@ const nextConfig = {
   },
   reactStrictMode: true,
   async redirects() {
+    // ⚠ lib/artwork-category.ts의 CATEGORY_SLUG_MAP과 반드시 동기 유지.
+    // next.config.js(CJS)는 TS 모듈 require 불가라 11개 고정 맵을 인라인 복제.
+    // (artwork-category.test.ts가 lib 쪽 커버리지를 강제. 카테고리 추가 시 양쪽 갱신.)
+    const CATEGORY_SLUG_MAP = {
+      회화: 'painting',
+      한국화: 'korean-painting',
+      판화: 'printmaking',
+      사후판화: 'posthumous-print',
+      드로잉: 'drawing',
+      조각: 'sculpture',
+      도자공예: 'ceramics-craft',
+      사진: 'photography',
+      아트프린트: 'art-print',
+      혼합매체: 'mixed-media',
+      디지털아트: 'digital-art',
+    };
+    // 기존 한글 인코딩 카테고리 URL(ko/en) → ASCII slug 308 흡수 (색인 자산 보존).
+    const categoryRedirects = Object.entries(CATEGORY_SLUG_MAP).flatMap(([ko, slug]) => {
+      const enc = encodeURIComponent(ko);
+      return [
+        { source: `/artworks/category/${enc}`, destination: `/artworks/category/${slug}`, permanent: true },
+        { source: `/en/artworks/category/${enc}`, destination: `/en/artworks/category/${slug}`, permanent: true },
+      ];
+    });
     return [
+      ...categoryRedirects,
       // apex(saf2026.com) → www redirect 제거. 같은 redirect를 Vercel 도메인 단계에서
       // 중복으로 걸고 있어 PSI "리디렉션 방지" 950ms 누적의 원인이었음. Vercel UI에서
       // saf2026.com을 "Connect to environment: Production"으로 변경해 양쪽 도메인이

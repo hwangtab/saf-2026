@@ -25,7 +25,7 @@ import { generateArtworkPurchaseHowTo, generateArtworkPurchaseFAQ } from '@/lib/
 import { getSupabaseArtworks } from '@/lib/supabase-data';
 import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { parseArtworkPrice, resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
-import { CATEGORY_EN_MAP, getCategoryLabel } from '@/lib/artwork-category';
+import { CATEGORY_EN_MAP, getCategoryLabel, categorySlug } from '@/lib/artwork-category';
 import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
@@ -269,10 +269,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
           className="sr-only"
         >
           {categoryNav.map((cat) => (
-            <Link
-              key={cat.category}
-              href={`/artworks/category/${encodeURIComponent(cat.category)}`}
-            >
+            <Link key={cat.category} href={`/artworks/category/${categorySlug(cat.category)}`}>
               {cat.displayName} ({cat.count})
             </Link>
           ))}
@@ -317,10 +314,7 @@ export default async function ArtworksPage({ params }: { params: Promise<LocaleP
                   key={cat.key}
                   className="bg-canvas rounded-2xl p-6 md:p-7 border border-gray-200 hover:border-primary/40 transition-colors"
                 >
-                  <Link
-                    href={`/artworks/category/${encodeURIComponent(cat.key)}`}
-                    className="block"
-                  >
+                  <Link href={`/artworks/category/${categorySlug(cat.key)}`} className="block">
                     <h3 className="text-lg md:text-xl font-section font-bold text-charcoal-deep mb-3">
                       {cat.title}
                     </h3>
