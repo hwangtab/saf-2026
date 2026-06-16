@@ -17,6 +17,46 @@ export const CATEGORY_EN_MAP: Record<string, string> = {
 };
 
 /**
+ * 한글 카테고리(DB 값) → URL ASCII slug 단일 출처.
+ *
+ * Next.js segment-cache 키 인코딩은 비-ASCII 라우트 세그먼트에 btoa()를 raw 호출해
+ * 'Invalid character'로 throw한다(force-static prerender). slug는 simpleParamValueRegex
+ * (/^[a-zA-Z0-9\-_@]+$/)를 통과해 btoa 분기에 진입하지 않으므로 throw를 구조적으로 제거한다.
+ * DB의 category 값은 한글 유지 — 이 맵은 라우트 레이어 변환 전용.
+ * 업스트림 추적: https://github.com/vercel/next.js/issues/94840
+ *
+ * ⚠ CATEGORY_EN_MAP에 카테고리를 추가하면 여기에도 반드시 slug를 추가할 것
+ * (artwork-category.test.ts가 커버리지를 강제).
+ */
+export const CATEGORY_SLUG_MAP: Record<string, string> = {
+  회화: 'painting',
+  한국화: 'korean-painting',
+  판화: 'printmaking',
+  사후판화: 'posthumous-print',
+  드로잉: 'drawing',
+  조각: 'sculpture',
+  도자공예: 'ceramics-craft',
+  사진: 'photography',
+  아트프린트: 'art-print',
+  혼합매체: 'mixed-media',
+  디지털아트: 'digital-art',
+};
+
+const CATEGORY_SLUG_REVERSE: Record<string, string> = Object.fromEntries(
+  Object.entries(CATEGORY_SLUG_MAP).map(([ko, slug]) => [slug, ko])
+);
+
+/** 한글 카테고리 → URL slug. 매핑이 없으면 입력을 그대로 반환(방어적). */
+export function categorySlug(category: string): string {
+  return CATEGORY_SLUG_MAP[category] ?? category;
+}
+
+/** URL slug → 한글 카테고리. 미지의 slug는 undefined(호출부에서 NotFound 처리). */
+export function categoryFromSlug(slug: string): string | undefined {
+  return CATEGORY_SLUG_REVERSE[slug];
+}
+
+/**
  * Category slug → 사용자 노출 display name 매핑 (한국어).
  *
  * 홈 카테고리 라벨과 카테고리 페이지 h1 라벨이 매치되지 않는 문제를 해결.
