@@ -933,6 +933,8 @@ export type Database = {
           party_size: number;
           payment_key: string | null;
           phone: string;
+          reconcile_attempts: number;
+          reconciled_at: string | null;
           status: string;
           updated_at: string;
           user_agent: string | null;
@@ -953,6 +955,8 @@ export type Database = {
           party_size: number;
           payment_key?: string | null;
           phone: string;
+          reconcile_attempts?: number;
+          reconciled_at?: string | null;
           status: string;
           updated_at?: string;
           user_agent?: string | null;
@@ -973,6 +977,8 @@ export type Database = {
           party_size?: number;
           payment_key?: string | null;
           phone?: string;
+          reconcile_attempts?: number;
+          reconciled_at?: string | null;
           status?: string;
           updated_at?: string;
           user_agent?: string | null;

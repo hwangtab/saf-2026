@@ -1,6 +1,6 @@
 /** 행사 발송·검증의 순수 헬퍼. 서버/이메일/DB 의존성 없음 — 단위 테스트 가능. */
 
-export type EventNotifyType = 'payment_confirmed' | 'waitlist' | 'waitlist_payment';
+export type EventNotifyType = 'payment_confirmed' | 'waitlist' | 'waitlist_payment' | 'refunded';
 
 export interface EventNotifyData {
   name: string;
@@ -21,6 +21,7 @@ export const EVENT_ALIMTALK_TEMPLATE_ENV: Record<EventNotifyType, string> = {
   payment_confirmed: 'SOLAPI_KAKAO_TEMPLATE_EVENT_PAYMENT_CONFIRMED',
   waitlist: 'SOLAPI_KAKAO_TEMPLATE_EVENT_WAITLIST',
   waitlist_payment: 'SOLAPI_KAKAO_TEMPLATE_EVENT_WAITLIST_PAYMENT',
+  refunded: 'SOLAPI_KAKAO_TEMPLATE_EVENT_REFUNDED',
 };
 
 export function buildEventAlimTalkVariables(
@@ -42,6 +43,12 @@ export function buildEventAlimTalkVariables(
         '#{partySize}': String(d.partySize),
         '#{amount}': won(d.amount),
         '#{deadline}': d.deadline ?? '',
+      };
+    case 'refunded':
+      return {
+        '#{name}': d.name,
+        '#{partySize}': String(d.partySize),
+        '#{amount}': won(d.amount),
       };
   }
 }
