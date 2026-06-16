@@ -26,6 +26,7 @@ import StoryAttributionPanel from './_components/StoryAttributionPanel';
 import WebVitalsPanel from './_components/WebVitalsPanel';
 import CtaClicksPanel from './_components/CtaClicksPanel';
 import PageReportPanel from './_components/PageReportPanel';
+import HomeFunnelPanel from '@/components/features/admin/HomeFunnelPanel';
 import { getTranslations, getLocale } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
@@ -366,6 +367,19 @@ export default async function AdminAnalyticsPage({ searchParams }: Props) {
           description={t('sectionCtaDesc')}
         />
         <CtaClicksPanel data={data.ctaClicks} />
+      </section>
+
+      {/* ============================================================ */}
+      {/* VIII. 홈 진입 퍼널 — 홈 노출→클릭→작품상세→구매CTA 전환율     */}
+      {/* ============================================================ */}
+      <section className="space-y-8">
+        <MajorSectionHeader
+          id="section-home-funnel"
+          index="08"
+          title="홈 진입 퍼널"
+          description="홈 화면 노출부터 구매 클릭까지 단계별 전환율과 섹션별 노출/클릭 현황을 보여줍니다."
+        />
+        <HomeFunnelPanel data={data.homeFunnel} />
       </section>
     </div>
   );
