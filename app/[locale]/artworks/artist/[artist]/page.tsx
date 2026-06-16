@@ -502,16 +502,15 @@ const OH_YOON_SALES_PRIORITY = [
   '4c920878-32dd-4727-ab03-6eda996597d5',
 ] as const;
 
-// force-dynamic 영구 유지 — force-static 환경에서만 발생하는 production-only throw 회귀
-// (류연복·천지윤·송광호·이문호 등). dev mode는 200 정상 응답, force-dynamic도 200, 오직
-// SSG/ISR 빌드 prerender 시점에만 'TypeError: Invalid character' throw하고 그게 ISR에 stale
-// 500으로 박힘. force-static 복원 시도(27d33770) 후 동일 회귀 재발 확인. throw origin은
-// Vercel build 환경에서만 재현되어 trace 캡처 어려움.
-// Trade-off: 매 요청 lambda(~200~500ms TTFB 증가) vs CDN 캐시 성능. 작가 페이지는 트래픽
-// 1% 미만이라 cost 영향 작음. SEO는 영향 없음 (Googlebot 첫 hit 시 SSR로 정상 200).
-// 근본 origin 파악되면 force-static 재시도 가능.
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// force-static 복원 (2026-06-16) — 'TypeError: Invalid character' 회귀의 근본원인이
+// Next.js 16.2.6 버그로 확정됨: 정적 prerender의 segment-cache 키 인코딩
+// (next/dist/shared/lib/segment-cache/segment-value-encoding.js)이 비-ASCII 라우트
+// 세그먼트(한글 작가명)에 btoa(value)를 raw 호출 → DOMException 'Invalid character'.
+// patches/next+16.2.6.patch가 btoa(unescape(encodeURIComponent(value)))로 교정해 근본 해결.
+// 과거엔 origin 미파악으로 force-dynamic 우회(트래픽 1% 미만이라 수용)했으나, 패치로
+// force-static + ISR을 복원해 CDN 캐시·TTFB 이점을 회복한다. (category 페이지도 동일 패치로 해결)
+export const dynamic = 'force-static';
+export const revalidate = 600;
 
 interface Props {
   params: Promise<{
