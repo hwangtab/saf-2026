@@ -265,12 +265,14 @@ export async function POST(req: NextRequest) {
       console.error('[confirm] order cancel failed:', cancelError);
     }
 
-    // fire-and-forget: 알림이 사용자 응답을 블로킹하면 안 됨
-    void notifyEmail('error', '결제 승인 실패', {
-      주문번호: orderId,
-      에러코드: confirmResult.error.code,
-      메시지: confirmResult.error.message,
-    });
+    // after(): 응답 후 실행 보장 — 알림 fetch abort 방지
+    after(() =>
+      notifyEmail('error', '결제 승인 실패', {
+        주문번호: orderId,
+        에러코드: confirmResult.error.code,
+        메시지: confirmResult.error.message,
+      })
+    );
 
     return NextResponse.json(
       { error: apiError('payment_confirmation_failed', reqLocale) },
@@ -300,11 +302,13 @@ export async function POST(req: NextRequest) {
 
   if (paymentInsertError) {
     console.error('[confirm] payment INSERT 실패:', paymentInsertError);
-    void notifyEmail('error', '결제 기록 저장 실패', {
-      주문번호: orderId,
-      에러: paymentInsertError.message,
-      참고: '결제는 승인 완료, 결제 기록만 누락 — reconciliation cron이 보정 예정',
-    });
+    after(() =>
+      notifyEmail('error', '결제 기록 저장 실패', {
+        주문번호: orderId,
+        에러: paymentInsertError.message,
+        참고: '결제는 승인 완료, 결제 기록만 누락 — reconciliation cron이 보정 예정',
+      })
+    );
     // 500 반환하지 않고 계속 진행 — 결제는 이미 Toss에서 승인됨
   }
 
@@ -325,11 +329,13 @@ export async function POST(req: NextRequest) {
 
   if (orderUpdateError) {
     console.error('[confirm] order UPDATE 실패:', orderUpdateError);
-    void notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
-      주문번호: orderId,
-      에러: orderUpdateError.message,
-      참고: '결제는 완료, 주문 상태 반영 실패 — reconciliation cron이 보정 예정',
-    });
+    after(() =>
+      notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
+        주문번호: orderId,
+        에러: orderUpdateError.message,
+        참고: '결제는 완료, 주문 상태 반영 실패 — reconciliation cron이 보정 예정',
+      })
+    );
   }
 
   // 가상계좌 발급 시 artwork 예약 처리 — unique edition만 reserved 잠금.
@@ -511,19 +517,23 @@ export async function POST(req: NextRequest) {
 
     if (salesResult.inserted === false && salesResult.reason === 'error') {
       console.error('[confirm] artwork_sales INSERT 실패:', salesResult.error);
-      void notifyEmail('error', '결제 후 판매 기록 생성 실패', {
-        주문번호: orderId,
-        에러: salesResult.error,
-        참고: '결제+주문 완료, 판매 기록 누락 — reconciliation cron 보정 예정',
-      });
+      after(() =>
+        notifyEmail('error', '결제 후 판매 기록 생성 실패', {
+          주문번호: orderId,
+          에러: salesResult.error,
+          참고: '결제+주문 완료, 판매 기록 누락 — reconciliation cron 보정 예정',
+        })
+      );
     } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
       // 결제 완료(paid)인데 order_items가 비어 매출이 기록되지 않음 — 정상 흐름에선
       // createOrder가 항상 order_items를 쓰므로 발생 불가. 발생 시 데이터 정합성 이상이라 알림.
       console.error('[confirm] paid order with no order_items:', orderId);
-      void notifyEmail('error', '결제 완료 주문에 품목 없음 — 판매 기록 누락', {
-        주문번호: orderId,
-        참고: '결제+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
-      });
+      after(() =>
+        notifyEmail('error', '결제 완료 주문에 품목 없음 — 판매 기록 누락', {
+          주문번호: orderId,
+          참고: '결제+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
+        })
+      );
     }
 
     // BUG 40: DB 트리거 실패 대비 방어적으로 artwork 상태 동기화
@@ -544,58 +554,67 @@ export async function POST(req: NextRequest) {
     revalidatePublicArtworkSurfaces();
   }
 
-  // 결제 성공 알림 — fire-and-forget: 응답 전송 후 백그라운드 처리
+  // 결제 성공 알림 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
   if (isDone) {
     if (notifyInfo) {
-      void notifyEmail(
-        'payment',
-        '결제 승인 완료',
-        buildAdminNotificationFields(notifyInfo, {
-          결제수단: tossResponse.method ?? '알 수 없음',
-        })
+      after(() =>
+        notifyEmail(
+          'payment',
+          '결제 승인 완료',
+          buildAdminNotificationFields(notifyInfo, {
+            결제수단: tossResponse.method ?? '알 수 없음',
+          })
+        )
       );
     } else {
-      void notifyEmail('payment', '결제 승인 완료', {
-        주문번호: orderId,
-        결제수단: tossResponse.method ?? '알 수 없음',
-        금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
-      });
-    }
-    if (order.buyer_email) {
-      void sendBuyerEmail(
-        order.buyer_email,
-        'payment_confirmed',
-        {
-          orderNo: orderId,
-          buyerName: order.buyer_name ?? '',
-          artworkTitle: notifyInfo?.artworkTitle ?? '',
-          artistName: notifyInfo?.artistName ?? '',
-          amount: tossResponse.totalAmount,
-          paymentMethod: tossResponse.method ?? undefined,
-          itemAmount: notifyInfo?.itemAmount,
-          shippingAmount: notifyInfo?.shippingAmount,
-          shipping: notifyInfo
-            ? {
-                name: notifyInfo.shippingName,
-                phone: notifyInfo.shippingPhone,
-                address: notifyInfo.shippingAddress,
-                memo: notifyInfo.shippingMemo,
-              }
-            : undefined,
-        },
-        buyerLocale
+      after(() =>
+        notifyEmail('payment', '결제 승인 완료', {
+          주문번호: orderId,
+          결제수단: tossResponse.method ?? '알 수 없음',
+          금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
+        })
       );
     }
-    void sendBuyerSms(
-      order.buyer_phone,
-      'payment_confirmed',
-      {
-        buyerName: order.buyer_name ?? '',
-        artworkTitle: notifyInfo?.artworkTitle ?? '',
-        amount: tossResponse.totalAmount,
-      },
-      buyerLocale,
-      orderId
+    if (order.buyer_email) {
+      const buyerEmail = order.buyer_email;
+      after(() =>
+        sendBuyerEmail(
+          buyerEmail,
+          'payment_confirmed',
+          {
+            orderNo: orderId,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle: notifyInfo?.artworkTitle ?? '',
+            artistName: notifyInfo?.artistName ?? '',
+            amount: tossResponse.totalAmount,
+            paymentMethod: tossResponse.method ?? undefined,
+            itemAmount: notifyInfo?.itemAmount,
+            shippingAmount: notifyInfo?.shippingAmount,
+            shipping: notifyInfo
+              ? {
+                  name: notifyInfo.shippingName,
+                  phone: notifyInfo.shippingPhone,
+                  address: notifyInfo.shippingAddress,
+                  memo: notifyInfo.shippingMemo,
+                }
+              : undefined,
+          },
+          buyerLocale
+        )
+      );
+    }
+    after(() =>
+      sendBuyerSms(
+        order.buyer_phone,
+        'payment_confirmed',
+        {
+          buyerName: order.buyer_name ?? '',
+          artworkTitle: notifyInfo?.artworkTitle ?? '',
+          amount: tossResponse.totalAmount,
+        },
+        buyerLocale,
+        orderId
+      )
     );
   } else if (isVirtualAccount) {
     const va = tossResponse.virtualAccount as
@@ -603,30 +622,54 @@ export async function POST(req: NextRequest) {
       | null
       | undefined;
     if (notifyInfo) {
-      void notifyEmail(
-        'info',
-        '가상계좌 발급 완료 (입금 대기)',
-        buildAdminNotificationFields(notifyInfo, {
-          은행: va?.bankName,
-          계좌번호: va?.accountNumber,
-          입금기한: va?.dueDate,
-        })
+      after(() =>
+        notifyEmail(
+          'info',
+          '가상계좌 발급 완료 (입금 대기)',
+          buildAdminNotificationFields(notifyInfo, {
+            은행: va?.bankName,
+            계좌번호: va?.accountNumber,
+            입금기한: va?.dueDate,
+          })
+        )
       );
     } else {
-      void notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
-        주문번호: orderId,
-        금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
-      });
+      after(() =>
+        notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
+          주문번호: orderId,
+          금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
+        })
+      );
     }
     if (order.buyer_email) {
-      void sendBuyerEmail(
-        order.buyer_email,
+      const buyerEmail = order.buyer_email;
+      after(() =>
+        sendBuyerEmail(
+          buyerEmail,
+          'virtual_account_issued',
+          {
+            orderNo: orderId,
+            buyerName: order.buyer_name ?? '',
+            artworkTitle: notifyInfo?.artworkTitle ?? '',
+            artistName: notifyInfo?.artistName ?? '',
+            amount: tossResponse.totalAmount,
+            virtualAccount: {
+              bankName: va?.bankName,
+              accountNumber: va?.accountNumber,
+              dueDate: va?.dueDate,
+            },
+          },
+          buyerLocale
+        )
+      );
+    }
+    after(() =>
+      sendBuyerSms(
+        order.buyer_phone,
         'virtual_account_issued',
         {
-          orderNo: orderId,
           buyerName: order.buyer_name ?? '',
           artworkTitle: notifyInfo?.artworkTitle ?? '',
-          artistName: notifyInfo?.artistName ?? '',
           amount: tossResponse.totalAmount,
           virtualAccount: {
             bankName: va?.bankName,
@@ -634,24 +677,9 @@ export async function POST(req: NextRequest) {
             dueDate: va?.dueDate,
           },
         },
-        buyerLocale
-      );
-    }
-    void sendBuyerSms(
-      order.buyer_phone,
-      'virtual_account_issued',
-      {
-        buyerName: order.buyer_name ?? '',
-        artworkTitle: notifyInfo?.artworkTitle ?? '',
-        amount: tossResponse.totalAmount,
-        virtualAccount: {
-          bankName: va?.bankName,
-          accountNumber: va?.accountNumber,
-          dueDate: va?.dueDate,
-        },
-      },
-      buyerLocale,
-      orderId
+        buyerLocale,
+        orderId
+      )
     );
   }
 

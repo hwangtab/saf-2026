@@ -74,10 +74,12 @@ export async function POST(req: NextRequest) {
     if (paymentLookupError) {
       // DB 에러: 인증 실패가 아닌 서버 에러 — Toss가 재시도할 수 있도록 500 반환
       console.error('[toss-webhook] payment lookup failed:', paymentLookupError);
-      void notifyEmail('error', '웹훅 DB 조회 실패', {
-        paymentKey,
-        에러: paymentLookupError.message,
-      });
+      after(() =>
+        notifyEmail('error', '웹훅 DB 조회 실패', {
+          paymentKey,
+          에러: paymentLookupError.message,
+        })
+      );
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 
@@ -102,10 +104,12 @@ export async function POST(req: NextRequest) {
 
     if (!verifyDepositCallbackSecret(payload, storedSecret)) {
       console.error(`[toss-webhook] DEPOSIT_CALLBACK secret verification failed: ${paymentKey}`);
-      void notifyEmail('error', '웹훅 검증 실패 (DEPOSIT_CALLBACK)', {
-        paymentKey,
-        사유: 'per-payment secret 불일치',
-      });
+      after(() =>
+        notifyEmail('error', '웹훅 검증 실패 (DEPOSIT_CALLBACK)', {
+          paymentKey,
+          사유: 'per-payment secret 불일치',
+        })
+      );
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -114,10 +118,12 @@ export async function POST(req: NextRequest) {
       const verified = await fetchPayment(paymentKey, provider);
       if (!verified || verified.status !== 'DONE') {
         console.error(`[toss-webhook] Toss API double-verify failed: ${paymentKey}`);
-        void notifyEmail('error', '웹훅 Toss API 이중검증 실패', {
-          paymentKey,
-          사유: verified ? `상태 불일치: ${verified.status}` : 'API 응답 없음',
-        });
+        after(() =>
+          notifyEmail('error', '웹훅 Toss API 이중검증 실패', {
+            paymentKey,
+            사유: verified ? `상태 불일치: ${verified.status}` : 'API 응답 없음',
+          })
+        );
         // 일시적 API 장애일 수 있으므로 500 반환 → Toss 재시도 유도
         return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
       }
@@ -163,11 +169,13 @@ export async function POST(req: NextRequest) {
             `[toss-webhook] order UPDATE failed: ${existingOrder?.order_no}`,
             orderUpdateError
           );
-          void notifyEmail('error', '웹훅 주문 상태 업데이트 실패', {
-            주문번호: existingOrder?.order_no ?? '',
-            paymentKey,
-            에러: orderUpdateError.message,
-          });
+          after(() =>
+            notifyEmail('error', '웹훅 주문 상태 업데이트 실패', {
+              주문번호: existingOrder?.order_no ?? '',
+              paymentKey,
+              에러: orderUpdateError.message,
+            })
+          );
         }
 
         // artwork_sales + artwork 상태 갱신은 주문 UPDATE 성공 시에만
@@ -333,16 +341,20 @@ export async function POST(req: NextRequest) {
                 `[toss-webhook] artwork_sales INSERT failed (error): ${order.order_no}`,
                 salesResult.error
               );
-              void notifyEmail('error', '웹훅 판매 기록 생성 실패', {
-                주문번호: order.order_no,
-                에러: salesResult.error,
-              });
+              after(() =>
+                notifyEmail('error', '웹훅 판매 기록 생성 실패', {
+                  주문번호: order.order_no,
+                  에러: salesResult.error,
+                })
+              );
             } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
               console.error(`[toss-webhook] paid deposit with no order_items: ${order.order_no}`);
-              void notifyEmail('error', '입금 완료 주문에 품목 없음 — 판매 기록 누락', {
-                주문번호: order.order_no ?? '',
-                참고: '입금+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
-              });
+              after(() =>
+                notifyEmail('error', '입금 완료 주문에 품목 없음 — 판매 기록 누락', {
+                  주문번호: order.order_no ?? '',
+                  참고: '입금+주문 완료이나 order_items가 비어 매출 미기록 — 수동 확인 필요',
+                })
+              );
             }
 
             // 정상 케이스만 artwork 상태 재계산(reserved → sold). 경합 패배는 작품을 건드리지 않음.
@@ -367,22 +379,27 @@ export async function POST(req: NextRequest) {
             });
 
             if (depositInfo) {
-              void notifyEmail(
-                'payment',
-                '가상계좌 입금 확인',
-                buildAdminNotificationFields(depositInfo)
+              after(() =>
+                notifyEmail(
+                  'payment',
+                  '가상계좌 입금 확인',
+                  buildAdminNotificationFields(depositInfo)
+                )
               );
             } else {
-              void notifyEmail('payment', '가상계좌 입금 확인', {
-                주문번호: order?.order_no ?? '',
-                금액: `₩${(order?.total_amount ?? 0).toLocaleString('ko-KR')}`,
-              });
+              after(() =>
+                notifyEmail('payment', '가상계좌 입금 확인', {
+                  주문번호: order?.order_no ?? '',
+                  금액: `₩${(order?.total_amount ?? 0).toLocaleString('ko-KR')}`,
+                })
+              );
             }
 
             if (order?.buyer_email) {
-              try {
-                void sendBuyerEmail(
-                  order.buyer_email,
+              const buyerEmail = order.buyer_email;
+              after(() =>
+                sendBuyerEmail(
+                  buyerEmail,
                   'deposit_confirmed',
                   {
                     orderNo: order.order_no,
@@ -402,32 +419,34 @@ export async function POST(req: NextRequest) {
                       : undefined,
                   },
                   extractBuyerLocale(order.metadata)
-                );
-              } catch (err) {
-                console.error('[toss-webhook] deposit email failed:', err);
-              }
+                )
+              );
             }
-            void sendBuyerSms(
-              order?.buyer_phone,
-              'deposit_confirmed',
-              {
-                buyerName: order?.buyer_name ?? '',
-                artworkTitle: depositInfo?.artworkTitle ?? '',
-                amount: order?.total_amount ?? 0,
-              },
-              extractBuyerLocale(order?.metadata),
-              order?.order_no ?? undefined
+            after(() =>
+              sendBuyerSms(
+                order?.buyer_phone,
+                'deposit_confirmed',
+                {
+                  buyerName: order?.buyer_name ?? '',
+                  artworkTitle: depositInfo?.artworkTitle ?? '',
+                  amount: order?.total_amount ?? 0,
+                },
+                extractBuyerLocale(order?.metadata),
+                order?.order_no ?? undefined
+              )
             );
           }
         }
       } else {
         // paymentRecord가 DB에 없는데 Toss에서 DONE 수신 — 심각한 정합성 문제
         console.error(`[toss-webhook] DEPOSIT_CALLBACK DONE but no payment record: ${paymentKey}`);
-        void notifyEmail('error', '웹훅 수신: 결제 기록 없이 입금 완료', {
-          paymentKey,
-          주문ID: payload.data.orderId,
-          참고: 'payments 테이블에 해당 paymentKey 미존재 — reconciliation 또는 수동 확인 필요',
-        });
+        after(() =>
+          notifyEmail('error', '웹훅 수신: 결제 기록 없이 입금 완료', {
+            paymentKey,
+            주문ID: payload.data.orderId,
+            참고: 'payments 테이블에 해당 paymentKey 미존재 — reconciliation 또는 수동 확인 필요',
+          })
+        );
         return NextResponse.json({ error: 'Payment record not found' }, { status: 500 });
       }
     } else if (payload.data.paymentStatus === 'CANCELED') {
@@ -481,10 +500,12 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      void notifyEmail('warning', '가상계좌 입금 취소/만료', {
-        paymentKey,
-        주문ID: payload.data.orderId,
-      });
+      after(() =>
+        notifyEmail('warning', '가상계좌 입금 취소/만료', {
+          paymentKey,
+          주문ID: payload.data.orderId,
+        })
+      );
     }
   } else if (isPaymentStatusChanged(payload)) {
     const paymentKey = payload.data.paymentKey;
@@ -579,10 +600,12 @@ export async function POST(req: NextRequest) {
           .eq('id', existingPayment.id);
         if (auditErr) console.error('[toss-webhook] audit trail write failed:', auditErr);
       }
-      void notifyEmail('error', '웹훅 Toss API 검증 실패 (STATUS_CHANGED)', {
-        paymentKey,
-        수신상태: newStatus,
-      });
+      after(() =>
+        notifyEmail('error', '웹훅 Toss API 검증 실패 (STATUS_CHANGED)', {
+          paymentKey,
+          수신상태: newStatus,
+        })
+      );
       // 일시적 API 장애일 수 있으므로 500 반환 → Toss 재시도 유도
       return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
     }
@@ -829,11 +852,13 @@ export async function POST(req: NextRequest) {
               `[toss-webhook] STATUS_CHANGED DONE artwork_sales INSERT failed (error): ${existingOrder.order_no}`,
               salesResult.error
             );
-            void notifyEmail('error', '웹훅 판매 기록 생성 실패 (STATUS_CHANGED)', {
-              주문번호: existingOrder.order_no ?? '',
-              paymentKey,
-              에러: salesResult.error,
-            });
+            after(() =>
+              notifyEmail('error', '웹훅 판매 기록 생성 실패 (STATUS_CHANGED)', {
+                주문번호: existingOrder.order_no ?? '',
+                paymentKey,
+                에러: salesResult.error,
+              })
+            );
           }
 
           // 정상 케이스만 artwork 상태 재계산. 경합 패배는 작품을 건드리지 않음.
@@ -848,12 +873,14 @@ export async function POST(req: NextRequest) {
             }
 
             // confirm route가 실패해 webhook이 보정한 시나리오 — 운영팀 알림
-            void notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
-              주문번호: existingOrder.order_no ?? '',
-              paymentKey,
-              상태: newStatus,
-              참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
-            });
+            after(() =>
+              notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
+                주문번호: existingOrder.order_no ?? '',
+                paymentKey,
+                상태: newStatus,
+                참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
+              })
+            );
           }
         }
 
@@ -864,31 +891,36 @@ export async function POST(req: NextRequest) {
           const paidInfo = await getOrderNotificationInfo(supabase, { id: paymentRow.order_id });
           const buyerLocale = extractBuyerLocale(existingOrder.metadata);
           if (existingOrder.buyer_email) {
-            void sendBuyerEmail(
-              existingOrder.buyer_email,
-              'payment_confirmed',
-              {
-                orderNo: existingOrder.order_no ?? '',
-                buyerName: existingOrder.buyer_name ?? '',
-                artworkTitle: paidInfo?.artworkTitle ?? '',
-                artistName: paidInfo?.artistName ?? '',
-                amount: existingOrder.total_amount ?? 0,
-                itemAmount: paidInfo?.itemAmount,
-                shippingAmount: paidInfo?.shippingAmount,
-              },
-              buyerLocale
+            const buyerEmail = existingOrder.buyer_email;
+            after(() =>
+              sendBuyerEmail(
+                buyerEmail,
+                'payment_confirmed',
+                {
+                  orderNo: existingOrder.order_no ?? '',
+                  buyerName: existingOrder.buyer_name ?? '',
+                  artworkTitle: paidInfo?.artworkTitle ?? '',
+                  artistName: paidInfo?.artistName ?? '',
+                  amount: existingOrder.total_amount ?? 0,
+                  itemAmount: paidInfo?.itemAmount,
+                  shippingAmount: paidInfo?.shippingAmount,
+                },
+                buyerLocale
+              )
             );
           }
-          void sendBuyerSms(
-            existingOrder.buyer_phone,
-            'payment_confirmed',
-            {
-              buyerName: existingOrder.buyer_name ?? '',
-              artworkTitle: paidInfo?.artworkTitle ?? '',
-              amount: existingOrder.total_amount ?? 0,
-            },
-            buyerLocale,
-            existingOrder.order_no ?? undefined
+          after(() =>
+            sendBuyerSms(
+              existingOrder.buyer_phone,
+              'payment_confirmed',
+              {
+                buyerName: existingOrder.buyer_name ?? '',
+                artworkTitle: paidInfo?.artworkTitle ?? '',
+                amount: existingOrder.total_amount ?? 0,
+              },
+              buyerLocale,
+              existingOrder.order_no ?? undefined
+            )
           );
         }
       }
@@ -970,25 +1002,29 @@ export async function POST(req: NextRequest) {
         });
 
         if (refundInfo) {
-          void notifyEmail(
-            'warning',
-            'Toss 결제 취소 수신',
-            buildAdminNotificationFields(refundInfo, {
+          after(() =>
+            notifyEmail(
+              'warning',
+              'Toss 결제 취소 수신',
+              buildAdminNotificationFields(refundInfo, {
+                상태: newStatus,
+                paymentKey,
+              })
+            )
+          );
+        } else {
+          after(() =>
+            notifyEmail('warning', 'Toss 결제 취소 수신', {
+              주문번호: existingOrder.order_no ?? '',
               상태: newStatus,
               paymentKey,
             })
           );
-        } else {
-          void notifyEmail('warning', 'Toss 결제 취소 수신', {
-            주문번호: existingOrder.order_no ?? '',
-            상태: newStatus,
-            paymentKey,
-          });
         }
 
-        // 구매자 환불 이메일 발송 (fire-and-forget)
+        // 구매자 환불 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
         if (existingOrder.buyer_email) {
-          void (async () => {
+          after(async () => {
             try {
               void sendBuyerEmail(
                 existingOrder.buyer_email!,
@@ -1007,18 +1043,20 @@ export async function POST(req: NextRequest) {
             } catch (err) {
               console.error('[toss-webhook] refund email failed:', err);
             }
-          })();
+          });
         }
-        void sendBuyerSms(
-          existingOrder.buyer_phone,
-          'refunded',
-          {
-            buyerName: existingOrder.buyer_name ?? '',
-            artworkTitle: '',
-            amount: existingOrder.total_amount ?? 0,
-          },
-          extractBuyerLocale(existingOrder.metadata),
-          existingOrder.order_no ?? undefined
+        after(() =>
+          sendBuyerSms(
+            existingOrder.buyer_phone,
+            'refunded',
+            {
+              buyerName: existingOrder.buyer_name ?? '',
+              artworkTitle: '',
+              amount: existingOrder.total_amount ?? 0,
+            },
+            extractBuyerLocale(existingOrder.metadata),
+            existingOrder.order_no ?? undefined
+          )
         );
       }
     }
