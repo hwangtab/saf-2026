@@ -502,15 +502,16 @@ const OH_YOON_SALES_PRIORITY = [
   '4c920878-32dd-4727-ab03-6eda996597d5',
 ] as const;
 
-// force-static 복원 (2026-06-16) — 'TypeError: Invalid character' 회귀의 근본원인이
-// Next.js 16.2.6 버그로 확정됨: 정적 prerender의 segment-cache 키 인코딩
-// (next/dist/shared/lib/segment-cache/segment-value-encoding.js)이 비-ASCII 라우트
-// 세그먼트(한글 작가명)에 btoa(value)를 raw 호출 → DOMException 'Invalid character'.
-// patches/next+16.2.6.patch가 btoa(unescape(encodeURIComponent(value)))로 교정해 근본 해결.
-// 과거엔 origin 미파악으로 force-dynamic 우회(트래픽 1% 미만이라 수용)했으나, 패치로
-// force-static + ISR을 복원해 CDN 캐시·TTFB 이점을 회복한다. (category 페이지도 동일 패치로 해결)
-export const dynamic = 'force-static';
-export const revalidate = 600;
+// force-dynamic 유지 — 'TypeError: Invalid character'의 근본원인은 Next.js 16.2.6
+// segment-cache 키 인코딩 버그(segment-value-encoding.js가 비-ASCII 라우트 세그먼트에
+// btoa(value) raw 호출). scripts/patch-next-segment-cache.js가 소스를 교정하지만,
+// Turbopack 빌드 캐시가 node_modules를 불변으로 간주해 stale 번들을 재사용 → 런타임
+// lambda에 패치가 반영되지 않아 빌드 안 된 작가의 on-demand SSG에서 throw(심하면 500).
+// 작가 페이지는 트래픽 1% 미만이라 force-dynamic(런타임 SSR)이 안전·실용적 — segment
+// prefetch 데이터 수집 경로를 아예 타지 않아 패치 반영 여부와 무관하게 정상 동작한다.
+// (회귀 사고: 2026-06-16 force-static 복원 시 이지 작가 500. 사용자도 force-dynamic 수용.)
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface Props {
   params: Promise<{
