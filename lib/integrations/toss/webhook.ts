@@ -109,6 +109,19 @@ export function isPaymentStatusChanged(
   return payload.eventType === 'PAYMENT_STATUS_CHANGED';
 }
 
+/**
+ * 이벤트(추도식) 결제 여부 판별 — 단일 출처.
+ *
+ * 추도식 이벤트 결제는 작품 결제와 같은 domestic MID(saf202i818)를 공유해 동일한 웹훅
+ * 엔드포인트로 들어오지만, 라이프사이클은 `event_registrations` + event confirm route가
+ * 전담한다(작품 웹훅의 payments/orders/artwork_sales 경로로는 처리 불가).
+ * orderId 포맷으로 구분: 작품 = 'SAF-YYYYMMDD-XXXXXXXX'(generateOrderNumber),
+ * 이벤트 = 'EVT-<16 hex>'(RPC 발급). 접두가 겹치지 않아 안전.
+ */
+export function isEventOrderId(orderId: string): boolean {
+  return orderId.startsWith('EVT-');
+}
+
 /** Safely parses a raw webhook body into a typed payload, or returns null if invalid. */
 export function parseWebhookPayload(body: unknown): TossWebhookPayload | null {
   if (!body || typeof body !== 'object') return null;
