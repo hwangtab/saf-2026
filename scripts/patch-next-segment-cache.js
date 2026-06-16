@@ -68,14 +68,20 @@ if (missing > 0) {
 // Turbopack 빌드 캐시 무효화 — Turbopack/webpack은 node_modules를 불변으로 간주해
 // 소스를 패치해도 캐시된 번들을 재사용한다. 그 결과 빌드 prerender는 패치된 소스를 쓰지만
 // 런타임 lambda 번들에는 패치가 반영되지 않아 한글 라우트가 여전히 throw한다.
-// 실제 패치를 적용한 이 실행에서만(이미 패치된 멱등 재실행은 제외) .next/cache를 비워
-// 다음 next build가 패치된 소스로 재번들하도록 강제한다.
-// (회귀 사고: 2026-06-16 Vercel 'Restored build cache'로 패치 전 번들 재사용 → 런타임 throw·500)
-if (appliedThisRun > 0) {
+// 패치 사본이 존재하면(이미 패치된 멱등 재실행 포함) 항상 .next/cache를 비운다 —
+// Vercel은 'Restored build cache'로 *패치된 node_modules*까지 복원하므로 postinstall이
+// ALREADY로 인식(appliedThisRun=0)해도 .next/cache의 Turbopack 번들은 stale일 수 있다.
+// 무조건 무효화해야 다음 next build가 패치된 소스로 재번들한다(런타임 반영 보장).
+// 트레이드오프: 매 빌드 Turbopack 캐시 미사용으로 컴파일 시간 소폭 증가.
+// (회귀 사고: 2026-06-16 조건부 무효화가 node_modules 캐시로 skip되어 category throw 잔존)
+void appliedThisRun;
+if (patched > 0) {
   const cacheDir = path.resolve(process.cwd(), '.next', 'cache');
   if (fs.existsSync(cacheDir)) {
     fs.rmSync(cacheDir, { recursive: true, force: true });
     console.log('[patch-next] .next/cache 무효화 (Turbopack stale 번들 제거)');
+  } else {
+    console.log('[patch-next] .next/cache 없음 (첫 빌드 — 무효화 불필요)');
   }
 }
 
