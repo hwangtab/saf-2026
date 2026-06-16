@@ -102,6 +102,28 @@ export async function logBuyerAction(
   });
 }
 
+/**
+ * 시스템 이벤트(결제 실패 등 — 인증된 actor가 없는 자동 이벤트) 로그.
+ * /admin/logs 감사 추적 + 관리자 알림 벨(getAdminNotifications) 소스로 함께 쓰인다.
+ * 인증을 요구하지 않으므로 route handler·webhook에서 직접 호출 가능.
+ */
+export async function logSystemAction(
+  action: string,
+  targetType: string,
+  targetId: string,
+  details?: Record<string, unknown>,
+  options?: Parameters<typeof writeActivityLog>[0]['options']
+) {
+  await writeActivityLog({
+    actor: { id: '00000000-0000-0000-0000-000000000000', role: 'system', name: '시스템' },
+    action,
+    targetType,
+    targetId,
+    metadata: details,
+    options,
+  });
+}
+
 export async function logExhibitorAction(
   action: string,
   targetType: string,

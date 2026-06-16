@@ -30,11 +30,13 @@ function formatKrw(amount: number): string {
 
 async function fetchPurchases(supabase: SupabaseClient): Promise<AdminNotification[]> {
   const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  // 결제된 모든 주문(paid_at 기준) — 관리자가 배송 처리로 넘겨도(preparing/shipped/delivered)
+  // 구매 완료 알림이 사라지지 않도록 status='paid'에 묶지 않는다. 환불·취소 계열만 제외.
   const { data, error } = await supabase
     .from('orders')
     .select('id, order_no, buyer_name, total_amount, paid_at')
-    .eq('status', 'paid')
     .not('paid_at', 'is', null)
+    .not('status', 'in', '(cancelled,refunded,refund_requested)')
     .gte('paid_at', sinceIso)
     .order('paid_at', { ascending: false })
     .limit(10);
@@ -241,6 +243,35 @@ async function fetchInboundEmails(supabase: SupabaseClient): Promise<AdminNotifi
     href: '/admin/email',
     createdAt: (row.received_at ?? new Date().toISOString()) as string,
   }));
+}
+
+// 결제 실패 — confirm route가 activity_logs(action='payment_failed')에 영속화
+async function fetchPaymentFailures(supabase: SupabaseClient): Promise<AdminNotification[]> {
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  const { data, error } = await supabase
+    .from('activity_logs')
+    .select('id, target_id, metadata, created_at')
+    .eq('action', 'payment_failed')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error || !data) return [];
+
+  return data.map((row) => {
+    const meta = (row.metadata ?? {}) as Record<string, unknown>;
+    const stage = typeof meta.stage === 'string' ? meta.stage : '결제 실패';
+    const orderNo = typeof meta.order_no === 'string' ? meta.order_no : null;
+    return {
+      id: `payfail:${row.id}`,
+      category: 'action_needed',
+      severity: 'danger',
+      title: `결제 실패 — ${stage}`,
+      detail: orderNo ? `주문 #${orderNo}` : '주문 확인 필요',
+      href: row.target_id ? `/admin/orders/${row.target_id}` : '/admin/orders',
+      createdAt: row.created_at as string,
+    };
+  });
 }
 
 // SNS 토큰 만료·게시 실패·대량 발송 실패 — 장애성 경보
@@ -526,6 +557,7 @@ export async function getAdminNotifications(): Promise<AdminNotification[]> {
     depositResult,
     petitionResult,
     inboundResult,
+    paymentFailResult,
     actionNeededResult,
     systemHealthResult,
     analyticsResult,
@@ -536,6 +568,7 @@ export async function getAdminNotifications(): Promise<AdminNotification[]> {
     fetchAwaitingDeposit(supabase),
     fetchPetitionSignatures(supabase),
     fetchInboundEmails(supabase),
+    fetchPaymentFailures(supabase),
     fetchActionNeeded(supabase),
     fetchSystemHealth(supabase),
     fetchAnalytics(supabase),
@@ -548,6 +581,7 @@ export async function getAdminNotifications(): Promise<AdminNotification[]> {
     ...(depositResult.status === 'fulfilled' ? depositResult.value : []),
     ...(petitionResult.status === 'fulfilled' ? petitionResult.value : []),
     ...(inboundResult.status === 'fulfilled' ? inboundResult.value : []),
+    ...(paymentFailResult.status === 'fulfilled' ? paymentFailResult.value : []),
     ...(actionNeededResult.status === 'fulfilled' ? actionNeededResult.value : []),
     ...(systemHealthResult.status === 'fulfilled' ? systemHealthResult.value : []),
     ...(analyticsResult.status === 'fulfilled' ? analyticsResult.value : []),

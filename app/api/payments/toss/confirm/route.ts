@@ -9,6 +9,7 @@ import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { sanitizeConfirmResponse, sanitizeMethodDetail } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
+import { logSystemAction } from '@/app/actions/activity-log-writer';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
   buildAdminNotificationFields,
@@ -266,13 +267,22 @@ export async function POST(req: NextRequest) {
     }
 
     // after(): 응답 후 실행 보장 — 알림 fetch abort 방지
-    after(() =>
-      notifyEmail('error', '결제 승인 실패', {
+    const failCode = confirmResult.error.code;
+    const failMsg = confirmResult.error.message;
+    after(async () => {
+      await notifyEmail('error', '결제 승인 실패', {
         주문번호: orderId,
-        에러코드: confirmResult.error.code,
-        메시지: confirmResult.error.message,
-      })
-    );
+        에러코드: failCode,
+        메시지: failMsg,
+      });
+      // 결제 실패를 activity_logs에 영속화 → 관리자 알림 벨 + /admin/logs 추적
+      await logSystemAction('payment_failed', 'order', order.id, {
+        stage: '결제 승인 실패',
+        order_no: orderId,
+        error_code: failCode,
+        message: failMsg,
+      });
+    });
 
     return NextResponse.json(
       { error: apiError('payment_confirmation_failed', reqLocale) },
@@ -302,13 +312,19 @@ export async function POST(req: NextRequest) {
 
   if (paymentInsertError) {
     console.error('[confirm] payment INSERT 실패:', paymentInsertError);
-    after(() =>
-      notifyEmail('error', '결제 기록 저장 실패', {
+    const insertErrMsg = paymentInsertError.message;
+    after(async () => {
+      await notifyEmail('error', '결제 기록 저장 실패', {
         주문번호: orderId,
-        에러: paymentInsertError.message,
+        에러: insertErrMsg,
         참고: '결제는 승인 완료, 결제 기록만 누락 — reconciliation cron이 보정 예정',
-      })
-    );
+      });
+      await logSystemAction('payment_failed', 'order', order.id, {
+        stage: '결제 기록 저장 실패(승인됨·기록 누락)',
+        order_no: orderId,
+        error: insertErrMsg,
+      });
+    });
     // 500 반환하지 않고 계속 진행 — 결제는 이미 Toss에서 승인됨
   }
 
@@ -329,13 +345,19 @@ export async function POST(req: NextRequest) {
 
   if (orderUpdateError) {
     console.error('[confirm] order UPDATE 실패:', orderUpdateError);
-    after(() =>
-      notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
+    const updateErrMsg = orderUpdateError.message;
+    after(async () => {
+      await notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
         주문번호: orderId,
-        에러: orderUpdateError.message,
+        에러: updateErrMsg,
         참고: '결제는 완료, 주문 상태 반영 실패 — reconciliation cron이 보정 예정',
-      })
-    );
+      });
+      await logSystemAction('payment_failed', 'order', order.id, {
+        stage: '결제 후 주문 상태 업데이트 실패',
+        order_no: orderId,
+        error: updateErrMsg,
+      });
+    });
   }
 
   // 가상계좌 발급 시 artwork 예약 처리 — unique edition만 reserved 잠금.
