@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import ArtworkGridCard from '@/components/features/ArtworkGridCard';
-import WishlistHeartButton from '@/components/features/WishlistHeartButton';
+import ArtworkCardActions from '@/components/features/ArtworkCardActions';
+import { isArtworkPurchasable } from '@/lib/artwork-purchasable';
 import type { Artwork } from '@/types';
 
 /**
@@ -36,7 +37,13 @@ export default async function CollectionArtworkGrid({
           inquiryValueLabel={tCard('inquiryValue')}
           sizesOverride="(max-width: 640px) calc(50vw - 1.5rem), (max-width: 1024px) calc(33vw - 1.5rem), 280px"
           wishlistSlot={(title) => (
-            <WishlistHeartButton artworkId={artwork.id} artworkTitle={title} variant="overlay" />
+            <ArtworkCardActions
+              artworkId={artwork.id}
+              artworkTitle={title}
+              isUnique={artwork.edition_type === 'unique'}
+              purchasable={isArtworkPurchasable(artwork)}
+              placement="inline"
+            />
           )}
         />
       ))}

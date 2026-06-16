@@ -147,7 +147,6 @@ export default function ArtworkGridCard({
             {mediumLabelText}
           </div>
         )}
-        {wishlistSlot?.(safeTitle) ?? null}
       </div>
       <div className="relative p-4 bg-white">
         <h3 className="text-base md:text-lg font-bold font-sans transition-colors duration-300 break-keep line-clamp-2 min-h-[3rem] md:min-h-[3.5rem] text-charcoal group-hover:text-primary-strong">
@@ -169,22 +168,25 @@ export default function ArtworkGridCard({
             return ' ';
           })()}
         </p>
-        {localizedPrice && !isInquiryPrice(localizedPrice) ? (
-          <p
-            className={cn(
-              'text-sm font-semibold mt-1',
-              artwork.sold
-                ? 'text-gray-600 line-through'
-                : artwork.reserved
-                  ? 'text-charcoal-soft'
-                  : 'text-primary-strong'
-            )}
-          >
-            {localizedPrice}
-          </p>
-        ) : (
-          <p className="text-sm font-semibold mt-1 min-h-[1.25rem]"> </p>
-        )}
+        <div className="mt-1 flex items-center justify-between gap-2">
+          {localizedPrice && !isInquiryPrice(localizedPrice) ? (
+            <p
+              className={cn(
+                'text-sm font-semibold',
+                artwork.sold
+                  ? 'text-gray-600 line-through'
+                  : artwork.reserved
+                    ? 'text-charcoal-soft'
+                    : 'text-primary-strong'
+              )}
+            >
+              {localizedPrice}
+            </p>
+          ) : (
+            <p className="text-sm font-semibold min-h-[1.25rem]"> </p>
+          )}
+          {wishlistSlot?.(safeTitle) ?? null}
+        </div>
       </div>
     </Link>
   );

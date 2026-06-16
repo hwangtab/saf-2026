@@ -48,7 +48,9 @@ import ArtworkPurchaseStickyMobile from '@/components/features/ArtworkPurchaseSt
 import { getPaymentMode } from '@/lib/integrations/toss/config';
 import TrustBadges from '@/components/features/TrustBadges';
 import PosthumousPrintDetails from '@/components/features/PosthumousPrintDetails';
+import ArtworkCardActions from '@/components/features/ArtworkCardActions';
 import WishlistHeartButton from '@/components/features/WishlistHeartButton';
+import { isArtworkPurchasable } from '@/lib/artwork-purchasable';
 import { containsHangul } from '@/lib/search-utils';
 import { generateArtworkOverview } from '@/lib/artwork-description-fallback';
 import { resolveArtworkImageUrl } from '@/lib/utils/artwork-image';
@@ -822,10 +824,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     inquiryValueLabel={tCard('inquiryValue')}
                     sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
                     wishlistSlot={(title) => (
-                      <WishlistHeartButton
+                      <ArtworkCardActions
                         artworkId={other.id}
                         artworkTitle={title}
-                        variant="overlay"
+                        isUnique={other.edition_type === 'unique'}
+                        purchasable={isArtworkPurchasable(other)}
+                        placement="inline"
                       />
                     )}
                   />
@@ -889,10 +893,12 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     inquiryValueLabel={tCard('inquiryValue')}
                     sizesOverride="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(33vw - 1rem)"
                     wishlistSlot={(title) => (
-                      <WishlistHeartButton
+                      <ArtworkCardActions
                         artworkId={other.id}
                         artworkTitle={title}
-                        variant="overlay"
+                        isUnique={other.edition_type === 'unique'}
+                        purchasable={isArtworkPurchasable(other)}
+                        placement="inline"
                       />
                     )}
                   />

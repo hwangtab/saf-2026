@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { buildArtworkAlt } from '@/lib/artwork-alt';
 import ArtworkCardActions from '@/components/features/ArtworkCardActions';
+import { isArtworkPurchasable } from '@/lib/artwork-purchasable';
 import type { Artwork } from '@/types';
 
 /**
@@ -101,7 +102,8 @@ export default async function ArtworkCategoryGrid({
                     artworkId={artwork.id}
                     artworkTitle={title}
                     isUnique={artwork.edition_type === 'unique'}
-                    purchasable={isPurchasable(artwork)}
+                    purchasable={isArtworkPurchasable(artwork)}
+                    placement="inline"
                   />
                 )}
               />
@@ -131,21 +133,6 @@ export default async function ArtworkCategoryGrid({
       </div>
     </section>
   );
-}
-
-// ─── Purchasable guard ─────────────────────────────────────────────────────────
-
-/**
- * 작품이 카트 담기 가능한지 판정.
- * !sold && !reserved && 가격이 구체적인 값(문의/확인 중 아님)이어야 한다.
- */
-function isPurchasable(artwork: Artwork): boolean {
-  if (artwork.sold || artwork.reserved) return false;
-  const price = artwork.price;
-  if (!price) return false;
-  if (price === '문의' || price === 'Inquiry') return false;
-  if (price === '확인 중' || price === 'Pending') return false;
-  return true;
 }
 
 // ─── Inline server card (hydration 0) ──────────────────────────────────────────
@@ -300,7 +287,6 @@ function InlineGridCard({
             {mediumLabelText}
           </div>
         )}
-        {wishlistSlot?.(safeTitle) ?? null}
       </div>
 
       <div className={cn('relative p-4', isDark ? 'bg-charcoal' : 'bg-white')}>
@@ -344,28 +330,31 @@ function InlineGridCard({
             return ' ';
           })()}
         </p>
-        {localizedPrice && !isInquiryPrice(localizedPrice) ? (
-          <p
-            className={cn(
-              'text-sm font-semibold mt-1',
-              artwork.sold
-                ? isDark
-                  ? 'text-white/70 line-through'
-                  : 'text-gray-600 line-through'
-                : artwork.reserved
+        <div className="mt-1 flex items-center justify-between gap-2">
+          {localizedPrice && !isInquiryPrice(localizedPrice) ? (
+            <p
+              className={cn(
+                'text-sm font-semibold',
+                artwork.sold
                   ? isDark
-                    ? 'text-white/70'
-                    : 'text-charcoal-soft'
-                  : isDark
-                    ? 'text-primary-soft'
-                    : 'text-primary-strong'
-            )}
-          >
-            {localizedPrice}
-          </p>
-        ) : (
-          <p className="text-sm font-semibold mt-1 min-h-[1.25rem]">{' '}</p>
-        )}
+                    ? 'text-white/70 line-through'
+                    : 'text-gray-600 line-through'
+                  : artwork.reserved
+                    ? isDark
+                      ? 'text-white/70'
+                      : 'text-charcoal-soft'
+                    : isDark
+                      ? 'text-primary-soft'
+                      : 'text-primary-strong'
+              )}
+            >
+              {localizedPrice}
+            </p>
+          ) : (
+            <p className="text-sm font-semibold min-h-[1.25rem]">{' '}</p>
+          )}
+          {wishlistSlot?.(safeTitle) ?? null}
+        </div>
       </div>
     </Link>
   );
