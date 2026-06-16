@@ -18,7 +18,13 @@ import GalleryCampaignBanner from '@/components/features/GalleryCampaignBanner';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { getLiveStats } from '@/lib/live-stats';
-import { CATEGORY_EN_MAP, getCategoryDisplayName } from '@/lib/artwork-category';
+import {
+  CATEGORY_EN_MAP,
+  CATEGORY_SLUG_MAP,
+  categoryFromSlug,
+  categorySlug,
+  getCategoryDisplayName,
+} from '@/lib/artwork-category';
 import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveLocale } from '@/lib/server-locale';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -35,18 +41,20 @@ import { Link } from '@/i18n/navigation';
 import type { Artwork, ArtworkListItem } from '@/types';
 import { getCategorySeoContent } from '@/lib/category-seo-content';
 
-// force-dynamic — 'TypeError: Invalid character' 회귀 회피. Next.js 16.2.6의 compiled
-// 런타임 번들(dist/compiled/next-server/app-page*.runtime.prod.js)이 비-ASCII 라우트
-// 세그먼트(한글 카테고리명)에 btoa()를 raw 호출해 정적 segment-prefetch 생성 시 throw한다
-// (DOMException 'Invalid character'). 소스 패치는 minified 런타임 번들에 닿지 않아 비현실적·
-// 취약 — force-dynamic은 정적 prefetch(collectSegmentData) 경로를 아예 타지 않아 throw를
-// 원천 차단한다. SEO 영향 없음(Googlebot 첫 hit SSR 200). artist 페이지도 동일 이유.
-// 잘못된 카테고리는 renderCategoryPage의 SUPPORTED_CATEGORIES 체크가 CategoryNotFoundView로
-// 처리하므로 dynamicParams=false 불필요. (회귀: 2026-06-16 force-static 시 segment-prefetch throw)
-// ⏳ 임시 우회 — 업스트림 버그 추적: https://github.com/vercel/next.js/issues/94840
-//    Next가 수정·릴리스하면 업그레이드 후 force-static + revalidate 복원할 것.
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// force-static — 카테고리 라우트 세그먼트는 ASCII slug(painting 등)라
+// simpleParamValueRegex를 통과해 Next segment-cache btoa 경로에 진입하지 않는다.
+// 한글 세그먼트의 'Invalid character' throw를 구조적으로 제거하면서 정적 생성·CDN 캐시·
+// 낮은 TTFB·CollectionPage JSON-LD를 모두 유지한다. (업스트림: vercel/next.js#94840)
+// DB의 category는 한글 유지 — slug↔한글 변환은 lib/artwork-category.ts 단일 출처.
+export const dynamic = 'force-static';
+export const revalidate = 600;
+// CATEGORY_SLUG_MAP에 등록된 11개 slug만 prerender. 그 외(한글 raw 포함)는 404 →
+// next.config.js redirects가 기존 한글 URL을 slug로 308 흡수.
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return Object.values(CATEGORY_SLUG_MAP).map((category) => ({ category }));
+}
 
 interface Props {
   params: Promise<{ locale: string; category: string }>;
@@ -63,9 +71,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale: rawLocale, category: rawCategory } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const category = decodeURIComponent(rawCategory);
-
-  if (!SUPPORTED_CATEGORIES.includes(category)) {
+  const slug = decodeURIComponent(rawCategory);
+  const category = categoryFromSlug(slug);
+  if (!category || !SUPPORTED_CATEGORIES.includes(category)) {
     return { title: 'Not Found' };
   }
 
@@ -73,7 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const count = categoryArtworks.length;
   const availableCount = categoryArtworks.filter((a) => !a.sold).length;
 
-  const categoryPath = `/artworks/category/${encodeURIComponent(category)}`;
+  const categoryPath = `/artworks/category/${categorySlug(category)}`;
   const t = await getTranslations({ locale, namespace: 'categoryPage' });
 
   const isEnglish = locale === 'en';
@@ -202,9 +210,9 @@ async function renderCategoryPage({ params }: Props) {
   const { locale: rawLocale, category: rawCategory } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const category = decodeURIComponent(rawCategory);
-
-  if (!SUPPORTED_CATEGORIES.includes(category)) {
+  const slug = decodeURIComponent(rawCategory);
+  const category = categoryFromSlug(slug);
+  if (!category || !SUPPORTED_CATEGORIES.includes(category)) {
     return <CategoryNotFoundView />;
   }
 
@@ -237,7 +245,7 @@ async function renderCategoryPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: 'categoryPage' });
   const tBreadcrumbs = await getTranslations({ locale, namespace: 'breadcrumbs' });
 
-  const categoryPath = `/artworks/category/${encodeURIComponent(category)}`;
+  const categoryPath = `/artworks/category/${categorySlug(category)}`;
   const pageUrl = buildLocaleUrl(categoryPath, locale);
 
   // Breadcrumb: 홈 > 출품작 > 카테고리
@@ -339,7 +347,7 @@ async function renderCategoryPage({ params }: Props) {
     category: cat,
     displayName: getCategoryDisplayName(cat, locale),
     count: 0,
-    path: `/artworks/category/${encodeURIComponent(cat)}`,
+    path: `/artworks/category/${categorySlug(cat)}`,
   }));
 
   // SEO 랜딩 콘텐츠 — 카테고리별 introductory 본문 + FAQ (long-tail 검색어 흡수)
@@ -381,7 +389,7 @@ async function renderCategoryPage({ params }: Props) {
           descriptionId="category-hero-description"
           breadcrumbItems={breadcrumbItems}
           customBackgroundImage={
-            getHeroOverride(`artworks/category/${category}`) ??
+            getHeroOverride(`artworks/category/${categorySlug(category)}`) ??
             pickListingHeroImage(categoryArtworks, (a) => (!a.sold && a.images?.[0]) || undefined)
           }
         >
