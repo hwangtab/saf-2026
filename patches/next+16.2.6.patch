@@ -1,5 +1,5 @@
 diff --git a/node_modules/next/dist/esm/shared/lib/segment-cache/segment-value-encoding.js b/node_modules/next/dist/esm/shared/lib/segment-cache/segment-value-encoding.js
-index 49288a5..d5cd7b8 100644
+index 49288a5..853b380 100644
 --- a/node_modules/next/dist/esm/shared/lib/segment-cache/segment-value-encoding.js
 +++ b/node_modules/next/dist/esm/shared/lib/segment-cache/segment-value-encoding.js
 @@ -52,7 +52,10 @@ function encodeToFilesystemAndURLSafeString(value) {
@@ -8,14 +8,14 @@ index 49288a5..d5cd7b8 100644
      // We also add a ! prefix so it doesn't collide with the simple case.
 -    const base64url = btoa(value).replace(/\+/g, '-') // Replace '+' with '-'
 +    // PATCH(saf2026): btoa() throws "Invalid character" on non-Latin1 (e.g. Korean)
-+    // route segments. Convert UTF-8 → Latin1 byte string first so static prerender
++    // route segments. Encode UTF-8 to a Latin1 byte string first so static prerender
 +    // segment-cache key encoding is ByteString-safe. See patches/next+16.2.6.patch.
 +    const base64url = btoa(unescape(encodeURIComponent(value))).replace(/\+/g, '-') // Replace '+' with '-'
      .replace(/\//g, '_') // Replace '/' with '_'
      .replace(/=+$/, '') // Remove trailing '='
      ;
 diff --git a/node_modules/next/dist/shared/lib/segment-cache/segment-value-encoding.js b/node_modules/next/dist/shared/lib/segment-cache/segment-value-encoding.js
-index 71505fc..16018c4 100644
+index 71505fc..3d9dda7 100644
 --- a/node_modules/next/dist/shared/lib/segment-cache/segment-value-encoding.js
 +++ b/node_modules/next/dist/shared/lib/segment-cache/segment-value-encoding.js
 @@ -86,7 +86,10 @@ function encodeToFilesystemAndURLSafeString(value) {
@@ -24,7 +24,7 @@ index 71505fc..16018c4 100644
      // We also add a ! prefix so it doesn't collide with the simple case.
 -    const base64url = btoa(value).replace(/\+/g, '-') // Replace '+' with '-'
 +    // PATCH(saf2026): btoa() throws "Invalid character" on non-Latin1 (e.g. Korean)
-+    // route segments. Convert UTF-8 → Latin1 byte string first so static prerender
++    // route segments. Encode UTF-8 to a Latin1 byte string first so static prerender
 +    // segment-cache key encoding is ByteString-safe. See patches/next+16.2.6.patch.
 +    const base64url = btoa(unescape(encodeURIComponent(value))).replace(/\+/g, '-') // Replace '+' with '-'
      .replace(/\//g, '_') // Replace '/' with '_'
