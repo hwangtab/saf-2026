@@ -44,7 +44,7 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
       className={cn(
         variant === 'detail'
           ? 'grid grid-cols-2 justify-items-center gap-1.5 md:flex md:flex-wrap md:justify-center md:gap-2'
-          : 'flex flex-nowrap justify-center gap-1.5 overflow-x-auto',
+          : 'flex flex-nowrap justify-center gap-1.5 overflow-x-auto scrollbar-hide',
         className
       )}
     >
