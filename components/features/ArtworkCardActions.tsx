@@ -46,7 +46,7 @@ export default function ArtworkCardActions({
     : t('addToCartAria', { title: artworkTitle });
 
   return (
-    <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5">
+    <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5">
       {purchasable && (
         <button
           type="button"

@@ -4,6 +4,7 @@ import { memo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
+import ArtworkCardActions from '@/components/features/ArtworkCardActions';
 import type { ArtworkCardData } from '@/types';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
@@ -267,6 +268,13 @@ function ArtworkCard({
   const artistHref = `/artworks/artist/${encodeURIComponent(artwork.artist)}`;
   const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
   const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
+  // 카드 장바구니 담기: 판매가능 + 정가일 때만 (위시 하트는 항상 노출).
+  const cartPurchasable =
+    !artwork.sold &&
+    !artwork.reserved &&
+    !!artwork.price &&
+    !isInquiryPrice(artwork.price) &&
+    !isPending(artwork.price);
   return (
     <div
       className={cn(
@@ -326,6 +334,13 @@ function ArtworkCard({
             {mediumLabelText}
           </div>
         )}
+        {/* 위시 하트 + 카트 담기 오버레이. stretched 링크(z-10) 위 z-20이라 클릭 가능. 갤러리 variant 전용. */}
+        <ArtworkCardActions
+          artworkId={artwork.id}
+          artworkTitle={safeTitle}
+          isUnique={artwork.edition_type === 'unique'}
+          purchasable={cartPurchasable}
+        />
       </div>
 
       <div className={cn('relative p-4', theme === 'dark' ? 'bg-charcoal' : 'bg-white')}>
