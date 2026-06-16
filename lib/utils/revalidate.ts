@@ -19,9 +19,14 @@ export function revalidatePublicArtworkSurfaces(
     )
   );
 
+  // 작가명은 한글 등 non-ASCII가 흔하다. revalidatePath에 raw 한글 경로를 넘기면
+  // Next.js가 캐시 태그로 직렬화할 때 Latin-1(ByteString) 변환에 실패해
+  // "Cannot convert argument to a ByteString"로 응답이 500 처리된다(server action try/catch 밖에서 발생).
+  // 실제 서빙 경로도 URL 인코딩되므로 encodeURIComponent가 캐시 매칭·안전성 양쪽에 맞다.
   uniqueArtistNames.forEach((name) => {
-    revalidatePath(`/artworks/artist/${name}`);
-    revalidatePath(`/en/artworks/artist/${name}`);
+    const encoded = encodeURIComponent(name);
+    revalidatePath(`/artworks/artist/${encoded}`);
+    revalidatePath(`/en/artworks/artist/${encoded}`);
   });
 
   revalidateTag('artworks', 'max');
