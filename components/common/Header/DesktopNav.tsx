@@ -110,18 +110,13 @@ export default function DesktopNav({
           />
         </IdleMount>
 
-        {/* pill 그룹(검색·주문조회·로그인)과 아이콘 액션(위시·카트)을 시각적으로 구분하는 옅은 divider.
-            textColor에 적응 — hero(흰 글씨)에선 white/25, solid 헤더에선 gray-300. */}
-        <span
-          aria-hidden="true"
-          className={clsx('h-5 w-px shrink-0', isInverse ? 'bg-white/25' : 'bg-gray-300')}
-        />
-
-        {/* 위시리스트 — 로그인 버튼 옆에 배치 */}
-        <WishlistNavButton textColor={textColor} />
-
-        {/* 카트 — 위시리스트 옆에 배치, 클릭 시 드로어 open */}
-        <CartNavButton textColor={textColor} />
+        {/* 위시리스트 + 카트 — 한 쌍으로 묶어 인접 배치. 데스크탑은 패딩 축소(각 버튼 44px
+            터치패딩 탓에 두 아이콘이 ~34px 벌어져 어색하던 문제 해결, 아이콘 간격 ~12px로).
+            모바일 헤더(lg:hidden)의 동일 버튼 인스턴스는 base 44px 터치타겟 그대로 유지. */}
+        <div className="flex items-center">
+          <WishlistNavButton textColor={textColor} className="lg:!min-h-0 lg:!min-w-0 lg:!p-1.5" />
+          <CartNavButton textColor={textColor} className="lg:!min-h-0 lg:!min-w-0 lg:!p-1.5" />
+        </div>
 
         <LanguageSwitcher className={textColor} compact inverse={isInverse} />
       </div>
