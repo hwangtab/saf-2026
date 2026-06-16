@@ -66,6 +66,13 @@ export default function ArtworkCardActions({
         isOverlay ? 'absolute bottom-3 right-3 z-20 gap-1.5' : 'relative z-20 shrink-0 gap-0.5'
       )}
     >
+      {/* 순서 = 헤더(WishlistNavButton→CartNavButton)와 동일: 위시(♡) 먼저, 카트(🛒) 다음. */}
+      <WishlistHeartButton
+        artworkId={artworkId}
+        artworkTitle={artworkTitle}
+        variant="overlay"
+        className={heartClass}
+      />
       {purchasable && (
         <button
           type="button"
@@ -84,12 +91,6 @@ export default function ArtworkCardActions({
           )}
         </button>
       )}
-      <WishlistHeartButton
-        artworkId={artworkId}
-        artworkTitle={artworkTitle}
-        variant="overlay"
-        className={heartClass}
-      />
     </div>
   );
 }
