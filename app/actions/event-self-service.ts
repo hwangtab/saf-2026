@@ -1,6 +1,7 @@
 'use server';
 
 import crypto from 'crypto';
+import { after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { rateLimit } from '@/lib/rate-limit';
@@ -308,10 +309,12 @@ export async function selfRefundEventRegistration(
     .select('id');
 
   if (updErr || !updated || updated.length === 0) {
-    void notifyEmail('error', '추도식 본인환불 성공 후 상태 변경 실패', {
-      주문번호: reg.order_no ?? '',
-      결제키: reg.payment_key,
-    });
+    after(() =>
+      notifyEmail('error', '추도식 본인환불 성공 후 상태 변경 실패', {
+        주문번호: reg.order_no ?? '',
+        결제키: reg.payment_key ?? '',
+      })
+    );
     return {
       ok: false,
       code: 'REFUND_FAILED',
@@ -331,11 +334,13 @@ export async function selfRefundEventRegistration(
   revalidatePath(`/en${OH_YOON_MEMORIAL_PATH}`);
   revalidatePath(OH_YOON_MEMORIAL_ADMIN_PATH);
 
-  void notifyEmail('info', '추도식 본인 환불 완료', {
-    신청자: reg.applicant_name,
-    주문번호: reg.order_no ?? '',
-    환불금액: `${reg.amount.toLocaleString('ko-KR')}원`,
-  });
+  after(() =>
+    notifyEmail('info', '추도식 본인 환불 완료', {
+      신청자: reg.applicant_name,
+      주문번호: reg.order_no ?? '',
+      환불금액: `${reg.amount.toLocaleString('ko-KR')}원`,
+    })
+  );
 
   return {
     ok: true,

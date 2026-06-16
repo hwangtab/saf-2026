@@ -1,5 +1,6 @@
 'use server';
 
+import { after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
@@ -90,11 +91,13 @@ export async function refundConfirmedRegistration(id: string): Promise<EventAdmi
 
   if (updateError || !updated || updated.length === 0) {
     console.error('[event-admin] refund status update error:', updateError);
-    void notifyEmail('error', '추도식 환불 성공 후 상태 변경 실패', {
-      신청자: reg.applicant_name,
-      주문번호: reg.order_no ?? '',
-      결제키: reg.payment_key,
-    });
+    after(() =>
+      notifyEmail('error', '추도식 환불 성공 후 상태 변경 실패', {
+        신청자: reg.applicant_name,
+        주문번호: reg.order_no ?? '',
+        결제키: reg.payment_key ?? '',
+      })
+    );
     return { ok: false, message: '환불 후 상태 변경 실패' };
   }
 
@@ -164,17 +167,19 @@ export async function sendWaitlistPaymentLink(
       .eq('status', 'pending');
     if (rollbackError) {
       console.error('[event-admin] waitlist promote rollback error:', rollbackError);
-      void notifyEmail('error', '추도식 대기자 안내 실패 후 상태 복구 실패', {
-        신청ID: id,
-        주문번호: p.order_no,
-      });
+      after(() =>
+        notifyEmail('error', '추도식 대기자 안내 실패 후 상태 복구 실패', {
+          신청ID: id,
+          주문번호: p.order_no ?? '',
+        })
+      );
       return { ok: false, message: '문자 발송 실패 및 상태 복구 실패' };
     }
     revalidateEvent();
     return { ok: false, message: '문자 발송 실패로 대기 상태를 유지했습니다.' };
   }
   if (p.email) {
-    void sendEventEmail(p.email, 'waitlist_payment', notifyData);
+    after(() => sendEventEmail(p.email!, 'waitlist_payment', notifyData));
   }
   revalidateEvent();
   return { ok: true };

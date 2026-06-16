@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
@@ -57,10 +57,12 @@ export async function POST(req: NextRequest) {
   );
 
   if (!confirmResult.success) {
-    void notifyEmail('error', '추도식 결제 승인 실패', {
-      주문번호: orderId,
-      에러: confirmResult.error.message ?? '',
-    });
+    after(() =>
+      notifyEmail('error', '추도식 결제 승인 실패', {
+        주문번호: orderId,
+        에러: confirmResult.error.message ?? '',
+      })
+    );
     return NextResponse.json({ error: 'payment_confirmation_failed' }, { status: 400 });
   }
 
@@ -69,10 +71,12 @@ export async function POST(req: NextRequest) {
   // 이 행사는 카드 즉시결제만 지원. 가상계좌(WAITING_FOR_DEPOSIT) 등 비-DONE 상태는
   // 입금 전이므로 확정하지 않는다. (현 MID는 가상계좌 미계약이라 사실상 불발생 — 방어적 가드.)
   if (toss.status !== 'DONE') {
-    void notifyEmail('warning', '추도식 비-DONE 결제 상태(미확정)', {
-      주문번호: orderId,
-      status: toss.status,
-    });
+    after(() =>
+      notifyEmail('warning', '추도식 비-DONE 결제 상태(미확정)', {
+        주문번호: orderId,
+        status: toss.status,
+      })
+    );
     return NextResponse.json({ error: 'unsupported_payment_status' }, { status: 400 });
   }
 
@@ -100,18 +104,22 @@ export async function POST(req: NextRequest) {
       if (cancelResult.success) {
         refundSucceeded = true;
       } else {
-        void notifyEmail('error', '추도식 자동환불 실패(수동 확인 필요)', {
-          주문번호: orderId,
-          결제키: toss.paymentKey,
-          에러: cancelResult.error.message || cancelResult.error.code,
-        });
+        after(() =>
+          notifyEmail('error', '추도식 자동환불 실패(수동 확인 필요)', {
+            주문번호: orderId,
+            결제키: toss.paymentKey,
+            에러: cancelResult.error.message || cancelResult.error.code,
+          })
+        );
       }
     } catch (e) {
       console.error('[event-confirm] auto-refund failed:', e);
-      void notifyEmail('error', '추도식 자동환불 실패(수동 확인 필요)', {
-        주문번호: orderId,
-        결제키: toss.paymentKey,
-      });
+      after(() =>
+        notifyEmail('error', '추도식 자동환불 실패(수동 확인 필요)', {
+          주문번호: orderId,
+          결제키: toss.paymentKey,
+        })
+      );
     }
     const { error: cancelUpdateError } = await supabase
       .from('event_registrations')
@@ -124,10 +132,12 @@ export async function POST(req: NextRequest) {
       .eq('order_no', orderId);
     if (cancelUpdateError) {
       console.error('[event-confirm] cancelled status update failed:', cancelUpdateError);
-      void notifyEmail('error', '추도식 자동환불 후 상태 변경 실패', {
-        주문번호: orderId,
-        결제키: toss.paymentKey,
-      });
+      after(() =>
+        notifyEmail('error', '추도식 자동환불 후 상태 변경 실패', {
+          주문번호: orderId,
+          결제키: toss.paymentKey,
+        })
+      );
     }
     return NextResponse.json(
       {
@@ -150,28 +160,38 @@ export async function POST(req: NextRequest) {
   });
   const s = seatNow as { capacity: number; occupied: number; remaining: number } | null;
 
-  // 발송 (fire-and-forget)
-  void notifyEmail('payment', '추도식 신청 접수(결제완료)', {
-    신청자: reg.applicant_name,
-    인원: `${reg.party_size}명`,
-    금액: `${reg.amount.toLocaleString('ko-KR')}원`,
-    현재누적: s ? `${s.occupied}/${s.capacity}석 (잔여 ${s.remaining}석)` : '-',
-    명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+  // 발송 — 응답 후 백그라운드. ⚠️ bare `void`로 두면 응답 반환 시 서버리스 함수가
+  // 정지하며 in-flight Resend/Solapi fetch가 abort되어 알림이 누락된다(2026-06-16 회귀:
+  // 관리자 알림 미수신). after()로 감싸 런타임이 발송 완료까지 함수를 살려둔다.
+  // 주문 결제는 Toss 웹훅이 별도 알림 백업을 제공하지만 행사 결제(event_registrations)는
+  // 웹훅 경로가 없어 이 confirm 라우트가 유일한 알림 출처다.
+  after(async () => {
+    await Promise.allSettled([
+      notifyEmail('payment', '추도식 신청 접수(결제완료)', {
+        신청자: reg.applicant_name,
+        인원: `${reg.party_size}명`,
+        금액: `${reg.amount.toLocaleString('ko-KR')}원`,
+        현재누적: s ? `${s.occupied}/${s.capacity}석 (잔여 ${s.remaining}석)` : '-',
+        명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+      }),
+      sendEventSms(
+        reg.phone,
+        'payment_confirmed',
+        { name: reg.applicant_name, partySize: reg.party_size, amount: reg.amount },
+        orderId
+      ),
+      ...(reg.email
+        ? [
+            sendEventEmail(reg.email, 'payment_confirmed', {
+              name: reg.applicant_name,
+              partySize: reg.party_size,
+              amount: reg.amount,
+              orderNo: orderId,
+            }),
+          ]
+        : []),
+    ]);
   });
-  void sendEventSms(
-    reg.phone,
-    'payment_confirmed',
-    { name: reg.applicant_name, partySize: reg.party_size, amount: reg.amount },
-    orderId
-  );
-  if (reg.email) {
-    void sendEventEmail(reg.email, 'payment_confirmed', {
-      name: reg.applicant_name,
-      partySize: reg.party_size,
-      amount: reg.amount,
-      orderNo: orderId,
-    });
-  }
 
   return NextResponse.json({ success: true });
 }

@@ -1,5 +1,6 @@
 'use server';
 
+import { after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { rateLimit } from '@/lib/rate-limit';
@@ -93,25 +94,32 @@ export async function registerEvent(input: unknown) {
   revalidatePath(`/en${OH_YOON_MEMORIAL_PATH}`);
 
   if (r.status === 'waitlist') {
-    // 대기자는 즉시 안내 (무료)
-    void sendEventSms(phone, 'waitlist', {
-      name,
-      partySize: payload.partySize,
-      amount: r.amount ?? 0,
-    });
-    if (email) {
-      void sendEventEmail(email, 'waitlist', {
-        name,
-        partySize: payload.partySize,
-        amount: r.amount ?? 0,
-      });
-    }
-    // 관리자 알림 — 대기 신청도 접수 사실 통지
-    void notifyEmail('info', '추도식 대기 신청 접수', {
-      신청자: name,
-      인원: `${payload.partySize}명`,
-      연락처: phone,
-      명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+    // 대기자 안내(무료) + 관리자 알림. ⚠️ after()로 감싸지 않으면 Server Action 응답 반환 시
+    // 함수가 정지하며 in-flight Resend/Solapi fetch가 abort되어 누락된다(2026-06-16 회귀).
+    after(async () => {
+      await Promise.allSettled([
+        sendEventSms(phone, 'waitlist', {
+          name,
+          partySize: payload.partySize,
+          amount: r.amount ?? 0,
+        }),
+        ...(email
+          ? [
+              sendEventEmail(email, 'waitlist', {
+                name,
+                partySize: payload.partySize,
+                amount: r.amount ?? 0,
+              }),
+            ]
+          : []),
+        // 관리자 알림 — 대기 신청도 접수 사실 통지
+        notifyEmail('info', '추도식 대기 신청 접수', {
+          신청자: name,
+          인원: `${payload.partySize}명`,
+          연락처: phone,
+          명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+        }),
+      ]);
     });
     return { ok: true, code: 'OK_WAITLIST', message: '대기자로 등록되었습니다.' };
   }
