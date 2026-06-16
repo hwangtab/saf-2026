@@ -33,6 +33,7 @@ const ALREADY = 'btoa(unescape(encodeURIComponent(value)))';
 
 let patched = 0;
 let missing = 0;
+let appliedThisRun = 0;
 
 for (const rel of TARGETS) {
   const file = path.resolve(process.cwd(), rel);
@@ -54,6 +55,7 @@ for (const rel of TARGETS) {
   }
   fs.writeFileSync(file, src.replace(FROM, TO), 'utf8');
   patched++;
+  appliedThisRun++;
   console.log(`[patch-next] ✔ 패치 적용: ${rel}`);
 }
 
@@ -62,4 +64,19 @@ if (missing > 0) {
     `[patch-next] 경고: ${missing}개 사본에서 패턴 미발견. 한글 라우트 'Invalid character' 회귀 위험.`
   );
 }
+
+// Turbopack 빌드 캐시 무효화 — Turbopack/webpack은 node_modules를 불변으로 간주해
+// 소스를 패치해도 캐시된 번들을 재사용한다. 그 결과 빌드 prerender는 패치된 소스를 쓰지만
+// 런타임 lambda 번들에는 패치가 반영되지 않아 한글 라우트가 여전히 throw한다.
+// 실제 패치를 적용한 이 실행에서만(이미 패치된 멱등 재실행은 제외) .next/cache를 비워
+// 다음 next build가 패치된 소스로 재번들하도록 강제한다.
+// (회귀 사고: 2026-06-16 Vercel 'Restored build cache'로 패치 전 번들 재사용 → 런타임 throw·500)
+if (appliedThisRun > 0) {
+  const cacheDir = path.resolve(process.cwd(), '.next', 'cache');
+  if (fs.existsSync(cacheDir)) {
+    fs.rmSync(cacheDir, { recursive: true, force: true });
+    console.log('[patch-next] .next/cache 무효화 (Turbopack stale 번들 제거)');
+  }
+}
+
 console.log(`[patch-next] 완료 — 패치/확인된 사본 ${patched}개`);
