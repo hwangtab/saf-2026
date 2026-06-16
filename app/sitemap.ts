@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { SITE_URL, CAMPAIGN } from '@/lib/constants';
 import { getSupabaseArtworks, getSupabaseNews, getSupabaseStoriesLight } from '@/lib/supabase-data';
 import { videos as archiveVideos } from '@/content/videos';
-import { CATEGORY_EN_MAP } from '@/lib/artwork-category';
+import { CATEGORY_EN_MAP, categorySlug } from '@/lib/artwork-category';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import { STORY_CATEGORIES } from '@/types';
 import { EN_INDEXABLE_PAGES, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
@@ -376,8 +376,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Category landing pages (한국어 로케일만 — 카테고리명이 한국어이므로 영어 페이지는 thin content)
   const categoryPages: MetadataRoute.Sitemap = Object.keys(CATEGORY_EN_MAP).map((category) => {
-    const encodedCategory = encodeURIComponent(category);
-    const categoryPath = `/artworks/category/${encodedCategory}`;
+    const categoryPath = `/artworks/category/${categorySlug(category)}`;
     const categoryWorks = allArtworks.filter((a) => a.category === category);
     const repCatWork = categoryWorks.find((a) => !a.sold && a.images?.[0]) || categoryWorks[0];
     const rawCatImg = repCatWork?.images?.[0]
