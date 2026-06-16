@@ -6,6 +6,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import EventPaymentConfirmedEmail from '@/emails/event-payment-confirmed';
 import EventWaitlistEmail from '@/emails/event-waitlist';
 import EventWaitlistPaymentEmail from '@/emails/event-waitlist-payment';
+import EventRefundedEmail from '@/emails/event-refunded';
 import {
   EVENT_ALIMTALK_TEMPLATE_ENV,
   buildEventAlimTalkVariables,
@@ -30,6 +31,8 @@ function buildEventSmsText(type: EventNotifyType, d: EventNotifyData): string {
       return `[씨앗페] ${d.name}님, 오윤 40주기 추도식 대기 신청이 접수되었습니다. 자리가 나면 순서대로 결제 안내를 드립니다.`;
     case 'waitlist_payment':
       return `[씨앗페] ${d.name}님, 추도식에 자리가 생겼습니다. (인원 ${d.partySize}명 / 회비 ${won(d.amount)}원) ${d.deadline ?? ''}까지 결제하시면 확정됩니다: ${d.paymentUrl ?? ''}`;
+    case 'refunded':
+      return `[씨앗페] ${d.name}님, 오윤 40주기 추도식 회비(${won(d.amount)}원)가 전액 환불 처리되었습니다. 자리가 마감되어 결제하신 금액을 돌려드립니다. 너른 양해 부탁드립니다.`;
   }
 }
 
@@ -97,6 +100,7 @@ const EVENT_EMAIL_SUBJECTS: Record<EventNotifyType, string> = {
   payment_confirmed: '[씨앗페] 오윤 40주기 추도식 신청이 완료되었습니다',
   waitlist: '[씨앗페] 오윤 40주기 추도식 대기 신청 접수',
   waitlist_payment: '[씨앗페] 오윤 40주기 추도식 좌석 안내',
+  refunded: '[씨앗페] 오윤 40주기 추도식 회비 환불 안내',
 };
 
 /** 행사 이메일(이메일 입력 시에만). never throw. */
@@ -123,6 +127,13 @@ export async function sendEventEmail(
         name: data.name,
         partySize: data.partySize,
         amount: data.amount,
+      });
+    } else if (type === 'refunded') {
+      el = React.createElement(EventRefundedEmail, {
+        name: data.name,
+        partySize: data.partySize,
+        amount: data.amount,
+        orderNo: data.orderNo,
       });
     } else {
       el = React.createElement(EventWaitlistPaymentEmail, {
