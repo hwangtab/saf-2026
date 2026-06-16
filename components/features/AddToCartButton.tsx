@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import { useCart } from '@/components/providers/CartProvider';
@@ -23,7 +23,7 @@ export default function AddToCartButton({
       variant="outline"
       className="w-full"
       disabled={disabled}
-      leadingIcon={<ShoppingBag className="w-4 h-4" aria-hidden="true" />}
+      leadingIcon={<ShoppingCart className="w-4 h-4" aria-hidden="true" />}
       onClick={() => {
         addOne(artworkId, { unique: isUnique });
         openDrawer();
