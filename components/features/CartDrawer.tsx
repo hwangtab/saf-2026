@@ -122,6 +122,16 @@ export default function CartDrawer() {
     [details]
   );
 
+  // unique 작품인데 수량 > 1이면 1로 자가치유 — 담은 시점에 edition_type이 누락돼 잘못 증가한
+  // 카트 보정(badge·소계·DB cart_items 정상화). 서버 checkout은 이미 unique를 1로 강제하지만 표시도 맞춰야 함.
+  useEffect(() => {
+    for (const item of items) {
+      if (item.quantity > 1 && detailById(item.artworkId)?.editionType === 'unique') {
+        setQuantity(item.artworkId, 1);
+      }
+    }
+  }, [items, detailById, setQuantity]);
+
   if (!mounted || !isOpen) return null;
 
   const hasItems = items.length > 0;
