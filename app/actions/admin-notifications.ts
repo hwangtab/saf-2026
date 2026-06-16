@@ -102,7 +102,11 @@ async function fetchRegistrations(supabase: SupabaseClient): Promise<AdminNotifi
 
 async function fetchEventRegistrations(supabase: SupabaseClient): Promise<AdminNotification[]> {
   const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
-  const { data, error } = await supabase
+  const href = '/admin/event/oh-yoon-memorial';
+  const notifications: AdminNotification[] = [];
+
+  // 결제완료 신청 — 개별
+  const { data: confirmed } = await supabase
     .from('event_registrations')
     .select('id, applicant_name, party_size, amount, order_no, paid_at')
     .eq('status', 'confirmed')
@@ -111,24 +115,223 @@ async function fetchEventRegistrations(supabase: SupabaseClient): Promise<AdminN
     .order('paid_at', { ascending: false })
     .limit(10);
 
+  for (const row of confirmed ?? []) {
+    notifications.push({
+      id: `event:${row.id}`,
+      category: 'registration',
+      severity: 'success',
+      title: `추도식 신청 — ${row.applicant_name ?? '신청자'}`,
+      detail: `${row.party_size ?? 1}명${row.amount ? ` · ${formatKrw(row.amount)}` : ''}${row.order_no ? ` · #${row.order_no}` : ''}`,
+      href,
+      createdAt: row.paid_at as string,
+    });
+  }
+
+  // 대기자(waitlist) — 개별. 좌석 매진 신호라 좌석 확보 시 안내가 필요
+  const { data: waitlist } = await supabase
+    .from('event_registrations')
+    .select('id, applicant_name, party_size, created_at')
+    .eq('status', 'waitlist')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  for (const row of waitlist ?? []) {
+    notifications.push({
+      id: `event-wait:${row.id}`,
+      category: 'action_needed',
+      severity: 'warning',
+      title: `추도식 대기 신청 — ${row.applicant_name ?? '신청자'}`,
+      detail: `${row.party_size ?? 1}명 · 좌석 확보 시 안내 필요`,
+      href,
+      createdAt: row.created_at as string,
+    });
+  }
+
+  // 미결제 hold(pending) — 카운트 요약(개별은 hold 만료가 잦아 노이즈)
+  const { count: pendingCount, data: pendingLatest } = await supabase
+    .from('event_registrations')
+    .select('created_at', { count: 'exact' })
+    .eq('status', 'pending')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if ((pendingCount ?? 0) > 0 && pendingLatest?.[0]?.created_at) {
+    notifications.push({
+      id: 'event:pending',
+      category: 'registration',
+      severity: 'info',
+      title: `추도식 미결제 신청 ${pendingCount}건`,
+      detail: '결제 대기(hold) 중',
+      href,
+      createdAt: pendingLatest[0].created_at,
+    });
+  }
+
+  return notifications;
+}
+
+async function fetchAwaitingDeposit(supabase: SupabaseClient): Promise<AdminNotification[]> {
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  const { data, error } = await supabase
+    .from('orders')
+    .select('id, order_no, buyer_name, total_amount, created_at')
+    .eq('status', 'awaiting_deposit')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
   if (error || !data) return [];
 
   return data.map((row) => ({
-    id: `event:${row.id}`,
-    category: 'registration',
-    severity: 'success',
-    title: `추도식 신청 — ${row.applicant_name ?? '신청자'}`,
-    detail: `${row.party_size ?? 1}명${row.amount ? ` · ${formatKrw(row.amount)}` : ''}${row.order_no ? ` · #${row.order_no}` : ''}`,
-    href: '/admin/event/oh-yoon-memorial',
-    createdAt: row.paid_at as string,
+    id: `deposit:${row.id}`,
+    category: 'action_needed',
+    severity: 'warning',
+    title: `가상계좌 입금 대기 — ${row.buyer_name ?? '구매자'}`,
+    detail: `주문 #${row.order_no}${row.total_amount ? ` · ${formatKrw(row.total_amount)}` : ''}`,
+    href: `/admin/orders/${row.id}`,
+    createdAt: row.created_at as string,
   }));
+}
+
+async function fetchPetitionSignatures(supabase: SupabaseClient): Promise<AdminNotification[]> {
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  const { count, data, error } = await supabase
+    .from('petition_signatures')
+    .select('created_at', { count: 'exact' })
+    .eq('petition_slug', 'oh-yoon')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (error || !count || count === 0 || !data?.[0]?.created_at) return [];
+
+  return [
+    {
+      id: 'petition:oh-yoon',
+      category: 'registration',
+      severity: 'info',
+      title: `신규 청원 서명 ${count}건`,
+      detail: `최근 ${RECENT_WINDOW_DAYS}일 · 오윤 구의동 벽화`,
+      href: '/admin/petition/oh-yoon',
+      createdAt: data[0].created_at,
+    },
+  ];
+}
+
+async function fetchInboundEmails(supabase: SupabaseClient): Promise<AdminNotification[]> {
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  const { data, error } = await supabase
+    .from('email_inbound_messages')
+    .select('id, from_email, subject, received_at')
+    .eq('status', 'new')
+    .gte('received_at', sinceIso)
+    .order('received_at', { ascending: false })
+    .limit(10);
+
+  if (error || !data) return [];
+
+  return data.map((row) => ({
+    id: `inbound:${row.id}`,
+    category: 'action_needed',
+    severity: 'info',
+    title: `메일 회신 — ${row.from_email ?? '발신자'}`,
+    detail: row.subject ?? '제목 없음',
+    href: '/admin/email',
+    createdAt: (row.received_at ?? new Date().toISOString()) as string,
+  }));
+}
+
+// SNS 토큰 만료·게시 실패·대량 발송 실패 — 장애성 경보
+async function fetchSystemHealth(supabase: SupabaseClient): Promise<AdminNotification[]> {
+  const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
+  const soonIso = new Date(Date.now() + 7 * 86_400_000).toISOString();
+  const today = todayUtcIso();
+  const notifications: AdminNotification[] = [];
+
+  const [tokenRes, postFailRes, emailFailRes, smsFailRes] = await Promise.all([
+    supabase
+      .from('social_tokens')
+      .select('platform, expires_at')
+      .not('expires_at', 'is', null)
+      .lt('expires_at', soonIso),
+    supabase
+      .from('social_posts')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'failed')
+      .gte('created_at', sinceIso),
+    supabase
+      .from('email_broadcasts')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'failed')
+      .gte('created_at', sinceIso),
+    supabase
+      .from('sms_broadcasts')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'failed')
+      .gte('created_at', sinceIso),
+  ]);
+
+  for (const tok of tokenRes.data ?? []) {
+    const expired = tok.expires_at ? new Date(tok.expires_at).getTime() < Date.now() : false;
+    notifications.push({
+      id: `social-token:${tok.platform}`,
+      category: 'action_needed',
+      severity: 'danger',
+      title: `SNS 토큰 ${expired ? '만료됨' : '만료 임박'} — ${tok.platform}`,
+      detail: expired
+        ? '게시 중단 위험 — 재인증 필요'
+        : `만료 예정: ${(tok.expires_at as string).slice(0, 10)}`,
+      href: '/admin/social',
+      createdAt: today,
+    });
+  }
+
+  if ((postFailRes.count ?? 0) > 0) {
+    notifications.push({
+      id: 'alert:social-post-failed',
+      category: 'action_needed',
+      severity: 'warning',
+      title: `SNS 게시 실패 ${postFailRes.count}건`,
+      detail: '최근 30일 게시 실패 — 수동 확인 필요',
+      href: '/admin/social',
+      createdAt: today,
+    });
+  }
+
+  if ((emailFailRes.count ?? 0) > 0) {
+    notifications.push({
+      id: 'alert:email-broadcast-failed',
+      category: 'action_needed',
+      severity: 'warning',
+      title: `대량 이메일 발송 실패 ${emailFailRes.count}건`,
+      detail: '최근 30일 실패한 broadcast',
+      href: '/admin/email',
+      createdAt: today,
+    });
+  }
+
+  if ((smsFailRes.count ?? 0) > 0) {
+    notifications.push({
+      id: 'alert:sms-broadcast-failed',
+      category: 'action_needed',
+      severity: 'warning',
+      title: `대량 SMS 발송 실패 ${smsFailRes.count}건`,
+      detail: '최근 30일 실패한 broadcast',
+      href: '/admin/sms',
+      createdAt: today,
+    });
+  }
+
+  return notifications;
 }
 
 async function fetchActionNeeded(supabase: SupabaseClient): Promise<AdminNotification[]> {
   const SLA_THRESHOLD = new Date(Date.now() - 72 * 3600 * 1000).toISOString();
   const today = todayUtcIso();
 
-  const [slaRes, escalatedRes, refundRes, pendingAppsRes] = await Promise.all([
+  const [slaRes, escalatedRes, refundRes, pendingAppsRes, feedbackRes] = await Promise.all([
     supabase
       .from('orders')
       .select('id', { count: 'exact', head: true })
@@ -149,6 +352,10 @@ async function fetchActionNeeded(supabase: SupabaseClient): Promise<AdminNotific
       .select('id', { count: 'exact', head: true })
       .neq('role', 'admin')
       .eq('status', 'pending'),
+    supabase
+      .from('feedback')
+      .select('id', { count: 'exact', head: true })
+      .in('status', ['open', 'reviewing']),
   ]);
 
   const notifications: AdminNotification[] = [];
@@ -157,6 +364,7 @@ async function fetchActionNeeded(supabase: SupabaseClient): Promise<AdminNotific
   const escalatedCount = escalatedRes.count ?? 0;
   const refundCount = refundRes.count ?? 0;
   const pendingApps = pendingAppsRes.count ?? 0;
+  const feedbackCount = feedbackRes.count ?? 0;
 
   if (escalatedCount > 0) {
     notifications.push({
@@ -199,6 +407,17 @@ async function fetchActionNeeded(supabase: SupabaseClient): Promise<AdminNotific
       title: `승인 대기 신청 ${pendingApps}건`,
       detail: '검토가 필요한 작가·출품자 신청',
       href: '/admin/users?status=pending',
+      createdAt: today,
+    });
+  }
+  if (feedbackCount > 0) {
+    notifications.push({
+      id: 'alert:feedback',
+      category: 'action_needed',
+      severity: 'info',
+      title: `미처리 피드백 ${feedbackCount}건`,
+      detail: '검토가 필요한 사용자 피드백',
+      href: '/admin/feedback',
       createdAt: today,
     });
   }
@@ -300,20 +519,37 @@ export async function getAdminNotifications(): Promise<AdminNotification[]> {
   await requireAdmin();
   const supabase = await requireAdminClient();
 
-  const [purchasesResult, registrationsResult, eventResult, actionNeededResult, analyticsResult] =
-    await Promise.allSettled([
-      fetchPurchases(supabase),
-      fetchRegistrations(supabase),
-      fetchEventRegistrations(supabase),
-      fetchActionNeeded(supabase),
-      fetchAnalytics(supabase),
-    ]);
+  const [
+    purchasesResult,
+    registrationsResult,
+    eventResult,
+    depositResult,
+    petitionResult,
+    inboundResult,
+    actionNeededResult,
+    systemHealthResult,
+    analyticsResult,
+  ] = await Promise.allSettled([
+    fetchPurchases(supabase),
+    fetchRegistrations(supabase),
+    fetchEventRegistrations(supabase),
+    fetchAwaitingDeposit(supabase),
+    fetchPetitionSignatures(supabase),
+    fetchInboundEmails(supabase),
+    fetchActionNeeded(supabase),
+    fetchSystemHealth(supabase),
+    fetchAnalytics(supabase),
+  ]);
 
   const all: AdminNotification[] = [
     ...(purchasesResult.status === 'fulfilled' ? purchasesResult.value : []),
     ...(registrationsResult.status === 'fulfilled' ? registrationsResult.value : []),
     ...(eventResult.status === 'fulfilled' ? eventResult.value : []),
+    ...(depositResult.status === 'fulfilled' ? depositResult.value : []),
+    ...(petitionResult.status === 'fulfilled' ? petitionResult.value : []),
+    ...(inboundResult.status === 'fulfilled' ? inboundResult.value : []),
     ...(actionNeededResult.status === 'fulfilled' ? actionNeededResult.value : []),
+    ...(systemHealthResult.status === 'fulfilled' ? systemHealthResult.value : []),
     ...(analyticsResult.status === 'fulfilled' ? analyticsResult.value : []),
   ];
 
