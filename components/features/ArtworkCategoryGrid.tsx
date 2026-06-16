@@ -10,7 +10,7 @@ import { getMediumLabel } from '@/lib/medium-labels';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { buildArtworkAlt } from '@/lib/artwork-alt';
-import WishlistHeartButton from '@/components/features/WishlistHeartButton';
+import ArtworkCardActions from '@/components/features/ArtworkCardActions';
 import type { Artwork } from '@/types';
 
 /**
@@ -97,10 +97,11 @@ export default async function ArtworkCategoryGrid({
                 })}
                 locale={locale}
                 wishlistSlot={(title) => (
-                  <WishlistHeartButton
+                  <ArtworkCardActions
                     artworkId={artwork.id}
                     artworkTitle={title}
-                    variant="overlay"
+                    isUnique={artwork.edition_type === 'unique'}
+                    purchasable={isPurchasable(artwork)}
                   />
                 )}
               />
@@ -130,6 +131,21 @@ export default async function ArtworkCategoryGrid({
       </div>
     </section>
   );
+}
+
+// ─── Purchasable guard ─────────────────────────────────────────────────────────
+
+/**
+ * 작품이 카트 담기 가능한지 판정.
+ * !sold && !reserved && 가격이 구체적인 값(문의/확인 중 아님)이어야 한다.
+ */
+function isPurchasable(artwork: Artwork): boolean {
+  if (artwork.sold || artwork.reserved) return false;
+  const price = artwork.price;
+  if (!price) return false;
+  if (price === '문의' || price === 'Inquiry') return false;
+  if (price === '확인 중' || price === 'Pending') return false;
+  return true;
 }
 
 // ─── Inline server card (hydration 0) ──────────────────────────────────────────
