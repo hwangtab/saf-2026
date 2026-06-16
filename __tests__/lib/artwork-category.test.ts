@@ -42,10 +42,11 @@ describe('category slug 매핑', () => {
 });
 
 describe('카테고리 링크 회귀 가드', () => {
-  it('소스에 한글 인코딩(%ED..) 또는 encodeURIComponent(category) 카테고리 URL이 없다', () => {
+  it('소스에 한글 인코딩(%ED..)·encodeURIComponent(category)·raw 한글 카테고리 URL이 없다', () => {
     // [category] 라우트 파일 자체는 제외(역매핑 처리). emitter만 검사.
+    // 3가지 패턴 차단: ${encodeURIComponent(..) / %인코딩 / raw 한글 리터럴([가-힣]).
     const cmd =
-      `grep -rn "artworks/category/\\\${encodeURIComponent\\|artworks/category/%" ` +
+      `grep -rn "artworks/category/\\\${encodeURIComponent\\|artworks/category/%\\|artworks/category/[가-힣]" ` +
       `app components --include="*.ts" --include="*.tsx" | grep -v "category/\\[category\\]" || true`;
     const out = execSync(cmd, { cwd: process.cwd(), encoding: 'utf8' }).trim();
     expect(out).toBe('');

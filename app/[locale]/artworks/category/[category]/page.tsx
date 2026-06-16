@@ -71,8 +71,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale: rawLocale, category: rawCategory } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const slug = decodeURIComponent(rawCategory);
-  const category = categoryFromSlug(slug);
+  // rawCategory는 ASCII slug(painting 등)라 인코딩되지 않음 — decodeURIComponent 불필요.
+  const category = categoryFromSlug(rawCategory);
   if (!category || !SUPPORTED_CATEGORIES.includes(category)) {
     return { title: 'Not Found' };
   }
@@ -210,8 +210,8 @@ async function renderCategoryPage({ params }: Props) {
   const { locale: rawLocale, category: rawCategory } = await params;
   const locale = resolveLocale(rawLocale);
   setRequestLocale(locale);
-  const slug = decodeURIComponent(rawCategory);
-  const category = categoryFromSlug(slug);
+  // rawCategory는 ASCII slug(painting 등)라 인코딩되지 않음 — decodeURIComponent 불필요.
+  const category = categoryFromSlug(rawCategory);
   if (!category || !SUPPORTED_CATEGORIES.includes(category)) {
     return <CategoryNotFoundView />;
   }
