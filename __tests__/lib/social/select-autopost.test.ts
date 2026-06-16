@@ -1,51 +1,65 @@
 import { selectAutopostArtworks, type SelectableCandidate } from '@/lib/social/select-autopost';
 
 const c = (o: Partial<SelectableCandidate> & { id: string }): SelectableCandidate => ({
-  artistName: o.artistName ?? `artist-${o.id}`,
-  careerTier: o.careerTier ?? '신진',
+  artistName: o.artistName ?? `art-${o.id}`,
   image: o.image === undefined ? 'https://x/i.jpg' : o.image,
   postCount: o.postCount ?? 0,
+  lastPublishedAt: o.lastPublishedAt ?? null,
   id: o.id,
 });
 
 describe('selectAutopostArtworks', () => {
   it('미게시 + 이미지 있는 것만 후보', () => {
-    const list = [
-      c({ id: 'a', postCount: 1 }), // 이미 게시 → 제외
-      c({ id: 'b', image: null }), // 이미지 없음 → 제외
-      c({ id: 'd' }),
-    ];
-    const out = selectAutopostArtworks(list, { count: 5, showingArtistNames: [] });
-    expect(out.map((x) => x.id)).toEqual(['d']);
+    const out = selectAutopostArtworks(
+      [c({ id: 'posted', postCount: 1, lastPublishedAt: '2026-06-10' }), c({ id: 'noimg', image: null }), c({ id: 'ok' })],
+      { count: 5 }
+    );
+    expect(out.map((x) => x.id)).toEqual(['ok']);
   });
 
-  it('거장·특별전 작가를 우선 선정', () => {
+  it('한 번도 안 올라간 작가를 먼저 선정', () => {
     const list = [
-      c({ id: 'rookie', careerTier: '신진', artistName: '신진가' }),
-      c({ id: 'master', careerTier: '거장', artistName: '거장가' }),
-      c({ id: 'special', careerTier: '신진', artistName: '오윤' }),
+      c({ id: 'A-posted', artistName: 'A', postCount: 1, lastPublishedAt: '2026-06-10' }),
+      c({ id: 'A-new', artistName: 'A', postCount: 0 }),
+      c({ id: 'B-new', artistName: 'B', postCount: 0 }), // 작가 B는 게시 이력 없음
     ];
-    const out = selectAutopostArtworks(list, { count: 2, showingArtistNames: ['오윤'] });
-    expect(out.map((x) => x.id)).toEqual(['master', 'special']); // 둘 다 +2, 입력순
+    const out = selectAutopostArtworks(list, { count: 1 });
+    expect(out[0].artistName).toBe('B');
   });
 
-  it('같은 작가 연속 회피(작가 다양성)', () => {
+  it('게시 이력 있는 작가끼리는 가장 오래전 올라간 작가 먼저(순환)', () => {
     const list = [
-      c({ id: 'a1', artistName: '김작가' }),
-      c({ id: 'a2', artistName: '김작가' }),
-      c({ id: 'b1', artistName: '이작가' }),
+      c({ id: 'A-p', artistName: 'A', postCount: 1, lastPublishedAt: '2026-06-10' }),
+      c({ id: 'A-n', artistName: 'A', postCount: 0 }),
+      c({ id: 'B-p', artistName: 'B', postCount: 1, lastPublishedAt: '2026-06-05' }), // 더 오래전
+      c({ id: 'B-n', artistName: 'B', postCount: 0 }),
     ];
-    const out = selectAutopostArtworks(list, { count: 2, showingArtistNames: [] });
-    expect(out.map((x) => x.artistName)).toEqual(['김작가', '이작가']);
+    const out = selectAutopostArtworks(list, { count: 1 });
+    expect(out[0].artistName).toBe('B');
   });
 
-  it('작가 종류가 부족하면 중복 허용해 count 채움', () => {
-    const list = [c({ id: 'a1', artistName: '김작가' }), c({ id: 'a2', artistName: '김작가' })];
-    const out = selectAutopostArtworks(list, { count: 2, showingArtistNames: [] });
-    expect(out.map((x) => x.id)).toEqual(['a1', 'a2']);
+  it('동률(둘 다 미게시 작가)이면 보유 작품 많은 작가 우선', () => {
+    const list = [
+      c({ id: 'A1', artistName: 'A' }),
+      c({ id: 'B1', artistName: 'B' }),
+      c({ id: 'B2', artistName: 'B' }),
+      c({ id: 'B3', artistName: 'B' }), // B가 자료 많음
+    ];
+    const out = selectAutopostArtworks(list, { count: 1 });
+    expect(out[0].artistName).toBe('B');
+  });
+
+  it('한 번에 서로 다른 작가로 count개 선정', () => {
+    const list = [
+      c({ id: 'A1', artistName: 'A' }),
+      c({ id: 'A2', artistName: 'A' }),
+      c({ id: 'B1', artistName: 'B' }),
+    ];
+    const out = selectAutopostArtworks(list, { count: 2 });
+    expect(out.map((x) => x.artistName)).toEqual(['A', 'B']); // A 자료 많아 먼저, 그다음 다른 작가 B
   });
 
   it('count 0이면 빈 배열', () => {
-    expect(selectAutopostArtworks([c({ id: 'a' })], { count: 0, showingArtistNames: [] })).toEqual([]);
+    expect(selectAutopostArtworks([c({ id: 'a' })], { count: 0 })).toEqual([]);
   });
 });

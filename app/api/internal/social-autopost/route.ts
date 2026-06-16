@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
-import { MASTER_ARTISTS } from '@/lib/master-artists';
-import { getActiveShowingItems } from '@/lib/now-showing';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import {
   buildCaptionForArtwork,
@@ -19,19 +17,10 @@ export const maxDuration = 300;
 
 const INTER_ARTWORK_DELAY_MS = 5000;
 
-/** 진행 중 특별전(/special/*)의 거장 작가 한글명 — 선정 가중치용. */
-function getShowingArtistNames(): string[] {
-  return getActiveShowingItems()
-    .map((item) => item.href)
-    .filter((href): href is string => href != null && href.startsWith('/special/'))
-    .map((href) => href.replace('/special/', ''))
-    .map((slug) => MASTER_ARTISTS.find((m) => m.specialSlug === slug)?.artistName)
-    .filter((name): name is string => Boolean(name));
-}
-
 /**
  * 소셜 자동 게시 cron. 하루 N건(기본 3) 작품을 설정된 플랫폼(IG/Threads)에 자동 게시.
- * 안전장치: SOCIAL_AUTOPOST_ENABLED='true' 일 때만 동작(기본 OFF), 미게시 작품만, 거장·특별전 가중.
+ * 안전장치: SOCIAL_AUTOPOST_ENABLED='true' 일 때만 동작(기본 OFF), 미게시 작품만.
+ * 선정: 작가별로 골고루 순환(최근 안 올라간 작가 우선) + 자료 많은 작가 가중.
  */
 export async function GET(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
@@ -49,10 +38,7 @@ export async function GET(request: NextRequest) {
 
   const supabase = createSupabaseAdminClient();
   const candidates = await fetchPublishCandidates(supabase);
-  const picks = selectAutopostArtworks(candidates, {
-    count,
-    showingArtistNames: getShowingArtistNames(),
-  });
+  const picks = selectAutopostArtworks(candidates, { count });
 
   if (picks.length === 0) {
     return NextResponse.json({ posted: 0, note: '게시할 미게시 후보가 없습니다.' });
