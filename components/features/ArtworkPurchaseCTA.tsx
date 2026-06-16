@@ -7,6 +7,7 @@ import AddToCartButton from '@/components/features/AddToCartButton';
 import { trackEvent } from '@/lib/analytics/track';
 import type { EditionType } from '@/types';
 import { SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
+import { categorySlug } from '@/lib/artwork-category';
 import TrustBadges from '@/components/features/TrustBadges';
 import PurchaseGuide from '@/components/features/PurchaseGuide';
 import {
@@ -215,7 +216,7 @@ export default function ArtworkPurchaseCTA({
     const fallbackHref = hasOtherWorks
       ? `/artworks/artist/${encodeURIComponent(artist)}`
       : hasSameCategoryWorks && category
-        ? `/artworks/category/${encodeURIComponent(category)}`
+        ? `/artworks/category/${categorySlug(category)}`
         : '/artworks';
 
     return (

@@ -35,7 +35,7 @@ import RelatedArticles from '@/components/features/RelatedArticles';
 import RelatedMagazineCard from '@/components/features/RelatedMagazineCard';
 import ExpandableHistory from '@/components/features/ExpandableHistory';
 import { generateArtworkMetadata, generateArtworkJsonLd } from '@/lib/seo-utils';
-import { getCategoryLabel } from '@/lib/artwork-category';
+import { getCategoryLabel, categorySlug } from '@/lib/artwork-category';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import ProductMetaTags from '@/components/common/ProductMetaTags';
 import SupportMessage from '@/components/features/SupportMessage';
@@ -323,7 +323,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const categoryBreadcrumb = artwork.category
     ? {
         name: getCategoryLabel(artwork.category, locale),
-        path: `/artworks/category/${encodeURIComponent(artwork.category)}`,
+        path: `/artworks/category/${categorySlug(artwork.category)}`,
       }
     : undefined;
   const { productSchema, breadcrumbSchema, webPageSchema } = generateArtworkJsonLd(
@@ -596,7 +596,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     <>
                       <span className="text-gray-600 font-medium text-sm">{t('category')}</span>
                       <Link
-                        href={`/artworks/category/${encodeURIComponent(artwork.category)}`}
+                        href={`/artworks/category/${categorySlug(artwork.category)}`}
                         className="text-primary-strong hover:underline"
                       >
                         {getCategoryLabel(artwork.category, locale)}
@@ -862,7 +862,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   })}
                 </h2>
                 <Link
-                  href={`/artworks/category/${encodeURIComponent(artwork.category)}`}
+                  href={`/artworks/category/${categorySlug(artwork.category)}`}
                   className="text-primary-strong font-medium hover:underline text-sm"
                 >
                   <span className="inline-flex items-center gap-1">

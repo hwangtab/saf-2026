@@ -287,25 +287,25 @@ async function CategorySections({ locale }: { locale: string }) {
     {
       artworks: paintingArtworks,
       title: t('sectionPainting'),
-      viewAllHref: '/artworks/category/%ED%9A%8C%ED%99%94',
+      viewAllHref: '/artworks/category/painting',
       theme: 'dark',
     },
     {
       artworks: printArtworks,
       title: t('sectionPrint'),
-      viewAllHref: '/artworks/category/%ED%8C%90%ED%99%94',
+      viewAllHref: '/artworks/category/printmaking',
       theme: 'light',
     },
     {
       artworks: photoMediaArtworks,
       title: t('sectionPhotoMedia'),
-      viewAllHref: '/artworks/category/%EC%82%AC%EC%A7%84',
+      viewAllHref: '/artworks/category/photography',
       theme: 'dark',
     },
     {
       artworks: sculptureArtworks,
       title: t('sectionSculpture'),
-      viewAllHref: '/artworks/category/%EC%A1%B0%EA%B0%81',
+      viewAllHref: '/artworks/category/sculpture',
       theme: 'light',
     },
   ];
