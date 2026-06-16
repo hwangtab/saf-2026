@@ -11,7 +11,14 @@ import { newsArticles } from '@/content/news';
 import { faqs, faqsEn, getFaqsByLocale } from '@/content/faq';
 import { testimonials } from '@/content/testimonials';
 import { exhibitionReviews } from '@/content/reviews';
-import type { Artwork, ExhibitionReview, NewsArticle, Story, TestimonialCategory } from '@/types';
+import type {
+  Artwork,
+  EditionType,
+  ExhibitionReview,
+  NewsArticle,
+  Story,
+  TestimonialCategory,
+} from '@/types';
 import { stories as fallbackStories } from '@/content/stories';
 import { containsHangul } from '@/lib/search-utils';
 import type { ArtistNoticeRecord } from '@/lib/artist-notice';
@@ -45,6 +52,7 @@ type ArtworkRow = {
   material: string | null;
   year: string | null;
   edition: string | null;
+  edition_type: EditionType | null;
   price: string | null;
   images: string[] | null;
   shop_url: string | null;
@@ -111,13 +119,13 @@ type FAQRow = {
 };
 
 const ARTWORK_SELECT_COLUMNS =
-  'id, artist_id, title, title_en, description, description_en, size, width_cm, height_cm, depth_cm, size_bucket, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
+  'id, artist_id, title, title_en, description, description_en, size, width_cm, height_cm, depth_cm, size_bucket, material, year, edition, edition_type, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
 const ARTIST_SELECT_COLUMNS = 'id, name_ko, name_en, bio, bio_en, history, history_en, career_tier';
 const ARTWORK_DATA_REVALIDATE_SECONDS = 300;
 
 // description/description_en 제외 — 카드 렌더에 불필요, 2MB cache 한도 회피
 const LIGHT_ARTWORK_COLUMNS =
-  'id, artist_id, title, title_en, size, width_cm, height_cm, depth_cm, size_bucket, material, year, edition, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
+  'id, artist_id, title, title_en, size, width_cm, height_cm, depth_cm, size_bucket, material, year, edition, edition_type, price, images, shop_url, status, sold_at, category, tone, quote, quote_en';
 // bio/bio_en/history/history_en 제외 — 카드는 작가명·tier만 필요
 const LIGHT_ARTIST_COLUMNS = 'id, name_ko, name_en, career_tier';
 
@@ -163,6 +171,7 @@ const mapArtworkRow = (item: ArtworkRow, artist?: ArtistRow | null): Artwork => 
   material: sanitizeTextForRscPayload(item.material || ''),
   year: sanitizeTextForRscPayload(item.year || ''),
   edition: sanitizeTextForRscPayload(item.edition || ''),
+  edition_type: item.edition_type ?? undefined,
   price: formatPriceForDisplay(item.price),
   images: item.images || [],
   shopUrl: item.shop_url || '',
