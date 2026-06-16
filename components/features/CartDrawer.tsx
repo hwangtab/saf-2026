@@ -227,7 +227,7 @@ export default function CartDrawer() {
                     <div className="flex min-w-0 flex-1 flex-col">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="text-artwork-title truncate text-sm text-charcoal-deep">
+                          <p className="truncate text-sm font-semibold text-charcoal-deep">
                             {info?.title || (soldOut ? t('unavailableTitle') : ' ')}
                           </p>
                           {info?.artistName ? (
