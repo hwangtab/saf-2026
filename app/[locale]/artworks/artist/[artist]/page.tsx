@@ -502,14 +502,15 @@ const OH_YOON_SALES_PRIORITY = [
   '4c920878-32dd-4727-ab03-6eda996597d5',
 ] as const;
 
-// force-dynamic 유지 — 'TypeError: Invalid character'의 근본원인은 Next.js 16.2.6
-// segment-cache 키 인코딩 버그(segment-value-encoding.js가 비-ASCII 라우트 세그먼트에
-// btoa(value) raw 호출). scripts/patch-next-segment-cache.js가 소스를 교정하지만,
-// Turbopack 빌드 캐시가 node_modules를 불변으로 간주해 stale 번들을 재사용 → 런타임
-// lambda에 패치가 반영되지 않아 빌드 안 된 작가의 on-demand SSG에서 throw(심하면 500).
-// 작가 페이지는 트래픽 1% 미만이라 force-dynamic(런타임 SSR)이 안전·실용적 — segment
-// prefetch 데이터 수집 경로를 아예 타지 않아 패치 반영 여부와 무관하게 정상 동작한다.
-// (회귀 사고: 2026-06-16 force-static 복원 시 이지 작가 500. 사용자도 force-dynamic 수용.)
+// force-dynamic 유지 — 'TypeError: Invalid character'의 근본원인은 Next.js segment-cache 키
+// 인코딩 버그: compiled 런타임 번들(dist/compiled/next-server/app-page*.runtime.prod.js)이
+// 비-ASCII 라우트 세그먼트(한글 작가명)에 btoa()를 raw 호출 → 정적 segment-prefetch 생성 시
+// throw(심하면 500). 소스(dist/shared·dist/esm) 패치는 minified 런타임 번들에 안 닿아 비현실적·
+// 취약. force-dynamic은 정적 prefetch(collectSegmentData) 경로를 아예 타지 않아 throw를 원천
+// 차단한다. SEO 영향 없음(Googlebot 첫 hit SSR 200). 트래픽 1% 미만이라 실용적.
+// (회귀: 2026-06-16 force-static 복원 시 이지 작가 500.)
+// ⏳ 임시 우회 — 업스트림 버그 추적: https://github.com/vercel/next.js/issues/94840
+//    Next가 수정·릴리스하면 업그레이드 후 force-static + ISR 복원할 것.
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
