@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import {
   CATEGORY_EN_MAP,
   CATEGORY_SLUG_MAP,
@@ -37,5 +38,16 @@ describe('category slug 매핑', () => {
 
   it('categorySlug는 매핑 없는 값에 입력을 그대로 반환(방어)', () => {
     expect(categorySlug('unknowncat')).toBe('unknowncat');
+  });
+});
+
+describe('카테고리 링크 회귀 가드', () => {
+  it('소스에 한글 인코딩(%ED..) 또는 encodeURIComponent(category) 카테고리 URL이 없다', () => {
+    // [category] 라우트 파일 자체는 제외(역매핑 처리). emitter만 검사.
+    const cmd =
+      `grep -rn "artworks/category/\\\${encodeURIComponent\\|artworks/category/%" ` +
+      `app components --include="*.ts" --include="*.tsx" | grep -v "category/\\[category\\]" || true`;
+    const out = execSync(cmd, { cwd: process.cwd(), encoding: 'utf8' }).trim();
+    expect(out).toBe('');
   });
 });
