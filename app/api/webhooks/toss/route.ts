@@ -12,6 +12,7 @@ import {
   verifyDepositCallbackSecret,
   isDepositCallback,
   isPaymentStatusChanged,
+  isEventOrderId,
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
@@ -45,6 +46,17 @@ export async function POST(req: NextRequest) {
   if (!payload) {
     console.error('[toss-webhook] Invalid payload received');
     return NextResponse.json({ error: 'Invalid webhook payload' }, { status: 400 });
+  }
+
+  // 이벤트(추도식) 결제는 작품 결제와 같은 domestic MID(saf202i818)를 공유하므로
+  // STATUS_CHANGED/DEPOSIT_CALLBACK 웹훅이 이 엔드포인트로 들어오지만, event_registrations +
+  // event confirm route가 전체 라이프사이클을 처리한다. 작품 웹훅(payments/orders 기반)은
+  // 이벤트 결제를 찾지 못해 provider를 api_v1(cafe24 secret)로 잘못 추정 → fetchPayment가
+  // saf202i818 결제를 cafe24 secret으로 조회 → 404 → '검증 실패' 알림 + 500 재시도 폭주
+  // (2026-06-15 회귀: EVT 결제마다 거짓 알림). 작품 웹훅이 처리할 수 없는 영역이므로
+  // 즉시 200으로 ack(Toss 재시도 중단)한 뒤 무시한다.
+  if (isEventOrderId(payload.data.orderId)) {
+    return NextResponse.json({ received: true, status: 'ignored_event' }, { status: 200 });
   }
 
   const supabase = createSupabaseAdminClient();
