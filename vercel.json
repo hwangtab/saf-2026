@@ -9,6 +9,7 @@
     "app/api/internal/broadcast-dispatch/route.ts": { "maxDuration": 300 },
     "app/api/internal/sms-broadcast-dispatch/route.ts": { "maxDuration": 300 },
     "app/api/internal/reconcile-payments/route.ts": { "maxDuration": 60 },
+    "app/api/internal/reconcile-event-registrations/route.ts": { "maxDuration": 60 },
     "app/api/internal/expire-stale-orders/route.ts": { "maxDuration": 60 },
     "app/api/internal/purge-trash/route.ts": { "maxDuration": 120 },
     "app/api/internal/gsc-sync/route.ts": { "maxDuration": 300 },
@@ -26,6 +27,10 @@
     },
     {
       "path": "/api/internal/reconcile-payments",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/internal/reconcile-event-registrations",
       "schedule": "*/10 * * * *"
     },
     {
