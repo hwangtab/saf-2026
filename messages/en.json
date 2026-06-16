@@ -1295,7 +1295,9 @@
     "soldOutNotice": "Remove sold-out works to continue to checkout",
     "unavailableTitle": "Unavailable artwork",
     "uniqueQtyLocked": "Only one of this work can be purchased",
-    "drawerTitle": "Cart"
+    "drawerTitle": "Cart",
+    "addToCartAria": "Add {title} to cart",
+    "inCartAria": "{title} in cart"
   },
   "storiesArchive": {
     "heroSubtitle": "{count, plural, =1 {1 article} other {# articles}}",

@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCart } from '@/components/providers/CartProvider';
 import { cn } from '@/lib/utils/cn';
@@ -30,7 +30,7 @@ export default function CartNavButton({
         className
       )}
     >
-      <ShoppingBag className="w-5 h-5 lg:w-4 lg:h-4" aria-hidden="true" />
+      <ShoppingCart className="w-5 h-5 lg:w-4 lg:h-4" aria-hidden="true" />
       {mounted && (
         <span
           className={cn(

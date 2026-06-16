@@ -110,11 +110,11 @@ export default function DesktopNav({
           />
         </IdleMount>
 
-        {/* 위시리스트 — 로그인 버튼 옆에 배치 */}
-        <WishlistNavButton textColor={textColor} />
-
-        {/* 카트 — 위시리스트 옆에 배치, 클릭 시 드로어 open */}
-        <CartNavButton textColor={textColor} />
+        {/* 위시리스트 + 카트 — 데스크탑에서 44px min-width 강제만 해제(아이콘이 과도하게 ~34px
+            벌어지던 원인). 패딩 lg:p-2는 유지 → 다른 요소와 동일한 gap-1.5 리듬으로 ~22px 균일.
+            모바일 헤더(lg:hidden)의 동일 버튼 인스턴스는 base 44px 터치타겟 그대로 유지. */}
+        <WishlistNavButton textColor={textColor} className="lg:!min-h-0 lg:!min-w-0" />
+        <CartNavButton textColor={textColor} className="lg:!min-h-0 lg:!min-w-0" />
 
         <LanguageSwitcher className={textColor} compact inverse={isInverse} />
       </div>

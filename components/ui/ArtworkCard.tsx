@@ -4,6 +4,7 @@ import { memo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import SafeImage from '@/components/common/SafeImage';
+import ArtworkCardActions from '@/components/features/ArtworkCardActions';
 import type { ArtworkCardData } from '@/types';
 import { cn } from '@/lib/utils/cn';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
@@ -267,6 +268,13 @@ function ArtworkCard({
   const artistHref = `/artworks/artist/${encodeURIComponent(artwork.artist)}`;
   const safeTitle = getSafeTitle(artwork, untitledLabel, locale);
   const safeArtist = getSafeArtist(artwork, unknownArtistLabel, locale);
+  // 카드 장바구니 담기: 판매가능 + 정가일 때만 (위시 하트는 항상 노출).
+  const cartPurchasable =
+    !artwork.sold &&
+    !artwork.reserved &&
+    !!artwork.price &&
+    !isInquiryPrice(artwork.price) &&
+    !isPending(artwork.price);
   return (
     <div
       className={cn(
@@ -382,30 +390,40 @@ function ArtworkCard({
           })()}
         </p>
 
-        {localizedPrice && !isInquiryPrice(localizedPrice) ? (
-          <p
-            className={cn(
-              'text-sm font-semibold mt-1',
-              artwork.sold
-                ? theme === 'dark'
-                  ? 'text-white/70 line-through'
-                  : 'text-gray-600 line-through'
-                : artwork.reserved
+        <div className="mt-1 flex items-center justify-between gap-2">
+          {localizedPrice && !isInquiryPrice(localizedPrice) ? (
+            <p
+              className={cn(
+                'text-sm font-semibold',
+                artwork.sold
                   ? theme === 'dark'
-                    ? 'text-white/70'
-                    : 'text-charcoal-soft'
-                  : theme === 'dark'
-                    ? 'text-primary-soft'
-                    : // light theme: primary-strong(6.98:1, AAA) — text-sm는 4.5:1 필요한데
-                      // 기본 primary(#2176FF, 4.12:1)는 미달. PSI a11y "색상 대비" 지적 해결.
-                      'text-primary-strong'
-            )}
-          >
-            {localizedPrice}
-          </p>
-        ) : (
-          <p className="text-sm font-semibold mt-1 min-h-[1.25rem]">{'\u00A0'}</p>
-        )}
+                    ? 'text-white/70 line-through'
+                    : 'text-gray-600 line-through'
+                  : artwork.reserved
+                    ? theme === 'dark'
+                      ? 'text-white/70'
+                      : 'text-charcoal-soft'
+                    : theme === 'dark'
+                      ? 'text-primary-soft'
+                      : // light theme: primary-strong(6.98:1, AAA) — text-sm는 4.5:1 필요한데
+                        // 기본 primary(#2176FF, 4.12:1)는 미달. PSI a11y "색상 대비" 지적 해결.
+                        'text-primary-strong'
+              )}
+            >
+              {localizedPrice}
+            </p>
+          ) : (
+            <p className="text-sm font-semibold min-h-[1.25rem]">{'\u00A0'}</p>
+          )}
+          {/* 위시 하트 + 카트 담기 — 가격 우측. stretched 링크(z-10) 위 z-20 클릭 가능. */}
+          <ArtworkCardActions
+            artworkId={artwork.id}
+            artworkTitle={safeTitle}
+            isUnique={artwork.edition_type === 'unique'}
+            purchasable={cartPurchasable}
+            placement="inline"
+          />
+        </div>
       </div>
     </div>
   );
