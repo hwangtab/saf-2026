@@ -507,10 +507,21 @@ const OH_YOON_SALES_PRIORITY = [
 // 비-ASCII 라우트 세그먼트(한글 작가명)에 btoa()를 raw 호출 → 정적 segment-prefetch 생성 시
 // throw(심하면 500). 소스(dist/shared·dist/esm) 패치는 minified 런타임 번들에 안 닿아 비현실적·
 // 취약. force-dynamic은 정적 prefetch(collectSegmentData) 경로를 아예 타지 않아 throw를 원천
-// 차단한다. SEO 영향 없음(Googlebot 첫 hit SSR 200). 트래픽 1% 미만이라 실용적.
+// 차단한다. SEO 영향 없음(Googlebot 첫 hit SSR 200, 색인 정상). 데이터 페치는 unstable_cache
+// (revalidate 300s)로 감싸져 매 요청 cold DB를 안 때림 — 실비용은 풀페이지 CDN 캐시 미적용(TTFB)뿐.
 // (회귀: 2026-06-16 force-static 복원 시 이지 작가 500.)
+//
+// 왜 category처럼 ASCII slug로 근본해결 안 하나 (전문가 회의 2026-06-16, keep-force-dynamic 결론):
+// category는 11개 고정 enum이라 slug 11줄로 끝났지만, artist는 128명 동적+신규 계속 유입이라
+// DB slug 컬럼·생성 훅(영속 운영부채)·287개 링크·111개 master feature 파일·sitemap·113개 한글→slug
+// 308(런타임 DB 조회 redirect 필요=force-dynamic 제거 목적 배반) 전면 교체가 필요 — ROI가 비대칭.
+// #94840 수정 시 한글 param 그대로 force-static 복원이 0-비용이라, 그 전 대규모 slug 인프라는 over-eng.
+//
 // ⏳ 임시 우회 — 업스트림 버그 추적: https://github.com/vercel/next.js/issues/94840
-//    Next가 수정·릴리스하면 업그레이드 후 force-static + ISR 복원할 것.
+//   복원 트리거 (우선순위): (A) #94840 수정 릴리스 → 업그레이드 후 dynamic 제거 + force-static
+//   + revalidate=600 복원(아래 generateStaticParams 그대로 활성). (B) RUM(admin/analytics)으로
+//   artist 경로 TTFB 임계 초과 + 거장(오윤·박생광=추도식·청원 funnel 진입점) 유입 유의미 확인 시
+//   '거장 한정 하이브리드' 별도 검토. ('트래픽 적음'은 GSC/GA4 미검증 추정 — 측정 후 재평가.)
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -662,8 +673,10 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// 빌드 시 인기 작가 TOP 20 × 2 locale = 40 페이지 prerender. 작가당 ~3-4 Supabase 쿼리라
-// 빌드 부하 안전. 나머지 작가는 첫 요청 시 SSG (그 후 캐시).
+// ⚠ 현재 dynamic='force-dynamic'이라 이 generateStaticParams는 prerender에 사용되지 않는다(무효).
+// 위 주석의 복원 트리거(A: #94840 수정) 발동 시 force-static으로 되돌리면 그대로 인기 작가 TOP 20×2
+// locale을 prerender하는 용도로 재활성된다. 복원 대비로 의도적으로 남겨둠 — 삭제하지 말 것.
+// (force-static 시: 작가당 ~3-4 Supabase 쿼리라 빌드 부하 안전, 나머지 작가는 첫 요청 on-demand SSG.)
 export async function generateStaticParams() {
   const names = await getPopularArtistNames(20);
   return names.flatMap((artist) => ['ko', 'en'].map((locale) => ({ locale, artist })));
