@@ -171,12 +171,18 @@ function generateChangelog() {
       const rawBody = bodyParts.join(FIELD_SEP);
       const bodySummary = extractSummary(rawBody);
       const fallbackSummary = createFallbackSummary(parsed);
+      // 우선순위: 한글 본문 요약 > changelog-ko.json 수동 매핑 > (영문이라도) 본문 요약 > fallback.
+      // 본문 `요약:` 줄이 영문으로 박힌 과거 커밋은 ko.json 매핑으로 교정 가능 (관리자 화면 한국어 보장).
+      const koSummary =
+        bodySummary && containsKorean(bodySummary)
+          ? bodySummary
+          : koSummaries[trimmedHash] || bodySummary || fallbackSummary;
       return {
         hash: trimmedHash,
         type: parsed.type,
         scope: parsed.scope,
         subject: parsed.subject,
-        summary: bodySummary || koSummaries[trimmedHash] || fallbackSummary,
+        summary: koSummary,
         body: cleanBody(rawBody),
         date: dateISO.trim().slice(0, 10), // YYYY-MM-DD
         author: author.trim(),
