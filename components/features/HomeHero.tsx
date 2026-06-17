@@ -93,9 +93,14 @@ export default async function HomeHero({ locale }: { locale: string }) {
         <p className="text-body-large text-white/90 mb-8 max-w-2xl break-keep text-balance">
           {desc}
         </p>
+        {/* Variant B(2026-06-17, PM 패널 #5): ghost → solid primary CTA로 행동 유도 강화.
+            bg-primary-strong (6.98:1 AA) — CLAUDE.md 색 규칙(bg-primary+text-white small text 금지) 준수.
+            hover는 white 반전으로 AA 유지. */}
         <span
-          className={`inline-flex items-center gap-2 rounded-lg border-2 border-white/80 px-7 py-3 text-base md:text-lg font-bold backdrop-blur-sm transition-colors ${
-            slide.href ? 'bg-white/10 hover:bg-white hover:text-charcoal-deep' : 'bg-white/5'
+          className={`inline-flex items-center gap-2 rounded-lg px-7 py-3 text-base md:text-lg font-bold shadow-lg transition-colors ${
+            slide.href
+              ? 'bg-primary-strong text-white hover:bg-white hover:text-primary-strong'
+              : 'bg-white/20 text-white'
           }`}
         >
           {cta}

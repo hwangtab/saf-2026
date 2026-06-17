@@ -317,6 +317,27 @@ export type AnalyticsData = {
     eventCount: number;
   }>;
   /**
+   * 홈 진입 퍼널 — 홈 노출 → 클릭 → 작품상세 → 구매CTA 단계별 고유 사용자 수.
+   * - funnel: 전체 단계 요약 1행 (없으면 null)
+   * - sectionViews: 섹션별 노출/방문자 수
+   * - ctaClicks: 섹션×이벤트별 클릭 수
+   */
+  homeFunnel: {
+    funnel: {
+      home_visitors: number;
+      home_clickers: number;
+      detail_viewers: number;
+      purchase_clickers: number;
+    } | null;
+    sectionViews: Array<{ section: string; views: number; visitors: number }>;
+    ctaClicks: Array<{
+      event_name: string;
+      section: string | null;
+      clicks: number;
+      clickers: number;
+    }>;
+  };
+  /**
    * CTA 클릭 (조합원 가입 / share) — 외부 conversion 의도 추적.
    * 기존 패턴:
    * - member_join_click: CTAButtonGroup·Footer·FullscreenMenu·TrackedDonateButton에서
@@ -628,6 +649,23 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     en_to_ko: number;
     total: number;
   };
+  type HomeEntryFunnelRow = {
+    home_visitors: number;
+    home_clickers: number;
+    detail_viewers: number;
+    purchase_clickers: number;
+  };
+  type HomeSectionViewRow = {
+    section: string;
+    views: number;
+    visitors: number;
+  };
+  type HomeCtaClickRow = {
+    event_name: string;
+    section: string | null;
+    clicks: number;
+    clickers: number;
+  };
 
   const [
     summaryRes,
@@ -674,6 +712,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     purchaseArtworksRes,
     localeSwitchSummaryRes,
     localeSwitchPagesRes,
+    homeEntryFunnelRes,
+    homeSectionViewRes,
+    homeCtaClickRes,
   ] = await Promise.all([
     supabase.rpc('get_pv_summary', { since_ts: sinceTs }),
     supabase.rpc('get_pv_daily_trend', { since_ts: sinceTs }),
@@ -766,6 +807,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     }),
     untypedRpc<LocaleSwitchSummaryRow[]>('get_locale_switch_summary', { since_ts: sinceTs }),
     untypedRpc<LocaleSwitchPageRow[]>('get_locale_switch_pages', { since_ts: sinceTs, lim: 10 }),
+    untypedRpc<HomeEntryFunnelRow[]>('get_home_entry_funnel', { since_ts: sinceTs }),
+    untypedRpc<HomeSectionViewRow[]>('get_home_section_view_summary', { since_ts: sinceTs }),
+    untypedRpc<HomeCtaClickRow[]>('get_home_cta_click_summary', { since_ts: sinceTs }),
   ]);
 
   // 모든 RPC 결과 에러 logging — Promise.all 안에서 swallow되는 error를 운영 로그에 노출.
@@ -816,6 +860,9 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     ['get_top_purchase_clicked_artworks', purchaseArtworksRes],
     ['get_locale_switch_summary', localeSwitchSummaryRes],
     ['get_locale_switch_pages', localeSwitchPagesRes],
+    ['get_home_entry_funnel', homeEntryFunnelRes],
+    ['get_home_section_view_summary', homeSectionViewRes],
+    ['get_home_cta_click_summary', homeCtaClickRes],
   ] as const;
   for (const [name, res] of allRpcResults) {
     if (res.error) {
@@ -1655,6 +1702,34 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
       : [],
   };
 
+  // 홈 진입 퍼널
+  const homeFunnel: AnalyticsData['homeFunnel'] = {
+    funnel:
+      Array.isArray(homeEntryFunnelRes.data) && homeEntryFunnelRes.data.length > 0
+        ? {
+            home_visitors: Number(homeEntryFunnelRes.data[0].home_visitors ?? 0),
+            home_clickers: Number(homeEntryFunnelRes.data[0].home_clickers ?? 0),
+            detail_viewers: Number(homeEntryFunnelRes.data[0].detail_viewers ?? 0),
+            purchase_clickers: Number(homeEntryFunnelRes.data[0].purchase_clickers ?? 0),
+          }
+        : null,
+    sectionViews: Array.isArray(homeSectionViewRes.data)
+      ? homeSectionViewRes.data.map((row) => ({
+          section: row.section,
+          views: Number(row.views ?? 0),
+          visitors: Number(row.visitors ?? 0),
+        }))
+      : [],
+    ctaClicks: Array.isArray(homeCtaClickRes.data)
+      ? homeCtaClickRes.data.map((row) => ({
+          event_name: row.event_name,
+          section: row.section ?? null,
+          clicks: Number(row.clicks ?? 0),
+          clickers: Number(row.clickers ?? 0),
+        }))
+      : [],
+  };
+
   return {
     period,
     summary: { totalPageViews, uniqueVisitors, avgViewsPerVisitor },
@@ -1674,6 +1749,7 @@ export async function getAnalyticsData(period: AnalyticsPeriod = '30d'): Promise
     gsc,
     webVitals,
     ctaClicks,
+    homeFunnel,
     pageReport,
   };
 }

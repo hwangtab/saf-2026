@@ -70,10 +70,12 @@ const config = [
     },
   },
   {
-    // Test files can use <img> instead of next/image
+    // Test files can use <img> instead of next/image,
+    // and <a> tags are test fixtures (not real Next.js page links)
     files: ['__tests__/**/*'],
     rules: {
       '@next/next/no-img-element': 'off',
+      '@next/next/no-html-link-for-pages': 'off',
     },
   },
   {

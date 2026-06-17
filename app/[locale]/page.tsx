@@ -14,6 +14,7 @@ import EmergingArtists from '@/components/features/EmergingArtists';
 import JoinCommunityCTA from '@/components/features/JoinCommunityCTA';
 import MagazineSection from '@/components/features/MagazineSection';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
+import HomeTrackedSection from '@/components/features/HomeTrackedSection';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { getLiveStats } from '@/lib/live-stats';
@@ -112,38 +113,49 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           carousel 자체를 fold-below `<NowShowing />` 그리드로 이동해 LCP element를 정적 hero와 분리.
           상세 설계 의도: components/features/HomeHero.tsx 헤더 주석 + 메모리
           feedback_hero_server_island_regression.md. */}
-      <HomeHero locale={locale} />
-
-      {/* About 정체성 ribbon — 매뉴얼 6.4 [C].
-          Hero[B] 직후 30초 인지 영역 — "한국 작가 N명, 작품 N점 / 예술인 상호부조 플랫폼".
-          1단 첫 구매자에게 "미술 플랫폼" 인상 우선, 상호부조 보조 톤 (매뉴얼 톤 원칙). */}
-      <AboutIdentity locale={locale} />
-
-      {/* 매뉴얼 6.4 [F] + 8.4 사회금융 메커니즘 — 4단계 도식 + 라이브 카운터 + /our-proof 링크.
-          challenger 카피 재작업(A-3): 메커니즘을 fold 위로 상향. */}
-      <MechanismSection locale={locale} />
+      <HomeTrackedSection section="hero">
+        <HomeHero locale={locale} />
+      </HomeTrackedSection>
 
       {/* Now Showing 그리드 — fold-below 시한성 큐레이션 카드. hero에 노출된 동일 슬라이드도 카드로
-          한 번 더 노출(매거진 톤). 정적 SSR, hydration 0. */}
-      <NowShowing locale={locale} />
+          한 번 더 노출(매거진 톤). 정적 SSR, hydration 0.
+          Variant B(2026-06-17, PM 패널 #5): Hero 직후 첫 섹션 = 쇼핑 가능한 그리드.
+          명분 섹션(About·Mechanism)은 그리드 아래로 이동(상품 우선 재배열). Hero sawtooth(canvas-soft)와 정합. */}
+      <HomeTrackedSection section="now-showing">
+        <NowShowing locale={locale} />
+      </HomeTrackedSection>
 
       {/* 한국 현대미술의 거장 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2.
           시한성 NowShowing[D] 직후 영구 거장 라인업 [E]. 페르소나 B "왜 이 사이트인가" 첫 인지 자산. */}
-      <MasterArtists locale={locale} />
+      <HomeTrackedSection section="master">
+        <MasterArtists locale={locale} />
+      </HomeTrackedSection>
 
       {/* 30만원 이하 첫 그림 — 매뉴얼 6.4 [H] + 9.2 컬렉션 4.
           페르소나 A·1단 첫 구매자 진입 동선. 가격 ₩100,000~₩300,000 + 작가 단위 dedupe + sold/reserved 제외. */}
-      <EntryLevelArtworks locale={locale} />
+      <HomeTrackedSection section="entry-level">
+        <EntryLevelArtworks locale={locale} />
+      </HomeTrackedSection>
 
       {/* Category Artwork Sections — 직접 await로 SSR. 이전 Suspense fallback(60vh)
           → 실제 콘텐츠(약 350vh) 전환 시 290vh layout shift → CLS 1.0 → GSC 100% URL
           CLS 회귀 회복. ISR 캐시(revalidate=3600)라 서버 응답 빠르니 streaming 이득보다
           정적 SSR이 CWV에 유리. */}
-      <CategorySections locale={locale} />
+      <HomeTrackedSection section="category">
+        <CategorySections locale={locale} />
+      </HomeTrackedSection>
 
       {/* 신진 작가 발견 — 매뉴얼 6.4 [G] + 9.2 컬렉션 3.
           페르소나 B "내가 먼저 발견" 자긍심 자극. 거장 6명 제외 + 작가별 1점 dedupe + sold/reserved 제외. */}
-      <EmergingArtists locale={locale} />
+      <HomeTrackedSection section="emerging">
+        <EmergingArtists locale={locale} />
+      </HomeTrackedSection>
+
+      {/* About 정체성 + 사회금융 메커니즘 — Variant B(2026-06-17, PM 패널 #5).
+          상품 우선 재배열로 명분 섹션을 쇼핑 그리드 아래로 이동. 작품을 충분히 본 방문자에게
+          "왜 이 플랫폼인가"(정체성·기금 메커니즘)를 설명하고 Join Community로 연결. pre/post 퍼널 측정. */}
+      <AboutIdentity locale={locale} />
+      <MechanismSection locale={locale} />
 
       {/* 매거진 [K] — 매뉴얼 6.4 [K]. 최신 기사 3건. 깊이감 + 재방문 의지 형성. */}
       <MagazineSection locale={locale} />
