@@ -4,6 +4,7 @@ import PageHero from '@/components/ui/PageHero';
 import { Link } from '@/i18n/navigation';
 import Section from '@/components/ui/Section';
 import { createStandardPageMetadata } from '@/lib/seo';
+import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL } from '@/lib/constants';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
@@ -47,13 +48,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale
   );
 
-  // OG/트위터 이미지는 파일 기반 컨벤션(opengraph-image.tsx)이 자동 emit하도록 images 키를
-  // 제거. (createStandardPageMetadata가 기본 og-image.jpg를 넣어두므로 own-property 삭제 필수 —
-  // images: undefined로 두면 Next.js가 hasOwnProperty로 판정해 컨벤션 파일을 무시함.)
-  const openGraph = base.openGraph ? { ...base.openGraph } : undefined;
-  const twitter = base.twitter ? { ...base.twitter } : undefined;
-  if (openGraph) delete (openGraph as { images?: unknown }).images;
-  if (twitter) delete (twitter as { images?: unknown }).images;
+  // OG/트위터 이미지: 동적 opengraph-image.tsx 라우트를 가리킨다. 단, 파일 컨벤션이
+  // 자동 생성하는 URL은 기본 locale(ko)에서 `/ko/...`가 되는데 next-intl 'as-needed'
+  // 미들웨어가 이를 308로 리다이렉트한다 → 카카오톡 등 OG 크롤러는 이미지 리다이렉트를
+  // 따라가지 않아 썸네일이 누락된다(2026-06-17 회귀). buildLocaleUrl로 리다이렉트 없는
+  // 절대 URL(ko=무접두, en=/en)을 og:image로 직접 지정한다.
+  const ogImageUrl = buildLocaleUrl(`${OH_YOON_MEMORIAL_PATH}/opengraph-image`, locale);
+  const ogImage = {
+    url: ogImageUrl,
+    width: 1200,
+    height: 630,
+    alt: '오윤 40주기 추도식 — 2026년 7월 5일, 인사동',
+  };
+  const openGraph = base.openGraph ? { ...base.openGraph, images: [ogImage] } : undefined;
+  const twitter = base.twitter ? { ...base.twitter, images: [ogImage] } : undefined;
 
   return { ...base, openGraph, twitter };
 }
