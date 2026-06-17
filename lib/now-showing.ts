@@ -74,6 +74,9 @@ export const NOW_SHOWING: NowShowingItem[] = [
     imageUrl: `${STORAGE}/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp`,
     startDate: '2026-01-01',
     heroPriority: 0,
+    // 제공받은 작품 사진이 hero 풀스크린엔 흐릿(저해상도/업스케일 뻥튀기) → 해상도 측정과
+    // 무관하게 강제 soft 연출. 해상도 판정(generated.json)은 향후 추가될 hero 작품용 안전망으로 유지.
+    heroTreatment: 'soft',
   },
   {
     slug: 'oh-yoon-40th',
@@ -84,6 +87,8 @@ export const NOW_SHOWING: NowShowingItem[] = [
     // PM 확정: 오윤 40주기 commemoration 2026년 말일까지. 2027-01-01 자동 fallback (강석태 hero).
     endDate: '2026-12-31',
     heroPriority: 0,
+    // 오윤 작품 사진도 hero 풀스크린엔 흐릿(세로형 1491px 폭 → 가로 풀폭 업스케일) → 강제 soft.
+    heroTreatment: 'soft',
   },
   {
     slug: 'park-saenggwang-drawings',
@@ -97,6 +102,9 @@ export const NOW_SHOWING: NowShowingItem[] = [
     // status 미지정 — getCardStatus()가 startDate 기준 자동 derive.
     // 5/20 이전엔 'coming-soon'(어두운 톤 배지), 5/20 ~ 6/28 동안 'on'(success 배지 + ping dot).
     heroPriority: 5,
+    // 박생광 사진은 저화질 원본을 1920px로 업스케일("뻥튀기")한 것 — 픽셀 수만 충분하고 실제론
+    // 흐림. 해상도 측정으로는 못 잡는 케이스라(자동 판정 사각지대) 강제 soft 연출.
+    heroTreatment: 'soft',
   },
 ];
 
