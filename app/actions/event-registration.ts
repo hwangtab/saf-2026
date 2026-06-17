@@ -95,6 +95,15 @@ export async function registerEvent(input: unknown) {
     if (r.code === 'EVENT_CLOSED' || r.code === 'EVENT_NOT_FOUND') {
       return { ok: false, code: 'EVENT_CLOSED', message: '신청이 마감되었습니다.' };
     }
+    if (r.code === 'DUPLICATE_DEPOSIT') {
+      // 같은 번호로 이미 입금 대기 중인 신청이 있음 (좌석 중복 점유 방지).
+      return {
+        ok: false,
+        code: 'DUPLICATE_DEPOSIT',
+        message:
+          '이미 입금 대기 중인 신청이 있습니다. 입금이 확인되면 확정되며, 변경이 필요하면 사무국으로 문의해 주세요.',
+      };
+    }
     return { ok: false, code: 'INTERNAL_ERROR', message: '신청 처리 중 오류가 발생했습니다.' };
   }
 
