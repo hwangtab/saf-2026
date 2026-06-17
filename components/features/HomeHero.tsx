@@ -1,9 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 import { ArrowRight } from 'lucide-react';
+import clsx from 'clsx';
 import SafeImage from '@/components/common/SafeImage';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { Link } from '@/i18n/navigation';
-import { getCardStatus, getHeroSlide } from '@/lib/now-showing';
+import { getCardStatus, getHeroSlide, resolveHeroSoftTreatment } from '@/lib/now-showing';
+import type { HeroImageQualityMap } from '@/lib/now-showing';
+import heroImageQuality from '@/lib/hero-image-quality.generated.json';
 import { getLiveStats } from '@/lib/live-stats';
 
 /**
@@ -34,6 +37,7 @@ import { getLiveStats } from '@/lib/live-stats';
 export default async function HomeHero({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'home.nowShowing' });
   const slide = getHeroSlide();
+  const softTreatment = resolveHeroSoftTreatment(slide, heroImageQuality as HeroImageQualityMap);
   const slideStatus = getCardStatus(slide);
   const { artistCount, artworkCount } = await getLiveStats();
 
@@ -62,13 +66,18 @@ export default async function HomeHero({ locale }: { locale: string }) {
         fetchPriority="high"
         quality={60}
         sizes="100vw"
-        className="object-cover"
+        className={clsx('object-cover', softTreatment && 'scale-110 blur-[10px]')}
       />
 
       {/* 다크 그라디언트 — 작품 이미지 가시성 우선. PM 결정(2026-05-13): primary-strong 베일은
           작품 색감을 해친다 → 단일 charcoal-deep tonal로 복귀. 상단/하단만 텍스트 가독성 확보,
           중간은 옅어 작품이 그대로 노출. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-charcoal-deep/85 via-charcoal-deep/30 to-charcoal-deep/70" />
+      <div
+        className={clsx(
+          'absolute inset-0 bg-gradient-to-b from-charcoal-deep/85 to-charcoal-deep/70',
+          softTreatment ? 'via-charcoal-deep/55' : 'via-charcoal-deep/30'
+        )}
+      />
 
       {/* 텍스트 블록 — 중앙 정렬, hero 톤 */}
       <div className="relative z-10 flex h-full min-h-[70svh] md:min-h-[85svh] flex-col items-center justify-center px-4 pt-24 pb-32 md:pb-40 text-center text-white">

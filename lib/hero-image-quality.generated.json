@@ -1,0 +1,17 @@
+{
+  "all-artworks": {
+    "width": 1397,
+    "height": 1166,
+    "lowRes": true
+  },
+  "oh-yoon-40th": {
+    "width": 1491,
+    "height": 1920,
+    "lowRes": false
+  },
+  "park-saenggwang-drawings": {
+    "width": 1920,
+    "height": 1605,
+    "lowRes": false
+  }
+}
