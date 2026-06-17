@@ -1,0 +1,13 @@
+{
+  "회화": "painting",
+  "한국화": "korean-painting",
+  "판화": "printmaking",
+  "사후판화": "posthumous-print",
+  "드로잉": "drawing",
+  "조각": "sculpture",
+  "도자공예": "ceramics-craft",
+  "사진": "photography",
+  "아트프린트": "art-print",
+  "혼합매체": "mixed-media",
+  "디지털아트": "digital-art"
+}

@@ -29,6 +29,7 @@ import {
   getOrderNotificationInfo,
   buildAdminNotificationFields,
 } from '@/lib/utils/get-order-notification-info';
+import { runAllSettled } from '@/lib/server/after-response';
 
 // 무통장 계좌이체 안내 — 한국스마트협동조합 기업은행 (IBK)
 // (messages/*.json bankTransfer*와 동기 유지 필요)
@@ -288,16 +289,19 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   // 동일 구매자의 각 작품에 대한 오래된 pending_payment 주문 자동 정리.
   // buyer_email은 본인 인증 수단이 아니므로, 현재 결제 가능성이 있는 최근 주문은 건드리지 않는다.
-  // 순차 처리 — 장바구니 품목 수는 작아 N+1 비용 미미(병렬화 불필요).
+  // 다품목 주문은 orders.artwork_id가 null이므로 order_items까지 보는 RPC가 단일 출처다.
   const pendingPaymentCleanupCutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
-  for (const id of artworkIds) {
-    await adminClient
-      .from('orders')
-      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-      .eq('artwork_id', id)
-      .eq('buyer_email', buyerEmailNorm)
-      .eq('status', 'pending_payment')
-      .lt('created_at', pendingPaymentCleanupCutoff);
+  const { error: cleanupError } = await adminClient.rpc(
+    'cancel_stale_pending_orders_for_buyer_artworks',
+    {
+      p_buyer_email: buyerEmailNorm,
+      p_artwork_ids: artworkIds,
+      p_cutoff: pendingPaymentCleanupCutoff,
+    }
+  );
+  if (cleanupError) {
+    console.error('[checkout] stale pending cleanup failed:', cleanupError);
+    return { success: false, error: apiError('availability_check_failed', buyerLocale) };
   }
 
   // 품목별 재고 재확인 + 금액 계산 + unique 강제(품절 부분 차단)
@@ -819,60 +823,63 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
           ? dueDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
           : dueDate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
 
-      // 관리자 알림 — 입금 확인 작업 필요
-      if (info) {
-        void notifyEmail(
-          'info',
-          '계좌이체 주문 접수 (입금 대기)',
-          buildAdminNotificationFields(info, {
-            은행: BANK_TRANSFER_INFO.bankName,
-            계좌번호: BANK_TRANSFER_INFO.accountNumber,
-            예금주: BANK_TRANSFER_INFO.holderName,
-            입금기한: dueDateStr,
-          })
-        );
-      } else {
-        void notifyEmail('info', '계좌이체 주문 접수 (입금 대기)', {
-          주문번호: result.orderNo,
-          금액: `₩${result.totalAmount.toLocaleString('ko-KR')}`,
-          입금기한: dueDateStr,
-        });
-      }
+      const adminNotifyTask = info
+        ? () =>
+            notifyEmail(
+              'info',
+              '계좌이체 주문 접수 (입금 대기)',
+              buildAdminNotificationFields(info, {
+                은행: BANK_TRANSFER_INFO.bankName,
+                계좌번호: BANK_TRANSFER_INFO.accountNumber,
+                예금주: BANK_TRANSFER_INFO.holderName,
+                입금기한: dueDateStr,
+              })
+            )
+        : () =>
+            notifyEmail('info', '계좌이체 주문 접수 (입금 대기)', {
+              주문번호: result.orderNo,
+              금액: `₩${result.totalAmount.toLocaleString('ko-KR')}`,
+              입금기한: dueDateStr,
+            });
 
-      // 구매자 이메일 — 계좌 안내 + 입금 마감
-      void sendBuyerEmail(
-        input.buyerEmail.trim().toLowerCase(),
-        'virtual_account_issued',
-        {
-          orderNo: result.orderNo,
-          buyerName: input.buyerName,
-          artworkTitle: info?.artworkTitle ?? '',
-          artistName: info?.artistName ?? '',
-          amount: result.totalAmount,
-          virtualAccount: {
-            bankName: BANK_TRANSFER_INFO.bankName,
-            accountNumber: BANK_TRANSFER_INFO.accountNumber,
-            dueDate: dueDateStr,
-          },
-        },
-        buyerLocale
-      );
-      void sendBuyerSms(
-        input.buyerPhone,
-        'virtual_account_issued',
-        {
-          buyerName: input.buyerName ?? '',
-          artworkTitle: info?.artworkTitle ?? '',
-          amount: result.totalAmount,
-          virtualAccount: {
-            bankName: BANK_TRANSFER_INFO.bankName,
-            accountNumber: BANK_TRANSFER_INFO.accountNumber,
-            dueDate: dueDateStr,
-          },
-        },
-        buyerLocale,
-        result.orderNo
-      );
+      await runAllSettled('createBankTransferOrder.notifications', [
+        adminNotifyTask,
+        () =>
+          sendBuyerEmail(
+            input.buyerEmail.trim().toLowerCase(),
+            'virtual_account_issued',
+            {
+              orderNo: result.orderNo,
+              buyerName: input.buyerName,
+              artworkTitle: info?.artworkTitle ?? '',
+              artistName: info?.artistName ?? '',
+              amount: result.totalAmount,
+              virtualAccount: {
+                bankName: BANK_TRANSFER_INFO.bankName,
+                accountNumber: BANK_TRANSFER_INFO.accountNumber,
+                dueDate: dueDateStr,
+              },
+            },
+            buyerLocale
+          ),
+        () =>
+          sendBuyerSms(
+            input.buyerPhone,
+            'virtual_account_issued',
+            {
+              buyerName: input.buyerName ?? '',
+              artworkTitle: info?.artworkTitle ?? '',
+              amount: result.totalAmount,
+              virtualAccount: {
+                bankName: BANK_TRANSFER_INFO.bankName,
+                accountNumber: BANK_TRANSFER_INFO.accountNumber,
+                dueDate: dueDateStr,
+              },
+            },
+            buyerLocale,
+            result.orderNo
+          ),
+      ]);
     } catch (err) {
       console.error('[createBankTransferOrder] email failed:', err);
     }

@@ -13,6 +13,7 @@ import {
 import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
 import { normalizeAdminTagInput, type AdminTagInput } from '@/lib/admin-artwork-tags';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
 
 type EditionType = Database['public']['Enums']['edition_type'];
 type ArtworkStatus = Database['public']['Enums']['artwork_status'];
@@ -126,12 +127,7 @@ export async function deleteAdminArtwork(id: string) {
     .eq('id', id)
     .single();
 
-  const { count: activeOrderCount } = await supabase
-    .from('orders')
-    .select('id', { count: 'exact', head: true })
-    .eq('artwork_id', id)
-    .in('status', ['paid', 'preparing', 'awaiting_deposit', 'shipped']);
-  if ((activeOrderCount ?? 0) > 0) {
+  if (await hasActiveOrdersForArtworks(supabase, [id])) {
     throw new Error('진행 중인 주문이 있어 삭제할 수 없습니다.');
   }
 
@@ -975,12 +971,7 @@ export async function batchDeleteArtworks(ids: string[]) {
     )
     .in('id', ids);
 
-  const { count: activeOrderCount } = await supabase
-    .from('orders')
-    .select('id', { count: 'exact', head: true })
-    .in('artwork_id', ids)
-    .in('status', ['paid', 'preparing', 'awaiting_deposit', 'shipped']);
-  if ((activeOrderCount ?? 0) > 0) {
+  if (await hasActiveOrdersForArtworks(supabase, ids)) {
     throw new Error('진행 중인 주문이 있는 작품이 포함되어 삭제할 수 없습니다.');
   }
 

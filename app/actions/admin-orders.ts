@@ -19,6 +19,7 @@ import {
   buildAdminNotificationFields,
   getOrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
+import { runAllSettled } from '@/lib/server/after-response';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 
 export type AdminOrderListItem = {
@@ -385,40 +386,52 @@ export async function refundOrder(input: RefundInput) {
     try {
       const refundInfo = await getOrderNotificationInfo(supabase, { id: order.id });
 
-      if (refundInfo) {
-        void notifyEmail(
-          'warning',
-          '주문 환불 처리 (관리자)',
-          buildAdminNotificationFields(refundInfo, {
-            환불사유: cancelReason.trim(),
-            환불방식: hasTossPayment ? 'Toss API 자동 취소' : '계좌이체 수동 처리',
-          })
-        );
-      }
-
-      if (order.buyer_email) {
-        void sendBuyerEmail(
-          order.buyer_email,
-          'refunded',
-          {
-            orderNo: order.order_no,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle: refundInfo?.artworkTitle ?? '',
-            artistName: refundInfo?.artistName ?? '',
-            amount: order.total_amount,
-            itemAmount: refundInfo?.itemAmount,
-            shippingAmount: refundInfo?.shippingAmount,
-          },
-          extractBuyerLocale(order.metadata)
-        );
-      }
-      void sendBuyerSms(
-        order.buyer_phone,
-        'refunded',
-        { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: order.total_amount ?? 0 },
-        extractBuyerLocale(order.metadata),
-        order.order_no ?? undefined
-      );
+      await runAllSettled('adminOrders.refundOrder.notifications', [
+        ...(refundInfo
+          ? [
+              () =>
+                notifyEmail(
+                  'warning',
+                  '주문 환불 처리 (관리자)',
+                  buildAdminNotificationFields(refundInfo, {
+                    환불사유: cancelReason.trim(),
+                    환불방식: hasTossPayment ? 'Toss API 자동 취소' : '계좌이체 수동 처리',
+                  })
+                ),
+            ]
+          : []),
+        ...(order.buyer_email
+          ? [
+              () =>
+                sendBuyerEmail(
+                  order.buyer_email!,
+                  'refunded',
+                  {
+                    orderNo: order.order_no,
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: refundInfo?.artworkTitle ?? '',
+                    artistName: refundInfo?.artistName ?? '',
+                    amount: order.total_amount,
+                    itemAmount: refundInfo?.itemAmount,
+                    shippingAmount: refundInfo?.shippingAmount,
+                  },
+                  extractBuyerLocale(order.metadata)
+                ),
+            ]
+          : []),
+        () =>
+          sendBuyerSms(
+            order.buyer_phone,
+            'refunded',
+            {
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: '',
+              amount: order.total_amount ?? 0,
+            },
+            extractBuyerLocale(order.metadata),
+            order.order_no ?? undefined
+          ),
+      ]);
     } catch (err) {
       console.error('[refundOrder] email failed:', err);
     }
@@ -653,59 +666,67 @@ export async function updateOrderStatus(
             }
           : undefined;
         if (newStatus === 'shipped') {
-          void sendBuyerEmail(
-            order.buyer_email!,
-            'shipped',
-            {
-              orderNo: order.order_no,
-              buyerName: order.buyer_name ?? '',
-              artworkTitle: info?.artworkTitle ?? '',
-              artistName: info?.artistName ?? '',
-              amount: 0,
-              carrier: trackingInfo?.carrier ?? '',
-              trackingNumber: trackingInfo?.trackingNumber,
-              shipping,
-            },
-            locale
-          );
-          void sendBuyerSms(
-            order.buyer_phone,
-            'shipped',
-            {
-              buyerName: order.buyer_name ?? '',
-              artworkTitle: info?.artworkTitle ?? '',
-              amount: 0,
-              carrier: trackingInfo?.carrier ?? undefined,
-              trackingNumber: trackingInfo?.trackingNumber ?? undefined,
-            },
-            locale,
-            order.order_no ?? undefined
-          );
+          await runAllSettled('adminOrders.updateOrderStatus.shippedNotifications', [
+            () =>
+              sendBuyerEmail(
+                order.buyer_email!,
+                'shipped',
+                {
+                  orderNo: order.order_no,
+                  buyerName: order.buyer_name ?? '',
+                  artworkTitle: info?.artworkTitle ?? '',
+                  artistName: info?.artistName ?? '',
+                  amount: 0,
+                  carrier: trackingInfo?.carrier ?? '',
+                  trackingNumber: trackingInfo?.trackingNumber,
+                  shipping,
+                },
+                locale
+              ),
+            () =>
+              sendBuyerSms(
+                order.buyer_phone,
+                'shipped',
+                {
+                  buyerName: order.buyer_name ?? '',
+                  artworkTitle: info?.artworkTitle ?? '',
+                  amount: 0,
+                  carrier: trackingInfo?.carrier ?? undefined,
+                  trackingNumber: trackingInfo?.trackingNumber ?? undefined,
+                },
+                locale,
+                order.order_no ?? undefined
+              ),
+          ]);
         } else {
-          void sendBuyerEmail(
-            order.buyer_email!,
-            'delivered',
-            {
-              orderNo: order.order_no,
-              buyerName: order.buyer_name ?? '',
-              artworkTitle: info?.artworkTitle ?? '',
-              artistName: info?.artistName ?? '',
-              amount: 0,
-              shipping,
-            },
-            locale
-          );
-          void sendBuyerSms(
-            order.buyer_phone,
-            'delivered',
-            {
-              buyerName: order.buyer_name ?? '',
-              artworkTitle: info?.artworkTitle ?? '',
-              amount: 0,
-            },
-            locale,
-            order.order_no ?? undefined
-          );
+          await runAllSettled('adminOrders.updateOrderStatus.deliveredNotifications', [
+            () =>
+              sendBuyerEmail(
+                order.buyer_email!,
+                'delivered',
+                {
+                  orderNo: order.order_no,
+                  buyerName: order.buyer_name ?? '',
+                  artworkTitle: info?.artworkTitle ?? '',
+                  artistName: info?.artistName ?? '',
+                  amount: 0,
+                  shipping,
+                },
+                locale
+              ),
+            () =>
+              sendBuyerSms(
+                order.buyer_phone,
+                'delivered',
+                {
+                  buyerName: order.buyer_name ?? '',
+                  artworkTitle: info?.artworkTitle ?? '',
+                  amount: 0,
+                },
+                locale,
+                order.order_no ?? undefined
+              ),
+          ]);
         }
       } catch (err) {
         console.error('[updateOrderStatus] email failed:', err);
@@ -844,45 +865,53 @@ export async function confirmDeposit(orderId: string) {
     try {
       const info = await getOrderNotificationInfo(supabase, { id: order.id });
 
-      if (info) {
-        void notifyEmail(
-          'payment',
-          '계좌이체 입금 확인 (관리자 처리)',
-          buildAdminNotificationFields(info, { 처리자: admin.id })
-        );
-      }
-
-      if (order.buyer_email) {
-        void sendBuyerEmail(
-          order.buyer_email,
-          'deposit_confirmed',
-          {
-            orderNo: order.order_no,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle: info?.artworkTitle ?? '',
-            artistName: info?.artistName ?? '',
-            amount: order.total_amount,
-            itemAmount: info?.itemAmount,
-            shippingAmount: info?.shippingAmount,
-            shipping: info
-              ? {
-                  name: info.shippingName,
-                  phone: info.shippingPhone,
-                  address: info.shippingAddress,
-                  memo: info.shippingMemo,
-                }
-              : undefined,
-          },
-          extractBuyerLocale(order.metadata)
-        );
-      }
-      void sendBuyerSms(
-        order.buyer_phone,
-        'deposit_confirmed',
-        { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: 0 },
-        extractBuyerLocale(order.metadata),
-        order.order_no ?? undefined
-      );
+      await runAllSettled('adminOrders.confirmDeposit.notifications', [
+        ...(info
+          ? [
+              () =>
+                notifyEmail(
+                  'payment',
+                  '계좌이체 입금 확인 (관리자 처리)',
+                  buildAdminNotificationFields(info, { 처리자: admin.id })
+                ),
+            ]
+          : []),
+        ...(order.buyer_email
+          ? [
+              () =>
+                sendBuyerEmail(
+                  order.buyer_email!,
+                  'deposit_confirmed',
+                  {
+                    orderNo: order.order_no,
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: info?.artworkTitle ?? '',
+                    artistName: info?.artistName ?? '',
+                    amount: order.total_amount,
+                    itemAmount: info?.itemAmount,
+                    shippingAmount: info?.shippingAmount,
+                    shipping: info
+                      ? {
+                          name: info.shippingName,
+                          phone: info.shippingPhone,
+                          address: info.shippingAddress,
+                          memo: info.shippingMemo,
+                        }
+                      : undefined,
+                  },
+                  extractBuyerLocale(order.metadata)
+                ),
+            ]
+          : []),
+        () =>
+          sendBuyerSms(
+            order.buyer_phone,
+            'deposit_confirmed',
+            { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: 0 },
+            extractBuyerLocale(order.metadata),
+            order.order_no ?? undefined
+          ),
+      ]);
     } catch (err) {
       console.error('[confirmDeposit] email failed:', err);
     }
@@ -1036,35 +1065,43 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
     try {
       const info = await getOrderNotificationInfo(supabase, { id: order.id });
 
-      if (info) {
-        void notifyEmail(
-          'warning',
-          '입금대기 주문 취소 (관리자 처리)',
-          buildAdminNotificationFields(info, { 취소사유: cancelReason.trim() })
-        );
-      }
-
-      if (order.buyer_email) {
-        void sendBuyerEmail(
-          order.buyer_email,
-          'auto_cancelled',
-          {
-            orderNo: order.order_no,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle: info?.artworkTitle ?? '',
-            artistName: info?.artistName ?? '',
-            amount: order.total_amount,
-          },
-          extractBuyerLocale(order.metadata)
-        );
-      }
-      void sendBuyerSms(
-        order.buyer_phone,
-        'auto_cancelled',
-        { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: 0 },
-        extractBuyerLocale(order.metadata),
-        order.order_no ?? undefined
-      );
+      await runAllSettled('adminOrders.cancelAwaitingOrder.notifications', [
+        ...(info
+          ? [
+              () =>
+                notifyEmail(
+                  'warning',
+                  '입금대기 주문 취소 (관리자 처리)',
+                  buildAdminNotificationFields(info, { 취소사유: cancelReason.trim() })
+                ),
+            ]
+          : []),
+        ...(order.buyer_email
+          ? [
+              () =>
+                sendBuyerEmail(
+                  order.buyer_email!,
+                  'auto_cancelled',
+                  {
+                    orderNo: order.order_no,
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: info?.artworkTitle ?? '',
+                    artistName: info?.artistName ?? '',
+                    amount: order.total_amount,
+                  },
+                  extractBuyerLocale(order.metadata)
+                ),
+            ]
+          : []),
+        () =>
+          sendBuyerSms(
+            order.buyer_phone,
+            'auto_cancelled',
+            { buyerName: order.buyer_name ?? '', artworkTitle: '', amount: 0 },
+            extractBuyerLocale(order.metadata),
+            order.order_no ?? undefined
+          ),
+      ]);
     } catch (err) {
       console.error('[cancelAwaitingOrder] email failed:', err);
     }

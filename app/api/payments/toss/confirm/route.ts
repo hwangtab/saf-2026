@@ -19,6 +19,7 @@ import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
+import { runAllSettled } from '@/lib/server/after-response';
 
 export const runtime = 'nodejs';
 
@@ -398,11 +399,14 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error('[confirm] auto-refund failed:', err);
       }
-      void notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
-        주문번호: orderId,
-        paymentKey: paymentKey as string,
-        참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해주세요.',
-      });
+      await runAllSettled('toss-confirm.cancelled-order-refund.notification', [
+        () =>
+          notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
+            주문번호: orderId,
+            paymentKey: paymentKey as string,
+            참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해주세요.',
+          }),
+      ]);
     });
   }
 
@@ -487,44 +491,54 @@ export async function POST(req: NextRequest) {
           if (paymentSyncError) {
             console.error('[confirm] 경합 패배 payments status 정합 실패:', paymentSyncError);
           }
-          void notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
-            주문번호: orderId,
-            paymentKey,
-            참고: '다른 주문이 unique 작품을 먼저 가져가 자동 환불 완료.',
-          });
-          if (order.buyer_email) {
-            void sendBuyerEmail(
-              order.buyer_email,
-              'refunded',
-              {
-                orderNo: orderId,
-                buyerName: order.buyer_name ?? '',
-                artworkTitle: '',
-                artistName: '',
-                amount: tossResponse.totalAmount,
-              },
-              buyerLocale
-            );
-          }
-          void sendBuyerSms(
-            order.buyer_phone,
-            'refunded',
-            {
-              buyerName: order.buyer_name ?? '',
-              artworkTitle: '',
-              amount: tossResponse.totalAmount,
-            },
-            buyerLocale,
-            orderId
-          );
+          await runAllSettled('toss-confirm.artwork-taken-refund.successNotifications', [
+            () =>
+              notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
+                주문번호: orderId,
+                paymentKey,
+                참고: '다른 주문이 unique 작품을 먼저 가져가 자동 환불 완료.',
+              }),
+            ...(order.buyer_email
+              ? [
+                  () =>
+                    sendBuyerEmail(
+                      order.buyer_email!,
+                      'refunded',
+                      {
+                        orderNo: orderId,
+                        buyerName: order.buyer_name ?? '',
+                        artworkTitle: '',
+                        artistName: '',
+                        amount: tossResponse.totalAmount,
+                      },
+                      buyerLocale
+                    ),
+                ]
+              : []),
+            () =>
+              sendBuyerSms(
+                order.buyer_phone,
+                'refunded',
+                {
+                  buyerName: order.buyer_name ?? '',
+                  artworkTitle: '',
+                  amount: tossResponse.totalAmount,
+                },
+                buyerLocale,
+                orderId
+              ),
+          ]);
         } else {
           // 환불 실패 — 구매자에게 '환불' 안내하지 않고 운영팀에 즉시 수동환불 요청.
-          void notifyEmail('error', '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요', {
-            주문번호: orderId,
-            paymentKey,
-            금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
-            참고: '결제는 캡처됐으나 작품은 타인 선점, 자동 환불 실패. 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
-          });
+          await runAllSettled('toss-confirm.artwork-taken-refund.failureNotifications', [
+            () =>
+              notifyEmail('error', '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요', {
+                주문번호: orderId,
+                paymentKey,
+                금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
+                참고: '결제는 캡처됐으나 작품은 타인 선점, 자동 환불 실패. 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
+              }),
+          ]);
         }
       });
 

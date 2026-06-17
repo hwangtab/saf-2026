@@ -5,8 +5,13 @@ import {
   categorySlug,
   categoryFromSlug,
 } from '@/lib/artwork-category';
+import categorySlugConfig from '@/config/artwork-category-slugs.json';
 
 describe('category slug 매핑', () => {
+  it('CATEGORY_SLUG_MAP은 JSON config 단일 출처와 동일하다', () => {
+    expect(CATEGORY_SLUG_MAP).toEqual(categorySlugConfig);
+  });
+
   it('CATEGORY_EN_MAP의 모든 한글 카테고리에 slug가 있다', () => {
     for (const ko of Object.keys(CATEGORY_EN_MAP)) {
       expect(typeof CATEGORY_SLUG_MAP[ko]).toBe('string');

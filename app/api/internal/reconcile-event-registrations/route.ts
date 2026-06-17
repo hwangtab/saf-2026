@@ -6,6 +6,7 @@ import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { notifyEmail } from '@/lib/notify';
 import { sendEventSms, sendEventEmail } from '@/lib/events/notify';
 import { planEventReconcile, interpretConfirmCode } from '@/lib/events/reconcile-decision';
+import { runAllSettled } from '@/lib/server/after-response';
 
 export const runtime = 'nodejs';
 
@@ -136,12 +137,15 @@ export async function GET(request: NextRequest) {
           // 환불 실패 — attempts++, 최초 1회만 운영팀 알림(폭주 방지)
           await bumpAttempt(supabase, reg);
           if ((reg.reconcile_attempts ?? 0) === 0) {
-            void notifyEmail('error', '🚨 이벤트 결제 자동 환불 실패 — 수동 환불 필요', {
-              주문번호: reg.order_no,
-              결제키: paymentKey,
-              금액: `₩${reg.amount.toLocaleString('ko-KR')}`,
-              참고: '캡처됐으나 좌석 마감/확정실패 + 자동환불 거부. 즉시 수동 환불 요망.',
-            });
+            await runAllSettled('reconcile-event.refundFailureAdminNotification', [
+              () =>
+                notifyEmail('error', '🚨 이벤트 결제 자동 환불 실패 — 수동 환불 필요', {
+                  주문번호: reg.order_no,
+                  결제키: paymentKey,
+                  금액: `₩${reg.amount.toLocaleString('ko-KR')}`,
+                  참고: '캡처됐으나 좌석 마감/확정실패 + 자동환불 거부. 즉시 수동 환불 요망.',
+                }),
+            ]);
           }
           errors.push(`${reg.order_no}: 자동 환불 실패`);
         }
@@ -197,14 +201,16 @@ async function bumpAttempt(supabase: AdminClient, reg: StuckRegistration): Promi
     .eq('id', reg.id);
 }
 
-/** 고객 확정/환불 알림 (SMS 알림톡→대체 + 이메일). fire-and-forget, never throw. */
+/** 고객 확정/환불 알림 (SMS 알림톡→대체 + 이메일). 실패해도 보정 자체는 되돌리지 않음. */
 async function notifyCustomer(
   reg: StuckRegistration,
   type: 'payment_confirmed' | 'refunded'
 ): Promise<void> {
   const data = { name: reg.applicant_name, partySize: reg.party_size, amount: reg.amount };
-  void sendEventSms(reg.phone, type, data, reg.order_no);
-  if (reg.email) {
-    void sendEventEmail(reg.email, type, { ...data, orderNo: reg.order_no });
-  }
+  await runAllSettled(`reconcile-event.notifyCustomer.${type}`, [
+    () => sendEventSms(reg.phone, type, data, reg.order_no),
+    ...(reg.email
+      ? [() => sendEventEmail(reg.email, type, { ...data, orderNo: reg.order_no })]
+      : []),
+  ]);
 }

@@ -98,7 +98,7 @@ describe('event waitlist and locale payment flow source guards', () => {
     expect(adminClient).toContain("r.status === 'expired' && Boolean(r.payment_key)");
     expect(adminClient).toContain('수동 환불 필요');
     expect(adminClient).toContain("setNotice('요청 처리 중 오류가 발생했습니다.')");
-    expect(action).toContain("in('status', ['pending', 'waitlist'])");
+    expect(action).toContain("in('status', ['pending', 'waitlist', 'awaiting_deposit'])");
     expect(action).toContain("in('status', ['confirmed', 'expired'])");
     expect(action).toContain('환불 가능한 결제 상태가 아닙니다.');
     expect(action).toContain('cancelPayment(');

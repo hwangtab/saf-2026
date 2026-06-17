@@ -62,6 +62,7 @@ type MockResult = { data: unknown; error: unknown };
 let mockArtworkResult: MockResult = { data: null, error: null };
 let mockOrderSelectResult: MockResult = { data: null, error: null };
 let mockRpcResult: MockResult = { data: null, error: null };
+let mockCleanupRpcResult: MockResult = { data: 0, error: null };
 // 다품목 재고 확인은 품목마다 RPC를 호출하므로 큐가 있으면 순서대로 소비.
 let mockRpcResultsQueue: MockResult[] = [];
 let mockInsertResult: MockResult = { data: null, error: null };
@@ -86,6 +87,7 @@ const capturedOrderUpdates: Array<{
   patch: Record<string, unknown>;
   filters: Array<{ op: 'eq' | 'lt'; column: string; value: unknown }>;
 }> = [];
+const capturedRpcCalls: Array<{ fn: string; args: Record<string, unknown> }> = [];
 
 const mockSingle = jest.fn();
 const mockSelect = jest.fn();
@@ -215,7 +217,11 @@ jest.mock('@/lib/auth/server', () => ({
         update: jest.fn(() => ({ eq: jest.fn() })),
       };
     }),
-    rpc: jest.fn(() => {
+    rpc: jest.fn((fn: string, args: Record<string, unknown>) => {
+      capturedRpcCalls.push({ fn, args });
+      if (fn === 'cancel_stale_pending_orders_for_buyer_artworks') {
+        return mockCleanupRpcResult;
+      }
       if (mockRpcResultsQueue.length > 0) {
         return mockRpcResultsQueue.shift();
       }
@@ -315,6 +321,7 @@ beforeEach(async () => {
   mockArtworkResult = { data: null, error: null };
   mockOrderSelectResult = { data: null, error: null };
   mockRpcResult = { data: null, error: null };
+  mockCleanupRpcResult = { data: 0, error: null };
   mockRpcResultsQueue = [];
   mockInsertResult = { data: null, error: null };
   mockInsertResultsQueue = [];
@@ -328,6 +335,7 @@ beforeEach(async () => {
   capturedOrderUpdates.length = 0;
   capturedOrderItemsInserts.length = 0;
   capturedOrderDeletes.length = 0;
+  capturedRpcCalls.length = 0;
   mockFetchWithTimeout.mockReset();
   mockFetchWithTimeout.mockResolvedValue({
     ok: true,
@@ -533,21 +541,96 @@ describe('createOrder', () => {
     const result = await createOrder(validInput);
 
     expect(result.success).toBe(true);
-    const cleanupCall = capturedOrderUpdates.find((call) =>
-      call.filters.some(
-        (filter) =>
-          filter.op === 'eq' && filter.column === 'status' && filter.value === 'pending_payment'
-      )
+    const cleanupCall = capturedRpcCalls.find(
+      (call) => call.fn === 'cancel_stale_pending_orders_for_buyer_artworks'
     );
     expect(cleanupCall).toBeDefined();
-    expect(cleanupCall?.filters).toEqual(
+    expect(cleanupCall?.args).toEqual(
+      expect.objectContaining({
+        p_buyer_email: validInput.buyerEmail,
+        p_artwork_ids: [validInput.artworkId],
+        p_cutoff: expect.any(String),
+      })
+    );
+  });
+
+  it('다품목 주문도 availability 확인 전에 stale pending cleanup RPC로 정리한다', async () => {
+    mockArtworkResult = {
+      data: [
+        {
+          id: 'art-1',
+          title: '소품 A',
+          price: '₩100,000',
+          status: 'available',
+          edition_type: 'limited',
+          edition_limit: 10,
+          artists: { name_ko: '김작가' },
+        },
+        {
+          id: 'art-2',
+          title: '소품 B',
+          price: '₩50,000',
+          status: 'available',
+          edition_type: 'limited',
+          edition_limit: 10,
+          artists: { name_ko: '이작가' },
+        },
+      ],
+      error: null,
+    };
+    mockRpcResultsQueue = [
+      { data: [{ is_available: true }], error: null },
+      { data: [{ is_available: true }], error: null },
+    ];
+    mockInsertResult = { data: { id: 'order-multi' }, error: null };
+
+    const result = await createOrder({
+      ...validInput,
+      artworkId: undefined,
+      items: [
+        { artworkId: 'art-1', quantity: 1 },
+        { artworkId: 'art-2', quantity: 1 },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    expect(capturedRpcCalls.map((call) => call.fn)).toEqual([
+      'cancel_stale_pending_orders_for_buyer_artworks',
+      'check_artwork_availability',
+      'check_artwork_availability',
+    ]);
+    expect(capturedRpcCalls[0].args).toEqual(
+      expect.objectContaining({
+        p_buyer_email: validInput.buyerEmail,
+        p_artwork_ids: ['art-1', 'art-2'],
+      })
+    );
+    expect(capturedOrderUpdates).not.toEqual(
       expect.arrayContaining([
-        { op: 'eq', column: 'artwork_id', value: validInput.artworkId },
-        { op: 'eq', column: 'buyer_email', value: validInput.buyerEmail },
-        { op: 'eq', column: 'status', value: 'pending_payment' },
-        expect.objectContaining({ op: 'lt', column: 'created_at' }),
+        expect.objectContaining({
+          filters: expect.arrayContaining([
+            expect.objectContaining({ column: 'artwork_id' }),
+            expect.objectContaining({ column: 'buyer_email' }),
+          ]),
+        }),
       ])
     );
+  });
+
+  it('stale pending cleanup RPC 실패 시 availability 확인 전에 중단한다', async () => {
+    setupSuccessfulArtwork();
+    mockCleanupRpcResult = { data: null, error: { message: 'cleanup failed' } };
+
+    const result = await createOrder(validInput);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain('재고 확인 중 오류가 발생했습니다');
+    }
+    expect(capturedRpcCalls.map((call) => call.fn)).toEqual([
+      'cancel_stale_pending_orders_for_buyer_artworks',
+    ]);
+    expect(capturedInsertedRows).toHaveLength(0);
   });
 
   it('20만원 미만 작품은 배송비 4000원 추가', async () => {
