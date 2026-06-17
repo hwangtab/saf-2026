@@ -17,6 +17,14 @@ export const OH_YOON_MEMORIAL_DEFAULT_CAPACITY = 44 as const;
 /** pending(결제대기) 좌석 hold 유지 시간(분). */
 export const OH_YOON_MEMORIAL_HOLD_MINUTES = 15 as const;
 
+/**
+ * 무통장입금(계좌이체) 안내 계좌. 작품 구매와 동일 계좌(한국스마트협동조합).
+ * 신청 안내 화면·SMS·이메일이 공통 참조.
+ */
+export const OH_YOON_MEMORIAL_BANK = '기업은행 (IBK)' as const;
+export const OH_YOON_MEMORIAL_BANK_ACCOUNT = '301-101031-04-095' as const;
+export const OH_YOON_MEMORIAL_BANK_HOLDER = '한국스마트협동조합' as const;
+
 /** 행사 일정(표시용). i18n 메시지가 아닌 구조 데이터 — 라벨은 메시지에서. */
 export const OH_YOON_MEMORIAL_SCHEDULE = [
   { time: '09:30', key: 'depart' },

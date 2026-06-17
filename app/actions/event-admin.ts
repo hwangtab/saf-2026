@@ -25,7 +25,10 @@ function revalidateEvent() {
   revalidatePath(`/en${OH_YOON_MEMORIAL_PATH}`);
 }
 
-/** 미결제/대기 신청 취소(좌석 반환). 확정 결제자는 refundConfirmedRegistration만 허용. */
+/**
+ * 미결제/대기/입금대기 신청 취소(좌석 반환). 확정 결제자는 refundConfirmedRegistration만 허용.
+ * awaiting_deposit(무통장 미입금)은 토스 결제가 없으므로 환불 없이 바로 취소 가능.
+ */
 export async function cancelRegistration(id: string): Promise<EventAdminResult> {
   await requireAdmin();
   const db = createSupabaseAdminClient();
@@ -33,7 +36,7 @@ export async function cancelRegistration(id: string): Promise<EventAdminResult> 
     .from('event_registrations')
     .update({ status: 'cancelled', updated_at: new Date().toISOString() })
     .eq('id', id)
-    .in('status', ['pending', 'waitlist'])
+    .in('status', ['pending', 'waitlist', 'awaiting_deposit'])
     .select('id');
   if (error) {
     console.error('[event-admin] cancel error:', error);
@@ -42,6 +45,67 @@ export async function cancelRegistration(id: string): Promise<EventAdminResult> 
   if (!updated || updated.length === 0) {
     return { ok: false, message: '확정 결제자는 환불 취소를 사용해 주세요.' };
   }
+  revalidateEvent();
+  return { ok: true };
+}
+
+/** 무통장입금 신청 입금확인 → 확정. awaiting_deposit → confirmed + 확정 안내 발송. */
+export async function confirmBankTransferDeposit(id: string): Promise<EventAdminResult> {
+  await requireAdmin();
+  const db = createSupabaseAdminClient();
+  const { data, error } = await db.rpc('confirm_event_bank_transfer', { p_id: id });
+  if (error) {
+    console.error('[event-admin] confirm bank transfer error:', error);
+    return { ok: false, message: '입금확인 처리 실패' };
+  }
+  const c = data as {
+    ok: boolean;
+    code?: string;
+    applicant_name?: string;
+    party_size?: number;
+    amount?: number;
+    phone?: string;
+    email?: string | null;
+    order_no?: string;
+  } | null;
+  if (!c?.ok) {
+    const message =
+      c?.code === 'NOT_FOUND'
+        ? '대상 신청을 찾을 수 없습니다.'
+        : c?.code === 'INVALID_STATE'
+          ? '입금대기(무통장) 상태가 아닙니다.'
+          : '입금확인 처리 실패';
+    return { ok: false, message };
+  }
+
+  if (c.code !== 'ALREADY_CONFIRMED') {
+    const name = c.applicant_name ?? '';
+    const partySize = c.party_size ?? 1;
+    const amount = c.amount ?? 0;
+    after(async () => {
+      await Promise.allSettled([
+        sendEventSms(c.phone, 'payment_confirmed', { name, partySize, amount }, c.order_no),
+        ...(c.email
+          ? [
+              sendEventEmail(c.email, 'payment_confirmed', {
+                name,
+                partySize,
+                amount,
+                orderNo: c.order_no,
+              }),
+            ]
+          : []),
+        notifyEmail('payment', '추도식 무통장 입금확인(확정)', {
+          신청자: name,
+          인원: `${partySize}명`,
+          회비: `${amount.toLocaleString('ko-KR')}원`,
+          주문번호: c.order_no ?? '',
+          명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+        }),
+      ]);
+    });
+  }
+
   revalidateEvent();
   return { ok: true };
 }
