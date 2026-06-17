@@ -101,7 +101,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : (seoOverride?.descriptionKo ?? baseDescription);
   const path = `/stories/${story.slug}`;
   const pageUrl = buildLocaleUrl(path, locale);
-  // Sprint 70: heroImage 변수 제거 — Next.js 컨벤션 파일 opengraph-image.tsx가 자동 emit.
+  // og:image를 동적 opengraph-image.tsx 라우트로 명시 지정. 컨벤션 자동 생성에 맡기면
+  // 기본 locale(ko)에서 `/ko/...` URL이 되어 next-intl 미들웨어가 308 리다이렉트 → 카카오톡
+  // 등 OG 크롤러가 리다이렉트를 안 따라가 썸네일 누락(2026-06-17). pageUrl은 이미
+  // 비-리다이렉트(ko=무접두, en=/en)라 그 뒤에 /opengraph-image만 붙이면 안전.
+  const ogImages = [
+    { url: `${pageUrl.replace(/\/$/, '')}/opengraph-image`, width: 1200, height: 630, alt: title },
+  ];
   const isEnIndexable = Boolean(story.body_en) && EN_INDEXABLE_STORY_SLUGS.has(story.slug);
 
   return {
@@ -123,18 +129,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       // SNS/Facebook Article schema 매칭 + Knowledge Graph entity 보강. KO tags는 EN locale에서도 노출
       // (Facebook은 entity name 정규화 처리).
       tags: story.tags && story.tags.length > 0 ? story.tags.slice(0, 6) : undefined,
-      // images 키 부재 — Next.js 컨벤션 파일(opengraph-image.tsx)이 자동 emit.
-      // 카테고리별 색상 + SAF Magazine 브랜딩 + title이 그려진 1200x630 ImageResponse가
-      // raw story thumbnail(작품 도판 이미지)보다 SNS/카카오 미리보기에서 매거진 entity를 명확히 노출.
-      // ⚠️ `images: undefined`로 명시하면 Next.js 16이 hasOwnProperty('images')로 판정해
-      // 컨벤션 주입을 스킵하고 og:image가 0개가 된다 — 키 자체를 쓰지 말 것 (2026-06-12 감사).
+      // 동적 opengraph-image.tsx(카테고리 색상 + 매거진 브랜딩 + title)를 비-리다이렉트
+      // URL로 명시. 컨벤션 자동 생성은 /ko 리다이렉트로 카카오 썸네일 누락 (위 ogImages 주석).
+      images: ogImages,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      // twitter-image.tsx 컨벤션 부재 시 Next.js가 opengraph-image.tsx로 자동 fallback.
-      // images 키를 undefined로도 명시하지 말 것 — 위 openGraph 주석과 동일한 회귀.
+      images: ogImages,
     },
     ...(() => {
       const enRobots = resolveEnRobots(locale, isEnIndexable);

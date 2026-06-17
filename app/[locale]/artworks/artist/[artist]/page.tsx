@@ -640,6 +640,18 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
         availability: availabilityText,
       });
 
+  // og:image를 동적 opengraph-image.tsx로 명시 지정. 컨벤션 자동 생성은 기본 locale(ko)에서
+  // `/ko/...` URL이 되어 next-intl 미들웨어가 308 리다이렉트 → 카카오톡 등 OG 크롤러가
+  // 리다이렉트를 안 따라가 썸네일 누락(2026-06-17). pageUrl은 비-리다이렉트라 안전.
+  const ogImages = [
+    {
+      url: `${pageUrl.replace(/\/$/, '')}/opengraph-image`,
+      width: 1200,
+      height: 630,
+      alt: metaTitle,
+    },
+  ];
+
   return {
     title: metaTitle,
     description: seoDescription.substring(0, 160),
@@ -655,18 +667,13 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
       type: 'website',
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
-      // images 키 부재 — Next.js 컨벤션 파일(opengraph-image.tsx)이 자동 emit.
-      // 작가 이름 + 작품 수 + 가격 범위 + 대표 카테고리 + 대표 작품 이미지 + SAF 브랜딩이 그려진
-      // 1200x630 ImageResponse가 raw 작품 thumbnail보다 SNS 공유에서 작가 entity 명확히 노출.
-      // ⚠️ `images: undefined`로 명시하면 Next.js 16이 hasOwnProperty('images')로 판정해
-      // 컨벤션 주입을 스킵하고 og:image가 0개가 된다 — 키 자체를 쓰지 말 것 (2026-06-12 감사).
+      images: ogImages,
     },
     twitter: {
       card: 'summary_large_image',
       title: metaTitle,
       description: seoDescription.substring(0, 200),
-      // twitter-image.tsx 컨벤션 부재 시 Next.js가 opengraph-image.tsx로 자동 fallback.
-      // images 키를 undefined로도 명시하지 말 것 — 위 openGraph 주석과 동일한 회귀.
+      images: ogImages,
     },
     // 영어 아티스트 페이지는 한국어 콘텐츠만 있어 thin content — 색인 제외
     ...(locale === 'en' ? { robots: { index: false, follow: true } } : {}),

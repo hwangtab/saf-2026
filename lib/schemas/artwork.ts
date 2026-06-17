@@ -255,6 +255,15 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
   const { images: _omitOgImages, ...baseOpenGraph } = baseMetadata.openGraph ?? {};
   const { images: _omitTwitterImages, ...baseTwitter } = baseMetadata.twitter ?? {};
 
+  // og:image를 동적 opengraph-image.tsx로 명시 지정. 컨벤션 자동 생성은 기본 locale(ko)에서
+  // `/ko/...` URL이 되어 next-intl 미들웨어가 308 리다이렉트 → 카카오톡 등 OG 크롤러가
+  // 리다이렉트를 안 따라가 썸네일 누락(2026-06-17). buildLocaleUrl은 비-리다이렉트(ko=무접두,
+  // en=/en)라 그 뒤에 /opengraph-image만 붙이면 안전.
+  const ogImageUrl = `${buildLocaleUrl(`/artworks/${artwork.id}`, locale).replace(/\/$/, '')}/opengraph-image`;
+  const ogImages = [
+    { url: ogImageUrl, width: 1200, height: 630, alt: `${titleForLocale} — ${artistForLocale}` },
+  ];
+
   return {
     ...baseMetadata,
     // koOnly=true: KO canonical 통합 — EN 작품 페이지(noindex)가 en-US hreflang으로
@@ -270,13 +279,13 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
       siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
-      // images 키 부재 → Next.js 컨벤션 파일(app/[locale]/artworks/[id]/opengraph-image.tsx)이
-      // 가격+SOLD 배지+SAF 브랜딩 디자인 카드를 og:image로 자동 emit.
+      // 가격+SOLD 배지+SAF 브랜딩 디자인 카드(opengraph-image.tsx)를 비-리다이렉트 URL로 명시.
+      images: ogImages,
     },
     twitter: {
       ...baseTwitter,
       card: 'summary_large_image',
-      // twitter-image.tsx 컨벤션 파일이 없으면 Next.js가 opengraph-image.tsx로 자동 fallback.
+      images: ogImages,
     },
     // ⚠️ product:* OG 확장 태그를 metadata.other에 넣지 말 것 — Next.js Metadata API는
     // other 항목을 전부 name= 속성으로 렌더하는데 product:*는 RDFa property= 속성 기준이라
