@@ -34,12 +34,12 @@
 
 ### 1. 측정 — 빌드 타임 생성 스크립트
 
-새 스크립트 `scripts/measure-hero-image-quality.ts`를 `npm run build` 파이프라인에
-`sync-site-stats` 다음 단계로 추가한다(기존 `generate-changelog` → `sync-site-stats` 결과 동일).
+새 스크립트 `scripts/measure-hero-image-quality.js`(기존 `sync-site-stats.js`와 동일한 `.js`
+CommonJS 패턴)를 `npm run build` 파이프라인에 `sync-site-stats` 다음 단계로 추가한다.
 
 - 입력: `NOW_SHOWING` 배열의 모든 항목(빌드 시점엔 만료/활성 무관하게 전체 측정 — 향후 활성화될
   특별전도 미리 측정해 둠).
-- 처리: 각 `imageUrl`을 fetch → `image-size` 패키지로 픽셀 측정.
+- 처리: 각 `imageUrl`을 fetch → `probe-image-size` 패키지로 픽셀 측정.
 - 출력: `lib/hero-image-quality.generated.json`
   ```json
   {
@@ -50,7 +50,9 @@
 - 안전 폴백: fetch 실패(네트워크/404), 측정 불가, 또는 JSON 자체가 없으면 해당 slug는
   `lowRes: false`로 간주(= 평소대로 렌더). **빌드는 절대 실패시키지 않는다.**
 
-`image-size`는 헤더만 읽어 dimension을 파악하므로 전체 이미지 다운로드 없이 가볍다.
+`probe-image-size`는 원격 URL을 스트림으로 받아 헤더만 읽고 dimension을 파악하므로 전체 이미지
+다운로드 없이 가볍다(`image-size`는 버퍼가 필요해 원격 측정에 부적합 — `probe-image-size` 채택).
+webp 포함 주요 포맷 지원.
 
 ### 2. 판정 기준
 
@@ -126,5 +128,4 @@ applySoft = treatment === 'soft'
   배경 참고). 블러/오버레이는 `lowRes`/`soft`일 때만 분기.
 - `generated.json`은 빌드 산출물 — git 추적 여부 결정 필요(추적하면 측정 없이도 첫 렌더 안전,
   미추적이면 빌드마다 생성). 기본: **추적**(generate-changelog 산출물과 동일 정책 확인 후 맞춤).
-- `image-size`가 webp를 지원하는지 확인(현 hero 이미지 전부 `.webp`). 미지원이면 대체 패키지
-  (`probe-image-size` 등) 필요.
+- 측정 패키지는 `probe-image-size` 채택 — webp 지원 + 원격 URL 스트림 측정(현 hero 이미지 전부 `.webp`).
