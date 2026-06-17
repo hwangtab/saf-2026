@@ -53,7 +53,7 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
         // text content가 미세하게 어긋나 React error #418 발생 가능. 이 영역에선 prop
         // drilling 부담이 커 suppressHydrationWarning으로 hydration mismatch만 silent 처리.
         <span
-          className="inline-flex items-center justify-center gap-1 px-2.5 py-1 md:px-3 md:py-1.5 bg-success/10 border border-success/20 rounded-full text-[11px] md:text-xs font-medium text-success-a11y"
+          className="col-span-2 inline-flex min-w-max items-center justify-center gap-1 whitespace-nowrap px-2.5 py-1 md:px-3 md:py-1.5 bg-success/10 border border-success/20 rounded-full text-[11px] md:text-xs font-medium text-success-a11y"
           suppressHydrationWarning
         >
           <Clock className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
