@@ -117,17 +117,10 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
         <HomeHero locale={locale} />
       </HomeTrackedSection>
 
-      {/* About 정체성 ribbon — 매뉴얼 6.4 [C].
-          Hero[B] 직후 30초 인지 영역 — "한국 작가 N명, 작품 N점 / 예술인 상호부조 플랫폼".
-          1단 첫 구매자에게 "미술 플랫폼" 인상 우선, 상호부조 보조 톤 (매뉴얼 톤 원칙). */}
-      <AboutIdentity locale={locale} />
-
-      {/* 매뉴얼 6.4 [F] + 8.4 사회금융 메커니즘 — 4단계 도식 + 라이브 카운터 + /our-proof 링크.
-          challenger 카피 재작업(A-3): 메커니즘을 fold 위로 상향. */}
-      <MechanismSection locale={locale} />
-
       {/* Now Showing 그리드 — fold-below 시한성 큐레이션 카드. hero에 노출된 동일 슬라이드도 카드로
-          한 번 더 노출(매거진 톤). 정적 SSR, hydration 0. */}
+          한 번 더 노출(매거진 톤). 정적 SSR, hydration 0.
+          Variant B(2026-06-17, PM 패널 #5): Hero 직후 첫 섹션 = 쇼핑 가능한 그리드.
+          명분 섹션(About·Mechanism)은 그리드 아래로 이동(상품 우선 재배열). Hero sawtooth(canvas-soft)와 정합. */}
       <HomeTrackedSection section="now-showing">
         <NowShowing locale={locale} />
       </HomeTrackedSection>
@@ -157,6 +150,12 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
       <HomeTrackedSection section="emerging">
         <EmergingArtists locale={locale} />
       </HomeTrackedSection>
+
+      {/* About 정체성 + 사회금융 메커니즘 — Variant B(2026-06-17, PM 패널 #5).
+          상품 우선 재배열로 명분 섹션을 쇼핑 그리드 아래로 이동. 작품을 충분히 본 방문자에게
+          "왜 이 플랫폼인가"(정체성·기금 메커니즘)를 설명하고 Join Community로 연결. pre/post 퍼널 측정. */}
+      <AboutIdentity locale={locale} />
+      <MechanismSection locale={locale} />
 
       {/* 매거진 [K] — 매뉴얼 6.4 [K]. 최신 기사 3건. 깊이감 + 재방문 의지 형성. */}
       <MagazineSection locale={locale} />
