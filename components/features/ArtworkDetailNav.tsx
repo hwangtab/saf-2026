@@ -45,21 +45,21 @@ export default function ArtworkDetailNav({ artist, title }: ArtworkDetailNavProp
 
   return (
     <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/50">
-      <div className="container-max py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="container-max flex items-center justify-between gap-3 py-2 md:gap-4 md:py-4">
         <BackToListButton fallbackHref={listHref} />
 
-        <div className="flex items-center text-xs text-charcoal-soft gap-2 whitespace-nowrap overflow-x-auto pb-1 md:pb-0">
-          <Link href="/" className="hover:text-primary-strong transition-colors">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 overflow-x-auto whitespace-nowrap text-[11px] text-charcoal-soft md:gap-2 md:text-xs">
+          <Link href="/" className="hidden transition-colors hover:text-primary-strong sm:inline">
             {tBreadcrumbs('home')}
           </Link>
-          <span>/</span>
-          <Link href={listHref} className="hover:text-primary-strong transition-colors">
+          <span className="hidden sm:inline">/</span>
+          <Link href={listHref} className="transition-colors hover:text-primary-strong">
             {listLabel}
           </Link>
           <span>/</span>
           <Link
             href={`/artworks/artist/${encodeURIComponent(artist)}`}
-            className="hover:text-primary-strong transition-colors"
+            className="transition-colors hover:text-primary-strong"
           >
             {artist}
           </Link>

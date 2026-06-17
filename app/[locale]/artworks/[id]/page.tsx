@@ -374,14 +374,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
         <Suspense
           fallback={
             <nav className="border-b sticky top-[calc(4rem+env(safe-area-inset-top,0px))] z-30 bg-white/80 backdrop-blur-md">
-              <div className="container-max py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="h-[44px] w-32 bg-gray-100 rounded animate-pulse" />
-                <div className="flex items-center gap-2 pb-1 md:pb-0">
-                  <div className="h-4 w-12 bg-gray-100 rounded animate-pulse" />
+              <div className="container-max flex items-center justify-between gap-3 py-2 md:gap-4 md:py-4">
+                <div className="h-9 w-28 shrink-0 animate-pulse rounded bg-gray-100 md:h-[44px] md:w-32" />
+                <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 md:gap-2">
+                  <div className="hidden h-4 w-12 animate-pulse rounded bg-gray-100 sm:block" />
+                  <span className="hidden text-gray-200 sm:inline">/</span>
+                  <div className="h-3 w-14 animate-pulse rounded bg-gray-100 md:h-4 md:w-16" />
                   <span className="text-gray-200">/</span>
-                  <div className="h-4 w-16 bg-gray-100 rounded animate-pulse" />
-                  <span className="text-gray-200">/</span>
-                  <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
+                  <div className="h-3 w-20 animate-pulse rounded bg-gray-100 md:h-4 md:w-24" />
                 </div>
               </div>
             </nav>
