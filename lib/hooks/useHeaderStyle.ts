@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo, useLayoutEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { isArtworkDetail, isHeroRoute } from '@/lib/hero-routes';
+import { useErrorHeaderActive } from '@/lib/error-header-signal';
 
 const HEADER_SOLID_STYLE = 'bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50';
 // border-b border-transparent: solid 모드와 동일한 박스 크기 유지 → transparent↔solid 전환 시 1px CLS 제거
@@ -43,6 +44,10 @@ export function useHeaderStyle() {
     }),
     [currentPath]
   );
+
+  // 에러 경계(error.tsx)가 떠 있으면 배경이 흰색이라 투명 헤더(흰 글씨)가 묻힌다 →
+  // solid로 강제 (lib/error-header-signal.ts 참조).
+  const errorActive = useErrorHeaderActive();
 
   // Hero routes should render transparent at top by default.
   const [heroAtTop, setHeroAtTop] = useState(true);
@@ -94,10 +99,11 @@ export function useHeaderStyle() {
 
   const headerMode: HeaderMode = useMemo(() => {
     if (isMenuOpen) return 'overlay';
+    if (errorActive) return 'solid';
     if (artworkDetail) return 'solid';
     if (!prefersHeroLayout) return 'solid';
     return heroAtTop ? 'transparent' : 'solid';
-  }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout]);
+  }, [heroAtTop, artworkDetail, isMenuOpen, prefersHeroLayout, errorActive]);
 
   const headerStyle = headerMode === 'transparent' ? HEADER_TRANSPARENT_STYLE : HEADER_SOLID_STYLE;
 
