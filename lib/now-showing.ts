@@ -14,6 +14,16 @@
  */
 export type NowShowingStatus = 'on' | 'coming-soon';
 
+export type HeroTreatment = 'auto' | 'soft' | 'sharp';
+
+export interface HeroImageQuality {
+  width: number;
+  height: number;
+  lowRes: boolean;
+}
+
+export type HeroImageQualityMap = Record<string, HeroImageQuality>;
+
 export interface NowShowingItem {
   slug: string;
   /** messages/{locale}.json `home.nowShowing.{i18nKey}{Title|Desc|Status|Cta}` prefix */
@@ -43,6 +53,13 @@ export interface NowShowingItem {
    * fold-below 그리드(`getNowShowingCards()`)는 priority와 무관하게 모든 활성 항목 노출.
    */
   heroPriority?: number;
+  /**
+   * 히어로 배경 연출 모드.
+   * - 'auto'(기본/미지정): 빌드 타임 해상도 측정 결과대로. lowRes면 자동 블러 연출.
+   * - 'soft': 측정 무시하고 강제 연출. 해상도는 충분하나 초점이 나간 사진 등 자동이 못 잡는 케이스.
+   * - 'sharp': 측정 무시하고 연출 off. 자동 판정 오탐 시 탈출구.
+   */
+  heroTreatment?: HeroTreatment;
 }
 
 const STORAGE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public`;
@@ -158,4 +175,22 @@ export function getCardStatus(item: NowShowingItem, now: Date = new Date()): Now
   if (item.status) return item.status;
   if (item.startDate && new Date(item.startDate) > now) return 'coming-soon';
   return 'on';
+}
+
+/**
+ * 히어로 배경에 soft 연출(블러+짙은 오버레이)을 적용할지 결정.
+ *
+ * - heroTreatment 'sharp' → 항상 false (자동 오탐 탈출구)
+ * - heroTreatment 'soft' → 항상 true (자동이 못 잡는 초점 흐림 등 수동 강제)
+ * - 'auto'/미지정 → 빌드 타임 측정 결과(qualityMap[slug].lowRes)를 따른다.
+ *   측정값이 없으면(미측정/측정 실패) false = 평소대로 렌더(안전 폴백).
+ */
+export function resolveHeroSoftTreatment(
+  item: NowShowingItem,
+  qualityMap: HeroImageQualityMap
+): boolean {
+  const treatment = item.heroTreatment ?? 'auto';
+  if (treatment === 'sharp') return false;
+  if (treatment === 'soft') return true;
+  return qualityMap[item.slug]?.lowRes === true;
 }
