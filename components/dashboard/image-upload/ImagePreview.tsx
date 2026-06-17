@@ -42,17 +42,10 @@ export function ImagePreview({ bucket, urls, copy, onRemove }: ImagePreviewProps
             key={index}
             className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group"
           >
-            <div
-              className="absolute inset-0 cursor-zoom-in z-0"
+            <button
+              type="button"
+              className="absolute inset-0 cursor-zoom-in z-0 border-0 bg-transparent p-0"
               onClick={() => handleImageClick(index)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleImageClick(index);
-                }
-              }}
-              role="button"
-              tabIndex={0}
               aria-label={copy.zoomImage}
             >
               <SafeImage
@@ -62,7 +55,7 @@ export function ImagePreview({ bucket, urls, copy, onRemove }: ImagePreviewProps
                 className="object-cover"
                 sizes="128px"
               />
-            </div>
+            </button>
             <button
               type="button"
               onClick={() => onRemove(index)}

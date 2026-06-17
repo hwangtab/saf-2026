@@ -475,18 +475,22 @@ export default function CheckoutClient({
               const description = value === 'TRANSFER' ? t('transferDescription') : null;
               return (
                 <div key={value}>
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    aria-label={t(labelKey)}
-                    onClick={() => setPaymentChoice(value)}
+                  <label
                     className={clsx(
                       'group relative flex w-full items-center gap-4 px-6 py-4 text-left transition-colors',
                       i > 0 && 'border-t border-gray-200',
                       selected ? 'bg-primary-surface' : 'hover:bg-canvas-strong'
                     )}
                   >
+                    <input
+                      type="radio"
+                      name="checkout-payment-method"
+                      value={value}
+                      checked={selected}
+                      onChange={() => setPaymentChoice(value)}
+                      aria-label={t(labelKey)}
+                      className="sr-only"
+                    />
                     {/* 좌측 primary 바 — selected 시 등장 (1px 처리, 미술관 cue) */}
                     <span
                       aria-hidden="true"
@@ -525,7 +529,7 @@ export default function CheckoutClient({
                         <span className="text-caption-meta text-charcoal-soft">{description}</span>
                       )}
                     </span>
-                  </button>
+                  </label>
                 </div>
               );
             })}

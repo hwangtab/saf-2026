@@ -171,6 +171,27 @@ async function fetchEventRegistrations(supabase: SupabaseClient): Promise<AdminN
     });
   }
 
+  // 무통장 입금대기 — 자동 만료 없이 수동 확인이 필요한 운영 큐.
+  const { data: awaitingDeposits } = await supabase
+    .from('event_registrations')
+    .select('id, applicant_name, party_size, amount, order_no, created_at')
+    .eq('status', 'awaiting_deposit')
+    .gte('created_at', sinceIso)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  for (const row of awaitingDeposits ?? []) {
+    notifications.push({
+      id: `event-deposit:${row.id}`,
+      category: 'action_needed',
+      severity: 'warning',
+      title: `추도식 무통장 입금 대기 — ${row.applicant_name ?? '신청자'}`,
+      detail: `${row.party_size ?? 1}명${row.amount ? ` · ${formatKrw(row.amount)}` : ''}${row.order_no ? ` · #${row.order_no}` : ''}`,
+      href,
+      createdAt: row.created_at as string,
+    });
+  }
+
   return notifications;
 }
 

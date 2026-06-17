@@ -466,19 +466,23 @@ export default function CartCheckoutClient({ clientKey }: Props) {
               const selected = paymentChoice === value;
               const description = value === 'TRANSFER' ? t('transferDescription') : null;
               return (
-                <button
+                <label
                   key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  aria-label={t(labelKey)}
-                  onClick={() => setPaymentChoice(value)}
                   className={clsx(
                     'group relative flex w-full items-center gap-4 px-6 py-4 text-left transition-colors',
                     i > 0 && 'border-t border-gray-200',
                     selected ? 'bg-primary-surface' : 'hover:bg-canvas-strong'
                   )}
                 >
+                  <input
+                    type="radio"
+                    name="cart-payment-method"
+                    value={value}
+                    checked={selected}
+                    onChange={() => setPaymentChoice(value)}
+                    aria-label={t(labelKey)}
+                    className="sr-only"
+                  />
                   <span
                     aria-hidden="true"
                     className={clsx(
@@ -512,7 +516,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                       <span className="text-caption-meta text-charcoal-soft">{description}</span>
                     )}
                   </span>
-                </button>
+                </label>
               );
             })}
           </div>

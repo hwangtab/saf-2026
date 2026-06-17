@@ -244,12 +244,9 @@ export default function ManageClient() {
           )}
 
           {notice && (
-            <p
-              role="status"
-              className="mt-4 rounded-lg bg-canvas px-4 py-3 text-sm text-charcoal break-keep"
-            >
+            <output className="block mt-4 rounded-lg bg-canvas px-4 py-3 text-sm text-charcoal break-keep">
               {notice}
-            </p>
+            </output>
           )}
         </div>
       </div>

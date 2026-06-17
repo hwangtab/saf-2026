@@ -54,16 +54,6 @@ export async function GET(request: NextRequest) {
     }
     response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
     response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
-    const setCookieHeaders = response.headers.getSetCookie();
-    const totalHeaderBytes = setCookieHeaders.reduce((acc, h) => acc + h.length, 0);
-    console.log('[auth/callback] redirect', {
-      url,
-      cookieCount: cookiesToPropagate.length,
-      cookieNames: cookiesToPropagate.map((c) => c.name),
-      setCookieHeaderCount: setCookieHeaders.length,
-      totalSetCookieBytes: totalHeaderBytes,
-      perCookieBytes: setCookieHeaders.map((h) => h.length),
-    });
     return response;
   };
 

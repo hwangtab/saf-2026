@@ -10,9 +10,8 @@ import { ChartErrorBoundary } from './ChartErrorBoundary';
 // 차이가 크면 chart chunk 로드 후 layout shift 발생. min-h-[400px]로 일치.
 // (ChartSkeleton in ChartContainer.tsx도 동일 값.)
 const LoadingPlaceholder = ({ label }: { label: string }) => (
-  <div
+  <output
     className="min-h-[400px] bg-gray-100 rounded animate-pulse"
-    role="status"
     aria-busy="true"
     aria-label={label}
   />

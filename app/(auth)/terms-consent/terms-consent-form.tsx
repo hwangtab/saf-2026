@@ -255,13 +255,13 @@ export function TermsConsentForm({
       if (!section) return;
 
       // 계약서 내부 스크롤을 맨 위로 리셋
-      const scrollContainer = section.querySelector<HTMLElement>('[role="region"]');
+      const scrollContainer = section.querySelector<HTMLElement>('[data-scroll-region]');
       if (scrollContainer) scrollContainer.scrollTop = 0;
 
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       window.requestAnimationFrame(() => {
-        // 스크롤 컨테이너([role="region"])는 focus 대상에서 제외
+        // 스크롤 컨테이너는 focus 대상에서 제외
         // — focus 시 브라우저가 자동 스크롤하여 내용이 빈 공간으로 밀림
         const focusTarget =
           section.querySelector<HTMLElement>('input[type="checkbox"]:not([disabled])') ??
@@ -287,6 +287,15 @@ export function TermsConsentForm({
 
   const nudgeScroll = (containerRef: RefObject<HTMLDivElement | null>) => {
     containerRef.current?.scrollBy({ top: 80, behavior: 'smooth' });
+  };
+
+  const handleUnreadAgreementKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    containerRef: RefObject<HTMLDivElement | null>
+  ) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    nudgeScroll(containerRef);
   };
 
   const handleArtistTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
@@ -402,16 +411,16 @@ export function TermsConsentForm({
           </p>
           <div className="relative">
             {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
-            <div
+            <section
               ref={artistTermsContainerRef}
+              data-scroll-region
               className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handleArtistTermsScroll}
               tabIndex={0}
-              role="region"
               aria-labelledby="artist-terms-heading"
             >
               <LegalDocumentContent document={ARTIST_APPLICATION_TERMS_DOCUMENT} />
-            </div>
+            </section>
             {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
             {!hasReadArtistTerms && (
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
@@ -429,10 +438,14 @@ export function TermsConsentForm({
             </div>
           )}
 
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- 미읽음 상태에서만 role="button"+onClick 활성화; 내부 checkbox가 키보드 접근성 담당 */}
           <div
             className="flex items-start gap-3"
             onClick={!hasReadArtistTerms ? () => nudgeScroll(artistTermsContainerRef) : undefined}
+            onKeyDown={
+              !hasReadArtistTerms
+                ? (event) => handleUnreadAgreementKeyDown(event, artistTermsContainerRef)
+                : undefined
+            }
             role={!hasReadArtistTerms ? 'button' : undefined}
             tabIndex={!hasReadArtistTerms ? 0 : undefined}
           >
@@ -472,16 +485,16 @@ export function TermsConsentForm({
           </p>
           <div className="relative">
             {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
-            <div
+            <section
               ref={exhibitorTermsContainerRef}
+              data-scroll-region
               className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handleExhibitorTermsScroll}
               tabIndex={0}
-              role="region"
               aria-labelledby="exhibitor-terms-heading"
             >
               <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
-            </div>
+            </section>
             {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
             {!hasReadExhibitorTerms && (
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
@@ -499,11 +512,15 @@ export function TermsConsentForm({
             </div>
           )}
 
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- 미읽음 상태에서만 role="button"+onClick 활성화; 내부 checkbox가 키보드 접근성 담당 */}
           <div
             className="flex items-start gap-3"
             onClick={
               !hasReadExhibitorTerms ? () => nudgeScroll(exhibitorTermsContainerRef) : undefined
+            }
+            onKeyDown={
+              !hasReadExhibitorTerms
+                ? (event) => handleUnreadAgreementKeyDown(event, exhibitorTermsContainerRef)
+                : undefined
             }
             role={!hasReadExhibitorTerms ? 'button' : undefined}
             tabIndex={!hasReadExhibitorTerms ? 0 : undefined}
@@ -544,16 +561,16 @@ export function TermsConsentForm({
           </p>
           <div className="relative">
             {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
-            <div
+            <section
               ref={privacyContainerRef}
+              data-scroll-region
               className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handlePrivacyScroll}
               tabIndex={0}
-              role="region"
               aria-labelledby="privacy-heading"
             >
               <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
-            </div>
+            </section>
             {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
             {!hasReadPrivacy && (
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
@@ -571,10 +588,14 @@ export function TermsConsentForm({
             </div>
           )}
 
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- 미읽음 상태에서만 role="button"+onClick 활성화; 내부 checkbox가 키보드 접근성 담당 */}
           <div
             className="flex items-start gap-3"
             onClick={!hasReadPrivacy ? () => nudgeScroll(privacyContainerRef) : undefined}
+            onKeyDown={
+              !hasReadPrivacy
+                ? (event) => handleUnreadAgreementKeyDown(event, privacyContainerRef)
+                : undefined
+            }
             role={!hasReadPrivacy ? 'button' : undefined}
             tabIndex={!hasReadPrivacy ? 0 : undefined}
           >
@@ -626,16 +647,16 @@ export function TermsConsentForm({
           </p>
           <div className="relative">
             {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
-            <div
+            <section
               ref={tosContainerRef}
+              data-scroll-region
               className="mb-3 max-h-[60vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[70vh]"
               onScroll={handleTosScroll}
               tabIndex={0}
-              role="region"
               aria-labelledby="tos-heading"
             >
               <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
-            </div>
+            </section>
             {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
             {!hasReadTos && (
               <div className="pointer-events-none absolute bottom-3 left-0 right-0 flex flex-col items-center">
@@ -653,10 +674,14 @@ export function TermsConsentForm({
             </div>
           )}
 
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- 미읽음 상태에서만 role="button"+onClick 활성화; 내부 checkbox가 키보드 접근성 담당 */}
           <div
             className="flex items-start gap-3"
             onClick={!hasReadTos ? () => nudgeScroll(tosContainerRef) : undefined}
+            onKeyDown={
+              !hasReadTos
+                ? (event) => handleUnreadAgreementKeyDown(event, tosContainerRef)
+                : undefined
+            }
             role={!hasReadTos ? 'button' : undefined}
             tabIndex={!hasReadTos ? 0 : undefined}
           >

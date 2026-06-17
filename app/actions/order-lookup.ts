@@ -637,11 +637,22 @@ export async function cancelBuyerOrder(
           : [];
 
     for (const artworkId of reservedArtworkIds) {
-      await adminClient
+      const { error: artworkRestoreError } = await adminClient
         .from('artworks')
         .update({ status: 'available', updated_at: now })
         .eq('id', artworkId)
         .eq('status', 'reserved');
+      if (artworkRestoreError) {
+        console.error('[cancelBuyerOrder] artwork restore failed:', artworkRestoreError);
+        after(() =>
+          notifyEmail('error', '구매자 입금대기 주문 취소 후 예약 해제 실패', {
+            주문번호: order.order_no,
+            주문ID: order.id,
+            작품ID: artworkId,
+            에러: artworkRestoreError.message,
+          })
+        );
+      }
       revalidatePath(`/artworks/${artworkId}`);
       revalidatePath(`/en/artworks/${artworkId}`);
     }
@@ -748,14 +759,18 @@ export async function cancelBuyerOrder(
 
   const now = new Date().toISOString();
 
-  const { error: orderCancelError } = await adminClient
+  const { data: cancelledRows, error: orderCancelError } = await adminClient
     .from('orders')
     .update({ status: 'refunded', refunded_at: now })
     .eq('id', order.id)
-    .eq('status', 'paid');
+    .eq('status', 'paid')
+    .select('id');
 
   if (orderCancelError) {
     console.error('[cancelBuyerOrder] order update failed:', orderCancelError);
+    return { success: false, error: 'ORDER_CANCEL_FAILED' };
+  }
+  if (!cancelledRows || cancelledRows.length === 0) {
     return { success: false, error: 'ORDER_CANCEL_FAILED' };
   }
 

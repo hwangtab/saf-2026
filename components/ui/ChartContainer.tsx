@@ -3,7 +3,6 @@
 import { ReactNode } from 'react';
 import { useLocale } from 'next-intl';
 import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
-import Card from '@/components/ui/Card';
 
 interface ChartDimensions {
   isMobile: boolean;
@@ -33,15 +32,14 @@ interface ChartContainerProps {
 }
 
 const ChartSkeleton = ({ loadingLabel }: { loadingLabel: string }) => (
-  <Card
-    className="p-6 h-full min-h-[400px] animate-pulse"
-    role="status"
+  <output
+    className="block rounded-2xl border border-gray-200 bg-white shadow-gallery-card p-6 h-full min-h-[400px] animate-pulse"
     aria-busy="true"
     aria-label={loadingLabel}
   >
     <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
     <div className="h-64 bg-gray-100 rounded"></div>
-  </Card>
+  </output>
 );
 
 export default function ChartContainer({
@@ -77,9 +75,8 @@ export default function ChartContainer({
     [descriptionId, descriptionElementId].filter(Boolean).join(' ') || undefined;
 
   return (
-    <Card
-      className="p-6"
-      role="img"
+    <figure
+      className="rounded-2xl border border-gray-200 bg-white shadow-gallery-card p-6"
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedBy}
       id={id}
@@ -110,6 +107,6 @@ export default function ChartContainer({
           </tbody>
         </table>
       )}
-    </Card>
+    </figure>
   );
 }

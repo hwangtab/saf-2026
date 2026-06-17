@@ -35,44 +35,53 @@ export default function SizeBucketFilter({
     <div role="radiogroup" aria-label={tA11y('filterSize')}>
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:justify-center">
         {/* "전체 크기" button */}
-        <button
-          type="button"
-          role="radio"
-          aria-checked={selected === null}
-          onClick={() => onSelect(null)}
+        <label
           className={`shrink-0 px-3 md:px-4 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border text-center ${
             selected === null
               ? 'bg-charcoal text-white shadow-sm border-charcoal'
               : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
           }`}
         >
+          <input
+            type="radio"
+            name="artwork-size-filter"
+            checked={selected === null}
+            onChange={() => onSelect(null)}
+            className="sr-only"
+          />
           {tFilters('sizeAll')}
           <span className={`ml-1 ${selected === null ? 'text-white/80' : 'text-charcoal-soft'}`}>
             {totalCount}
           </span>
-        </button>
+        </label>
 
         {/* Size bucket buttons */}
         {buckets.map((bucket) => (
-          <button
+          <label
             key={bucket.id}
-            type="button"
-            role="radio"
-            aria-checked={selected === bucket.id}
-            onClick={() => onSelect(selected === bucket.id ? null : bucket.id)}
             className={`shrink-0 px-3 md:px-4 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border text-center ${
               selected === bucket.id
                 ? 'bg-charcoal text-white shadow-sm border-charcoal'
                 : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
             }`}
           >
+            <input
+              type="radio"
+              name="artwork-size-filter"
+              checked={selected === bucket.id}
+              onClick={() => {
+                if (selected === bucket.id) onSelect(null);
+              }}
+              onChange={() => onSelect(bucket.id)}
+              className="sr-only"
+            />
             {tFilters(LABEL_KEY[bucket.id] ?? 'sizeAll')}
             <span
               className={`ml-1 ${selected === bucket.id ? 'text-white/80' : 'text-charcoal-soft'}`}
             >
               {bucket.count}
             </span>
-          </button>
+          </label>
         ))}
       </div>
     </div>

@@ -395,63 +395,61 @@ export async function POST(req: NextRequest) {
               id: paymentRecord.order_id,
             });
 
-            if (depositInfo) {
-              after(() =>
-                notifyEmail(
-                  'payment',
-                  '가상계좌 입금 확인',
-                  buildAdminNotificationFields(depositInfo)
-                )
-              );
-            } else {
-              after(() =>
-                notifyEmail('payment', '가상계좌 입금 확인', {
-                  주문번호: order?.order_no ?? '',
-                  금액: `₩${(order?.total_amount ?? 0).toLocaleString('ko-KR')}`,
-                })
-              );
-            }
-
-            if (order?.buyer_email) {
-              const buyerEmail = order.buyer_email;
-              after(() =>
-                sendBuyerEmail(
-                  buyerEmail,
-                  'deposit_confirmed',
-                  {
-                    orderNo: order.order_no,
-                    buyerName: order.buyer_name ?? '',
-                    artworkTitle: depositInfo?.artworkTitle ?? '',
-                    artistName: depositInfo?.artistName ?? '',
-                    amount: order.total_amount,
-                    itemAmount: depositInfo?.itemAmount,
-                    shippingAmount: depositInfo?.shippingAmount,
-                    shipping: depositInfo
-                      ? {
-                          name: depositInfo.shippingName,
-                          phone: depositInfo.shippingPhone,
-                          address: depositInfo.shippingAddress,
-                          memo: depositInfo.shippingMemo,
-                        }
-                      : undefined,
-                  },
-                  extractBuyerLocale(order.metadata)
-                )
-              );
-            }
-            after(() =>
-              sendBuyerSms(
-                order?.buyer_phone,
-                'deposit_confirmed',
-                {
-                  buyerName: order?.buyer_name ?? '',
-                  artworkTitle: depositInfo?.artworkTitle ?? '',
-                  amount: order?.total_amount ?? 0,
-                },
-                extractBuyerLocale(order?.metadata),
-                order?.order_no ?? undefined
-              )
-            );
+            const buyerEmail = order?.buyer_email;
+            after(async () => {
+              await runAllSettled('tossWebhook.depositPaid.notifications', [
+                () =>
+                  depositInfo
+                    ? notifyEmail(
+                        'payment',
+                        '가상계좌 입금 확인',
+                        buildAdminNotificationFields(depositInfo)
+                      )
+                    : notifyEmail('payment', '가상계좌 입금 확인', {
+                        주문번호: order?.order_no ?? '',
+                        금액: `₩${(order?.total_amount ?? 0).toLocaleString('ko-KR')}`,
+                      }),
+                ...(buyerEmail
+                  ? [
+                      () =>
+                        sendBuyerEmail(
+                          buyerEmail,
+                          'deposit_confirmed',
+                          {
+                            orderNo: order?.order_no ?? '',
+                            buyerName: order?.buyer_name ?? '',
+                            artworkTitle: depositInfo?.artworkTitle ?? '',
+                            artistName: depositInfo?.artistName ?? '',
+                            amount: order?.total_amount ?? 0,
+                            itemAmount: depositInfo?.itemAmount,
+                            shippingAmount: depositInfo?.shippingAmount,
+                            shipping: depositInfo
+                              ? {
+                                  name: depositInfo.shippingName,
+                                  phone: depositInfo.shippingPhone,
+                                  address: depositInfo.shippingAddress,
+                                  memo: depositInfo.shippingMemo,
+                                }
+                              : undefined,
+                          },
+                          extractBuyerLocale(order?.metadata)
+                        ),
+                    ]
+                  : []),
+                () =>
+                  sendBuyerSms(
+                    order?.buyer_phone,
+                    'deposit_confirmed',
+                    {
+                      buyerName: order?.buyer_name ?? '',
+                      artworkTitle: depositInfo?.artworkTitle ?? '',
+                      amount: order?.total_amount ?? 0,
+                    },
+                    extractBuyerLocale(order?.metadata),
+                    order?.order_no ?? undefined
+                  ),
+              ]);
+            });
           }
         }
       } else {
@@ -894,16 +892,6 @@ export async function POST(req: NextRequest) {
               revalidatePath(`/artworks/${item.artwork_id}`);
               revalidatePath(`/en/artworks/${item.artwork_id}`);
             }
-
-            // confirm route가 실패해 webhook이 보정한 시나리오 — 운영팀 알림
-            after(() =>
-              notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
-                주문번호: existingOrder.order_no ?? '',
-                paymentKey,
-                상태: newStatus,
-                참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
-              })
-            );
           }
         }
 
@@ -913,38 +901,49 @@ export async function POST(req: NextRequest) {
         if (updatedOrders && updatedOrders.length > 0 && !contestLost) {
           const paidInfo = await getOrderNotificationInfo(supabase, { id: paymentRow.order_id });
           const buyerLocale = extractBuyerLocale(existingOrder.metadata);
-          if (existingOrder.buyer_email) {
-            const buyerEmail = existingOrder.buyer_email;
-            after(() =>
-              sendBuyerEmail(
-                buyerEmail,
-                'payment_confirmed',
-                {
-                  orderNo: existingOrder.order_no ?? '',
-                  buyerName: existingOrder.buyer_name ?? '',
-                  artworkTitle: paidInfo?.artworkTitle ?? '',
-                  artistName: paidInfo?.artistName ?? '',
-                  amount: existingOrder.total_amount ?? 0,
-                  itemAmount: paidInfo?.itemAmount,
-                  shippingAmount: paidInfo?.shippingAmount,
-                },
-                buyerLocale
-              )
-            );
-          }
-          after(() =>
-            sendBuyerSms(
-              existingOrder.buyer_phone,
-              'payment_confirmed',
-              {
-                buyerName: existingOrder.buyer_name ?? '',
-                artworkTitle: paidInfo?.artworkTitle ?? '',
-                amount: existingOrder.total_amount ?? 0,
-              },
-              buyerLocale,
-              existingOrder.order_no ?? undefined
-            )
-          );
+          const buyerEmail = existingOrder.buyer_email;
+          after(async () => {
+            await runAllSettled('tossWebhook.statusChangedDone.notifications', [
+              () =>
+                notifyEmail('warning', '결제 webhook 보정 — confirm route 실패 추정', {
+                  주문번호: existingOrder.order_no ?? '',
+                  paymentKey,
+                  상태: newStatus,
+                  참고: 'confirm route 실패로 추정 — payment 기록은 있으나 order/artwork_sales 미반영 상태에서 webhook이 복구',
+                }),
+              ...(buyerEmail
+                ? [
+                    () =>
+                      sendBuyerEmail(
+                        buyerEmail,
+                        'payment_confirmed',
+                        {
+                          orderNo: existingOrder.order_no ?? '',
+                          buyerName: existingOrder.buyer_name ?? '',
+                          artworkTitle: paidInfo?.artworkTitle ?? '',
+                          artistName: paidInfo?.artistName ?? '',
+                          amount: existingOrder.total_amount ?? 0,
+                          itemAmount: paidInfo?.itemAmount,
+                          shippingAmount: paidInfo?.shippingAmount,
+                        },
+                        buyerLocale
+                      ),
+                  ]
+                : []),
+              () =>
+                sendBuyerSms(
+                  existingOrder.buyer_phone,
+                  'payment_confirmed',
+                  {
+                    buyerName: existingOrder.buyer_name ?? '',
+                    artworkTitle: paidInfo?.artworkTitle ?? '',
+                    amount: existingOrder.total_amount ?? 0,
+                  },
+                  buyerLocale,
+                  existingOrder.order_no ?? undefined
+                ),
+            ]);
+          });
         }
       }
     }
@@ -1024,30 +1023,24 @@ export async function POST(req: NextRequest) {
           id: paymentRow.order_id,
         });
 
-        if (refundInfo) {
-          after(() =>
-            notifyEmail(
-              'warning',
-              'Toss 결제 취소 수신',
-              buildAdminNotificationFields(refundInfo, {
-                상태: newStatus,
-                paymentKey,
-              })
-            )
-          );
-        } else {
-          after(() =>
-            notifyEmail('warning', 'Toss 결제 취소 수신', {
-              주문번호: existingOrder.order_no ?? '',
-              상태: newStatus,
-              paymentKey,
-            })
-          );
-        }
-
-        // 구매자 환불 알림 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
+        // 관리자 + 구매자 환불 알림 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
         after(async () => {
-          await runAllSettled('toss-webhook.refundNotifications', [
+          await runAllSettled('tossWebhook.canceled.notifications', [
+            () =>
+              refundInfo
+                ? notifyEmail(
+                    'warning',
+                    'Toss 결제 취소 수신',
+                    buildAdminNotificationFields(refundInfo, {
+                      상태: newStatus,
+                      paymentKey,
+                    })
+                  )
+                : notifyEmail('warning', 'Toss 결제 취소 수신', {
+                    주문번호: existingOrder.order_no ?? '',
+                    상태: newStatus,
+                    paymentKey,
+                  }),
             ...(existingOrder.buyer_email
               ? [
                   () =>

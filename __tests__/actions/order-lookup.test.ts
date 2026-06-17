@@ -92,6 +92,7 @@ let mockSaleResult: MockResult = { data: null, error: null };
 let mockSaleVoidError: unknown = null;
 let mockOrderUpdateError: unknown = null;
 let mockPaymentUpdateError: unknown = null;
+let mockArtworkUpdateError: { message: string } | null = null;
 // awaiting_deposit self-cancel: orders UPDATE .select('id') 결과(취소된 행)
 let mockOrderUpdateSelectRows: MockResult = { data: [{ id: 'ord-1' }], error: null };
 // artworks UPDATE 캡처 — 예약 해제(available 복원)가 어떤 작품에 갔는지 검증 (FIX-5b)
@@ -99,6 +100,8 @@ const capturedArtworkRestores: Array<{
   patch: Record<string, unknown>;
   filters: Array<{ column: string; value: unknown }>;
 }> = [];
+const capturedPaymentUpdates: Array<Record<string, unknown>> = [];
+const capturedSaleUpdates: Array<Record<string, unknown>> = [];
 
 // 호출 순서에 따라 다른 결과 반환을 위한 카운터
 let ordersSelectCallCount = 0;
@@ -190,7 +193,7 @@ function createArtworksMock() {
       capturedArtworkRestores.push(call);
       const eq: jest.Mock = jest.fn((column: string, value: unknown) => {
         call.filters.push({ column, value });
-        return { eq, error: null };
+        return { eq, error: mockArtworkUpdateError };
       });
       return { eq };
     }),
@@ -211,7 +214,8 @@ function createPaymentsMock() {
       }));
       return { eq };
     }),
-    update: jest.fn(() => {
+    update: jest.fn((patch: Record<string, unknown>) => {
+      capturedPaymentUpdates.push(patch);
       const eq: jest.Mock = jest.fn(() => ({
         eq,
         error: mockPaymentUpdateError,
@@ -232,7 +236,8 @@ function createSalesMock() {
       const eq: jest.Mock = jest.fn(() => ({ eq, is }));
       return { eq };
     }),
-    update: jest.fn(() => {
+    update: jest.fn((patch: Record<string, unknown>) => {
+      capturedSaleUpdates.push(patch);
       // void-all 경로: .update().eq('order_id', ...).is('voided_at', null) → { error }
       const is = jest.fn(() => ({ error: mockSaleVoidError }));
       const eq: jest.Mock = jest.fn(() => ({ eq, is, error: mockSaleVoidError }));
@@ -276,8 +281,11 @@ beforeEach(async () => {
   mockSaleVoidError = null;
   mockOrderUpdateError = null;
   mockPaymentUpdateError = null;
+  mockArtworkUpdateError = null;
   mockOrderUpdateSelectRows = { data: [{ id: 'ord-1' }], error: null };
   capturedArtworkRestores.length = 0;
+  capturedPaymentUpdates.length = 0;
+  capturedSaleUpdates.length = 0;
   mockCancelResult = { success: true };
   ordersSelectCallCount = 0;
 
@@ -860,6 +868,34 @@ describe('cancelBuyerOrder', () => {
     expect(result.success).toBe(true);
   });
 
+  it('paid 주문 취소 중 주문 상태가 이미 바뀌었으면 payment/sales 후속 변경을 중단한다', async () => {
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-1',
+        order_no: 'SAF-001',
+        status: 'paid',
+        total_amount: 5000000,
+        artwork_id: 'art-1',
+        buyer_email: 'buyer@test.com',
+        buyer_name: '홍길동',
+      },
+      error: null,
+    };
+    mockPaymentResult = {
+      data: { id: 'pay-1', payment_key: 'pk_test', method: '카드' },
+      error: null,
+    };
+    mockCancelResult = { success: true };
+    mockOrderUpdateSelectRows = { data: [], error: null };
+
+    const result = await cancelBuyerOrder('SAF-001', 'buyer@test.com', '단순변심');
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error).toBe('ORDER_CANCEL_FAILED');
+    expect(capturedPaymentUpdates).toHaveLength(0);
+    expect(capturedSaleUpdates).toHaveLength(0);
+  });
+
   it('FIX-5b: awaiting_deposit 다품목 취소 시 모든 작품의 예약을 해제한다', async () => {
     mockOrdersSingleResult = {
       data: {
@@ -916,5 +952,40 @@ describe('cancelBuyerOrder', () => {
         c.filters.some((f) => f.column === 'id' && f.value === 'art-legacy')
     );
     expect(restored).toBeTruthy();
+  });
+
+  it('awaiting_deposit 예약 해제 실패는 운영 알림으로 남긴다', async () => {
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-1',
+        order_no: 'SAF-001',
+        status: 'awaiting_deposit',
+        total_amount: 5000000,
+        artwork_id: 'art-legacy',
+        buyer_email: 'buyer@test.com',
+        buyer_name: '홍길동',
+      },
+      error: null,
+    };
+    mockArtworkUpdateError = { message: 'artwork update failed' };
+    const { notifyEmail } = jest.requireMock('@/lib/notify') as { notifyEmail: jest.Mock };
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    try {
+      const result = await cancelBuyerOrder('SAF-001', 'buyer@test.com', '단순변심');
+
+      expect(result.success).toBe(true);
+      expect(notifyEmail).toHaveBeenCalledWith(
+        'error',
+        '구매자 입금대기 주문 취소 후 예약 해제 실패',
+        expect.objectContaining({
+          주문번호: 'SAF-001',
+          작품ID: 'art-legacy',
+          에러: 'artwork update failed',
+        })
+      );
+    } finally {
+      consoleSpy.mockRestore();
+    }
   });
 });

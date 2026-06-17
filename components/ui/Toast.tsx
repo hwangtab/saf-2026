@@ -79,7 +79,8 @@ function Toast({ toast, onDismiss }: ToastProps) {
   /* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex -- Toast는 키보드 해제(Escape/Enter)가 가능한 인터랙티브 알림 */
   return (
     <div
-      role={type === 'error' ? 'alert' : 'status'}
+      role={type === 'error' ? 'alert' : undefined}
+      aria-live={type === 'error' ? undefined : 'polite'}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onAnimationEnd={handleAnimationEnd}

@@ -187,14 +187,14 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
 
         {/* Results Message */}
         {searchQuery && (
-          <div className="mb-6 container-max mt-6" role="status" aria-live="polite">
+          <output className="block mb-6 container-max mt-6" aria-live="polite">
             <p className="text-charcoal-soft">
               <span className="font-semibold text-primary-strong">&apos;{searchQuery}&apos;</span>{' '}
               {locale === 'en'
                 ? `${filteredArtworks.length} ${tSearch('resultPrefix')}`
                 : `${tSearch('resultPrefix')} ${filteredArtworks.length}${tSearch('resultSuffix')}`}
             </p>
-          </div>
+          </output>
         )}
 
         {/* No Results State */}

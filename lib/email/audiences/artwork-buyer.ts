@@ -62,6 +62,7 @@ export class ArtworkBuyerAudienceResolver implements AudienceResolver {
       const email = order?.buyer_email ?? null;
       if (!email) continue;
       const normalized = email.toLowerCase().trim();
+      if (!normalized) continue;
       if (seen.has(normalized)) continue;
       seen.add(normalized);
       const h = hashEmail(normalized);

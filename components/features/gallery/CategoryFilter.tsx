@@ -25,44 +25,53 @@ export default function CategoryFilter({
     <div role="radiogroup" aria-label={tA11y('filterCategory')}>
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide md:justify-center">
         {/* "All" button */}
-        <button
-          type="button"
-          role="radio"
-          aria-checked={selected === null}
-          onClick={() => onSelect(null)}
+        <label
           className={`shrink-0 px-3 md:px-4 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border text-center ${
             selected === null
               ? 'bg-charcoal text-white shadow-sm border-charcoal'
               : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
           }`}
         >
+          <input
+            type="radio"
+            name="artwork-category-filter"
+            checked={selected === null}
+            onChange={() => onSelect(null)}
+            className="sr-only"
+          />
           {tFilters('categoryAll')}
           <span className={`ml-1 ${selected === null ? 'text-white/80' : 'text-charcoal-soft'}`}>
             {totalCount}
           </span>
-        </button>
+        </label>
 
         {/* Category buttons */}
         {categories.map((cat) => (
-          <button
+          <label
             key={cat.value}
-            type="button"
-            role="radio"
-            aria-checked={selected === cat.value}
-            onClick={() => onSelect(selected === cat.value ? null : cat.value)}
             className={`shrink-0 px-3 md:px-4 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap border text-center ${
               selected === cat.value
                 ? 'bg-charcoal text-white shadow-sm border-charcoal'
                 : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-100'
             }`}
           >
+            <input
+              type="radio"
+              name="artwork-category-filter"
+              checked={selected === cat.value}
+              onClick={() => {
+                if (selected === cat.value) onSelect(null);
+              }}
+              onChange={() => onSelect(cat.value)}
+              className="sr-only"
+            />
             {getCategoryLabel(cat.value, locale)}
             <span
               className={`ml-1 ${selected === cat.value ? 'text-white/80' : 'text-charcoal-soft'}`}
             >
               {cat.count}
             </span>
-          </button>
+          </label>
         ))}
       </div>
     </div>

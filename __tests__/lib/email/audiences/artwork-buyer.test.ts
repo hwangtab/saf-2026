@@ -55,6 +55,23 @@ describe('ArtworkBuyerAudienceResolver', () => {
     expect(recipients.map((r) => r.email)).toEqual(['ok@x.com']);
   });
 
+  it('공백만 있는 구매자 이메일은 발송 대상에서 제외한다', async () => {
+    mockFrom
+      .mockReturnValueOnce(
+        createSupabaseQueryMock({
+          data: [
+            { orders: { buyer_email: '   ', buyer_name: '공백' } },
+            { orders: { buyer_email: 'ok@x.com', buyer_name: '정상' } },
+          ],
+          error: null,
+        })
+      )
+      .mockReturnValueOnce(createSupabaseQueryMock({ data: [], error: null }));
+
+    const recipients = await new ArtworkBuyerAudienceResolver('artwork-uuid').resolve();
+    expect(recipients.map((r) => r.email)).toEqual(['ok@x.com']);
+  });
+
   it('광고성 작품 구매자 조회는 주문 생성일 6개월 필터를 order_items 조인에 적용한다', async () => {
     const buyersQuery = createSupabaseQueryMock({
       data: [{ orders: { buyer_email: 'recent@x.com', buyer_name: '최근' } }],

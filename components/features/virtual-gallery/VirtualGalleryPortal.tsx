@@ -81,7 +81,7 @@ export default function VirtualGalleryPortal({
   const [webglSupported] = useState(() => detectWebGL());
   const isMobile = useIsMobile();
 
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const dialogTitleId = useId();
 
   const isKo = locale !== 'en';
@@ -160,12 +160,12 @@ export default function VirtualGalleryPortal({
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 pointer-events-none">
-        <div
+        <dialog
+          open
           ref={dialogRef}
-          role="dialog"
           aria-modal="true"
           aria-labelledby={dialogTitleId}
-          className="relative w-full max-w-5xl h-[70vh] md:h-[75vh] bg-gallery-tile rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col"
+          className="relative w-full max-w-5xl h-[70vh] md:h-[75vh] bg-gallery-tile rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col border-0 p-0"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-2.5 bg-gallery-tile/95 border-b border-white/10">
@@ -240,7 +240,7 @@ export default function VirtualGalleryPortal({
               {isMobile ? copy.controlHintMobile : copy.controlHint}
             </div>
           )}
-        </div>
+        </dialog>
       </div>
     </>
   );

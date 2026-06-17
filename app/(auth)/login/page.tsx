@@ -454,9 +454,7 @@ export default function LoginPage() {
             </div>
 
             {successMessage && (
-              <div role="status" className="text-sm text-success-a11y">
-                {successMessage}
-              </div>
+              <output className="block text-sm text-success-a11y">{successMessage}</output>
             )}
 
             {error && (

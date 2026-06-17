@@ -99,10 +99,10 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
                 - items 영역 `overflow-y-auto` — 메뉴 길어도 스크롤 가능.
                 - footer `pb-[env(safe-area-inset-bottom)]` — iOS notch·home indicator
                   영역에 SignOut이 가려지지 않게 안전 마진. */}
-            <nav
+            <dialog
+              open
               id="mobile-nav-drawer"
-              className="fixed top-0 left-0 h-[100dvh] w-64 bg-white z-50 flex flex-col xl:hidden"
-              role="dialog"
+              className="fixed top-0 left-0 m-0 h-[100dvh] max-h-none w-64 max-w-none border-0 bg-white p-0 z-50 flex flex-col xl:hidden"
               aria-modal="true"
               aria-label={t('adminMenu')}
             >
@@ -192,7 +192,7 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
               <div className="shrink-0 border-t border-gray-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] flex justify-center">
                 <SignOutButton />
               </div>
-            </nav>
+            </dialog>
           </>,
           document.body
         )}

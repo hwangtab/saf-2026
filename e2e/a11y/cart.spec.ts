@@ -51,7 +51,7 @@ for (const locale of ['ko', 'en'] as const) {
 
     await page.getByRole('button', { name: cartButtonName }).first().click();
 
-    const dialog = page.locator('[role="dialog"]');
+    const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText(SEED_ARTWORK_TITLE)).toBeVisible({ timeout: 10_000 });
 

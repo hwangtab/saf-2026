@@ -91,13 +91,15 @@ export default function ProgressBar({ goal, pollIntervalMs = 300_000 }: Progress
         <span className="tabular-nums opacity-80">{percent}%</span>
       </div>
       <div className="relative">
+        <progress
+          className="sr-only"
+          value={total}
+          max={over ? total : goal}
+          aria-label={t('heroProgressLabel', { current: total.toLocaleString('ko-KR') })}
+        />
         <div
           className="h-3 w-full rounded-full bg-white/20 overflow-hidden relative"
-          role="progressbar"
-          aria-valuenow={total}
-          aria-valuemin={0}
-          aria-valuemax={over ? total : goal}
-          aria-label={t('heroProgressLabel', { current: total.toLocaleString('ko-KR') })}
+          aria-hidden="true"
         >
           {over ? (
             <>

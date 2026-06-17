@@ -8,6 +8,7 @@ import { getRequestMetadata } from './request-metadata';
 import { sendEventSms, sendEventEmail } from '@/lib/events/notify';
 import { notifyEmail } from '@/lib/notify';
 import { validateEventInput, type RegisterEventInput } from '@/lib/events/format';
+import { runAllSettled } from '@/lib/server/after-response';
 import {
   OH_YOON_MEMORIAL_SLUG,
   OH_YOON_MEMORIAL_PATH,
@@ -114,28 +115,31 @@ export async function registerEvent(input: unknown) {
     // 대기자 안내(무료) + 관리자 알림. ⚠️ after()로 감싸지 않으면 Server Action 응답 반환 시
     // 함수가 정지하며 in-flight Resend/Solapi fetch가 abort되어 누락된다(2026-06-16 회귀).
     after(async () => {
-      await Promise.allSettled([
-        sendEventSms(phone, 'waitlist', {
-          name,
-          partySize: payload.partySize,
-          amount: r.amount ?? 0,
-        }),
+      await runAllSettled('eventRegistration.waitlist.notifications', [
+        () =>
+          sendEventSms(phone, 'waitlist', {
+            name,
+            partySize: payload.partySize,
+            amount: r.amount ?? 0,
+          }),
         ...(email
           ? [
-              sendEventEmail(email, 'waitlist', {
-                name,
-                partySize: payload.partySize,
-                amount: r.amount ?? 0,
-              }),
+              () =>
+                sendEventEmail(email, 'waitlist', {
+                  name,
+                  partySize: payload.partySize,
+                  amount: r.amount ?? 0,
+                }),
             ]
           : []),
         // 관리자 알림 — 대기 신청도 접수 사실 통지
-        notifyEmail('info', '추도식 대기 신청 접수', {
-          신청자: name,
-          인원: `${payload.partySize}명`,
-          연락처: phone,
-          명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
-        }),
+        () =>
+          notifyEmail('info', '추도식 대기 신청 접수', {
+            신청자: name,
+            인원: `${payload.partySize}명`,
+            연락처: phone,
+            명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+          }),
       ]);
     });
     return { ok: true, code: 'OK_WAITLIST', message: '대기자로 등록되었습니다.' };
@@ -145,27 +149,30 @@ export async function registerEvent(input: unknown) {
   if (r.status === 'awaiting_deposit') {
     const amount = r.amount ?? payload.partySize * 30000;
     after(async () => {
-      await Promise.allSettled([
-        sendEventSms(phone, 'deposit_pending', { name, partySize: payload.partySize, amount }),
+      await runAllSettled('eventRegistration.depositPending.notifications', [
+        () =>
+          sendEventSms(phone, 'deposit_pending', { name, partySize: payload.partySize, amount }),
         ...(email
           ? [
-              sendEventEmail(email, 'deposit_pending', {
-                name,
-                partySize: payload.partySize,
-                amount,
-                orderNo: r.order_no,
-              }),
+              () =>
+                sendEventEmail(email, 'deposit_pending', {
+                  name,
+                  partySize: payload.partySize,
+                  amount,
+                  orderNo: r.order_no,
+                }),
             ]
           : []),
         // 관리자 알림 — 무통장 신청 접수(입금 대기)
-        notifyEmail('info', '추도식 무통장 신청 접수(입금 대기)', {
-          신청자: name,
-          인원: `${payload.partySize}명`,
-          회비: `${amount.toLocaleString('ko-KR')}원`,
-          연락처: phone,
-          주문번호: r.order_no ?? '',
-          명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
-        }),
+        () =>
+          notifyEmail('info', '추도식 무통장 신청 접수(입금 대기)', {
+            신청자: name,
+            인원: `${payload.partySize}명`,
+            회비: `${amount.toLocaleString('ko-KR')}원`,
+            연락처: phone,
+            주문번호: r.order_no ?? '',
+            명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+          }),
       ]);
     });
     return {

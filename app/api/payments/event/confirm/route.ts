@@ -6,6 +6,7 @@ import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { notifyEmail } from '@/lib/notify';
 import { sendEventSms, sendEventEmail } from '@/lib/events/notify';
 import { OH_YOON_MEMORIAL_PATH, OH_YOON_MEMORIAL_SLUG } from '@/content/events/oh-yoon-memorial';
+import { runAllSettled } from '@/lib/server/after-response';
 
 /**
  * 행사(추도식) 결제 confirm.
@@ -166,28 +167,31 @@ export async function POST(req: NextRequest) {
   // 주문 결제는 Toss 웹훅이 별도 알림 백업을 제공하지만 행사 결제(event_registrations)는
   // 웹훅 경로가 없어 이 confirm 라우트가 유일한 알림 출처다.
   after(async () => {
-    await Promise.allSettled([
-      notifyEmail('payment', '추도식 신청 접수(결제완료)', {
-        신청자: reg.applicant_name,
-        인원: `${reg.party_size}명`,
-        금액: `${reg.amount.toLocaleString('ko-KR')}원`,
-        현재누적: s ? `${s.occupied}/${s.capacity}석 (잔여 ${s.remaining}석)` : '-',
-        명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
-      }),
-      sendEventSms(
-        reg.phone,
-        'payment_confirmed',
-        { name: reg.applicant_name, partySize: reg.party_size, amount: reg.amount },
-        orderId
-      ),
+    await runAllSettled('eventPaymentConfirm.notifications', [
+      () =>
+        notifyEmail('payment', '추도식 신청 접수(결제완료)', {
+          신청자: reg.applicant_name,
+          인원: `${reg.party_size}명`,
+          금액: `${reg.amount.toLocaleString('ko-KR')}원`,
+          현재누적: s ? `${s.occupied}/${s.capacity}석 (잔여 ${s.remaining}석)` : '-',
+          명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+        }),
+      () =>
+        sendEventSms(
+          reg.phone,
+          'payment_confirmed',
+          { name: reg.applicant_name, partySize: reg.party_size, amount: reg.amount },
+          orderId
+        ),
       ...(reg.email
         ? [
-            sendEventEmail(reg.email, 'payment_confirmed', {
-              name: reg.applicant_name,
-              partySize: reg.party_size,
-              amount: reg.amount,
-              orderNo: orderId,
-            }),
+            () =>
+              sendEventEmail(reg.email, 'payment_confirmed', {
+                name: reg.applicant_name,
+                partySize: reg.party_size,
+                amount: reg.amount,
+                orderNo: orderId,
+              }),
           ]
         : []),
     ]);

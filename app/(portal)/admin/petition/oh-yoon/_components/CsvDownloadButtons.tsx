@@ -64,11 +64,7 @@ export default function CsvDownloadButtons() {
           </button>
         ))}
       </div>
-      {msg && (
-        <p role="status" className="text-xs text-charcoal-muted">
-          {msg}
-        </p>
-      )}
+      {msg && <output className="block text-xs text-charcoal-muted">{msg}</output>}
     </div>
   );
 }

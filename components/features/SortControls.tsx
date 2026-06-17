@@ -146,9 +146,9 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-primary hover:bg-primary-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-        aria-haspopup="listbox"
+        aria-haspopup="true"
         aria-expanded={isOpen}
-        aria-controls="sort-listbox"
+        aria-controls="sort-menu"
         aria-label={tA11y('sortOptions')}
       >
         <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-charcoal whitespace-nowrap">
@@ -160,27 +160,20 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
         />
       </button>
 
-      {/* 드롭다운 메뉴 — ARIA listbox 패턴: ul > li[role="option"] (button에 role override 금지) */}
-      {/* W3C APG listbox 패턴: ul[role="listbox"] > li[role="option"]. jsx-a11y 룰은 이 표준
-          패턴을 false-positive로 잡으므로 disable. 키보드 핸들링은 부모 div의 onKeyDown에 통합됨. */}
-      {/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role, jsx-a11y/click-events-have-key-events */}
       {isOpen && (
-        <ul
-          id="sort-listbox"
-          className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 list-none m-0 p-0"
-          role="listbox"
-          aria-label={tA11y('sortOptions')}
+        <div
+          id="sort-menu"
+          className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
         >
           {sortOptions.map((option, index) => (
-            <li
+            <button
               key={option.value}
-              role="option"
-              aria-selected={value === option.value}
-              tabIndex={-1}
+              type="button"
               onClick={() => {
                 onChange(option.value);
                 setIsOpen(false);
                 setFocusedIndex(-1);
+                buttonRef.current?.focus();
               }}
               className={`w-full text-left px-4 py-3 text-sm flex items-center gap-2 transition-colors first:rounded-t-lg last:rounded-b-lg cursor-pointer ${
                 focusedIndex === index ? 'bg-gray-100 outline-none' : 'hover:bg-gray-50'
@@ -193,11 +186,10 @@ export default function SortControls({ value, onChange }: SortControlsProps) {
               <span>{option.icon}</span>
               <span>{option.label}</span>
               {value === option.value && <CheckMarkIcon className="w-4 h-4 ml-auto text-primary" />}
-            </li>
+            </button>
           ))}
-        </ul>
+        </div>
       )}
-      {/* eslint-enable jsx-a11y/no-noninteractive-element-to-interactive-role, jsx-a11y/click-events-have-key-events */}
     </div>
   );
 }

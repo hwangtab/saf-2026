@@ -27,6 +27,7 @@ export default function FAQList({ items }: FAQListProps) {
             className="border border-gray-200 rounded-2xl bg-white shadow-sm overflow-hidden transition-colors duration-200 hover:border-gray-300"
           >
             <button
+              id={`faq-button-${index}`}
               type="button"
               onClick={() => toggleItem(index)}
               className="w-full flex items-center justify-between gap-4 p-6 text-left cursor-pointer transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
@@ -43,9 +44,9 @@ export default function FAQList({ items }: FAQListProps) {
                 <ChevronDownIcon className="w-5 h-5" />
               </span>
             </button>
-            <div
+            <section
               id={`faq-content-${index}`}
-              role="region"
+              aria-labelledby={`faq-button-${index}`}
               aria-hidden={!isOpen}
               className="grid transition-[grid-template-rows,opacity] duration-300 ease-in-out"
               style={{ gridTemplateRows: isOpen ? '1fr' : '0fr', opacity: isOpen ? 1 : 0 }}
@@ -55,7 +56,7 @@ export default function FAQList({ items }: FAQListProps) {
                   {item.answer}
                 </div>
               </div>
-            </div>
+            </section>
           </div>
         );
       })}

@@ -102,11 +102,7 @@ export default function OverviewTab({ counts, regionBreakdown }: OverviewTabProp
               {t('overviewReopen')}
             </button>
           )}
-          {msg && (
-            <span role="status" className="text-sm text-charcoal-muted">
-              {msg}
-            </span>
-          )}
+          {msg && <output className="text-sm text-charcoal-muted">{msg}</output>}
         </div>
         <p className="mt-2 text-xs text-charcoal-muted break-keep">{t('overviewCronNote')}</p>
       </section>

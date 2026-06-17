@@ -153,10 +153,8 @@ export default async function HomeHero({ locale }: { locale: string }) {
           {inner}
         </Link>
       ) : (
-        // 비활성 CTA — SR이 "준비 중/disabled" 상태를 인식하도록 aria-disabled + role="link"로 명시.
-        // 실제 nav는 일어나지 않지만 시각적으로는 CTA 버튼 모양이라 SR 사용자 혼란 방지.
+        // 비활성 CTA — 실제 nav는 일어나지 않으므로 링크 역할을 부여하지 않는다.
         <div
-          role="link"
           aria-disabled="true"
           aria-label={`${title} — ${cta}`}
           className="block h-full cursor-not-allowed"

@@ -184,9 +184,5 @@ export async function GET(request: NextRequest) {
     // delivered/undelivered 카운트는 recipient side에서만 집계 (logs는 단건 트랜잭션용)
   }
 
-  console.log(
-    `[sms-delivery-reconcile] checked=${checked} delivered=${delivered} undelivered=${undelivered} suppressed=${suppressed}`
-  );
-
   return NextResponse.json({ checked, delivered, undelivered, suppressed });
 }

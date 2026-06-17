@@ -18,15 +18,20 @@ export default function CartNavButton({
   return (
     <button
       type="button"
-      onClick={openDrawer}
+      onClick={() => {
+        if (!mounted) return;
+        openDrawer();
+      }}
       aria-label={t('headerLabel')}
+      aria-disabled={!mounted}
+      disabled={!mounted}
       className={cn(
         'relative flex items-center justify-center',
         'p-3 min-w-[44px] min-h-[44px] lg:p-2 lg:min-w-[44px] lg:min-h-[44px]',
         'transition-[transform,color] duration-150 active:scale-90',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg',
         textColor,
-        'hover:text-primary',
+        mounted ? 'hover:text-primary' : 'cursor-default opacity-70',
         className
       )}
     >

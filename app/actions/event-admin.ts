@@ -7,6 +7,7 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { sendEventSms, sendEventEmail } from '@/lib/events/notify';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { notifyEmail } from '@/lib/notify';
+import { runAllSettled } from '@/lib/server/after-response';
 import {
   OH_YOON_MEMORIAL_SLUG,
   OH_YOON_MEMORIAL_ADMIN_PATH,
@@ -83,25 +84,27 @@ export async function confirmBankTransferDeposit(id: string): Promise<EventAdmin
     const partySize = c.party_size ?? 1;
     const amount = c.amount ?? 0;
     after(async () => {
-      await Promise.allSettled([
-        sendEventSms(c.phone, 'payment_confirmed', { name, partySize, amount }, c.order_no),
+      await runAllSettled('eventAdmin.confirmBankTransfer.notifications', [
+        () => sendEventSms(c.phone, 'payment_confirmed', { name, partySize, amount }, c.order_no),
         ...(c.email
           ? [
-              sendEventEmail(c.email, 'payment_confirmed', {
-                name,
-                partySize,
-                amount,
-                orderNo: c.order_no,
-              }),
+              () =>
+                sendEventEmail(c.email, 'payment_confirmed', {
+                  name,
+                  partySize,
+                  amount,
+                  orderNo: c.order_no,
+                }),
             ]
           : []),
-        notifyEmail('payment', '추도식 무통장 입금확인(확정)', {
-          신청자: name,
-          인원: `${partySize}명`,
-          회비: `${amount.toLocaleString('ko-KR')}원`,
-          주문번호: c.order_no ?? '',
-          명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
-        }),
+        () =>
+          notifyEmail('payment', '추도식 무통장 입금확인(확정)', {
+            신청자: name,
+            인원: `${partySize}명`,
+            회비: `${amount.toLocaleString('ko-KR')}원`,
+            주문번호: c.order_no ?? '',
+            명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+          }),
       ]);
     });
   }
@@ -243,7 +246,11 @@ export async function sendWaitlistPaymentLink(
     return { ok: false, message: '문자 발송 실패로 대기 상태를 유지했습니다.' };
   }
   if (p.email) {
-    after(() => sendEventEmail(p.email!, 'waitlist_payment', notifyData));
+    after(() =>
+      runAllSettled('eventAdmin.promoteWaitlist.email', [
+        () => sendEventEmail(p.email!, 'waitlist_payment', notifyData),
+      ])
+    );
   }
   revalidateEvent();
   return { ok: true };

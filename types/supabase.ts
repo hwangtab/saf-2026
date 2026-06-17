@@ -2371,6 +2371,14 @@ export type Database = {
       };
       close_petition: { Args: { p_slug: string }; Returns: Json };
       close_petitions_due: { Args: never; Returns: Json };
+      confirm_bank_transfer_order: {
+        Args: { p_order_id: string; p_sold_at?: string };
+        Returns: {
+          artwork_ids: string[];
+          order_id: string;
+          order_no: string | null;
+        }[];
+      };
       confirm_event_bank_transfer: { Args: { p_id: string }; Returns: Json };
       confirm_event_registration: {
         Args: { p_amount: number; p_order_no: string; p_payment_key: string };

@@ -28,7 +28,7 @@ export default function CartDrawer() {
   const [details, setDetails] = useState<CartArtworkInfo[]>([]);
   // 초기 true — 첫 fetch 완료 전 항목이 잠깐 '품절/없음'으로 깜빡이는 것 방지(missing 판정 억제).
   const [loading, setLoading] = useState(true);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDialogElement>(null);
 
   // 상세 로드 — 열려 있고 항목이 있을 때 artworkId로 조회. items 변경 시 재조회.
   const itemIds = items.map((i) => i.artworkId);
@@ -158,13 +158,13 @@ export default function CartDrawer() {
       />
 
       {/* Panel */}
-      <div
+      <dialog
+        open
         ref={panelRef}
-        role="dialog"
         aria-modal="true"
         aria-label={t('drawerTitle')}
         className={clsx(
-          'absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-canvas-soft shadow-xl',
+          'absolute inset-y-0 right-0 m-0 flex h-auto w-full max-w-md flex-col border-0 bg-canvas-soft p-0 shadow-xl',
           'motion-safe:animate-slide-in-right motion-reduce:transform-none'
         )}
       >
@@ -360,7 +360,7 @@ export default function CartDrawer() {
             </div>
           </>
         )}
-      </div>
+      </dialog>
     </div>,
     document.body
   );

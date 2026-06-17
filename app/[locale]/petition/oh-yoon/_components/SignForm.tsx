@@ -60,9 +60,8 @@ export default function SignForm({ url }: { url: string }) {
 
   if (result?.ok) {
     return (
-      <div
+      <output
         className="rounded-xl border border-primary/30 bg-canvas px-6 py-10 text-center"
-        role="status"
         aria-live="polite"
       >
         <h3 className="font-display font-bold text-2xl text-charcoal-deep mb-2 break-keep">
@@ -81,7 +80,7 @@ export default function SignForm({ url }: { url: string }) {
           </p>
           <ShareTemplates url={url} />
         </div>
-      </div>
+      </output>
     );
   }
 

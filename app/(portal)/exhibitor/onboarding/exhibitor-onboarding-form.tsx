@@ -108,7 +108,7 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
 
     window.requestAnimationFrame(() => {
       const focusTarget =
-        section.querySelector<HTMLElement>('[role="region"]') ??
+        section.querySelector<HTMLElement>('[data-scroll-region]') ??
         section.querySelector<HTMLElement>('input[type="checkbox"]:not([disabled])') ??
         section.querySelector<HTMLElement>(
           'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -127,6 +127,15 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
 
   const nudgeScroll = (containerRef: RefObject<HTMLDivElement | null>) => {
     containerRef.current?.scrollBy({ top: 80, behavior: 'smooth' });
+  };
+
+  const handleUnreadAgreementKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    containerRef: RefObject<HTMLDivElement | null>
+  ) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    nudgeScroll(containerRef);
   };
 
   const handleTermsScroll = (event: React.UIEvent<HTMLDivElement>) => {
@@ -274,16 +283,16 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             </p>
             <div className="relative">
               {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
-              <div
+              <section
                 ref={termsContainerRef}
+                data-scroll-region
                 className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
                 onScroll={handleTermsScroll}
                 tabIndex={0}
-                role="region"
                 aria-labelledby="exhibitor-terms-heading"
               >
                 <LegalDocumentContent document={EXHIBITOR_APPLICATION_TERMS_DOCUMENT} />
-              </div>
+              </section>
               {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
               {!hasReadTerms && (
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
@@ -308,16 +317,16 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             </p>
             <div className="relative">
               {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
-              <div
+              <section
                 ref={tosContainerRef}
+                data-scroll-region
                 className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
                 onScroll={handleTosScroll}
                 tabIndex={0}
-                role="region"
                 aria-labelledby="tos-heading"
               >
                 <LegalDocumentContent document={TERMS_OF_SERVICE_DOCUMENT} />
-              </div>
+              </section>
               {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
               {!hasReadTos && (
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
@@ -342,16 +351,16 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
             </p>
             <div className="relative">
               {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- 키보드 스크롤 접근성을 위해 region에 tabIndex 필요 */}
-              <div
+              <section
                 ref={privacyContainerRef}
+                data-scroll-region
                 className="max-h-[52vh] overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 md:max-h-[65vh]"
                 onScroll={handlePrivacyScroll}
                 tabIndex={0}
-                role="region"
                 aria-labelledby="privacy-policy-heading"
               >
                 <LegalDocumentContent document={PRIVACY_POLICY_DOCUMENT} />
-              </div>
+              </section>
               {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
               {!hasReadPrivacy && (
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col items-center">
@@ -371,11 +380,15 @@ export function ExhibitorOnboardingForm({ defaultValues }: { defaultValues?: Onb
           </div>
         </div>
 
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- 미읽음 상태에서만 role="button"+onClick 활성화; 내부 checkbox가 키보드 접근성 담당 */}
         <div
           id="exhibitor-agreement-section"
           className="mt-4 flex items-start gap-3"
           onClick={!allRead && firstUnreadRef ? () => nudgeScroll(firstUnreadRef) : undefined}
+          onKeyDown={
+            !allRead && firstUnreadRef
+              ? (event) => handleUnreadAgreementKeyDown(event, firstUnreadRef)
+              : undefined
+          }
           role={!allRead ? 'button' : undefined}
           tabIndex={!allRead ? 0 : undefined}
         >

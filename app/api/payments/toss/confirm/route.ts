@@ -592,130 +592,126 @@ export async function POST(req: NextRequest) {
 
   // 결제 성공 알림 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
   if (isDone) {
-    if (notifyInfo) {
-      after(() =>
-        notifyEmail(
-          'payment',
-          '결제 승인 완료',
-          buildAdminNotificationFields(notifyInfo, {
-            결제수단: tossResponse.method ?? '알 수 없음',
-          })
-        )
-      );
-    } else {
-      after(() =>
-        notifyEmail('payment', '결제 승인 완료', {
-          주문번호: orderId,
-          결제수단: tossResponse.method ?? '알 수 없음',
-          금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
-        })
-      );
-    }
-    if (order.buyer_email) {
-      const buyerEmail = order.buyer_email;
-      after(() =>
-        sendBuyerEmail(
-          buyerEmail,
-          'payment_confirmed',
-          {
-            orderNo: orderId,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle: notifyInfo?.artworkTitle ?? '',
-            artistName: notifyInfo?.artistName ?? '',
-            amount: tossResponse.totalAmount,
-            paymentMethod: tossResponse.method ?? undefined,
-            itemAmount: notifyInfo?.itemAmount,
-            shippingAmount: notifyInfo?.shippingAmount,
-            shipping: notifyInfo
-              ? {
-                  name: notifyInfo.shippingName,
-                  phone: notifyInfo.shippingPhone,
-                  address: notifyInfo.shippingAddress,
-                  memo: notifyInfo.shippingMemo,
-                }
-              : undefined,
-          },
-          buyerLocale
-        )
-      );
-    }
     after(() =>
-      sendBuyerSms(
-        order.buyer_phone,
-        'payment_confirmed',
-        {
-          buyerName: order.buyer_name ?? '',
-          artworkTitle: notifyInfo?.artworkTitle ?? '',
-          amount: tossResponse.totalAmount,
-        },
-        buyerLocale,
-        orderId
-      )
+      runAllSettled('tossConfirm.paymentConfirmed.notifications', [
+        () =>
+          notifyInfo
+            ? notifyEmail(
+                'payment',
+                '결제 승인 완료',
+                buildAdminNotificationFields(notifyInfo, {
+                  결제수단: tossResponse.method ?? '알 수 없음',
+                })
+              )
+            : notifyEmail('payment', '결제 승인 완료', {
+                주문번호: orderId,
+                결제수단: tossResponse.method ?? '알 수 없음',
+                금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
+              }),
+        ...(order.buyer_email
+          ? [
+              () =>
+                sendBuyerEmail(
+                  order.buyer_email!,
+                  'payment_confirmed',
+                  {
+                    orderNo: orderId,
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: notifyInfo?.artworkTitle ?? '',
+                    artistName: notifyInfo?.artistName ?? '',
+                    amount: tossResponse.totalAmount,
+                    paymentMethod: tossResponse.method ?? undefined,
+                    itemAmount: notifyInfo?.itemAmount,
+                    shippingAmount: notifyInfo?.shippingAmount,
+                    shipping: notifyInfo
+                      ? {
+                          name: notifyInfo.shippingName,
+                          phone: notifyInfo.shippingPhone,
+                          address: notifyInfo.shippingAddress,
+                          memo: notifyInfo.shippingMemo,
+                        }
+                      : undefined,
+                  },
+                  buyerLocale
+                ),
+            ]
+          : []),
+        () =>
+          sendBuyerSms(
+            order.buyer_phone,
+            'payment_confirmed',
+            {
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: notifyInfo?.artworkTitle ?? '',
+              amount: tossResponse.totalAmount,
+            },
+            buyerLocale,
+            orderId
+          ),
+      ])
     );
   } else if (isVirtualAccount) {
     const va = tossResponse.virtualAccount as
       | { bankName?: string; accountNumber?: string; dueDate?: string }
       | null
       | undefined;
-    if (notifyInfo) {
-      after(() =>
-        notifyEmail(
-          'info',
-          '가상계좌 발급 완료 (입금 대기)',
-          buildAdminNotificationFields(notifyInfo, {
-            은행: va?.bankName,
-            계좌번호: va?.accountNumber,
-            입금기한: va?.dueDate,
-          })
-        )
-      );
-    } else {
-      after(() =>
-        notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
-          주문번호: orderId,
-          금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
-        })
-      );
-    }
-    if (order.buyer_email) {
-      const buyerEmail = order.buyer_email;
-      after(() =>
-        sendBuyerEmail(
-          buyerEmail,
-          'virtual_account_issued',
-          {
-            orderNo: orderId,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle: notifyInfo?.artworkTitle ?? '',
-            artistName: notifyInfo?.artistName ?? '',
-            amount: tossResponse.totalAmount,
-            virtualAccount: {
-              bankName: va?.bankName,
-              accountNumber: va?.accountNumber,
-              dueDate: va?.dueDate,
-            },
-          },
-          buyerLocale
-        )
-      );
-    }
     after(() =>
-      sendBuyerSms(
-        order.buyer_phone,
-        'virtual_account_issued',
-        {
-          buyerName: order.buyer_name ?? '',
-          artworkTitle: notifyInfo?.artworkTitle ?? '',
-          amount: tossResponse.totalAmount,
-          virtualAccount: {
-            bankName: va?.bankName,
-            accountNumber: va?.accountNumber,
-            dueDate: va?.dueDate,
-          },
-        },
-        buyerLocale,
-        orderId
-      )
+      runAllSettled('tossConfirm.virtualAccountIssued.notifications', [
+        () =>
+          notifyInfo
+            ? notifyEmail(
+                'info',
+                '가상계좌 발급 완료 (입금 대기)',
+                buildAdminNotificationFields(notifyInfo, {
+                  은행: va?.bankName,
+                  계좌번호: va?.accountNumber,
+                  입금기한: va?.dueDate,
+                })
+              )
+            : notifyEmail('info', '가상계좌 발급 완료 (입금 대기)', {
+                주문번호: orderId,
+                금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
+              }),
+        ...(order.buyer_email
+          ? [
+              () =>
+                sendBuyerEmail(
+                  order.buyer_email!,
+                  'virtual_account_issued',
+                  {
+                    orderNo: orderId,
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: notifyInfo?.artworkTitle ?? '',
+                    artistName: notifyInfo?.artistName ?? '',
+                    amount: tossResponse.totalAmount,
+                    virtualAccount: {
+                      bankName: va?.bankName,
+                      accountNumber: va?.accountNumber,
+                      dueDate: va?.dueDate,
+                    },
+                  },
+                  buyerLocale
+                ),
+            ]
+          : []),
+        () =>
+          sendBuyerSms(
+            order.buyer_phone,
+            'virtual_account_issued',
+            {
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: notifyInfo?.artworkTitle ?? '',
+              amount: tossResponse.totalAmount,
+              virtualAccount: {
+                bankName: va?.bankName,
+                accountNumber: va?.accountNumber,
+                dueDate: va?.dueDate,
+              },
+            },
+            buyerLocale,
+            orderId
+          ),
+      ])
     );
   }
 

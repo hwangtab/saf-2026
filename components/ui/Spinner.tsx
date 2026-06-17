@@ -26,11 +26,10 @@ export default async function Spinner({
 }: SpinnerProps) {
   const t = await getTranslations('a11y');
   return (
-    <div
-      role="status"
+    <output
       aria-label={t('loading')}
       className={cn(
-        'animate-spin rounded-full',
+        'block animate-spin rounded-full',
         sizeClasses[size],
         variantClasses[variant],
         className

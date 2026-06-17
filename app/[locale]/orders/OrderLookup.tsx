@@ -342,10 +342,10 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
   }
 
   return (
-    <div
-      role="dialog"
+    <dialog
+      open
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex h-auto max-h-none w-auto max-w-none items-center justify-center border-0 bg-black/40 px-4 py-0"
     >
       <div
         aria-labelledby="cancel-modal-title"
@@ -391,7 +391,7 @@ function CancelModal({ order, buyerEmail, onCancelled, onClose }: CancelModalPro
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
 

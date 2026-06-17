@@ -128,17 +128,13 @@ export default function ForgotPasswordPage() {
               </div>
             </div>
 
-            {message && (
-              <div
-                role={message.type === 'error' ? 'alert' : 'status'}
-                className={
-                  message.type === 'success'
-                    ? 'text-sm text-success-a11y'
-                    : 'text-sm text-danger-a11y'
-                }
-              >
+            {message?.type === 'error' && (
+              <div role="alert" className="text-sm text-danger-a11y">
                 {message.text}
               </div>
+            )}
+            {message?.type === 'success' && (
+              <output className="block text-sm text-success-a11y">{message.text}</output>
             )}
 
             <div>

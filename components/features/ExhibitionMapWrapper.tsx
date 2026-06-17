@@ -6,9 +6,8 @@ import { useTranslations } from 'next-intl';
 const KakaoMap = dynamic(() => import('@/components/features/KakaoMap'), {
   ssr: false,
   loading: () => (
-    <div
+    <output
       className="flex h-[400px] w-full items-center justify-center rounded-lg bg-canvas text-sm text-charcoal-soft"
-      role="status"
       aria-busy="true"
     />
   ),

@@ -19,7 +19,7 @@ let activeModalCount = 0;
 
 export default function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
   const [mounted, setMounted] = useState(false);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -107,13 +107,13 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
   return createPortal(
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
-      <div
+      <dialog
+        open
         ref={modalRef}
-        role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         className={cn(
-          'relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-zoom-in-95',
+          'relative bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-zoom-in-95 border-0 p-0',
           className
         )}
       >
@@ -134,7 +134,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
           </Button>
         </div>
         <div className="p-6 overflow-y-auto overscroll-contain">{children}</div>
-      </div>
+      </dialog>
     </div>,
     document.body
   );

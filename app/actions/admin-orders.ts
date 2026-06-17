@@ -8,7 +8,7 @@ import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
-import { extractLineItems, recordOrderArtworkSales } from '@/lib/orders/record-artwork-sales';
+import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import {
   getRepresentativeArtwork,
   formatRepresentativeTitle,
@@ -803,61 +803,41 @@ export async function confirmDeposit(orderId: string) {
 
   const now = new Date().toISOString();
 
-  // 1. 주문 상태 → paid (WHERE status = 'awaiting_deposit' 멱등성 가드)
-  const { data: updatedRows, error: updateError } = await supabase
-    .from('orders')
-    .update({ status: 'paid', paid_at: now, updated_at: now })
-    .eq('id', orderId)
-    .eq('status', 'awaiting_deposit')
-    .select('id');
+  // 1. 주문 paid 전환 + artwork_sales 기록은 DB RPC에서 한 트랜잭션으로 처리한다.
+  //    트리거/제약 실패 시 주문만 paid로 남는 중간 상태가 생기면 안 된다.
+  const { data: confirmedRows, error: confirmError } = await supabase.rpc(
+    'confirm_bank_transfer_order',
+    {
+      p_order_id: orderId,
+      p_sold_at: now,
+    }
+  );
 
-  if (updateError) throw updateError;
-  if (!updatedRows || updatedRows.length === 0) {
-    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+  if (confirmError) {
+    console.error('[confirmDeposit] confirm_bank_transfer_order RPC failed:', confirmError);
+    throw new Error(
+      '판매 기록 생성에 실패해 입금 확인을 중단했습니다. 작품 판매 상태와 주문을 확인해주세요.'
+    );
   }
 
-  // 2. artwork_sales 생성 — order_items 라인별 멱등 INSERT (다품목 카트 주문 지원).
-  //    DB 트리거가 artwork reserved→sold 처리. order_items가 비면 legacy 단건 artwork_id fallback.
-  const lineItems = extractLineItems(order);
-  const salesLineItems =
-    lineItems.length > 0
-      ? lineItems
-      : order.artwork_id
-        ? [{ artwork_id: order.artwork_id, quantity: 1, unit_price: order.total_amount }]
-        : [];
+  const confirmed = Array.isArray(confirmedRows) ? confirmedRows[0] : null;
+  const artworkIds = Array.isArray(confirmed?.artwork_ids)
+    ? confirmed.artwork_ids.filter((id): id is string => typeof id === 'string' && id.length > 0)
+    : [];
 
-  if (salesLineItems.length > 0) {
-    const salesResult = await recordOrderArtworkSales(supabase, {
-      orderId: order.id,
-      orderNo: order.order_no,
-      lineItems: salesLineItems,
-      source: 'manual',
-      sourceDetail: 'bank_transfer',
-      buyerName: order.buyer_name,
-      buyerPhone: order.buyer_phone,
-      soldAt: now,
+  if (artworkIds.length === 0) {
+    console.error('[confirmDeposit] confirm_bank_transfer_order returned no artwork ids:', {
+      orderId,
+      confirmedRows,
     });
+    throw new Error(
+      '판매 기록 생성에 실패해 입금 확인을 중단했습니다. 작품 판매 상태와 주문을 확인해주세요.'
+    );
+  }
 
-    if (salesResult.inserted === false && salesResult.reason === 'error') {
-      console.error('[confirmDeposit] artwork_sales INSERT 실패:', salesResult.error);
-      after(() =>
-        notifyEmail('error', '입금 확인 후 판매 기록 생성 실패', {
-          주문번호: order.order_no,
-          주문ID: orderId,
-          에러: salesResult.error,
-          참고: '주문은 paid 처리됨 — 판매 기록 수동 생성 필요',
-        })
-      );
-      throw new Error(
-        '입금은 확인되었으나 판매 기록 생성에 실패했습니다. 작품 판매 상태가 갱신되지 않았으니 수동 확인이 필요합니다.'
-      );
-    }
-
-    // 작품 상태 재동기화 — order_items 전 품목 루프 (reserved → sold)
-    const artworkIds = salesLineItems.map((item) => item.artwork_id);
-    for (const artworkId of artworkIds) {
-      await deriveAndSyncArtworkStatus(supabase, artworkId);
-    }
+  // 2. 작품 상태 재동기화 — RPC 내부 INSERT 트리거 후 방어적으로 한 번 더 맞춘다.
+  for (const artworkId of artworkIds) {
+    await deriveAndSyncArtworkStatus(supabase, artworkId);
   }
 
   // 3. 관리자 + 구매자 입금 확인 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
@@ -934,11 +914,11 @@ export async function confirmDeposit(orderId: string) {
     }
   );
 
-  for (const item of salesLineItems) {
-    revalidatePath(`/artworks/${item.artwork_id}`);
-    revalidatePath(`/en/artworks/${item.artwork_id}`);
+  for (const artworkId of artworkIds) {
+    revalidatePath(`/artworks/${artworkId}`);
+    revalidatePath(`/en/artworks/${artworkId}`);
   }
-  if (salesLineItems.length > 0) {
+  if (artworkIds.length > 0) {
     revalidatePublicArtworkSurfaces();
   }
   revalidatePath('/admin/orders');
@@ -1053,11 +1033,22 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
         ? [order.artwork_id]
         : [];
   for (const artworkId of reservedArtworkIds) {
-    await supabase
+    const { error: artworkRestoreError } = await supabase
       .from('artworks')
       .update({ status: 'available', updated_at: now })
       .eq('id', artworkId)
       .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
+    if (artworkRestoreError) {
+      console.error('[cancelAwaitingOrder] artwork restore failed:', artworkRestoreError);
+      after(() =>
+        notifyEmail('error', '입금대기 주문 취소 후 예약 해제 실패', {
+          주문번호: order.order_no,
+          주문ID: orderId,
+          작품ID: artworkId,
+          에러: artworkRestoreError.message,
+        })
+      );
+    }
   }
 
   // 3. 관리자 + 구매자 취소 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지

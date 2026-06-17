@@ -166,17 +166,16 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
       </section>
 
       {statusMsg && (
-        <p
-          role="status"
+        <output
           className={clsx(
-            'rounded-lg px-3 py-2 text-sm',
+            'block rounded-lg px-3 py-2 text-sm',
             statusMsg.tone === 'ok'
               ? 'bg-success-surface text-success-strong border border-success/30'
               : 'bg-danger-surface text-danger-a11y border border-danger/30'
           )}
         >
           {statusMsg.text}
-        </p>
+        </output>
       )}
 
       {rows.length === 0 ? (
@@ -247,11 +246,11 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
       <p className="text-xs text-charcoal-muted break-keep">{t('committeeFooter')}</p>
 
       {removing && (
-        <div
-          role="dialog"
+        <dialog
+          open
           aria-modal="true"
           aria-labelledby="committee-remove-confirm-title"
-          className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-[110] flex h-auto max-h-none w-auto max-w-none items-center justify-center border-0 bg-black/50 p-4 backdrop-blur-sm"
         >
           <div
             className="absolute inset-0"
@@ -290,7 +289,7 @@ export default function CommitteeTab({ committeeTotal }: CommitteeTabProps) {
               </button>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   );

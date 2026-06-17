@@ -122,6 +122,8 @@ const config = [
       '.next/**',
       '.worktrees/**',
       '.vercel/**',
+      'playwright-report/**',
+      'test-results/**',
       '.claude/**',
       '.understand-anything/**',
       'tmp/**',

@@ -45,14 +45,13 @@ export default function PetitionFAQ() {
               </button>
             </h3>
             {isOpen && (
-              <div
+              <section
                 id={panelId}
-                role="region"
                 aria-labelledby={buttonId}
                 className="pb-5 text-base text-charcoal leading-relaxed"
               >
                 {item.a}
-              </div>
+              </section>
             )}
           </div>
         );
