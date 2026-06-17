@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import clsx from 'clsx';
 import SafeImage from '@/components/common/SafeImage';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
+import { BRAND_COLORS } from '@/lib/colors';
 import { Link } from '@/i18n/navigation';
 import { getCardStatus, getHeroSlide, resolveHeroSoftTreatment } from '@/lib/now-showing';
 import type { HeroImageQualityMap } from '@/lib/now-showing';
@@ -66,12 +67,26 @@ export default async function HomeHero({ locale }: { locale: string }) {
         fetchPriority="high"
         quality={60}
         sizes="100vw"
-        className={clsx('object-cover', softTreatment && 'scale-110 blur-[10px]')}
+        className="object-cover"
       />
+
+      {/* 저해상도/흐린 작품 사진(softTreatment) 비네팅 — 블러는 작품을 죽이므로 폐기(2026-06-17 PM).
+          가장자리(업스케일 깨짐이 가장 잘 드러나는 곳)를 radial로 어둡게 묻고 중앙 작품은 살린다.
+          색은 charcoal.deep(#1F2428) + alpha hex(b3≈70%) — Tailwind에 radial gradient arbitrary가
+          없어 inline style + BRAND_COLORS 참조(차트·런타임 hex 정책). 정상 해상도면 미렌더. */}
+      {softTreatment && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(ellipse at center, transparent 38%, ${BRAND_COLORS.charcoal.deep}b3 100%)`,
+          }}
+        />
+      )}
 
       {/* 다크 그라디언트 — 작품 이미지 가시성 우선. PM 결정(2026-05-13): primary-strong 베일은
           작품 색감을 해친다 → 단일 charcoal-deep tonal로 복귀. 상단/하단만 텍스트 가독성 확보,
-          중간은 옅어 작품이 그대로 노출. */}
+          중간은 옅어 작품이 그대로 노출. softTreatment면 중앙(via)을 진하게 해 추가로 어둡게. */}
       <div
         className={clsx(
           'absolute inset-0 bg-gradient-to-b from-charcoal-deep/85 to-charcoal-deep/70',
