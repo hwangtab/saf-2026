@@ -23,6 +23,7 @@ import {
   getOrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { runAllSettled } from '@/lib/server/after-response';
 
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 
@@ -294,45 +295,61 @@ export async function POST(req: NextRequest) {
                       paymentSyncError
                     );
                   }
-                  void notifyEmail('info', '동시 구매 경합 — 자동 환불 완료 (가상계좌 입금분)', {
-                    주문번호: refundOrderNo,
-                    paymentKey,
-                    참고: '다른 주문이 unique 작품을 먼저 가져가 입금분 자동 환불 완료.',
-                  });
-                  if (buyerEmail) {
-                    void sendBuyerEmail(
-                      buyerEmail,
-                      'refunded',
-                      {
-                        orderNo: refundOrderNo,
-                        buyerName,
-                        artworkTitle: '',
-                        artistName: '',
-                        amount: refundAmount,
-                      },
-                      refundLocale
-                    );
-                  }
-                  void sendBuyerSms(
-                    buyerPhone,
-                    'refunded',
-                    { buyerName, artworkTitle: '', amount: refundAmount },
-                    refundLocale,
-                    refundOrderNo || undefined
+                  await runAllSettled(
+                    'toss-webhook.depositCallback.autoRefund.successNotifications',
+                    [
+                      () =>
+                        notifyEmail('info', '동시 구매 경합 — 자동 환불 완료 (가상계좌 입금분)', {
+                          주문번호: refundOrderNo,
+                          paymentKey,
+                          참고: '다른 주문이 unique 작품을 먼저 가져가 입금분 자동 환불 완료.',
+                        }),
+                      ...(buyerEmail
+                        ? [
+                            () =>
+                              sendBuyerEmail(
+                                buyerEmail,
+                                'refunded',
+                                {
+                                  orderNo: refundOrderNo,
+                                  buyerName,
+                                  artworkTitle: '',
+                                  artistName: '',
+                                  amount: refundAmount,
+                                },
+                                refundLocale
+                              ),
+                          ]
+                        : []),
+                      () =>
+                        sendBuyerSms(
+                          buyerPhone,
+                          'refunded',
+                          { buyerName, artworkTitle: '', amount: refundAmount },
+                          refundLocale,
+                          refundOrderNo || undefined
+                        ),
+                    ]
                   );
                 } else {
                   // 환불 실패 — 구매자에게 '환불' 안내하지 않고 운영팀에 즉시 수동환불 요청.
                   // VA는 실입금분이라 refundReceiveAccount(환불 계좌)가 필요할 수 있어 자동 취소가
                   // 거부될 수 있다 — 이 경우 운영팀이 수동으로 환불 계좌를 받아 처리해야 한다.
-                  void notifyEmail(
-                    'error',
-                    '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요 (가상계좌 입금분)',
-                    {
-                      주문번호: refundOrderNo,
-                      paymentKey,
-                      금액: `₩${refundAmount.toLocaleString('ko-KR')}`,
-                      참고: '가상계좌 입금 완료됐으나 작품은 타인 선점, 자동 환불 실패(환불 계좌 필요 가능성). 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
-                    }
+                  await runAllSettled(
+                    'toss-webhook.depositCallback.autoRefund.failureNotifications',
+                    [
+                      () =>
+                        notifyEmail(
+                          'error',
+                          '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요 (가상계좌 입금분)',
+                          {
+                            주문번호: refundOrderNo,
+                            paymentKey,
+                            금액: `₩${refundAmount.toLocaleString('ko-KR')}`,
+                            참고: '가상계좌 입금 완료됐으나 작품은 타인 선점, 자동 환불 실패(환불 계좌 필요 가능성). 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
+                          }
+                        ),
+                    ]
                   );
                 }
               });
@@ -806,45 +823,51 @@ export async function POST(req: NextRequest) {
                     paymentSyncError
                   );
                 }
-                void notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
-                  주문번호: refundOrderNo,
-                  paymentKey,
-                  참고: '다른 주문이 unique 작품을 먼저 가져가 자동 환불 완료.',
-                });
-                if (buyerEmail) {
-                  void sendBuyerEmail(
-                    buyerEmail,
-                    'refunded',
-                    {
-                      orderNo: refundOrderNo,
-                      buyerName,
-                      artworkTitle: '',
-                      artistName: '',
-                      amount: refundAmount,
-                    },
-                    refundLocale
-                  );
-                }
-                void sendBuyerSms(
-                  buyerPhone,
-                  'refunded',
-                  { buyerName, artworkTitle: '', amount: refundAmount },
-                  refundLocale,
-                  refundOrderNo || undefined
-                );
+                await runAllSettled('toss-webhook.statusChanged.autoRefund.successNotifications', [
+                  () =>
+                    notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
+                      주문번호: refundOrderNo,
+                      paymentKey,
+                      참고: '다른 주문이 unique 작품을 먼저 가져가 자동 환불 완료.',
+                    }),
+                  ...(buyerEmail
+                    ? [
+                        () =>
+                          sendBuyerEmail(
+                            buyerEmail,
+                            'refunded',
+                            {
+                              orderNo: refundOrderNo,
+                              buyerName,
+                              artworkTitle: '',
+                              artistName: '',
+                              amount: refundAmount,
+                            },
+                            refundLocale
+                          ),
+                      ]
+                    : []),
+                  () =>
+                    sendBuyerSms(
+                      buyerPhone,
+                      'refunded',
+                      { buyerName, artworkTitle: '', amount: refundAmount },
+                      refundLocale,
+                      refundOrderNo || undefined
+                    ),
+                ]);
               } else {
                 // 환불 실패 — 구매자 안내 보류, 운영팀 즉시 수동환불 요청.
                 // 가상계좌 입금분이면 환불 계좌(refundReceiveAccount)가 필요해 자동 취소가 거부될 수 있음.
-                void notifyEmail(
-                  'error',
-                  '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요',
-                  {
-                    주문번호: refundOrderNo,
-                    paymentKey,
-                    금액: `₩${refundAmount.toLocaleString('ko-KR')}`,
-                    참고: '결제는 캡처됐으나 작품은 타인 선점, 자동 환불 실패(가상계좌면 환불 계좌 필요 가능성). 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
-                  }
-                );
+                await runAllSettled('toss-webhook.statusChanged.autoRefund.failureNotifications', [
+                  () =>
+                    notifyEmail('error', '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요', {
+                      주문번호: refundOrderNo,
+                      paymentKey,
+                      금액: `₩${refundAmount.toLocaleString('ko-KR')}`,
+                      참고: '결제는 캡처됐으나 작품은 타인 선점, 자동 환불 실패(가상계좌면 환불 계좌 필요 가능성). 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
+                    }),
+                ]);
               }
             });
           } else if (salesResult.inserted === false && salesResult.reason === 'error') {
@@ -1022,42 +1045,42 @@ export async function POST(req: NextRequest) {
           );
         }
 
-        // 구매자 환불 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
-        if (existingOrder.buyer_email) {
-          after(async () => {
-            try {
-              void sendBuyerEmail(
-                existingOrder.buyer_email!,
+        // 구매자 환불 알림 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
+        after(async () => {
+          await runAllSettled('toss-webhook.refundNotifications', [
+            ...(existingOrder.buyer_email
+              ? [
+                  () =>
+                    sendBuyerEmail(
+                      existingOrder.buyer_email!,
+                      'refunded',
+                      {
+                        orderNo: existingOrder.order_no ?? '',
+                        buyerName: existingOrder.buyer_name ?? '',
+                        artworkTitle: refundInfo?.artworkTitle ?? '',
+                        artistName: refundInfo?.artistName ?? '',
+                        amount: existingOrder.total_amount ?? 0,
+                        itemAmount: refundInfo?.itemAmount,
+                        shippingAmount: refundInfo?.shippingAmount,
+                      },
+                      extractBuyerLocale(existingOrder.metadata)
+                    ),
+                ]
+              : []),
+            () =>
+              sendBuyerSms(
+                existingOrder.buyer_phone,
                 'refunded',
                 {
-                  orderNo: existingOrder.order_no ?? '',
                   buyerName: existingOrder.buyer_name ?? '',
-                  artworkTitle: refundInfo?.artworkTitle ?? '',
-                  artistName: refundInfo?.artistName ?? '',
+                  artworkTitle: '',
                   amount: existingOrder.total_amount ?? 0,
-                  itemAmount: refundInfo?.itemAmount,
-                  shippingAmount: refundInfo?.shippingAmount,
                 },
-                extractBuyerLocale(existingOrder.metadata)
-              );
-            } catch (err) {
-              console.error('[toss-webhook] refund email failed:', err);
-            }
-          });
-        }
-        after(() =>
-          sendBuyerSms(
-            existingOrder.buyer_phone,
-            'refunded',
-            {
-              buyerName: existingOrder.buyer_name ?? '',
-              artworkTitle: '',
-              amount: existingOrder.total_amount ?? 0,
-            },
-            extractBuyerLocale(existingOrder.metadata),
-            existingOrder.order_no ?? undefined
-          )
-        );
+                extractBuyerLocale(existingOrder.metadata),
+                existingOrder.order_no ?? undefined
+              ),
+          ]);
+        });
       }
     }
   }

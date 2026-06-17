@@ -118,6 +118,30 @@ describe('reconcile-event-registrations cron', () => {
     expect((await res.json()).reconciled).toBe(1);
   });
 
+  it('확정 고객 알림 Promise가 settle될 때까지 응답을 반환하지 않는다', async () => {
+    selectResult = { data: [{ ...REG }], error: null };
+    let releaseSms!: () => void;
+    const smsPromise = new Promise<{ ok: boolean; skipped: boolean }>((resolve) => {
+      releaseSms = () => resolve({ ok: true, skipped: false });
+    });
+    mockSendSms.mockReturnValueOnce(smsPromise);
+
+    let settled = false;
+    const responsePromise = run().then((res) => {
+      settled = true;
+      return res;
+    });
+    await new Promise((resolve) => setImmediate(resolve));
+
+    expect(mockSendSms).toHaveBeenCalled();
+    expect(settled).toBe(false);
+
+    releaseSms();
+    const res = await responsePromise;
+    expect(settled).toBe(true);
+    expect((await res.json()).reconciled).toBe(1);
+  });
+
   it('pending + DONE + 매진(SOLD_OUT) → 환불 + cancelled + 환불 알림', async () => {
     selectResult = { data: [{ ...REG }], error: null };
     mockRpc.mockResolvedValue({ data: { ok: false, code: 'SOLD_OUT' }, error: null });

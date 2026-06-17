@@ -1,6 +1,6 @@
 'use server';
 
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
 import type { Database } from '@/types/supabase';
 import { requireArtistActive } from '@/lib/auth/guards';
 import { revalidatePath } from 'next/cache';
@@ -17,6 +17,7 @@ import {
 import { getString, buildArtworkSizeFields } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
 import type { ActionState } from '@/types';
 
 export type { ActionState } from '@/types';
@@ -389,12 +390,8 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
       .eq('artist_id', artist.id)
       .single();
 
-    const { count: activeOrderCount } = await supabase
-      .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('artwork_id', id)
-      .in('status', ['paid', 'preparing', 'awaiting_deposit', 'shipped']);
-    if ((activeOrderCount ?? 0) > 0) {
+    const adminClient = createSupabaseAdminClient();
+    if (await hasActiveOrdersForArtworks(adminClient, [id])) {
       return { message: '진행 중인 주문이 있어 삭제할 수 없습니다.', error: true };
     }
 

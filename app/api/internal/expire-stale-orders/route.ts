@@ -10,6 +10,7 @@ import {
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import { runAllSettled } from '@/lib/server/after-response';
 
 export const runtime = 'nodejs';
 
@@ -151,35 +152,41 @@ export async function GET(request: NextRequest) {
     );
     depositInfos = actuallyCancelled.map((o) => depositInfoById.get(o.id) ?? null);
 
+    const buyerNotificationTasks: Array<() => Promise<unknown>> = [];
     for (const expiredOrder of actuallyCancelled) {
       if (expiredOrder.buyer_email && expiredOrder.order_no) {
         const info = depositInfoById.get(expiredOrder.id);
-        // sendBuyerEmail은 내부에서 throw하지 않지만(자체 try/catch) 방어적으로 .catch 부착.
-        void sendBuyerEmail(
-          expiredOrder.buyer_email,
-          'auto_cancelled',
-          {
-            orderNo: expiredOrder.order_no,
-            buyerName: expiredOrder.buyer_name ?? '',
-            artworkTitle: info?.artworkTitle ?? '',
-            artistName: info?.artistName ?? '',
-            amount: expiredOrder.total_amount ?? 0,
-          },
-          extractBuyerLocale(expiredOrder.metadata)
-        ).catch((err) => console.error('[expire-stale-orders] email failed:', err));
-        void sendBuyerSms(
-          info?.buyerPhone,
-          'auto_cancelled',
-          {
-            buyerName: expiredOrder.buyer_name ?? '',
-            artworkTitle: info?.artworkTitle ?? '',
-            amount: expiredOrder.total_amount ?? 0,
-          },
-          extractBuyerLocale(expiredOrder.metadata),
-          expiredOrder.order_no
+        const locale = extractBuyerLocale(expiredOrder.metadata);
+        buyerNotificationTasks.push(
+          () =>
+            sendBuyerEmail(
+              expiredOrder.buyer_email!,
+              'auto_cancelled',
+              {
+                orderNo: expiredOrder.order_no!,
+                buyerName: expiredOrder.buyer_name ?? '',
+                artworkTitle: info?.artworkTitle ?? '',
+                artistName: info?.artistName ?? '',
+                amount: expiredOrder.total_amount ?? 0,
+              },
+              locale
+            ),
+          () =>
+            sendBuyerSms(
+              info?.buyerPhone,
+              'auto_cancelled',
+              {
+                buyerName: expiredOrder.buyer_name ?? '',
+                artworkTitle: info?.artworkTitle ?? '',
+                amount: expiredOrder.total_amount ?? 0,
+              },
+              locale,
+              expiredOrder.order_no!
+            )
         );
       }
     }
+    await runAllSettled('expire-stale-orders.buyerNotifications', buyerNotificationTasks);
 
     // 실제 취소된 주문의 artwork reserved→available 복원 — 다품목 지원.
     // 각 주문의 order_items 전 품목을 복원 대상으로 수집. order_items가 비면(legacy 단건)

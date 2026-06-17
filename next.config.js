@@ -1,5 +1,6 @@
 const createNextIntlPlugin = require('next-intl/plugin');
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+const categorySlugMap = require('./config/artwork-category-slugs.json');
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -70,24 +71,8 @@ const nextConfig = {
   },
   reactStrictMode: true,
   async redirects() {
-    // ⚠ lib/artwork-category.ts의 CATEGORY_SLUG_MAP과 반드시 동기 유지.
-    // next.config.js(CJS)는 TS 모듈 require 불가라 11개 고정 맵을 인라인 복제.
-    // (artwork-category.test.ts가 lib 쪽 커버리지를 강제. 카테고리 추가 시 양쪽 갱신.)
-    const CATEGORY_SLUG_MAP = {
-      회화: 'painting',
-      한국화: 'korean-painting',
-      판화: 'printmaking',
-      사후판화: 'posthumous-print',
-      드로잉: 'drawing',
-      조각: 'sculpture',
-      도자공예: 'ceramics-craft',
-      사진: 'photography',
-      아트프린트: 'art-print',
-      혼합매체: 'mixed-media',
-      디지털아트: 'digital-art',
-    };
     // 기존 한글 인코딩 카테고리 URL(ko/en) → ASCII slug 308 흡수 (색인 자산 보존).
-    const categoryRedirects = Object.entries(CATEGORY_SLUG_MAP).flatMap(([ko, slug]) => {
+    const categoryRedirects = Object.entries(categorySlugMap).flatMap(([ko, slug]) => {
       const enc = encodeURIComponent(ko);
       return [
         { source: `/artworks/category/${enc}`, destination: `/artworks/category/${slug}`, permanent: true },

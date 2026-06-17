@@ -8,6 +8,7 @@ import { sendPetitionReceipt } from '@/lib/petition/mail';
 import { PETITION_OH_YOON_PATH, PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
 import { isValidRegionPair } from '@/lib/petition/regions';
 import { SITE_URL } from '@/lib/constants';
+import { afterAllSettled } from '@/lib/server/after-response';
 import { getRequestMetadata } from './request-metadata';
 
 export interface SignPetitionInput {
@@ -148,11 +149,14 @@ export async function signPetition(input: SignPetitionInput): Promise<SignPetiti
   }
 
   // ─── 4. 서명 확인 메일 (실패해도 서명 자체는 성공으로 응답) ─────
-  void sendPetitionReceipt({
-    to: email,
-    fullName,
-    petitionUrl: `${SITE_URL}${PETITION_OH_YOON_PATH}`,
-  }).catch((err) => console.error('[petition/sign] receipt enqueue failed:', err));
+  afterAllSettled('petition.sign.receipt', [
+    () =>
+      sendPetitionReceipt({
+        to: email,
+        fullName,
+        petitionUrl: `${SITE_URL}${PETITION_OH_YOON_PATH}`,
+      }),
+  ]);
 
   // ─── 5. ISR 카운터 즉시 갱신 ─────────────────────────────────
   try {

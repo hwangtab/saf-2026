@@ -9,6 +9,7 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveEnRobots } from '@/lib/en-indexable';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveLocale } from '@/lib/server-locale';
 import { getSpaceCollections, getCollectionArtworks } from '@/lib/space-collections';
 
@@ -67,6 +68,9 @@ export default async function CollectionsLandingPage({
     { name: t('landingTitle'), url: buildLocaleUrl('/collections', locale) },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const heroImage =
+    getHeroOverride('collections') ??
+    pickListingHeroImage(cards, ({ cover }) => cover?.images?.[0] || undefined);
 
   return (
     <>
@@ -75,6 +79,7 @@ export default async function CollectionsLandingPage({
         title={t('landingTitle')}
         description={t('landingSubtitle')}
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={heroImage}
       />
 
       <Section variant="canvas-soft">

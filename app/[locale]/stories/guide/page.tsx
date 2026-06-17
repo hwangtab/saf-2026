@@ -10,6 +10,7 @@ import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveEnRobots } from '@/lib/en-indexable';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL, CONTACT, OG_IMAGE } from '@/lib/constants';
 import { Link } from '@/i18n/navigation';
@@ -174,6 +175,9 @@ export default async function StoriesGuidePage({
     { name: copy.pageTitle, url: buildLocaleUrl(path, locale) },
   ];
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
+  const heroImage =
+    getHeroOverride('stories/guide') ??
+    pickListingHeroImage(allSpokes, (story) => story.thumbnail || undefined);
 
   const collectionSchema = {
     '@context': 'https://schema.org',
@@ -219,6 +223,7 @@ export default async function StoriesGuidePage({
         title={copy.heroTitle}
         description={copy.heroDescription}
         breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={heroImage}
       />
 
       {/* Answer-first intro prose — featured snippet 후보 */}

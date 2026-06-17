@@ -13,6 +13,7 @@ import { createBreadcrumbSchema, generateArtworkListSchema } from '@/lib/seo-uti
 import { createPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
 import { resolveEnRobots } from '@/lib/en-indexable';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveLocale } from '@/lib/server-locale';
 import { resolveSeoArtworkImageUrl } from '@/lib/schemas/utils';
 import {
@@ -113,13 +114,21 @@ export default async function CollectionDetailPage({
         description: subtitle,
       })
     : null;
+  const heroImage =
+    getHeroOverride(`collections/${slug}`) ??
+    pickListingHeroImage(artworks, (artwork) => artwork.images?.[0] || undefined);
 
   return (
     <>
       <JsonLdScript
         data={itemListSchema ? [breadcrumbSchema, itemListSchema] : [breadcrumbSchema]}
       />
-      <PageHero title={title} description={subtitle} breadcrumbItems={breadcrumbItems} />
+      <PageHero
+        title={title}
+        description={subtitle}
+        breadcrumbItems={breadcrumbItems}
+        customBackgroundImage={heroImage}
+      />
 
       <Section variant="canvas-soft">
         <p className="mx-auto mb-12 max-w-2xl text-center text-lg leading-relaxed text-charcoal-muted text-pretty break-keep">

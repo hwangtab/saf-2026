@@ -48,13 +48,17 @@ describe('buildEventAlimTalkVariables', () => {
     expect(v['#{amount}']).toBe('60,000');
   });
 
-  it('env 매핑은 4종', () => {
+  it('env 매핑은 5종', () => {
     expect(Object.keys(EVENT_ALIMTALK_TEMPLATE_ENV).sort()).toEqual([
+      'deposit_pending',
       'payment_confirmed',
       'refunded',
       'waitlist',
       'waitlist_payment',
     ]);
+    expect(EVENT_ALIMTALK_TEMPLATE_ENV.deposit_pending).toBe(
+      'SOLAPI_KAKAO_TEMPLATE_EVENT_DEPOSIT_PENDING'
+    );
     expect(EVENT_ALIMTALK_TEMPLATE_ENV.refunded).toBe('SOLAPI_KAKAO_TEMPLATE_EVENT_REFUNDED');
   });
 });

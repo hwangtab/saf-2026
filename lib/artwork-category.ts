@@ -1,3 +1,5 @@
+import categorySlugConfig from '@/config/artwork-category-slugs.json';
+
 /** Korean category → English display name */
 export const CATEGORY_EN_MAP: Record<string, string> = {
   회화: 'Painting',
@@ -29,17 +31,7 @@ export const CATEGORY_EN_MAP: Record<string, string> = {
  * (artwork-category.test.ts가 커버리지를 강제).
  */
 export const CATEGORY_SLUG_MAP: Record<string, string> = {
-  회화: 'painting',
-  한국화: 'korean-painting',
-  판화: 'printmaking',
-  사후판화: 'posthumous-print',
-  드로잉: 'drawing',
-  조각: 'sculpture',
-  도자공예: 'ceramics-craft',
-  사진: 'photography',
-  아트프린트: 'art-print',
-  혼합매체: 'mixed-media',
-  디지털아트: 'digital-art',
+  ...categorySlugConfig,
 };
 
 const CATEGORY_SLUG_REVERSE: Record<string, string> = Object.fromEntries(

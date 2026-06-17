@@ -23,6 +23,7 @@ import {
   formatRepresentativeTitle,
 } from '@/lib/orders/representative-artwork';
 import { getClientIp } from '@/lib/security/get-client-ip';
+import { runAllSettled } from '@/lib/server/after-response';
 import { logBuyerAction } from './activity-log-writer';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { verifyOrderAccessToken } from '@/lib/email/order-access-token';
@@ -670,38 +671,47 @@ export async function cancelBuyerOrder(
     after(async () => {
       try {
         const info = await getOrderNotificationInfo(adminClient, { id: order.id });
-        if (info) {
-          void notifyEmail(
-            'warning',
-            '구매자 입금대기 주문 취소 (셀프서비스)',
-            buildAdminNotificationFields(info, { 취소사유: trimmedReason })
-          );
-        }
-        if (order.buyer_email) {
-          void sendBuyerEmail(
-            order.buyer_email,
-            'auto_cancelled',
-            {
-              orderNo: order.order_no,
-              buyerName: order.buyer_name ?? '',
-              artworkTitle: info?.artworkTitle ?? '',
-              artistName: info?.artistName ?? '',
-              amount: order.total_amount,
-            },
-            extractBuyerLocale(order.metadata)
-          );
-        }
-        void sendBuyerSms(
-          info?.buyerPhone,
-          'auto_cancelled',
-          {
-            buyerName: order.buyer_name ?? '',
-            artworkTitle: info?.artworkTitle ?? '',
-            amount: order.total_amount,
-          },
-          extractBuyerLocale(order.metadata),
-          order.order_no
-        );
+        await runAllSettled('cancelBuyerAwaitingOrder.notifications', [
+          ...(info
+            ? [
+                () =>
+                  notifyEmail(
+                    'warning',
+                    '구매자 입금대기 주문 취소 (셀프서비스)',
+                    buildAdminNotificationFields(info, { 취소사유: trimmedReason })
+                  ),
+              ]
+            : []),
+          ...(order.buyer_email
+            ? [
+                () =>
+                  sendBuyerEmail(
+                    order.buyer_email!,
+                    'auto_cancelled',
+                    {
+                      orderNo: order.order_no,
+                      buyerName: order.buyer_name ?? '',
+                      artworkTitle: info?.artworkTitle ?? '',
+                      artistName: info?.artistName ?? '',
+                      amount: order.total_amount,
+                    },
+                    extractBuyerLocale(order.metadata)
+                  ),
+              ]
+            : []),
+          () =>
+            sendBuyerSms(
+              info?.buyerPhone,
+              'auto_cancelled',
+              {
+                buyerName: order.buyer_name ?? '',
+                artworkTitle: info?.artworkTitle ?? '',
+                amount: order.total_amount,
+              },
+              extractBuyerLocale(order.metadata),
+              order.order_no
+            ),
+        ]);
       } catch (err) {
         console.error('[cancelBuyerOrder] awaiting cancel email failed:', err);
       }
@@ -822,41 +832,49 @@ export async function cancelBuyerOrder(
     try {
       const info = await getOrderNotificationInfo(adminClient, { id: order.id });
 
-      if (info) {
-        void notifyEmail(
-          'warning',
-          '구매자 주문 취소 (셀프서비스)',
-          buildAdminNotificationFields(info, { 취소사유: trimmedReason })
-        );
-      }
-
-      if (order.buyer_email) {
-        void sendBuyerEmail(
-          order.buyer_email,
-          'refunded',
-          {
-            orderNo: order.order_no,
-            buyerName: order.buyer_name ?? '',
-            artworkTitle: info?.artworkTitle ?? '',
-            artistName: info?.artistName ?? '',
-            amount: order.total_amount,
-            itemAmount: info?.itemAmount,
-            shippingAmount: info?.shippingAmount,
-          },
-          extractBuyerLocale(order.metadata)
-        );
-      }
-      void sendBuyerSms(
-        info?.buyerPhone,
-        'refunded',
-        {
-          buyerName: order.buyer_name ?? '',
-          artworkTitle: info?.artworkTitle ?? '',
-          amount: order.total_amount,
-        },
-        extractBuyerLocale(order.metadata),
-        order.order_no
-      );
+      await runAllSettled('cancelBuyerPaidOrder.notifications', [
+        ...(info
+          ? [
+              () =>
+                notifyEmail(
+                  'warning',
+                  '구매자 주문 취소 (셀프서비스)',
+                  buildAdminNotificationFields(info, { 취소사유: trimmedReason })
+                ),
+            ]
+          : []),
+        ...(order.buyer_email
+          ? [
+              () =>
+                sendBuyerEmail(
+                  order.buyer_email!,
+                  'refunded',
+                  {
+                    orderNo: order.order_no,
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: info?.artworkTitle ?? '',
+                    artistName: info?.artistName ?? '',
+                    amount: order.total_amount,
+                    itemAmount: info?.itemAmount,
+                    shippingAmount: info?.shippingAmount,
+                  },
+                  extractBuyerLocale(order.metadata)
+                ),
+            ]
+          : []),
+        () =>
+          sendBuyerSms(
+            info?.buyerPhone,
+            'refunded',
+            {
+              buyerName: order.buyer_name ?? '',
+              artworkTitle: info?.artworkTitle ?? '',
+              amount: order.total_amount,
+            },
+            extractBuyerLocale(order.metadata),
+            order.order_no
+          ),
+      ]);
     } catch (err) {
       console.error('[cancelBuyerOrder] email failed:', err);
     }
