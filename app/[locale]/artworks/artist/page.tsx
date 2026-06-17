@@ -15,6 +15,7 @@ import { createBreadcrumbSchema } from '@/lib/seo-utils';
 import { getSupabaseArtworks, getSupabaseStoriesLight } from '@/lib/supabase-data';
 import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { getPrimaryStorySlug } from '@/lib/artist-story-map';
+import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
 import { SITE_URL, CONTACT } from '@/lib/constants';
 import type { Artwork } from '@/types';
@@ -131,6 +132,9 @@ export default async function ArtistsIndexPage({ params }: { params: Promise<Loc
   const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
 
   const pageUrl = buildLocaleUrl('/artworks/artist', locale);
+  const heroImage =
+    getHeroOverride('artworks/artist') ??
+    pickListingHeroImage(artists, (artist) => artist.cover.images?.[0] || undefined);
 
   // 매체 hub about entity — 작가 인덱스도 4 매체 hub와 schema 연결(작품수 top 4).
   const aboutHubs = mediumHubCards.map((card) => ({
@@ -196,6 +200,7 @@ export default async function ArtistsIndexPage({ params }: { params: Promise<Loc
           title={t('title')}
           description={t('heroDescription', { artistCount })}
           breadcrumbItems={breadcrumbItems}
+          customBackgroundImage={heroImage}
         />
 
         <Section variant="white" padding="none" className="pt-8 md:pt-10 pb-4">
