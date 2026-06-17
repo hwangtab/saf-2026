@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { setErrorHeaderActive } from '@/lib/error-header-signal';
 
 interface ErrorViewProps {
   /** Visual indicator. Pass a lucide icon component or any ReactNode. */
@@ -31,6 +32,13 @@ export default function ErrorView({
   useEffect(() => {
     console.error(error);
   }, [error]);
+
+  // 에러 화면이 떠 있는 동안 헤더를 solid로 강제 — hero 라우트의 투명(흰 글씨) 헤더가
+  // 흰 에러 배경에 묻히는 것 방지. 언마운트(reset/이동) 시 원복.
+  useEffect(() => {
+    setErrorHeaderActive(true);
+    return () => setErrorHeaderActive(false);
+  }, []);
 
   return (
     <div className="min-h-[100svh] flex items-center justify-center p-4">
