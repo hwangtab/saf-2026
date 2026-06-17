@@ -61,6 +61,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  @supports not (overflow: clip) {
+    html,
+    body {
+      overflow-x: hidden;
+    }
+  }
+
+  body {
+    position: relative;
+  }
+}
+
 @layer components {
   .container-max {
     @apply max-w-screen-xl mx-auto px-4 sm:px-5;
