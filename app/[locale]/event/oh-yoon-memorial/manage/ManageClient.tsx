@@ -23,6 +23,7 @@ const STATUS_KEY: Record<EventRegistrationView['status'], string> = {
   waitlist: 'manageStatusWaitlist',
   cancelled: 'manageStatusCancelled',
   expired: 'manageStatusExpired',
+  awaiting_deposit: 'manageStatusAwaitingDeposit',
 };
 
 type Step = 'phone' | 'code' | 'result';
@@ -74,15 +75,24 @@ export default function ManageClient() {
       const res = await selfRefundEventRegistration(phone, code);
       if (res.ok) {
         setRefunded(true);
-        setReg(
-          res.registration ?? {
-            ...reg,
-            status: 'cancelled',
-            refundable: false,
-            refundClosed: false,
-          }
-        );
+        setReg(res.registration ?? { ...reg, status: 'cancelled' });
         setNotice(t('manageRefunded'));
+      } else {
+        setNotice(res.message ?? t('manageError'));
+      }
+    });
+  }
+
+  // 무통장 미입금 본인 취소 (환불 없이 좌석 반납) — 동일 액션, 안내 문구만 다름.
+  function cancelDeposit() {
+    if (pending || !reg) return;
+    if (!window.confirm(t('manageCancelConfirm'))) return;
+    startTransition(async () => {
+      const res = await selfRefundEventRegistration(phone, code);
+      if (res.ok) {
+        setRefunded(true);
+        setReg(res.registration ?? { ...reg, status: 'cancelled' });
+        setNotice(t('manageCancelled'));
       } else {
         setNotice(res.message ?? t('manageError'));
       }
@@ -209,7 +219,23 @@ export default function ManageClient() {
                 </p>
               )}
 
-              {!refunded && reg.status !== 'confirmed' && (
+              {!refunded && reg.cancellable && (
+                <div className="mt-5">
+                  <button
+                    type="button"
+                    onClick={cancelDeposit}
+                    disabled={pending}
+                    className="w-full rounded-full border-2 border-danger bg-white px-6 py-3 text-base font-semibold text-danger-a11y transition hover:bg-danger/5 disabled:opacity-50"
+                  >
+                    {pending ? t('manageCancelling') : t('manageCancelBtn')}
+                  </button>
+                  <p className="mt-2 text-xs text-charcoal-muted break-keep">
+                    {t('manageCancelNote')}
+                  </p>
+                </div>
+              )}
+
+              {!refunded && !reg.refundable && !reg.refundClosed && !reg.cancellable && (
                 <p className="mt-5 text-sm text-charcoal-muted break-keep">
                   {t('manageNotRefundable')}
                 </p>

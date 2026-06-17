@@ -28,9 +28,11 @@ export interface EventRegistrationView {
   applicantName: string;
   partySize: number;
   amount: number;
-  status: 'pending' | 'confirmed' | 'waitlist' | 'cancelled' | 'expired';
+  status: 'pending' | 'confirmed' | 'waitlist' | 'cancelled' | 'expired' | 'awaiting_deposit';
   refundable: boolean;
   refundClosed: boolean;
+  /** 무통장 입금대기(미결제) — 환불 없이 본인 취소 가능. */
+  cancellable: boolean;
 }
 
 export type EventSelfCode =
@@ -73,12 +75,13 @@ export async function requestEventRefundCode(phoneRaw: string): Promise<EventSel
   }
 
   const supabase = createSupabaseAdminClient();
-  // 해당 번호의 확정 신청 존재 확인 (없으면 발송하지 않음 — 문자 폭탄 방지)
+  // 해당 번호의 조회·취소 가능 신청 존재 확인 (없으면 발송하지 않음 — 문자 폭탄 방지).
+  // confirmed(결제완료, 환불 대상) + awaiting_deposit(무통장 미입금, 취소 대상) 모두 포함.
   const { data: regs, error } = await supabase
     .from('event_registrations')
     .select('id, phone, status')
     .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
-    .eq('status', 'confirmed');
+    .in('status', ['confirmed', 'awaiting_deposit']);
   if (error) {
     console.error('[event-self] code lookup error:', error);
     return { ok: false, code: 'INTERNAL_ERROR', message: '처리 중 오류가 발생했습니다.' };
@@ -88,7 +91,7 @@ export async function requestEventRefundCode(phoneRaw: string): Promise<EventSel
     return {
       ok: false,
       code: 'NOT_FOUND',
-      message: '해당 번호로 결제 완료된 신청을 찾을 수 없습니다.',
+      message: '해당 번호로 조회 가능한 신청을 찾을 수 없습니다.',
     };
   }
 
@@ -115,7 +118,7 @@ export async function requestEventRefundCode(phoneRaw: string): Promise<EventSel
 
   const sms = await sendSolapiSms({
     to: phone,
-    text: `[씨앗페] 오윤 추도식 환불 인증번호 ${code} (5분 내 입력)`,
+    text: `[씨앗페] 오윤 추도식 신청 조회·취소 인증번호 ${code} (5분 내 입력)`,
   });
   // 'not-configured'(env 미설정 dev)는 통과, 그 외 발송 실패만 에러
   if (!sms.ok && sms.error !== 'not-configured') {
@@ -195,6 +198,8 @@ function viewOf(reg: {
     status,
     refundable: status === 'confirmed' && open,
     refundClosed: status === 'confirmed' && !open,
+    // 무통장 미입금은 결제 전이라 환불 없이 언제든 본인 취소 가능(좌석만 반납).
+    cancellable: status === 'awaiting_deposit',
   };
 }
 
@@ -223,12 +228,12 @@ export async function verifyEventRefundCode(
   const supabase = createSupabaseAdminClient();
   const { data: regs } = await supabase
     .from('event_registrations')
-    .select('applicant_name, phone, party_size, amount, status, paid_at')
+    .select('applicant_name, phone, party_size, amount, status, created_at')
     .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
-    .eq('status', 'confirmed')
-    .order('paid_at', { ascending: false });
+    .in('status', ['confirmed', 'awaiting_deposit'])
+    .order('created_at', { ascending: false });
   const reg = (regs ?? []).find((r) => digits(r.phone) === phone);
-  if (!reg) return { ok: false, code: 'NOT_FOUND', message: '확정된 신청을 찾을 수 없습니다.' };
+  if (!reg) return { ok: false, code: 'NOT_FOUND', message: '신청 내역을 찾을 수 없습니다.' };
 
   return { ok: true, code: 'OK', registration: viewOf(reg) };
 }
@@ -260,11 +265,54 @@ export async function selfRefundEventRegistration(
     .from('event_registrations')
     .select('id, order_no, phone, applicant_name, party_size, amount, status, payment_key')
     .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
-    .eq('status', 'confirmed')
-    .order('paid_at', { ascending: false });
+    .in('status', ['confirmed', 'awaiting_deposit'])
+    .order('created_at', { ascending: false });
   const reg = (regs ?? []).find((r) => digits(r.phone) === phone);
   if (!reg)
-    return { ok: false, code: 'NOT_REFUNDABLE', message: '환불 가능한 신청을 찾을 수 없습니다.' };
+    return { ok: false, code: 'NOT_REFUNDABLE', message: '취소 가능한 신청을 찾을 수 없습니다.' };
+
+  // 무통장 입금대기(미결제) — 토스 환불 없이 좌석만 반납하고 취소.
+  if (reg.status === 'awaiting_deposit') {
+    const { data: cancelled, error: cancelErr } = await supabase
+      .from('event_registrations')
+      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+      .eq('id', reg.id)
+      .eq('status', 'awaiting_deposit')
+      .select('id');
+    if (cancelErr || !cancelled || cancelled.length === 0) {
+      return {
+        ok: false,
+        code: 'INTERNAL_ERROR',
+        message: '취소 처리 중 문제가 발생했습니다. 사무국으로 문의해 주세요.',
+      };
+    }
+    await supabase
+      .from('event_phone_verifications')
+      .update({ consumed: true })
+      .eq('event_slug', OH_YOON_MEMORIAL_SLUG)
+      .eq('phone', phone)
+      .eq('consumed', false);
+
+    revalidatePath(OH_YOON_MEMORIAL_PATH);
+    revalidatePath(`/en${OH_YOON_MEMORIAL_PATH}`);
+    revalidatePath(OH_YOON_MEMORIAL_ADMIN_PATH);
+
+    after(() =>
+      notifyEmail('info', '추도식 무통장 신청 본인 취소', {
+        신청자: reg.applicant_name,
+        주문번호: reg.order_no ?? '',
+        인원: `${reg.party_size}명`,
+      })
+    );
+
+    return {
+      ok: true,
+      code: 'OK',
+      message: '신청이 취소되었습니다.',
+      registration: viewOf({ ...reg, status: 'cancelled' }),
+    };
+  }
+
   if (!isRefundOpen()) {
     return {
       ok: false,
