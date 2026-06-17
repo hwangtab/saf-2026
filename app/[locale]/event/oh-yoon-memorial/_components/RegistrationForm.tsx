@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import { registerEvent } from '@/app/actions/event-registration';
-import { resumeEventPayment } from '@/app/actions/event-admin';
+import { resumeEventPayment, cancelEventPendingPayment } from '@/app/actions/event-admin';
 
 const INPUT_BASE =
   'w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-charcoal-deep ' +
@@ -74,20 +74,30 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
     const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
     const tossPayments = await loadTossPayments(clientKey);
     const tossPayment = tossPayments.payment({ customerKey: payment.orderNo });
-    await tossPayment.requestPayment({
-      method: 'CARD',
-      amount: { currency: 'KRW', value: payment.amount },
-      orderId: payment.orderNo,
-      orderName: payment.orderName,
-      customerName: payment.customerName ?? applicantName,
-      ...((payment.customerEmail ?? email)
-        ? { customerEmail: payment.customerEmail ?? email }
-        : {}),
-      successUrl,
-      failUrl,
-    });
-    // redirect 진행 중 — 페이지 unload까지 대기
-    await new Promise(() => {});
+    try {
+      await tossPayment.requestPayment({
+        method: 'CARD',
+        amount: { currency: 'KRW', value: payment.amount },
+        orderId: payment.orderNo,
+        orderName: payment.orderName,
+        customerName: payment.customerName ?? applicantName,
+        ...((payment.customerEmail ?? email)
+          ? { customerEmail: payment.customerEmail ?? email }
+          : {}),
+        successUrl,
+        failUrl,
+      });
+      // redirect 진행 중 — 페이지 unload까지 대기
+      await new Promise(() => {});
+    } catch (err) {
+      // Toss SDK v2 에러는 { code, message }. 사용자가 결제창을 닫으면 USER_CANCEL —
+      // 에러 화면 대신 폼을 그대로 유지하고, 잡아둔 좌석(pending hold)은 즉시 반환한다.
+      // (try/catch 없으면 rejection이 error 경계로 전파돼 흰 에러 화면 + hero 헤더 가림 발생.)
+      const e = err as { code?: string; message?: string };
+      void cancelEventPendingPayment(payment.orderNo, e?.code ?? 'USER_CANCEL');
+      if (e?.code === 'USER_CANCEL') return;
+      setResult({ ok: false, code: 'INTERNAL_ERROR', message: t('errorGeneric') });
+    }
   }
 
   useEffect(() => {
