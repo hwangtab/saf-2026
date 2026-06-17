@@ -74,4 +74,7 @@ async function main() {
   console.log(`[measure-hero-images] 갱신 완료 — ${candidates.length}개 후보`);
 }
 
-main();
+main().catch((err) => {
+  console.warn('[measure-hero-images] 예기치 못한 오류 — 측정 건너뜀(빌드 비차단):', err.message);
+  process.exit(0);
+});
