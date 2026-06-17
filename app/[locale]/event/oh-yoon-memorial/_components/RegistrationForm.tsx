@@ -38,6 +38,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
   const [partyStr, setPartyStr] = useState('1');
   const [boardingConfirmed, setBoarding] = useState(false);
   const [agreedPrivacy, setAgreed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer'>('card');
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<RegisterEventResultState | null>(null);
   const [resumePayment, setResumePayment] = useState<{
@@ -120,9 +121,10 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
         partySize,
         boardingConfirmed,
         agreedPrivacy,
+        paymentMethod,
       });
       setResult(res);
-      if (res.ok && res.code === 'OK_PENDING' && res.payment) {
+      if (res.ok && res.code === 'OK_PENDING' && 'payment' in res && res.payment) {
         await startTossPayment(res.payment);
       }
     });
@@ -136,6 +138,44 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
       >
         <h3 className="font-display text-2xl font-bold text-charcoal-deep">{t('waitlistTitle')}</h3>
         <p className="mt-3 text-charcoal">{t('waitlistBody')}</p>
+      </div>
+    );
+  }
+
+  if (result?.ok && result.code === 'OK_DEPOSIT' && 'deposit' in result && result.deposit) {
+    const d = result.deposit;
+    return (
+      <div
+        className="mt-6 rounded-xl border border-primary/30 bg-white px-6 py-8"
+        aria-live="polite"
+      >
+        <h3 className="text-center font-display text-2xl font-bold text-charcoal-deep">
+          {t('depositTitle')}
+        </h3>
+        <p className="mt-3 text-center text-charcoal break-keep">{t('depositLead')}</p>
+        <dl className="mt-6 space-y-2 rounded-lg bg-canvas p-5 text-sm">
+          <div className="flex justify-between gap-4">
+            <dt className="text-charcoal-muted">{t('depositBankLabel')}</dt>
+            <dd className="font-semibold text-charcoal-deep">{d.bank}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-charcoal-muted">{t('depositAccountLabel')}</dt>
+            <dd className="font-bold text-charcoal-deep">{d.account}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-charcoal-muted">{t('depositHolderLabel')}</dt>
+            <dd className="font-semibold text-charcoal-deep">{d.holder}</dd>
+          </div>
+          <div className="flex justify-between gap-4 border-t border-gray-200 pt-2">
+            <dt className="text-charcoal-muted">{t('depositAmountLabel')}</dt>
+            <dd className="font-bold text-primary-strong">
+              {t('formFeeSummary', { amount: d.amount.toLocaleString('ko-KR') })}
+            </dd>
+          </div>
+        </dl>
+        <p className="mt-4 text-center text-sm text-charcoal-muted break-keep">
+          {t('depositNotice')}
+        </p>
       </div>
     );
   }
@@ -263,6 +303,51 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
         {err('agreedPrivacy') && <p className={ERROR_TEXT}>{err('agreedPrivacy')}</p>}
       </fieldset>
 
+      {canSeat && (
+        <fieldset className="space-y-2">
+          <legend className={LABEL_BASE}>{t('paymentMethodLabel')}</legend>
+          <div className="grid grid-cols-2 gap-2">
+            <label
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm font-semibold transition ${
+                paymentMethod === 'card'
+                  ? 'border-primary bg-primary-surface text-primary-strong'
+                  : 'border-gray-300 bg-white text-charcoal'
+              }`}
+            >
+              <input
+                type="radio"
+                name="ev-payment"
+                value="card"
+                checked={paymentMethod === 'card'}
+                onChange={() => setPaymentMethod('card')}
+                className="sr-only"
+              />
+              {t('paymentMethodCard')}
+            </label>
+            <label
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm font-semibold transition ${
+                paymentMethod === 'transfer'
+                  ? 'border-primary bg-primary-surface text-primary-strong'
+                  : 'border-gray-300 bg-white text-charcoal'
+              }`}
+            >
+              <input
+                type="radio"
+                name="ev-payment"
+                value="transfer"
+                checked={paymentMethod === 'transfer'}
+                onChange={() => setPaymentMethod('transfer')}
+                className="sr-only"
+              />
+              {t('paymentMethodTransfer')}
+            </label>
+          </div>
+          {paymentMethod === 'transfer' && (
+            <p className="text-xs text-charcoal-muted break-keep">{t('paymentTransferHelp')}</p>
+          )}
+        </fieldset>
+      )}
+
       <p className="text-right text-sm font-semibold text-charcoal-deep">
         {t('formFeeSummary', { amount: amount.toLocaleString('ko-KR') })}
       </p>
@@ -301,7 +386,13 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
       )}
 
       <Button type="submit" variant="primary" size="lg" disabled={pending} className="w-full">
-        {pending ? t('submitting') : canSeat ? t('submitPay') : t('submitWaitlist')}
+        {pending
+          ? t('submitting')
+          : !canSeat
+            ? t('submitWaitlist')
+            : paymentMethod === 'transfer'
+              ? t('submitTransfer')
+              : t('submitPay')}
       </Button>
     </form>
   );

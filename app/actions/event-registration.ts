@@ -12,6 +12,9 @@ import {
   OH_YOON_MEMORIAL_SLUG,
   OH_YOON_MEMORIAL_PATH,
   OH_YOON_MEMORIAL_HOLD_MINUTES,
+  OH_YOON_MEMORIAL_BANK,
+  OH_YOON_MEMORIAL_BANK_ACCOUNT,
+  OH_YOON_MEMORIAL_BANK_HOLDER,
 } from '@/content/events/oh-yoon-memorial';
 
 function normalizeRegisterEventInput(input: unknown): RegisterEventInput {
@@ -34,6 +37,7 @@ function normalizeRegisterEventInput(input: unknown): RegisterEventInput {
     partySize: Number.isFinite(partySize) ? partySize : 0,
     boardingConfirmed: candidate.boardingConfirmed === true,
     agreedPrivacy: candidate.agreedPrivacy === true,
+    paymentMethod: candidate.paymentMethod === 'transfer' ? 'transfer' : 'card',
   };
 }
 
@@ -55,20 +59,24 @@ export async function registerEvent(input: unknown) {
   const phone = payload.phone.trim();
   const email = payload.email?.trim() ?? '';
 
+  const isTransfer = payload.paymentMethod === 'transfer';
   const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase.rpc('register_event_seat', {
-    p_payload: {
-      event_slug: OH_YOON_MEMORIAL_SLUG,
-      applicant_name: name,
-      phone,
-      email,
-      party_size: payload.partySize,
-      boarding_confirmed: payload.boardingConfirmed,
-      agreed_privacy: payload.agreedPrivacy,
-      hold_minutes: OH_YOON_MEMORIAL_HOLD_MINUTES,
-      user_agent: meta.userAgent ?? null,
-    },
-  });
+  const { data, error } = await supabase.rpc(
+    isTransfer ? 'register_event_bank_transfer' : 'register_event_seat',
+    {
+      p_payload: {
+        event_slug: OH_YOON_MEMORIAL_SLUG,
+        applicant_name: name,
+        phone,
+        email,
+        party_size: payload.partySize,
+        boarding_confirmed: payload.boardingConfirmed,
+        agreed_privacy: payload.agreedPrivacy,
+        hold_minutes: OH_YOON_MEMORIAL_HOLD_MINUTES,
+        user_agent: meta.userAgent ?? null,
+      },
+    }
+  );
 
   if (error) {
     console.error('[event-register] rpc error:', error);
@@ -124,7 +132,47 @@ export async function registerEvent(input: unknown) {
     return { ok: true, code: 'OK_WAITLIST', message: '대기자로 등록되었습니다.' };
   }
 
-  // pending → 결제창으로
+  // 무통장입금(awaiting_deposit) → 입금 안내. 좌석은 이미 확보됨.
+  if (r.status === 'awaiting_deposit') {
+    const amount = r.amount ?? payload.partySize * 30000;
+    after(async () => {
+      await Promise.allSettled([
+        sendEventSms(phone, 'deposit_pending', { name, partySize: payload.partySize, amount }),
+        ...(email
+          ? [
+              sendEventEmail(email, 'deposit_pending', {
+                name,
+                partySize: payload.partySize,
+                amount,
+                orderNo: r.order_no,
+              }),
+            ]
+          : []),
+        // 관리자 알림 — 무통장 신청 접수(입금 대기)
+        notifyEmail('info', '추도식 무통장 신청 접수(입금 대기)', {
+          신청자: name,
+          인원: `${payload.partySize}명`,
+          회비: `${amount.toLocaleString('ko-KR')}원`,
+          연락처: phone,
+          주문번호: r.order_no ?? '',
+          명단: 'https://www.saf2026.com/admin/event/oh-yoon-memorial',
+        }),
+      ]);
+    });
+    return {
+      ok: true,
+      code: 'OK_DEPOSIT',
+      deposit: {
+        orderNo: r.order_no!,
+        amount,
+        bank: OH_YOON_MEMORIAL_BANK,
+        account: OH_YOON_MEMORIAL_BANK_ACCOUNT,
+        holder: OH_YOON_MEMORIAL_BANK_HOLDER,
+      },
+    };
+  }
+
+  // pending → 결제창으로 (카드)
   return {
     ok: true,
     code: 'OK_PENDING',

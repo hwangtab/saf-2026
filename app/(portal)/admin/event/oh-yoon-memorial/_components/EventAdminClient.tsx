@@ -6,6 +6,7 @@ import {
   cancelRegistration,
   refundConfirmedRegistration,
   sendWaitlistPaymentLink,
+  confirmBankTransferDeposit,
   updateCapacity,
   exportConfirmedCsv,
 } from '@/app/actions/event-admin';
@@ -39,6 +40,7 @@ const STATUS_LABEL: Record<string, string> = {
   waitlist: '대기',
   cancelled: '취소',
   expired: '만료',
+  awaiting_deposit: '입금대기(무통장)',
 };
 
 function won(n: number) {
@@ -221,7 +223,26 @@ export default function EventAdminClient({
                           환불취소
                         </button>
                       )}
-                      {(r.status === 'waitlist' || r.status === 'pending') && (
+                      {r.status === 'awaiting_deposit' && (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          className="mr-2 text-success-a11y underline"
+                          onClick={() => {
+                            if (!window.confirm('입금이 확인되었습니까? 참가를 확정합니다.'))
+                              return;
+                            run(
+                              () => confirmBankTransferDeposit(r.id),
+                              '입금 확인 — 확정되었습니다'
+                            );
+                          }}
+                        >
+                          입금확인
+                        </button>
+                      )}
+                      {(r.status === 'waitlist' ||
+                        r.status === 'pending' ||
+                        r.status === 'awaiting_deposit') && (
                         <button
                           type="button"
                           disabled={pending}

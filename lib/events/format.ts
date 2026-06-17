@@ -1,6 +1,14 @@
 /** 행사 발송·검증의 순수 헬퍼. 서버/이메일/DB 의존성 없음 — 단위 테스트 가능. */
 
-export type EventNotifyType = 'payment_confirmed' | 'waitlist' | 'waitlist_payment' | 'refunded';
+export type EventNotifyType =
+  | 'payment_confirmed'
+  | 'waitlist'
+  | 'waitlist_payment'
+  | 'refunded'
+  | 'deposit_pending';
+
+/** 결제 수단. card=토스 카드 즉시결제, transfer=무통장입금(계좌이체). */
+export type EventPaymentMethod = 'card' | 'transfer';
 
 export interface EventNotifyData {
   name: string;
@@ -22,6 +30,7 @@ export const EVENT_ALIMTALK_TEMPLATE_ENV: Record<EventNotifyType, string> = {
   waitlist: 'SOLAPI_KAKAO_TEMPLATE_EVENT_WAITLIST',
   waitlist_payment: 'SOLAPI_KAKAO_TEMPLATE_EVENT_WAITLIST_PAYMENT',
   refunded: 'SOLAPI_KAKAO_TEMPLATE_EVENT_REFUNDED',
+  deposit_pending: 'SOLAPI_KAKAO_TEMPLATE_EVENT_DEPOSIT_PENDING',
 };
 
 export function buildEventAlimTalkVariables(
@@ -50,6 +59,12 @@ export function buildEventAlimTalkVariables(
         '#{partySize}': String(d.partySize),
         '#{amount}': won(d.amount),
       };
+    case 'deposit_pending':
+      return {
+        '#{name}': d.name,
+        '#{partySize}': String(d.partySize),
+        '#{amount}': won(d.amount),
+      };
   }
 }
 
@@ -60,6 +75,8 @@ export interface RegisterEventInput {
   partySize: number;
   boardingConfirmed: boolean;
   agreedPrivacy: boolean;
+  /** 결제 수단 (기본 card). transfer=무통장입금. */
+  paymentMethod: EventPaymentMethod;
 }
 
 /** 신청 입력 검증. 에러가 없으면 빈 객체. */

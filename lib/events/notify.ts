@@ -7,6 +7,12 @@ import EventPaymentConfirmedEmail from '@/emails/event-payment-confirmed';
 import EventWaitlistEmail from '@/emails/event-waitlist';
 import EventWaitlistPaymentEmail from '@/emails/event-waitlist-payment';
 import EventRefundedEmail from '@/emails/event-refunded';
+import EventDepositPendingEmail from '@/emails/event-deposit-pending';
+import {
+  OH_YOON_MEMORIAL_BANK,
+  OH_YOON_MEMORIAL_BANK_ACCOUNT,
+  OH_YOON_MEMORIAL_BANK_HOLDER,
+} from '@/content/events/oh-yoon-memorial';
 import {
   EVENT_ALIMTALK_TEMPLATE_ENV,
   buildEventAlimTalkVariables,
@@ -33,6 +39,8 @@ function buildEventSmsText(type: EventNotifyType, d: EventNotifyData): string {
       return `[씨앗페] ${d.name}님, 추도식에 자리가 생겼습니다. (인원 ${d.partySize}명 / 회비 ${won(d.amount)}원) ${d.deadline ?? ''}까지 결제하시면 확정됩니다: ${d.paymentUrl ?? ''}`;
     case 'refunded':
       return `[씨앗페] ${d.name}님, 오윤 40주기 추도식 회비(${won(d.amount)}원)가 전액 환불 처리되었습니다. 자리가 마감되어 결제하신 금액을 돌려드립니다. 너른 양해 부탁드립니다.`;
+    case 'deposit_pending':
+      return `[씨앗페] ${d.name}님, 오윤 40주기 추도식 신청이 접수되었습니다. 아래 계좌로 회비 ${won(d.amount)}원(${d.partySize}명)을 입금해 주세요. ${OH_YOON_MEMORIAL_BANK} ${OH_YOON_MEMORIAL_BANK_ACCOUNT} (예금주 ${OH_YOON_MEMORIAL_BANK_HOLDER}). 입금자명은 신청자명과 동일하게. 입금 확인 후 확정됩니다.`;
   }
 }
 
@@ -101,6 +109,7 @@ const EVENT_EMAIL_SUBJECTS: Record<EventNotifyType, string> = {
   waitlist: '[씨앗페] 오윤 40주기 추도식 대기 신청 접수',
   waitlist_payment: '[씨앗페] 오윤 40주기 추도식 좌석 안내',
   refunded: '[씨앗페] 오윤 40주기 추도식 회비 환불 안내',
+  deposit_pending: '[씨앗페] 오윤 40주기 추도식 입금 안내',
 };
 
 /** 행사 이메일(이메일 입력 시에만). never throw. */
@@ -130,6 +139,13 @@ export async function sendEventEmail(
       });
     } else if (type === 'refunded') {
       el = React.createElement(EventRefundedEmail, {
+        name: data.name,
+        partySize: data.partySize,
+        amount: data.amount,
+        orderNo: data.orderNo,
+      });
+    } else if (type === 'deposit_pending') {
+      el = React.createElement(EventDepositPendingEmail, {
         name: data.name,
         partySize: data.partySize,
         amount: data.amount,

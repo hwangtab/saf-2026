@@ -2367,6 +2367,7 @@ export type Database = {
         Args: { p_amount: number; p_order_no: string; p_payment_key: string };
         Returns: Json;
       };
+      confirm_event_bank_transfer: { Args: { p_id: string }; Returns: Json };
       count_artwork_buyer_audience: {
         Args: { p_advertising: boolean; p_artwork_id: string; p_salt: string };
         Returns: number;
@@ -2874,6 +2875,7 @@ export type Database = {
       };
       purge_petitions_expired: { Args: never; Returns: Json };
       register_event_seat: { Args: { p_payload: Json }; Returns: Json };
+      register_event_bank_transfer: { Args: { p_payload: Json }; Returns: Json };
       promote_waitlist_event_registration: {
         Args: { p_id: string; p_hold_minutes?: number };
         Returns: Json;
