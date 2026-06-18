@@ -1,0 +1,2066 @@
+{
+  "generatedAt": "2026-06-15T08:53:53.975Z",
+  "dateRange": {
+    "startDate": "2026-05-16",
+    "endDate": "2026-06-12"
+  },
+  "source": {
+    "analyticsUrls": 250,
+    "sitemapUrls": 823,
+    "targetUrls": 60
+  },
+  "totals": {
+    "inspectedUrls": 60,
+    "indexedUrls": 40,
+    "richResultPassUrls": 38,
+    "richResultFailUrls": 2,
+    "errorIssues": 4,
+    "warningIssues": 25,
+    "failedInspections": 0
+  },
+  "issueGroups": [
+    {
+      "priority": "P1",
+      "severity": "ERROR",
+      "richResultType": "FAQ",
+      "message": "Duplicate field \"FAQPage\"",
+      "count": 4,
+      "urls": [
+        "https://www.saf2026.com/artworks/0169e066-9557-4129-a61f-4d369066dca8",
+        "https://www.saf2026.com/artworks/01e6de61-d2bf-4d56-80a0-83cc081ddb18"
+      ],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    },
+    {
+      "priority": "P2",
+      "severity": "WARNING",
+      "richResultType": "Image Metadata",
+      "message": "Missing field \"creditText\"",
+      "count": 6,
+      "urls": [
+        "https://www.saf2026.com/artworks/01ecbea9-e777-4ccd-8180-7b9e135ca966",
+        "https://www.saf2026.com/artworks/0427c48e-0b9c-4408-99a9-bae911dd9791",
+        "https://www.saf2026.com/artworks/057f7ba7-9d90-4551-8feb-0505bc738d78",
+        "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f",
+        "https://www.saf2026.com/artworks/0d8e82e0-b268-4159-9f15-aaf68ddfa5fe",
+        "https://www.saf2026.com/artworks/0fa23930-184b-4516-9f10-a454864457a7"
+      ],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    },
+    {
+      "priority": "P2",
+      "severity": "WARNING",
+      "richResultType": "Image Metadata",
+      "message": "Missing field \"copyrightNotice\"",
+      "count": 6,
+      "urls": [
+        "https://www.saf2026.com/artworks/01ecbea9-e777-4ccd-8180-7b9e135ca966",
+        "https://www.saf2026.com/artworks/0427c48e-0b9c-4408-99a9-bae911dd9791",
+        "https://www.saf2026.com/artworks/057f7ba7-9d90-4551-8feb-0505bc738d78",
+        "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f",
+        "https://www.saf2026.com/artworks/0d8e82e0-b268-4159-9f15-aaf68ddfa5fe",
+        "https://www.saf2026.com/artworks/0fa23930-184b-4516-9f10-a454864457a7"
+      ],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    },
+    {
+      "priority": "P2",
+      "severity": "WARNING",
+      "richResultType": "Product snippets",
+      "message": "Missing field \"review\"",
+      "count": 5,
+      "urls": [
+        "https://www.saf2026.com/artworks/014cf76d-8b9c-41dd-a335-febf48a9d8a4",
+        "https://www.saf2026.com/artworks/0169e066-9557-4129-a61f-4d369066dca8",
+        "https://www.saf2026.com/artworks/09c52096-0b93-4983-824a-3de19fc517d3",
+        "https://www.saf2026.com/artworks/10",
+        "https://www.saf2026.com/artworks/100e14e5-5934-4d9c-942e-3ae74d20f7f1"
+      ],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    },
+    {
+      "priority": "P2",
+      "severity": "WARNING",
+      "richResultType": "Product snippets",
+      "message": "Missing field \"aggregateRating\"",
+      "count": 5,
+      "urls": [
+        "https://www.saf2026.com/artworks/014cf76d-8b9c-41dd-a335-febf48a9d8a4",
+        "https://www.saf2026.com/artworks/0169e066-9557-4129-a61f-4d369066dca8",
+        "https://www.saf2026.com/artworks/09c52096-0b93-4983-824a-3de19fc517d3",
+        "https://www.saf2026.com/artworks/10",
+        "https://www.saf2026.com/artworks/100e14e5-5934-4d9c-942e-3ae74d20f7f1"
+      ],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    },
+    {
+      "priority": "P2",
+      "severity": "WARNING",
+      "richResultType": "Merchant listings",
+      "message": "Invalid object type for field \"size\"",
+      "count": 1,
+      "urls": ["https://www.saf2026.com/artworks/10"],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    },
+    {
+      "priority": "P2",
+      "severity": "WARNING",
+      "richResultType": "Merchant listings",
+      "message": "Missing field \"shippingDetails\"",
+      "count": 1,
+      "urls": ["https://www.saf2026.com/artworks/100e14e5-5934-4d9c-942e-3ae74d20f7f1"],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    },
+    {
+      "priority": "P2",
+      "severity": "WARNING",
+      "richResultType": "Merchant listings",
+      "message": "Missing field \"hasMerchantReturnPolicy\"",
+      "count": 1,
+      "urls": ["https://www.saf2026.com/artworks/100e14e5-5934-4d9c-942e-3ae74d20f7f1"],
+      "pageTypes": ["artwork_detail"],
+      "codePointers": ["app/[locale]/artworks/[id]/page.tsx", "lib/schemas/artwork.ts"]
+    }
+  ],
+  "retryUrls": [],
+  "inspectionResults": [
+    {
+      "url": "https://www.saf2026.com/",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/",
+        "userCanonical": "https://www.saf2026.com/"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/009bwxf64qs.2.css?dpl=dpl_DnSw23UkjZiYuyX73xWoj116VCY8",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/045ivr-2n~cws.css?dpl=dpl_DnSw23UkjZiYuyX73xWoj116VCY8",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/09s2k1qpcd9em.css?dpl=dpl_DLtaVc1tybtcASdgkLyqZ4FDjJ45",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0e7u0bu0uqch0.js?dpl=dpl_DpdRz92hQBBSsH11EFBughp4P7Ch",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0i.l9589uvx0j.js?dpl=dpl_2CzFXUjHmgF5drmgkJSNQRj9RyUJ",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0i.l9589uvx0j.js?dpl=dpl_4aKEmd6jSnLPSdK2yHFgqbsPgSGA",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0nbz3qmyj7ohq.css?dpl=dpl_FdRnKrntYJmEiCfvAg2ewhgSzXwU",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0r6vsz0vato09.css?dpl=dpl_DDy4jZS6pWMb5APYmuQRpnk4oUWK",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0s4frhd3.f5.d.css?dpl=dpl_8qerZDHRHw7VhcNF4UzFBBbUQdNS",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0vcs2w3aenjl8.css?dpl=dpl_BD6dqndhmnA5YUN9RCYNd6HHKSDQ",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0x7nm3gcfrr42.css?dpl=dpl_AvAjFHfqH31PFncNjrEt5mSyEy1x",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/0z54ukmq489xl.css?dpl=dpl_FbZbLp683PPvWh6Fjt1Ca4sH2ymD",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/11sbq3_48qump.css?dpl=dpl_Cx3PmFvW6xdsndygqByknK9gvoox",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Blocked by robots.txt",
+        "robotsTxtState": "DISALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "BLOCKED_ROBOTS_TXT",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/_next/static/chunks/17uv5y4pdd3xh.css?dpl=dpl_BGkRsMxf33pn7DoGtNV2tWz9A1h9",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Crawled - currently not indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/about",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/about",
+        "userCanonical": "https://www.saf2026.com/about"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/archive",
+        "userCanonical": "https://www.saf2026.com/archive"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/archive/2023",
+        "userCanonical": "https://www.saf2026.com/archive/2023"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Videos",
+            "items": [
+              {
+                "name": "[씨앗페] Jinu Konda Full Live (2023.3.26 @인디프레스 갤러리)"
+              },
+              {
+                "name": "[씨앗페] 윤장현 Performance (2023.3.24 @인디프레스 갤러리)"
+              },
+              {
+                "name": "[씨앗페] 자이 Full Live (2023.3.26 @오디오가이 스튜디오)"
+              },
+              {
+                "name": "[씨앗페] 윤선애 Full Live (2023.3.26 @인디프레스 갤러리)"
+              },
+              {
+                "name": "이익태 - &#39;피멍&#39; (2023 씨앗페 오프닝 퍼포먼스)"
+              },
+              {
+                "name": "[씨앗페] 호와호 Full Live (2023.3.26 @오디오가이 스튜디오)"
+              },
+              {
+                "name": "[씨앗페] 여유와 설빈 Full Live (2023.3.25 @오디오가이 스튜디오)"
+              },
+              {
+                "name": "[씨앗페] 파르베 Full Live (2023.3.25 @인디프레스 갤러리)"
+              },
+              {
+                "name": "[씨앗페] Launch &amp; Highlights (2023.3.24-26)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/-HicY7-natU",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Discovered - currently not indexed",
+        "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/65QiH2mBHcc",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Discovered - currently not indexed",
+        "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/KK3POxK7U6w",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/archive/2023/videos/KK3POxK7U6w",
+        "userCanonical": "https://www.saf2026.com/archive/2023/videos/KK3POxK7U6w"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Videos",
+            "items": [
+              {
+                "name": "[씨앗페] 자이 Full Live (2023.3.26 @오디오가이 스튜디오)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/Tp8UWQudv50",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "URL is unknown to Google",
+        "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/XL8WAd_WUw0",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/archive/2023/videos/XL8WAd_WUw0",
+        "userCanonical": "https://www.saf2026.com/archive/2023/videos/XL8WAd_WUw0"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Videos",
+            "items": [
+              {
+                "name": "[씨앗페] 윤선애 Full Live (2023.3.26 @인디프레스 갤러리)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/ZFnswRrM01M",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Discovered - currently not indexed",
+        "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/d-LeLZcQ4RA",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/archive/2023/videos/d-LeLZcQ4RA",
+        "userCanonical": "https://www.saf2026.com/archive/2023/videos/d-LeLZcQ4RA"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Videos",
+            "items": [
+              {
+                "name": "[씨앗페] Jinu Konda Full Live (2023.3.26 @인디프레스 갤러리)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/tjmScl936q4",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Discovered - currently not indexed",
+        "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+        "indexingState": "INDEXING_STATE_UNSPECIFIED",
+        "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+        "googleCanonical": null,
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2023/videos/zCvlguR9jMc",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/archive/2023/videos/zCvlguR9jMc",
+        "userCanonical": "https://www.saf2026.com/archive/2023/videos/zCvlguR9jMc"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Videos",
+            "items": [
+              {
+                "name": "이익태 - &#39;피멍&#39; (2023 씨앗페 오프닝 퍼포먼스)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/archive/2026",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/archive/2026",
+        "userCanonical": "https://www.saf2026.com/archive/2026"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Review snippets",
+            "items": [
+              {
+                "name": "씨앗페 온라인 (Seed Art Festival Online)"
+              },
+              {
+                "name": "씨앗페 온라인 (Seed Art Festival Online)"
+              },
+              {
+                "name": "씨앗페 온라인 (Seed Art Festival Online)"
+              },
+              {
+                "name": "씨앗페 온라인 (Seed Art Festival Online)"
+              },
+              {
+                "name": "씨앗페 온라인 (Seed Art Festival Online)"
+              },
+              {
+                "name": "씨앗페 온라인 (Seed Art Festival Online)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks",
+        "userCanonical": "https://www.saf2026.com/artworks"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0124709a-e046-4603-adc6-ad82e98538de",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0124709a-e046-4603-adc6-ad82e98538de",
+        "userCanonical": "https://www.saf2026.com/artworks/0124709a-e046-4603-adc6-ad82e98538de"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "124__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/014ce68f-8430-40e1-bed7-3cf8c01e3879",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/014ce68f-8430-40e1-bed7-3cf8c01e3879",
+        "userCanonical": "https://www.saf2026.com/artworks/014ce68f-8430-40e1-bed7-3cf8c01e3879"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/014cf76d-8b9c-41dd-a335-febf48a9d8a4",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/014cf76d-8b9c-41dd-a335-febf48a9d8a4",
+        "userCanonical": "https://www.saf2026.com/artworks/014cf76d-8b9c-41dd-a335-febf48a9d8a4"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Product snippets",
+            "items": [
+              {
+                "name": "포옹",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"review\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"aggregateRating\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "richResultType": "Merchant listings",
+            "items": [
+              {
+                "name": "포옹"
+              }
+            ]
+          },
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "220__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0169e066-9557-4129-a61f-4d369066dca8",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0169e066-9557-4129-a61f-4d369066dca8",
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": "FAIL",
+        "detectedItems": [
+          {
+            "richResultType": "Product snippets",
+            "items": [
+              {
+                "name": "용감한 바람",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"review\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"aggregateRating\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "richResultType": "Merchant listings",
+            "items": [
+              {
+                "name": "용감한 바람"
+              }
+            ]
+          },
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item",
+                "issues": [
+                  {
+                    "issueMessage": "Duplicate field \"FAQPage\"",
+                    "severity": "ERROR"
+                  }
+                ]
+              },
+              {
+                "name": "Unnamed item",
+                "issues": [
+                  {
+                    "issueMessage": "Duplicate field \"FAQPage\"",
+                    "severity": "ERROR"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/01c68646-cf9d-45da-8b3a-d87216240dbd",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/01c68646-cf9d-45da-8b3a-d87216240dbd",
+        "userCanonical": "https://www.saf2026.com/artworks/01c68646-cf9d-45da-8b3a-d87216240dbd"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/01e6de61-d2bf-4d56-80a0-83cc081ddb18",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/01e6de61-d2bf-4d56-80a0-83cc081ddb18",
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": "FAIL",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item",
+                "issues": [
+                  {
+                    "issueMessage": "Duplicate field \"FAQPage\"",
+                    "severity": "ERROR"
+                  }
+                ]
+              },
+              {
+                "name": "Unnamed item",
+                "issues": [
+                  {
+                    "issueMessage": "Duplicate field \"FAQPage\"",
+                    "severity": "ERROR"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/01ecbea9-e777-4ccd-8180-7b9e135ca966",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/01ecbea9-e777-4ccd-8180-7b9e135ca966",
+        "userCanonical": "https://www.saf2026.com/artworks/01ecbea9-e777-4ccd-8180-7b9e135ca966"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "282__original.jpg?width=1200&amp;quality=80&amp;resize=contain",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"creditText\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"copyrightNotice\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/023274db-7d8a-4886-99b8-3399b0ae5eef",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/023274db-7d8a-4886-99b8-3399b0ae5eef",
+        "userCanonical": "https://www.saf2026.com/artworks/023274db-7d8a-4886-99b8-3399b0ae5eef"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/02b8e072-207b-4727-a2a6-c8c54a3dd943",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/02b8e072-207b-4727-a2a6-c8c54a3dd943",
+        "userCanonical": "https://www.saf2026.com/artworks/02b8e072-207b-4727-a2a6-c8c54a3dd943"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/03b440ba-52fd-49ef-8f32-9d7d9bd7bd24",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/03b440ba-52fd-49ef-8f32-9d7d9bd7bd24",
+        "userCanonical": "https://www.saf2026.com/artworks/03b440ba-52fd-49ef-8f32-9d7d9bd7bd24"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "tuuaw8acz2n_1771675669923__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/03f75942-fcfa-4ab8-aeed-b735a02bebe1",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/03f75942-fcfa-4ab8-aeed-b735a02bebe1",
+        "userCanonical": "https://www.saf2026.com/artworks/03f75942-fcfa-4ab8-aeed-b735a02bebe1"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0400c2a3-a063-4f1c-94b5-1341c025c3e9",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0400c2a3-a063-4f1c-94b5-1341c025c3e9",
+        "userCanonical": "https://www.saf2026.com/artworks/0400c2a3-a063-4f1c-94b5-1341c025c3e9"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0427c48e-0b9c-4408-99a9-bae911dd9791",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0427c48e-0b9c-4408-99a9-bae911dd9791",
+        "userCanonical": "https://www.saf2026.com/artworks/0427c48e-0b9c-4408-99a9-bae911dd9791"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "18__original.webp?width=1200&amp;quality=80&amp;resize=contain",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"creditText\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"copyrightNotice\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/057f7ba7-9d90-4551-8feb-0505bc738d78",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/057f7ba7-9d90-4551-8feb-0505bc738d78",
+        "userCanonical": "https://www.saf2026.com/artworks/057f7ba7-9d90-4551-8feb-0505bc738d78"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "61kcqosej5p_1772510161485__original.webp?width=1200&amp;quality=80&amp;resize=contain",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"creditText\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"copyrightNotice\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/068d38d7-06f6-485e-a93b-4e6541f4bc1a",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/068d38d7-06f6-485e-a93b-4e6541f4bc1a",
+        "userCanonical": "https://www.saf2026.com/artworks/068d38d7-06f6-485e-a93b-4e6541f4bc1a"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/06b76f49-9e49-478a-8f53-8051f31503f8",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/06b76f49-9e49-478a-8f53-8051f31503f8",
+        "userCanonical": "https://www.saf2026.com/artworks/06b76f49-9e49-478a-8f53-8051f31503f8"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "238__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/07e3bec6-2a7b-44c8-bede-da064d9c9447",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/07e3bec6-2a7b-44c8-bede-da064d9c9447",
+        "userCanonical": "https://www.saf2026.com/artworks/07e3bec6-2a7b-44c8-bede-da064d9c9447"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/099a6bc7-bd7c-4712-92fc-d2c95a9ad64c",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/099a6bc7-bd7c-4712-92fc-d2c95a9ad64c",
+        "userCanonical": "https://www.saf2026.com/artworks/099a6bc7-bd7c-4712-92fc-d2c95a9ad64c"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "260__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f",
+        "userCanonical": "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "2hwpqhmbioq_1773391711478.webp?width=1200&amp;quality=80&amp;resize=contain",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"creditText\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"copyrightNotice\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f?returnTo=%2F",
+      "indexStatus": {
+        "verdict": "NEUTRAL",
+        "coverageState": "Page with redirect",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f",
+        "userCanonical": "https://www.saf2026.com/artworks/099d666e-81b8-40c8-9e31-bab78ddd703f"
+      },
+      "richResults": {
+        "verdict": null,
+        "detectedItems": []
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/09c52096-0b93-4983-824a-3de19fc517d3",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/09c52096-0b93-4983-824a-3de19fc517d3",
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Product snippets",
+            "items": [
+              {
+                "name": "Hollowed yellow 04",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"review\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"aggregateRating\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "richResultType": "Merchant listings",
+            "items": [
+              {
+                "name": "Hollowed yellow 04"
+              }
+            ]
+          },
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0b89cdc0-c1ed-4631-b6cd-ed6600552e7f",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0b89cdc0-c1ed-4631-b6cd-ed6600552e7f",
+        "userCanonical": "https://www.saf2026.com/artworks/0b89cdc0-c1ed-4631-b6cd-ed6600552e7f"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0d2beb22-5838-48cd-a093-5150255864d1",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0d2beb22-5838-48cd-a093-5150255864d1",
+        "userCanonical": "https://www.saf2026.com/artworks/0d2beb22-5838-48cd-a093-5150255864d1"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "x6oe3pvro4f_1771574933811__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0d8e82e0-b268-4159-9f15-aaf68ddfa5fe",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0d8e82e0-b268-4159-9f15-aaf68ddfa5fe",
+        "userCanonical": "https://www.saf2026.com/artworks/0d8e82e0-b268-4159-9f15-aaf68ddfa5fe"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "105__original.webp?width=1200&amp;quality=80&amp;resize=contain",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"creditText\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"copyrightNotice\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0e60e54b-9bb1-4715-8927-87d84f14d194",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0e60e54b-9bb1-4715-8927-87d84f14d194",
+        "userCanonical": "https://www.saf2026.com/artworks/0e60e54b-9bb1-4715-8927-87d84f14d194"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0e9ce433-07b6-4762-9f21-38938edb1847",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0e9ce433-07b6-4762-9f21-38938edb1847",
+        "userCanonical": "https://www.saf2026.com/artworks/0e9ce433-07b6-4762-9f21-38938edb1847"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "1013__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0fa23930-184b-4516-9f10-a454864457a7",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0fa23930-184b-4516-9f10-a454864457a7",
+        "userCanonical": "https://www.saf2026.com/artworks/0fa23930-184b-4516-9f10-a454864457a7"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "279__original.webp?width=1200&amp;quality=80&amp;resize=contain",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"creditText\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"copyrightNotice\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0fe38606-1618-4151-b1eb-e6943fa2ce0e",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0fe38606-1618-4151-b1eb-e6943fa2ce0e",
+        "userCanonical": "https://www.saf2026.com/artworks/0fe38606-1618-4151-b1eb-e6943fa2ce0e"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "FAQ",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/0ffd5444-2de1-4a2a-bf98-9d27f90226a8",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/0ffd5444-2de1-4a2a-bf98-9d27f90226a8",
+        "userCanonical": "https://www.saf2026.com/artworks/0ffd5444-2de1-4a2a-bf98-9d27f90226a8"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "57__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/10",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/10",
+        "userCanonical": null
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Product snippets",
+            "items": [
+              {
+                "name": "야형화접도(夜螢花蝶圖)",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"review\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"aggregateRating\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "richResultType": "Merchant listings",
+            "items": [
+              {
+                "name": "야형화접도(夜螢花蝶圖)",
+                "issues": [
+                  {
+                    "issueMessage": "Invalid object type for field \"size\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://www.saf2026.com/artworks/100e14e5-5934-4d9c-942e-3ae74d20f7f1",
+      "indexStatus": {
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed",
+        "robotsTxtState": "ALLOWED",
+        "indexingState": "INDEXING_ALLOWED",
+        "pageFetchState": "SUCCESSFUL",
+        "googleCanonical": "https://www.saf2026.com/artworks/100e14e5-5934-4d9c-942e-3ae74d20f7f1",
+        "userCanonical": "https://www.saf2026.com/artworks/100e14e5-5934-4d9c-942e-3ae74d20f7f1"
+      },
+      "richResults": {
+        "verdict": "PASS",
+        "detectedItems": [
+          {
+            "richResultType": "Product snippets",
+            "items": [
+              {
+                "name": "추수",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"review\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"aggregateRating\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "richResultType": "Merchant listings",
+            "items": [
+              {
+                "name": "추수",
+                "issues": [
+                  {
+                    "issueMessage": "Missing field \"shippingDetails\"",
+                    "severity": "WARNING"
+                  },
+                  {
+                    "issueMessage": "Missing field \"hasMerchantReturnPolicy\"",
+                    "severity": "WARNING"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "richResultType": "Breadcrumbs",
+            "items": [
+              {
+                "name": "Unnamed item"
+              }
+            ]
+          },
+          {
+            "richResultType": "Image Metadata",
+            "items": [
+              {
+                "name": "221__original.webp?width=1200&amp;quality=80&amp;resize=contain"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
