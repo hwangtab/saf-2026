@@ -95,6 +95,7 @@ jobs:
         env:
           CI: true
           PORT: 3000
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
           NEXT_PUBLIC_KAKAO_MAP_KEY: placeholder
