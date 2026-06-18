@@ -30,6 +30,9 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
   const formattedDate = useMemo(() => formatCurrentDate(locale), [locale]);
 
   const badges = [
+    ...(variant === 'detail'
+      ? [{ icon: Clock, label: t('alwaysOpen', { date: formattedDate }), tone: 'success' as const }]
+      : []),
     { icon: Shield, label: t('authenticity') },
     { icon: RotateCcw, label: t('returnPolicy') },
     { icon: Truck, label: t('safeDelivery') },
@@ -38,45 +41,38 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
   ];
 
   return (
-    // detail: 모바일 2열 grid (매뉴얼 L1235 "2열 그리드"), md+ flex-wrap 가로 배치.
+    // detail: 구매 가능 상태까지 같은 크기의 2열 신뢰 그리드로 노출한다.
     // checkout: flex-wrap 유지 (좁은 결제 박스 컨텍스트).
     <div
       className={cn(
         variant === 'detail'
-          ? 'grid grid-cols-2 justify-items-center gap-1.5 md:flex md:flex-wrap md:justify-center md:gap-2'
+          ? 'grid grid-cols-2 gap-2'
           : 'flex flex-nowrap justify-center gap-1.5 overflow-x-auto scrollbar-hide',
         className
       )}
     >
-      {variant === 'detail' && (
-        // formattedDate는 client `new Date()`라 SSR 시점·hydration 시점 자정/timezone 차이로
-        // text content가 미세하게 어긋나 React error #418 발생 가능. 이 영역에선 prop
-        // drilling 부담이 커 suppressHydrationWarning으로 hydration mismatch만 silent 처리.
-        <span
-          className="col-span-2 inline-flex min-w-max items-center justify-center gap-1 whitespace-nowrap px-2.5 py-1 md:px-3 md:py-1.5 bg-success/10 border border-success/20 rounded-full text-[11px] md:text-xs font-medium text-success-a11y"
-          suppressHydrationWarning
-        >
-          <Clock className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
-          {t('alwaysOpen', { date: formattedDate })}
-        </span>
-      )}
-      {badges.map(({ icon: Icon, label }) => (
+      {badges.map(({ icon: Icon, label, tone }) => (
         <span
           key={label}
+          suppressHydrationWarning={variant === 'detail' && tone === 'success'}
           className={cn(
-            'inline-flex shrink-0 items-center justify-center gap-1 bg-gray-50 border border-gray-100 rounded-full font-medium text-gray-700',
+            'inline-flex shrink-0 items-center gap-1 rounded-full border font-medium',
             variant === 'checkout'
               ? 'px-2.5 py-1 text-[11px]'
-              : 'px-2.5 py-1 md:px-3 md:py-1.5 text-[11px] md:text-xs'
+              : 'min-h-[40px] w-full justify-start px-2.5 py-1.5 text-[11px] leading-tight md:min-h-[44px] md:px-3 md:text-xs',
+            tone === 'success'
+              ? 'border-success/20 bg-success/10 text-success-a11y'
+              : 'border-gray-100 bg-gray-50 text-gray-700'
           )}
         >
           <Icon
             className={cn(
-              'shrink-0 text-primary',
-              variant === 'checkout' ? 'w-3 h-3' : 'w-3 h-3 md:w-3.5 md:h-3.5'
+              'shrink-0',
+              tone === 'success' ? 'text-success-a11y' : 'text-primary',
+              variant === 'checkout' ? 'h-3 w-3' : 'h-3 w-3 md:h-3.5 md:w-3.5'
             )}
           />
-          {label}
+          <span className="min-w-0 break-keep leading-tight">{label}</span>
         </span>
       ))}
     </div>

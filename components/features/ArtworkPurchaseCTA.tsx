@@ -54,21 +54,19 @@ function ContactButtons() {
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      <LinkButton
-        href="tel:02-764-3114"
-        variant="outline"
-        leadingIcon={<Phone className="w-4 h-4" />}
-        iconLayout="fixed-left"
-      >
-        <span className="text-sm font-bold text-center">02-764-3114</span>
+      <LinkButton href="tel:02-764-3114" variant="outline" className="min-w-0 px-3">
+        <span className="inline-flex min-w-0 items-center justify-center gap-1.5">
+          <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="whitespace-nowrap text-[13px] font-bold sm:text-sm">02-764-3114</span>
+        </span>
       </LinkButton>
-      <LinkButton
-        href="mailto:contact@kosmart.org"
-        variant="outline"
-        leadingIcon={<Mail className="w-4 h-4" />}
-        iconLayout="fixed-left"
-      >
-        <span className="text-sm font-bold text-center">{t('emailInquiry')}</span>
+      <LinkButton href="mailto:contact@kosmart.org" variant="outline" className="min-w-0 px-3">
+        <span className="inline-flex min-w-0 items-center justify-center gap-1.5">
+          <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="whitespace-nowrap text-[13px] font-bold sm:text-sm">
+            {t('emailInquiry')}
+          </span>
+        </span>
       </LinkButton>
     </div>
   );
@@ -133,20 +131,24 @@ function ConsultationButtons({
       <LinkButton
         href="tel:02-764-3114"
         variant="outline"
-        leadingIcon={<Phone className="h-4 w-4" />}
-        iconLayout="fixed-left"
+        className="min-w-0 px-4"
         onClick={() => trackConsultation('phone')}
       >
-        <span className="text-sm font-bold text-center">{t('phoneConsult')}</span>
+        <span className="inline-flex min-w-0 items-center justify-center gap-2">
+          <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="break-keep text-center text-sm font-bold">{t('phoneConsult')}</span>
+        </span>
       </LinkButton>
       <LinkButton
         href={`mailto:contact@kosmart.org?subject=${mailSubject}&body=${mailBody}`}
         variant="outline"
-        leadingIcon={<MessageCircle className="h-4 w-4" />}
-        iconLayout="fixed-left"
+        className="min-w-0 px-4"
         onClick={() => trackConsultation('email')}
       >
-        <span className="text-sm font-bold text-center">{t('artworkConsult')}</span>
+        <span className="inline-flex min-w-0 items-center justify-center gap-2">
+          <MessageCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="break-keep text-center text-sm font-bold">{t('artworkConsult')}</span>
+        </span>
       </LinkButton>
     </div>
   );
