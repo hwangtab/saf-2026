@@ -264,12 +264,18 @@ export default memo(function AuthButtons({
     }
     return null;
   })();
+  const shouldDisableDashboardPrefetch =
+    dashboardLink?.href.startsWith('/admin') ||
+    dashboardLink?.href.startsWith('/dashboard') ||
+    dashboardLink?.href.startsWith('/exhibitor') ||
+    dashboardLink?.href.startsWith('/mypage');
 
   return (
     <div className={wrapperClassName}>
       {dashboardLink ? (
         <Button
           href={dashboardLink.href}
+          prefetch={shouldDisableDashboardPrefetch ? false : undefined}
           variant={variant}
           size={size}
           className={mergedButtonClass}

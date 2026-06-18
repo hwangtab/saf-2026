@@ -14,6 +14,7 @@ import {
 interface ButtonProps extends ButtonStyleProps {
   children: React.ReactNode;
   href?: string;
+  prefetch?: boolean;
   onClick?: () => Promise<void> | void;
   external?: boolean;
   loading?: boolean;
@@ -30,6 +31,7 @@ interface ButtonProps extends ButtonStyleProps {
 export default function Button({
   children,
   href,
+  prefetch,
   onClick,
   variant,
   size,
@@ -155,6 +157,7 @@ export default function Button({
     return (
       <Link
         href={href}
+        prefetch={prefetch}
         className={styles}
         aria-disabled={isDisabled}
         tabIndex={isDisabled ? -1 : undefined}

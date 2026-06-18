@@ -11,6 +11,7 @@ import {
 interface LinkButtonProps extends ButtonStyleProps {
   children: React.ReactNode;
   href: string;
+  prefetch?: boolean;
   external?: boolean;
   disabled?: boolean;
   leadingIcon?: React.ReactNode;
@@ -58,6 +59,7 @@ function toInternalHref(href: string): string | null {
 export default function LinkButton({
   children,
   href,
+  prefetch,
   external = false,
   disabled = false,
   variant,
@@ -133,7 +135,7 @@ export default function LinkButton({
   }
 
   return (
-    <Link href={internalHref} className={styles} onClick={onClick}>
+    <Link href={internalHref} prefetch={prefetch} className={styles} onClick={onClick}>
       {content}
     </Link>
   );
