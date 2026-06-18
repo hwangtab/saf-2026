@@ -8,8 +8,9 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build": "npm run generate-changelog && node scripts/sync-site-stats.js && node scripts/measure-hero-image-quality.js && NODE_OPTIONS=--max-old-space-size=8192 next build && npm run verify:i18n-placeholders",
+    "build": "npm run generate-changelog && node scripts/sync-site-stats.js && node scripts/measure-hero-image-quality.js && node scripts/measure-page-hero-image-quality.js && NODE_OPTIONS=--max-old-space-size=8192 next build && npm run verify:i18n-placeholders",
     "measure:hero-images": "node scripts/measure-hero-image-quality.js",
+    "measure:page-hero-images": "node scripts/measure-page-hero-image-quality.js",
     "sync-stats": "node scripts/sync-site-stats.js",
     "verify:i18n-placeholders": "node scripts/verify-i18n-placeholders.mjs",
     "start": "next start",

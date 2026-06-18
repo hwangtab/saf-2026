@@ -1,3 +1,28 @@
+# 서브 히어로 이미지 품질 보정 구현 계획 (2026-06-18)
+
+## 목표
+
+- `customBackgroundImage`가 있는 `PageHero`에만 저화질 보정 연출을 적용한다.
+- 홈 히어로와 같은 운영 의도(저화질 이미지를 숨기지 않고 의도된 배경처럼 보이게 함)를 따르되, 홈 LCP 경로와 서브 히어로 경로는 분리한다.
+- 단색 히어로와 utility/legal/portal 페이지는 기존 렌더를 유지한다.
+
+## 구현 범위
+
+1. `PageHero`에 `backgroundTreatment?: 'auto' | 'soft' | 'sharp'` 옵션을 추가한다.
+2. URL 기반 resolver를 추가해 `auto/soft/sharp`와 빌드 타임 품질 JSON을 합산한다.
+3. `PageHeroBackground`는 보정 시 이미지에 약한 `brightness/saturate` 조정만 적용하고, 블러는 쓰지 않는다.
+4. `PageHero` 오버레이는 보정 시 중앙 그라디언트와 radial vignette만 강화한다.
+5. 새 스크립트 `scripts/measure-page-hero-image-quality.js`를 추가해 정적 서브 히어로 후보를 측정하고 `lib/page-hero-image-quality.generated.json`을 갱신한다.
+6. `npm run build` 파이프라인에 서브 히어로 측정 단계를 추가한다.
+
+## 검증
+
+- resolver 단위 테스트로 `auto/soft/sharp` 매트릭스를 검증한다.
+- 측정 스크립트 단위 테스트로 로컬 public 이미지, 원격 이미지, 실패 URL 폴백 경로를 검증한다.
+- `npm run type-check`, `npm run lint`, targeted Jest를 실행한다.
+
+---
+
 # CI e2e-a11y 실패 수정 계획 (2026-06-14)
 
 ## 확인된 실패 범위

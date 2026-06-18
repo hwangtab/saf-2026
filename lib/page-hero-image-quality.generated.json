@@ -1,0 +1,262 @@
+{
+  "/images/hero/1.jpg": {
+    "width": 1600,
+    "height": 1066,
+    "lowRes": true
+  },
+  "/images/hero/10.jpg": {
+    "width": 1600,
+    "height": 1600,
+    "lowRes": true
+  },
+  "/images/hero/11.jpg": {
+    "width": 1254,
+    "height": 1920,
+    "lowRes": false
+  },
+  "/images/hero/12.jpg": {
+    "width": 1588,
+    "height": 1600,
+    "lowRes": true
+  },
+  "/images/hero/13.jpg": {
+    "width": 1600,
+    "height": 1281,
+    "lowRes": true
+  },
+  "/images/hero/14.jpg": {
+    "width": 1600,
+    "height": 1600,
+    "lowRes": true
+  },
+  "/images/hero/15.jpg": {
+    "width": 1382,
+    "height": 1400,
+    "lowRes": true
+  },
+  "/images/hero/16.jpg": {
+    "width": 2500,
+    "height": 1982,
+    "lowRes": false
+  },
+  "/images/hero/17.jpg": {
+    "width": 1740,
+    "height": 1262,
+    "lowRes": true
+  },
+  "/images/hero/18.jpg": {
+    "width": 1589,
+    "height": 1600,
+    "lowRes": true
+  },
+  "/images/hero/2.jpg": {
+    "width": 1648,
+    "height": 1920,
+    "lowRes": false
+  },
+  "/images/hero/3.jpg": {
+    "width": 1920,
+    "height": 402,
+    "lowRes": false
+  },
+  "/images/hero/4.jpg": {
+    "width": 1920,
+    "height": 1914,
+    "lowRes": false
+  },
+  "/images/hero/5.jpg": {
+    "width": 1176,
+    "height": 1920,
+    "lowRes": false
+  },
+  "/images/hero/6.jpg": {
+    "width": 1746,
+    "height": 1920,
+    "lowRes": false
+  },
+  "/images/hero/7.jpg": {
+    "width": 1388,
+    "height": 1920,
+    "lowRes": false
+  },
+  "/images/hero/8.jpg": {
+    "width": 1600,
+    "height": 1199,
+    "lowRes": true
+  },
+  "/images/hero/9.jpg": {
+    "width": 2500,
+    "height": 1812,
+    "lowRes": false
+  },
+  "/images/saf2023/IMG_0292.webp": {
+    "width": 1280,
+    "height": 723,
+    "lowRes": true
+  },
+  "https://cdn.abcn.kr/news/thumbnail/202303/71851_22311_3055_v150.jpg": {
+    "width": 300,
+    "height": 425,
+    "lowRes": true
+  },
+  "https://cdn.ebn.co.kr/news/thumbnail/202511/1685475_703389_313_v150.jpg": {
+    "width": 300,
+    "height": 195,
+    "lowRes": true
+  },
+  "https://cdn.eroun.net/news/thumbnail/202009/20447_40691_490_v150.jpg": {
+    "width": 300,
+    "height": 225,
+    "lowRes": true
+  },
+  "https://cdn.ggoverallnews.co.kr/news/thumbnail/202510/92298_83427_5931_v150.jpg": {
+    "width": 300,
+    "height": 400,
+    "lowRes": true
+  },
+  "https://cdn.ndnnews.co.kr/news/photo/202511/923967_934058_123.png": {
+    "width": 600,
+    "height": 399,
+    "lowRes": true
+  },
+  "https://cdn.socialimpactnews.net/news/thumbnail/202304/378_512_4128_v150.jpg": {
+    "width": 300,
+    "height": 225,
+    "lowRes": true
+  },
+  "https://cdn.socialimpactnews.net/news/thumbnail/202305/519_778_4027_v150.jpg": {
+    "width": 300,
+    "height": 368,
+    "lowRes": true
+  },
+  "https://cphoto.asiae.co.kr/listimglink/1/2025102215152176930_1761113721.jpg": {
+    "width": 745,
+    "height": 496,
+    "lowRes": true
+  },
+  "https://cphoto.asiae.co.kr/listimglink/1/2025110517522196297_1762332741.jpg": {
+    "width": 614,
+    "height": 868,
+    "lowRes": true
+  },
+  "https://flexible.img.hani.co.kr/flexible/normal/800/533/imgdb/original/2025/1105/20251105501193.webp": {
+    "width": 800,
+    "height": 533,
+    "lowRes": true
+  },
+  "https://khtunrybrzntlnowlahb.supabase.co/storage/v1/object/public/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/1006__original.webp": {
+    "width": 960,
+    "height": 1280,
+    "lowRes": true
+  },
+  "https://mmagimg.speedgabia.com/2025/11/img-1762384976993-f5326e9fdfd4713d.jpeg": {
+    "width": 870,
+    "height": 580,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230309/art_167773339515_ec12da.jpg": {
+    "width": 680,
+    "height": 434,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230311/art_16787751224813_706e9c.jpg": {
+    "width": 680,
+    "height": 433,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230311/art_16790200974545_c510b0.jpg": {
+    "width": 680,
+    "height": 1019,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230311/art_16790426553832_413106.jpg": {
+    "width": 680,
+    "height": 961,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230311/shp_1679022767.jpg": {
+    "width": 680,
+    "height": 963,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230312/art_16795520135967_e527d2.png": {
+    "width": 680,
+    "height": 383,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230312/art_16797188293039_3e82e4.jpg": {
+    "width": 680,
+    "height": 322,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230312/art_16797954749719_d689bc.jpg": {
+    "width": 680,
+    "height": 387,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230313/art_16798812721326_6631d2.jpg": {
+    "width": 680,
+    "height": 492,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230313/art_16800665997266_a23405.jpg": {
+    "width": 680,
+    "height": 907,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230414/art_1680483844.jpg": {
+    "width": 640,
+    "height": 480,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230626/art_16879167132386_de7953.png": {
+    "width": 680,
+    "height": 988,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20230727/art_16887146539998_21c79d.jpg": {
+    "width": 595,
+    "height": 280,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20231252/art_17037334058548_0f9f85.jpg": {
+    "width": 680,
+    "height": 383,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20240101/art_17041725871048_15ff42.jpg": {
+    "width": 680,
+    "height": 454,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20250313/art_17429771615682_0f2f90.jpg": {
+    "width": 680,
+    "height": 453,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20250521/art_17479029709267_f16e6e.png": {
+    "width": 680,
+    "height": 454,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20250937/art_17574805036594_823433.png": {
+    "width": 680,
+    "height": 454,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20250938/art_17580794565924_ed4d73.png": {
+    "width": 680,
+    "height": 680,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20250938/art_17581738708772_15d4c1.png": {
+    "width": 680,
+    "height": 454,
+    "lowRes": true
+  },
+  "https://www.news-art.co.kr/data/photos/20251145/art_17623403153642_d40d7b.jpg": {
+    "width": 680,
+    "height": 453,
+    "lowRes": true
+  }
+}

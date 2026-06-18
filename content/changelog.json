@@ -1,5 +1,65 @@
 [
   {
+    "hash": "fb15ae3b",
+    "type": "fix",
+    "scope": null,
+    "subject": "disable portal link prefetch",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "eb83d75d",
+    "type": "fix",
+    "scope": null,
+    "subject": "tighten artwork detail footer spacing",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "05f18d7c",
+    "type": "fix",
+    "scope": null,
+    "subject": "remove unused image preloads",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "62f8319e",
+    "type": "fix",
+    "scope": null,
+    "subject": "align artwork trust badges",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "eb69f5a8",
+    "type": "fix",
+    "scope": null,
+    "subject": "keep fixed header anchored on mobile",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-18",
+    "author": "황경하"
+  },
+  {
+    "hash": "b6cc8716",
+    "type": "fix",
+    "scope": null,
+    "subject": "keep artwork availability badge on one line",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-17",
+    "author": "황경하"
+  },
+  {
     "hash": "bc12e0d5",
     "type": "feat",
     "scope": "hero",

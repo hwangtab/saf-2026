@@ -1,8 +1,10 @@
 import { getHeroImageUrls } from '@/lib/hero-image';
+import { cn } from '@/lib/utils/cn';
 
 interface PageHeroBackgroundProps {
   customImage: string;
   seed?: string;
+  softTreatment?: boolean;
   /**
    * hero 배경 이미지 alt. 빈 값이면 네이버 사이트 진단이 "Alt 속성 누락"으로
    * 집계하므로(PageHero는 거의 모든 공개 페이지에 깔림) 페이지 제목을 전달받아 채운다.
@@ -24,7 +26,11 @@ interface PageHeroBackgroundProps {
  *
  * 서버 컴포넌트. animate-hero-breathing은 motion-reduce에서 자동 비활성.
  */
-export default function PageHeroBackground({ customImage, alt }: PageHeroBackgroundProps) {
+export default function PageHeroBackground({
+  customImage,
+  alt,
+  softTreatment = false,
+}: PageHeroBackgroundProps) {
   const urls = getHeroImageUrls(customImage);
   if (!urls) return null;
 
@@ -43,7 +49,11 @@ export default function PageHeroBackground({ customImage, alt }: PageHeroBackgro
             loading="eager"
             fetchPriority="high"
             decoding="sync"
-            className="absolute inset-0 h-full w-full object-cover"
+            className={cn(
+              'absolute inset-0 h-full w-full object-cover',
+              // 저화질 서브 hero는 흐림을 더하지 않고 색/밝기만 눌러 배경 질감처럼 보이게 한다.
+              softTreatment && 'brightness-[0.78] saturate-[0.85]'
+            )}
           />
         </picture>
       </div>
