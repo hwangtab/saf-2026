@@ -126,7 +126,7 @@ export default function PrideBox({ artwork, locale = 'ko' }: PrideBoxProps) {
   return (
     <section
       aria-labelledby="pride-box-heading"
-      className="mt-16 mb-12 mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-canvas-soft px-6 py-10 md:px-10 md:py-12 shadow-sm"
+      className="mt-16 mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-canvas-soft px-6 py-10 md:px-10 md:py-12 shadow-sm"
     >
       {/* suppressHydrationWarning: SSR(1단)과 마운트 후(2·3·4단) 텍스트 차이 무시 */}
       <h2

@@ -98,7 +98,11 @@ export default function FooterSlider() {
     };
   }, [showSlider]);
 
-  if (!showSlider || artworks.length === 0) return null;
+  if (!showSlider) return null;
+
+  if (artworks.length === 0) {
+    return isLoading ? <div className="h-[460px] animate-pulse opacity-50" aria-hidden /> : null;
+  }
 
   return (
     <div className={isLoading ? 'animate-pulse opacity-50' : ''}>

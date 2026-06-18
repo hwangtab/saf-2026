@@ -369,7 +369,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
         variant="white"
         prevVariant="canvas"
         padding="none"
-        className="pb-24 md:pb-32 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
+        className="pb-8 md:pb-12 pt-[calc(4rem+env(safe-area-inset-top,0px))]"
       >
         <Suspense
           fallback={
