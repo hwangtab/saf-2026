@@ -162,16 +162,12 @@ function ArtworkCard({
   const t = useTranslations('artworkCard');
   const config = VARIANT_CONFIG[variant];
   const imageSizes = sizesOverride ?? config.imageSizes;
-  // 갤러리 페이지는 모두 60vh PageHero(자체 이미지 preload 2건) 아래에 그리드가 깔리므로
-  // preload(priority) 힌트는 첫 카드 1장으로 제한 — 모바일(1열)에서 2~3 viewport 아래
-  // 이미지까지 critical로 끌어올리는 과잉이었음 (2026-06-12 감사).
-  // 단 eager 로딩은 첫 3장 유지 — 데스크탑 3열 그리드의 첫 줄(카드 2·3)이 lazy로 떨어지면
-  // 뷰포트 진입 감지 후에야 받기 시작해 데스크탑 LCP가 역행한다 (2026-06-12 리뷰).
+  // 갤러리 페이지의 카드는 PageHero 아래에 있어 head preload(priority/eager) 대상이 아니다.
+  // Next 16은 loading="eager"도 head preload로 승격하므로 기본 lazy 정책을 유지한다.
   const isGalleryCard = variant === 'gallery' && typeof priorityIndex === 'number';
-  const isEagerRow = isGalleryCard && priorityIndex < 3;
-  const isAboveFold = isGalleryCard && priorityIndex < 1;
+  const shouldShowInitialImage = isGalleryCard && priorityIndex < 1;
 
-  const [imageReady, setImageReady] = useState(isAboveFold);
+  const [imageReady, setImageReady] = useState(shouldShowInitialImage);
   const isDisplayable = (value: string | undefined): value is string => Boolean(value);
 
   const untitledLabel = t('untitled');
@@ -296,10 +292,8 @@ function ArtworkCard({
         {!imageReady && <div className="absolute inset-0 shimmer-loading" />}
         <div className="absolute inset-3 md:inset-4">
           <SafeImage
-            src={getImageSrc(artwork, variant, isAboveFold)}
+            src={getImageSrc(artwork, variant, shouldShowInitialImage)}
             alt={getImageAlt(artwork, untitledLabel, unknownArtistLabel, locale)}
-            loading={isEagerRow ? 'eager' : 'lazy'}
-            priority={isAboveFold}
             fill
             quality={70}
             onLoad={() => setImageReady(true)}

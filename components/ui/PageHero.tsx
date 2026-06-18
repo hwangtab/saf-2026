@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils/cn';
-import { getHeroImageUrls } from '@/lib/hero-image';
 import PageHeroBackground from './PageHeroBackground';
 import SawtoothDivider from './SawtoothDivider';
 import Breadcrumb from './Breadcrumb';
@@ -44,32 +43,8 @@ export default function PageHero({
   descriptionId,
   breadcrumbItems,
 }: PageHeroProps) {
-  // 자동 preload — customBackgroundImage가 있으면 LCP hint를 head로 발행 (React 19
-  // link hoisting). 사용처에서 별도로 preload 발행 안 해도 됨 (단일 출처).
-  // mobile/desktop 분기는 media query로 정밀 매칭 — picture srcSet과 정확히 일치.
-  const heroUrls = getHeroImageUrls(customBackgroundImage);
-
   return (
     <>
-      {heroUrls && (
-        <>
-          <link
-            rel="preload"
-            as="image"
-            href={heroUrls.mobile}
-            fetchPriority="high"
-            media="(max-width: 767px)"
-          />
-          <link
-            rel="preload"
-            as="image"
-            href={heroUrls.desktop1x}
-            imageSrcSet={`${heroUrls.desktop1x} 1x, ${heroUrls.desktop2x} 2x`}
-            fetchPriority="high"
-            media="(min-width: 768px)"
-          />
-        </>
-      )}
       <section
         className={cn(
           // page-hero-min-h: vh fallback + svh override를 globals.css의 동일 selector에 두 줄로
