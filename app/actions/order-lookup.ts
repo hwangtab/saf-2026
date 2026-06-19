@@ -18,6 +18,7 @@ import { hashEmail } from '@/lib/email/email-hash';
 import { normalizePhoneDigits } from '@/lib/utils/phone';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
+import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
 import {
   getRepresentativeArtwork,
   formatRepresentativeTitle,
@@ -636,23 +637,29 @@ export async function cancelBuyerOrder(
           ? [order.artwork_id]
           : [];
 
-    for (const artworkId of reservedArtworkIds) {
-      const { error: artworkRestoreError } = await adminClient
-        .from('artworks')
-        .update({ status: 'available', updated_at: now })
-        .eq('id', artworkId)
-        .eq('status', 'reserved');
-      if (artworkRestoreError) {
-        console.error('[cancelBuyerOrder] artwork restore failed:', artworkRestoreError);
+    const releaseResult = await releaseReservedArtworksIfUnowned(
+      adminClient,
+      reservedArtworkIds,
+      now
+    );
+    if (releaseResult.errors) {
+      console.error('[cancelBuyerOrder] artwork restore failed:', releaseResult.errors);
+      for (const releaseError of releaseResult.errors) {
         after(() =>
           notifyEmail('error', '구매자 입금대기 주문 취소 후 예약 해제 실패', {
             주문번호: order.order_no,
             주문ID: order.id,
-            작품ID: artworkId,
-            에러: artworkRestoreError.message,
+            작품ID: releaseError.artworkId,
+            에러:
+              releaseError.error instanceof Error
+                ? releaseError.error.message
+                : ((releaseError.error as { message?: string } | null)?.message ??
+                  String(releaseError.error)),
           })
         );
       }
+    }
+    for (const artworkId of reservedArtworkIds) {
       revalidatePath(`/artworks/${artworkId}`);
       revalidatePath(`/en/artworks/${artworkId}`);
     }

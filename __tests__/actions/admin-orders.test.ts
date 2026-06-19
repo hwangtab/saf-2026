@@ -53,6 +53,14 @@ let mockOrderSelectError: unknown = null;
 let mockOrderUpdateRows: Array<{ id: string }> = [{ id: 'ord-1' }];
 let mockOrderUpdateError: unknown = null;
 let mockSalesResult: unknown = { inserted: true, rows: 1 };
+let mockActiveOrderItemsCountResult: { count: number | null; error: unknown } = {
+  count: 0,
+  error: null,
+};
+let mockActiveLegacyOrdersCountResult: { count: number | null; error: unknown } = {
+  count: 0,
+  error: null,
+};
 let mockRpcResult: { data: unknown; error: unknown } = {
   data: [{ order_id: 'ord-1', order_no: 'SAF-001', artwork_ids: ['art-1', 'art-2'] }],
   error: null,
@@ -70,12 +78,20 @@ jest.mock('@/lib/auth/guards', () => ({
     }),
     from: jest.fn((table: string) => {
       if (table === 'orders') {
+        const countQuery = {
+          in: jest.fn(() => countQuery),
+          then: (resolve: (value: { count: number | null; error: unknown }) => unknown) =>
+            resolve(mockActiveLegacyOrdersCountResult),
+        };
         return {
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({ data: mockOrderRow, error: mockOrderSelectError })),
-            })),
-          })),
+          select: jest.fn((_columns?: string, options?: { count?: string; head?: boolean }) => {
+            if (options?.count === 'exact' && options.head) return countQuery;
+            return {
+              eq: jest.fn(() => ({
+                single: jest.fn(() => ({ data: mockOrderRow, error: mockOrderSelectError })),
+              })),
+            };
+          }),
           update: jest.fn((patch: Record<string, unknown>) => {
             capturedOrderUpdates.push(patch);
             const select = jest.fn(() =>
@@ -91,9 +107,27 @@ jest.mock('@/lib/auth/guards', () => ({
       if (table === 'artworks') {
         return {
           update: jest.fn(() => {
-            const eq: jest.Mock = jest.fn(() => ({ eq, error: mockArtworkUpdateError }));
+            const eq: jest.Mock = jest.fn(() => ({
+              eq,
+              select: jest.fn(() =>
+                mockArtworkUpdateError
+                  ? { data: null, error: mockArtworkUpdateError }
+                  : { data: [{ id: 'art-1' }], error: null }
+              ),
+              error: mockArtworkUpdateError,
+            }));
             return { eq };
           }),
+        };
+      }
+      if (table === 'order_items') {
+        const query = {
+          in: jest.fn(() => query),
+          then: (resolve: (value: { count: number | null; error: unknown }) => unknown) =>
+            resolve(mockActiveOrderItemsCountResult),
+        };
+        return {
+          select: jest.fn(() => query),
         };
       }
       return {
@@ -135,6 +169,8 @@ beforeEach(async () => {
   mockOrderSelectError = null;
   mockOrderUpdateRows = [{ id: 'ord-1' }];
   mockOrderUpdateError = null;
+  mockActiveOrderItemsCountResult = { count: 0, error: null };
+  mockActiveLegacyOrdersCountResult = { count: 0, error: null };
   mockArtworkUpdateError = null;
   mockSalesResult = { inserted: true, rows: 2 };
   mockRpcResult = {

@@ -82,6 +82,7 @@ jest.mock('@/lib/utils/get-order-notification-info', () => ({
 
 // --- Mock: Supabase ---
 type MockResult = { data: unknown; error: unknown };
+type MockCountResult = { count: number | null; error: unknown };
 
 // 테이블별 결과를 설정할 수 있는 구조
 let mockOrdersSelectResult: MockResult = { data: null, error: null };
@@ -93,6 +94,8 @@ let mockSaleVoidError: unknown = null;
 let mockOrderUpdateError: unknown = null;
 let mockPaymentUpdateError: unknown = null;
 let mockArtworkUpdateError: { message: string } | null = null;
+let mockActiveOrderItemsCountResult: MockCountResult = { count: 0, error: null };
+let mockActiveLegacyOrdersCountResult: MockCountResult = { count: 0, error: null };
 // awaiting_deposit self-cancel: orders UPDATE .select('id') 결과(취소된 행)
 let mockOrderUpdateSelectRows: MockResult = { data: [{ id: 'ord-1' }], error: null };
 // artworks UPDATE 캡처 — 예약 해제(available 복원)가 어떤 작품에 갔는지 검증 (FIX-5b)
@@ -123,6 +126,9 @@ jest.mock('@/lib/auth/server', () => ({
         if (table === 'artworks') {
           return createArtworksMock();
         }
+        if (table === 'order_items') {
+          return createOrderItemsMock();
+        }
         return createDefaultMock();
       }),
     };
@@ -133,6 +139,13 @@ jest.mock('@/lib/auth/server', () => ({
 }));
 
 function createOrdersMock() {
+  const createCountQuery = (result: MockCountResult) => {
+    const query = {
+      in: jest.fn(() => query),
+      then: (resolve: (value: MockCountResult) => unknown) => resolve(result),
+    };
+    return query;
+  };
   const makeMaybeSingle = (result: MockResult) => jest.fn(() => result);
   const makeOrder = (result: MockResult) =>
     jest.fn(() => ({
@@ -141,7 +154,10 @@ function createOrdersMock() {
     }));
 
   return {
-    select: jest.fn(() => {
+    select: jest.fn((_columns?: string, options?: { count?: string; head?: boolean }) => {
+      if (options?.count === 'exact' && options.head) {
+        return createCountQuery(mockActiveLegacyOrdersCountResult);
+      }
       ordersSelectCallCount++;
       const currentResult =
         ordersSelectCallCount <= 1 ? mockOrdersSelectResult : mockPhoneVerifiedResult;
@@ -193,10 +209,29 @@ function createArtworksMock() {
       capturedArtworkRestores.push(call);
       const eq: jest.Mock = jest.fn((column: string, value: unknown) => {
         call.filters.push({ column, value });
-        return { eq, error: mockArtworkUpdateError };
+        return {
+          eq,
+          select: jest.fn(() =>
+            mockArtworkUpdateError
+              ? { data: null, error: mockArtworkUpdateError }
+              : { data: [{ id: call.filters.find((f) => f.column === 'id')?.value }], error: null }
+          ),
+          error: mockArtworkUpdateError,
+        };
       });
       return { eq };
     }),
+  };
+}
+
+function createOrderItemsMock() {
+  const query = {
+    in: jest.fn(() => query),
+    then: (resolve: (value: MockCountResult) => unknown) =>
+      resolve(mockActiveOrderItemsCountResult),
+  };
+  return {
+    select: jest.fn(() => query),
   };
 }
 
@@ -282,6 +317,8 @@ beforeEach(async () => {
   mockOrderUpdateError = null;
   mockPaymentUpdateError = null;
   mockArtworkUpdateError = null;
+  mockActiveOrderItemsCountResult = { count: 0, error: null };
+  mockActiveLegacyOrdersCountResult = { count: 0, error: null };
   mockOrderUpdateSelectRows = { data: [{ id: 'ord-1' }], error: null };
   capturedArtworkRestores.length = 0;
   capturedPaymentUpdates.length = 0;

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
+import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { sanitizeConfirmResponse } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail } from '@/lib/notify';
@@ -8,6 +9,10 @@ import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
+import {
+  releaseReservedArtworksIfUnowned,
+  reserveUniqueArtworksOrRollback,
+} from '@/lib/orders/reservations';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import type { Database, Json } from '@/types/supabase';
 
@@ -235,6 +240,62 @@ export async function GET(request: NextRequest) {
           }
         }
 
+        // 주문을 입금대기로 열기 전에 unique 작품 예약이 먼저 성공해야 한다.
+        const depositLineItems = extractLineItems(order);
+        const reserveArtworkIds =
+          depositLineItems.length > 0
+            ? depositLineItems.map((item) => item.artwork_id)
+            : order.artwork_id
+              ? [order.artwork_id]
+              : [];
+
+        const reservationResult = await reserveUniqueArtworksOrRollback(
+          supabase,
+          reserveArtworkIds,
+          now
+        );
+
+        if (!reservationResult.ok) {
+          let cancelOk = false;
+          let cancelError: unknown = null;
+          try {
+            const cancelResult = await cancelPayment(
+              tossPayment.paymentKey,
+              { cancelReason: '작품 예약 실패로 가상계좌 주문 자동 취소 (reconcile)' },
+              `auto-cancel-reservation-${order.order_no}`,
+              provider
+            );
+            cancelOk = cancelResult.success;
+            if (!cancelResult.success) cancelError = cancelResult.error;
+          } catch (err) {
+            cancelError = err;
+          }
+
+          const { error: orderCancelError } = await supabase
+            .from('orders')
+            .update({ status: 'cancelled', cancelled_at: now })
+            .eq('id', order.id)
+            .eq('status', 'pending_payment');
+          if (orderCancelError) {
+            errors.push(`${order.order_no}: reservation failure order cancel failed`);
+          }
+
+          if (cancelOk) {
+            const { error: paymentCancelError } = await supabase
+              .from('payments')
+              .update({ status: 'CANCELED', cancelled_at: now })
+              .eq('payment_key', tossPayment.paymentKey);
+            if (paymentCancelError) {
+              errors.push(`${order.order_no}: reservation failure payment cancel sync failed`);
+            }
+          } else {
+            errors.push(
+              `${order.order_no}: reservation failed for ${reservationResult.failedArtworkId}; Toss cancel failed (${String(cancelError)})`
+            );
+          }
+          continue;
+        }
+
         // 주문 → awaiting_deposit
         const { data: updatedOrders, error: orderUpdateError } = await supabase
           .from('orders')
@@ -251,48 +312,52 @@ export async function GET(request: NextRequest) {
           .select('id');
 
         if (orderUpdateError) {
+          await releaseReservedArtworksIfUnowned(
+            supabase,
+            reservationResult.reservedArtworkIds,
+            new Date().toISOString()
+          );
           errors.push(`${order.order_no}: order update failed: ${orderUpdateError.message}`);
           continue;
         }
 
         if (!updatedOrders || updatedOrders.length === 0) {
+          await releaseReservedArtworksIfUnowned(
+            supabase,
+            reservationResult.reservedArtworkIds,
+            new Date().toISOString()
+          );
+          try {
+            const cancelResult = await cancelPayment(
+              tossPayment.paymentKey,
+              { cancelReason: '주문 상태 경합으로 가상계좌 주문 자동 취소 (reconcile)' },
+              `auto-cancel-race-${order.order_no}`,
+              provider
+            );
+            if (cancelResult.success) {
+              await supabase
+                .from('payments')
+                .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+                .eq('payment_key', tossPayment.paymentKey);
+            } else {
+              errors.push(
+                `${order.order_no}: VA race cancel failed: ${cancelResult.error.message}`
+              );
+            }
+          } catch (err) {
+            errors.push(`${order.order_no}: VA race cancel failed: ${String(err)}`);
+          }
           console.error(
             `[reconcile-payments] SKIP: ${order.order_no} — order no longer pending_payment`
           );
           continue;
         }
 
-        // awaiting_deposit 전환 후 artwork 예약 처리 — unique edition만 잠금. 다품목 지원.
-        // limited/open은 여러 구매자가 동시에 진행 가능하므로 입금 대기 중 잠그면 안 됨.
-        // order_items가 있으면 라인별로, 비면(legacy 단건) order.artwork_id로 fallback (confirm route 패턴).
-        const depositLineItems = extractLineItems(order);
-        const reserveArtworkIds =
-          depositLineItems.length > 0
-            ? depositLineItems.map((item) => item.artwork_id)
-            : order.artwork_id
-              ? [order.artwork_id]
-              : [];
-
-        let anyReserved = false;
-        for (const artworkId of reserveArtworkIds) {
-          const { data: artworkEdition } = await supabase
-            .from('artworks')
-            .select('edition_type')
-            .eq('id', artworkId)
-            .maybeSingle();
-
-          if (artworkEdition?.edition_type === 'unique') {
-            await supabase
-              .from('artworks')
-              .update({ status: 'reserved' })
-              .eq('id', artworkId)
-              .eq('status', 'available');
-            revalidatePath(`/artworks/${artworkId}`);
-            revalidatePath(`/en/artworks/${artworkId}`);
-            anyReserved = true;
-          }
+        for (const artworkId of reservationResult.reservedArtworkIds) {
+          revalidatePath(`/artworks/${artworkId}`);
+          revalidatePath(`/en/artworks/${artworkId}`);
         }
-        if (anyReserved) {
+        if (reservationResult.reservedArtworkIds.length > 0) {
           revalidatePublicArtworkSurfaces();
         }
 

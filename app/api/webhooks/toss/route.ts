@@ -16,6 +16,7 @@ import {
 } from '@/lib/integrations/toss/webhook';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
+import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
 import {
@@ -28,6 +29,63 @@ import { runAllSettled } from '@/lib/server/after-response';
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 
 export const runtime = 'nodejs';
+
+type AdminClient = ReturnType<typeof createSupabaseAdminClient>;
+
+function handleDoneForAlreadyCancelledOrder({
+  supabase,
+  paymentKey,
+  paymentId,
+  orderNo,
+  provider,
+}: {
+  supabase: AdminClient;
+  paymentKey: string;
+  paymentId: string;
+  orderNo?: string | null;
+  provider: PaymentProvider;
+}) {
+  after(async () => {
+    const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+    let cancelOk = false;
+    let cancelError: unknown = null;
+    try {
+      const result = await cancelPayment(
+        paymentKey,
+        { cancelReason: '이미 취소된 주문에 결제 완료 웹훅 수신 — 자동 취소' },
+        `auto-refund-cancelled-${orderNo || paymentKey}`,
+        provider
+      );
+      cancelOk = result.success;
+      if (!result.success) cancelError = result.error;
+    } catch (err) {
+      cancelError = err;
+    }
+
+    if (cancelOk) {
+      const { error: paymentSyncError } = await supabase
+        .from('payments')
+        .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+        .eq('id', paymentId);
+      if (paymentSyncError) {
+        console.error('[toss-webhook] cancelled-order DONE payment sync failed:', paymentSyncError);
+      }
+    }
+
+    await runAllSettled('toss-webhook.cancelled-order-done-refund.notification', [
+      () =>
+        notifyEmail(cancelOk ? 'warning' : 'error', '취소 주문에 결제 완료 웹훅 수신', {
+          주문번호: orderNo ?? '',
+          paymentKey,
+          Toss취소: cancelOk ? '성공' : '실패',
+          ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
+          참고: cancelOk
+            ? '이미 취소된 주문에 결제 완료 웹훅이 도착해 자동 취소 처리했습니다.'
+            : '이미 취소된 주문에 결제 완료 웹훅이 도착했지만 Toss 취소가 실패했습니다. 수동 확인이 필요합니다.',
+        }),
+    ]);
+  });
+}
 
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -139,6 +197,19 @@ export async function POST(req: NextRequest) {
         if (existingOrder?.status === 'paid') {
           return NextResponse.json({ received: true }, { status: 200 });
         }
+        if (existingOrder?.status === 'cancelled') {
+          handleDoneForAlreadyCancelledOrder({
+            supabase,
+            paymentKey,
+            paymentId: paymentRecord.id,
+            orderNo: existingOrder.order_no,
+            provider,
+          });
+          return NextResponse.json(
+            { received: true, status: 'cancelled_order_done_refund_scheduled' },
+            { status: 200 }
+          );
+        }
 
         // Update payment status
         const existingWebhooks = Array.isArray(paymentRecord.webhook_responses)
@@ -235,15 +306,15 @@ export async function POST(req: NextRequest) {
               // 승자 주문이 소유한 sold 작품은 .eq('status','reserved') 가드로 제외됨.
               const takenReleaseIds = lineItems.map((item) => item.artwork_id);
               if (takenReleaseIds.length > 0) {
-                const { error: releaseError } = await supabase
-                  .from('artworks')
-                  .update({ status: 'available', updated_at: new Date().toISOString() })
-                  .in('id', takenReleaseIds)
-                  .eq('status', 'reserved');
-                if (releaseError) {
+                const releaseResult = await releaseReservedArtworksIfUnowned(
+                  supabase,
+                  takenReleaseIds,
+                  new Date().toISOString()
+                );
+                if (releaseResult.errors) {
                   console.error(
                     '[toss-webhook] DEPOSIT_CALLBACK 경합 패배 reserved→available 해제 실패:',
-                    releaseError
+                    releaseResult.errors
                   );
                 }
                 for (const artworkId of takenReleaseIds) {
@@ -497,15 +568,14 @@ export async function POST(req: NextRequest) {
               : cancelledOrder.artwork_id
                 ? [cancelledOrder.artwork_id]
                 : [];
+          const releaseResult = await releaseReservedArtworksIfUnowned(supabase, artworkIds, now);
+          if (releaseResult.errors) {
+            console.error(
+              '[toss-webhook] artwork reserved→available failed:',
+              releaseResult.errors
+            );
+          }
           for (const artworkId of artworkIds) {
-            const { error: artworkError } = await supabase
-              .from('artworks')
-              .update({ status: 'available', updated_at: now })
-              .eq('id', artworkId)
-              .eq('status', 'reserved');
-            if (artworkError) {
-              console.error('[toss-webhook] artwork reserved→available failed:', artworkError);
-            }
             revalidatePath(`/artworks/${artworkId}`);
             revalidatePath(`/en/artworks/${artworkId}`);
           }
@@ -690,6 +760,20 @@ export async function POST(req: NextRequest) {
         .eq('id', paymentRow.order_id)
         .single();
 
+      if (existingOrder && existingOrder.status === 'cancelled') {
+        handleDoneForAlreadyCancelledOrder({
+          supabase,
+          paymentKey,
+          paymentId: paymentRow.id,
+          orderNo: existingOrder.order_no,
+          provider,
+        });
+        return NextResponse.json(
+          { received: true, status: 'cancelled_order_done_refund_scheduled' },
+          { status: 200 }
+        );
+      }
+
       if (
         existingOrder &&
         existingOrder.status !== 'paid' &&
@@ -761,15 +845,15 @@ export async function POST(req: NextRequest) {
             // reserved가 없어 no-op이지만 방어적으로 둠.)
             const takenReleaseIds = lineItems.map((item) => item.artwork_id);
             if (takenReleaseIds.length > 0) {
-              const { error: releaseError } = await supabase
-                .from('artworks')
-                .update({ status: 'available', updated_at: new Date().toISOString() })
-                .in('id', takenReleaseIds)
-                .eq('status', 'reserved');
-              if (releaseError) {
+              const releaseResult = await releaseReservedArtworksIfUnowned(
+                supabase,
+                takenReleaseIds,
+                new Date().toISOString()
+              );
+              if (releaseResult.errors) {
                 console.error(
                   '[toss-webhook] STATUS_CHANGED 경합 패배 reserved→available 해제 실패:',
-                  releaseError
+                  releaseResult.errors
                 );
               }
               for (const artworkId of takenReleaseIds) {
@@ -1003,17 +1087,12 @@ export async function POST(req: NextRequest) {
         // 범위 밖(awaiting_deposit 취소 케이스)이라 별도 복원.
         for (const artworkId of artworkIds) {
           await deriveAndSyncArtworkStatus(supabase, artworkId);
-
-          const { error: artworkError } = await supabase
-            .from('artworks')
-            .update({ status: 'available', updated_at: now })
-            .eq('id', artworkId)
-            .eq('status', 'reserved');
-          if (artworkError) {
-            console.error('[toss-webhook] artwork reserved→available failed:', artworkError);
-          }
           revalidatePath(`/artworks/${artworkId}`);
           revalidatePath(`/en/artworks/${artworkId}`);
+        }
+        const releaseResult = await releaseReservedArtworksIfUnowned(supabase, artworkIds, now);
+        if (releaseResult.errors) {
+          console.error('[toss-webhook] artwork reserved→available failed:', releaseResult.errors);
         }
         if (artworkIds.length > 0) {
           revalidatePublicArtworkSurfaces();

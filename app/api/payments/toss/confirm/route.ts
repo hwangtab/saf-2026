@@ -17,6 +17,10 @@ import {
 } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
+import {
+  releaseReservedArtworksIfUnowned,
+  reserveUniqueArtworksOrRollback,
+} from '@/lib/orders/reservations';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
 import { runAllSettled } from '@/lib/server/after-response';
@@ -294,6 +298,7 @@ export async function POST(req: NextRequest) {
   const tossResponse = confirmResult.data;
   const isVirtualAccount = tossResponse.status === 'WAITING_FOR_DEPOSIT';
   const isDone = tossResponse.status === 'DONE';
+  const existingMetadata = (order.metadata as Record<string, unknown>) ?? {};
 
   // Insert payment record — PII(카드번호·승인번호·휴대폰)는 저장 전 sanitize.
   // virtualAccount.secret은 후속 입금 콜백 검증에 필요하므로 sanitize 함수가 보존.
@@ -329,9 +334,88 @@ export async function POST(req: NextRequest) {
     // 500 반환하지 않고 계속 진행 — 결제는 이미 Toss에서 승인됨
   }
 
+  let reservedForVirtualAccount: string[] = [];
+
+  // 가상계좌는 실제 입금 안내를 보내기 전에 unique 작품 예약이 먼저 성공해야 한다.
+  if (isVirtualAccount) {
+    const reservationNow = new Date().toISOString();
+    const reservationResult = await reserveUniqueArtworksOrRollback(
+      supabase,
+      lineItems.map((item) => item.artwork_id),
+      reservationNow
+    );
+
+    if (!reservationResult.ok) {
+      const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+      let cancelOk = false;
+      let cancelError: unknown = null;
+      try {
+        const cancelResult = await cancelPayment(
+          paymentKey,
+          { cancelReason: '작품 예약 실패로 가상계좌 주문 자동 취소' },
+          `auto-cancel-reservation-${orderId}`,
+          provider
+        );
+        cancelOk = cancelResult.success;
+        if (!cancelResult.success) cancelError = cancelResult.error;
+      } catch (err) {
+        cancelError = err;
+      }
+
+      const cancelledAt = new Date().toISOString();
+      const { error: orderCancelError } = await supabase
+        .from('orders')
+        .update({ status: 'cancelled', cancelled_at: cancelledAt })
+        .eq('id', order.id)
+        .eq('status', 'pending_payment');
+      if (orderCancelError) {
+        console.error('[confirm] VA reservation failure order cancel failed:', orderCancelError);
+      }
+
+      if (cancelOk) {
+        const { error: paymentCancelError } = await supabase
+          .from('payments')
+          .update({ status: 'CANCELED', cancelled_at: cancelledAt })
+          .eq('order_id', order.id);
+        if (paymentCancelError) {
+          console.error(
+            '[confirm] VA reservation failure payment sync failed:',
+            paymentCancelError
+          );
+        }
+      }
+
+      after(() =>
+        runAllSettled('toss-confirm.virtual-account-reservation-failed.notifications', [
+          () =>
+            notifyEmail(
+              cancelOk ? 'warning' : 'error',
+              '가상계좌 주문 작품 예약 실패 — 자동 취소',
+              {
+                주문번호: orderId,
+                paymentKey,
+                작품ID: reservationResult.failedArtworkId,
+                Toss취소: cancelOk ? '성공' : '실패',
+                ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
+                참고: cancelOk
+                  ? '가상계좌는 발급됐지만 작품 예약에 실패해 입금 안내 없이 주문을 취소했습니다.'
+                  : '가상계좌는 발급됐지만 작품 예약에 실패했고 Toss 취소가 실패했습니다. 구매자 입금 안내는 보내지 않았으니 Toss 관리자에서 수동 확인이 필요합니다.',
+              }
+            ),
+        ])
+      );
+
+      return NextResponse.json(
+        { error: apiError('artwork_sold_out', buyerLocale) },
+        { status: 409 }
+      );
+    }
+
+    reservedForVirtualAccount = reservationResult.reservedArtworkIds;
+  }
+
   // Update order status with optimistic lock (.eq status guard) + metadata merge
   const newOrderStatus = isDone ? 'paid' : isVirtualAccount ? 'awaiting_deposit' : order.status;
-  const existingMetadata = (order.metadata as Record<string, unknown>) ?? {};
 
   const { data: updatedOrders, error: orderUpdateError } = await supabase
     .from('orders')
@@ -361,27 +445,62 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // 가상계좌 발급 시 artwork 예약 처리 — unique edition만 reserved 잠금.
-  // limited/open은 여러 구매자가 동시 진행 가능하므로 입금 대기 중 잠그면 안 됨.
   if (isVirtualAccount && updatedOrders && updatedOrders.length > 0) {
-    for (const item of lineItems) {
-      const { data: artworkEdition } = await supabase
-        .from('artworks')
-        .select('edition_type')
-        .eq('id', item.artwork_id)
-        .maybeSingle();
-
-      if (artworkEdition?.edition_type === 'unique') {
-        await supabase
-          .from('artworks')
-          .update({ status: 'reserved' })
-          .eq('id', item.artwork_id)
-          .eq('status', 'available');
-        revalidatePath(`/artworks/${item.artwork_id}`);
-        revalidatePath(`/en/artworks/${item.artwork_id}`);
-      }
+    for (const artworkId of reservedForVirtualAccount) {
+      revalidatePath(`/artworks/${artworkId}`);
+      revalidatePath(`/en/artworks/${artworkId}`);
     }
     revalidatePublicArtworkSurfaces();
+  }
+
+  if (isVirtualAccount && !orderUpdateError && (!updatedOrders || updatedOrders.length === 0)) {
+    await releaseReservedArtworksIfUnowned(
+      supabase,
+      reservedForVirtualAccount,
+      new Date().toISOString()
+    );
+    after(async () => {
+      const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+      let cancelOk = false;
+      let cancelError: unknown = null;
+      try {
+        const cancelResult = await cancelPayment(
+          paymentKey,
+          { cancelReason: '주문 상태 경합으로 가상계좌 주문 자동 취소' },
+          `auto-cancel-race-${orderId}`,
+          provider
+        );
+        cancelOk = cancelResult.success;
+        if (!cancelResult.success) cancelError = cancelResult.error;
+      } catch (err) {
+        cancelError = err;
+      }
+
+      if (cancelOk) {
+        const { error: paymentSyncError } = await supabase
+          .from('payments')
+          .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+          .eq('order_id', order.id);
+        if (paymentSyncError) {
+          console.error('[confirm] VA race payment sync failed:', paymentSyncError);
+        }
+      }
+
+      await runAllSettled('toss-confirm.virtual-account-race-cancel.notification', [
+        () =>
+          notifyEmail(cancelOk ? 'warning' : 'error', '가상계좌 주문 상태 경합 — 입금 안내 보류', {
+            주문번호: orderId,
+            paymentKey,
+            Toss취소: cancelOk ? '성공' : '실패',
+            ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
+            참고: '가상계좌는 발급됐지만 주문 상태가 이미 바뀌어 입금 안내를 보내지 않았습니다.',
+          }),
+      ]);
+    });
+    return NextResponse.json(
+      { error: apiError('invalid_order_status', buyerLocale) },
+      { status: 409 }
+    );
   }
 
   // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불
@@ -447,13 +566,13 @@ export async function POST(req: NextRequest) {
       // reserved가 없어 no-op이지만 가상계좌·동시진행 케이스 대비 방어적으로 둠.)
       const takenReleaseIds = lineItems.map((item) => item.artwork_id);
       if (takenReleaseIds.length > 0) {
-        const { error: releaseError } = await supabase
-          .from('artworks')
-          .update({ status: 'available', updated_at: new Date().toISOString() })
-          .in('id', takenReleaseIds)
-          .eq('status', 'reserved');
-        if (releaseError) {
-          console.error('[confirm] 경합 패배 reserved→available 해제 실패:', releaseError);
+        const releaseResult = await releaseReservedArtworksIfUnowned(
+          supabase,
+          takenReleaseIds,
+          new Date().toISOString()
+        );
+        if (releaseResult.errors) {
+          console.error('[confirm] 경합 패배 reserved→available 해제 실패:', releaseResult.errors);
         }
         for (const artworkId of takenReleaseIds) {
           revalidatePath(`/artworks/${artworkId}`);

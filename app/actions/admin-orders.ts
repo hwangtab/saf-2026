@@ -9,6 +9,7 @@ import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { logAdminAction } from './activity-log-writer';
 import { deriveAndSyncArtworkStatus } from './admin-artworks';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
+import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
 import {
   getRepresentativeArtwork,
   formatRepresentativeTitle,
@@ -469,14 +470,11 @@ export async function refundOrder(input: RefundInput) {
   }
 
   // 6b. reserved 작품 해제 — 다품목 VA 주문에서 안 팔린 unique 작품이 reserved로 남는 재고누수 차단.
-  // deriveAndSyncArtworkStatus가 sold로 만든 작품(승자 소유)은 .eq('status','reserved') 가드로 제외됨.
+  // deriveAndSyncArtworkStatus 이후에도 다른 활성 주문이 없는 예약만 해제한다.
   // void→resync 후에 호출해야 안전. (awaiting_deposit→cancelled 분기와 동일 패턴)
-  for (const artworkId of artworkIds) {
-    await supabase
-      .from('artworks')
-      .update({ status: 'available', updated_at: now })
-      .eq('id', artworkId)
-      .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
+  const refundReleaseResult = await releaseReservedArtworksIfUnowned(supabase, artworkIds, now);
+  if (refundReleaseResult.errors) {
+    console.error('[refundOrder] reserved artwork release failed:', refundReleaseResult.errors);
   }
 
   // 7. Log action
@@ -602,14 +600,20 @@ export async function updateOrderStatus(
       await deriveAndSyncArtworkStatus(supabase, artworkId);
     }
     // reserved 작품 해제 — 다품목 VA 주문에서 안 팔린 unique 작품이 reserved로 남는 재고누수 차단.
-    // deriveAndSyncArtworkStatus가 sold로 만든 작품(승자 소유)은 .eq('status','reserved') 가드로 제외.
+    // deriveAndSyncArtworkStatus 이후에도 다른 활성 주문이 없는 예약만 해제한다.
     // void→resync 후에 호출해야 안전.
+    const transitionReleaseResult = await releaseReservedArtworksIfUnowned(
+      supabase,
+      artworkIds,
+      now
+    );
+    if (transitionReleaseResult.errors) {
+      console.error(
+        '[updateOrderStatus] reserved artwork release failed:',
+        transitionReleaseResult.errors
+      );
+    }
     for (const artworkId of artworkIds) {
-      await supabase
-        .from('artworks')
-        .update({ status: 'available', updated_at: now })
-        .eq('id', artworkId)
-        .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
       revalidatePath(`/artworks/${artworkId}`);
       revalidatePath(`/en/artworks/${artworkId}`);
     }
@@ -628,12 +632,18 @@ export async function updateOrderStatus(
         : order.artwork_id
           ? [order.artwork_id]
           : [];
+    const cancelTransitionReleaseResult = await releaseReservedArtworksIfUnowned(
+      supabase,
+      artworkIds,
+      now
+    );
+    if (cancelTransitionReleaseResult.errors) {
+      console.error(
+        '[updateOrderStatus] awaiting cancel reserved artwork release failed:',
+        cancelTransitionReleaseResult.errors
+      );
+    }
     for (const artworkId of artworkIds) {
-      await supabase
-        .from('artworks')
-        .update({ status: 'available', updated_at: now })
-        .eq('id', artworkId)
-        .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
       revalidatePath(`/artworks/${artworkId}`);
       revalidatePath(`/en/artworks/${artworkId}`);
     }
@@ -1032,20 +1042,20 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
       : order.artwork_id
         ? [order.artwork_id]
         : [];
-  for (const artworkId of reservedArtworkIds) {
-    const { error: artworkRestoreError } = await supabase
-      .from('artworks')
-      .update({ status: 'available', updated_at: now })
-      .eq('id', artworkId)
-      .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
-    if (artworkRestoreError) {
-      console.error('[cancelAwaitingOrder] artwork restore failed:', artworkRestoreError);
+  const releaseResult = await releaseReservedArtworksIfUnowned(supabase, reservedArtworkIds, now);
+  if (releaseResult.errors) {
+    console.error('[cancelAwaitingOrder] artwork restore failed:', releaseResult.errors);
+    for (const releaseError of releaseResult.errors) {
       after(() =>
         notifyEmail('error', '입금대기 주문 취소 후 예약 해제 실패', {
           주문번호: order.order_no,
           주문ID: orderId,
-          작품ID: artworkId,
-          에러: artworkRestoreError.message,
+          작품ID: releaseError.artworkId,
+          에러:
+            releaseError.error instanceof Error
+              ? releaseError.error.message
+              : ((releaseError.error as { message?: string } | null)?.message ??
+                String(releaseError.error)),
         })
       );
     }

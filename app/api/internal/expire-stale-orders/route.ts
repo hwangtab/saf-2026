@@ -9,6 +9,7 @@ import {
 } from '@/lib/utils/get-order-notification-info';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
+import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { runAllSettled } from '@/lib/server/after-response';
 
@@ -207,16 +208,14 @@ export async function GET(request: NextRequest) {
     );
 
     if (artworkIds.length > 0) {
-      const { error: artworkError } = await supabase
-        .from('artworks')
-        .update({ status: 'available', updated_at: now })
-        .in('id', artworkIds)
-        .eq('status', 'reserved'); // 멱등성: reserved 상태일 때만 변경
+      const releaseResult = await releaseReservedArtworksIfUnowned(supabase, artworkIds, now);
 
-      if (artworkError) {
-        console.error('[expire-stale-orders] artwork status restore failed:', artworkError);
+      if (releaseResult.errors) {
+        console.error('[expire-stale-orders] artwork status restore failed:', releaseResult.errors);
         await notifyEmail('error', '만료 크론: 작품 상태 복원 실패', {
-          에러: artworkError.message,
+          에러: releaseResult.errors
+            .map((item) => `${item.artworkId}: ${String(item.error)}`)
+            .join('\n'),
           작품수: `${artworkIds.length}건`,
         });
       } else {
