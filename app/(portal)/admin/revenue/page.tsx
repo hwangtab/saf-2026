@@ -11,6 +11,7 @@ import {
 import { RevenueCard } from '@/app/admin/_components/RevenueCard';
 import { RevenueFilterBar } from '@/app/admin/revenue/_components/RevenueFilterBar';
 import { MonthlyRevenueChart } from '@/app/admin/revenue/_components/RevenueCharts';
+import { getRevenueFocusScopeLabel } from '@/lib/admin/revenue-display';
 import { getTranslations, getLocale } from 'next-intl/server';
 
 type Props = {
@@ -235,6 +236,11 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
   });
   const detailRevenue = analytics.entries.reduce((sum, entry) => sum + entry.revenue, 0);
   const detailSoldCount = analytics.entries.reduce((sum, entry) => sum + entry.quantity, 0);
+  const focusScopeLabel = getRevenueFocusScopeLabel({
+    evidenceLabel: analytics.filter.evidenceLabel,
+    periodLabel: analytics.summary.periodLabel,
+    compareBaseLabel: t('compareBase'),
+  });
 
   return (
     <div className="space-y-8">
@@ -614,9 +620,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-gray-900">{t('topArtists')}</h2>
-            <span className="text-xs text-gray-500">
-              {analytics.summary.periodLabel} {t('compareBase')}
-            </span>
+            <span className="text-xs text-gray-500">{focusScopeLabel}</span>
           </AdminCardHeader>
           <div className="p-0">
             {analytics.topArtists.length === 0 ? (
@@ -660,9 +664,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-gray-900">{t('topBuyers')}</h2>
-            <span className="text-xs text-gray-500">
-              {analytics.summary.periodLabel} {t('compareBase')}
-            </span>
+            <span className="text-xs text-gray-500">{focusScopeLabel}</span>
           </AdminCardHeader>
           <div className="p-0">
             {analytics.topBuyers.length === 0 ? (
@@ -707,9 +709,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-gray-900">{t('topArtworks')}</h2>
-            <span className="text-xs text-gray-500">
-              {analytics.summary.periodLabel} {t('compareBase')}
-            </span>
+            <span className="text-xs text-gray-500">{focusScopeLabel}</span>
           </AdminCardHeader>
           <div className="p-0">
             {analytics.topArtworks.length === 0 ? (
