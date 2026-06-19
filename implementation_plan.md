@@ -1,5 +1,30 @@
 # 관리자 포털 페이지 전환 시 스크롤 초기화 구현 계획 (2026-06-19)
 
+# 관리자 작품 등록 후 목록 이동 근본 수정 계획 (2026-06-19)
+
+## 목표
+
+- 작품 등록 성공 후 클라이언트 `router.push` 상태에 의존하지 않고 목록으로 이동한다.
+- 포털 라우트(`/admin/*`)에서는 public i18n navigation이 아니라 `next/link` / `next/navigation` 기반을 사용한다.
+- 등록 이미지 업로드와 업로드 중 등록 차단 흐름은 유지한다.
+
+## 구현 범위
+
+1. `createAdminArtwork`의 기존 `{ success, id }` 반환 API는 보존한다.
+2. 실제 insert/revalidate/log 로직은 내부 공통 함수로 분리한다.
+3. 폼 제출 전용 `createAdminArtworkAndRedirect` 서버 액션을 추가하고, 성공 시 `redirect('/admin/artworks')`를 호출한다.
+4. `ArtworkEditForm`의 신규 등록 성공 분기는 `createAdminArtworkAndRedirect(formData)`만 호출하게 한다.
+5. `목록으로`는 공용 `Button href` 대신 `next/link`와 `buttonVariants`를 사용한다.
+
+## 검증
+
+- 기존 소스 회귀 테스트를 서버 액션 redirect 흐름과 포털-safe 링크 기준으로 갱신한다.
+- `npm test -- __tests__/app/admin-artwork-create-image-upload-source.test.ts`
+- `npm run lint`
+- `npm run type-check`
+
+---
+
 ## 목표
 
 - 관리자 포털에서 다른 작업 화면으로 이동하면 항상 화면 최상단에서 시작한다.

@@ -57,15 +57,20 @@ describe('admin artwork create image upload source wiring', () => {
 
   it('routes newly created artwork back to the list after create succeeds', () => {
     const source = formSource();
+    const action = actionSource();
 
-    expect(source).toContain("router.push('/admin/artworks')");
-    expect(source).toContain("throw new Error('작품 등록 결과가 올바르지 않습니다.');");
+    expect(source).toContain('createAdminArtworkAndRedirect(formData)');
+    expect(source).not.toContain('createAdminArtwork(formData)');
+    expect(action).toContain('export async function createAdminArtworkAndRedirect(formData: FormData)');
+    expect(action).toContain("redirect('/admin/artworks')");
   });
 
-  it('uses a real link for the back-to-list button', () => {
+  it('uses a portal-safe Next link for the back-to-list button', () => {
     const source = formSource();
 
-    expect(source).toContain('<Button href="/admin/artworks" variant="white">');
+    expect(source).toContain('import Link from');
+    expect(source).toContain('<Link href="/admin/artworks" className={buttonVariants({ variant: \'white\' })}>');
+    expect(source).not.toContain('<Button href="/admin/artworks"');
     expect(source).not.toContain(
       '<Button type="button" variant="white" onClick={() => router.push(\'/admin/artworks\')}>'
     );
@@ -79,5 +84,6 @@ describe('admin artwork create image upload source wiring', () => {
     expect(source).toContain("imageOwnerPrefix.startsWith('admin-artwork-draft-')");
     expect(source).toContain('validateImageUrls(imageList.urls, imageOwnerPrefix)');
     expect(source).toContain('images: imageList.urls');
+    expect(source).toContain('async function createAdminArtworkRecord(formData: FormData)');
   });
 });

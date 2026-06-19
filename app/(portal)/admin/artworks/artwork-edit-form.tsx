@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, Trash2, X } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import { buttonVariants } from '@/components/ui/button-base';
 import {
   updateArtworkDetails,
   updateArtworkImages,
-  createAdminArtwork,
+  createAdminArtworkAndRedirect,
   createAndAttachAdminTagToArtwork,
   addAdminTagToArtworks,
   removeAdminTagFromArtworks,
@@ -195,13 +196,7 @@ export function ArtworkEditForm({
         }
         router.push('/admin/artworks');
       } else {
-        const result = await createAdminArtwork(formData);
-        if (result.success && result.id) {
-          toast.success('작품 등록이 완료되었습니다.');
-          router.push('/admin/artworks');
-          return;
-        }
-        throw new Error('작품 등록 결과가 올바르지 않습니다.');
+        await createAdminArtworkAndRedirect(formData);
       }
     } catch (error) {
       console.error('[admin-artwork-edit-form] Artwork save failed:', error);
@@ -922,9 +917,9 @@ export function ArtworkEditForm({
         )}
 
         <div className="flex justify-end gap-3">
-          <Button href="/admin/artworks" variant="white">
+          <Link href="/admin/artworks" className={buttonVariants({ variant: 'white' })}>
             목록으로
-          </Button>
+          </Link>
           <Button
             type="submit"
             variant="primary"
