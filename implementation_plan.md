@@ -1,3 +1,43 @@
+# 관리자 포털 stale 번들 자동 갱신 구현 계획 (2026-06-19)
+
+## 목표
+
+- 관리자 화면을 오래 열어 둔 상태에서 새 배포가 나가도 구버전 RSC 메시지 payload가 계속 남아 `{title}` 같은 이전 번역 버그가 다시 보이지 않게 한다.
+- 운영자에게 “새로고침하세요”라고 떠넘기지 않고, 포털이 현재 배포 버전을 감지해 스스로 최신 화면으로 갱신한다.
+- 삭제 확인 모달의 title 치환 수정은 유지하고, 이번 원인인 stale client payload를 포털 공통 정책으로 막는다.
+
+## 원인
+
+1. 최신 `origin/main`과 Vercel 배포 소스의 `messages/ko.admin.json`은 이미 `〈{title}〉`로 수정되어 있었다.
+2. 실제 Chrome 탭의 `__next_f` payload에는 새로고침 전 `'{title}' 작품...` 구버전 메시지가 남아 있었다.
+3. 같은 탭을 새로고침하자 payload와 삭제 모달이 `〈되살아나는 풍경 5〉 작품...`로 정상 치환됐다.
+4. 따라서 남은 문제는 메시지 파일 자체가 아니라 배포 후에도 열려 있던 관리자 클라이언트가 오래된 RSC payload를 계속 쓰는 구조다.
+
+## 구현 범위
+
+1. 관리자 전용 배포 버전 API를 추가한다.
+   - `GET /api/admin/deployment-version`
+   - `requireAdmin()`으로 관리자만 호출 가능하게 한다.
+   - 응답은 `deploymentId`와 `Cache-Control: no-store`를 포함한다.
+2. 관리자 layout에 client refresh guard를 추가한다.
+   - 서버에서 현재 배포 식별자를 prop으로 내려준다.
+   - 탭 focus, visibility 복귀, 주기적 확인 시 API의 배포 식별자와 비교한다.
+   - 식별자가 달라지면 현재 페이지를 한 번 새로고침해 최신 RSC payload와 번역 메시지를 받는다.
+3. 회귀 테스트를 추가한다.
+   - 삭제 확인 번역 소스 테스트는 유지한다.
+   - refresh guard가 `/api/admin/deployment-version`을 no-store로 조회하고, 버전이 다를 때 reload 경로를 갖는지 확인한다.
+   - API가 no-store 응답과 배포 식별자를 반환하는지 확인한다.
+
+## 검증
+
+- `npm test -- __tests__/lib/admin-i18n-placeholders.test.ts`
+- 새로 추가한 관리자 배포 갱신 테스트
+- `npm run lint`
+- `npm run type-check`
+- 배포 후 실제 로그인 Chrome에서 `/admin/artworks` 삭제 모달이 작품명으로 치환되는지 확인한다.
+
+---
+
 # 관리자 포털 페이지 전환 시 스크롤 초기화 구현 계획 (2026-06-19)
 
 # 관리자 작품 등록 후 목록 이동 근본 수정 계획 (2026-06-19)

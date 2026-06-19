@@ -1,16 +1,20 @@
 import { Suspense } from 'react';
+import { getTranslations } from 'next-intl/server';
+
 import { requireAdmin } from '@/lib/auth/guards';
+import { getDeploymentId } from '@/lib/deployment';
 import { AdminMobileNav } from './admin-mobile-nav';
 import { AdminDesktopNav } from './admin-desktop-nav';
 import PortalShell from '@/components/layout/PortalShell';
-import { getTranslations } from 'next-intl/server';
 import { getWebVitalsRegressionCount } from '@/app/actions/admin-analytics';
 import { getAdminNotifications } from '@/app/actions/admin-notifications';
 import { AdminNotificationBell } from './_components/AdminNotificationBell';
+import AdminDeploymentRefresh from './_components/AdminDeploymentRefresh';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   await requireAdmin();
   const t = await getTranslations('admin.common');
+  const deploymentId = getDeploymentId();
   // 두 fetch를 병렬로 — regressionCount는 nav dot, notifications는 벨 드롭다운.
   const [regressionCount, notifications] = await Promise.all([
     getWebVitalsRegressionCount(),
@@ -36,6 +40,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       }
       rightSlot={<AdminNotificationBell notifications={notifications} />}
     >
+      <AdminDeploymentRefresh deploymentId={deploymentId} />
       {children}
     </PortalShell>
   );
