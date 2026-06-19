@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, unstable_rethrow } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, Trash2, X } from 'lucide-react';
 import Button from '@/components/ui/Button';
@@ -199,6 +199,10 @@ export function ArtworkEditForm({
         await createAdminArtworkAndRedirect(formData);
       }
     } catch (error) {
+      // createAdminArtworkAndRedirect의 redirect()는 정상 흐름에서 NEXT_REDIRECT를 던진다.
+      // 이를 삼키면 작품은 등록됐는데도 "저장 중 오류" 토스트가 뜨고 목록 이동이 막힌다.
+      // 프레임워크 예외(NEXT_REDIRECT 등)는 unstable_rethrow로 재전파해야 한다.
+      unstable_rethrow(error);
       console.error('[admin-artwork-edit-form] Artwork save failed:', error);
       setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       toast.error('An error occurred while saving.');
