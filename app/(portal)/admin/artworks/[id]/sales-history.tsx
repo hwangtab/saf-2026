@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import {
@@ -85,7 +85,15 @@ export function SalesHistory({
   const [buyerName, setBuyerName] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
   const [note, setNote] = useState('');
-  const [soldAt, setSoldAt] = useState(new Date().toISOString().split('T')[0]);
+  // 렌더 중 new Date()를 초기값으로 쓰면 SSR/hydration 시점 차이로 날짜 input 값이
+  // 어긋나 hydration mismatch(#418)를 유발한다. 빈값으로 시작해 마운트 후 KST 오늘로 채운다.
+  const [soldAt, setSoldAt] = useState('');
+
+  useEffect(() => {
+    if (!soldAt) {
+      setSoldAt(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date()));
+    }
+  }, [soldAt]);
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/,/g, '');
@@ -549,7 +557,9 @@ export function SalesHistory({
                 return (
                   <tr key={sale.id} className="hover:bg-gray-50/50">
                     <td className="px-4 py-3 text-sm text-gray-900">
-                      {new Date(sale.sold_at).toLocaleDateString('ko-KR')}
+                      {new Date(sale.sold_at).toLocaleDateString('ko-KR', {
+                        timeZone: 'Asia/Seoul',
+                      })}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {sale.buyer_name || '-'}

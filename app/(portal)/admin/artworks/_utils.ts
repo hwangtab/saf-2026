@@ -83,7 +83,10 @@ export function formatDate(dateString: string | null | undefined, locale: 'ko' |
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return '-';
 
+  // timeZone 고정 필수: 미지정 시 서버(UTC)와 브라우저(KST)가 시:분을 9시간 다르게
+  // 렌더해 React hydration mismatch(#418)가 발생한다.
   return date.toLocaleDateString(locale === 'en' ? 'en-US' : 'ko-KR', {
+    timeZone: 'Asia/Seoul',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
