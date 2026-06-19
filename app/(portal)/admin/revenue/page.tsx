@@ -17,6 +17,9 @@ type Props = {
   searchParams: Promise<{
     year?: string;
     month?: string;
+    buyerName?: string;
+    buyerPhone?: string;
+    artistId?: string;
   }>;
 };
 
@@ -37,6 +40,51 @@ function formatShare(value: number | null) {
   return `${value.toFixed(1)}%`;
 }
 
+function formatDateTime(iso: string, locale: string) {
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(iso));
+}
+
+function getRevenueHref(
+  current: {
+    year: number;
+    month: number | 'all';
+    buyerName?: string | null;
+    buyerPhone?: string | null;
+    artistId?: string | null;
+  },
+  next: {
+    month?: number | 'all';
+    buyerName?: string | null;
+    buyerPhone?: string | null;
+    artistId?: string | null;
+  }
+) {
+  const params = new URLSearchParams();
+  params.set('year', String(current.year));
+  params.set('month', String(next.month ?? current.month));
+
+  const buyerName = next.buyerName === undefined ? current.buyerName : next.buyerName;
+  const buyerPhone = next.buyerPhone === undefined ? current.buyerPhone : next.buyerPhone;
+  const artistId = next.artistId === undefined ? current.artistId : next.artistId;
+
+  if (buyerName) params.set('buyerName', buyerName);
+  if (buyerPhone) params.set('buyerPhone', buyerPhone);
+  if (artistId) params.set('artistId', artistId);
+
+  return `/admin/revenue?${params.toString()}`;
+}
+
+function formatChannelLabel(channel: 'offline' | 'online') {
+  return channel === 'online' ? '온라인' : '오프라인';
+}
+
 export default async function AdminRevenuePage({ searchParams }: Props) {
   const locale = await getLocale();
   const t = await getTranslations('admin.revenue');
@@ -53,6 +101,9 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
     analytics = await getRevenueAnalytics({
       year: params.year,
       month: params.month,
+      buyerName: params.buyerName,
+      buyerPhone: params.buyerPhone,
+      artistId: params.artistId,
     });
   } catch (error) {
     console.error('Revenue Analytics Error:', error);
@@ -79,6 +130,25 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
   const reportExportHref = `/admin/revenue/export?year=${analytics.filter.selectedYear}&month=${selectedMonthToken}&format=report`;
   const sourceSummary = analytics.summaryBySource;
   const channelSummary = analytics.summaryByChannel;
+  const currentFilter = {
+    year: analytics.filter.selectedYear,
+    month: analytics.filter.selectedMonth,
+    buyerName: analytics.filter.buyerName,
+    buyerPhone: analytics.filter.buyerPhone,
+    artistId: analytics.filter.artistId,
+  };
+  const hasDrilldownFilter =
+    analytics.filter.selectedMonth !== 'all' ||
+    !!analytics.filter.buyerName ||
+    !!analytics.filter.artistId;
+  const clearFilterHref = getRevenueHref(currentFilter, {
+    month: 'all',
+    buyerName: null,
+    buyerPhone: null,
+    artistId: null,
+  });
+  const detailRevenue = analytics.entries.reduce((sum, entry) => sum + entry.revenue, 0);
+  const detailSoldCount = analytics.entries.reduce((sum, entry) => sum + entry.quantity, 0);
 
   return (
     <div className="space-y-8">
@@ -110,6 +180,37 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           {t('reportCsv')}
         </a>
       </div>
+
+      {hasDrilldownFilter ? (
+        <AdminCard className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="font-semibold text-gray-800">{t('activeFilters')}</span>
+            {analytics.filter.selectedMonth !== 'all' ? (
+              <span className="rounded-full bg-primary-surface px-3 py-1 font-medium text-primary-strong">
+                {analytics.filter.selectedMonth}
+                {t('month')}
+              </span>
+            ) : null}
+            {analytics.filter.buyerName ? (
+              <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700">
+                {t('buyerColumn')}: {analytics.filter.buyerName}
+                {analytics.filter.buyerPhone ? ` · ${analytics.filter.buyerPhone}` : ''}
+              </span>
+            ) : null}
+            {analytics.filter.artistId ? (
+              <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700">
+                {t('sellerColumn')}: {analytics.filter.artistId.startsWith('name:') ? analytics.filter.artistId.slice(5) : analytics.filter.artistId}
+              </span>
+            ) : null}
+          </div>
+          <Link
+            href={clearFilterHref}
+            className="text-sm font-semibold text-primary-strong hover:underline"
+          >
+            {t('clearFilters')}
+          </Link>
+        </AdminCard>
+      ) : null}
 
       {analytics.dataQuality.soldWithoutSoldAtCount > 0 ? (
         <AdminCard className="border-charcoal-deep/20 bg-charcoal-deep/5 p-4">
@@ -244,7 +345,19 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
 
                 return (
                   <tr key={month.month} className={isSelected ? 'bg-primary-surface/50' : ''}>
-                    <td className="px-4 py-3 font-medium text-gray-800">{month.label}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <Link
+                        href={getRevenueHref(currentFilter, {
+                          month: month.month,
+                          buyerName: null,
+                          buyerPhone: null,
+                          artistId: null,
+                        })}
+                        className="text-gray-900 hover:text-primary-strong hover:underline"
+                      >
+                        {month.label}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3 text-right font-medium text-gray-900">
                       {krwFormatter.format(month.revenue)}
                     </td>
@@ -293,7 +406,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         </div>
       </AdminCard>
 
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <AdminCard className="flex flex-col">
           <AdminCardHeader className="rounded-t-2xl">
             <h2 className="text-base font-semibold text-gray-900">{t('topArtists')}</h2>
@@ -313,7 +426,17 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                   >
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {index + 1}. {artist.artistName}
+                        {index + 1}.{' '}
+                        <Link
+                          href={getRevenueHref(currentFilter, {
+                            buyerName: null,
+                            buyerPhone: null,
+                            artistId: artist.artistFilterId,
+                          })}
+                          className="hover:text-primary-strong hover:underline"
+                        >
+                          {artist.artistName}
+                        </Link>
                       </p>
                       <p className="mt-0.5 text-xs text-gray-500">
                         {t('soldCount')} {numberFormatter.format(artist.soldCount)}{' '}
@@ -322,6 +445,53 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                     </div>
                     <p className="text-sm font-semibold text-gray-900">
                       {krwFormatter.format(artist.revenue)}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        </AdminCard>
+
+        <AdminCard className="flex flex-col">
+          <AdminCardHeader className="rounded-t-2xl">
+            <h2 className="text-base font-semibold text-gray-900">{t('topBuyers')}</h2>
+            <span className="text-xs text-gray-500">
+              {analytics.summary.periodLabel} {t('compareBase')}
+            </span>
+          </AdminCardHeader>
+          <div className="p-0">
+            {analytics.topBuyers.length === 0 ? (
+              <AdminEmptyState title={t('noRevenueData')} description={t('noRevenueDataDesc')} />
+            ) : (
+              <ol className="divide-y divide-gray-100">
+                {analytics.topBuyers.map((buyer, index) => (
+                  <li
+                    key={`${buyer.buyerName}-${buyer.buyerPhone || 'no-phone'}-${index}`}
+                    className="flex items-center justify-between gap-4 p-4"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-900">
+                        {index + 1}.{' '}
+                        <Link
+                          href={getRevenueHref(currentFilter, {
+                            buyerName: buyer.buyerName,
+                            buyerPhone: buyer.buyerPhone,
+                            artistId: null,
+                          })}
+                          className="hover:text-primary-strong hover:underline"
+                        >
+                          {buyer.buyerName}
+                        </Link>
+                      </p>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        {buyer.buyerPhone || t('noBuyerPhone')} · {t('soldCount')}{' '}
+                        {numberFormatter.format(buyer.soldCount)} {t('pointsUnit')} ·{' '}
+                        {t('purchaseCount')} {numberFormatter.format(buyer.purchaseCount)}
+                      </p>
+                    </div>
+                    <p className="shrink-0 text-sm font-semibold text-gray-900">
+                      {krwFormatter.format(buyer.revenue)}
                     </p>
                   </li>
                 ))}
@@ -367,6 +537,124 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
           </div>
         </AdminCard>
       </section>
+
+      <AdminCard className="overflow-hidden">
+        <AdminCardHeader className="rounded-t-2xl">
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">{t('detailEvidenceTitle')}</h2>
+            <p className="mt-1 text-xs text-gray-500">{t('detailEvidenceDesc')}</p>
+          </div>
+          <div className="text-right text-xs text-gray-500">
+            <p>
+              {numberFormatter.format(analytics.entries.length)}
+              {t('entriesUnit')} · {numberFormatter.format(detailSoldCount)} {t('pointsUnit')}
+            </p>
+            <p className="font-semibold text-gray-900">{krwFormatter.format(detailRevenue)}</p>
+          </div>
+        </AdminCardHeader>
+        {analytics.entries.length === 0 ? (
+          <AdminEmptyState title={t('noRevenueData')} description={t('noRevenueDataDesc')} />
+        ) : (
+          <div className="max-h-[520px] overflow-x-auto overflow-y-auto">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
+                <tr>
+                  <th className="px-4 py-3 text-left">{t('soldDate')}</th>
+                  <th className="px-4 py-3 text-left">{t('buyerColumn')}</th>
+                  <th className="px-4 py-3 text-left">{t('sellerColumn')}</th>
+                  <th className="px-4 py-3 text-left">{t('artworkColumn')}</th>
+                  <th className="px-4 py-3 text-right">{t('quantityColumn')}</th>
+                  <th className="px-4 py-3 text-right">{t('unitPriceColumn')}</th>
+                  <th className="px-4 py-3 text-right">{t('revenueColumn')}</th>
+                  <th className="px-4 py-3 text-left">{t('channelColumn')}</th>
+                  <th className="px-4 py-3 text-left">{t('orderColumn')}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 bg-white">
+                {analytics.entries.map((entry) => (
+                  <tr key={entry.saleId} className="hover:bg-gray-50">
+                    <td className="whitespace-nowrap px-4 py-3 text-gray-700">
+                      {formatDateTime(entry.soldAtUtc, locale)}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {entry.buyerName ? (
+                        <Link
+                          href={getRevenueHref(currentFilter, {
+                            buyerName: entry.buyerName,
+                            buyerPhone: entry.buyerPhone,
+                            artistId: null,
+                          })}
+                          className="font-medium text-gray-900 hover:text-primary-strong hover:underline"
+                        >
+                          {entry.buyerName}
+                        </Link>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        {entry.buyerPhone || t('noBuyerPhone')}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={getRevenueHref(currentFilter, {
+                          buyerName: null,
+                          buyerPhone: null,
+                          artistId: entry.artistFilterId,
+                        })}
+                        className="font-medium text-gray-900 hover:text-primary-strong hover:underline"
+                      >
+                        {entry.artistName}
+                      </Link>
+                    </td>
+                    <td className="max-w-[240px] px-4 py-3">
+                      <Link
+                        href={`/admin/artworks/${entry.artworkId}`}
+                        className="line-clamp-2 font-medium text-gray-900 hover:text-primary-strong hover:underline"
+                      >
+                        {entry.title}
+                      </Link>
+                      <p className="mt-0.5 truncate font-mono text-[10px] text-gray-400">
+                        {entry.artworkId}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums text-gray-700">
+                      {numberFormatter.format(entry.quantity)}
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums text-gray-700">
+                      {krwFormatter.format(entry.unitPrice)}
+                    </td>
+                    <td className="px-4 py-3 text-right tabular-nums font-semibold text-gray-900">
+                      {krwFormatter.format(entry.revenue)}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-gray-700">
+                      {formatChannelLabel(entry.channel)}
+                      {entry.sourceDetail ? (
+                        <p className="mt-0.5 text-xs text-gray-500">{entry.sourceDetail}</p>
+                      ) : null}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-gray-700">
+                      {entry.orderId ? (
+                        <Link
+                          href={`/admin/orders/${entry.orderId}`}
+                          className="font-medium text-gray-900 hover:text-primary-strong hover:underline"
+                        >
+                          {entry.orderNo || entry.orderId}
+                        </Link>
+                      ) : (
+                        <span>{entry.externalOrderId || '-'}</span>
+                      )}
+                      {entry.orderId && entry.externalOrderId ? (
+                        <p className="mt-0.5 text-xs text-gray-500">{entry.externalOrderId}</p>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </AdminCard>
     </div>
   );
 }
