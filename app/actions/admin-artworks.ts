@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { after } from 'next/server';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import type { Database } from '@/types/supabase';
 import { logAdminAction } from './activity-log-writer';
@@ -153,7 +152,17 @@ export async function deleteAdminArtwork(id: string) {
   }
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);
-  if (error) throw error;
+  if (error) {
+    // order_items/orders FK는 ON DELETE NO ACTION(회계 기록 보존). 환불·취소된 과거
+    // 주문이라도 행이 남아 있으면 DELETE가 23503으로 실패한다. raw FK 에러 대신 운영자가
+    // 이해할 수 있는 안내로 변환한다(삭제 대신 '숨김' 권장). 회귀: 2026-06-19 삭제 멈춤.
+    if ((error as { code?: string }).code === '23503') {
+      throw new Error(
+        '주문·판매 이력이 연결돼 있어 삭제할 수 없습니다. 작품을 "숨김" 처리해 목록에서 가려주세요.'
+      );
+    }
+    throw error;
+  }
 
   let artistName: string | null = null;
   if (artwork?.artist_id) {
@@ -396,27 +405,25 @@ async function createAdminArtworkRecord(formData: FormData) {
 
   if (error) throw error;
 
-  const { data: artist } = await supabase
-    .from('artists')
-    .select('name_ko')
-    .eq('id', artist_id)
-    .single();
-
   await logAdminAction('artwork_created', 'artwork', artwork.id, { title }, admin.id, {
     afterSnapshot: artwork,
     reversible: true,
   });
 
-  // ⚠️ revalidate는 응답 이후(after)로 분리한다 — 동기 호출 시 등록이 멈추는 회귀(2026-06-19).
-  // server action 응답에 동기 revalidate가 포함되면 Next.js가 무효화된 라우트를 client
-  // router cache에 반영(refetch)하는데, revalidateTag('artworks')는 600+개 작품 페이지를
-  // 무효화해 client refetch가 폭발한다. 그게 끝날 때까지 client의 `await createAdminArtwork`가
-  // resolve되지 않아 — 작품은 정상 저장(POST 200)됐는데도 — 성공 토스트도 목록 이동도 막혔다.
-  // navigation 코드를 4회 바꿔도 안 잡힌 이유: 원인은 navigation이 아니라 응답을 막는 revalidate.
-  after(() => {
-    revalidatePublicArtworkSurfaces([artist?.name_ko]);
-    revalidatePath('/admin/artworks');
-  });
+  // 회귀 근본 해결(2026-06-19): 작품 등록 후 화면이 멈추고 토스트·목록 이동이 모두 막힌 문제.
+  //   - 서버 액션은 매번 정상 완주(POST 200, INSERT·로그 모두 성공)했으나 client의
+  //     `await createAdminArtwork`가 resolve되지 않았다(버튼 영구 로딩).
+  //   - 정상 동작하는 작가 등록(createAdminArtist)과의 유일한 차이가 이 revalidate 블록이었다.
+  //     작가 등록은 `revalidatePath('/admin/artists')` 단일·동기·ASCII 호출뿐이다.
+  //   - 작품 등록만 `revalidatePublicArtworkSurfaces`(→ `revalidateTag('artworks','max')` +
+  //     한글 작가명 경로 직렬화)를 호출했고, sync든 after()든 이 무거운 무효화가 액션 응답의
+  //     cache-invalidation 디렉티브로 client router에 전달되며 후속 처리를 막았다.
+  // 해결: 등록 경로는 작가 등록과 동일하게 가벼운 단일 경로 revalidate만 동기로 수행한다.
+  //   revalidateTag('artworks')·한글 작가 경로 등 무거운 공개면 무효화는 등록 응답에서 제거.
+  //   (신규 작품의 공개면 노출은 다음 자연 revalidate 또는 작품 수정/판매 액션에서 갱신된다.)
+  revalidatePath('/admin/artworks');
+  revalidatePath('/artworks');
+  revalidatePath('/');
 
   return artwork;
 }
@@ -1027,7 +1034,16 @@ export async function batchDeleteArtworks(ids: string[]) {
   }
 
   const { error } = await supabase.from('artworks').delete().in('id', ids);
-  if (error) throw error;
+  if (error) {
+    // 단건 삭제와 동일: order_items/orders FK(NO ACTION) 때문에 주문 이력 있는 작품이
+    // 하나라도 끼면 일괄 DELETE가 23503으로 실패. 운영자 안내 메시지로 변환.
+    if ((error as { code?: string }).code === '23503') {
+      throw new Error(
+        '선택한 작품 중 주문·판매 이력이 연결된 작품이 있어 삭제할 수 없습니다. 해당 작품은 "숨김" 처리해 주세요.'
+      );
+    }
+    throw error;
+  }
 
   revalidatePublicArtworkSurfaces();
   revalidatePath('/admin/artworks');

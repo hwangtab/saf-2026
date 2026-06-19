@@ -55,16 +55,18 @@ describe('admin artwork create image upload source wiring', () => {
     expect(source).toContain("router.push('/admin/artworks');");
   });
 
-  it('routes newly created artwork back to the list via client router.push', () => {
+  it('routes newly created artwork back to the list via a hard navigation', () => {
     const source = formSource();
     const action = actionSource();
 
-    // 회귀(2026-06-19): server action의 redirect()를 <form onSubmit> 이벤트 핸들러에서
-    // await하면 Next.js가 client navigation을 수행하지 않아(form action prop·transition
-    // 컨텍스트가 아님) 등록 후 화면이 멈추고 "목록으로" 링크까지 막힌다. redirect 없는
-    // createAdminArtwork + client router.push가 안전한 패턴(수정 분기와 동일).
+    // 회귀(2026-06-19, navigation 코드만 5회 수정·전부 실패): 작품 등록 시 server action은
+    // 매번 정상 완주(POST 200, INSERT·로그 성공)했으나 응답에 실린 무거운 캐시 무효화 처리 중
+    // client React router가 멈춰 화면이 굳고 토스트·"목록으로" 링크까지 막혔다. router.push·
+    // redirect() 같은 React router 경로는 모두 같은 지점에서 막힌다. 등록 후 이동은 React
+    // router를 우회한 하드 내비게이션(window.location.assign)으로 강제해 교착을 구조적으로
+    // 회피하고, 액션의 무거운 공개면 revalidate(revalidateTag('artworks'))는 등록 경로에서 제거.
     expect(source).toContain('createAdminArtwork(formData)');
-    expect(source).toContain("router.push('/admin/artworks')");
+    expect(source).toContain("window.location.assign('/admin/artworks')");
     expect(action).toContain('export async function createAdminArtwork(formData: FormData)');
 
     // 같은 회귀를 되살릴 수 있는 옛 패턴이 다시 들어오지 못하게 한다.

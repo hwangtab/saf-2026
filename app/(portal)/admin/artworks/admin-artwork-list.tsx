@@ -364,9 +364,11 @@ export function AdminArtworkList({
       await deleteAdminArtwork(id);
       toast.success(t('deleted'));
       setDeleteConfirm(null);
-    } catch {
+    } catch (error) {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(t('deleteError'));
+      // 서버가 던지는 안내(주문 이력 연결 등)를 그대로 노출 — 기존엔 generic 메시지로 덮어
+      // "왜 안 되는지" 알 수 없었다(회귀: 2026-06-19).
+      toast.error(error instanceof Error ? error.message : t('deleteError'));
     } finally {
       setProcessingId(null);
     }
@@ -736,20 +738,26 @@ export function AdminArtworkList({
   };
 
   const handleBatchDelete = async () => {
-    if (selectedInFiltered.length === 0) return;
-    setBatchProcessing(true);
+    // 확정 시점의 선택을 먼저 스냅샷으로 고정한다. 아래 낙관적 제거가 filtered를 바꾸면
+    // selectedInFiltered가 즉시 재계산되어 0으로 붕괴하므로, 이후 로직은 스냅샷 ids만 쓴다.
+    const ids = selectedInFiltered;
+    if (ids.length === 0) return;
+    const targets = new Set(ids);
 
-    const targets = new Set(selectedInFiltered);
+    setBatchProcessing(true);
+    // 모달을 먼저 닫고 선택을 비운 뒤에 낙관적 제거 — 모달이 열린 채로 낙관적 제거가 일어나면
+    // 모달 본문/버튼의 {count}가 0으로 바뀌어 "0개 항목 삭제"로 보이던 회귀 방지(2026-06-19).
+    setShowBatchDeleteConfirm(false);
+    setSelectedIds(new Set());
     setOptimisticArtworks((prev) => prev.filter((item) => !targets.has(item.id)));
 
     try {
-      await batchDeleteArtworks(selectedInFiltered);
-      setSelectedIds(new Set());
-      setShowBatchDeleteConfirm(false);
+      await batchDeleteArtworks(ids);
       toast.success(t('batchDeleted'));
-    } catch {
+    } catch (error) {
       setOptimisticArtworks(artworksRef.current);
-      toast.error(t('batchDeleteError'));
+      setSelectedIds(new Set(ids)); // 실패 시 선택 복구
+      toast.error(error instanceof Error ? error.message : t('batchDeleteError'));
     } finally {
       setBatchProcessing(false);
     }
@@ -881,27 +889,27 @@ export function AdminArtworkList({
                         aria-hidden="true"
                       />
                       {tag.name}
-                        <button
-                          type="button"
-                          onClick={() => setArchiveTagConfirm(tag)}
-                          disabled={processingId === `tag:${tag.id}`}
-                          className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
-                          aria-label={t('archiveAdminTag', { tag: tag.name })}
-                        >
-                          <Archive className="h-3 w-3" aria-hidden="true" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDeleteTagConfirm(tag)}
-                          disabled={processingId === `delete-tag:${tag.id}`}
-                          className="rounded-full p-0.5 text-charcoal-soft hover:bg-danger/10 hover:text-danger-a11y disabled:opacity-50"
-                          aria-label={t('deleteAdminTag', { tag: tag.name })}
-                        >
-                          <Trash2 className="h-3 w-3" aria-hidden="true" />
-                        </button>
-                      </span>
-                    ))
-                  )}
+                      <button
+                        type="button"
+                        onClick={() => setArchiveTagConfirm(tag)}
+                        disabled={processingId === `tag:${tag.id}`}
+                        className="rounded-full p-0.5 text-charcoal-soft hover:bg-charcoal/10 hover:text-charcoal-deep disabled:opacity-50"
+                        aria-label={t('archiveAdminTag', { tag: tag.name })}
+                      >
+                        <Archive className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeleteTagConfirm(tag)}
+                        disabled={processingId === `delete-tag:${tag.id}`}
+                        className="rounded-full p-0.5 text-charcoal-soft hover:bg-danger/10 hover:text-danger-a11y disabled:opacity-50"
+                        aria-label={t('deleteAdminTag', { tag: tag.name })}
+                      >
+                        <Trash2 className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    </span>
+                  ))
+                )}
               </div>
             </div>
             <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_44px_auto]">
@@ -1408,7 +1416,8 @@ export function AdminArtworkList({
         isOpen={showBatchDeleteConfirm}
         onClose={() => setShowBatchDeleteConfirm(false)}
         onConfirm={handleBatchDelete}
-        title={t('batchDeleteTitle')}
+        // 1개만 선택했는데 "일괄 삭제"로 보이던 문제: 개수에 따라 단수/일괄 문구로 분기.
+        title={selectedInFiltered.length === 1 ? t('deleteConfirmTitle') : t('batchDeleteTitle')}
         description={t('batchDeleteDescription', { count: selectedInFiltered.length })}
         confirmText={t('batchDeleteText', { count: selectedInFiltered.length })}
         variant="danger"
