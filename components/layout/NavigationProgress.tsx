@@ -5,11 +5,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { BRAND_COLORS } from '@/lib/colors';
 
+function shouldScrollToTopOnPortalNavigation(
+  previousPathname: string | null,
+  nextPathname: string
+) {
+  return previousPathname !== null && previousPathname !== nextPathname;
+}
+
 export default function NavigationProgress() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const barRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
+  const previousPathnameRef = useRef<string | null>(null);
   const completeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafIdsRef = useRef<number[]>([]);
@@ -117,6 +125,16 @@ export default function NavigationProgress() {
       mediaQuery.removeEventListener('change', handleChange);
     };
   }, []);
+
+  useEffect(() => {
+    const previousPathname = previousPathnameRef.current;
+
+    if (shouldScrollToTopOnPortalNavigation(previousPathname, pathname)) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+
+    previousPathnameRef.current = pathname;
+  }, [pathname]);
 
   useEffect(() => {
     const bar = barRef.current;

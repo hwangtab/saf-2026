@@ -52,6 +52,8 @@ describe('NavigationProgress', () => {
     jest.spyOn(window, 'cancelAnimationFrame').mockImplementation((id: number) => {
       rafCallbacks.delete(id);
     });
+
+    jest.spyOn(window, 'scrollTo').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -69,6 +71,37 @@ describe('NavigationProgress', () => {
 
     return bar;
   }
+
+  it('does not scroll on the first render', () => {
+    render(<NavigationProgress />);
+
+    expect(window.scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('scrolls to the top when the portal pathname changes', () => {
+    const { rerender } = render(<NavigationProgress />);
+
+    act(() => {
+      mockPathname = '/admin/users';
+      rerender(<NavigationProgress />);
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledTimes(1);
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
+  });
+
+  it('keeps the current scroll position when only search params change', () => {
+    mockPathname = '/admin/users';
+    mockSearchParams = 'role=user';
+    const { rerender } = render(<NavigationProgress />);
+
+    act(() => {
+      mockSearchParams = 'role=artist';
+      rerender(<NavigationProgress />);
+    });
+
+    expect(window.scrollTo).not.toHaveBeenCalled();
+  });
 
   it('cancels pending animation frames before a new cycle starts', () => {
     const { container, rerender } = render(<NavigationProgress />);

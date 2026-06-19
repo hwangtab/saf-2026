@@ -1,3 +1,28 @@
+# 관리자 포털 페이지 전환 시 스크롤 초기화 구현 계획 (2026-06-19)
+
+## 목표
+
+- 관리자 포털에서 다른 작업 화면으로 이동하면 항상 화면 최상단에서 시작한다.
+- 같은 화면 안에서 필터, 기간, 정렬 등 query string만 바뀌는 전환은 현재 스크롤을 유지한다.
+- 개별 링크마다 우회 설정을 붙이지 않고 포털 공통 전환 정책으로 처리한다.
+
+## 구현 범위
+
+1. `NavigationProgress`에 pathname 변경 전용 스크롤 초기화 effect를 추가한다.
+2. 최초 렌더에서는 `window.scrollTo`를 호출하지 않는다.
+3. `pathname`이 바뀐 경우에만 `window.scrollTo({ top: 0, left: 0, behavior: 'auto' })`를 호출한다.
+4. `searchParams`만 바뀐 경우에는 스크롤하지 않는다.
+5. 기존 progress bar animation은 pathname/searchParams 변경에 계속 반응하게 유지한다.
+6. 기존 `{ scroll: false }` 필터 전환 코드는 그대로 둔다.
+
+## 검증
+
+- `__tests__/components/NavigationProgress.test.tsx`에 pathname 변경, query-only 변경, 최초 렌더 회귀 테스트를 추가한다.
+- `npm test -- __tests__/components/NavigationProgress.test.tsx`를 실행한다.
+- `npm run lint`를 실행한다.
+
+---
+
 # 관리자 작품 등록 화면 이미지 통합 업로드 구현 계획 (2026-06-19)
 
 ## 업로드 중 등록 차단 보강 (2026-06-19)
