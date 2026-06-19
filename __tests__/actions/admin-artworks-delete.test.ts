@@ -90,4 +90,34 @@ describe('admin artwork deletion active-order guard', () => {
     expect(mockHasActiveOrdersForArtworks).toHaveBeenCalledWith(supabase, ['art-1', 'art-2']);
     expect(deleteMock).not.toHaveBeenCalled();
   });
+
+  it('translates FK violation (23503) into an operator-facing message on single delete', async () => {
+    // 환불·취소된 과거 주문 등 비활성 이력이라 가드는 통과하지만 order_items/orders FK가
+    // NO ACTION이라 DELETE가 23503으로 실패하는 경우. raw FK 에러 대신 안내로 변환되어야 한다.
+    mockHasActiveOrdersForArtworks.mockResolvedValue(false);
+    const artworkQuery = createArtworkQueryResult({
+      id: 'art-1',
+      title: '봄의 정원',
+      artist_id: 'artist-1',
+    });
+    const deleteMock = jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ error: { code: '23503' } })),
+    }));
+    const supabase = {
+      from: jest.fn((table: string) => {
+        if (table === 'artworks') {
+          return { select: artworkQuery.select, delete: deleteMock };
+        }
+        return createArtworkQueryResult(null);
+      }),
+    };
+    mockRequireAdminClient.mockResolvedValue(supabase);
+
+    const { deleteAdminArtwork } = await import('@/app/actions/admin-artworks');
+
+    await expect(deleteAdminArtwork('art-1')).rejects.toThrow(
+      '주문·판매 이력이 연결돼 있어 삭제할 수 없습니다. 작품을 "숨김" 처리해 목록에서 가려주세요.'
+    );
+    expect(deleteMock).toHaveBeenCalled();
+  });
 });

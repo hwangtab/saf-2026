@@ -194,18 +194,22 @@ export function ArtworkEditForm({
         if (result.success) {
           toast.success('작품 저장이 완료되었습니다.');
         }
+        // 수정 저장은 기존대로 soft nav(정상 동작).
+        router.push('/admin/artworks');
       } else {
         const result = await createAdminArtwork(formData);
         if (result.success) {
           toast.success('작품이 등록되었습니다.');
         }
+        // 등록 후 이동은 하드 내비게이션으로 강제한다.
+        // 회귀(2026-06-19, navigation 코드만 5회 수정·전부 실패): 작품 등록 시 server action은
+        // 매번 정상 완주(POST 200, INSERT·로그 성공)했으나, 응답에 실린 무거운 캐시 무효화
+        // 디렉티브 처리 중 client React router가 멈춰 화면이 굳고 토스트·"목록으로" 링크까지
+        // 막혔다. router.push·redirect() 등 React router 경로는 모두 같은 지점에서 막힌다.
+        // window.location.assign은 React router를 우회한 브라우저 레벨 내비게이션이라 이 교착을
+        // 구조적으로 회피하고, 목록을 항상 최신 상태로 강제 로드한다(서버 revalidate도 경량화함).
+        window.location.assign('/admin/artworks');
       }
-      // 등록·수정 모두 client router로 명시적으로 목록 이동.
-      // 주의: server action의 redirect()를 <form onSubmit> 이벤트 핸들러에서 await하면
-      // Next.js가 client navigation을 수행하지 않아(form action prop·transition 컨텍스트가
-      // 아니므로) 화면이 멈추고 이후 "목록으로" 링크까지 막힌다. redirect 없는 액션 +
-      // router.push가 안전한 패턴 (회귀: 2026-06-19 작품 등록 후 멈춤).
-      router.push('/admin/artworks');
     } catch (error) {
       console.error('[admin-artwork-edit-form] Artwork save failed:', error);
       setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
