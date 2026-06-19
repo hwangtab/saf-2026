@@ -15,6 +15,22 @@ describe('admin artwork console-error regressions', () => {
     expect(out).not.toContain('18');
   });
 
+  // React #418 2차: timeZone을 고정해도 hour/minute에 day-period(오전/오후·AM/PM)가
+  // 붙으면 Node ICU는 일반 space(U+0020), 브라우저 ICU는 narrow no-break space(U+202F)를
+  // day-period 앞에 넣어 서버/클라 텍스트가 보이지 않게 달라진다 → 여전히 #418.
+  // day-period를 쓰지 않는 24시간 표기로 런타임 무관 결정적 출력을 보장한다.
+  it('formatDate uses 24h format without day-period (no ICU-version-dependent separator)', () => {
+    for (const locale of ['ko', 'en'] as const) {
+      const out = formatDate('2026-06-19T05:34:00.000Z', locale);
+      // day-period 마커가 없어야 한다.
+      expect(out).not.toMatch(/오전|오후|AM|PM/i);
+      // ICU 버전마다 갈리는 narrow no-break space가 없어야 한다.
+      expect(out).not.toContain(' ');
+      // 24시간 표기 14:34가 그대로 나와야 한다.
+      expect(out).toContain('14:34');
+    }
+  });
+
   it('SafeImage transparent fallback is a decodable canonical PNG (ERR_INVALID_URL 방지)', () => {
     const src = readFileSync(join(process.cwd(), 'components/common/SafeImage.tsx'), 'utf8');
     const match = src.match(/data:image\/png;base64,([A-Za-z0-9+/=]+)/);
