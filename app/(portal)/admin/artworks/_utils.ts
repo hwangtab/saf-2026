@@ -83,13 +83,17 @@ export function formatDate(dateString: string | null | undefined, locale: 'ko' |
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return '-';
 
-  // timeZone 고정 필수: 미지정 시 서버(UTC)와 브라우저(KST)가 시:분을 9시간 다르게
-  // 렌더해 React hydration mismatch(#418)가 발생한다.
+  // hydration mismatch(#418) 방지 2종:
+  // 1) timeZone 고정: 미지정 시 서버(UTC)/브라우저(KST)가 9시간 다른 시:분을 렌더.
+  // 2) hourCycle:'h23' 필수: day-period(오전/오후·AM/PM)를 쓰면 Node ICU는 일반
+  //    space(U+0020), 브라우저 ICU는 narrow no-break space(U+202F)를 day-period 앞에
+  //    넣어 timeZone이 같아도 텍스트가 보이지 않게 달라진다. 24시간 표기로 제거.
   return date.toLocaleDateString(locale === 'en' ? 'en-US' : 'ko-KR', {
     timeZone: 'Asia/Seoul',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    hourCycle: 'h23',
   });
 }
