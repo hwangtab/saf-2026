@@ -20,6 +20,10 @@ type Props = {
     buyerName?: string;
     buyerPhone?: string;
     artistId?: string;
+    evidenceStart?: string;
+    evidenceEnd?: string;
+    evidenceLabel?: string;
+    evidenceChannel?: string;
   }>;
 };
 
@@ -58,12 +62,21 @@ function getRevenueHref(
     buyerName?: string | null;
     buyerPhone?: string | null;
     artistId?: string | null;
+    evidenceStart?: string | null;
+    evidenceEnd?: string | null;
+    evidenceLabel?: string | null;
+    evidenceChannel?: string | null;
   },
   next: {
     month?: number | 'all';
     buyerName?: string | null;
     buyerPhone?: string | null;
     artistId?: string | null;
+    evidenceStart?: string | null;
+    evidenceEnd?: string | null;
+    evidenceLabel?: string | null;
+    evidenceChannel?: string | null;
+    hash?: string;
   }
 ) {
   const params = new URLSearchParams();
@@ -73,16 +86,76 @@ function getRevenueHref(
   const buyerName = next.buyerName === undefined ? current.buyerName : next.buyerName;
   const buyerPhone = next.buyerPhone === undefined ? current.buyerPhone : next.buyerPhone;
   const artistId = next.artistId === undefined ? current.artistId : next.artistId;
+  const evidenceStart =
+    next.evidenceStart === undefined ? current.evidenceStart : next.evidenceStart;
+  const evidenceEnd = next.evidenceEnd === undefined ? current.evidenceEnd : next.evidenceEnd;
+  const evidenceLabel =
+    next.evidenceLabel === undefined ? current.evidenceLabel : next.evidenceLabel;
+  const evidenceChannel =
+    next.evidenceChannel === undefined ? current.evidenceChannel : next.evidenceChannel;
 
   if (buyerName) params.set('buyerName', buyerName);
   if (buyerPhone) params.set('buyerPhone', buyerPhone);
   if (artistId) params.set('artistId', artistId);
+  if (evidenceStart) params.set('evidenceStart', evidenceStart);
+  if (evidenceEnd) params.set('evidenceEnd', evidenceEnd);
+  if (evidenceLabel) params.set('evidenceLabel', evidenceLabel);
+  if (evidenceChannel) params.set('evidenceChannel', evidenceChannel);
 
-  return `/admin/revenue?${params.toString()}`;
+  return `/admin/revenue?${params.toString()}${next.hash ? `#${next.hash}` : ''}`;
 }
 
 function formatChannelLabel(channel: 'offline' | 'online') {
   return channel === 'online' ? '온라인' : '오프라인';
+}
+
+function padMonth(month: number) {
+  return String(month).padStart(2, '0');
+}
+
+function getMonthStartKstDate(year: number, month: number) {
+  return `${year}-${padMonth(month)}-01`;
+}
+
+function getNextMonthStartKstDate(year: number, month: number) {
+  if (month === 12) return `${year + 1}-01-01`;
+  return `${year}-${padMonth(month + 1)}-01`;
+}
+
+function getPreviousMonth(year: number, month: number) {
+  if (month === 1) return { year: year - 1, month: 12 };
+  return { year, month: month - 1 };
+}
+
+function RevenueAmountLink({
+  value,
+  href,
+  format,
+  label,
+  hint,
+}: {
+  value: number;
+  href: string;
+  format: (value: number) => string;
+  label: string;
+  hint: string;
+}) {
+  if (value <= 0) {
+    return <span className="text-gray-400">{format(value)}</span>;
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={`${label}: ${format(value)} ${hint}`}
+      className="group inline-flex min-w-[8rem] flex-col items-end rounded-md px-2 py-1 text-right font-semibold text-gray-900 transition hover:bg-primary-surface hover:text-primary-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-a11y/25"
+    >
+      <span className="tabular-nums">{format(value)}</span>
+      <span className="mt-0.5 text-[10px] font-medium text-gray-400 transition group-hover:text-primary-strong group-focus-visible:text-primary-strong">
+        {hint}
+      </span>
+    </Link>
+  );
 }
 
 export default async function AdminRevenuePage({ searchParams }: Props) {
@@ -104,6 +177,10 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       buyerName: params.buyerName,
       buyerPhone: params.buyerPhone,
       artistId: params.artistId,
+      evidenceStart: params.evidenceStart,
+      evidenceEnd: params.evidenceEnd,
+      evidenceLabel: params.evidenceLabel,
+      evidenceChannel: params.evidenceChannel,
     });
   } catch (error) {
     console.error('Revenue Analytics Error:', error);
@@ -136,16 +213,25 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
     buyerName: analytics.filter.buyerName,
     buyerPhone: analytics.filter.buyerPhone,
     artistId: analytics.filter.artistId,
+    evidenceStart: analytics.filter.evidenceStartKstDate,
+    evidenceEnd: analytics.filter.evidenceEndKstDateExclusive,
+    evidenceLabel: analytics.filter.evidenceLabel,
+    evidenceChannel: analytics.filter.evidenceChannel,
   };
   const hasDrilldownFilter =
     analytics.filter.selectedMonth !== 'all' ||
     !!analytics.filter.buyerName ||
-    !!analytics.filter.artistId;
+    !!analytics.filter.artistId ||
+    !!analytics.filter.evidenceLabel;
   const clearFilterHref = getRevenueHref(currentFilter, {
     month: 'all',
     buyerName: null,
     buyerPhone: null,
     artistId: null,
+    evidenceStart: null,
+    evidenceEnd: null,
+    evidenceLabel: null,
+    evidenceChannel: null,
   });
   const detailRevenue = analytics.entries.reduce((sum, entry) => sum + entry.revenue, 0);
   const detailSoldCount = analytics.entries.reduce((sum, entry) => sum + entry.quantity, 0);
@@ -200,6 +286,11 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
             {analytics.filter.artistId ? (
               <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700">
                 {t('sellerColumn')}: {analytics.filter.artistId.startsWith('name:') ? analytics.filter.artistId.slice(5) : analytics.filter.artistId}
+              </span>
+            ) : null}
+            {analytics.filter.evidenceLabel ? (
+              <span className="rounded-full bg-primary-surface px-3 py-1 font-medium text-primary-strong">
+                {t('evidenceFilter')}: {analytics.filter.evidenceLabel}
               </span>
             ) : null}
           </div>
@@ -342,6 +433,65 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                 const isSelected =
                   analytics.filter.selectedMonth !== 'all' &&
                   analytics.filter.selectedMonth === month.month;
+                const selectedYear = analytics.filter.selectedYear;
+                const currentMonthStart = getMonthStartKstDate(selectedYear, month.month);
+                const nextMonthStart = getNextMonthStartKstDate(selectedYear, month.month);
+                const previousMonth = getPreviousMonth(selectedYear, month.month);
+                const previousMonthStart = getMonthStartKstDate(
+                  previousMonth.year,
+                  previousMonth.month
+                );
+                const previousMonthEnd = getNextMonthStartKstDate(
+                  previousMonth.year,
+                  previousMonth.month
+                );
+                const previousYearMonthStart = getMonthStartKstDate(
+                  selectedYear - 1,
+                  month.month
+                );
+                const previousYearMonthEnd = getNextMonthStartKstDate(
+                  selectedYear - 1,
+                  month.month
+                );
+                const ytdStart = getMonthStartKstDate(selectedYear, 1);
+                const evidenceHash = 'revenue-evidence';
+                const amountHref = (
+                  label: string,
+                  start: string,
+                  end: string,
+                  channel?: 'offline' | 'online'
+                ) =>
+                  getRevenueHref(currentFilter, {
+                    evidenceStart: start,
+                    evidenceEnd: end,
+                    evidenceLabel: label,
+                    evidenceChannel: channel ?? null,
+                    hash: evidenceHash,
+                  });
+                const currentRevenueLabel = t('evidenceCurrentRevenueLabel', {
+                  year: selectedYear,
+                  month: month.month,
+                });
+                const offlineRevenueLabel = t('evidenceOfflineRevenueLabel', {
+                  year: selectedYear,
+                  month: month.month,
+                });
+                const onlineRevenueLabel = t('evidenceOnlineRevenueLabel', {
+                  year: selectedYear,
+                  month: month.month,
+                });
+                const previousMonthLabel = t('evidencePreviousMonthLabel', {
+                  year: previousMonth.year,
+                  month: previousMonth.month,
+                });
+                const previousYearLabel = t('evidencePreviousYearLabel', {
+                  year: selectedYear - 1,
+                  month: month.month,
+                });
+                const ytdLabel = t('evidenceYtdLabel', {
+                  year: selectedYear,
+                  month: month.month,
+                });
 
                 return (
                   <tr key={month.month} className={isSelected ? 'bg-primary-surface/50' : ''}>
@@ -352,20 +502,52 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                           buyerName: null,
                           buyerPhone: null,
                           artistId: null,
+                          evidenceStart: null,
+                          evidenceEnd: null,
+                          evidenceLabel: null,
+                          evidenceChannel: null,
                         })}
                         className="text-gray-900 hover:text-primary-strong hover:underline"
                       >
                         {month.label}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-gray-900">
-                      {krwFormatter.format(month.revenue)}
+                    <td className="px-4 py-3 text-right">
+                      <RevenueAmountLink
+                        value={month.revenue}
+                        href={amountHref(currentRevenueLabel, currentMonthStart, nextMonthStart)}
+                        format={krwFormatter.format}
+                        label={currentRevenueLabel}
+                        hint={t('viewEvidence')}
+                      />
                     </td>
-                    <td className="px-4 py-3 text-right text-gray-700">
-                      {krwFormatter.format(month.offlineRevenue)}
+                    <td className="px-4 py-3 text-right">
+                      <RevenueAmountLink
+                        value={month.offlineRevenue}
+                        href={amountHref(
+                          offlineRevenueLabel,
+                          currentMonthStart,
+                          nextMonthStart,
+                          'offline'
+                        )}
+                        format={krwFormatter.format}
+                        label={offlineRevenueLabel}
+                        hint={t('viewEvidence')}
+                      />
                     </td>
-                    <td className="px-4 py-3 text-right text-gray-700">
-                      {krwFormatter.format(month.onlineRevenue)}
+                    <td className="px-4 py-3 text-right">
+                      <RevenueAmountLink
+                        value={month.onlineRevenue}
+                        href={amountHref(
+                          onlineRevenueLabel,
+                          currentMonthStart,
+                          nextMonthStart,
+                          'online'
+                        )}
+                        format={krwFormatter.format}
+                        label={onlineRevenueLabel}
+                        hint={t('viewEvidence')}
+                      />
                     </td>
                     <td className="px-4 py-3 text-right text-gray-700">
                       {numberFormatter.format(month.offlineSoldCount)} {t('pointsUnit')}
@@ -379,24 +561,46 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                     <td className="px-4 py-3 text-right text-gray-700">
                       {krwFormatter.format(month.averagePrice)}
                     </td>
-                    <td className="px-4 py-3 text-right text-gray-500">
-                      {krwFormatter.format(month.previousMonthRevenue)}
+                    <td className="px-4 py-3 text-right">
+                      <RevenueAmountLink
+                        value={month.previousMonthRevenue}
+                        href={amountHref(previousMonthLabel, previousMonthStart, previousMonthEnd)}
+                        format={krwFormatter.format}
+                        label={previousMonthLabel}
+                        hint={t('viewEvidence')}
+                      />
                     </td>
                     <td
                       className={`px-4 py-3 text-right font-semibold ${getChangeRateClass(month.momChangeRatePct)}`}
                     >
                       {formatChangeRate(month.momChangeRatePct)}
                     </td>
-                    <td className="px-4 py-3 text-right text-gray-500">
-                      {krwFormatter.format(month.previousYearRevenue)}
+                    <td className="px-4 py-3 text-right">
+                      <RevenueAmountLink
+                        value={month.previousYearRevenue}
+                        href={amountHref(
+                          previousYearLabel,
+                          previousYearMonthStart,
+                          previousYearMonthEnd
+                        )}
+                        format={krwFormatter.format}
+                        label={previousYearLabel}
+                        hint={t('viewEvidence')}
+                      />
                     </td>
                     <td
                       className={`px-4 py-3 text-right font-semibold ${getChangeRateClass(month.yoyChangeRatePct)}`}
                     >
                       {formatChangeRate(month.yoyChangeRatePct)}
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-gray-700">
-                      {krwFormatter.format(month.cumulativeRevenue)}
+                    <td className="px-4 py-3 text-right">
+                      <RevenueAmountLink
+                        value={month.cumulativeRevenue}
+                        href={amountHref(ytdLabel, ytdStart, nextMonthStart)}
+                        format={krwFormatter.format}
+                        label={ytdLabel}
+                        hint={t('viewEvidence')}
+                      />
                     </td>
                   </tr>
                 );
@@ -538,11 +742,13 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         </AdminCard>
       </section>
 
-      <AdminCard className="overflow-hidden">
+      <AdminCard id="revenue-evidence" className="scroll-mt-24 overflow-hidden">
         <AdminCardHeader className="rounded-t-2xl">
           <div>
             <h2 className="text-base font-semibold text-gray-900">{t('detailEvidenceTitle')}</h2>
-            <p className="mt-1 text-xs text-gray-500">{t('detailEvidenceDesc')}</p>
+            <p className="mt-1 text-xs text-gray-500">
+              {analytics.filter.evidenceLabel || t('detailEvidenceDesc')}
+            </p>
           </div>
           <div className="text-right text-xs text-gray-500">
             <p>

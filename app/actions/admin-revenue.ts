@@ -4,6 +4,8 @@ import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import {
   buildRevenueAnalyticsFromRows,
   type RevenueAnalytics,
+  type RevenueChannel,
+  type RevenueEvidenceFilter,
   type RevenueSalesRecordRow,
 } from '@/lib/admin/revenue-analytics';
 
@@ -18,7 +20,6 @@ const KST_PARTS_FORMATTER = new Intl.DateTimeFormat('en-CA', {
 
 export type {
   RevenueAnalytics,
-  RevenueChannel,
   RevenueEntry,
   RevenueMonthlyRow,
   RevenueSource,
@@ -30,6 +31,10 @@ export type RevenueQueryInput = {
   buyerName?: string | null;
   buyerPhone?: string | null;
   artistId?: string | null;
+  evidenceStart?: string | null;
+  evidenceEnd?: string | null;
+  evidenceLabel?: string | null;
+  evidenceChannel?: string | null;
 };
 
 function getKstDateParts(date: Date): { year: number; month: number; day: number } {
@@ -73,6 +78,38 @@ function normalizeYear(raw: string | null | undefined, minYear: number, maxYear:
   if (!Number.isInteger(year)) return maxYear;
   if (year < minYear || year > maxYear) return maxYear;
   return year;
+}
+
+function normalizeKstDate(raw: string | null | undefined): string | null {
+  const value = raw?.trim();
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const date = new Date(`${value}T00:00:00.000+09:00`);
+  if (Number.isNaN(date.getTime())) return null;
+  return value;
+}
+
+function normalizeEvidenceChannel(raw: string | null | undefined): RevenueChannel | null {
+  if (raw === 'offline' || raw === 'online') return raw;
+  return null;
+}
+
+function normalizeEvidence(input: RevenueQueryInput): RevenueEvidenceFilter | null {
+  const startKstDate = normalizeKstDate(input.evidenceStart);
+  const endKstDateExclusive = normalizeKstDate(input.evidenceEnd);
+  const label = input.evidenceLabel?.trim();
+  if (!startKstDate || !endKstDateExclusive || !label) return null;
+  if (startKstDate >= endKstDateExclusive) return null;
+  return {
+    startKstDate,
+    endKstDateExclusive,
+    label,
+    channel: normalizeEvidenceChannel(input.evidenceChannel),
+  };
+}
+
+function getKstYearFromDateText(value: string): number | null {
+  const year = Number(value.slice(0, 4));
+  return Number.isInteger(year) ? year : null;
 }
 
 function isMissingVoidedAtColumnError(error: unknown): boolean {
@@ -198,9 +235,17 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const availableYears = createYearOptions(minYear, maxYear);
   const selectedYear = normalizeYear(input.year, minYear, maxYear);
   const selectedMonth = normalizeMonth(input.month);
+  const evidence = normalizeEvidence(input);
 
-  const rangeStartIso = getYearStartUtcIso(selectedYear - 1);
-  const rangeEndIso = getYearStartUtcIso(selectedYear + 1);
+  const evidenceStartYear = evidence ? getKstYearFromDateText(evidence.startKstDate) : null;
+  const evidenceEndYear = evidence ? getKstYearFromDateText(evidence.endKstDateExclusive) : null;
+  const rangeStartYear =
+    evidenceStartYear === null ? selectedYear - 1 : Math.min(selectedYear - 1, evidenceStartYear);
+  const rangeEndYear =
+    evidenceEndYear === null ? selectedYear + 1 : Math.max(selectedYear + 1, evidenceEndYear);
+
+  const rangeStartIso = getYearStartUtcIso(rangeStartYear);
+  const rangeEndIso = getYearStartUtcIso(rangeEndYear);
 
   let soldRowsResult = await supabase
     .from('artwork_sales')
@@ -234,5 +279,6 @@ export async function getRevenueAnalyticsForAuthorizedUser(
       buyerPhone: input.buyerPhone,
       artistId: input.artistId,
     },
+    evidence,
   });
 }

@@ -230,4 +230,132 @@ describe('buildRevenueAnalyticsFromRows', () => {
       'sale-may-no-phone',
     ]);
   });
+
+  it('uses evidence range and channel for monthly amount drilldowns without changing page summary', () => {
+    const analytics = buildRevenueAnalyticsFromRows({
+      rows,
+      selectedYear: 2026,
+      selectedMonth: 'all',
+      availableYears: [2026],
+      soldWithoutSoldAtCount: 0,
+      evidence: {
+        startKstDate: '2026-05-01',
+        endKstDateExclusive: '2026-06-01',
+        label: '2026년 5월 온라인 매출',
+        channel: 'online',
+      },
+    });
+
+    expect(analytics.summary.periodLabel).toBe('2026년');
+    expect(analytics.filter.evidenceLabel).toBe('2026년 5월 온라인 매출');
+    expect(analytics.entries.map((entry) => entry.saleId)).toEqual(['sale-may-lee-1']);
+  });
+
+  it('supports January previous-month evidence by reading previous December entries', () => {
+    const analytics = buildRevenueAnalyticsFromRows({
+      rows: [
+        sale({
+          id: 'sale-2025-dec',
+          sold_at: '2025-12-20T03:00:00.000Z',
+          sale_price: 120000,
+        }),
+        sale({
+          id: 'sale-2026-jan',
+          sold_at: '2026-01-10T03:00:00.000Z',
+          sale_price: 130000,
+        }),
+      ],
+      selectedYear: 2026,
+      selectedMonth: 'all',
+      availableYears: [2026, 2025],
+      soldWithoutSoldAtCount: 0,
+      evidence: {
+        startKstDate: '2025-12-01',
+        endKstDateExclusive: '2026-01-01',
+        label: '2025년 12월 매출',
+      },
+    });
+
+    expect(analytics.entries.map((entry) => entry.saleId)).toEqual(['sale-2025-dec']);
+  });
+
+  it('supports same-month last-year and YTD evidence ranges', () => {
+    const evidenceRows = [
+      sale({
+        id: 'sale-2025-may',
+        sold_at: '2025-05-10T03:00:00.000Z',
+        sale_price: 250000,
+      }),
+      sale({
+        id: 'sale-2026-jan',
+        sold_at: '2026-01-10T03:00:00.000Z',
+        sale_price: 100000,
+      }),
+      sale({
+        id: 'sale-2026-may',
+        sold_at: '2026-05-10T03:00:00.000Z',
+        sale_price: 200000,
+      }),
+      sale({
+        id: 'sale-2026-june',
+        sold_at: '2026-06-10T03:00:00.000Z',
+        sale_price: 300000,
+      }),
+    ];
+    const analytics = buildRevenueAnalyticsFromRows({
+      rows: evidenceRows,
+      selectedYear: 2026,
+      selectedMonth: 'all',
+      availableYears: [2026, 2025],
+      soldWithoutSoldAtCount: 0,
+      evidence: {
+        startKstDate: '2026-01-01',
+        endKstDateExclusive: '2026-06-01',
+        label: '2026년 1~5월 누계',
+      },
+    });
+
+    expect(analytics.entries.map((entry) => entry.saleId)).toEqual([
+      'sale-2026-may',
+      'sale-2026-jan',
+    ]);
+
+    const previousYearAnalytics = buildRevenueAnalyticsFromRows({
+      rows: evidenceRows,
+      selectedYear: 2026,
+      selectedMonth: 'all',
+      availableYears: [2026, 2025],
+      soldWithoutSoldAtCount: 0,
+      evidence: {
+        startKstDate: '2025-05-01',
+        endKstDateExclusive: '2025-06-01',
+        label: '2025년 5월 매출',
+      },
+    });
+
+    expect(previousYearAnalytics.entries.map((entry) => entry.saleId)).toEqual(['sale-2025-may']);
+  });
+
+  it('combines buyer and seller filters inside the evidence range and channel', () => {
+    const analytics = buildRevenueAnalyticsFromRows({
+      rows,
+      selectedYear: 2026,
+      selectedMonth: 'all',
+      availableYears: [2026],
+      soldWithoutSoldAtCount: 0,
+      drilldown: {
+        buyerName: '이승미',
+        buyerPhone: '010-1111-2222',
+        artistId: 'artist-oh',
+      },
+      evidence: {
+        startKstDate: '2026-05-01',
+        endKstDateExclusive: '2026-06-01',
+        label: '2026년 5월 오프라인 매출',
+        channel: 'offline',
+      },
+    });
+
+    expect(analytics.entries.map((entry) => entry.saleId)).toEqual(['sale-may-lee-2']);
+  });
 });

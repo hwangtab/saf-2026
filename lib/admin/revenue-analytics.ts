@@ -130,6 +130,13 @@ export type RevenueDrilldownFilters = {
   artistId?: string | null;
 };
 
+export type RevenueEvidenceFilter = {
+  startKstDate: string;
+  endKstDateExclusive: string;
+  label: string;
+  channel?: RevenueChannel | null;
+};
+
 export type RevenueAnalytics = {
   filter: {
     timezone: string;
@@ -139,6 +146,10 @@ export type RevenueAnalytics = {
     buyerName: string | null;
     buyerPhone: string | null;
     artistId: string | null;
+    evidenceStartKstDate: string | null;
+    evidenceEndKstDateExclusive: string | null;
+    evidenceLabel: string | null;
+    evidenceChannel: RevenueChannel | null;
   };
   summary: {
     periodLabel: string;
@@ -198,6 +209,7 @@ export type BuildRevenueAnalyticsInput = {
   availableYears: number[];
   soldWithoutSoldAtCount: number;
   drilldown?: RevenueDrilldownFilters;
+  evidence?: RevenueEvidenceFilter | null;
 };
 
 function getKstDateParts(date: Date): { year: number; month: number; day: number } {
@@ -345,6 +357,14 @@ function isInPeriod(entry: RevenueEntry, selectedYear: number, selectedMonth: nu
   return year === selectedYear && month === selectedMonth;
 }
 
+function matchesEvidence(entry: RevenueEntry, evidence: RevenueEvidenceFilter | null | undefined) {
+  if (!evidence) return true;
+  if (entry.soldAtKstDate < evidence.startKstDate) return false;
+  if (entry.soldAtKstDate >= evidence.endKstDateExclusive) return false;
+  if (evidence.channel && entry.channel !== evidence.channel) return false;
+  return true;
+}
+
 function matchesDrilldown(entry: RevenueEntry, drilldown: Required<RevenueDrilldownFilters>) {
   if (drilldown.buyerName) {
     if (entry.buyerName !== drilldown.buyerName) return false;
@@ -366,15 +386,18 @@ export function buildRevenueAnalyticsFromRows({
   availableYears,
   soldWithoutSoldAtCount,
   drilldown,
+  evidence,
 }: BuildRevenueAnalyticsInput): RevenueAnalytics {
   const currentYearMonthly = createMonthlyAccumulator();
   const previousYearMonthly = createMonthlyAccumulator();
   const currentYearMonthlyBySource = createMonthlySourceBreakdown();
+  const allEntries: RevenueEntry[] = [];
   const allPeriodEntries: RevenueEntry[] = [];
 
   for (const row of rows) {
     const entry = createEntry(row);
     if (!entry) continue;
+    allEntries.push(entry);
 
     const soldDate = new Date(entry.soldAtUtc);
     const { year, month } = getKstDateParts(soldDate);
@@ -480,7 +503,10 @@ export function buildRevenueAnalyticsFromRows({
     buyerPhone: normalizeNullableText(drilldown?.buyerPhone) || null,
     artistId: normalizeNullableText(drilldown?.artistId) || null,
   };
-  const entries = allPeriodEntries
+  const detailBaseEntries = evidence
+    ? allEntries.filter((entry) => matchesEvidence(entry, evidence))
+    : allPeriodEntries;
+  const entries = detailBaseEntries
     .filter((entry) => matchesDrilldown(entry, normalizedDrilldown))
     .sort((a, b) => b.soldAtUtc.localeCompare(a.soldAtUtc));
 
@@ -582,6 +608,10 @@ export function buildRevenueAnalyticsFromRows({
       buyerName: normalizedDrilldown.buyerName,
       buyerPhone: normalizedDrilldown.buyerPhone,
       artistId: normalizedDrilldown.artistId,
+      evidenceStartKstDate: evidence?.startKstDate || null,
+      evidenceEndKstDateExclusive: evidence?.endKstDateExclusive || null,
+      evidenceLabel: evidence?.label || null,
+      evidenceChannel: evidence?.channel || null,
     },
     summary,
     summaryBySource: periodSourceBreakdown,
