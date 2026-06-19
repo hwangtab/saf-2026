@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { IMAGE_UPLOAD_COPY } from './image-upload/types';
 import { useImageUpload } from './image-upload/useImageUpload';
@@ -15,6 +15,7 @@ export function ImageUpload({
   pathPrefix,
   onUploadComplete,
   onUploadDelta,
+  onUploadingChange,
   value,
   onChange,
   maxFiles = 1,
@@ -49,6 +50,10 @@ export function ImageUpload({
       onUploadDelta,
       deleteOnRemove,
     });
+
+  useEffect(() => {
+    onUploadingChange?.(uploading);
+  }, [onUploadingChange, uploading]);
 
   return (
     <div className="space-y-4">

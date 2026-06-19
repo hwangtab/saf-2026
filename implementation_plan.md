@@ -1,3 +1,36 @@
+# 관리자 작품 등록 화면 이미지 통합 업로드 구현 계획 (2026-06-19)
+
+## 업로드 중 등록 차단 보강 (2026-06-19)
+
+- `ImageUpload`에서 업로드 진행 상태를 부모 폼으로 전달하는 optional callback을 추가한다.
+- 신규 작품 등록 모드에서는 이미지 업로드 중 `등록` 제출과 버튼 활성화를 차단한다.
+- 업로드 진행 중임을 `작품 이미지` 제목 옆에 표시해 운영자가 완료 후 등록하도록 안내한다.
+- 기존 수정 모드의 즉시 이미지 저장 동작은 유지한다.
+
+---
+
+## 목표
+
+- 관리자 새 작품 등록 화면에서 이미지 업로드를 바로 가능하게 한다.
+- 운영자는 작품 정보와 이미지를 같은 화면에서 준비한 뒤 `등록` 한 번으로 `artworks.images`까지 함께 저장한다.
+- 등록 성공 후에는 방금 만든 작품 수정 화면으로 이동해 저장 결과와 이미지를 확인한다.
+
+## 구현 범위
+
+1. 신규 등록 모드에서도 `ArtworkEditForm`의 `작품 이미지` 카드를 표시한다.
+2. 신규 등록용 storage prefix는 클라이언트 mount 후 `admin-artwork-draft-${crypto.randomUUID()}`로 생성한다.
+3. 업로드된 이미지 URL과 draft prefix를 hidden input으로 제출한다.
+4. `createAdminArtwork`는 draft prefix에 속한 `artworks` bucket URL만 검증해 insert payload의 `images`에 포함한다.
+5. 수정 모드의 즉시 이미지 저장과 기존 저장 후 목록 이동 동작은 유지한다.
+
+## 검증
+
+- 신규 등록 이미지 카드, hidden input, 성공 후 상세 이동, 수정 모드 유지에 대한 소스 회귀 테스트를 추가한다.
+- `createAdminArtwork`의 이미지 검증 및 insert payload 포함을 회귀 테스트로 확인한다.
+- `npm test -- __tests__/app/admin-artwork-create-image-upload-source.test.ts`, `npm run lint`, `npm run type-check`를 실행한다.
+
+---
+
 # 서브 히어로 이미지 품질 보정 구현 계획 (2026-06-18)
 
 ## 목표

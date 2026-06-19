@@ -83,7 +83,9 @@ export function ArtworkEditForm({
   const toast = useToast();
   const [saving, setSaving] = useState(false);
   const [savingImages, setSavingImages] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [images, setImages] = useState<string[]>(artwork.images || []);
+  const [draftImagePrefix, setDraftImagePrefix] = useState('');
   const [tones, setTones] = useState<string[]>(artwork.tone || []);
   const [tagOptions, setTagOptions] = useState(adminTags);
   const [selectedAdminTags, setSelectedAdminTags] = useState(artworkAdminTags);
@@ -143,6 +145,12 @@ export function ArtworkEditForm({
     setSelectedAdminTags(artworkAdminTags);
   }, [artworkAdminTags]);
 
+  useEffect(() => {
+    if (!isEditing && !draftImagePrefix) {
+      setDraftImagePrefix(`admin-artwork-draft-${crypto.randomUUID()}`);
+    }
+  }, [draftImagePrefix, isEditing]);
+
   const filteredArtists = useMemo(() => {
     const normalizedQuery = artistQuery.trim();
     if (!normalizedQuery) return artists;
@@ -164,6 +172,20 @@ export function ArtworkEditForm({
       return;
     }
 
+    if (!isEditing && uploadingImages) {
+      const message = '이미지 업로드 중입니다. 완료 후 등록해주세요.';
+      setError(message);
+      toast.error(message);
+      return;
+    }
+
+    if (!isEditing && !draftImagePrefix) {
+      const message = '이미지 업로드 준비 중입니다. 잠시 후 다시 시도해주세요.';
+      setError(message);
+      toast.error(message);
+      return;
+    }
+
     setSaving(true);
     try {
       if (isEditing && artwork.id) {
@@ -176,8 +198,10 @@ export function ArtworkEditForm({
         const result = await createAdminArtwork(formData);
         if (result.success && result.id) {
           toast.success('작품 등록이 완료되었습니다.');
-          router.push('/admin/artworks');
+          router.push(`/admin/artworks/${result.id}`);
+          return;
         }
+        throw new Error('작품 등록 결과가 올바르지 않습니다.');
       }
     } catch (error) {
       console.error('[admin-artwork-edit-form] Artwork save failed:', error);
@@ -260,8 +284,8 @@ export function ArtworkEditForm({
   };
 
   const handleImagesChange = async (newImages: string[]) => {
-    if (!artwork.id) return;
     setImages(newImages);
+    if (!artwork.id) return;
     setError(null);
     setSavingImages(true);
     try {
@@ -308,26 +332,34 @@ export function ArtworkEditForm({
         </div>
       )}
 
-      {/* Image Section - Only visible when editing */}
-      {isEditing && artwork.id ? (
-        <AdminCard className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            작품 이미지
-            {savingImages && <span className="ml-2 text-sm text-gray-500">저장 중...</span>}
-          </h2>
+      <AdminCard id="artwork-images" className="p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          작품 이미지
+          {isEditing && savingImages && (
+            <span className="ml-2 text-sm text-gray-500">저장 중...</span>
+          )}
+          {!isEditing && uploadingImages && (
+            <span className="ml-2 text-sm text-gray-500">
+              이미지 업로드 중... 완료 후 등록할 수 있습니다.
+            </span>
+          )}
+        </h2>
+        {isEditing || draftImagePrefix ? (
           <ImageUpload
             bucket="artworks"
-            pathPrefix={`admin-artwork-${artwork.id}`}
+            pathPrefix={isEditing && artwork.id ? `admin-artwork-${artwork.id}` : draftImagePrefix}
             value={images}
             onUploadComplete={handleImagesChange}
+            onUploadingChange={setUploadingImages}
             maxFiles={10}
+            deleteOnRemove={!isEditing}
           />
-        </AdminCard>
-      ) : (
-        <div className="rounded-lg border border-primary-soft bg-primary-surface p-4 text-sm text-primary-strong">
-          이미지 등록은 작품 정보를 먼저 저장한 후에 가능합니다.
-        </div>
-      )}
+        ) : (
+          <div className="rounded-lg border border-primary-soft bg-primary-surface p-4 text-sm text-primary-strong">
+            이미지 업로드 준비 중입니다.
+          </div>
+        )}
+      </AdminCard>
 
       {/* Details Section */}
       <form
@@ -337,6 +369,12 @@ export function ArtworkEditForm({
         }}
         className="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface)] p-6 shadow-sm"
       >
+        {!isEditing && (
+          <>
+            <input type="hidden" name="images" value={JSON.stringify(images)} />
+            <input type="hidden" name="image_owner_prefix" value={draftImagePrefix} />
+          </>
+        )}
         <h2 className="text-lg font-semibold text-gray-900">
           {isEditing ? '작품 정보 수정' : '새 작품 등록'}
         </h2>
@@ -887,7 +925,12 @@ export function ArtworkEditForm({
           <Button type="button" variant="white" onClick={() => router.push('/admin/artworks')}>
             목록으로
           </Button>
-          <Button type="submit" variant="primary" loading={saving}>
+          <Button
+            type="submit"
+            variant="primary"
+            loading={saving}
+            disabled={!isEditing && (uploadingImages || !draftImagePrefix)}
+          >
             {isEditing ? '저장' : '등록'}
           </Button>
         </div>

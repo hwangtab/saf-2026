@@ -5,6 +5,7 @@ export type UploadProps = {
   pathPrefix: string; // e.g. user_id or artist_id
   onUploadComplete: (urls: string[]) => void;
   onUploadDelta?: (urls: string[]) => void;
+  onUploadingChange?: (uploading: boolean) => void;
   value?: string[];
   onChange?: (urls: string[]) => void;
   maxFiles?: number;

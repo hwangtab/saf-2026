@@ -10,13 +10,19 @@ import {
   validateBatchSize,
   buildArtworkSizeFields,
 } from '@/lib/utils/form-helpers';
-import { validateArtworkData, validateSaleInput } from '@/lib/actions/artwork-validation';
+import {
+  parseUrlList,
+  validateArtworkData,
+  validateImageUrls,
+  validateSaleInput,
+} from '@/lib/actions/artwork-validation';
 import { normalizeAdminTagInput, type AdminTagInput } from '@/lib/admin-artwork-tags';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
 
 type EditionType = Database['public']['Enums']['edition_type'];
 type ArtworkStatus = Database['public']['Enums']['artwork_status'];
+const ADMIN_ARTWORK_MAX_IMAGES = 10;
 
 function isMissingVoidedAtColumnError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
@@ -329,6 +335,19 @@ export async function createAdminArtwork(formData: FormData) {
     .filter(Boolean);
   const quote = getString(formData, 'quote') || null;
   const quote_en = getString(formData, 'quote_en') || null;
+  const imageOwnerPrefix = getString(formData, 'image_owner_prefix');
+  const imageList = parseUrlList(formData.get('images'), '이미지');
+  if (imageList.error) throw new Error(imageList.error);
+  if (imageList.urls.length > ADMIN_ARTWORK_MAX_IMAGES) {
+    throw new Error(`이미지는 최대 ${ADMIN_ARTWORK_MAX_IMAGES}장까지 등록할 수 있습니다.`);
+  }
+  if (imageList.urls.length > 0) {
+    if (!imageOwnerPrefix.startsWith('admin-artwork-draft-')) {
+      throw new Error('이미지 업로드 경로가 올바르지 않습니다.');
+    }
+    const imageValidation = validateImageUrls(imageList.urls, imageOwnerPrefix);
+    if (imageValidation.error) throw new Error(imageValidation.error);
+  }
 
   if (!artist_id) throw new Error('작가를 선택해주세요.');
 
@@ -355,6 +374,7 @@ export async function createAdminArtwork(formData: FormData) {
       artist_id,
       status: 'available',
       is_hidden: false,
+      images: imageList.urls,
     })
     .select()
     .single();
