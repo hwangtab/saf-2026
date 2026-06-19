@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import type { Database } from '@/types/supabase';
 import { logAdminAction } from './activity-log-writer';
@@ -400,12 +401,21 @@ async function createAdminArtworkRecord(formData: FormData) {
     .select('name_ko')
     .eq('id', artist_id)
     .single();
-  revalidatePublicArtworkSurfaces([artist?.name_ko]);
-  revalidatePath('/admin/artworks');
 
   await logAdminAction('artwork_created', 'artwork', artwork.id, { title }, admin.id, {
     afterSnapshot: artwork,
     reversible: true,
+  });
+
+  // ⚠️ revalidate는 응답 이후(after)로 분리한다 — 동기 호출 시 등록이 멈추는 회귀(2026-06-19).
+  // server action 응답에 동기 revalidate가 포함되면 Next.js가 무효화된 라우트를 client
+  // router cache에 반영(refetch)하는데, revalidateTag('artworks')는 600+개 작품 페이지를
+  // 무효화해 client refetch가 폭발한다. 그게 끝날 때까지 client의 `await createAdminArtwork`가
+  // resolve되지 않아 — 작품은 정상 저장(POST 200)됐는데도 — 성공 토스트도 목록 이동도 막혔다.
+  // navigation 코드를 4회 바꿔도 안 잡힌 이유: 원인은 navigation이 아니라 응답을 막는 revalidate.
+  after(() => {
+    revalidatePublicArtworkSurfaces([artist?.name_ko]);
+    revalidatePath('/admin/artworks');
   });
 
   return artwork;
