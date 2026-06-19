@@ -61,15 +61,28 @@ describe('admin artwork create image upload source wiring', () => {
 
     expect(source).toContain('createAdminArtworkAndRedirect(formData)');
     expect(source).not.toContain('createAdminArtwork(formData)');
-    expect(action).toContain('export async function createAdminArtworkAndRedirect(formData: FormData)');
+    expect(action).toContain(
+      'export async function createAdminArtworkAndRedirect(formData: FormData)'
+    );
     expect(action).toContain("redirect('/admin/artworks')");
+  });
+
+  it('re-throws framework redirect signals so create navigation is not swallowed', () => {
+    const source = formSource();
+
+    // createAdminArtworkAndRedirect의 redirect()는 NEXT_REDIRECT를 던진다. 이를 catch가
+    // 삼키면 작품은 등록됐는데도 "저장 중 오류" 토스트가 뜨는 회귀(2026-06-19)가 발생한다.
+    expect(source).toContain("import { useRouter, unstable_rethrow } from 'next/navigation'");
+    expect(source).toContain('unstable_rethrow(error);');
   });
 
   it('uses a portal-safe Next link for the back-to-list button', () => {
     const source = formSource();
 
     expect(source).toContain('import Link from');
-    expect(source).toContain('<Link href="/admin/artworks" className={buttonVariants({ variant: \'white\' })}>');
+    expect(source).toContain(
+      '<Link href="/admin/artworks" className={buttonVariants({ variant: \'white\' })}>'
+    );
     expect(source).not.toContain('<Button href="/admin/artworks"');
     expect(source).not.toContain(
       '<Button type="button" variant="white" onClick={() => router.push(\'/admin/artworks\')}>'
