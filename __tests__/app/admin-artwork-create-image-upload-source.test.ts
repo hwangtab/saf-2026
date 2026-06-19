@@ -55,11 +55,20 @@ describe('admin artwork create image upload source wiring', () => {
     expect(source).toContain("router.push('/admin/artworks');");
   });
 
-  it('routes newly created artwork to its detail page after create succeeds', () => {
+  it('routes newly created artwork back to the list after create succeeds', () => {
     const source = formSource();
 
-    expect(source).toContain('router.push(`/admin/artworks/${result.id}`)');
+    expect(source).toContain("router.push('/admin/artworks')");
     expect(source).toContain("throw new Error('작품 등록 결과가 올바르지 않습니다.');");
+  });
+
+  it('uses a real link for the back-to-list button', () => {
+    const source = formSource();
+
+    expect(source).toContain('<Button href="/admin/artworks" variant="white">');
+    expect(source).not.toContain(
+      '<Button type="button" variant="white" onClick={() => router.push(\'/admin/artworks\')}>'
+    );
   });
 
   it('validates draft image URLs before inserting a new admin artwork', () => {

@@ -198,7 +198,7 @@ export function ArtworkEditForm({
         const result = await createAdminArtwork(formData);
         if (result.success && result.id) {
           toast.success('작품 등록이 완료되었습니다.');
-          router.push(`/admin/artworks/${result.id}`);
+          router.push('/admin/artworks');
           return;
         }
         throw new Error('작품 등록 결과가 올바르지 않습니다.');
@@ -922,7 +922,7 @@ export function ArtworkEditForm({
         )}
 
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="white" onClick={() => router.push('/admin/artworks')}>
+          <Button href="/admin/artworks" variant="white">
             목록으로
           </Button>
           <Button
