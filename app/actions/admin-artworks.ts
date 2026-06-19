@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import type { Database } from '@/types/supabase';
 import { logAdminAction } from './activity-log-writer';
@@ -53,11 +52,24 @@ export async function deriveAndSyncArtworkStatus(
 ): Promise<'available' | 'sold' | 'reserved'> {
   const { data: artwork } = await supabase
     .from('artworks')
-    .select('id, status, sold_at, edition_type, edition_limit')
+    .select('id, status, sold_at, edition_type, edition_limit, manual_sold_override')
     .eq('id', artworkId)
     .single();
 
   if (!artwork) return 'available';
+
+  if (artwork.manual_sold_override && artwork.status === 'sold') {
+    if (!artwork.sold_at) {
+      await supabase
+        .from('artworks')
+        .update({
+          sold_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', artworkId);
+    }
+    return 'sold';
+  }
 
   let { data: salesRows, error: salesError } = await supabase
     .from('artwork_sales')
@@ -104,6 +116,7 @@ export async function deriveAndSyncArtworkStatus(
       .update({
         status: 'available',
         sold_at: null,
+        manual_sold_override: false,
         updated_at: new Date().toISOString(),
       })
       .eq('id', artworkId);
@@ -403,11 +416,6 @@ export async function createAdminArtwork(formData: FormData) {
   return { success: true, id: artwork.id };
 }
 
-export async function createAdminArtworkAndRedirect(formData: FormData) {
-  await createAdminArtworkRecord(formData);
-  redirect('/admin/artworks');
-}
-
 export async function updateArtworkImages(id: string, images: string[]) {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
@@ -507,7 +515,7 @@ export async function batchUpdateArtworkStatus(
 
   const { data: beforeArtworks } = await supabase
     .from('artworks')
-    .select('id, title, status, sold_at, updated_at')
+    .select('id, title, status, sold_at, manual_sold_override, updated_at')
     .in('id', ids);
 
   const nowIso = new Date().toISOString();
@@ -516,6 +524,7 @@ export async function batchUpdateArtworkStatus(
       .from('artworks')
       .update({
         status,
+        manual_sold_override: true,
         updated_at: nowIso,
       })
       .in('id', ids);
@@ -543,6 +552,7 @@ export async function batchUpdateArtworkStatus(
       .update({
         status,
         sold_at: null,
+        manual_sold_override: false,
         updated_at: nowIso,
       })
       .in('id', ids);
@@ -552,7 +562,7 @@ export async function batchUpdateArtworkStatus(
 
   const { data: afterArtworks } = await supabase
     .from('artworks')
-    .select('id, title, status, sold_at, updated_at')
+    .select('id, title, status, sold_at, manual_sold_override, updated_at')
     .in('id', ids);
 
   revalidatePublicArtworkSurfaces();

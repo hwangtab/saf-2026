@@ -92,8 +92,7 @@ export async function getSmsLogs(params: SmsLogsParams = {}): Promise<SmsLogsRes
 
 const RESENDABLE_TYPES = new Set<BuyerSmsType>([
   'payment_confirmed',
-  // virtual_account_issued 제외: 계좌 정보(은행/계좌번호/입금기한)가 orders에 저장되지 않아
-  // 재발송 시 깨진 본문(입금안내: / / ₩...)이 구매자에게 전송됨
+  'virtual_account_issued',
   'deposit_confirmed',
   'shipped',
   'delivered',
@@ -101,9 +100,106 @@ const RESENDABLE_TYPES = new Set<BuyerSmsType>([
   'auto_cancelled',
 ]);
 
+const BANK_TRANSFER_FALLBACK = {
+  bankName: '기업은행 (IBK)',
+  accountNumber: '301-101031-04-095',
+  holderName: '한국스마트협동조합',
+} as const;
+const DEPOSIT_DEADLINE_HOURS = 24;
+
 function extractLocale(metadata: unknown): 'ko' | 'en' {
   if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return 'ko';
   return (metadata as Record<string, unknown>).locale === 'en' ? 'en' : 'ko';
+}
+
+function formatBankTransferDueDate(date: Date, locale: 'ko' | 'en') {
+  return locale === 'ko'
+    ? date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+    : date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
+}
+
+function extractBankTransferInfo(
+  metadata: unknown,
+  createdAt: string | null | undefined,
+  locale: 'ko' | 'en'
+) {
+  const meta =
+    metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+      ? (metadata as Record<string, unknown>)
+      : {};
+  const bankTransfer =
+    meta.bank_transfer &&
+    typeof meta.bank_transfer === 'object' &&
+    !Array.isArray(meta.bank_transfer)
+      ? (meta.bank_transfer as Record<string, unknown>)
+      : {};
+  const dueDate =
+    typeof bankTransfer.dueDate === 'string' && bankTransfer.dueDate.trim()
+      ? bankTransfer.dueDate
+      : formatBankTransferDueDate(
+          new Date(
+            new Date(createdAt ?? Date.now()).getTime() + DEPOSIT_DEADLINE_HOURS * 60 * 60 * 1000
+          ),
+          locale
+        );
+
+  return {
+    bankName:
+      typeof bankTransfer.bankName === 'string' && bankTransfer.bankName.trim()
+        ? bankTransfer.bankName
+        : BANK_TRANSFER_FALLBACK.bankName,
+    accountNumber:
+      typeof bankTransfer.accountNumber === 'string' && bankTransfer.accountNumber.trim()
+        ? bankTransfer.accountNumber
+        : BANK_TRANSFER_FALLBACK.accountNumber,
+    holderName:
+      typeof bankTransfer.holderName === 'string' && bankTransfer.holderName.trim()
+        ? bankTransfer.holderName
+        : BANK_TRANSFER_FALLBACK.holderName,
+    dueDate,
+  };
+}
+
+function firstArtistName(artists: unknown): string {
+  if (Array.isArray(artists)) {
+    return typeof artists[0]?.name_ko === 'string' ? artists[0].name_ko : '';
+  }
+  if (artists && typeof artists === 'object') {
+    const value = (artists as { name_ko?: unknown }).name_ko;
+    return typeof value === 'string' ? value : '';
+  }
+  return '';
+}
+
+function resolveArtworkSummary(order: { artworks?: unknown; order_items?: unknown }): {
+  artworkTitle: string;
+  artistName: string;
+} {
+  const orderItemsRaw = order.order_items;
+  const orderItems = Array.isArray(orderItemsRaw)
+    ? orderItemsRaw
+    : orderItemsRaw != null
+      ? [orderItemsRaw]
+      : [];
+  if (orderItems.length > 0) {
+    const firstItem = orderItems[0] as { artworks?: unknown };
+    const artworkRaw = Array.isArray(firstItem.artworks)
+      ? firstItem.artworks[0]
+      : firstItem.artworks;
+    const artwork = (artworkRaw ?? {}) as { title?: unknown; artists?: unknown };
+    const title = typeof artwork.title === 'string' ? artwork.title : '';
+    return {
+      artworkTitle: orderItems.length >= 2 ? `${title} 외 ${orderItems.length - 1}건` : title,
+      artistName: firstArtistName(artwork.artists),
+    };
+  }
+
+  const artworkRaw = Array.isArray(order.artworks) ? order.artworks[0] : order.artworks;
+  const artwork = (artworkRaw ?? {}) as { title?: unknown; artists?: unknown };
+  return {
+    artworkTitle: typeof artwork.title === 'string' ? artwork.title : '',
+    artistName: firstArtistName(artwork.artists),
+  };
 }
 
 export async function resendSms(logId: string): Promise<{ ok: boolean; error?: string }> {
@@ -133,7 +229,7 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
     .select(
-      'order_no, buyer_name, buyer_phone, total_amount, shipping_carrier, tracking_number, metadata, artworks(title)'
+      'order_no, buyer_name, buyer_phone, total_amount, shipping_carrier, tracking_number, created_at, metadata, artworks(title, artists(name_ko)), order_items(artworks(title, artists(name_ko)))'
     )
     .eq('order_no', log.order_no)
     .maybeSingle();
@@ -143,16 +239,20 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
     return { ok: false, error: '원본 주문을 찾을 수 없습니다.' };
   }
 
-  const artwork = Array.isArray(order.artworks) ? order.artworks[0] : order.artworks;
   const type = log.type as BuyerSmsType;
   const locale = extractLocale(order.metadata);
+  const artworkSummary = resolveArtworkSummary(order);
   const data: BuyerSmsData = {
     buyerName: order.buyer_name ?? '',
-    artworkTitle: (artwork?.title as string | undefined) ?? '',
+    artworkTitle: artworkSummary.artworkTitle,
+    artistName: artworkSummary.artistName,
     amount: order.total_amount ?? 0,
     carrier: order.shipping_carrier ?? undefined,
     trackingNumber: order.tracking_number ?? undefined,
   };
+  if (type === 'virtual_account_issued') {
+    data.virtualAccount = extractBankTransferInfo(order.metadata, order.created_at, locale);
+  }
 
   const res = await sendBuyerSms(order.buyer_phone, type, data, locale, order.order_no);
   if (!res.ok) {

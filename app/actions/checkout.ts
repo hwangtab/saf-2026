@@ -40,6 +40,12 @@ const BANK_TRANSFER_INFO = {
 } as const;
 const DEPOSIT_DEADLINE_HOURS = 24;
 
+function formatBankTransferDueDate(date: Date, locale: ApiLocale) {
+  return locale === 'ko'
+    ? date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+    : date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
+}
+
 export type CreateOrderInput = {
   /** 단건 바로구매(quantity 1). items가 있으면 무시됨. */
   artworkId?: string;
@@ -710,6 +716,15 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   if (!result.success) return result;
 
   const adminClient = createSupabaseAdminClient();
+  const dueDate = new Date(Date.now() + DEPOSIT_DEADLINE_HOURS * 60 * 60 * 1000);
+  const dueDateStr = formatBankTransferDueDate(dueDate, buyerLocale);
+  const bankTransferMetadata = {
+    bankName: BANK_TRANSFER_INFO.bankName,
+    accountNumber: BANK_TRANSFER_INFO.accountNumber,
+    holderName: BANK_TRANSFER_INFO.holderName,
+    dueDate: dueDateStr,
+    dueDateIso: dueDate.toISOString(),
+  };
 
   const { error: orderUpdateError } = await adminClient
     .from('orders')
@@ -720,6 +735,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
         locale: buyerLocale,
         payment_provider: 'manual_bank_transfer',
         [CHECKOUT_TOKEN_HASH_KEY]: hashCheckoutToken(result.checkoutToken),
+        bank_transfer: bankTransferMetadata,
       },
     })
     .eq('order_no', result.orderNo);
@@ -817,11 +833,6 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   after(async () => {
     try {
       const info = await getOrderNotificationInfo(adminClient, { id: result.orderId });
-      const dueDate = new Date(Date.now() + DEPOSIT_DEADLINE_HOURS * 60 * 60 * 1000);
-      const dueDateStr =
-        buyerLocale === 'ko'
-          ? dueDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
-          : dueDate.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
 
       const adminNotifyTask = info
         ? () =>
@@ -855,9 +866,9 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
               artistName: info?.artistName ?? '',
               amount: result.totalAmount,
               virtualAccount: {
-                bankName: BANK_TRANSFER_INFO.bankName,
-                accountNumber: BANK_TRANSFER_INFO.accountNumber,
-                dueDate: dueDateStr,
+                bankName: bankTransferMetadata.bankName,
+                accountNumber: bankTransferMetadata.accountNumber,
+                dueDate: bankTransferMetadata.dueDate,
               },
             },
             buyerLocale
@@ -868,12 +879,14 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
             'virtual_account_issued',
             {
               buyerName: input.buyerName ?? '',
+              artistName: info?.artistName ?? '',
               artworkTitle: info?.artworkTitle ?? '',
               amount: result.totalAmount,
               virtualAccount: {
-                bankName: BANK_TRANSFER_INFO.bankName,
-                accountNumber: BANK_TRANSFER_INFO.accountNumber,
-                dueDate: dueDateStr,
+                bankName: bankTransferMetadata.bankName,
+                accountNumber: bankTransferMetadata.accountNumber,
+                holderName: bankTransferMetadata.holderName,
+                dueDate: bankTransferMetadata.dueDate,
               },
             },
             buyerLocale,

@@ -487,6 +487,7 @@ export type Database = {
           id: string;
           images: string[] | null;
           is_hidden: boolean | null;
+          manual_sold_override: boolean;
           material: string | null;
           price: string | null;
           quote: string | null;
@@ -519,6 +520,7 @@ export type Database = {
           id?: string;
           images?: string[] | null;
           is_hidden?: boolean | null;
+          manual_sold_override?: boolean;
           material?: string | null;
           price?: string | null;
           quote?: string | null;
@@ -551,6 +553,7 @@ export type Database = {
           id?: string;
           images?: string[] | null;
           is_hidden?: boolean | null;
+          manual_sold_override?: boolean;
           material?: string | null;
           price?: string | null;
           quote?: string | null;
