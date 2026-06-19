@@ -25,7 +25,7 @@ const STATUS_META: Record<string, { label: string; tone: BadgeTone }> = {
 
 const TYPE_LABELS: Record<string, string> = {
   payment_confirmed: '결제 완료',
-  virtual_account_issued: '가상계좌 발급',
+  virtual_account_issued: '입금 안내',
   deposit_confirmed: '입금 확인',
   shipped: '발송 완료',
   delivered: '배송 완료',
@@ -46,9 +46,10 @@ const STATUS_OPTIONS = [
   { value: 'failed', label: '발송 실패' },
 ];
 
-// 서버 resendSms의 RESENDABLE_TYPES와 일치 — virtual_account_issued는 계좌정보 미저장으로 재발송 불가
+// 서버 resendSms의 RESENDABLE_TYPES와 일치
 const RESENDABLE_TYPES = new Set([
   'payment_confirmed',
+  'virtual_account_issued',
   'deposit_confirmed',
   'shipped',
   'delivered',

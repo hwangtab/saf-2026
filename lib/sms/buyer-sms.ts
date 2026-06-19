@@ -14,8 +14,14 @@ export type BuyerSmsType =
 export interface BuyerSmsData {
   buyerName: string;
   artworkTitle: string;
+  artistName?: string;
   amount: number;
-  virtualAccount?: { bankName?: string; accountNumber?: string; dueDate?: string };
+  virtualAccount?: {
+    bankName?: string;
+    accountNumber?: string;
+    holderName?: string;
+    dueDate?: string;
+  };
   carrier?: string;
   trackingNumber?: string;
 }
@@ -38,9 +44,17 @@ export function buildSmsText(
       return `[씨앗페] ${data.buyerName}님, '${data.artworkTitle}' 결제(${won(data.amount)})가 완료되었습니다. 감사합니다.`;
     case 'virtual_account_issued': {
       const va = data.virtualAccount ?? {};
-      const due = va.dueDate ? ` / 기한 ${va.dueDate}` : '';
-      const greeting = data.buyerName ? `${data.buyerName}님, ` : '';
-      return `[씨앗페] ${greeting}입금안내: ${va.bankName ?? ''} ${va.accountNumber ?? ''} / ${won(data.amount)}${due}`;
+      return [
+        '[씨앗페] 계좌이체 입금 안내',
+        `${data.buyerName ? `${data.buyerName}님, ` : ''}작품 주문이 접수되었습니다.`,
+        `작가: ${data.artistName ?? ''}`,
+        `작품: ${data.artworkTitle}`,
+        `금액: ${won(data.amount)}`,
+        `입금계좌: ${[va.bankName, va.accountNumber].filter(Boolean).join(' ')}`,
+        `예금주: ${va.holderName ?? ''}`,
+        `입금기한: ${va.dueDate ?? ''}`,
+        '입금 확인 후 작품 준비가 시작됩니다.',
+      ].join('\n');
     }
     case 'deposit_confirmed':
       return `[씨앗페] ${data.buyerName}님, 입금이 확인되었습니다. 작품을 준비합니다.`;
@@ -69,9 +83,17 @@ function buildSmsTextEn(type: BuyerSmsType, data: BuyerSmsData): string {
       return `[Seed Art Festival] ${data.buyerName}, your payment (${won(data.amount)}) for '${data.artworkTitle}' is complete. Thank you.`;
     case 'virtual_account_issued': {
       const va = data.virtualAccount ?? {};
-      const due = va.dueDate ? ` (due ${va.dueDate})` : '';
-      const greeting = data.buyerName ? `${data.buyerName}, ` : '';
-      return `[Seed Art Festival] ${greeting}Deposit: ${va.bankName ?? ''} ${va.accountNumber ?? ''} / ${won(data.amount)}${due}`;
+      return [
+        '[Seed Art Festival] Bank transfer deposit instructions',
+        `${data.buyerName ? `${data.buyerName}, ` : ''}your artwork order has been received.`,
+        `Artist: ${data.artistName ?? ''}`,
+        `Artwork: ${data.artworkTitle}`,
+        `Amount: ${won(data.amount)}`,
+        `Account: ${[va.bankName, va.accountNumber].filter(Boolean).join(' ')}`,
+        `Account holder: ${va.holderName ?? ''}`,
+        `Deposit deadline: ${va.dueDate ?? ''}`,
+        'We will start preparing the artwork after confirming your deposit.',
+      ].join('\n');
     }
     case 'deposit_confirmed':
       return `[Seed Art Festival] ${data.buyerName}, your deposit is confirmed. We're preparing your artwork.`;
@@ -128,9 +150,12 @@ export function buildAlimTalkVariables(
       const va = data.virtualAccount ?? {};
       return {
         '#{name}': data.buyerName,
+        '#{artist}': data.artistName ?? '',
+        '#{title}': data.artworkTitle,
+        '#{amount}': won(data.amount),
         '#{bank}': va.bankName ?? '',
         '#{account}': va.accountNumber ?? '',
-        '#{amount}': won(data.amount),
+        '#{holder}': va.holderName ?? '',
         '#{due}': va.dueDate ?? '',
       };
     }

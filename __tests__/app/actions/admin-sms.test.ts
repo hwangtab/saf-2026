@@ -182,7 +182,7 @@ describe('resendSms', () => {
     expect(mockSendBuyerSms).not.toHaveBeenCalled();
   });
 
-  it('virtual_account_issued는 계좌정보 미저장으로 재발송 불가 ok:false', async () => {
+  it('virtual_account_issued 실패 로그는 metadata 계좌정보로 재발송 가능', async () => {
     const logRow = {
       id: 'log-va',
       order_no: 'SAF-VA',
@@ -190,14 +190,96 @@ describe('resendSms', () => {
       type: 'virtual_account_issued',
       status: 'failed',
     };
+    const orderRow = {
+      order_no: 'SAF-VA',
+      buyer_name: '홍길동',
+      buyer_phone: '01012345678',
+      total_amount: 50000,
+      shipping_carrier: null,
+      tracking_number: null,
+      created_at: '2026-06-19T05:00:00.000Z',
+      metadata: {
+        locale: 'ko',
+        bank_transfer: {
+          bankName: '기업은행 (IBK)',
+          accountNumber: '301-101031-04-095',
+          holderName: '한국스마트협동조합',
+          dueDate: '2026. 6. 20. 오후 2:00:00',
+        },
+      },
+      artworks: { title: '들꽃', artists: { name_ko: '김작가' } },
+    };
     mockFrom.mockImplementation((table: string) => {
       if (table === 'sms_logs')
         return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      if (table === 'orders')
+        return createSupabaseQueryMock({ data: orderRow, error: null }) as never;
       return createSupabaseQueryMock({ data: null, error: null }) as never;
     });
     const result = await resendSms('log-va');
-    expect(result.ok).toBe(false);
-    expect(mockSendBuyerSms).not.toHaveBeenCalled();
+    expect(result.ok).toBe(true);
+    expect(mockSendBuyerSms).toHaveBeenCalledWith(
+      '01012345678',
+      'virtual_account_issued',
+      expect.objectContaining({
+        buyerName: '홍길동',
+        artistName: '김작가',
+        artworkTitle: '들꽃',
+        amount: 50000,
+        virtualAccount: {
+          bankName: '기업은행 (IBK)',
+          accountNumber: '301-101031-04-095',
+          holderName: '한국스마트협동조합',
+          dueDate: '2026. 6. 20. 오후 2:00:00',
+        },
+      }),
+      'ko',
+      'SAF-VA'
+    );
+  });
+
+  it('virtual_account_issued legacy 주문은 created_at + 24시간 fallback으로 재발송', async () => {
+    const logRow = {
+      id: 'log-va-legacy',
+      order_no: 'SAF-VA-LEGACY',
+      to_phone: '01012345678',
+      type: 'virtual_account_issued',
+      status: 'failed',
+    };
+    const orderRow = {
+      order_no: 'SAF-VA-LEGACY',
+      buyer_name: '홍길동',
+      buyer_phone: '01012345678',
+      total_amount: 50000,
+      shipping_carrier: null,
+      tracking_number: null,
+      created_at: '2026-06-19T05:00:00.000Z',
+      metadata: { locale: 'ko' },
+      artworks: { title: '들꽃', artists: { name_ko: '김작가' } },
+    };
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'sms_logs')
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      if (table === 'orders')
+        return createSupabaseQueryMock({ data: orderRow, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
+    });
+    const result = await resendSms('log-va-legacy');
+    expect(result.ok).toBe(true);
+    expect(mockSendBuyerSms).toHaveBeenCalledWith(
+      '01012345678',
+      'virtual_account_issued',
+      expect.objectContaining({
+        virtualAccount: expect.objectContaining({
+          bankName: '기업은행 (IBK)',
+          accountNumber: '301-101031-04-095',
+          holderName: '한국스마트협동조합',
+          dueDate: expect.any(String),
+        }),
+      }),
+      'ko',
+      'SAF-VA-LEGACY'
+    );
   });
 
   it('이미 발송된(sent) 건은 재발송 불가 ok:false', async () => {

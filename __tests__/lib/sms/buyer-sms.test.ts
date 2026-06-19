@@ -1,5 +1,5 @@
 /** @jest-environment node */
-import { buildSmsText, sendBuyerSms } from '@/lib/sms/buyer-sms';
+import { buildAlimTalkVariables, buildSmsText, sendBuyerSms } from '@/lib/sms/buyer-sms';
 
 import { sendSolapiSms, sendSolapiAlimTalk } from '@/lib/sms/solapi';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
@@ -31,24 +31,42 @@ describe('buildSmsText', () => {
     expect(t).toBe("[씨앗페] 홍길동님, '들꽃' 결제(₩1,500,000)가 완료되었습니다. 감사합니다.");
   });
 
-  it('virtual_account_issued: 은행·계좌·금액·기한', () => {
+  it('virtual_account_issued: 작가·작품·은행·계좌·예금주·금액·기한', () => {
     const t = buildSmsText('virtual_account_issued', {
       buyerName: '',
-      artworkTitle: '',
+      artistName: '김작가',
+      artworkTitle: '들꽃',
       amount: 50000,
-      virtualAccount: { bankName: 'IBK기업', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+      virtualAccount: {
+        bankName: 'IBK기업',
+        accountNumber: '01012345678',
+        holderName: '한국스마트협동조합',
+        dueDate: '6/5 23:59',
+      },
     });
-    expect(t).toBe('[씨앗페] 입금안내: IBK기업 01012345678 / ₩50,000 / 기한 6/5 23:59');
+    expect(t).toContain('[씨앗페] 계좌이체 입금 안내');
+    expect(t).toContain('작가: 김작가');
+    expect(t).toContain('작품: 들꽃');
+    expect(t).toContain('금액: ₩50,000');
+    expect(t).toContain('입금계좌: IBK기업 01012345678');
+    expect(t).toContain('예금주: 한국스마트협동조합');
+    expect(t).toContain('입금기한: 6/5 23:59');
   });
 
   it('virtual_account_issued: 이름이 있으면 인사말 포함', () => {
     const t = buildSmsText('virtual_account_issued', {
       buyerName: '홍길동',
-      artworkTitle: '',
+      artistName: '김작가',
+      artworkTitle: '들꽃',
       amount: 50000,
-      virtualAccount: { bankName: 'IBK기업', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+      virtualAccount: {
+        bankName: 'IBK기업',
+        accountNumber: '01012345678',
+        holderName: '한국스마트협동조합',
+        dueDate: '6/5 23:59',
+      },
     });
-    expect(t).toBe('[씨앗페] 홍길동님, 입금안내: IBK기업 01012345678 / ₩50,000 / 기한 6/5 23:59');
+    expect(t).toContain('홍길동님, 작품 주문이 접수되었습니다.');
   });
 
   it('shipped: 작품명·택배사·운송장', () => {
@@ -93,13 +111,25 @@ describe('buildSmsText', () => {
       'virtual_account_issued',
       {
         buyerName: '',
-        artworkTitle: '',
+        artistName: 'Kim Artist',
+        artworkTitle: 'Wildflowers',
         amount: 50000,
-        virtualAccount: { bankName: 'IBK', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+        virtualAccount: {
+          bankName: 'IBK',
+          accountNumber: '01012345678',
+          holderName: 'KOSMART',
+          dueDate: '6/5 23:59',
+        },
       },
       'en'
     );
-    expect(t).toBe('[Seed Art Festival] Deposit: IBK 01012345678 / ₩50,000 (due 6/5 23:59)');
+    expect(t).toContain('[Seed Art Festival] Bank transfer deposit instructions');
+    expect(t).toContain('Artist: Kim Artist');
+    expect(t).toContain('Artwork: Wildflowers');
+    expect(t).toContain('Amount: ₩50,000');
+    expect(t).toContain('Account: IBK 01012345678');
+    expect(t).toContain('Account holder: KOSMART');
+    expect(t).toContain('Deposit deadline: 6/5 23:59');
   });
 
   it('en virtual_account_issued: 이름이 있으면 인사말 포함', () => {
@@ -107,13 +137,19 @@ describe('buildSmsText', () => {
       'virtual_account_issued',
       {
         buyerName: 'Jane',
-        artworkTitle: '',
+        artistName: 'Kim Artist',
+        artworkTitle: 'Wildflowers',
         amount: 50000,
-        virtualAccount: { bankName: 'IBK', accountNumber: '01012345678', dueDate: '6/5 23:59' },
+        virtualAccount: {
+          bankName: 'IBK',
+          accountNumber: '01012345678',
+          holderName: 'KOSMART',
+          dueDate: '6/5 23:59',
+        },
       },
       'en'
     );
-    expect(t).toBe('[Seed Art Festival] Jane, Deposit: IBK 01012345678 / ₩50,000 (due 6/5 23:59)');
+    expect(t).toContain('Jane, your artwork order has been received.');
   });
 
   it('en deposit_confirmed', () => {
@@ -147,6 +183,34 @@ describe('buildSmsText', () => {
     expect(
       buildSmsText('auto_cancelled', { buyerName: '', artworkTitle: '', amount: 0 }, 'en')
     ).toBe('[Seed Art Festival] Your order has been automatically cancelled.');
+  });
+});
+
+describe('buildAlimTalkVariables', () => {
+  it('virtual_account_issued: 템플릿 변수 전체 매핑', () => {
+    expect(
+      buildAlimTalkVariables('virtual_account_issued', {
+        buyerName: '홍길동',
+        artistName: '김작가',
+        artworkTitle: '들꽃',
+        amount: 50000,
+        virtualAccount: {
+          bankName: '기업은행 (IBK)',
+          accountNumber: '301-101031-04-095',
+          holderName: '한국스마트협동조합',
+          dueDate: '2026. 6. 20. 오후 2:00:00',
+        },
+      })
+    ).toEqual({
+      '#{name}': '홍길동',
+      '#{artist}': '김작가',
+      '#{title}': '들꽃',
+      '#{amount}': '₩50,000',
+      '#{bank}': '기업은행 (IBK)',
+      '#{account}': '301-101031-04-095',
+      '#{holder}': '한국스마트협동조합',
+      '#{due}': '2026. 6. 20. 오후 2:00:00',
+    });
   });
 });
 
