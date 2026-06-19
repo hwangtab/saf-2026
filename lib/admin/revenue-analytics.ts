@@ -482,7 +482,7 @@ export function buildRevenueAnalyticsFromRows({
   };
   const entries = allPeriodEntries
     .filter((entry) => matchesDrilldown(entry, normalizedDrilldown))
-    .sort((a, b) => a.soldAtUtc.localeCompare(b.soldAtUtc));
+    .sort((a, b) => b.soldAtUtc.localeCompare(a.soldAtUtc));
 
   const periodSourceBreakdown = createSourceBreakdown();
   const periodChannelBreakdown = createChannelBreakdown();

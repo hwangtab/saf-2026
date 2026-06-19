@@ -107,7 +107,7 @@ describe('buildRevenueAnalyticsFromRows', () => {
     }),
   ];
 
-  it('selected month entries contain only that month and preserve order evidence fields', () => {
+  it('selected month entries contain only that month in latest-transaction-first order and preserve order evidence fields', () => {
     const analytics = buildRevenueAnalyticsFromRows({
       rows,
       selectedYear: 2026,
@@ -117,12 +117,12 @@ describe('buildRevenueAnalyticsFromRows', () => {
     });
 
     expect(analytics.entries.map((entry) => entry.saleId)).toEqual([
-      'sale-may-lee-1',
-      'sale-may-lee-2',
-      'sale-may-lee-same-name',
       'sale-may-no-phone',
+      'sale-may-lee-same-name',
+      'sale-may-lee-2',
+      'sale-may-lee-1',
     ]);
-    expect(analytics.entries[0]).toMatchObject({
+    expect(analytics.entries[3]).toMatchObject({
       saleId: 'sale-may-lee-1',
       orderId: 'order-1',
       orderNo: 'SAF-001',
@@ -189,8 +189,8 @@ describe('buildRevenueAnalyticsFromRows', () => {
     });
 
     expect(analytics.entries.map((entry) => entry.saleId)).toEqual([
-      'sale-may-lee-1',
       'sale-may-lee-2',
+      'sale-may-lee-1',
     ]);
   });
 
@@ -209,8 +209,8 @@ describe('buildRevenueAnalyticsFromRows', () => {
     });
 
     expect(artistIdAnalytics.entries.map((entry) => entry.saleId)).toEqual([
-      'sale-may-lee-1',
       'sale-may-lee-2',
+      'sale-may-lee-1',
     ]);
 
     const artistNameAnalytics = buildRevenueAnalyticsFromRows({
