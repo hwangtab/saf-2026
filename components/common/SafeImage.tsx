@@ -17,8 +17,10 @@ import { useState } from 'react';
  * Vercel Image Optimization은 한국 edge + 장기 immutable cache → 첫 방문자에게도 안정.
  */
 
+// 1x1 투명 PNG. base64가 손상되면 브라우저가 ERR_INVALID_URL을 내며 fallback이
+// 다시 깨지므로, 디코드 가능한 canonical 값을 사용한다.
 const TRANSPARENT_FALLBACK =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQABNjN9GQAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAA0lEQVQI12P4z8BQDwAEgAF/QualzQAAAABJRU5ErkJggg==';
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP8//8/AwAFAAH/f29sAAAAAElFTkSuQmCC';
 
 const SUPABASE_RENDER_PATH = '/storage/v1/render/image/public/';
 const SUPABASE_OBJECT_PATH = '/storage/v1/object/public/';
