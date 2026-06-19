@@ -55,25 +55,22 @@ describe('admin artwork create image upload source wiring', () => {
     expect(source).toContain("router.push('/admin/artworks');");
   });
 
-  it('routes newly created artwork back to the list after create succeeds', () => {
+  it('routes newly created artwork back to the list via client router.push', () => {
     const source = formSource();
     const action = actionSource();
 
-    expect(source).toContain('createAdminArtworkAndRedirect(formData)');
-    expect(source).not.toContain('createAdminArtwork(formData)');
-    expect(action).toContain(
-      'export async function createAdminArtworkAndRedirect(formData: FormData)'
-    );
-    expect(action).toContain("redirect('/admin/artworks')");
-  });
+    // 회귀(2026-06-19): server action의 redirect()를 <form onSubmit> 이벤트 핸들러에서
+    // await하면 Next.js가 client navigation을 수행하지 않아(form action prop·transition
+    // 컨텍스트가 아님) 등록 후 화면이 멈추고 "목록으로" 링크까지 막힌다. redirect 없는
+    // createAdminArtwork + client router.push가 안전한 패턴(수정 분기와 동일).
+    expect(source).toContain('createAdminArtwork(formData)');
+    expect(source).toContain("router.push('/admin/artworks')");
+    expect(action).toContain('export async function createAdminArtwork(formData: FormData)');
 
-  it('re-throws framework redirect signals so create navigation is not swallowed', () => {
-    const source = formSource();
-
-    // createAdminArtworkAndRedirect의 redirect()는 NEXT_REDIRECT를 던진다. 이를 catch가
-    // 삼키면 작품은 등록됐는데도 "저장 중 오류" 토스트가 뜨는 회귀(2026-06-19)가 발생한다.
-    expect(source).toContain("import { useRouter, unstable_rethrow } from 'next/navigation'");
-    expect(source).toContain('unstable_rethrow(error);');
+    // 같은 회귀를 되살릴 수 있는 옛 패턴이 다시 들어오지 못하게 한다.
+    expect(source).not.toContain('createAdminArtworkAndRedirect');
+    expect(source).not.toContain('unstable_rethrow');
+    expect(action).not.toContain('createAdminArtworkAndRedirect');
   });
 
   it('uses a portal-safe Next link for the back-to-list button', () => {

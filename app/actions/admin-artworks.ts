@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import type { Database } from '@/types/supabase';
 import { logAdminAction } from './activity-log-writer';
@@ -401,11 +400,6 @@ async function createAdminArtworkRecord(formData: FormData) {
 export async function createAdminArtwork(formData: FormData) {
   const artwork = await createAdminArtworkRecord(formData);
   return { success: true, id: artwork.id };
-}
-
-export async function createAdminArtworkAndRedirect(formData: FormData) {
-  await createAdminArtworkRecord(formData);
-  redirect('/admin/artworks');
 }
 
 export async function updateArtworkImages(id: string, images: string[]) {
