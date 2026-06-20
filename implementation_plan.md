@@ -1,304 +1,795 @@
-# 최근 결제·관리자 등록 회귀 개선 Implementation Plan (2026-06-20)
+# SAF 최근 회귀 리스크 개선 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. 모든 구현은 `superpowers:test-driven-development` 순서(실패 테스트 확인 -> 최소 구현 -> 통과 확인)를 따른다.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. 구현은 승인 후에만 진행하고, 각 task는 실패 테스트 확인 -> 최소 구현 -> 통과 확인 순서로 수행한다.
 
-**Goal:** 최근 커밋 이후 남은 관리자 신규 작품 등록 멈춤 회귀와 가상계좌 결제 row 누락 보정 구멍을 제거한다.
+**Goal:** 최근 점검에서 남은 운영 리스크 3개를 코드 불변조건과 운영 관찰성으로 닫는다.
 
-**Architecture:** 관리자 신규 작품 등록은 action 응답에 공개면 `revalidateTag('artworks')`가 실리지 않게 하고, 등록 후 공개 캐시 갱신은 `after()`에서 별도 HTTP route를 호출해 다른 request의 revalidate로 분리한다. 결제 보정은 `payments` row가 없더라도 Toss API 검증으로 `DEPOSIT_CALLBACK DONE`과 reconcile이 동일한 증거 보존 helper를 호출하도록 한다.
+**Architecture:** 공개 작품 캐시 갱신은 관리자 등록 응답과 분리된 internal route 방식을 유지하되, 설정 누락과 route 실패를 관리자 알림/로그로 승격한다. 결제 보정은 기존 5~28분 cron 창은 그대로 두고, 오래된 `paid`/`awaiting_deposit` 주문의 `payments` row 누락만 별도 backfill 모드로 안전하게 점검·복구한다. 계좌이체 안내 정보는 checkout과 SMS 재발송이 같은 helper를 읽게 해 운영 계좌 변경 시 한 곳만 바꾸게 한다.
 
-**Tech Stack:** Next.js 14 App Router, Server Actions, Route Handlers, Supabase JS v2, Jest, TypeScript.
+**Tech Stack:** Next.js App Router, Server Actions, Route Handlers, Supabase JS v2, TossPayments API, Jest, TypeScript, Vercel Cron.
 
 ## Global Constraints
 
-- `AGENTS.md`: 실행 전 계획은 한국어로 `implementation_plan.md`에 남기고, 승인 전에는 코드 수정하지 않는다.
-- TDD: production code 수정 전에 실패 테스트를 먼저 추가하고, 실패를 확인한 뒤 최소 구현한다.
-- 관리자 신규 작품 등록: 등록 성공 후 operator는 화면 멈춤 없이 목록으로 이동해야 한다.
-- 공개 작품 갱신: 신규 작품 등록 후 KO/EN 목록, home, API `artworks` tag, 관련 작가 경로는 결국 갱신되어야 한다.
-- 결제 불변조건: `paid` 또는 입금 완료된 가상계좌 결제는 Toss 증거가 `payments` row로 보존되어야 한다.
+- `AGENTS.md`: 계획은 한국어로 작성하고, 승인 전에는 코드 수정하지 않는다.
+- `AGENTS.md`: 보고/확인 모드와 달리 이 문서는 실행 계획이며, 실제 구현은 별도 승인 후 진행한다.
+- 운영 의도: 기술적 우회가 아니라 운영자가 한 달 뒤 덜 헷갈리는 구조를 만든다.
+- 공개 작품 갱신: 관리자 신규 작품 등록 후 KO/EN home, 작품 목록, 작가 페이지, `artworks` cache tag가 결국 갱신되어야 한다.
+- 결제 불변조건: Toss에서 결제 증거가 확인된 `paid`/`awaiting_deposit` 주문은 `payments` row가 있어야 한다.
+- SMS/계좌 안내: 구매자에게 나가는 계좌 정보는 checkout 신규 발송과 관리자 재발송이 같은 출처를 사용해야 한다.
 - 기존 사용자/다른 에이전트 변경은 되돌리지 않는다.
 
 ---
 
-### Task 1: 관리자 신규 작품 등록의 공개 캐시 무효화 분리
+### Task 1: 공개 작품 revalidation 실패를 운영자에게 보이게 만들기
 
 **Files:**
 
+- Create: `lib/admin/public-artwork-revalidation.ts`
 - Modify: `app/actions/admin-artworks.ts`
-- Create: `app/api/internal/revalidate-artwork-surfaces/route.ts`
-- Test: `__tests__/app/admin-artwork-create-image-upload-source.test.ts`
+- Test: `__tests__/lib/public-artwork-revalidation.test.ts`
 - Test: `__tests__/app/admin-artwork-create-revalidate-contract.test.ts`
 
 **Interfaces:**
 
-- Produces: `createAdminArtworkRecord`는 동기/`after()` 어디에서도 직접 `revalidatePublicArtworkSurfaces()`를 호출하지 않고, `schedulePublicArtworkSurfaceRevalidation([artistName])`만 호출한다.
-- Produces: internal route `POST /api/internal/revalidate-artwork-surfaces`는 `artistNames?: string[]` body를 받아 `revalidatePublicArtworkSurfaces(artistNames)`를 실행한다.
-- Consumes: `CRON_SECRET` Bearer 인증 또는 같은 프로젝트 내부 호출용 shared secret.
+- Produces: `resolvePublicArtworkRevalidationConfig(env?: NodeJS.ProcessEnv): { ok: true; baseUrl: string; cronSecret: string } | { ok: false; missing: string[] }`
+- Produces: `normalizeRevalidationArtistNames(artistNames: Array<string | null | undefined>): string[]`
+- Consumes: `schedulePublicArtworkSurfaceRevalidation(artistNames, context)` in `app/actions/admin-artworks.ts`
+- Produces: missing env or HTTP failure is recorded through `notifyEmail` and `logSystemAction`, not only `console.error`.
 
-- [x] **Step 1: Write failing source contract test**
+- [ ] **Step 1: Add failing helper tests**
+
+Create `__tests__/lib/public-artwork-revalidation.test.ts`:
 
 ```ts
-import { readFileSync } from 'node:fs';
+import {
+  normalizeRevalidationArtistNames,
+  resolvePublicArtworkRevalidationConfig,
+} from '@/lib/admin/public-artwork-revalidation';
 
-describe('admin artwork create revalidate contract', () => {
-  it('does not attach public artwork invalidation to the create server action response', () => {
-    const src = readFileSync('app/actions/admin-artworks.ts', 'utf8');
-    const createBlock = src.slice(
-      src.indexOf('async function createAdminArtworkRecord'),
-      src.indexOf('export async function createAdminArtwork')
-    );
+describe('public artwork revalidation config', () => {
+  it('uses NEXT_PUBLIC_SITE_URL without trailing slash when CRON_SECRET exists', () => {
+    expect(
+      resolvePublicArtworkRevalidationConfig({
+        NEXT_PUBLIC_SITE_URL: 'https://www.saf2026.com/',
+        CRON_SECRET: 'secret-1',
+      } as NodeJS.ProcessEnv)
+    ).toEqual({
+      ok: true,
+      baseUrl: 'https://www.saf2026.com',
+      cronSecret: 'secret-1',
+    });
+  });
 
-    expect(createBlock).toContain("revalidatePath('/admin/artworks')");
-    expect(createBlock).toContain('schedulePublicArtworkSurfaceRevalidation([artistName])');
-    expect(createBlock).not.toContain('revalidatePublicArtworkSurfaces');
+  it('uses VERCEL_URL as https fallback when public site url is absent', () => {
+    expect(
+      resolvePublicArtworkRevalidationConfig({
+        VERCEL_URL: 'saf-2026.vercel.app',
+        CRON_SECRET: 'secret-1',
+      } as NodeJS.ProcessEnv)
+    ).toEqual({
+      ok: true,
+      baseUrl: 'https://saf-2026.vercel.app',
+      cronSecret: 'secret-1',
+    });
+  });
+
+  it('returns exact missing env names instead of silently degrading', () => {
+    expect(resolvePublicArtworkRevalidationConfig({} as NodeJS.ProcessEnv)).toEqual({
+      ok: false,
+      missing: ['NEXT_PUBLIC_SITE_URL or VERCEL_URL', 'CRON_SECRET'],
+    });
+  });
+
+  it('normalizes and deduplicates artist names', () => {
+    expect(normalizeRevalidationArtistNames([' 오윤 ', null, '', '오윤', '박생광'])).toEqual([
+      '오윤',
+      '박생광',
+    ]);
   });
 });
 ```
 
-- [x] **Step 2: Run RED**
+- [ ] **Step 2: Run RED**
 
-Run: `npm test -- __tests__/app/admin-artwork-create-revalidate-contract.test.ts --runInBand`
+Run:
 
-Expected: FAIL because `createAdminArtworkRecord` currently contains `after(() => { revalidatePublicArtworkSurfaces([artistName]); })` and does not call `schedulePublicArtworkSurfaceRevalidation`.
-
-- [x] **Step 3: Write failing route contract test**
-
-Add to `__tests__/app/admin-artwork-create-revalidate-contract.test.ts`:
-
-```ts
-it('exposes a protected internal route for public artwork surface invalidation', () => {
-  const src = readFileSync('app/api/internal/revalidate-artwork-surfaces/route.ts', 'utf8');
-
-  expect(src).toContain('validateInternalCronRequest');
-  expect(src).toContain('revalidatePublicArtworkSurfaces');
-  expect(src).toContain('artistNames');
-});
-
-it('schedules the protected route instead of calling revalidate directly from the action', () => {
-  const src = readFileSync('app/actions/admin-artworks.ts', 'utf8');
-
-  expect(src).toContain('async function schedulePublicArtworkSurfaceRevalidation');
-  expect(src).toContain('/api/internal/revalidate-artwork-surfaces');
-  expect(src).toContain('CRON_SECRET');
-});
+```bash
+npm test -- --runInBand __tests__/lib/public-artwork-revalidation.test.ts
 ```
 
-- [x] **Step 4: Run RED**
+Expected: FAIL with module not found for `@/lib/admin/public-artwork-revalidation`.
 
-Run: `npm test -- __tests__/app/admin-artwork-create-revalidate-contract.test.ts --runInBand`
+- [ ] **Step 3: Add helper implementation**
 
-Expected: FAIL because `app/api/internal/revalidate-artwork-surfaces/route.ts` does not exist.
-
-- [x] **Step 5: Minimal implementation**
-
-In `app/actions/admin-artworks.ts`:
-
-- keep `revalidatePath('/admin/artworks')` in `createAdminArtworkRecord`
-- keep artist lookup only to pass the relevant artist name to background route scheduling
-- do not call `revalidatePublicArtworkSurfaces` directly inside create action
-- call `schedulePublicArtworkSurfaceRevalidation([artistName])` after the admin-list revalidate
-- implement `schedulePublicArtworkSurfaceRevalidation` with `after(async () => fetch(...))`; the target route performs the actual cache invalidation in a separate request so the server action response does not carry public artwork invalidation directives
-
-Create `app/api/internal/revalidate-artwork-surfaces/route.ts`:
+Create `lib/admin/public-artwork-revalidation.ts`:
 
 ```ts
-import { NextRequest, NextResponse } from 'next/server';
+export type PublicArtworkRevalidationConfig =
+  | { ok: true; baseUrl: string; cronSecret: string }
+  | { ok: false; missing: string[] };
 
-import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
-import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+export function normalizeRevalidationArtistNames(
+  artistNames: Array<string | null | undefined>
+): string[] {
+  return Array.from(
+    new Set(
+      artistNames
+        .filter((name): name is string => typeof name === 'string')
+        .map((name) => name.trim())
+        .filter((name) => name.length > 0)
+    )
+  );
+}
 
-export const runtime = 'nodejs';
+export function resolvePublicArtworkRevalidationConfig(
+  env: NodeJS.ProcessEnv = process.env
+): PublicArtworkRevalidationConfig {
+  const missing: string[] = [];
+  const siteUrl = env.NEXT_PUBLIC_SITE_URL?.trim();
+  const vercelUrl = env.VERCEL_URL?.trim();
+  const cronSecret = env.CRON_SECRET?.trim();
 
-export async function POST(request: NextRequest) {
-  const authError = validateInternalCronRequest(request);
-  if (authError) return authError;
-
-  let body: unknown = null;
-  try {
-    body = await request.json();
-  } catch {
-    body = null;
+  let baseUrl: string | null = null;
+  if (siteUrl) {
+    baseUrl = siteUrl.replace(/\/+$/, '');
+  } else if (vercelUrl) {
+    baseUrl = `https://${vercelUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')}`;
+  } else {
+    missing.push('NEXT_PUBLIC_SITE_URL or VERCEL_URL');
   }
 
-  const artistNames = Array.isArray((body as { artistNames?: unknown } | null)?.artistNames)
-    ? (body as { artistNames: unknown[] }).artistNames.filter(
-        (name): name is string => typeof name === 'string' && name.trim().length > 0
-      )
-    : [];
+  if (!cronSecret) missing.push('CRON_SECRET');
 
-  revalidatePublicArtworkSurfaces(artistNames);
-  return NextResponse.json({ revalidated: true, artistNames });
+  if (missing.length > 0 || !baseUrl || !cronSecret) {
+    return { ok: false, missing };
+  }
+
+  return { ok: true, baseUrl, cronSecret };
 }
 ```
 
-- [x] **Step 6: Run GREEN**
+- [ ] **Step 4: Run GREEN for helper**
 
 Run:
 
 ```bash
-npm test -- __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts --runInBand
+npm test -- --runInBand __tests__/lib/public-artwork-revalidation.test.ts
 ```
 
-Expected: PASS. If the old test expects `after(() => revalidatePublicArtworkSurfaces)`, update it to assert the new contract instead.
+Expected: PASS.
 
----
+- [ ] **Step 5: Add failing source contract for visible failure handling**
 
-### Task 2: `DEPOSIT_CALLBACK DONE`에서 payment row 누락 복구
-
-**Files:**
-
-- Modify: `app/api/webhooks/toss/route.ts`
-- Test: `__tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts`
-
-**Interfaces:**
-
-- Consumes: `ensureTossPaymentRecord` from `lib/payments/toss-payment-record.ts`.
-- Produces: payment row가 없더라도 `DEPOSIT_CALLBACK DONE`은 Toss API double-verify 후 order_no로 주문을 찾아 payment row를 먼저 생성한 뒤 기존 입금 완료 처리로 들어간다.
-
-- [x] **Step 1: Write failing test**
+Update `__tests__/app/admin-artwork-create-revalidate-contract.test.ts` with:
 
 ```ts
-it('repairs a missing payment row for verified DEPOSIT_CALLBACK DONE before marking the order paid', async () => {
-  const supabase = createDepositCallbackMissingPaymentMock();
-  mockCreateSupabaseAdminClient.mockReturnValue(supabase);
-  mockFetchPayment.mockResolvedValue({
-    paymentKey: 'pay-key',
-    orderId: 'SAF-001',
-    orderName: 'SAF artwork',
-    status: 'DONE',
-    method: '가상계좌',
-    totalAmount: 100000,
-    balanceAmount: 100000,
-    currency: 'KRW',
-    approvedAt: '2026-06-20T12:00:00+09:00',
-    requestedAt: '2026-06-20T11:59:00+09:00',
-    virtualAccount: { secret: 'deposit-secret' },
-  });
-  mockEnsureTossPaymentRecord.mockResolvedValue({
-    ok: true,
-    paymentId: 'payment-1',
-    created: true,
-  });
+it('reports public artwork revalidation schedule failures to operator-visible channels', () => {
+  const src = readFileSync('app/actions/admin-artworks.ts', 'utf8');
 
-  const { POST } = await import('@/app/api/webhooks/toss/route');
-  const response = await POST(makeDepositCallbackDoneRequest() as never);
-
-  expect(response.status).toBe(200);
-  expect(mockEnsureTossPaymentRecord).toHaveBeenCalledWith(
-    expect.objectContaining({ orderId: 'order-1' })
-  );
-  expect(supabase.orderStatusUpdates).toContain('paid');
+  expect(src).toContain('resolvePublicArtworkRevalidationConfig');
+  expect(src).toContain('logSystemAction');
+  expect(src).toContain('notifyEmail');
+  expect(src).toContain('public_artwork_revalidation_failed');
 });
 ```
 
-- [x] **Step 2: Run RED**
-
-Run: `npm test -- __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts --runInBand`
-
-Expected: FAIL because current `DEPOSIT_CALLBACK` rejects missing `payments` row before Toss API verification.
-
-- [x] **Step 3: Minimal implementation**
-
-In `app/api/webhooks/toss/route.ts` `isDepositCallback` branch:
-
-- if `paymentRecord` is missing and `paymentStatus === 'DONE'`, resolve provider from `orders.order_no = payload.data.orderId`
-- call `fetchPayment(paymentKey, provider)` and require `verified.status === 'DONE'`
-- call `ensureTossPaymentRecord({ supabase, orderId: order.id, tossPayment: verified, idempotencyKey: \`webhook-deposit-${paymentKey}\` })`
-- refetch `paymentRecord` or synthesize `{ id, order_id, webhook_responses: [], confirm_response: verified }`
-- continue existing DONE flow
-- keep secret verification for rows that already have `confirm_response.virtualAccount.secret`
-- do not weaken verification for non-DONE deposit callbacks
-
-- [x] **Step 4: Run GREEN**
+- [ ] **Step 6: Run RED**
 
 Run:
 
 ```bash
-npm test -- __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts --runInBand
+npm test -- --runInBand __tests__/app/admin-artwork-create-revalidate-contract.test.ts
+```
+
+Expected: FAIL because `app/actions/admin-artworks.ts` still logs missing env only with `console.error`.
+
+- [ ] **Step 7: Update scheduler implementation**
+
+Modify `app/actions/admin-artworks.ts`:
+
+```ts
+import { notifyEmail } from '@/lib/notify';
+import { logSystemAction } from './activity-log-writer';
+import {
+  normalizeRevalidationArtistNames,
+  resolvePublicArtworkRevalidationConfig,
+} from '@/lib/admin/public-artwork-revalidation';
+```
+
+Replace the body of `schedulePublicArtworkSurfaceRevalidation` with this shape:
+
+```ts
+function schedulePublicArtworkSurfaceRevalidation(
+  artistNames: Array<string | null | undefined>,
+  context: { artworkId?: string | null; title?: string | null } = {}
+) {
+  const config = resolvePublicArtworkRevalidationConfig();
+  const normalizedArtistNames = normalizeRevalidationArtistNames(artistNames);
+
+  if (!config.ok) {
+    after(async () => {
+      const missing = config.missing.join(', ');
+      await Promise.allSettled([
+        notifyEmail('error', '공개 작품 캐시 갱신 예약 실패', {
+          작품ID: context.artworkId ?? '',
+          작품명: context.title ?? '',
+          누락설정: missing,
+          참고: '작품 등록은 완료됐지만 공개 목록/작가 페이지 갱신 요청을 예약하지 못했습니다.',
+        }),
+        logSystemAction(
+          'public_artwork_revalidation_failed',
+          'artwork',
+          context.artworkId ?? 'unknown',
+          {
+            title: context.title ?? null,
+            artist_names: normalizedArtistNames,
+            missing,
+            stage: 'schedule_config',
+          }
+        ),
+      ]);
+    });
+    return;
+  }
+
+  after(async () => {
+    try {
+      const response = await fetch(`${config.baseUrl}${INTERNAL_ARTWORK_REVALIDATE_PATH}`, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${config.cronSecret}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ artistNames: normalizedArtistNames }),
+      });
+
+      if (!response.ok) {
+        await logSystemAction(
+          'public_artwork_revalidation_failed',
+          'artwork',
+          context.artworkId ?? 'unknown',
+          {
+            title: context.title ?? null,
+            artist_names: normalizedArtistNames,
+            status: response.status,
+            stage: 'route_response',
+          }
+        );
+      }
+    } catch (err) {
+      await Promise.allSettled([
+        notifyEmail('error', '공개 작품 캐시 갱신 요청 실패', {
+          작품ID: context.artworkId ?? '',
+          작품명: context.title ?? '',
+          에러: err instanceof Error ? err.message : String(err),
+        }),
+        logSystemAction(
+          'public_artwork_revalidation_failed',
+          'artwork',
+          context.artworkId ?? 'unknown',
+          {
+            title: context.title ?? null,
+            artist_names: normalizedArtistNames,
+            error: err instanceof Error ? err.message : String(err),
+            stage: 'route_fetch',
+          }
+        ),
+      ]);
+    }
+  });
+}
+```
+
+In `createAdminArtworkRecord`, call:
+
+```ts
+schedulePublicArtworkSurfaceRevalidation([artistName], {
+  artworkId: artwork.id,
+  title: artwork.title,
+});
+```
+
+- [ ] **Step 8: Run GREEN**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/lib/public-artwork-revalidation.test.ts __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts
 ```
 
 Expected: PASS.
 
 ---
 
-### Task 3: Reconcile에서 `awaiting_deposit + Toss DONE + payment row 없음` 보정
+### Task 2: 오래된 missing payment row backfill 모드 추가
 
 **Files:**
 
 - Modify: `app/api/internal/reconcile-payments/route.ts`
 - Test: `__tests__/app/reconcile-payments-missing-payment-source.test.ts`
+- Test: `__tests__/app/reconcile-payments-backfill-contract.test.ts`
 
 **Interfaces:**
 
-- Produces: missing payment scan은 `awaiting_deposit` 주문의 Toss 상태가 `DONE`이면 payment row 생성 후 주문 paid 전환/매출 기록 경로로 넘긴다.
+- Produces: query param `scope=missing-payments-backfill`
+- Produces: query param `lookbackDays`, integer `1..90`, default `30`
+- Produces: query param `limit`, integer `1..500`, default `100`
+- Produces: default cron behavior remains the existing 5~28 minute window when `scope` is absent.
+- Consumes: existing `ensureTossPaymentRecord` and `reconcileMissingDoneOrder` flow.
 
-- [x] **Step 1: Write failing source contract test**
+- [ ] **Step 1: Add failing backfill contract test**
 
-Update `__tests__/app/reconcile-payments-missing-payment-source.test.ts`:
+Create `__tests__/app/reconcile-payments-backfill-contract.test.ts`:
 
 ```ts
-it('does not skip awaiting_deposit missing-payment orders after Toss has moved to DONE', () => {
-  const src = readFileSync('app/api/internal/reconcile-payments/route.ts', 'utf8');
+import { readFileSync } from 'node:fs';
 
-  expect(src).toContain("order.status === 'awaiting_deposit' && tossPayment.status === 'DONE'");
-  expect(src).toContain('reconcileMissingDoneOrder');
+describe('reconcile-payments missing-payment backfill mode', () => {
+  it('keeps the cron window unchanged for normal scheduled runs', () => {
+    const src = readFileSync('app/api/internal/reconcile-payments/route.ts', 'utf8');
+
+    expect(src).toContain('28 * 60 * 1000');
+    expect(src).toContain('5 * 60 * 1000');
+  });
+
+  it('adds an explicit bounded backfill mode for old paid/awaiting_deposit rows missing payments', () => {
+    const src = readFileSync('app/api/internal/reconcile-payments/route.ts', 'utf8');
+
+    expect(src).toContain("scope === 'missing-payments-backfill'");
+    expect(src).toContain('parseBackfillLookbackDays');
+    expect(src).toContain('parseBackfillLimit');
+    expect(src).toContain('.limit(backfillLimit)');
+    expect(src).toContain('idempotencyKey: `backfill-missing-payment-${order.order_no}`');
+  });
 });
 ```
 
-- [x] **Step 2: Run RED**
-
-Run: `npm test -- __tests__/app/reconcile-payments-missing-payment-source.test.ts --runInBand`
-
-Expected: FAIL because current code pushes an error and continues when `awaiting_deposit` order sees Toss `DONE`.
-
-- [x] **Step 3: Minimal implementation**
-
-In `app/api/internal/reconcile-payments/route.ts`:
-
-- extract the existing pending `DONE` repair body into helper `reconcileMissingDoneOrder({ supabase, order, tossPayment, provider, now, errors })`
-- for `missingPaymentOrders`, when `order.status === 'awaiting_deposit' && tossPayment.status === 'DONE'`, call the helper
-- ensure helper creates/ensures payment row, updates order to `paid` from either `pending_payment` or `awaiting_deposit`, records `artwork_sales`, syncs artwork status, and revalidates public surfaces
-- keep existing mismatch error for all other status mismatches
-
-- [x] **Step 4: Run GREEN**
+- [ ] **Step 2: Run RED**
 
 Run:
 
 ```bash
-npm test -- __tests__/app/reconcile-payments-missing-payment-source.test.ts __tests__/app/toss-confirm-virtual-account-reservation.test.ts --runInBand
+npm test -- --runInBand __tests__/app/reconcile-payments-backfill-contract.test.ts
+```
+
+Expected: FAIL because backfill mode is not present.
+
+- [ ] **Step 3: Add bounded query parsing helpers in route**
+
+Add near the top of `app/api/internal/reconcile-payments/route.ts`:
+
+```ts
+function clampInteger(raw: string | null, fallback: number, min: number, max: number): number {
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, Math.floor(parsed)));
+}
+
+function parseBackfillLookbackDays(searchParams: URLSearchParams): number {
+  return clampInteger(searchParams.get('lookbackDays'), 30, 1, 90);
+}
+
+function parseBackfillLimit(searchParams: URLSearchParams): number {
+  return clampInteger(searchParams.get('limit'), 100, 1, 500);
+}
+```
+
+- [ ] **Step 4: Implement backfill branch without changing cron branch**
+
+Inside `GET(request: NextRequest)`, after Supabase admin client creation and before normal `minAge/maxAge` query:
+
+```ts
+const searchParams = request.nextUrl.searchParams;
+const scope = searchParams.get('scope');
+
+if (scope === 'missing-payments-backfill') {
+  const lookbackDays = parseBackfillLookbackDays(searchParams);
+  const backfillLimit = parseBackfillLimit(searchParams);
+  const since = new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: settledOrders, error: backfillFetchError } = await supabase
+    .from('orders')
+    .select(
+      'id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata, status, order_items(artwork_id, quantity, unit_price), payments(id)'
+    )
+    .in('status', ['paid', 'awaiting_deposit'])
+    .gte('created_at', since)
+    .order('created_at', { ascending: false })
+    .limit(backfillLimit);
+
+  if (backfillFetchError) {
+    return NextResponse.json({ error: backfillFetchError.message }, { status: 500 });
+  }
+
+  const missingPaymentOrders = (settledOrders ?? []).filter((order) => !hasPaymentRows(order));
+  let reconciled = 0;
+  const errors: string[] = [];
+
+  for (const order of missingPaymentOrders) {
+    try {
+      const provider = resolveOrderProvider(order.metadata);
+      const tossPayment = await fetchPaymentByOrderId(order.order_no, provider);
+      if (!tossPayment) continue;
+
+      if (order.status === 'awaiting_deposit' && tossPayment.status === 'DONE') {
+        const repaired = await reconcileMissingDoneOrder({
+          supabase,
+          order,
+          tossPayment,
+          provider,
+          now: new Date().toISOString(),
+          sourceStatuses: ['awaiting_deposit'],
+          idempotencyKey: `backfill-missing-payment-${order.order_no}`,
+          errors,
+        });
+        if (repaired) reconciled++;
+        continue;
+      }
+
+      const expectedTossStatus =
+        order.status === 'paid'
+          ? 'DONE'
+          : order.status === 'awaiting_deposit'
+            ? 'WAITING_FOR_DEPOSIT'
+            : null;
+
+      if (expectedTossStatus && tossPayment.status !== expectedTossStatus) {
+        errors.push(
+          `${order.order_no}: order is ${order.status} but Toss status is ${tossPayment.status}`
+        );
+        continue;
+      }
+
+      const paymentRecordResult = await ensureTossPaymentRecord({
+        supabase,
+        orderId: order.id,
+        tossPayment,
+        idempotencyKey: `backfill-missing-payment-${order.order_no}`,
+      });
+
+      if (!paymentRecordResult.ok) {
+        errors.push(
+          `${order.order_no}: missing payment backfill failed: ${paymentRecordResult.error}`
+        );
+        continue;
+      }
+
+      reconciled++;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`${order.order_no}: ${msg}`);
+    }
+  }
+
+  return NextResponse.json({
+    scope,
+    lookbackDays,
+    limit: backfillLimit,
+    checked: missingPaymentOrders.length,
+    reconciled,
+    ...(errors.length > 0 ? { errors } : {}),
+  });
+}
+```
+
+- [ ] **Step 5: Run GREEN**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/app/reconcile-payments-backfill-contract.test.ts __tests__/app/reconcile-payments-missing-payment-source.test.ts
+```
+
+Expected: PASS.
+
+- [ ] **Step 6: Manual runtime command for operator use**
+
+After deploy, run the protected backfill once from a trusted shell with the production `CRON_SECRET`:
+
+```bash
+curl -fsS \
+  -H "Authorization: Bearer $CRON_SECRET" \
+  "https://www.saf2026.com/api/internal/reconcile-payments?scope=missing-payments-backfill&lookbackDays=30&limit=200"
+```
+
+Expected: JSON with `scope:"missing-payments-backfill"`, `checked`, `reconciled`, and no `errors` field. If `errors` exists, do not rerun blindly; inspect each order number first.
+
+---
+
+### Task 3: 계좌이체 안내 정보를 단일 출처로 통합
+
+**Files:**
+
+- Create: `lib/payments/bank-transfer-info.ts`
+- Modify: `app/actions/checkout.ts`
+- Modify: `app/actions/admin-sms.ts`
+- Modify: `.env.local.example`
+- Test: `__tests__/lib/bank-transfer-info.test.ts`
+- Test: `__tests__/app/actions/admin-sms.test.ts`
+- Test: `__tests__/actions/checkout.test.ts`
+
+**Interfaces:**
+
+- Produces: `getBankTransferInfo(env?: NodeJS.ProcessEnv): { bankName: string; accountNumber: string; holderName: string; deadlineHours: number }`
+- Produces: `formatBankTransferDueDate(date: Date, locale: 'ko' | 'en'): string`
+- Produces: checkout and admin SMS resend both import the helper instead of duplicating account constants.
+
+- [ ] **Step 1: Add failing helper tests**
+
+Create `__tests__/lib/bank-transfer-info.test.ts`:
+
+```ts
+import { formatBankTransferDueDate, getBankTransferInfo } from '@/lib/payments/bank-transfer-info';
+
+describe('bank transfer info', () => {
+  it('returns the current SAF default account when env is absent', () => {
+    expect(getBankTransferInfo({} as NodeJS.ProcessEnv)).toEqual({
+      bankName: '기업은행 (IBK)',
+      accountNumber: '301-101031-04-095',
+      holderName: '한국스마트협동조합',
+      deadlineHours: 24,
+    });
+  });
+
+  it('allows production env to override account info from one source', () => {
+    expect(
+      getBankTransferInfo({
+        BANK_TRANSFER_BANK_NAME: '신한은행',
+        BANK_TRANSFER_ACCOUNT_NUMBER: '110-000-000000',
+        BANK_TRANSFER_HOLDER_NAME: '씨앗페',
+        BANK_TRANSFER_DEADLINE_HOURS: '48',
+      } as NodeJS.ProcessEnv)
+    ).toEqual({
+      bankName: '신한은행',
+      accountNumber: '110-000-000000',
+      holderName: '씨앗페',
+      deadlineHours: 48,
+    });
+  });
+
+  it('formats due date in KST for Korean and English messages', () => {
+    const date = new Date('2026-06-20T05:00:00.000Z');
+
+    expect(formatBankTransferDueDate(date, 'ko')).toContain('2026');
+    expect(formatBankTransferDueDate(date, 'en')).toContain('2026');
+  });
+});
+```
+
+- [ ] **Step 2: Run RED**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/lib/bank-transfer-info.test.ts
+```
+
+Expected: FAIL with module not found.
+
+- [ ] **Step 3: Add helper implementation**
+
+Create `lib/payments/bank-transfer-info.ts`:
+
+```ts
+export type BankTransferInfo = {
+  bankName: string;
+  accountNumber: string;
+  holderName: string;
+  deadlineHours: number;
+};
+
+const DEFAULT_BANK_TRANSFER_INFO: BankTransferInfo = {
+  bankName: '기업은행 (IBK)',
+  accountNumber: '301-101031-04-095',
+  holderName: '한국스마트협동조합',
+  deadlineHours: 24,
+};
+
+function positiveIntegerOrDefault(value: string | undefined, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
+}
+
+export function getBankTransferInfo(env: NodeJS.ProcessEnv = process.env): BankTransferInfo {
+  return {
+    bankName: env.BANK_TRANSFER_BANK_NAME?.trim() || DEFAULT_BANK_TRANSFER_INFO.bankName,
+    accountNumber:
+      env.BANK_TRANSFER_ACCOUNT_NUMBER?.trim() || DEFAULT_BANK_TRANSFER_INFO.accountNumber,
+    holderName: env.BANK_TRANSFER_HOLDER_NAME?.trim() || DEFAULT_BANK_TRANSFER_INFO.holderName,
+    deadlineHours: positiveIntegerOrDefault(
+      env.BANK_TRANSFER_DEADLINE_HOURS,
+      DEFAULT_BANK_TRANSFER_INFO.deadlineHours
+    ),
+  };
+}
+
+export function formatBankTransferDueDate(date: Date, locale: 'ko' | 'en') {
+  return locale === 'ko'
+    ? date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+    : date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
+}
+```
+
+- [ ] **Step 4: Run GREEN for helper**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/lib/bank-transfer-info.test.ts
+```
+
+Expected: PASS.
+
+- [ ] **Step 5: Replace checkout duplicate constants**
+
+In `app/actions/checkout.ts`, remove local `BANK_TRANSFER_INFO`, `DEPOSIT_DEADLINE_HOURS`, and local `formatBankTransferDueDate`. Add:
+
+```ts
+import { formatBankTransferDueDate, getBankTransferInfo } from '@/lib/payments/bank-transfer-info';
+```
+
+In the bank-transfer order branch:
+
+```ts
+const bankTransferInfo = getBankTransferInfo();
+const dueDate = new Date(Date.now() + bankTransferInfo.deadlineHours * 60 * 60 * 1000);
+const dueDateStr = formatBankTransferDueDate(dueDate, buyerLocale);
+const bankTransferMetadata = {
+  bankName: bankTransferInfo.bankName,
+  accountNumber: bankTransferInfo.accountNumber,
+  holderName: bankTransferInfo.holderName,
+  dueDate: dueDateStr,
+  dueDateIso: dueDate.toISOString(),
+};
+```
+
+Use `bankTransferInfo.bankName`, `bankTransferInfo.accountNumber`, and `bankTransferInfo.holderName` in the admin notification fields.
+
+- [ ] **Step 6: Replace admin SMS fallback duplicate constants**
+
+In `app/actions/admin-sms.ts`, remove local `BANK_TRANSFER_FALLBACK`, `DEPOSIT_DEADLINE_HOURS`, and local `formatBankTransferDueDate`. Add:
+
+```ts
+import { formatBankTransferDueDate, getBankTransferInfo } from '@/lib/payments/bank-transfer-info';
+```
+
+In `extractBankTransferInfo`:
+
+```ts
+const fallback = getBankTransferInfo();
+const dueDate =
+  typeof bankTransfer.dueDate === 'string' && bankTransfer.dueDate.trim()
+    ? bankTransfer.dueDate
+    : formatBankTransferDueDate(
+        new Date(
+          new Date(createdAt ?? Date.now()).getTime() + fallback.deadlineHours * 60 * 60 * 1000
+        ),
+        locale
+      );
+
+return {
+  bankName:
+    typeof bankTransfer.bankName === 'string' && bankTransfer.bankName.trim()
+      ? bankTransfer.bankName
+      : fallback.bankName,
+  accountNumber:
+    typeof bankTransfer.accountNumber === 'string' && bankTransfer.accountNumber.trim()
+      ? bankTransfer.accountNumber
+      : fallback.accountNumber,
+  holderName:
+    typeof bankTransfer.holderName === 'string' && bankTransfer.holderName.trim()
+      ? bankTransfer.holderName
+      : fallback.holderName,
+  dueDate,
+};
+```
+
+- [ ] **Step 7: Document env names**
+
+Add to `.env.local.example`:
+
+```dotenv
+# Manual bank-transfer fallback used by checkout and admin SMS resend.
+# Defaults in code match the current SAF account, but production can override here.
+BANK_TRANSFER_BANK_NAME="기업은행 (IBK)"
+BANK_TRANSFER_ACCOUNT_NUMBER="301-101031-04-095"
+BANK_TRANSFER_HOLDER_NAME="한국스마트협동조합"
+BANK_TRANSFER_DEADLINE_HOURS="24"
+```
+
+- [ ] **Step 8: Run GREEN**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/lib/bank-transfer-info.test.ts __tests__/app/actions/admin-sms.test.ts __tests__/actions/checkout.test.ts
 ```
 
 Expected: PASS.
 
 ---
 
-### Task 4: Verification
+### Task 4: Final verification and operator handoff
 
 **Files:**
 
-- No production edits.
+- Modify: `walkthrough.md`
 
-- [x] **Step 1: Run targeted regression tests**
+**Interfaces:**
 
-Run:
+- Produces: a short Korean walkthrough with changed files, commands run, backfill URL, and operational caveats.
 
-```bash
-npm test -- __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/reconcile-payments-missing-payment-source.test.ts __tests__/lib/toss-payment-record.test.ts --runInBand
-```
-
-- [x] **Step 2: Run broader safety checks**
+- [ ] **Step 1: Run full local verification**
 
 Run:
 
 ```bash
-npm run type-check
 npm run lint
+npm run type-check
+npm test -- --runInBand
+npm run validate-artworks
 ```
 
-- [x] **Step 3: Write walkthrough**
+Expected:
 
-Create/update `walkthrough.md` with:
+- `lint`: exit 0
+- `type-check`: exit 0
+- `test`: all suites pass
+- `validate-artworks`: exit 0; existing warnings may remain and must be reported as warnings, not failures
 
-- changed files
-- failed-test evidence before implementation
-- passing-test evidence after implementation
-- remaining risk: route-based public revalidation may need a production smoke call with `CRON_SECRET`
+- [ ] **Step 2: Check whether build changed generated files before deciding to run it**
+
+Run:
+
+```bash
+git status --short
+```
+
+If the tree is clean and the user approves generated-file churn, run:
+
+```bash
+npm run build
+```
+
+Expected: exit 0. If `content/changelog.json`, `lib/site-stats.ts`, or generated hero quality files change, inspect and either commit them with the implementation or explicitly leave build unrun in the final report.
+
+- [ ] **Step 3: Write walkthrough**
+
+Update `walkthrough.md` with:
+
+````md
+# 최근 회귀 리스크 개선 결과
+
+## 변경 요약
+
+- 관리자 신규 작품 등록 후 공개 캐시 갱신 예약 실패를 관리자 알림/시스템 로그로 남기도록 개선.
+- `/api/internal/reconcile-payments?scope=missing-payments-backfill` 모드로 오래된 missing payment row를 제한적으로 복구 가능하게 개선.
+- 계좌이체 안내 계좌/기한 정보를 `lib/payments/bank-transfer-info.ts` 단일 출처로 통합.
+
+## 운영 명령
+
+```bash
+curl -fsS \
+  -H "Authorization: Bearer $CRON_SECRET" \
+  "https://www.saf2026.com/api/internal/reconcile-payments?scope=missing-payments-backfill&lookbackDays=30&limit=200"
+```
+````
+
+## 검증
+
+- `npm run lint`
+- `npm run type-check`
+- `npm test -- --runInBand`
+- `npm run validate-artworks`
+
+````
+
+- [ ] **Step 4: Final clean-tree check**
+
+Run:
+
+```bash
+git status --short --branch
+````
+
+Expected: only intended files are modified. No unrelated generated output should appear unless explicitly accepted in Step 2.
