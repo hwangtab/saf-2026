@@ -9,6 +9,7 @@ import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/aut
 import { getClientIp } from '@/lib/security/get-client-ip';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { parsePrice } from '@/lib/parsePrice';
+import { formatBankTransferDueDate, getBankTransferInfo } from '@/lib/payments/bank-transfer-info';
 import {
   calculateShippingFee,
   getTossAuthHeader,
@@ -30,21 +31,6 @@ import {
   buildAdminNotificationFields,
 } from '@/lib/utils/get-order-notification-info';
 import { runAllSettled } from '@/lib/server/after-response';
-
-// 무통장 계좌이체 안내 — 한국스마트협동조합 기업은행 (IBK)
-// (messages/*.json bankTransfer*와 동기 유지 필요)
-const BANK_TRANSFER_INFO = {
-  bankName: '기업은행 (IBK)',
-  accountNumber: '301-101031-04-095',
-  holderName: '한국스마트협동조합',
-} as const;
-const DEPOSIT_DEADLINE_HOURS = 24;
-
-function formatBankTransferDueDate(date: Date, locale: ApiLocale) {
-  return locale === 'ko'
-    ? date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
-    : date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
-}
 
 export type CreateOrderInput = {
   /** 단건 바로구매(quantity 1). items가 있으면 무시됨. */
@@ -716,12 +702,13 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   if (!result.success) return result;
 
   const adminClient = createSupabaseAdminClient();
-  const dueDate = new Date(Date.now() + DEPOSIT_DEADLINE_HOURS * 60 * 60 * 1000);
+  const bankTransferInfo = getBankTransferInfo();
+  const dueDate = new Date(Date.now() + bankTransferInfo.deadlineHours * 60 * 60 * 1000);
   const dueDateStr = formatBankTransferDueDate(dueDate, buyerLocale);
   const bankTransferMetadata = {
-    bankName: BANK_TRANSFER_INFO.bankName,
-    accountNumber: BANK_TRANSFER_INFO.accountNumber,
-    holderName: BANK_TRANSFER_INFO.holderName,
+    bankName: bankTransferInfo.bankName,
+    accountNumber: bankTransferInfo.accountNumber,
+    holderName: bankTransferInfo.holderName,
     dueDate: dueDateStr,
     dueDateIso: dueDate.toISOString(),
   };
@@ -840,9 +827,9 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
               'info',
               '계좌이체 주문 접수 (입금 대기)',
               buildAdminNotificationFields(info, {
-                은행: BANK_TRANSFER_INFO.bankName,
-                계좌번호: BANK_TRANSFER_INFO.accountNumber,
-                예금주: BANK_TRANSFER_INFO.holderName,
+                은행: bankTransferInfo.bankName,
+                계좌번호: bankTransferInfo.accountNumber,
+                예금주: bankTransferInfo.holderName,
                 입금기한: dueDateStr,
               })
             )

@@ -5,6 +5,7 @@ import { logAdminAction } from '@/app/actions/activity-log-writer';
 import { sendBuyerSms, type BuyerSmsType, type BuyerSmsData } from '@/lib/sms/buyer-sms';
 import { normalizeKoreanMobile } from '@/lib/sms/phone';
 import { hashPhone } from '@/lib/sms/phone-hash';
+import { formatBankTransferDueDate, getBankTransferInfo } from '@/lib/payments/bank-transfer-info';
 
 export type SmsLogRow = {
   id: string;
@@ -100,22 +101,9 @@ const RESENDABLE_TYPES = new Set<BuyerSmsType>([
   'auto_cancelled',
 ]);
 
-const BANK_TRANSFER_FALLBACK = {
-  bankName: '기업은행 (IBK)',
-  accountNumber: '301-101031-04-095',
-  holderName: '한국스마트협동조합',
-} as const;
-const DEPOSIT_DEADLINE_HOURS = 24;
-
 function extractLocale(metadata: unknown): 'ko' | 'en' {
   if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return 'ko';
   return (metadata as Record<string, unknown>).locale === 'en' ? 'en' : 'ko';
-}
-
-function formatBankTransferDueDate(date: Date, locale: 'ko' | 'en') {
-  return locale === 'ko'
-    ? date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
-    : date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
 }
 
 function extractBankTransferInfo(
@@ -133,12 +121,13 @@ function extractBankTransferInfo(
     !Array.isArray(meta.bank_transfer)
       ? (meta.bank_transfer as Record<string, unknown>)
       : {};
+  const fallback = getBankTransferInfo();
   const dueDate =
     typeof bankTransfer.dueDate === 'string' && bankTransfer.dueDate.trim()
       ? bankTransfer.dueDate
       : formatBankTransferDueDate(
           new Date(
-            new Date(createdAt ?? Date.now()).getTime() + DEPOSIT_DEADLINE_HOURS * 60 * 60 * 1000
+            new Date(createdAt ?? Date.now()).getTime() + fallback.deadlineHours * 60 * 60 * 1000
           ),
           locale
         );
@@ -147,15 +136,15 @@ function extractBankTransferInfo(
     bankName:
       typeof bankTransfer.bankName === 'string' && bankTransfer.bankName.trim()
         ? bankTransfer.bankName
-        : BANK_TRANSFER_FALLBACK.bankName,
+        : fallback.bankName,
     accountNumber:
       typeof bankTransfer.accountNumber === 'string' && bankTransfer.accountNumber.trim()
         ? bankTransfer.accountNumber
-        : BANK_TRANSFER_FALLBACK.accountNumber,
+        : fallback.accountNumber,
     holderName:
       typeof bankTransfer.holderName === 'string' && bankTransfer.holderName.trim()
         ? bankTransfer.holderName
-        : BANK_TRANSFER_FALLBACK.holderName,
+        : fallback.holderName,
     dueDate,
   };
 }
