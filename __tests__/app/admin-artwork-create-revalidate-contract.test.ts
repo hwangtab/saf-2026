@@ -9,7 +9,9 @@ describe('admin artwork create revalidate contract', () => {
     );
 
     expect(createBlock).toContain("revalidatePath('/admin/artworks')");
-    expect(createBlock).toContain('schedulePublicArtworkSurfaceRevalidation([artistName])');
+    expect(createBlock).toContain('schedulePublicArtworkSurfaceRevalidation([artistName], {');
+    expect(createBlock).toContain('artworkId: artwork.id');
+    expect(createBlock).toContain('title: artwork.title');
     expect(createBlock).not.toContain('revalidatePublicArtworkSurfaces');
   });
 
@@ -26,6 +28,15 @@ describe('admin artwork create revalidate contract', () => {
 
     expect(src).toContain('function schedulePublicArtworkSurfaceRevalidation');
     expect(src).toContain('/api/internal/revalidate-artwork-surfaces');
-    expect(src).toContain('CRON_SECRET');
+    expect(src).toContain('resolvePublicArtworkRevalidationConfig');
+  });
+
+  it('reports public artwork revalidation schedule failures to operator-visible channels', () => {
+    const src = readFileSync('app/actions/admin-artworks.ts', 'utf8');
+
+    expect(src).toContain('resolvePublicArtworkRevalidationConfig');
+    expect(src).toContain('logSystemAction');
+    expect(src).toContain('notifyEmail');
+    expect(src).toContain('public_artwork_revalidation_failed');
   });
 });

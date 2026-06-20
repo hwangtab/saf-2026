@@ -102,7 +102,9 @@ describe('admin artwork create image upload source wiring', () => {
   it('schedules public artwork cache invalidation after create without blocking the action response', () => {
     const action = actionSource();
 
-    expect(action).toContain('schedulePublicArtworkSurfaceRevalidation([artistName])');
+    expect(action).toContain('schedulePublicArtworkSurfaceRevalidation([artistName], {');
+    expect(action).toContain('artworkId: artwork.id');
+    expect(action).toContain('title: artwork.title');
     expect(action).toContain('/api/internal/revalidate-artwork-surfaces');
     expect(action).toContain("revalidatePath('/admin/artworks')");
     expect(action).not.toContain('신규 작품의 공개면 노출은 다음 자연 revalidate');

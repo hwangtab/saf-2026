@@ -3,8 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { after } from 'next/server';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
+import {
+  normalizeRevalidationArtistNames,
+  resolvePublicArtworkRevalidationConfig,
+} from '@/lib/admin/public-artwork-revalidation';
+import { notifyEmail } from '@/lib/notify';
 import type { Database } from '@/types/supabase';
-import { logAdminAction } from './activity-log-writer';
+import { logAdminAction, logSystemAction } from './activity-log-writer';
 import {
   getString,
   getStoragePathsForRemoval,
@@ -26,49 +31,82 @@ type ArtworkStatus = Database['public']['Enums']['artwork_status'];
 const ADMIN_ARTWORK_MAX_IMAGES = 10;
 const INTERNAL_ARTWORK_REVALIDATE_PATH = '/api/internal/revalidate-artwork-surfaces';
 
-function getInternalRevalidateBaseUrl(): string | null {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (siteUrl) return siteUrl.replace(/\/+$/, '');
+function schedulePublicArtworkSurfaceRevalidation(
+  artistNames: Array<string | null | undefined>,
+  context: { artworkId?: string | null; title?: string | null } = {}
+) {
+  const config = resolvePublicArtworkRevalidationConfig();
+  const normalizedArtistNames = normalizeRevalidationArtistNames(artistNames);
 
-  const vercelUrl = process.env.VERCEL_URL?.trim();
-  if (vercelUrl) return `https://${vercelUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')}`;
-
-  return null;
-}
-
-function schedulePublicArtworkSurfaceRevalidation(artistNames: Array<string | null | undefined>) {
-  const baseUrl = getInternalRevalidateBaseUrl();
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (!baseUrl || !cronSecret) {
-    console.error(
-      '[admin-artworks] public artwork revalidation skipped: missing NEXT_PUBLIC_SITE_URL/VERCEL_URL or CRON_SECRET'
-    );
+  if (!config.ok) {
+    after(async () => {
+      const missing = config.missing.join(', ');
+      await Promise.allSettled([
+        notifyEmail('error', '공개 작품 캐시 갱신 예약 실패', {
+          작품ID: context.artworkId ?? '',
+          작품명: context.title ?? '',
+          누락설정: missing,
+          참고: '작품 등록은 완료됐지만 공개 목록/작가 페이지 갱신 요청을 예약하지 못했습니다.',
+        }),
+        logSystemAction(
+          'public_artwork_revalidation_failed',
+          'artwork',
+          context.artworkId ?? 'unknown',
+          {
+            title: context.title ?? null,
+            artist_names: normalizedArtistNames,
+            missing,
+            stage: 'schedule_config',
+          }
+        ),
+      ]);
+    });
     return;
   }
 
-  const normalizedArtistNames = artistNames
-    .filter((name): name is string => typeof name === 'string' && name.trim().length > 0)
-    .map((name) => name.trim());
-
   after(async () => {
     try {
-      const response = await fetch(`${baseUrl}${INTERNAL_ARTWORK_REVALIDATE_PATH}`, {
+      const response = await fetch(`${config.baseUrl}${INTERNAL_ARTWORK_REVALIDATE_PATH}`, {
         method: 'POST',
         headers: {
-          authorization: `Bearer ${cronSecret}`,
+          authorization: `Bearer ${config.cronSecret}`,
           'content-type': 'application/json',
         },
         body: JSON.stringify({ artistNames: normalizedArtistNames }),
       });
 
       if (!response.ok) {
-        console.error(
-          `[admin-artworks] public artwork revalidation route failed: ${response.status}`
+        await logSystemAction(
+          'public_artwork_revalidation_failed',
+          'artwork',
+          context.artworkId ?? 'unknown',
+          {
+            title: context.title ?? null,
+            artist_names: normalizedArtistNames,
+            status: response.status,
+            stage: 'route_response',
+          }
         );
       }
     } catch (err) {
-      console.error('[admin-artworks] public artwork revalidation route failed:', err);
+      await Promise.allSettled([
+        notifyEmail('error', '공개 작품 캐시 갱신 요청 실패', {
+          작품ID: context.artworkId ?? '',
+          작품명: context.title ?? '',
+          에러: err instanceof Error ? err.message : String(err),
+        }),
+        logSystemAction(
+          'public_artwork_revalidation_failed',
+          'artwork',
+          context.artworkId ?? 'unknown',
+          {
+            title: context.title ?? null,
+            artist_names: normalizedArtistNames,
+            error: err instanceof Error ? err.message : String(err),
+            stage: 'route_fetch',
+          }
+        ),
+      ]);
     }
   });
 }
@@ -480,7 +518,10 @@ async function createAdminArtworkRecord(formData: FormData) {
   // 등록 응답에는 관리자 목록만 가볍게 싣고, 공개면 tag/path 무효화는 응답 후 수행한다.
   // 하드 내비게이션 기반 등록 UX를 유지하면서도 KO/EN 목록·API tag·작가 경로는 같은 정책으로 갱신한다.
   revalidatePath('/admin/artworks');
-  schedulePublicArtworkSurfaceRevalidation([artistName]);
+  schedulePublicArtworkSurfaceRevalidation([artistName], {
+    artworkId: artwork.id,
+    title: artwork.title,
+  });
 
   return artwork;
 }
