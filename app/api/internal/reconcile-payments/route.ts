@@ -28,8 +28,23 @@ type ReconcileOrder = {
   buyer_phone?: string | null;
   metadata?: unknown;
   order_items?: unknown;
+  payments?: unknown;
   status?: string | null;
 };
+
+function clampInteger(raw: string | null, fallback: number, min: number, max: number): number {
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, Math.floor(parsed)));
+}
+
+function parseBackfillLookbackDays(searchParams: URLSearchParams): number {
+  return clampInteger(searchParams.get('lookbackDays'), 30, 1, 90);
+}
+
+function parseBackfillLimit(searchParams: URLSearchParams): number {
+  return clampInteger(searchParams.get('limit'), 100, 1, 500);
+}
 
 function hasPaymentRows(order: { payments?: unknown }): boolean {
   if (Array.isArray(order.payments)) return order.payments.length > 0;
@@ -179,6 +194,98 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error('[reconcile-payments] admin client init failed:', err);
     return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
+  }
+
+  const searchParams = request.nextUrl.searchParams;
+  const scope = searchParams.get('scope');
+
+  if (scope === 'missing-payments-backfill') {
+    const lookbackDays = parseBackfillLookbackDays(searchParams);
+    const backfillLimit = parseBackfillLimit(searchParams);
+    const since = new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: settledOrders, error: backfillFetchError } = await supabase
+      .from('orders')
+      .select(
+        'id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata, status, order_items(artwork_id, quantity, unit_price), payments(id)'
+      )
+      .in('status', ['paid', 'awaiting_deposit'])
+      .gte('created_at', since)
+      .order('created_at', { ascending: false })
+      .limit(backfillLimit);
+
+    if (backfillFetchError) {
+      return NextResponse.json({ error: backfillFetchError.message }, { status: 500 });
+    }
+
+    const missingPaymentOrders = (settledOrders ?? []).filter((order) => !hasPaymentRows(order));
+    let reconciled = 0;
+    const errors: string[] = [];
+
+    for (const order of missingPaymentOrders) {
+      try {
+        const provider = resolveOrderProvider(order.metadata);
+        const tossPayment = await fetchPaymentByOrderId(order.order_no, provider);
+        if (!tossPayment) continue;
+
+        if (order.status === 'awaiting_deposit' && tossPayment.status === 'DONE') {
+          const repaired = await reconcileMissingDoneOrder({
+            supabase,
+            order,
+            tossPayment,
+            provider,
+            now: new Date().toISOString(),
+            sourceStatuses: ['awaiting_deposit'],
+            idempotencyKey: `backfill-missing-payment-${order.order_no}`,
+            errors,
+          });
+          if (repaired) reconciled++;
+          continue;
+        }
+
+        const expectedTossStatus =
+          order.status === 'paid'
+            ? 'DONE'
+            : order.status === 'awaiting_deposit'
+              ? 'WAITING_FOR_DEPOSIT'
+              : null;
+
+        if (expectedTossStatus && tossPayment.status !== expectedTossStatus) {
+          errors.push(
+            `${order.order_no}: order is ${order.status} but Toss status is ${tossPayment.status}`
+          );
+          continue;
+        }
+
+        const paymentRecordResult = await ensureTossPaymentRecord({
+          supabase,
+          orderId: order.id,
+          tossPayment,
+          idempotencyKey: `backfill-missing-payment-${order.order_no}`,
+        });
+
+        if (!paymentRecordResult.ok) {
+          errors.push(
+            `${order.order_no}: missing payment backfill failed: ${paymentRecordResult.error}`
+          );
+          continue;
+        }
+
+        reconciled++;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        errors.push(`${order.order_no}: ${msg}`);
+      }
+    }
+
+    return NextResponse.json({
+      scope,
+      lookbackDays,
+      limit: backfillLimit,
+      checked: missingPaymentOrders.length,
+      reconciled,
+      ...(errors.length > 0 ? { errors } : {}),
+    });
   }
 
   // 5분~28분 경과한 pending_payment 주문 (5분 미만은 정상 결제 진행 중일 수 있고,
