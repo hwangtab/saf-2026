@@ -167,11 +167,11 @@ const nextConfig = {
         permanent: true,
       },
       // 매거진 통합(2026-06-20, GSC 색인 감사): Google이 색인 거부한 thin meet-artist
-      // 프로필(Discovered-never-crawled·Duplicate·Crawled-not-indexed)을 작가 갤러리
+      // 프로필(Discovered-never-crawled·Duplicate·Crawled-not-indexed) 17편을 작가 갤러리
       // (정규 엔티티)로 308 통합. link equity 집중 + 크롤예산·도메인 품질 회복.
-      // 대상은 pin(ARTIST_PRIMARY_STORY) 안 된 12편만 — pin된 5편은 별도 처리.
       // 각 작가 공개 작품 2~9점 보유(갤러리 실존 검증 완료). DB에선 is_published=false로 내려
       // listing·sitemap에서도 제외(이 redirect가 직접 방문을 갤러리로 보냄).
+      // 뒤 5편(최혜수~양순열)은 ARTIST_PRIMARY_STORY pin이었으나 색인 거부라 pin 제거 후 통합.
       ...Object.entries({
         'meet-artist-an-sohyeon': '안소현',
         'meet-artist-chilmoe-kim-gu': '칡뫼 김구',
@@ -185,6 +185,11 @@ const nextConfig = {
         'meet-artist-ra-inseok': '라인석',
         'meet-artist-sim-moby': '심모비',
         'meet-artist-song-gwang-yeon': '송광연',
+        'meet-artist-choe-hyesu': '최혜수',
+        'meet-artist-lee-munhyeong': '이문형',
+        'meet-artist-park-sohyeong': '박소형',
+        'meet-artist-sin-yeonjin': '신연진',
+        'meet-artist-yang-sunyeol': '양순열',
       }).flatMap(([slug, name]) => {
         const enc = encodeURIComponent(name);
         return [

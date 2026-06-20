@@ -25,13 +25,10 @@ export const ARTIST_PRIMARY_STORY: Record<string, string> = {
   조문호: 'meet-artist-cho-moon-ho',
   박불똥: 'meet-artist-park-bul-ttong',
   윤겸: 'meet-artist-yoon-gyeom',
-  신연진: 'meet-artist-sin-yeonjin',
   박성완: 'meet-artist-park-seongwan',
   김수오: 'meet-artist-kim-suoh',
   이은화: 'meet-artist-lee-eun-hwa',
-  양순열: 'meet-artist-yang-sunyeol',
   천지수: 'meet-artist-cheon-jisu',
-  이문형: 'meet-artist-lee-munhyeong',
   박재동: 'park-jae-dong-artist-guide', // 2개 스토리 중 장문 프로필 guide 채택
   이홍원: 'meet-artist-lee-hongwon',
 
@@ -42,14 +39,13 @@ export const ARTIST_PRIMARY_STORY: Record<string, string> = {
   // ─── GSC 2026-04-22~05-20: T2-8 잔여 ────────────────────────────────────
   손은영: 'meet-artist-son-eunyeong',
   주재환: 'joo-jaehwan-art-and-life',
-  최혜수: 'meet-artist-choe-hyesu',
   강석태: 'kang-seoktae-little-prince',
-
-  // ─── GSC 2026-04-19~05-17: T2-13 미커버 ─────────────────────────────────
-  박소형: 'meet-artist-park-sohyeong',
 
   // ─── GSC 2026-05-27: T2 잔여 gap-fill ───────────────────────────────────
   정영신: 'meet-artist-jung-young-shin',
+  // ─── 2026-06-20 pin 제거: 신연진·양순열·이문형·최혜수·박소형 ───────────────
+  // GSC 색인 거부(thin/duplicate)된 프로필이라 작가 갤러리로 308 통합(next.config.js).
+  // 갤러리가 정규 엔티티 — 죽은 스토리를 pin하면 redirect 루프라 pin에서 제외.
 };
 
 /** 작가명으로 정전 스토리 slug 조회. 미등재 작가는 null. */
