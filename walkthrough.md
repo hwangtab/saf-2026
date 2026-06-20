@@ -1,39 +1,33 @@
-# 결제·캐시·운영 검증 회귀 개선 (2026-06-20)
+# 최근 결제·관리자 등록 회귀 개선 (2026-06-20)
 
 ## 변경 사항
 
-- Toss 결제 승인 뒤 `payments` row 저장을 `ensureTossPaymentRecord` helper로 공통화했다.
-  - confirm 경로는 payment row 저장 실패 시 주문을 `paid`/`awaiting_deposit`로 올리지 않고 500으로 중단해 “주문은 paid, 증거 row 없음” 상태를 만들지 않는다.
-  - STATUS_CHANGED DONE 웹훅은 검증된 Toss 응답으로 missing payment row를 생성한 뒤 기존 주문 보정 흐름을 이어간다.
-  - reconcile cron은 기존 `pending_payment` 보정 외에 `paid`/`awaiting_deposit`인데 payment row가 없는 최근 주문도 스캔해 보정한다.
-- 관리자 작품 등록은 `/admin/artworks`만 즉시 revalidate하고, 공개 작품 표면은 `after()`에서 `revalidatePublicArtworkSurfaces()`로 무효화한다.
-  - 등록 후 화면 교착 회피와 KO/EN 공개 목록·API tag·작가 경로 freshness를 함께 만족하도록 조정했다.
-- Supabase placeholder URL은 기본적으로 live config로 보지 않도록 했다.
-  - CI에서 placeholder fallback을 의도적으로 쓰는 build/a11y job에는 `ALLOW_SUPABASE_PLACEHOLDER_FALLBACK=true`를 명시했다.
-- draft 이미지 purge가 `activity_logs` active trash snapshot을 페이지네이션으로 전수 스캔하게 했다.
-- 관리자 작품 삭제는 stale/nonexistent ID를 성공 처리하지 않는다.
-  - 단건 missing row는 `작품을 찾을 수 없습니다.`로 중단한다.
-  - 일괄 삭제는 실제 존재한 ID만 삭제하고 missing ID는 `failedIds`/`errors`로 반환한다.
+- 관리자 신규 작품 등록에서 공개 작품 표면 revalidate를 server action 응답에서 분리했다.
+  - `createAdminArtworkRecord`는 `/admin/artworks`만 즉시 revalidate한다.
+  - 공개 목록, home, API `artworks` tag, 작가 경로 revalidate는 `after()`에서 보호된 내부 route를 별도 HTTP request로 호출한다.
+  - 새 route `POST /api/internal/revalidate-artwork-surfaces`는 `CRON_SECRET` Bearer 인증 뒤 `revalidatePublicArtworkSurfaces(artistNames)`를 실행한다.
+- `DEPOSIT_CALLBACK DONE` 웹훅에서 `payments` row가 없으면 Toss API double-verify 후 `ensureTossPaymentRecord`로 row를 먼저 복구하고 기존 입금 완료 처리로 이어가게 했다.
+  - 기존 row가 있는 경우 per-payment virtual account secret 검증은 그대로 유지한다.
+  - row가 없는 DONE도 Toss 응답의 `virtualAccount.secret`과 payload secret이 맞아야 진행된다.
+- reconcile cron에서 `awaiting_deposit + Toss DONE + payment row 없음`을 mismatch로 버리지 않고 paid 보정 경로로 보낸다.
+  - `reconcileMissingDoneOrder` helper로 payment row 보존, order paid 전환, `artwork_sales`, 작품 상태 동기화, 공개 revalidate를 공통 처리한다.
 
 ## 검증
 
+- RED 확인
+  - `npm test -- __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts __tests__/app/reconcile-payments-missing-payment-source.test.ts --runInBand`
+  - 예상대로 관리자 등록 직접 revalidate, 내부 route 부재, DEPOSIT_CALLBACK 401, reconcile skip 계약에서 실패.
 - Targeted regression suite 통과
-  - `npm test -- __tests__/lib/toss-payment-record.test.ts __tests__/app/toss-confirm-payment-record-failure.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/reconcile-payments-missing-payment-source.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts __tests__/lib/supabase-config.test.ts __tests__/lib/draft-image-purge.test.ts __tests__/actions/admin-artworks-delete.test.ts --runInBand`
-  - 8 suites / 38 tests
+  - `npm test -- __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/reconcile-payments-missing-payment-source.test.ts __tests__/app/reconcile-payments-reservation-source.test.ts --runInBand`
+  - 6 suites / 17 tests
+- `npm run type-check` 통과
 - `npm run lint` 통과
   - 기존 Browserslist 오래됨 경고와 대형 generated 파일 Babel deopt 안내는 남아 있음.
-- `npm run type-check` 통과
-- `npm test -- --runInBand` 통과
-  - 190 suites / 1427 tests
-- `npm run validate-artworks` 통과
-  - 기존 작품 데이터 warning 63개는 유지됨 (`year`/`size` 형식, `shopUrl` 누락 등).
-- `npm run build` 통과
-  - `verify:i18n-placeholders`까지 통과: 170 HTML, raw placeholder 0건.
-  - build 중 생성된 `content/changelog.json`, `lib/site-stats.ts` 변경은 이번 수정 범위가 아니어서 diff에서 제거했다.
 
-## 운영 메모
+## 남은 운영 확인
 
-- Vercel CLI 기반 배포/진단 전에는 `npm i -g vercel@latest` 또는 `pnpm add -g vercel@latest`로 최신화 권장.
+- 배포 후 `POST /api/internal/revalidate-artwork-surfaces`가 production `CRON_SECRET`과 `NEXT_PUBLIC_SITE_URL` 조합으로 200 응답하는지 smoke call을 한 번 확인하면 좋다.
+- reconcile의 기존 조회창은 최근 주문 중심이다. 28분보다 오래된 과거 missing payment row를 전수 소급하려면 별도 일회성 audit/reconcile 작업으로 다루는 편이 안전하다.
 
 ---
 

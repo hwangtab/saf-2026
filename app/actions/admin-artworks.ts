@@ -24,6 +24,54 @@ import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
 type EditionType = Database['public']['Enums']['edition_type'];
 type ArtworkStatus = Database['public']['Enums']['artwork_status'];
 const ADMIN_ARTWORK_MAX_IMAGES = 10;
+const INTERNAL_ARTWORK_REVALIDATE_PATH = '/api/internal/revalidate-artwork-surfaces';
+
+function getInternalRevalidateBaseUrl(): string | null {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (siteUrl) return siteUrl.replace(/\/+$/, '');
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) return `https://${vercelUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')}`;
+
+  return null;
+}
+
+function schedulePublicArtworkSurfaceRevalidation(artistNames: Array<string | null | undefined>) {
+  const baseUrl = getInternalRevalidateBaseUrl();
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (!baseUrl || !cronSecret) {
+    console.error(
+      '[admin-artworks] public artwork revalidation skipped: missing NEXT_PUBLIC_SITE_URL/VERCEL_URL or CRON_SECRET'
+    );
+    return;
+  }
+
+  const normalizedArtistNames = artistNames
+    .filter((name): name is string => typeof name === 'string' && name.trim().length > 0)
+    .map((name) => name.trim());
+
+  after(async () => {
+    try {
+      const response = await fetch(`${baseUrl}${INTERNAL_ARTWORK_REVALIDATE_PATH}`, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${cronSecret}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ artistNames: normalizedArtistNames }),
+      });
+
+      if (!response.ok) {
+        console.error(
+          `[admin-artworks] public artwork revalidation route failed: ${response.status}`
+        );
+      }
+    } catch (err) {
+      console.error('[admin-artworks] public artwork revalidation route failed:', err);
+    }
+  });
+}
 
 function isMissingVoidedAtColumnError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
@@ -432,9 +480,7 @@ async function createAdminArtworkRecord(formData: FormData) {
   // 등록 응답에는 관리자 목록만 가볍게 싣고, 공개면 tag/path 무효화는 응답 후 수행한다.
   // 하드 내비게이션 기반 등록 UX를 유지하면서도 KO/EN 목록·API tag·작가 경로는 같은 정책으로 갱신한다.
   revalidatePath('/admin/artworks');
-  after(() => {
-    revalidatePublicArtworkSurfaces([artistName]);
-  });
+  schedulePublicArtworkSurfaceRevalidation([artistName]);
 
   return artwork;
 }

@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
     const paymentKey = payload.data.paymentKey;
 
     // Find payment record — distinguish Supabase errors from "not found"
-    const { data: paymentRecord, error: paymentLookupError } = await supabase
+    let { data: paymentRecord, error: paymentLookupError } = await supabase
       .from('payments')
       .select('id, order_id, webhook_responses, confirm_response')
       .eq('payment_key', paymentKey)
@@ -153,6 +153,83 @@ export async function POST(req: NextRequest) {
       provider = resolveOrderProvider(orderForProvider?.metadata);
     }
 
+    let verifiedDepositPayment: Awaited<ReturnType<typeof fetchPayment>> | null = null;
+    if (!paymentRecord && payload.data.paymentStatus === 'DONE') {
+      const { data: orderForMissingPayment, error: orderForMissingPaymentError } = await supabase
+        .from('orders')
+        .select('id, metadata')
+        .eq('order_no', payload.data.orderId)
+        .maybeSingle();
+
+      if (orderForMissingPaymentError || !orderForMissingPayment) {
+        console.error(
+          `[toss-webhook] DEPOSIT_CALLBACK missing payment order fetch failed: ${paymentKey}`,
+          orderForMissingPaymentError
+        );
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      }
+
+      provider = resolveOrderProvider(orderForMissingPayment.metadata);
+      verifiedDepositPayment = await fetchPayment(paymentKey, provider);
+      if (
+        !verifiedDepositPayment ||
+        verifiedDepositPayment.status !== 'DONE' ||
+        verifiedDepositPayment.orderId !== payload.data.orderId
+      ) {
+        console.error(
+          `[toss-webhook] DEPOSIT_CALLBACK missing payment verify failed: ${paymentKey}`
+        );
+        after(() =>
+          notifyEmail('error', '웹훅 Toss API 이중검증 실패', {
+            paymentKey,
+            사유: verifiedDepositPayment
+              ? `상태/주문 불일치: ${verifiedDepositPayment.status}/${verifiedDepositPayment.orderId}`
+              : 'API 응답 없음',
+          })
+        );
+        return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
+      }
+
+      const paymentRecordResult = await ensureTossPaymentRecord({
+        supabase,
+        orderId: orderForMissingPayment.id,
+        tossPayment: verifiedDepositPayment,
+        idempotencyKey: `webhook-deposit-${paymentKey}`,
+      });
+
+      if (!paymentRecordResult.ok) {
+        console.error(
+          `[toss-webhook] DEPOSIT_CALLBACK missing payment create failed: ${paymentKey}`,
+          paymentRecordResult.error
+        );
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      }
+
+      if (paymentRecordResult.paymentId) {
+        paymentRecord = {
+          id: paymentRecordResult.paymentId,
+          order_id: orderForMissingPayment.id,
+          webhook_responses: [],
+          confirm_response: verifiedDepositPayment as Json,
+        };
+      } else {
+        const { data: refetchedPayment, error: refetchPaymentError } = await supabase
+          .from('payments')
+          .select('id, order_id, webhook_responses, confirm_response')
+          .eq('payment_key', paymentKey)
+          .maybeSingle();
+
+        if (refetchPaymentError || !refetchedPayment) {
+          console.error(
+            `[toss-webhook] DEPOSIT_CALLBACK missing payment refetch failed: ${paymentKey}`,
+            refetchPaymentError
+          );
+          return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        }
+        paymentRecord = refetchedPayment;
+      }
+    }
+
     // SEC-04a: Verify per-payment secret from confirm_response.virtualAccount.secret
     const storedSecret =
       (
@@ -175,7 +252,7 @@ export async function POST(req: NextRequest) {
 
     if (payload.data.paymentStatus === 'DONE') {
       // SEC-04b: Double-verify from Toss API
-      const verified = await fetchPayment(paymentKey, provider);
+      const verified = verifiedDepositPayment ?? (await fetchPayment(paymentKey, provider));
       if (!verified || verified.status !== 'DONE') {
         console.error(`[toss-webhook] Toss API double-verify failed: ${paymentKey}`);
         after(() =>
