@@ -166,6 +166,36 @@ const nextConfig = {
         destination: '/en/artworks/artist/%EB%B0%95%EC%83%9D%EA%B4%91',
         permanent: true,
       },
+      // 매거진 통합(2026-06-20, GSC 색인 감사): Google이 색인 거부한 thin meet-artist
+      // 프로필(Discovered-never-crawled·Duplicate·Crawled-not-indexed)을 작가 갤러리
+      // (정규 엔티티)로 308 통합. link equity 집중 + 크롤예산·도메인 품질 회복.
+      // 대상은 pin(ARTIST_PRIMARY_STORY) 안 된 12편만 — pin된 5편은 별도 처리.
+      // 각 작가 공개 작품 2~9점 보유(갤러리 실존 검증 완료). DB에선 is_published=false로 내려
+      // listing·sitemap에서도 제외(이 redirect가 직접 방문을 갤러리로 보냄).
+      ...Object.entries({
+        'meet-artist-an-sohyeon': '안소현',
+        'meet-artist-chilmoe-kim-gu': '칡뫼 김구',
+        'meet-artist-hong-jin-hee': '홍진희',
+        'meet-artist-jung-seo-on': '정서온',
+        'meet-artist-kim-hoseong': '김호성',
+        'meet-artist-kim-uju': '김우주',
+        'meet-artist-lee-jieun': '이지은',
+        'meet-artist-nam-jinhyun': '남진현',
+        'meet-artist-park-suji': '박수지',
+        'meet-artist-ra-inseok': '라인석',
+        'meet-artist-sim-moby': '심모비',
+        'meet-artist-song-gwang-yeon': '송광연',
+      }).flatMap(([slug, name]) => {
+        const enc = encodeURIComponent(name);
+        return [
+          { source: `/stories/${slug}`, destination: `/artworks/artist/${enc}`, permanent: true },
+          {
+            source: `/en/stories/${slug}`,
+            destination: `/en/artworks/artist/${enc}`,
+            permanent: true,
+          },
+        ];
+      }),
     ];
   },
   async headers() {
