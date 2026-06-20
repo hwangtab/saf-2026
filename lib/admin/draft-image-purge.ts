@@ -117,17 +117,21 @@ export async function buildReferencedArtworkPaths(
     if (data.length < PAGE) break;
   }
 
-  const { data: logs, error: logError } = await supabase
-    .from('activity_logs')
-    .select('before_snapshot, after_snapshot')
-    .in('action', TRASHABLE_ACTIONS)
-    .is('reverted_at', null)
-    .is('purged_at', null);
-  if (logError) throw new Error(`trash snapshot scan failed: ${logError.message}`);
-
-  for (const log of logs ?? []) {
-    addUrlsToReferenced(extractSnapshotImageUrls(log.before_snapshot), referenced);
-    addUrlsToReferenced(extractSnapshotImageUrls(log.after_snapshot), referenced);
+  for (let from = 0; ; from += PAGE) {
+    const { data: logs, error: logError } = await supabase
+      .from('activity_logs')
+      .select('before_snapshot, after_snapshot')
+      .in('action', TRASHABLE_ACTIONS)
+      .is('reverted_at', null)
+      .is('purged_at', null)
+      .range(from, from + PAGE - 1);
+    if (logError) throw new Error(`trash snapshot scan failed: ${logError.message}`);
+    if (!logs || logs.length === 0) break;
+    for (const log of logs) {
+      addUrlsToReferenced(extractSnapshotImageUrls(log.before_snapshot), referenced);
+      addUrlsToReferenced(extractSnapshotImageUrls(log.after_snapshot), referenced);
+    }
+    if (logs.length < PAGE) break;
   }
 
   return referenced;

@@ -49,6 +49,7 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          ALLOW_SUPABASE_PLACEHOLDER_FALLBACK: true
           NEXT_PUBLIC_KAKAO_MAP_KEY: placeholder
           NEXT_PUBLIC_KAKAO_JS_KEY: placeholder
 
@@ -82,6 +83,7 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          ALLOW_SUPABASE_PLACEHOLDER_FALLBACK: true
           NEXT_PUBLIC_KAKAO_MAP_KEY: placeholder
           NEXT_PUBLIC_KAKAO_JS_KEY: placeholder
           NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY: test_ck_ci
@@ -98,6 +100,7 @@ jobs:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          ALLOW_SUPABASE_PLACEHOLDER_FALLBACK: true
           NEXT_PUBLIC_KAKAO_MAP_KEY: placeholder
           NEXT_PUBLIC_KAKAO_JS_KEY: placeholder
           NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY: test_ck_ci

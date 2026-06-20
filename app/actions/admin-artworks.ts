@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import type { Database } from '@/types/supabase';
 import { logAdminAction } from './activity-log-writer';
@@ -139,13 +140,23 @@ export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
 
-  const { data: artwork } = await supabase
+  const { data: artwork, error: artworkFetchError } = await supabase
     .from('artworks')
     .select(
       'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
     )
     .eq('id', id)
     .single();
+
+  if (artworkFetchError) {
+    if ((artworkFetchError as { code?: string }).code === 'PGRST116') {
+      throw new Error('작품을 찾을 수 없습니다.');
+    }
+    throw artworkFetchError;
+  }
+  if (!artwork) {
+    throw new Error('작품을 찾을 수 없습니다.');
+  }
 
   if (await hasActiveOrdersForArtworks(supabase, [id])) {
     throw new Error('진행 중인 주문이 있어 삭제할 수 없습니다.');
@@ -410,20 +421,20 @@ async function createAdminArtworkRecord(formData: FormData) {
     reversible: true,
   });
 
-  // 회귀 근본 해결(2026-06-19): 작품 등록 후 화면이 멈추고 토스트·목록 이동이 모두 막힌 문제.
-  //   - 서버 액션은 매번 정상 완주(POST 200, INSERT·로그 모두 성공)했으나 client의
-  //     `await createAdminArtwork`가 resolve되지 않았다(버튼 영구 로딩).
-  //   - 정상 동작하는 작가 등록(createAdminArtist)과의 유일한 차이가 이 revalidate 블록이었다.
-  //     작가 등록은 `revalidatePath('/admin/artists')` 단일·동기·ASCII 호출뿐이다.
-  //   - 작품 등록만 `revalidatePublicArtworkSurfaces`(→ `revalidateTag('artworks','max')` +
-  //     한글 작가명 경로 직렬화)를 호출했고, sync든 after()든 이 무거운 무효화가 액션 응답의
-  //     cache-invalidation 디렉티브로 client router에 전달되며 후속 처리를 막았다.
-  // 해결: 등록 경로는 작가 등록과 동일하게 가벼운 단일 경로 revalidate만 동기로 수행한다.
-  //   revalidateTag('artworks')·한글 작가 경로 등 무거운 공개면 무효화는 등록 응답에서 제거.
-  //   (신규 작품의 공개면 노출은 다음 자연 revalidate 또는 작품 수정/판매 액션에서 갱신된다.)
+  let artistName: string | null = null;
+  const { data: artist } = await supabase
+    .from('artists')
+    .select('name_ko')
+    .eq('id', artist_id)
+    .single();
+  artistName = artist?.name_ko ?? null;
+
+  // 등록 응답에는 관리자 목록만 가볍게 싣고, 공개면 tag/path 무효화는 응답 후 수행한다.
+  // 하드 내비게이션 기반 등록 UX를 유지하면서도 KO/EN 목록·API tag·작가 경로는 같은 정책으로 갱신한다.
   revalidatePath('/admin/artworks');
-  revalidatePath('/artworks');
-  revalidatePath('/');
+  after(() => {
+    revalidatePublicArtworkSurfaces([artistName]);
+  });
 
   return artwork;
 }
@@ -1016,24 +1027,44 @@ export async function batchToggleHidden(
 }
 
 export async function batchDeleteArtworks(ids: string[]) {
-  if (ids.length === 0) return { success: true, count: 0 };
+  if (ids.length === 0) {
+    return {
+      success: true,
+      partial: false,
+      count: 0,
+      succeededIds: [],
+      failedIds: [],
+      errors: [],
+    } satisfies BatchArtworkMutationResult;
+  }
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
   validateBatchSize(ids);
 
   // Keep full snapshots so deleted rows can be restored from activity logs.
-  const { data: artworks } = await supabase
+  const { data: artworks, error: artworkFetchError } = await supabase
     .from('artworks')
     .select(
       'id, title, description, size, material, year, edition, edition_type, edition_limit, price, status, sold_at, is_hidden, images, shop_url, artist_id, created_at, updated_at'
     )
     .in('id', ids);
+  if (artworkFetchError) throw artworkFetchError;
+
+  const foundIds = (artworks || [])
+    .map((artwork) => artwork.id)
+    .filter((id): id is string => typeof id === 'string');
+  const foundSet = new Set(foundIds);
+  const missingIds = ids.filter((id) => !foundSet.has(id));
+
+  if (foundIds.length === 0) {
+    throw new Error('선택한 작품을 찾을 수 없습니다.');
+  }
 
   if (await hasActiveOrdersForArtworks(supabase, ids)) {
     throw new Error('진행 중인 주문이 있는 작품이 포함되어 삭제할 수 없습니다.');
   }
 
-  const { error } = await supabase.from('artworks').delete().in('id', ids);
+  const { error } = await supabase.from('artworks').delete().in('id', foundIds);
   if (error) {
     // 단건 삭제와 동일: order_items/orders FK(NO ACTION) 때문에 주문 이력 있는 작품이
     // 하나라도 끼면 일괄 DELETE가 23503으로 실패. 운영자 안내 메시지로 변환.
@@ -1051,21 +1082,29 @@ export async function batchDeleteArtworks(ids: string[]) {
   await logAdminAction(
     'batch_artwork_deleted',
     'artwork',
-    ids.join(','),
+    foundIds.join(','),
     {
-      count: ids.length,
+      count: foundIds.length,
+      missing_count: missingIds.length,
       storage_cleanup_deferred: true,
     },
     admin.id,
     {
-      summary: `작품 일괄 삭제: ${ids.length}건`,
+      summary: `작품 일괄 삭제: ${foundIds.length}건`,
       beforeSnapshot: { items: artworks || [] },
       afterSnapshot: null,
       reversible: true,
     }
   );
 
-  return { success: true, count: ids.length };
+  return {
+    success: true,
+    partial: missingIds.length > 0,
+    count: foundIds.length,
+    succeededIds: foundIds,
+    failedIds: missingIds,
+    errors: missingIds.map((id) => `${id}: 작품을 찾을 수 없습니다.`),
+  } satisfies BatchArtworkMutationResult;
 }
 
 function normalizeTagInput(input: AdminTagInput) {

@@ -100,7 +100,8 @@ describe('extractSnapshotImageUrls', () => {
 // (1) render-form URL 참조 보호, (2) 활성 트래시 스냅샷 참조 보호를 통합적으로 확인한다.
 type MockOptions = {
   artworksRows: { images: string[] | null }[];
-  logRows: { before_snapshot: unknown; after_snapshot: unknown }[];
+  logRows?: { before_snapshot: unknown; after_snapshot: unknown }[];
+  logPages?: { before_snapshot: unknown; after_snapshot: unknown }[][];
   artworksError?: string;
   logsError?: string;
 };
@@ -127,14 +128,21 @@ function makeMockSupabase(options: MockOptions): SupabaseClient<Database> {
         };
       }
       if (table === 'activity_logs') {
-        const result = options.logsError
-          ? { data: null, error: { message: options.logsError } }
-          : { data: options.logRows, error: null };
+        const getResult = (from?: number) => {
+          if (options.logsError) return { data: null, error: { message: options.logsError } };
+          if (options.logPages) {
+            const pageIndex = typeof from === 'number' ? Math.floor(from / 1000) : 0;
+            return { data: options.logPages[pageIndex] ?? [], error: null };
+          }
+          return { data: options.logRows ?? [], error: null };
+        };
         const chain = {
           select: () => chain,
           in: () => chain,
           is: () => chain,
-          then: (resolve: (value: unknown) => unknown) => Promise.resolve(result).then(resolve),
+          range: (from: number) => Promise.resolve(getResult(from)),
+          then: (resolve: (value: unknown) => unknown) =>
+            Promise.resolve(getResult()).then(resolve),
         };
         return chain;
       }
@@ -166,6 +174,24 @@ describe('buildReferencedArtworkPaths', () => {
       ],
     });
     const referenced = await buildReferencedArtworkPaths(supabase);
+    expect(referenced.has(DRAFT_B)).toBe(true);
+  });
+
+  it('paginates active trash snapshot logs so old referenced drafts are protected after page 1', async () => {
+    const firstPage = Array.from({ length: 1000 }, () => ({
+      before_snapshot: null,
+      after_snapshot: null,
+    }));
+    const supabase = makeMockSupabase({
+      artworksRows: [],
+      logPages: [
+        firstPage,
+        [{ before_snapshot: { images: [objectUrl(DRAFT_B)] }, after_snapshot: null }],
+      ],
+    });
+
+    const referenced = await buildReferencedArtworkPaths(supabase);
+
     expect(referenced.has(DRAFT_B)).toBe(true);
   });
 

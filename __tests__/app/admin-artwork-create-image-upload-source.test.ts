@@ -98,4 +98,13 @@ describe('admin artwork create image upload source wiring', () => {
     expect(source).toContain('images: imageList.urls');
     expect(source).toContain('async function createAdminArtworkRecord(formData: FormData)');
   });
+
+  it('schedules public artwork cache invalidation after create without blocking the action response', () => {
+    const action = actionSource();
+
+    expect(action).toContain('after(() =>');
+    expect(action).toContain('revalidatePublicArtworkSurfaces');
+    expect(action).toContain("revalidatePath('/admin/artworks')");
+    expect(action).not.toContain('신규 작품의 공개면 노출은 다음 자연 revalidate');
+  });
 });

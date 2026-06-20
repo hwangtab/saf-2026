@@ -25,6 +25,7 @@ import {
 } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { runAllSettled } from '@/lib/server/after-response';
+import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
 
 const CANCELED_STATUSES = new Set(['CANCELED', 'PARTIAL_CANCELED']);
 
@@ -718,11 +719,59 @@ export async function POST(req: NextRequest) {
     }
 
     // Update payment status
-    const { data: paymentRow, error: paymentFetchError } = await supabase
+    let { data: paymentRow, error: paymentFetchError } = await supabase
       .from('payments')
       .select('id, order_id, status, webhook_responses')
       .eq('payment_key', paymentKey)
-      .single();
+      .maybeSingle();
+
+    if (!paymentFetchError && !paymentRow && newStatus === 'DONE') {
+      const { data: orderForMissingPayment, error: orderForMissingPaymentError } = await supabase
+        .from('orders')
+        .select('id')
+        .eq('order_no', verified.orderId)
+        .maybeSingle();
+
+      if (orderForMissingPaymentError || !orderForMissingPayment) {
+        console.error(
+          `[toss-webhook] STATUS_CHANGED missing payment order fetch failed: ${paymentKey}`,
+          orderForMissingPaymentError
+        );
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      }
+
+      const paymentRecordResult = await ensureTossPaymentRecord({
+        supabase,
+        orderId: orderForMissingPayment.id,
+        tossPayment: verified,
+        idempotencyKey: `webhook-status-${paymentKey}`,
+      });
+
+      if (!paymentRecordResult.ok) {
+        console.error(
+          `[toss-webhook] STATUS_CHANGED missing payment create failed: ${paymentKey}`,
+          paymentRecordResult.error
+        );
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      }
+
+      if (paymentRecordResult.paymentId) {
+        paymentRow = {
+          id: paymentRecordResult.paymentId,
+          order_id: orderForMissingPayment.id,
+          status: verified.status,
+          webhook_responses: [],
+        };
+      } else {
+        const { data: refetchedPayment, error: refetchPaymentError } = await supabase
+          .from('payments')
+          .select('id, order_id, status, webhook_responses')
+          .eq('payment_key', paymentKey)
+          .maybeSingle();
+        paymentFetchError = refetchPaymentError;
+        paymentRow = refetchedPayment;
+      }
+    }
 
     if (paymentFetchError || !paymentRow) {
       console.error(`[toss-webhook] STATUS_CHANGED payment fetch failed: ${paymentKey}`);

@@ -3,7 +3,6 @@ import { revalidatePath } from 'next/cache';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
-import { sanitizeConfirmResponse } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail } from '@/lib/notify';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
@@ -14,11 +13,14 @@ import {
   reserveUniqueArtworksOrRollback,
 } from '@/lib/orders/reservations';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
-import type { Database, Json } from '@/types/supabase';
-
-type PaymentsInsert = Database['public']['Tables']['payments']['Insert'];
+import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
 
 export const runtime = 'nodejs';
+
+function hasPaymentRows(order: { payments?: unknown }): boolean {
+  if (Array.isArray(order.payments)) return order.payments.length > 0;
+  return Boolean(order.payments);
+}
 
 /**
  * Reconciliation cron: 결제-주문 불일치 자동 보정.
@@ -68,14 +70,29 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: fetchError.message }, { status: 500 });
   }
 
-  if (!staleOrders || staleOrders.length === 0) {
+  const { data: settledOrders, error: missingPaymentFetchError } = await supabase
+    .from('orders')
+    .select(
+      'id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata, status, payments(id)'
+    )
+    .in('status', ['paid', 'awaiting_deposit'])
+    .gt('created_at', minAge)
+    .lt('created_at', maxAge);
+
+  if (missingPaymentFetchError) {
+    return NextResponse.json({ error: missingPaymentFetchError.message }, { status: 500 });
+  }
+
+  const missingPaymentOrders = (settledOrders ?? []).filter((order) => !hasPaymentRows(order));
+
+  if ((!staleOrders || staleOrders.length === 0) && missingPaymentOrders.length === 0) {
     return NextResponse.json({ reconciled: 0, checked: 0 });
   }
 
   let reconciled = 0;
   const errors: string[] = [];
 
-  for (const order of staleOrders) {
+  for (const order of staleOrders ?? []) {
     try {
       // 주문별 provider 해석 — 위젯/레거시 MID 시크릿이 다르므로 반드시 매칭되는 provider로 호출
       const provider = resolveOrderProvider(order.metadata);
@@ -92,34 +109,16 @@ export async function GET(request: NextRequest) {
         // ── 결제 완료인데 DB에 반영 안 된 케이스 → 보정 ──
 
         // 1) payment 레코드가 없으면 생성
-        const { data: existingPayment } = await supabase
-          .from('payments')
-          .select('id')
-          .eq('payment_key', tossPayment.paymentKey)
-          .maybeSingle();
+        const paymentRecordResult = await ensureTossPaymentRecord({
+          supabase,
+          orderId: order.id,
+          tossPayment,
+          idempotencyKey: `reconcile-${order.order_no}`,
+        });
 
-        if (!existingPayment) {
-          const insertPayload: PaymentsInsert = {
-            order_id: order.id,
-            payment_key: tossPayment.paymentKey,
-            toss_order_id: tossPayment.orderId,
-            method: tossPayment.method ?? null,
-            method_detail: (tossPayment.card ?? tossPayment.virtualAccount ?? null) as Json | null,
-            amount: tossPayment.totalAmount,
-            currency: tossPayment.currency ?? 'KRW',
-            status: tossPayment.status,
-            approved_at: tossPayment.approvedAt ?? null,
-            confirm_response: sanitizeConfirmResponse(tossPayment) as Json,
-            idempotency_key: `reconcile-${order.order_no}`,
-          };
-          const { error: paymentInsertError } = await supabase
-            .from('payments')
-            .insert(insertPayload);
-
-          if (paymentInsertError) {
-            errors.push(`${order.order_no}: payment insert failed: ${paymentInsertError.message}`);
-            continue;
-          }
+        if (!paymentRecordResult.ok) {
+          errors.push(`${order.order_no}: payment insert failed: ${paymentRecordResult.error}`);
+          continue;
         }
 
         // 2) 주문 → paid (멱등성: pending_payment일 때만)
@@ -211,33 +210,16 @@ export async function GET(request: NextRequest) {
         // ── 가상계좌 입금 대기인데 DB에 반영 안 된 케이스 ──
 
         // payment 레코드 보정
-        const { data: existingPayment } = await supabase
-          .from('payments')
-          .select('id')
-          .eq('payment_key', tossPayment.paymentKey)
-          .maybeSingle();
+        const paymentRecordResult = await ensureTossPaymentRecord({
+          supabase,
+          orderId: order.id,
+          tossPayment,
+          idempotencyKey: `reconcile-${order.order_no}`,
+        });
 
-        if (!existingPayment) {
-          const insertPayload: PaymentsInsert = {
-            order_id: order.id,
-            payment_key: tossPayment.paymentKey,
-            toss_order_id: tossPayment.orderId,
-            method: tossPayment.method ?? null,
-            method_detail: (tossPayment.virtualAccount ?? null) as Json | null,
-            amount: tossPayment.totalAmount,
-            currency: tossPayment.currency ?? 'KRW',
-            status: tossPayment.status,
-            confirm_response: sanitizeConfirmResponse(tossPayment) as Json,
-            idempotency_key: `reconcile-${order.order_no}`,
-          };
-          const { error: paymentInsertError } = await supabase
-            .from('payments')
-            .insert(insertPayload);
-
-          if (paymentInsertError) {
-            errors.push(`${order.order_no}: payment insert failed: ${paymentInsertError.message}`);
-            continue;
-          }
+        if (!paymentRecordResult.ok) {
+          errors.push(`${order.order_no}: payment insert failed: ${paymentRecordResult.error}`);
+          continue;
         }
 
         // 주문을 입금대기로 열기 전에 unique 작품 예약이 먼저 성공해야 한다.
@@ -374,22 +356,68 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  for (const order of missingPaymentOrders) {
+    try {
+      const provider = resolveOrderProvider(order.metadata);
+      const tossPayment = await fetchPaymentByOrderId(order.order_no, provider);
+      if (!tossPayment) continue;
+
+      const expectedTossStatus =
+        order.status === 'paid'
+          ? 'DONE'
+          : order.status === 'awaiting_deposit'
+            ? 'WAITING_FOR_DEPOSIT'
+            : null;
+      if (expectedTossStatus && tossPayment.status !== expectedTossStatus) {
+        errors.push(
+          `${order.order_no}: order is ${order.status} but Toss status is ${tossPayment.status}`
+        );
+        continue;
+      }
+
+      const paymentRecordResult = await ensureTossPaymentRecord({
+        supabase,
+        orderId: order.id,
+        tossPayment,
+        idempotencyKey: `reconcile-missing-payment-${order.order_no}`,
+      });
+
+      if (!paymentRecordResult.ok) {
+        errors.push(
+          `${order.order_no}: missing payment repair failed: ${paymentRecordResult.error}`
+        );
+        continue;
+      }
+
+      reconciled++;
+      console.error(
+        `[reconcile-payments] FIXED: ${order.order_no} — order was ${order.status}, payment row was missing`
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`${order.order_no}: ${msg}`);
+      console.error(`[reconcile-payments] ERROR: ${order.order_no}:`, err);
+    }
+  }
+
+  const checked = (staleOrders?.length ?? 0) + missingPaymentOrders.length;
+
   // 결과 알림
   if (errors.length > 0) {
     await notifyEmail('error', `결제 보정 크론 에러 (${errors.length}건)`, {
-      검사: `${staleOrders.length}건`,
+      검사: `${checked}건`,
       보정: `${reconciled}건`,
       에러: errors.slice(0, 3).join('\n'),
     });
   } else if (reconciled > 0) {
     await notifyEmail('warning', `결제 보정 완료 (${reconciled}건)`, {
-      검사: `${staleOrders.length}건`,
+      검사: `${checked}건`,
       보정: `${reconciled}건`,
     });
   }
 
   return NextResponse.json({
-    checked: staleOrders.length,
+    checked,
     reconciled,
     ...(errors.length > 0 ? { errors } : {}),
   });

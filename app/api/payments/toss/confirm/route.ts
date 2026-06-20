@@ -3,11 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 
-import type { Json } from '@/types/supabase';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
-import { sanitizeConfirmResponse, sanitizeMethodDetail } from '@/lib/integrations/toss/sanitize';
 import { notifyEmail, sendBuyerEmail } from '@/lib/notify';
 import { logSystemAction } from '@/app/actions/activity-log-writer';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
@@ -24,6 +22,7 @@ import {
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
 import { runAllSettled } from '@/lib/server/after-response';
+import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
 
 export const runtime = 'nodejs';
 
@@ -300,30 +299,21 @@ export async function POST(req: NextRequest) {
   const isDone = tossResponse.status === 'DONE';
   const existingMetadata = (order.metadata as Record<string, unknown>) ?? {};
 
-  // Insert payment record — PII(카드번호·승인번호·휴대폰)는 저장 전 sanitize.
-  // virtualAccount.secret은 후속 입금 콜백 검증에 필요하므로 sanitize 함수가 보존.
-  const { error: paymentInsertError } = await supabase.from('payments').insert({
-    order_id: order.id,
-    payment_key: tossResponse.paymentKey,
-    toss_order_id: tossResponse.orderId,
-    method: tossResponse.method ?? null,
-    method_detail: sanitizeMethodDetail(tossResponse) as Json,
-    amount: tossResponse.totalAmount,
-    currency: tossResponse.currency ?? 'KRW',
-    status: tossResponse.status,
-    approved_at: tossResponse.approvedAt ?? null,
-    confirm_response: sanitizeConfirmResponse(tossResponse) as Json,
-    idempotency_key: idempotencyKey,
+  const paymentRecordResult = await ensureTossPaymentRecord({
+    supabase,
+    orderId: order.id,
+    tossPayment: tossResponse,
+    idempotencyKey,
   });
 
-  if (paymentInsertError) {
-    console.error('[confirm] payment INSERT 실패:', paymentInsertError);
-    const insertErrMsg = paymentInsertError.message;
+  if (!paymentRecordResult.ok) {
+    console.error('[confirm] payment INSERT 실패:', paymentRecordResult.error);
+    const insertErrMsg = paymentRecordResult.error;
     after(async () => {
       await notifyEmail('error', '결제 기록 저장 실패', {
         주문번호: orderId,
         에러: insertErrMsg,
-        참고: '결제는 승인 완료, 결제 기록만 누락 — reconciliation cron이 보정 예정',
+        참고: 'Toss 승인은 완료됐지만 결제 기록 저장에 실패해 주문 상태 전환을 보류했습니다. reconciliation cron이 보정 예정입니다.',
       });
       await logSystemAction('payment_failed', 'order', order.id, {
         stage: '결제 기록 저장 실패(승인됨·기록 누락)',
@@ -331,7 +321,10 @@ export async function POST(req: NextRequest) {
         error: insertErrMsg,
       });
     });
-    // 500 반환하지 않고 계속 진행 — 결제는 이미 Toss에서 승인됨
+    return NextResponse.json(
+      { error: apiError('payment_confirmation_failed', buyerLocale) },
+      { status: 500 }
+    );
   }
 
   let reservedForVirtualAccount: string[] = [];

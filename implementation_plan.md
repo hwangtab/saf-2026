@@ -1,3 +1,397 @@
+# 결제·캐시·운영 검증 회귀 개선 Implementation Plan (2026-06-20)
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` to implement this plan task-by-task. 모든 구현 작업은 `superpowers:test-driven-development` 순서(실패 테스트 확인 → 최소 구현 → 통과 확인)를 따른다.
+
+**Goal:** 결제 완료 증거 누락, 관리자 작품 등록 후 공개 캐시 stale, 운영 env 검증 공백, draft 이미지 purge 누락, stale ID 삭제 성공 오인을 제거한다.
+
+**Architecture:** 결제 정합성은 Toss 응답을 `payments` row로 보존하는 helper를 공통화하고, confirm/webhook/reconcile이 같은 불변조건을 쓰게 한다. 공개 캐시는 기존 `revalidatePublicArtworkSurfaces()`를 비동기 후처리로 재도입해 관리자 등록 응답 교착을 피하면서 공개 표면은 같은 정책으로 무효화한다. 검증/삭제/purge 항목은 작은 순수 helper와 targeted 테스트로 잠근다.
+
+**Tech Stack:** Next.js App Router server actions/route handlers, Supabase JS v2, Jest, TypeScript, Vercel CI.
+
+## Global Constraints
+
+- `AGENTS.md`: 실행 전 계획은 한국어로 `implementation_plan.md`에 남기고, 승인 전에는 코드 수정하지 않는다.
+- 결제 불변조건: 주문이 `paid` 또는 `awaiting_deposit`이면 같은 Toss 결제에 대한 `payments` row가 존재해야 한다.
+- 공개 작품 불변조건: 관리자 create/update/delete/sales 후 공개 KO/EN 목록, API 캐시 tag, 관련 작가 경로는 같은 제품 의도에 따라 갱신되어야 한다.
+- 운영 검증 불변조건: CI placeholder env가 운영 Supabase 오설정을 정상처럼 통과시키면 안 된다.
+- 삭제/정리 불변조건: stale ID를 성공으로 보고하지 않고, purge는 참조 스캔 누락 시 fail-closed 한다.
+
+---
+
+### Task 1: Toss payment row 보존 helper 추가
+
+**Files:**
+
+- Create: `lib/payments/toss-payment-record.ts`
+- Test: `__tests__/lib/toss-payment-record.test.ts`
+
+**Interfaces:**
+
+- Produces: `ensureTossPaymentRecord(input): Promise<{ ok: true; paymentId: string | null; created: boolean } | { ok: false; error: string }>`
+- Consumes: Supabase-like client, order id, Toss payment response, idempotency key, optional method detail override.
+
+- [x] **Step 1: Write the failing test**
+
+```ts
+it('inserts a sanitized payment row when no payment exists', async () => {
+  const supabase = makePaymentRecordClient({ existingPayment: null });
+  const result = await ensureTossPaymentRecord({
+    supabase,
+    orderId: 'order-1',
+    tossPayment: tossDonePayment,
+    idempotencyKey: 'confirm-SAF-001',
+  });
+  expect(result).toEqual({ ok: true, paymentId: 'payment-1', created: true });
+  expect(supabase.insertedPayment).toEqual(
+    expect.objectContaining({
+      order_id: 'order-1',
+      payment_key: 'pay-key',
+      toss_order_id: 'SAF-001',
+      amount: 100000,
+      status: 'DONE',
+      idempotency_key: 'confirm-SAF-001',
+    })
+  );
+});
+
+it('returns ok false when the payment row cannot be stored', async () => {
+  const supabase = makePaymentRecordClient({ existingPayment: null, insertError: 'db down' });
+  await expect(
+    ensureTossPaymentRecord({
+      supabase,
+      orderId: 'order-1',
+      tossPayment: tossDonePayment,
+      idempotencyKey: 'confirm-SAF-001',
+    })
+  ).resolves.toEqual({ ok: false, error: 'db down' });
+});
+```
+
+- [x] **Step 2: Run test to verify it fails**
+
+Run: `npm test -- __tests__/lib/toss-payment-record.test.ts --runInBand`
+Expected: FAIL because `@/lib/payments/toss-payment-record` does not exist.
+
+- [x] **Step 3: Write minimal implementation**
+
+Implement `ensureTossPaymentRecord` with:
+
+- `.select('id').eq('payment_key', tossPayment.paymentKey).maybeSingle()`
+- existing row returns `{ ok: true, created: false }`
+- insert uses `sanitizeConfirmResponse(tossPayment)` and card/virtualAccount method detail
+- Supabase select/insert errors return `{ ok: false, error }`
+
+- [x] **Step 4: Run test to verify it passes**
+
+Run: `npm test -- __tests__/lib/toss-payment-record.test.ts --runInBand`
+Expected: PASS.
+
+### Task 2: Confirm/webhook/reconcile payment-row-missing 경로 보정
+
+**Files:**
+
+- Modify: `app/api/payments/toss/confirm/route.ts`
+- Modify: `app/api/webhooks/toss/route.ts`
+- Modify: `app/api/internal/reconcile-payments/route.ts`
+- Test: `__tests__/app/toss-confirm-payment-record-failure.test.ts`
+- Test: `__tests__/app/toss-webhook-status-changed-missing-payment.test.ts`
+- Test: `__tests__/app/reconcile-payments-missing-payment-source.test.ts`
+
+**Interfaces:**
+
+- Consumes: `ensureTossPaymentRecord` from Task 1.
+- Produces: no `orders.status = paid|awaiting_deposit` transition unless `payments` row exists or was just created.
+
+- [x] **Step 1: Write the failing tests**
+
+```ts
+it('does not mark an order paid when the payment row insert fails after Toss DONE', async () => {
+  const supabase = createConfirmMock({ paymentInsertError: 'db down' });
+  const { POST } = await import('@/app/api/payments/toss/confirm/route');
+  const response = await POST(makeConfirmRequest());
+  expect(response.status).toBeGreaterThanOrEqual(500);
+  expect(supabase.orderStatusUpdates).not.toContain('paid');
+});
+```
+
+```ts
+it('creates the missing payment row from verified STATUS_CHANGED DONE before order repair', async () => {
+  const supabase = createWebhookMock({ paymentByKey: null, orderByNo: pendingOrder });
+  const { POST } = await import('@/app/api/webhooks/toss/route');
+  const response = await POST(makeStatusChangedDoneRequest());
+  expect(response.status).toBe(200);
+  expect(supabase.insertedPayment).toEqual(expect.objectContaining({ payment_key: 'pay-key' }));
+  expect(supabase.orderStatusUpdates).toContain('paid');
+});
+```
+
+```ts
+it('documents that reconcile checks paid or awaiting_deposit orders missing a payment row', () => {
+  const src = readFileSync('app/api/internal/reconcile-payments/route.ts', 'utf8');
+  expect(src).toContain('missingPaymentOrders');
+  expect(src).toContain(".in('status', ['paid', 'awaiting_deposit'])");
+  expect(src).toContain('ensureTossPaymentRecord');
+});
+```
+
+- [x] **Step 2: Run tests to verify they fail**
+
+Run:
+
+- `npm test -- __tests__/app/toss-confirm-payment-record-failure.test.ts --runInBand`
+- `npm test -- __tests__/app/toss-webhook-status-changed-missing-payment.test.ts --runInBand`
+- `npm test -- __tests__/app/reconcile-payments-missing-payment-source.test.ts --runInBand`
+
+Expected: FAIL because current confirm continues order update, webhook 500s on missing payment, reconcile only scans `pending_payment`.
+
+- [x] **Step 3: Write minimal implementation**
+
+Implementation rules:
+
+- Confirm route calls `ensureTossPaymentRecord` immediately after Toss success.
+- If `ensureTossPaymentRecord` fails, do not update order status; notify/log; return a server error so the existing pending-order reconcile path can repair instead of creating `paid` without evidence.
+- STATUS_CHANGED DONE webhook, after Toss API verification, if `payments` row is missing, find the order by `verified.orderId`, call `ensureTossPaymentRecord`, then continue with the existing DONE repair flow.
+- Reconcile adds a second pass for `paid`/`awaiting_deposit` orders in the same recent window that have no joined `payments` row; it fetches Toss by `order_no` and calls `ensureTossPaymentRecord`.
+
+- [x] **Step 4: Run targeted tests**
+
+Run:
+
+- `npm test -- __tests__/lib/toss-payment-record.test.ts __tests__/app/toss-confirm-payment-record-failure.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/reconcile-payments-missing-payment-source.test.ts --runInBand`
+
+Expected: PASS.
+
+### Task 3: Admin artwork create 공개 캐시 무효화 복구
+
+**Files:**
+
+- Modify: `app/actions/admin-artworks.ts`
+- Modify: `__tests__/app/admin-artwork-create-image-upload-source.test.ts`
+
+**Interfaces:**
+
+- Consumes: `revalidatePublicArtworkSurfaces(artistNames?)`.
+- Produces: create action response remains light enough for hard navigation, but public surfaces get tag/path invalidation through post-response work.
+
+- [x] **Step 1: Write the failing test**
+
+```ts
+it('schedules public artwork cache invalidation after create without blocking the action response', () => {
+  const action = actionSource();
+  expect(action).toContain('after(() =>');
+  expect(action).toContain('revalidatePublicArtworkSurfaces');
+  expect(action).toContain("revalidatePath('/admin/artworks')");
+  expect(action).not.toContain('신규 작품의 공개면 노출은 다음 자연 revalidate');
+});
+```
+
+- [x] **Step 2: Run test to verify it fails**
+
+Run: `npm test -- __tests__/app/admin-artwork-create-image-upload-source.test.ts --runInBand`
+Expected: FAIL because current test/code intentionally removes public revalidation.
+
+- [x] **Step 3: Write minimal implementation**
+
+Implementation rules:
+
+- Keep synchronous `revalidatePath('/admin/artworks')`.
+- Schedule public revalidation with `after(() => revalidatePublicArtworkSurfaces([artistName]))` or equivalent post-response pattern already used in the repo.
+- Fetch only the created artist display name needed for artist-path invalidation.
+- Do not reintroduce redirect/router behavior in the server action.
+
+- [x] **Step 4: Run test to verify it passes**
+
+Run: `npm test -- __tests__/app/admin-artwork-create-image-upload-source.test.ts --runInBand`
+Expected: PASS.
+
+### Task 4: CI Supabase placeholder를 명시적 fallback 모드로 제한
+
+**Files:**
+
+- Modify: `lib/supabase.ts`
+- Modify: `.github/workflows/ci.yml`
+- Test: `__tests__/lib/supabase-config.test.ts`
+
+**Interfaces:**
+
+- Produces: placeholder Supabase URL is treated as “no live Supabase config” unless `ALLOW_SUPABASE_PLACEHOLDER_FALLBACK=true`.
+
+- [x] **Step 1: Write the failing test**
+
+```ts
+it('does not treat placeholder Supabase env as live config by default', async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://placeholder.supabase.co';
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'placeholder';
+  delete process.env.ALLOW_SUPABASE_PLACEHOLDER_FALLBACK;
+  const mod = await import('@/lib/supabase');
+  expect(mod.hasSupabaseConfig).toBe(false);
+  expect(mod.supabase).toBeNull();
+});
+
+it('allows placeholder fallback only when CI opts in explicitly', async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://placeholder.supabase.co';
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'placeholder';
+  process.env.ALLOW_SUPABASE_PLACEHOLDER_FALLBACK = 'true';
+  const mod = await import('@/lib/supabase');
+  expect(mod.hasSupabaseConfig).toBe(true);
+});
+```
+
+- [x] **Step 2: Run test to verify it fails**
+
+Run: `npm test -- __tests__/lib/supabase-config.test.ts --runInBand`
+Expected: FAIL because placeholder currently counts as configured.
+
+- [x] **Step 3: Write minimal implementation**
+
+Implementation rules:
+
+- Add `isPlaceholderSupabaseConfig`.
+- Set `hasSupabaseConfig` false for placeholder unless `ALLOW_SUPABASE_PLACEHOLDER_FALLBACK === 'true'`.
+- Add `ALLOW_SUPABASE_PLACEHOLDER_FALLBACK: true` to CI jobs that intentionally use static fallback.
+
+- [x] **Step 4: Run test to verify it passes**
+
+Run: `npm test -- __tests__/lib/supabase-config.test.ts --runInBand`
+Expected: PASS.
+
+### Task 5: Draft purge activity_logs pagination
+
+**Files:**
+
+- Modify: `lib/admin/draft-image-purge.ts`
+- Modify: `__tests__/lib/draft-image-purge.test.ts`
+
+**Interfaces:**
+
+- Produces: `buildReferencedArtworkPaths` scans `activity_logs` with `.range()` pages exactly like `artworks`.
+
+- [x] **Step 1: Write the failing test**
+
+```ts
+it('paginates active trash snapshot logs so old referenced drafts are protected after page 1', async () => {
+  const supabase = makeMockSupabase({
+    artworksRows: [],
+    logPages: [
+      [{ before_snapshot: null, after_snapshot: null }],
+      [{ before_snapshot: { images: [objectUrl(DRAFT_B)] }, after_snapshot: null }],
+      [],
+    ],
+  });
+  const referenced = await buildReferencedArtworkPaths(supabase);
+  expect(referenced.has(DRAFT_B)).toBe(true);
+});
+```
+
+- [x] **Step 2: Run test to verify it fails**
+
+Run: `npm test -- __tests__/lib/draft-image-purge.test.ts --runInBand`
+Expected: FAIL because the mock expects `.range()` on activity_logs but current code does not paginate.
+
+- [x] **Step 3: Write minimal implementation**
+
+Implementation rules:
+
+- Wrap `activity_logs` scan in the same `PAGE = 1000` loop.
+- Preserve `.in('action', TRASHABLE_ACTIONS).is('reverted_at', null).is('purged_at', null)`.
+- Throw on any page error; break on empty or short page.
+
+- [x] **Step 4: Run test to verify it passes**
+
+Run: `npm test -- __tests__/lib/draft-image-purge.test.ts --runInBand`
+Expected: PASS.
+
+### Task 6: Admin artwork delete stale ID 성공 오인 차단
+
+**Files:**
+
+- Modify: `app/actions/admin-artworks.ts`
+- Modify: `__tests__/actions/admin-artworks-delete.test.ts`
+
+**Interfaces:**
+
+- Produces: single delete throws `작품을 찾을 수 없습니다.` when the row is absent; batch delete reports only actually found ids and fails when none exist.
+
+- [x] **Step 1: Write the failing tests**
+
+```ts
+it('rejects single delete when the artwork row no longer exists', async () => {
+  mockHasActiveOrdersForArtworks.mockResolvedValue(false);
+  mockRequireAdminClient.mockResolvedValue(makeDeleteMock({ artwork: null }));
+  const { deleteAdminArtwork } = await import('@/app/actions/admin-artworks');
+  await expect(deleteAdminArtwork('missing-art')).rejects.toThrow('작품을 찾을 수 없습니다.');
+});
+
+it('does not report requested ids as deleted when batch rows are missing', async () => {
+  mockHasActiveOrdersForArtworks.mockResolvedValue(false);
+  mockRequireAdminClient.mockResolvedValue(makeBatchDeleteMock({ artworks: [{ id: 'art-1' }] }));
+  const { batchDeleteArtworks } = await import('@/app/actions/admin-artworks');
+  const result = await batchDeleteArtworks(['art-1', 'missing-art']);
+  expect(result).toEqual(
+    expect.objectContaining({
+      success: true,
+      partial: true,
+      count: 1,
+      succeededIds: ['art-1'],
+      failedIds: ['missing-art'],
+    })
+  );
+});
+```
+
+- [x] **Step 2: Run test to verify it fails**
+
+Run: `npm test -- __tests__/actions/admin-artworks-delete.test.ts --runInBand`
+Expected: FAIL because current delete accepts null single snapshot and batch returns requested id count.
+
+- [x] **Step 3: Write minimal implementation**
+
+Implementation rules:
+
+- Single delete checks fetch `error` and `artwork`; absent row throws `작품을 찾을 수 없습니다.`
+- Batch delete computes `foundIds`, `missingIds`; if `foundIds.length === 0`, return/throw an operator-facing “선택한 작품을 찾을 수 없습니다.”
+- Delete only `foundIds`.
+- Return `BatchArtworkMutationResult` for batch delete with `partial`, `succeededIds`, `failedIds`, `errors`.
+- Log snapshot count and summary with actual deleted count.
+
+- [x] **Step 4: Run test to verify it passes**
+
+Run: `npm test -- __tests__/actions/admin-artworks-delete.test.ts --runInBand`
+Expected: PASS.
+
+### Task 7: Final verification
+
+**Files:**
+
+- Modify: `walkthrough.md`
+
+- [x] **Step 1: Run targeted regression suite**
+
+Run:
+
+- `npm test -- __tests__/lib/toss-payment-record.test.ts __tests__/app/toss-confirm-payment-record-failure.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/reconcile-payments-missing-payment-source.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts __tests__/lib/supabase-config.test.ts __tests__/lib/draft-image-purge.test.ts __tests__/actions/admin-artworks-delete.test.ts --runInBand`
+
+- [x] **Step 2: Run broad verification**
+
+Run:
+
+- `npm run lint`
+- `npm run type-check`
+- `npm test -- --runInBand`
+- `npm run validate-artworks`
+- `npm run build`
+
+- [x] **Step 3: Document outcome**
+
+Update `walkthrough.md` with:
+
+- changed invariants
+- tests run and results
+- any remaining data warnings from `validate-artworks`
+- note that Vercel CLI should be updated with `npm i -g vercel@latest` or `pnpm add -g vercel@latest` before Vercel CLI-based deployment/debugging.
+
+---
+
 # 관리자 포털 stale 번들 자동 갱신 구현 계획 (2026-06-19)
 
 ## 목표

@@ -111,6 +111,7 @@ function createSupabaseMock() {
   const makeBuilder = (table: string) => {
     const builder = {
       patch: undefined as Record<string, unknown> | undefined,
+      inserted: false,
       select: jest.fn(() => builder),
       eq: jest.fn(() => builder),
       in: jest.fn(() => builder),
@@ -119,10 +120,18 @@ function createSupabaseMock() {
         updates.push({ table, patch });
         return builder;
       }),
-      insert: jest.fn(async () => ({ error: null })),
+      insert: jest.fn(() => {
+        builder.inserted = true;
+        return builder;
+      }),
       single: jest.fn(async () => ({ data: table === 'orders' ? order : null, error: null })),
       maybeSingle: jest.fn(async () => ({
-        data: table === 'artworks' ? { edition_type: 'unique' } : null,
+        data:
+          table === 'payments' && builder.inserted
+            ? { id: 'payment-1' }
+            : table === 'artworks'
+              ? { edition_type: 'unique' }
+              : null,
         error: null,
       })),
       then: (resolve: (value: { data: unknown; error: unknown }) => unknown) => {

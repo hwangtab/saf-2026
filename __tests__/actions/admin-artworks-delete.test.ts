@@ -14,6 +14,11 @@ jest.mock('@/lib/orders/active-order-guard', () => ({
 
 jest.mock('next/cache', () => ({
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
+  revalidateTag: jest.fn(),
+}));
+
+jest.mock('next/server', () => ({
+  after: (callback: () => unknown) => callback(),
 }));
 
 jest.mock('@/app/actions/activity-log-writer', () => ({
@@ -119,5 +124,60 @@ describe('admin artwork deletion active-order guard', () => {
       '주문·판매 이력이 연결돼 있어 삭제할 수 없습니다. 작품을 "숨김" 처리해 목록에서 가려주세요.'
     );
     expect(deleteMock).toHaveBeenCalled();
+  });
+
+  it('rejects single delete when the artwork row no longer exists', async () => {
+    mockHasActiveOrdersForArtworks.mockResolvedValue(false);
+    const artworkQuery = createArtworkQueryResult(null);
+    const deleteMock = jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ error: null })),
+    }));
+    const supabase = {
+      from: jest.fn((table: string) => {
+        if (table === 'artworks') {
+          return { select: artworkQuery.select, delete: deleteMock };
+        }
+        return createArtworkQueryResult(null);
+      }),
+    };
+    mockRequireAdminClient.mockResolvedValue(supabase);
+
+    const { deleteAdminArtwork } = await import('@/app/actions/admin-artworks');
+
+    await expect(deleteAdminArtwork('missing-art')).rejects.toThrow('작품을 찾을 수 없습니다.');
+    expect(deleteMock).not.toHaveBeenCalled();
+  });
+
+  it('does not report requested ids as deleted when batch rows are missing', async () => {
+    mockHasActiveOrdersForArtworks.mockResolvedValue(false);
+    const artworkQuery = createArtworkQueryResult([{ id: 'art-1', title: '봄의 정원' }]);
+    const deleteInMock = jest.fn(() => Promise.resolve({ error: null }));
+    const supabase = {
+      from: jest.fn((table: string) => {
+        if (table === 'artworks') {
+          return {
+            select: artworkQuery.select,
+            delete: jest.fn(() => ({ in: deleteInMock })),
+          };
+        }
+        return createArtworkQueryResult(null);
+      }),
+    };
+    mockRequireAdminClient.mockResolvedValue(supabase);
+
+    const { batchDeleteArtworks } = await import('@/app/actions/admin-artworks');
+
+    const result = await batchDeleteArtworks(['art-1', 'missing-art']);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: true,
+        partial: true,
+        count: 1,
+        succeededIds: ['art-1'],
+        failedIds: ['missing-art'],
+      })
+    );
+    expect(deleteInMock).toHaveBeenCalledWith('id', ['art-1']);
   });
 });
