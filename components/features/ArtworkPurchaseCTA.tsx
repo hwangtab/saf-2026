@@ -49,18 +49,34 @@ interface ArtworkPurchaseCTAProps {
   priceAmount: number | null;
 }
 
-function ContactButtons() {
+function ContactButtons({ artworkId, artist }: { artworkId: string; artist: string }) {
   const t = useTranslations('artworkDetail');
+
+  // 연락 동선도 추적해 측정 사각을 닫는다(ConsultationButtons의 purchase_consult_click와 동일 취지).
+  // 고가 원화는 온라인 즉시구매보다 전화·메일 문의가 실제 전환 경로라 이 신호 누락이 퍼널을 왜곡.
+  function trackContact(channel: 'phone' | 'email') {
+    trackEvent('purchase_contact_click', { artwork_id: artworkId, artist, channel });
+  }
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      <LinkButton href="tel:02-764-3114" variant="outline" className="min-w-0 px-3">
+      <LinkButton
+        href="tel:02-764-3114"
+        variant="outline"
+        className="min-w-0 px-3"
+        onClick={() => trackContact('phone')}
+      >
         <span className="inline-flex min-w-0 items-center justify-center gap-1.5">
           <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span className="whitespace-nowrap text-[13px] font-bold sm:text-sm">02-764-3114</span>
         </span>
       </LinkButton>
-      <LinkButton href="mailto:contact@kosmart.org" variant="outline" className="min-w-0 px-3">
+      <LinkButton
+        href="mailto:contact@kosmart.org"
+        variant="outline"
+        className="min-w-0 px-3"
+        onClick={() => trackContact('email')}
+      >
         <span className="inline-flex min-w-0 items-center justify-center gap-1.5">
           <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span className="whitespace-nowrap text-[13px] font-bold sm:text-sm">
@@ -250,7 +266,7 @@ export default function ArtworkPurchaseCTA({
           <p className="text-base font-bold text-charcoal mb-1">{t('inquiryTitle')}</p>
           <p className="text-sm text-charcoal-soft">{t('inquiryDescription')}</p>
         </div>
-        <ContactButtons />
+        <ContactButtons artworkId={artworkId} artist={artist} />
       </div>
     );
   }
@@ -304,7 +320,7 @@ export default function ArtworkPurchaseCTA({
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
-          <ContactButtons />
+          <ContactButtons artworkId={artworkId} artist={artist} />
 
           <PurchaseGuide />
         </>
@@ -345,7 +361,7 @@ export default function ArtworkPurchaseCTA({
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
-          <ContactButtons />
+          <ContactButtons artworkId={artworkId} artist={artist} />
 
           <PurchaseGuide />
         </>
@@ -371,7 +387,7 @@ export default function ArtworkPurchaseCTA({
             </p>
           </div>
 
-          <ContactButtons />
+          <ContactButtons artworkId={artworkId} artist={artist} />
 
           <ConsultationButtons artworkId={artworkId} artworkTitle={artworkTitle} artist={artist} />
 
