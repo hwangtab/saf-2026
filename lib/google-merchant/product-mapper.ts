@@ -32,7 +32,8 @@ export type MerchantSyncDecision = { sync: true } | { sync: false; reason: Merch
 const DEFAULT_CONTENT_LANGUAGE = 'ko';
 const DEFAULT_FEED_LABEL = 'KR';
 const DEFAULT_SITE_ORIGIN = 'https://www.saf2026.com';
-const DEFAULT_BRAND = 'SAF2026';
+// 브랜드 기본값 = 축제 브랜드 '씨앗페'. ('SAF2026'/'saf2026'은 도메인 문자열일 뿐 브랜드가 아님)
+const DEFAULT_BRAND = '씨앗페';
 
 function compactText(value: string | null | undefined): string {
   return (value || '').replace(/\s+/g, ' ').trim();

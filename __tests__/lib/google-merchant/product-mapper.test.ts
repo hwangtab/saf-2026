@@ -45,7 +45,7 @@ describe('Google Merchant product mapper', () => {
     expect(attrValue(productInput, 'availability')).toBe('in_stock');
     expect(attrValue(productInput, 'condition')).toBe('new');
     expect(attrValue(productInput, 'identifier_exists')).toBe('no');
-    expect(attrValue(productInput, 'brand')).toBe('SAF2026');
+    expect(attrValue(productInput, 'brand')).toBe('씨앗페');
     expect(attrValue(productInput, 'custom_label_0')).toBe('홍길동');
     expect(attrValue(productInput, 'custom_label_1')).toBe('회화');
   });
