@@ -149,7 +149,8 @@ export default async function PetitionOhYoonPage({
   const is_active = await fetchPetitionActive();
 
   const breadcrumbSchema = createBreadcrumbSchema([
-    { name: 'SAF2026', url: SITE_URL },
+    // 루트 크럼은 홈을 가리킨다(다른 페이지와 동일). 'SAF2026'은 도메인 문자열이라 사이트명으로 부적절.
+    { name: locale === 'en' ? 'Home' : '홈', url: SITE_URL },
     { name: t('breadcrumb'), url: PAGE_URL },
   ]);
 
