@@ -77,3 +77,37 @@
 
 - `route_response`(HTTP 비정상 응답) 단계는 브리프에 맞춰 `logSystemAction`만 남기고 메일은 보내지 않았다. 운영상 메일도 필요하면 후속 Task에서 severity 정책을 정하면 된다.
 - 이번 Task는 소스 계약과 헬퍼 단위 검증 중심이다. 실제 운영 env 누락/오응답이 관리자 알림 벨과 메일에 어떻게 보이는지는 통합 검증 대상이 남아 있다.
+
+---
+
+## 2026-06-20 리뷰 반영 추가 수정
+
+### 수정 대상
+
+- 리뷰 지적 1: `app/actions/admin-artworks.ts`의 `route_response` 경로에서도 `notifyEmail`과 `logSystemAction`이 함께 실행되도록 보강.
+- 리뷰 지적 2: `__tests__/app/admin-artwork-create-revalidate-contract.test.ts`가 `route_response` 블록 자체를 검사하도록 강화.
+
+### RED
+
+- 명령:
+  - `npm test -- --runInBand __tests__/app/admin-artwork-create-revalidate-contract.test.ts`
+- 결과 요약:
+  - 실패.
+  - `route_response` 블록 검사에서 `notifyEmail`이 없어서 계약 테스트가 깨짐.
+  - 핵심 메시지:
+    - `Expected substring: "notifyEmail"`
+    - `Received string: "if (!response.ok) { await logSystemAction(... stage: 'route_response' ...) }"`
+
+### GREEN
+
+- 명령:
+  - `npm test -- --runInBand __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/lib/public-artwork-revalidation.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts`
+  - `npx eslint app/actions/admin-artworks.ts __tests__/app/admin-artwork-create-revalidate-contract.test.ts`
+- 결과 요약:
+  - 테스트 통과: `3 passed, 3 total`, `17 passed, 17 total`
+  - eslint 통과. `caniuse-lite` 갱신 권고만 출력됨.
+
+### 최종 상태
+
+- `route_response` HTTP 실패가 이제 운영자 가시 채널 두 곳 모두로 기록된다.
+- 계약 테스트는 `notifyEmail`이 파일 어딘가에만 존재해도 통과하던 약한 형태에서, 실제 `route_response` 분기 내부를 검사하는 형태로 강화됐다.

@@ -76,17 +76,25 @@ function schedulePublicArtworkSurfaceRevalidation(
       });
 
       if (!response.ok) {
-        await logSystemAction(
-          'public_artwork_revalidation_failed',
-          'artwork',
-          context.artworkId ?? 'unknown',
-          {
-            title: context.title ?? null,
-            artist_names: normalizedArtistNames,
-            status: response.status,
-            stage: 'route_response',
-          }
-        );
+        await Promise.allSettled([
+          notifyEmail('error', '공개 작품 캐시 갱신 요청 실패', {
+            작품ID: context.artworkId ?? '',
+            작품명: context.title ?? '',
+            상태코드: String(response.status),
+            참고: '작품 등록은 완료됐지만 공개 목록/작가 페이지 갱신 요청이 HTTP 실패로 끝났습니다.',
+          }),
+          logSystemAction(
+            'public_artwork_revalidation_failed',
+            'artwork',
+            context.artworkId ?? 'unknown',
+            {
+              title: context.title ?? null,
+              artist_names: normalizedArtistNames,
+              status: response.status,
+              stage: 'route_response',
+            }
+          ),
+        ]);
       }
     } catch (err) {
       await Promise.allSettled([

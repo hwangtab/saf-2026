@@ -33,10 +33,15 @@ describe('admin artwork create revalidate contract', () => {
 
   it('reports public artwork revalidation schedule failures to operator-visible channels', () => {
     const src = readFileSync('app/actions/admin-artworks.ts', 'utf8');
+    const routeResponseBlockStart = src.indexOf('if (!response.ok) {');
+    const routeResponseBlockEnd = src.indexOf('    } catch (err) {');
+    const routeResponseBlock = src.slice(routeResponseBlockStart, routeResponseBlockEnd);
 
     expect(src).toContain('resolvePublicArtworkRevalidationConfig');
-    expect(src).toContain('logSystemAction');
-    expect(src).toContain('notifyEmail');
-    expect(src).toContain('public_artwork_revalidation_failed');
+    expect(routeResponseBlockStart).toBeGreaterThanOrEqual(0);
+    expect(routeResponseBlock).toContain('notifyEmail');
+    expect(routeResponseBlock).toContain('logSystemAction');
+    expect(routeResponseBlock).toContain('public_artwork_revalidation_failed');
+    expect(routeResponseBlock).toContain("stage: 'route_response'");
   });
 });
