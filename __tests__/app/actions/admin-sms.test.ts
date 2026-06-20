@@ -24,6 +24,13 @@ jest.mock('@/lib/sms/buyer-sms', () => ({
   sendBuyerSms: (...args: unknown[]) => mockSendBuyerSms(...args),
 }));
 
+const BANK_TRANSFER_ENV_KEYS = [
+  'BANK_TRANSFER_BANK_NAME',
+  'BANK_TRANSFER_ACCOUNT_NUMBER',
+  'BANK_TRANSFER_HOLDER_NAME',
+  'BANK_TRANSFER_DEADLINE_HOURS',
+] as const;
+
 describe('getSmsLogs', () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -97,7 +104,12 @@ describe('getSmsLogs', () => {
 });
 
 describe('resendSms', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    for (const key of BANK_TRANSFER_ENV_KEYS) {
+      delete process.env[key];
+    }
+  });
 
   it('실패 로그를 order 재조회 후 sendBuyerSms로 재발송하고 활동 로그를 남긴다', async () => {
     const logRow = {
@@ -238,7 +250,11 @@ describe('resendSms', () => {
     );
   });
 
-  it('virtual_account_issued legacy 주문은 created_at + 24시간 fallback으로 재발송', async () => {
+  it('virtual_account_issued legacy 주문은 created_at + configured deadline/locale fallback으로 재발송', async () => {
+    process.env.BANK_TRANSFER_DEADLINE_HOURS = '36';
+    const expectedDueDate = new Date('2026-06-20T17:00:00.000Z').toLocaleString('ko-KR', {
+      timeZone: 'Asia/Seoul',
+    });
     const logRow = {
       id: 'log-va-legacy',
       order_no: 'SAF-VA-LEGACY',
@@ -274,7 +290,7 @@ describe('resendSms', () => {
           bankName: '기업은행 (IBK)',
           accountNumber: '301-101031-04-095',
           holderName: '한국스마트협동조합',
-          dueDate: expect.any(String),
+          dueDate: expectedDueDate,
         }),
       }),
       'ko',

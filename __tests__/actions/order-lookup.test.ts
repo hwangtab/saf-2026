@@ -105,6 +105,12 @@ const capturedArtworkRestores: Array<{
 }> = [];
 const capturedPaymentUpdates: Array<Record<string, unknown>> = [];
 const capturedSaleUpdates: Array<Record<string, unknown>> = [];
+const BANK_TRANSFER_ENV_KEYS = [
+  'BANK_TRANSFER_BANK_NAME',
+  'BANK_TRANSFER_ACCOUNT_NUMBER',
+  'BANK_TRANSFER_HOLDER_NAME',
+  'BANK_TRANSFER_DEADLINE_HOURS',
+] as const;
 
 // 호출 순서에 따라 다른 결과 반환을 위한 카운터
 let ordersSelectCallCount = 0;
@@ -325,6 +331,9 @@ beforeEach(async () => {
   capturedSaleUpdates.length = 0;
   mockCancelResult = { success: true };
   ordersSelectCallCount = 0;
+  for (const key of BANK_TRANSFER_ENV_KEYS) {
+    delete process.env[key];
+  }
 
   const mod = await import('@/app/actions/order-lookup');
   lookupOrders = mod.lookupOrders;
@@ -697,6 +706,105 @@ describe('lookupOrderDetail', () => {
       expect(result.order.artworkTitle).toBe('봄의 정원 외 1건');
       expect(result.order.artistName).toBe('김작가');
       expect(result.order.artworkImage).toBe('spring.jpg');
+    }
+  });
+
+  it('manual_bank_transfer 입금대기 상세는 metadata.bank_transfer 표시값을 반환하고 Toss virtualAccount로 섞지 않는다', async () => {
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-bank',
+        order_no: 'SAF-BANK',
+        status: 'awaiting_deposit',
+        buyer_email: 'buyer@test.com',
+        item_amount: 5000000,
+        shipping_amount: 0,
+        total_amount: 5000000,
+        paid_at: null,
+        created_at: '2026-06-19T05:00:00.000Z',
+        shipping_name: '홍길동',
+        shipping_phone: '01012345678',
+        shipping_address: '서울',
+        shipping_address_detail: null,
+        shipping_memo: null,
+        shipping_carrier: null,
+        tracking_number: null,
+        metadata: {
+          locale: 'ko',
+          payment_provider: 'manual_bank_transfer',
+          bank_transfer: {
+            bankName: '메타은행',
+            accountNumber: '999-111',
+            holderName: '메타 예금주',
+            dueDate: '2026. 6. 20. 오후 2:00:00',
+          },
+        },
+        artworks: { title: '봄의 정원', images: [], artists: { name_ko: '김작가' } },
+      },
+      error: null,
+    };
+    mockPaymentResult = { data: null, error: null };
+
+    const result = await lookupOrderDetail('SAF-BANK', 'buyer@test.com');
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.order.virtualAccount).toBeNull();
+      expect(result.order.bankTransfer).toEqual({
+        bankName: '메타은행',
+        accountNumber: '999-111',
+        holderName: '메타 예금주',
+        dueDate: '2026. 6. 20. 오후 2:00:00',
+      });
+    }
+  });
+
+  it('manual_bank_transfer legacy 상세는 env 계좌와 created_at + deadlineHours fallback을 반환', async () => {
+    process.env.BANK_TRANSFER_BANK_NAME = '운영은행';
+    process.env.BANK_TRANSFER_ACCOUNT_NUMBER = '777-888';
+    process.env.BANK_TRANSFER_HOLDER_NAME = '운영 예금주';
+    process.env.BANK_TRANSFER_DEADLINE_HOURS = '48';
+    const expectedDueDate = new Date('2026-06-21T05:00:00.000Z').toLocaleString('en-US', {
+      timeZone: 'Asia/Seoul',
+    });
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-bank-legacy',
+        order_no: 'SAF-BANK-LEGACY',
+        status: 'awaiting_deposit',
+        buyer_email: 'buyer@test.com',
+        item_amount: 5000000,
+        shipping_amount: 0,
+        total_amount: 5000000,
+        paid_at: null,
+        created_at: '2026-06-19T05:00:00.000Z',
+        shipping_name: '홍길동',
+        shipping_phone: '01012345678',
+        shipping_address: '서울',
+        shipping_address_detail: null,
+        shipping_memo: null,
+        shipping_carrier: null,
+        tracking_number: null,
+        metadata: {
+          locale: 'en',
+          payment_provider: 'manual_bank_transfer',
+        },
+        artworks: { title: 'Spring Garden', images: [], artists: { name_ko: 'Kim' } },
+      },
+      error: null,
+    };
+    mockPaymentResult = { data: null, error: null };
+
+    const result = await lookupOrderDetail('SAF-BANK-LEGACY', 'buyer@test.com');
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.order.virtualAccount).toBeNull();
+      expect(result.order.bankTransfer).toEqual({
+        bankName: '운영은행',
+        accountNumber: '777-888',
+        holderName: '운영 예금주',
+        dueDate: expectedDueDate,
+      });
     }
   });
 });

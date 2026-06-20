@@ -7,6 +7,8 @@
 
 import { TextDecoder, TextEncoder } from 'util';
 import crypto from 'crypto';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import type { CreateOrderInput } from '@/app/actions/checkout';
 
 if (typeof global.TextEncoder === 'undefined') {
@@ -96,6 +98,35 @@ const mockInsert = jest.fn();
 const mockUpdate = jest.fn();
 const mockRpc = jest.fn();
 const mockFetchWithTimeout = jest.fn();
+const mockNotifyEmail = jest.fn(async () => {});
+const mockSendBuyerEmail = jest.fn(async () => {});
+const mockSendBuyerSms = jest.fn(async () => ({ ok: true, skipped: false }));
+const mockGetOrderNotificationInfo = jest.fn(async () => ({
+  orderId: 'order-1',
+  orderNo: 'SAF-20260414-TEST',
+  buyerName: '홍길동',
+  buyerEmail: 'buyer@test.com',
+  buyerPhone: '01012345678',
+  shippingName: '홍길동',
+  shippingPhone: '01012345678',
+  shippingAddress: '서울시 강남구 101호',
+  shippingMemo: '',
+  artworkTitle: '봄의 정원',
+  artistName: '김작가',
+  itemAmount: 5_000_000,
+  shippingAmount: 0,
+  totalAmount: 5_000_000,
+  locale: 'ko',
+}));
+
+const ROOT = process.cwd();
+const readSource = (rel: string) => readFileSync(join(ROOT, rel), 'utf8');
+const BANK_TRANSFER_ENV_KEYS = [
+  'BANK_TRANSFER_BANK_NAME',
+  'BANK_TRANSFER_ACCOUNT_NUMBER',
+  'BANK_TRANSFER_HOLDER_NAME',
+  'BANK_TRANSFER_DEADLINE_HOURS',
+] as const;
 
 function buildChain(result: MockResult) {
   const single = jest.fn(() => result);
@@ -249,6 +280,20 @@ jest.mock('@/lib/integrations/toss/fetch-with-timeout', () => ({
   fetchWithTimeout: (...args: unknown[]) => mockFetchWithTimeout(...args),
 }));
 
+jest.mock('@/lib/notify', () => ({
+  notifyEmail: (...args: unknown[]) => mockNotifyEmail(...args),
+  sendBuyerEmail: (...args: unknown[]) => mockSendBuyerEmail(...args),
+}));
+
+jest.mock('@/lib/sms/buyer-sms', () => ({
+  sendBuyerSms: (...args: unknown[]) => mockSendBuyerSms(...args),
+}));
+
+jest.mock('@/lib/utils/get-order-notification-info', () => ({
+  getOrderNotificationInfo: (...args: unknown[]) => mockGetOrderNotificationInfo(...args),
+  buildAdminNotificationFields: (_info: unknown, extras: Record<string, unknown>) => extras,
+}));
+
 // --- Mock: order number ---
 jest.mock('@/lib/integrations/toss/order-number', () => ({
   generateOrderNumber: jest.fn(() => 'SAF-20260414-TEST'),
@@ -341,7 +386,14 @@ beforeEach(async () => {
     ok: true,
     json: async () => ({ checkout: { url: 'https://checkout.tosspayments.test/pay' } }),
   });
+  mockNotifyEmail.mockClear();
+  mockSendBuyerEmail.mockClear();
+  mockSendBuyerSms.mockClear();
+  mockGetOrderNotificationInfo.mockClear();
   (jest.requireMock('next/navigation').redirect as jest.Mock).mockClear();
+  for (const key of BANK_TRANSFER_ENV_KEYS) {
+    delete process.env[key];
+  }
 
   const mod = await import('@/app/actions/checkout');
   createOrder = mod.createOrder;
@@ -984,16 +1036,34 @@ describe('initiatePayment', () => {
 // ========== verifyBankTransferLanding ==========
 
 describe('verifyBankTransferLanding', () => {
-  it('checkout token 없는 legacy 주문은 manual_bank_transfer일 때만 허용', async () => {
+  it('checkout token 없는 legacy 주문은 manual_bank_transfer일 때만 허용하고 표시 계좌를 반환', async () => {
     mockOrderSelectResult = {
       data: {
         id: 'order-1',
-        metadata: { payment_provider: 'manual_bank_transfer' },
+        created_at: '2026-06-19T05:00:00.000Z',
+        metadata: {
+          locale: 'ko',
+          payment_provider: 'manual_bank_transfer',
+          bank_transfer: {
+            bankName: '메타은행',
+            accountNumber: '999-111',
+            holderName: '메타 예금주',
+            dueDate: '2026. 6. 20. 오후 2:00:00',
+          },
+        },
       },
       error: null,
     };
 
-    await expect(verifyBankTransferLanding('SAF-20260414-TEST', '')).resolves.toBe(true);
+    await expect(verifyBankTransferLanding('SAF-20260414-TEST', '')).resolves.toEqual({
+      ok: true,
+      bankTransfer: {
+        bankName: '메타은행',
+        accountNumber: '999-111',
+        holderName: '메타 예금주',
+        dueDate: '2026. 6. 20. 오후 2:00:00',
+      },
+    });
   });
 
   it('checkout token 없는 legacy 카드 주문은 무통장 랜딩을 허용하지 않음', async () => {
@@ -1005,7 +1075,60 @@ describe('verifyBankTransferLanding', () => {
       error: null,
     };
 
-    await expect(verifyBankTransferLanding('SAF-20260414-TEST', '')).resolves.toBe(false);
+    await expect(verifyBankTransferLanding('SAF-20260414-TEST', '')).resolves.toEqual({
+      ok: false,
+    });
+  });
+
+  it('checkout token 보호 주문은 유효한 token일 때 fallback 계좌 표시값을 반환', async () => {
+    process.env.BANK_TRANSFER_BANK_NAME = '운영은행';
+    process.env.BANK_TRANSFER_ACCOUNT_NUMBER = '777-888';
+    process.env.BANK_TRANSFER_HOLDER_NAME = '운영 예금주';
+    process.env.BANK_TRANSFER_DEADLINE_HOURS = '48';
+    const expectedDueDate = new Date('2026-06-21T05:00:00.000Z').toLocaleString('en-US', {
+      timeZone: 'Asia/Seoul',
+    });
+    mockOrderSelectResult = {
+      data: {
+        id: 'order-1',
+        created_at: '2026-06-19T05:00:00.000Z',
+        metadata: {
+          locale: 'en',
+          payment_provider: 'manual_bank_transfer',
+          checkout_token_hash: hashCheckoutToken('valid-token'),
+        },
+      },
+      error: null,
+    };
+
+    await expect(verifyBankTransferLanding('SAF-20260414-TEST', 'valid-token')).resolves.toEqual({
+      ok: true,
+      bankTransfer: {
+        bankName: '운영은행',
+        accountNumber: '777-888',
+        holderName: '운영 예금주',
+        dueDate: expectedDueDate,
+      },
+    });
+  });
+
+  it('checkout token 보호 주문은 invalid token을 거부', async () => {
+    mockOrderSelectResult = {
+      data: {
+        id: 'order-1',
+        created_at: '2026-06-19T05:00:00.000Z',
+        metadata: {
+          locale: 'ko',
+          payment_provider: 'manual_bank_transfer',
+          checkout_token_hash: hashCheckoutToken('valid-token'),
+        },
+      },
+      error: null,
+    };
+
+    await expect(verifyBankTransferLanding('SAF-20260414-TEST', 'wrong-token')).resolves.toEqual({
+      ok: false,
+    });
   });
 });
 
@@ -1064,6 +1187,80 @@ describe('createBankTransferOrder', () => {
     );
     expect((manualUpdate?.patch.metadata as Record<string, unknown>).checkout_token_hash).toEqual(
       expect.any(String)
+    );
+  });
+
+  it('env override 계좌정보를 metadata와 buyer/admin 알림 payload에 동일하게 사용한다', async () => {
+    process.env.BANK_TRANSFER_BANK_NAME = '신한은행';
+    process.env.BANK_TRANSFER_ACCOUNT_NUMBER = '110-000-000000';
+    process.env.BANK_TRANSFER_HOLDER_NAME = '씨앗페';
+    process.env.BANK_TRANSFER_DEADLINE_HOURS = '36';
+    const nowSpy = jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-06-19T05:00:00.000Z').getTime());
+    const expectedDueDate = new Date('2026-06-20T17:00:00.000Z').toLocaleString('ko-KR', {
+      timeZone: 'Asia/Seoul',
+    });
+    setupSuccessfulArtwork();
+
+    try {
+      await expect(createBankTransferOrder(validInput)).rejects.toThrow(/NEXT_REDIRECT:/);
+    } finally {
+      nowSpy.mockRestore();
+    }
+
+    const manualUpdate = capturedOrderUpdates.find((call) =>
+      Boolean(
+        (call.patch.metadata as Record<string, unknown> | undefined)?.payment_provider ===
+          'manual_bank_transfer'
+      )
+    );
+    expect(manualUpdate?.patch.metadata).toEqual(
+      expect.objectContaining({
+        bank_transfer: {
+          bankName: '신한은행',
+          accountNumber: '110-000-000000',
+          holderName: '씨앗페',
+          dueDate: expectedDueDate,
+          dueDateIso: '2026-06-20T17:00:00.000Z',
+        },
+      })
+    );
+    expect(mockNotifyEmail).toHaveBeenCalledWith(
+      'info',
+      '계좌이체 주문 접수 (입금 대기)',
+      expect.objectContaining({
+        은행: '신한은행',
+        계좌번호: '110-000-000000',
+        예금주: '씨앗페',
+        입금기한: expectedDueDate,
+      })
+    );
+    expect(mockSendBuyerEmail).toHaveBeenCalledWith(
+      'buyer@test.com',
+      'virtual_account_issued',
+      expect.objectContaining({
+        virtualAccount: {
+          bankName: '신한은행',
+          accountNumber: '110-000-000000',
+          dueDate: expectedDueDate,
+        },
+      }),
+      'ko'
+    );
+    expect(mockSendBuyerSms).toHaveBeenCalledWith(
+      validInput.buyerPhone,
+      'virtual_account_issued',
+      expect.objectContaining({
+        virtualAccount: {
+          bankName: '신한은행',
+          accountNumber: '110-000-000000',
+          holderName: '씨앗페',
+          dueDate: expectedDueDate,
+        },
+      }),
+      'ko',
+      'SAF-20260414-TEST'
     );
   });
 
@@ -1201,5 +1398,27 @@ describe('createBankTransferOrder', () => {
     // 주문은 cancelled 처리
     const cancelled = capturedOrderUpdates.find((c) => c.patch.status === 'cancelled');
     expect(cancelled).toBeTruthy();
+  });
+});
+
+describe('bank transfer success clients', () => {
+  it('수동 계좌이체 화면은 server action 반환 payload를 렌더링하고 catalog 값/date-now fallback을 쓰지 않는다', () => {
+    for (const rel of [
+      'app/[locale]/checkout/success/SuccessClient.tsx',
+      'app/[locale]/checkout/[artworkId]/success/SuccessClient.tsx',
+    ]) {
+      const src = readSource(rel);
+      expect(src).toContain('setBankTransfer');
+      expect(src).toContain('verification.bankTransfer');
+      expect(src).toContain('bankTransfer.bankName');
+      expect(src).toContain('bankTransfer.accountNumber');
+      expect(src).toContain('bankTransfer.holderName');
+      expect(src).toContain('bankTransfer.dueDate');
+      expect(src).not.toContain("t('bankTransferBank')");
+      expect(src).not.toContain("t('bankTransferAccount')");
+      expect(src).not.toContain("t('bankTransferHolderName')");
+      expect(src).not.toContain('Date.now() + 24 * 60 * 60 * 1000');
+      expect(src).not.toContain('@/lib/payments/bank-transfer-info');
+    }
   });
 });

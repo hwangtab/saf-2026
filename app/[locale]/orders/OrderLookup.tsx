@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import { Link, useRouter } from '@/i18n/navigation';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
@@ -411,34 +411,12 @@ function OrderDetail({
   const t = useTranslations('orderLookup');
   const tCheckout = useTranslations('checkout');
   const tA11y = useTranslations('a11y');
-  const locale = useLocale();
   const [order, setOrder] = useState(initialOrder);
   const [editingShipping, setEditingShipping] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const canEditShipping = ['paid', 'preparing'].includes(order.status);
   const canCancel = ['paid', 'awaiting_deposit'].includes(order.status);
-
-  const bankTransferDeadline =
-    order.status === 'awaiting_deposit' && !order.virtualAccount
-      ? (() => {
-          const dl = new Date(new Date(order.createdAt).getTime() + 24 * 60 * 60 * 1000);
-          if (locale === 'ko') {
-            const m = dl.getMonth() + 1;
-            const d = dl.getDate();
-            const hh = String(dl.getHours()).padStart(2, '0');
-            const mm = String(dl.getMinutes()).padStart(2, '0');
-            return `${m}월 ${d}일 ${hh}:${mm}`;
-          }
-          return dl.toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          });
-        })()
-      : '';
 
   function handleShippingSaved(updated: Partial<OrderPublicInfo>) {
     setOrder((prev) => ({ ...prev, ...updated }));
@@ -486,32 +464,36 @@ function OrderDetail({
       )}
 
       {/* 수동 계좌이체 입금 안내 */}
-      {order.status === 'awaiting_deposit' && !order.virtualAccount && (
+      {order.status === 'awaiting_deposit' && !order.virtualAccount && order.bankTransfer && (
         <div className="rounded-xl border border-primary-soft bg-primary-surface p-4 text-sm">
           <p className="mb-2 font-semibold text-primary-strong">{tCheckout('bankTransferTitle')}</p>
           <div className="space-y-1.5">
             <div className="flex justify-between">
               <span className="text-charcoal-muted">{t('bankName')}</span>
               <span className="font-semibold text-charcoal-deep">
-                {tCheckout('bankTransferBank')}
+                {order.bankTransfer.bankName}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-charcoal-muted">{t('accountNumber')}</span>
               <span className="font-mono font-semibold text-charcoal-deep">
-                {tCheckout('bankTransferAccount')}
+                {order.bankTransfer.accountNumber}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-charcoal-muted">{tCheckout('bankTransferHolder')}</span>
               <span className="font-semibold text-charcoal-deep">
-                {tCheckout('bankTransferHolderName')}
+                {order.bankTransfer.holderName}
               </span>
             </div>
           </div>
           <div className="mt-2 text-xs text-charcoal-muted space-y-0.5">
             <p>{tCheckout('bankTransferNoticeName')}</p>
-            <p>{tCheckout('bankTransferNoticeDeadline', { deadline: bankTransferDeadline })}</p>
+            <p>
+              {tCheckout('bankTransferNoticeDeadline', {
+                deadline: order.bankTransfer.dueDate,
+              })}
+            </p>
           </div>
         </div>
       )}

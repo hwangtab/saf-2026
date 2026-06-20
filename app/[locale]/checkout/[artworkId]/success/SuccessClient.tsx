@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
@@ -17,6 +17,13 @@ import { verifyBankTransferLanding } from '@/app/actions/checkout';
 interface VirtualAccount {
   bankName: string;
   accountNumber: string;
+  dueDate: string;
+}
+
+interface BankTransferDisplay {
+  bankName: string;
+  accountNumber: string;
+  holderName: string;
   dueDate: string;
 }
 
@@ -44,24 +51,6 @@ type PageState = 'loading' | 'success' | 'virtual' | 'bank_transfer' | 'error';
 
 function formatAmount(amount: number, currency: 'KRW' | 'USD'): string {
   return currency === 'USD' ? formatUsd(amount) : formatPriceForDisplay(amount);
-}
-
-function formatDeadline(locale: string): string {
-  const deadline = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  if (locale === 'ko') {
-    const m = deadline.getMonth() + 1;
-    const d = deadline.getDate();
-    const hh = String(deadline.getHours()).padStart(2, '0');
-    const mm = String(deadline.getMinutes()).padStart(2, '0');
-    return `${m}월 ${d}일 ${hh}:${mm}`;
-  }
-  return deadline.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
 }
 
 function restorePendingCheckout(orderId: string, artworkId: string): PendingCheckoutSession | null {
@@ -93,10 +82,10 @@ export default function SuccessClient() {
   const params = useParams();
   const artworkId = String(params.artworkId ?? '');
 
-  const deadline = useMemo(() => formatDeadline(locale), [locale]);
   const [state, setPageState] = useState<PageState>('loading');
   const [landing, setLanding] = useState<Landing | null>(null);
   const [virtualAccount, setVirtualAccount] = useState<VirtualAccount | null>(null);
+  const [bankTransfer, setBankTransfer] = useState<BankTransferDisplay | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const confirmedRef = useRef(false);
 
@@ -251,8 +240,10 @@ export default function SuccessClient() {
     // 실제 awaiting_deposit/paid 주문인지 server에서 검증.
     if (method === 'BANK_TRANSFER') {
       void (async () => {
-        const valid = await verifyBankTransferLanding(orderId, checkoutToken).catch(() => false);
-        if (!valid) {
+        const verification = await verifyBankTransferLanding(orderId, checkoutToken).catch(() => ({
+          ok: false as const,
+        }));
+        if (!verification.ok) {
           router.replace(`/artworks/${artworkId}`);
           return;
         }
@@ -266,6 +257,7 @@ export default function SuccessClient() {
             payment_type: 'TRANSFER',
           });
         }
+        setBankTransfer(verification.bankTransfer);
         setPageState('bank_transfer');
       })();
       return;
@@ -331,8 +323,17 @@ export default function SuccessClient() {
     );
   }
 
-  // 무통장 계좌이체 — 우리 계좌번호 안내 (NH 농협 / 한국스마트협동조합)
+  // 무통장 계좌이체 — 서버 검증된 계좌정보 안내
   if (state === 'bank_transfer') {
+    if (!bankTransfer) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4 pt-24">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-primary" />
+          <p className="text-sm text-charcoal-soft">{t('confirmingPayment')}</p>
+        </div>
+      );
+    }
+
     return (
       <div
         className={`min-h-screen bg-canvas-soft flex items-center justify-center pt-24 ${SAWTOOTH_TOP_SAFE_PADDING}`}
@@ -346,17 +347,17 @@ export default function SuccessClient() {
             <div className="rounded-xl bg-gray-50 p-6 text-left space-y-3 mb-6">
               <div className="flex justify-between text-sm">
                 <span className="text-charcoal-soft">{t('depositBankName')}</span>
-                <span className="font-semibold text-charcoal">{t('bankTransferBank')}</span>
+                <span className="font-semibold text-charcoal">{bankTransfer.bankName}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-charcoal-soft">{t('depositAccountNumber')}</span>
                 <span className="font-semibold text-charcoal font-mono">
-                  {t('bankTransferAccount')}
+                  {bankTransfer.accountNumber}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-charcoal-soft">{t('bankTransferHolder')}</span>
-                <span className="font-semibold text-charcoal">{t('bankTransferHolderName')}</span>
+                <span className="font-semibold text-charcoal">{bankTransfer.holderName}</span>
               </div>
               <div className="flex justify-between text-sm border-t border-gray-200 pt-3">
                 <span className="text-charcoal-soft">{t('orderNo')}</span>
@@ -372,7 +373,7 @@ export default function SuccessClient() {
 
             <div className="text-xs text-charcoal-soft mb-6 space-y-1">
               <p>{t('bankTransferNoticeName')}</p>
-              <p>{t('bankTransferNoticeDeadline', { deadline })}</p>
+              <p>{t('bankTransferNoticeDeadline', { deadline: bankTransfer.dueDate })}</p>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">

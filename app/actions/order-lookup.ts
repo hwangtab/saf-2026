@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { resolveOrderProvider } from '@/lib/integrations/toss/config';
+import { formatBankTransferDueDate, getBankTransferInfo } from '@/lib/payments/bank-transfer-info';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { notifyEmail, sendBuyerEmail, extractBuyerLocale } from '@/lib/notify';
 import { sendBuyerSms } from '@/lib/sms/buyer-sms';
@@ -38,6 +39,13 @@ export type PublicOrderListItem = {
   createdAt: string;
 };
 
+type BankTransferDisplay = {
+  bankName: string;
+  accountNumber: string;
+  holderName: string;
+  dueDate: string;
+};
+
 export type OrderPublicInfo = {
   orderNo: string;
   status: string;
@@ -63,6 +71,7 @@ export type OrderPublicInfo = {
     accountNumber: string;
     dueDate: string;
   } | null;
+  bankTransfer: BankTransferDisplay | null;
 };
 
 export type OrderLookupListResult =
@@ -282,6 +291,55 @@ type OrderDetailRow = {
   buyerUserId: string | null;
 };
 
+function asMetadataRecord(metadata: unknown): Record<string, unknown> {
+  return metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+    ? (metadata as Record<string, unknown>)
+    : {};
+}
+
+function isManualBankTransfer(metadata: unknown): boolean {
+  return asMetadataRecord(metadata).payment_provider === 'manual_bank_transfer';
+}
+
+function buildBankTransferDisplay(
+  metadata: unknown,
+  createdAt: string | null | undefined
+): BankTransferDisplay {
+  const meta = asMetadataRecord(metadata);
+  const bankTransfer =
+    meta.bank_transfer &&
+    typeof meta.bank_transfer === 'object' &&
+    !Array.isArray(meta.bank_transfer)
+      ? (meta.bank_transfer as Record<string, unknown>)
+      : {};
+  const fallback = getBankTransferInfo();
+  const baseTime = createdAt ? new Date(createdAt).getTime() : NaN;
+  const base = Number.isFinite(baseTime) ? baseTime : Date.now();
+  const fallbackDueDate = formatBankTransferDueDate(
+    new Date(base + fallback.deadlineHours * 60 * 60 * 1000),
+    extractBuyerLocale(metadata)
+  );
+
+  return {
+    bankName:
+      typeof bankTransfer.bankName === 'string' && bankTransfer.bankName.trim()
+        ? bankTransfer.bankName
+        : fallback.bankName,
+    accountNumber:
+      typeof bankTransfer.accountNumber === 'string' && bankTransfer.accountNumber.trim()
+        ? bankTransfer.accountNumber
+        : fallback.accountNumber,
+    holderName:
+      typeof bankTransfer.holderName === 'string' && bankTransfer.holderName.trim()
+        ? bankTransfer.holderName
+        : fallback.holderName,
+    dueDate:
+      typeof bankTransfer.dueDate === 'string' && bankTransfer.dueDate.trim()
+        ? bankTransfer.dueDate
+        : fallbackDueDate,
+  };
+}
+
 // 주문번호로 상세(작품·작가·결제수단·가상계좌 포함)를 조회·조립하는 공통 헬퍼.
 // lookupOrderDetail(이메일/세션 검증)과 lookupOrderByToken(서명 토큰 인증)이 공유한다.
 // 권한 검증은 호출자 책임 — 이 함수는 조회·조립만 한다.
@@ -364,6 +422,7 @@ async function fetchOrderDetailRow(
 
   let paymentMethod: string | null = null;
   let virtualAccount: OrderPublicInfo['virtualAccount'] = null;
+  let bankTransfer: OrderPublicInfo['bankTransfer'] = null;
 
   const { data: paymentRecord } = await adminClient
     .from('payments')
@@ -392,6 +451,9 @@ async function fetchOrderDetailRow(
       }
     }
   }
+  if (order.status === 'awaiting_deposit' && isManualBankTransfer(order.metadata)) {
+    bankTransfer = buildBankTransferDisplay(order.metadata, order.created_at);
+  }
 
   return {
     info: {
@@ -415,6 +477,7 @@ async function fetchOrderDetailRow(
       shippingCarrier: order.shipping_carrier ?? null,
       trackingNumber: order.tracking_number ?? null,
       virtualAccount,
+      bankTransfer,
     },
     buyerEmail: order.buyer_email,
     buyerUserId: order.buyer_user_id,

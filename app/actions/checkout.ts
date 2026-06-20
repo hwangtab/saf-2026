@@ -62,6 +62,17 @@ export type CreateOrderResult =
     }
   | { success: false; error: string; unavailable?: string[] };
 
+export type BankTransferDisplay = {
+  bankName: string;
+  accountNumber: string;
+  holderName: string;
+  dueDate: string;
+};
+
+export type BankTransferLandingResult =
+  | { ok: true; bankTransfer: BankTransferDisplay }
+  | { ok: false };
+
 const MAX_ORDER_NO_INSERT_RETRIES = 3;
 const CHECKOUT_TOKEN_BYTES = 32;
 const CHECKOUT_TOKEN_HASH_KEY = 'checkout_token_hash';
@@ -105,6 +116,55 @@ function isCheckoutTokenValid(metadata: unknown, checkoutToken: string) {
   const stored = Buffer.from(storedHash);
   const provided = Buffer.from(providedHash);
   return stored.length === provided.length && crypto.timingSafeEqual(stored, provided);
+}
+
+function asMetadataRecord(metadata: unknown): Record<string, unknown> {
+  return metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+    ? (metadata as Record<string, unknown>)
+    : {};
+}
+
+function getBuyerLocaleFromMetadata(metadata: unknown): ApiLocale {
+  return asMetadataRecord(metadata).locale === 'en' ? 'en' : 'ko';
+}
+
+function buildBankTransferDisplay(
+  metadata: unknown,
+  createdAt: string | null | undefined
+): BankTransferDisplay {
+  const meta = asMetadataRecord(metadata);
+  const bankTransfer =
+    meta.bank_transfer &&
+    typeof meta.bank_transfer === 'object' &&
+    !Array.isArray(meta.bank_transfer)
+      ? (meta.bank_transfer as Record<string, unknown>)
+      : {};
+  const fallback = getBankTransferInfo();
+  const baseTime = createdAt ? new Date(createdAt).getTime() : NaN;
+  const base = Number.isFinite(baseTime) ? baseTime : Date.now();
+  const fallbackDueDate = formatBankTransferDueDate(
+    new Date(base + fallback.deadlineHours * 60 * 60 * 1000),
+    getBuyerLocaleFromMetadata(metadata)
+  );
+
+  return {
+    bankName:
+      typeof bankTransfer.bankName === 'string' && bankTransfer.bankName.trim()
+        ? bankTransfer.bankName
+        : fallback.bankName,
+    accountNumber:
+      typeof bankTransfer.accountNumber === 'string' && bankTransfer.accountNumber.trim()
+        ? bankTransfer.accountNumber
+        : fallback.accountNumber,
+    holderName:
+      typeof bankTransfer.holderName === 'string' && bankTransfer.holderName.trim()
+        ? bankTransfer.holderName
+        : fallback.holderName,
+    dueDate:
+      typeof bankTransfer.dueDate === 'string' && bankTransfer.dueDate.trim()
+        ? bankTransfer.dueDate
+        : fallbackDueDate,
+  };
 }
 
 function checkoutCookieName(orderId: string) {
@@ -932,18 +992,18 @@ export async function cancelPendingOrder(orderNo: string, buyerEmail: string): P
 export async function verifyBankTransferLanding(
   orderId: string,
   checkoutToken: string
-): Promise<boolean> {
-  if (!orderId || typeof orderId !== 'string') return false;
+): Promise<BankTransferLandingResult> {
+  if (!orderId || typeof orderId !== 'string') return { ok: false };
   try {
     const token = checkoutToken || (await getCheckoutCookieByOrder(orderId))?.checkoutToken || '';
     const adminClient = createSupabaseAdminClient();
     const { data } = await adminClient
       .from('orders')
-      .select('id, metadata')
+      .select('id, created_at, metadata')
       .eq('order_no', orderId)
       .in('status', ['awaiting_deposit', 'paid', 'preparing'])
       .maybeSingle();
-    if (!data) return false;
+    if (!data) return { ok: false };
 
     // 토큰 도입 전 생성된 계좌이체 주문의 재방문은 허용한다.
     const storedHash = getCheckoutTokenHash(data.metadata);
@@ -952,11 +1012,21 @@ export async function verifyBankTransferLanding(
         typeof data.metadata === 'object' && data.metadata !== null
           ? (data.metadata as Record<string, unknown>).payment_provider
           : null;
-      return paymentProvider === 'manual_bank_transfer';
+      return paymentProvider === 'manual_bank_transfer'
+        ? {
+            ok: true,
+            bankTransfer: buildBankTransferDisplay(data.metadata, data.created_at),
+          }
+        : { ok: false };
     }
-    return isCheckoutTokenValid(data.metadata, token);
+    return isCheckoutTokenValid(data.metadata, token)
+      ? {
+          ok: true,
+          bankTransfer: buildBankTransferDisplay(data.metadata, data.created_at),
+        }
+      : { ok: false };
   } catch {
-    return false;
+    return { ok: false };
   }
 }
 
