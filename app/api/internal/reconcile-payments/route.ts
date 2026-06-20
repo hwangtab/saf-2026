@@ -207,10 +207,11 @@ export async function GET(request: NextRequest) {
     const { data: settledOrders, error: backfillFetchError } = await supabase
       .from('orders')
       .select(
-        'id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata, status, order_items(artwork_id, quantity, unit_price), payments(id)'
+        'id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata, status, order_items(artwork_id, quantity, unit_price), payments!left(id)'
       )
       .in('status', ['paid', 'awaiting_deposit'])
       .gte('created_at', since)
+      .is('payments.id', null)
       .order('created_at', { ascending: false })
       .limit(backfillLimit);
 
@@ -218,7 +219,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: backfillFetchError.message }, { status: 500 });
     }
 
-    const missingPaymentOrders = (settledOrders ?? []).filter((order) => !hasPaymentRows(order));
+    const missingPaymentOrders = settledOrders ?? [];
     let reconciled = 0;
     const errors: string[] = [];
 
@@ -226,7 +227,10 @@ export async function GET(request: NextRequest) {
       try {
         const provider = resolveOrderProvider(order.metadata);
         const tossPayment = await fetchPaymentByOrderId(order.order_no, provider);
-        if (!tossPayment) continue;
+        if (!tossPayment) {
+          errors.push(`${order.order_no}: Toss payment not found for missing payment backfill`);
+          continue;
+        }
 
         if (order.status === 'awaiting_deposit' && tossPayment.status === 'DONE') {
           const repaired = await reconcileMissingDoneOrder({
