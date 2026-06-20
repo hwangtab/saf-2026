@@ -128,6 +128,10 @@ function getBuyerLocaleFromMetadata(metadata: unknown): ApiLocale {
   return asMetadataRecord(metadata).locale === 'en' ? 'en' : 'ko';
 }
 
+function isManualBankTransferMetadata(metadata: unknown): boolean {
+  return asMetadataRecord(metadata).payment_provider === 'manual_bank_transfer';
+}
+
 function buildBankTransferDisplay(
   metadata: unknown,
   createdAt: string | null | undefined
@@ -1004,20 +1008,15 @@ export async function verifyBankTransferLanding(
       .in('status', ['awaiting_deposit', 'paid', 'preparing'])
       .maybeSingle();
     if (!data) return { ok: false };
+    if (!isManualBankTransferMetadata(data.metadata)) return { ok: false };
 
     // 토큰 도입 전 생성된 계좌이체 주문의 재방문은 허용한다.
     const storedHash = getCheckoutTokenHash(data.metadata);
     if (!storedHash) {
-      const paymentProvider =
-        typeof data.metadata === 'object' && data.metadata !== null
-          ? (data.metadata as Record<string, unknown>).payment_provider
-          : null;
-      return paymentProvider === 'manual_bank_transfer'
-        ? {
-            ok: true,
-            bankTransfer: buildBankTransferDisplay(data.metadata, data.created_at),
-          }
-        : { ok: false };
+      return {
+        ok: true,
+        bankTransfer: buildBankTransferDisplay(data.metadata, data.created_at),
+      };
     }
     return isCheckoutTokenValid(data.metadata, token)
       ? {

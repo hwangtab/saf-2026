@@ -106,6 +106,15 @@ function extractLocale(metadata: unknown): 'ko' | 'en' {
   return (metadata as Record<string, unknown>).locale === 'en' ? 'en' : 'ko';
 }
 
+function isManualBankTransfer(metadata: unknown): boolean {
+  return (
+    metadata != null &&
+    typeof metadata === 'object' &&
+    !Array.isArray(metadata) &&
+    (metadata as Record<string, unknown>).payment_provider === 'manual_bank_transfer'
+  );
+}
+
 function extractBankTransferInfo(
   metadata: unknown,
   createdAt: string | null | undefined,
@@ -145,6 +154,32 @@ function extractBankTransferInfo(
       typeof bankTransfer.holderName === 'string' && bankTransfer.holderName.trim()
         ? bankTransfer.holderName
         : fallback.holderName,
+    dueDate,
+  };
+}
+
+function extractTossVirtualAccount(
+  confirmResponse: unknown
+): BuyerSmsData['virtualAccount'] | null {
+  if (!confirmResponse || typeof confirmResponse !== 'object' || Array.isArray(confirmResponse)) {
+    return null;
+  }
+  const virtualAccount = (confirmResponse as Record<string, unknown>).virtualAccount;
+  if (!virtualAccount || typeof virtualAccount !== 'object' || Array.isArray(virtualAccount)) {
+    return null;
+  }
+  const va = virtualAccount as Record<string, unknown>;
+  const bankName = typeof va.bankName === 'string' && va.bankName.trim() ? va.bankName : null;
+  const accountNumber =
+    typeof va.accountNumber === 'string' && va.accountNumber.trim() ? va.accountNumber : null;
+  const dueDate = typeof va.dueDate === 'string' && va.dueDate.trim() ? va.dueDate : null;
+  if (!bankName || !accountNumber || !dueDate) return null;
+
+  return {
+    bankName,
+    accountNumber,
+    holderName:
+      typeof va.holderName === 'string' && va.holderName.trim() ? va.holderName : undefined,
     dueDate,
   };
 }
@@ -218,7 +253,7 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
     .select(
-      'order_no, buyer_name, buyer_phone, total_amount, shipping_carrier, tracking_number, created_at, metadata, artworks(title, artists(name_ko)), order_items(artworks(title, artists(name_ko)))'
+      'id, order_no, buyer_name, buyer_phone, total_amount, shipping_carrier, tracking_number, created_at, metadata, artworks(title, artists(name_ko)), order_items(artworks(title, artists(name_ko)))'
     )
     .eq('order_no', log.order_no)
     .maybeSingle();
@@ -240,7 +275,25 @@ export async function resendSms(logId: string): Promise<{ ok: boolean; error?: s
     trackingNumber: order.tracking_number ?? undefined,
   };
   if (type === 'virtual_account_issued') {
-    data.virtualAccount = extractBankTransferInfo(order.metadata, order.created_at, locale);
+    if (isManualBankTransfer(order.metadata)) {
+      data.virtualAccount = extractBankTransferInfo(order.metadata, order.created_at, locale);
+    } else {
+      if (!order.id) {
+        return { ok: false, error: '가상계좌 정보를 찾을 수 없습니다.' };
+      }
+      const { data: paymentData, error: paymentError } = await supabase
+        .from('payments')
+        .select('confirm_response')
+        .eq('order_id', order.id)
+        .maybeSingle();
+      const virtualAccount = paymentError
+        ? null
+        : extractTossVirtualAccount(paymentData?.confirm_response);
+      if (!virtualAccount) {
+        return { ok: false, error: '가상계좌 정보를 찾을 수 없습니다.' };
+      }
+      data.virtualAccount = virtualAccount;
+    }
   }
 
   const res = await sendBuyerSms(order.buyer_phone, type, data, locale, order.order_no);

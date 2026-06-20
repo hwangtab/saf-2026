@@ -1112,6 +1112,28 @@ describe('verifyBankTransferLanding', () => {
     });
   });
 
+  it('checkout token 보호 주문도 manual_bank_transfer가 아니면 무통장 랜딩을 거부', async () => {
+    process.env.BANK_TRANSFER_BANK_NAME = '운영은행';
+    process.env.BANK_TRANSFER_ACCOUNT_NUMBER = '777-888';
+    process.env.BANK_TRANSFER_HOLDER_NAME = '운영 예금주';
+    mockOrderSelectResult = {
+      data: {
+        id: 'order-1',
+        created_at: '2026-06-19T05:00:00.000Z',
+        metadata: {
+          locale: 'ko',
+          payment_provider: 'api_v1',
+          checkout_token_hash: hashCheckoutToken('valid-token'),
+        },
+      },
+      error: null,
+    };
+
+    await expect(verifyBankTransferLanding('SAF-20260414-TEST', 'valid-token')).resolves.toEqual({
+      ok: false,
+    });
+  });
+
   it('checkout token 보호 주문은 invalid token을 거부', async () => {
     mockOrderSelectResult = {
       data: {

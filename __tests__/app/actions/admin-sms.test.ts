@@ -212,6 +212,7 @@ describe('resendSms', () => {
       created_at: '2026-06-19T05:00:00.000Z',
       metadata: {
         locale: 'ko',
+        payment_provider: 'manual_bank_transfer',
         bank_transfer: {
           bankName: '기업은행 (IBK)',
           accountNumber: '301-101031-04-095',
@@ -250,7 +251,100 @@ describe('resendSms', () => {
     );
   });
 
-  it('virtual_account_issued legacy 주문은 created_at + configured deadline/locale fallback으로 재발송', async () => {
+  it('Toss virtual_account_issued 실패 로그는 payments.confirm_response 가상계좌로 재발송', async () => {
+    process.env.BANK_TRANSFER_BANK_NAME = 'SAF수동은행';
+    process.env.BANK_TRANSFER_ACCOUNT_NUMBER = '000-0000';
+    process.env.BANK_TRANSFER_HOLDER_NAME = 'SAF 수동 예금주';
+    const logRow = {
+      id: 'log-va-toss',
+      order_no: 'SAF-VA-TOSS',
+      to_phone: '01012345678',
+      type: 'virtual_account_issued',
+      status: 'failed',
+    };
+    const orderRow = {
+      id: 'order-toss',
+      order_no: 'SAF-VA-TOSS',
+      buyer_name: '홍길동',
+      buyer_phone: '01012345678',
+      total_amount: 50000,
+      shipping_carrier: null,
+      tracking_number: null,
+      created_at: '2026-06-19T05:00:00.000Z',
+      metadata: { locale: 'ko', payment_provider: 'api_v1' },
+      artworks: { title: '들꽃', artists: { name_ko: '김작가' } },
+    };
+    const paymentRow = {
+      confirm_response: {
+        virtualAccount: {
+          bankName: '토스가상은행',
+          accountNumber: '1234567890',
+          dueDate: '2026-06-21T14:00:00+09:00',
+        },
+      },
+    };
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'sms_logs')
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      if (table === 'orders')
+        return createSupabaseQueryMock({ data: orderRow, error: null }) as never;
+      if (table === 'payments')
+        return createSupabaseQueryMock({ data: paymentRow, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
+    });
+    const result = await resendSms('log-va-toss');
+    expect(result.ok).toBe(true);
+    expect(mockSendBuyerSms).toHaveBeenCalledWith(
+      '01012345678',
+      'virtual_account_issued',
+      expect.objectContaining({
+        virtualAccount: {
+          bankName: '토스가상은행',
+          accountNumber: '1234567890',
+          dueDate: '2026-06-21T14:00:00+09:00',
+        },
+      }),
+      'ko',
+      'SAF-VA-TOSS'
+    );
+  });
+
+  it('non-manual virtual_account_issued 재발송은 Toss 가상계좌가 없으면 발송하지 않음', async () => {
+    const logRow = {
+      id: 'log-va-missing-payment',
+      order_no: 'SAF-VA-MISSING',
+      to_phone: '01012345678',
+      type: 'virtual_account_issued',
+      status: 'failed',
+    };
+    const orderRow = {
+      id: 'order-missing-payment',
+      order_no: 'SAF-VA-MISSING',
+      buyer_name: '홍길동',
+      buyer_phone: '01012345678',
+      total_amount: 50000,
+      shipping_carrier: null,
+      tracking_number: null,
+      created_at: '2026-06-19T05:00:00.000Z',
+      metadata: { locale: 'ko', payment_provider: 'api_v1' },
+      artworks: { title: '들꽃', artists: { name_ko: '김작가' } },
+    };
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'sms_logs')
+        return createSupabaseQueryMock({ data: logRow, error: null }) as never;
+      if (table === 'orders')
+        return createSupabaseQueryMock({ data: orderRow, error: null }) as never;
+      if (table === 'payments')
+        return createSupabaseQueryMock({ data: null, error: null }) as never;
+      return createSupabaseQueryMock({ data: null, error: null }) as never;
+    });
+    const result = await resendSms('log-va-missing-payment');
+    expect(result.ok).toBe(false);
+    expect(result.error).toContain('가상계좌');
+    expect(mockSendBuyerSms).not.toHaveBeenCalled();
+  });
+
+  it('manual_bank_transfer virtual_account_issued 주문은 created_at + configured deadline/locale fallback으로 재발송', async () => {
     process.env.BANK_TRANSFER_DEADLINE_HOURS = '36';
     const expectedDueDate = new Date('2026-06-20T17:00:00.000Z').toLocaleString('ko-KR', {
       timeZone: 'Asia/Seoul',
@@ -270,7 +364,7 @@ describe('resendSms', () => {
       shipping_carrier: null,
       tracking_number: null,
       created_at: '2026-06-19T05:00:00.000Z',
-      metadata: { locale: 'ko' },
+      metadata: { locale: 'ko', payment_provider: 'manual_bank_transfer' },
       artworks: { title: '들꽃', artists: { name_ko: '김작가' } },
     };
     mockFrom.mockImplementation((table: string) => {
