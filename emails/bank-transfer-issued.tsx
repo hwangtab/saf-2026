@@ -4,7 +4,7 @@ import * as React from 'react';
 import SAFEmailLayout from './_components/saf-email-layout';
 import OrderInfoTable from './_components/order-info-table';
 import OrderCtaButton from './_components/order-cta-button';
-import { formatAmount, formatDate, t, type EmailLocale } from './_components/i18n';
+import { formatAmount, t, type EmailLocale } from './_components/i18n';
 
 export interface BankTransferIssuedEmailProps {
   buyerName: string;
@@ -43,9 +43,7 @@ export default function BankTransferIssuedEmail({
     ...(bankTransfer.holderName
       ? [{ label: locale === 'en' ? 'Account Holder' : '예금주', value: bankTransfer.holderName }]
       : []),
-    ...(bankTransfer.dueDate
-      ? [{ label: t('dueDate', locale), value: formatDate(bankTransfer.dueDate, locale) }]
-      : []),
+    ...(bankTransfer.dueDate ? [{ label: t('dueDate', locale), value: bankTransfer.dueDate }] : []),
   ];
 
   const header =
