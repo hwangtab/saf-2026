@@ -71,6 +71,7 @@ function createOrdersBuilder(result: QueryResult) {
     gte: jest.fn(() => builder),
     lt: jest.fn(() => builder),
     is: jest.fn(() => builder),
+    or: jest.fn(() => builder),
     order: jest.fn(() => builder),
     limit: jest.fn(() => builder),
     then: (resolve: (value: QueryResult) => unknown) => resolve(result),
@@ -159,6 +160,9 @@ describe('reconcile-payments missing-payment backfill mode', () => {
     const query = ordersBuilders[0];
     expect(query.select).toHaveBeenCalledWith(expect.stringContaining('payments!left(id)'));
     expect(query.is).toHaveBeenCalledWith('payments', null);
+    expect(query.or).toHaveBeenCalledWith(
+      'metadata->>payment_provider.is.null,metadata->>payment_provider.neq.manual_bank_transfer'
+    );
     expect(query.limit).toHaveBeenCalledWith(2);
     expect(mockEnsureTossPaymentRecord).toHaveBeenCalledWith(
       expect.objectContaining({ orderId: 'order-1' })
@@ -170,6 +174,35 @@ describe('reconcile-payments missing-payment backfill mode', () => {
         reconciled: 1,
       })
     );
+  });
+
+  it('does not report normal manual bank-transfer orders as Toss backfill errors', async () => {
+    queuedOrderResults = [
+      {
+        data: [
+          {
+            id: 'order-manual',
+            order_no: 'SAF-MANUAL',
+            status: 'awaiting_deposit',
+            metadata: { payment_provider: 'manual_bank_transfer' },
+          },
+        ],
+        error: null,
+      },
+    ];
+
+    const res = await run('/api/internal/reconcile-payments?scope=missing-payments-backfill');
+    const body = await res.json();
+
+    expect(body).toEqual(
+      expect.objectContaining({
+        checked: 1,
+        reconciled: 0,
+      })
+    );
+    expect(body.errors).toBeUndefined();
+    expect(mockFetchPaymentByOrderId).not.toHaveBeenCalled();
+    expect(mockEnsureTossPaymentRecord).not.toHaveBeenCalled();
   });
 
   it('reports missing Toss evidence for a settled order instead of silently succeeding', async () => {

@@ -57,6 +57,10 @@ function metadataRecord(metadata: unknown): Record<string, unknown> {
     : {};
 }
 
+function isManualBankTransferOrder(metadata: unknown): boolean {
+  return metadataRecord(metadata).payment_provider === 'manual_bank_transfer';
+}
+
 async function reconcileMissingDoneOrder({
   supabase,
   order,
@@ -212,6 +216,9 @@ export async function GET(request: NextRequest) {
       .in('status', ['paid', 'awaiting_deposit'])
       .gte('created_at', since)
       .is('payments', null)
+      .or(
+        'metadata->>payment_provider.is.null,metadata->>payment_provider.neq.manual_bank_transfer'
+      )
       .order('created_at', { ascending: false })
       .limit(backfillLimit);
 
@@ -225,6 +232,8 @@ export async function GET(request: NextRequest) {
 
     for (const order of missingPaymentOrders) {
       try {
+        if (isManualBankTransferOrder(order.metadata)) continue;
+
         const provider = resolveOrderProvider(order.metadata);
         const tossPayment = await fetchPaymentByOrderId(order.order_no, provider);
         if (!tossPayment) {

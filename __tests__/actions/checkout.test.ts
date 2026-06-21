@@ -1260,11 +1260,12 @@ describe('createBankTransferOrder', () => {
     );
     expect(mockSendBuyerEmail).toHaveBeenCalledWith(
       'buyer@test.com',
-      'virtual_account_issued',
+      'bank_transfer_issued',
       expect.objectContaining({
         virtualAccount: {
           bankName: '신한은행',
           accountNumber: '110-000-000000',
+          holderName: '씨앗페',
           dueDate: expectedDueDate,
         },
       }),
@@ -1284,6 +1285,15 @@ describe('createBankTransferOrder', () => {
       'ko',
       'SAF-20260414-TEST'
     );
+  });
+
+  it('수동 계좌이체 구매자 이메일은 가상계좌 템플릿이 아니라 전용 템플릿을 사용한다', () => {
+    const checkoutSrc = readSource('app/actions/checkout.ts');
+    const emailSrc = readSource('emails/bank-transfer-issued.tsx');
+
+    expect(checkoutSrc).toContain("'bank_transfer_issued'");
+    expect(emailSrc).toContain('계좌이체 입금 안내');
+    expect(emailSrc).not.toContain('가상계좌');
   });
 
   it('FIX-5: 다품목 무통장 주문은 모든 unique 작품을 reserved 처리한다', async () => {

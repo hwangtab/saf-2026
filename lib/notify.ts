@@ -12,6 +12,7 @@ import * as React from 'react';
 import { BRAND_COLORS } from '@/lib/colors';
 import PaymentConfirmedEmail from '@/emails/payment-confirmed';
 import VirtualAccountIssuedEmail from '@/emails/virtual-account-issued';
+import BankTransferIssuedEmail from '@/emails/bank-transfer-issued';
 import DepositConfirmedEmail from '@/emails/deposit-confirmed';
 import ShippedEmail from '@/emails/shipped';
 import DeliveredEmail from '@/emails/delivered';
@@ -142,6 +143,7 @@ export async function notifyEmail(
 export type BuyerEmailType =
   | 'payment_confirmed'
   | 'virtual_account_issued'
+  | 'bank_transfer_issued'
   | 'deposit_confirmed'
   | 'shipped'
   | 'delivered'
@@ -155,7 +157,12 @@ export interface BuyerEmailData {
   artistName: string;
   amount: number;
   paymentMethod?: string;
-  virtualAccount?: { bankName?: string; accountNumber?: string; dueDate?: string };
+  virtualAccount?: {
+    bankName?: string;
+    accountNumber?: string;
+    holderName?: string;
+    dueDate?: string;
+  };
   carrier?: string;
   trackingNumber?: string;
   itemAmount?: number;
@@ -172,6 +179,7 @@ const BUYER_EMAIL_SUBJECTS: Record<EmailLocale, Record<BuyerEmailType, string>> 
   ko: {
     payment_confirmed: '[씨앗페] 감사합니다. 작품을 준비하고 있습니다',
     virtual_account_issued: '[씨앗페] 가상계좌 입금 안내',
+    bank_transfer_issued: '[씨앗페] 계좌이체 입금 안내',
     deposit_confirmed: '[씨앗페] 입금이 확인되었습니다. 작품을 준비하고 있습니다',
     shipped: '[씨앗페] 작품이 발송되었습니다',
     delivered: '[씨앗페] 작품이 배송 완료되었습니다',
@@ -181,6 +189,7 @@ const BUYER_EMAIL_SUBJECTS: Record<EmailLocale, Record<BuyerEmailType, string>> 
   en: {
     payment_confirmed: "[SAF] Thank you. We're preparing your artwork",
     virtual_account_issued: '[SAF] Virtual account deposit instructions',
+    bank_transfer_issued: '[SAF] Bank transfer deposit instructions',
     deposit_confirmed: '[SAF] Deposit confirmed — preparing your artwork',
     shipped: '[SAF] Your artwork has shipped',
     delivered: '[SAF] Your artwork has been delivered',
@@ -238,6 +247,18 @@ export async function sendBuyerEmail(
           artistName: data.artistName,
           amount: data.amount,
           virtualAccount: data.virtualAccount ?? {},
+          orderUrl,
+          locale,
+        });
+        break;
+      case 'bank_transfer_issued':
+        emailElement = React.createElement(BankTransferIssuedEmail, {
+          buyerName: data.buyerName,
+          orderNo: data.orderNo,
+          artworkTitle: data.artworkTitle,
+          artistName: data.artistName,
+          amount: data.amount,
+          bankTransfer: data.virtualAccount ?? {},
           orderUrl,
           locale,
         });

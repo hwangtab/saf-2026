@@ -879,7 +879,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
   }
 
   // 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
-  // - 구매자: virtual_account_issued 템플릿 재사용 (bankName/accountNumber/dueDate 동일 구조)
+  // - 구매자: 수동 계좌이체 전용 템플릿
   // - 관리자: 입금 대기 알림
   after(async () => {
     try {
@@ -909,7 +909,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
         () =>
           sendBuyerEmail(
             input.buyerEmail.trim().toLowerCase(),
-            'virtual_account_issued',
+            'bank_transfer_issued',
             {
               orderNo: result.orderNo,
               buyerName: input.buyerName,
@@ -919,6 +919,7 @@ export async function createBankTransferOrder(input: CreateOrderInput): Promise<
               virtualAccount: {
                 bankName: bankTransferMetadata.bankName,
                 accountNumber: bankTransferMetadata.accountNumber,
+                holderName: bankTransferMetadata.holderName,
                 dueDate: bankTransferMetadata.dueDate,
               },
             },

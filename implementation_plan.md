@@ -36,7 +36,7 @@
 - Consumes: `schedulePublicArtworkSurfaceRevalidation(artistNames, context)` in `app/actions/admin-artworks.ts`
 - Produces: missing env or HTTP failure is recorded through `notifyEmail` and `logSystemAction`, not only `console.error`.
 
-- [ ] **Step 1: Add failing helper tests**
+- [x] **Step 1: Add failing helper tests**
 
 Create `__tests__/lib/public-artwork-revalidation.test.ts`:
 
@@ -89,7 +89,7 @@ describe('public artwork revalidation config', () => {
 });
 ```
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run:
 
@@ -99,7 +99,7 @@ npm test -- --runInBand __tests__/lib/public-artwork-revalidation.test.ts
 
 Expected: FAIL with module not found for `@/lib/admin/public-artwork-revalidation`.
 
-- [ ] **Step 3: Add helper implementation**
+- [x] **Step 3: Add helper implementation**
 
 Create `lib/admin/public-artwork-revalidation.ts`:
 
@@ -148,7 +148,7 @@ export function resolvePublicArtworkRevalidationConfig(
 }
 ```
 
-- [ ] **Step 4: Run GREEN for helper**
+- [x] **Step 4: Run GREEN for helper**
 
 Run:
 
@@ -158,7 +158,7 @@ npm test -- --runInBand __tests__/lib/public-artwork-revalidation.test.ts
 
 Expected: PASS.
 
-- [ ] **Step 5: Add failing source contract for visible failure handling**
+- [x] **Step 5: Add failing source contract for visible failure handling**
 
 Update `__tests__/app/admin-artwork-create-revalidate-contract.test.ts` with:
 
@@ -173,7 +173,7 @@ it('reports public artwork revalidation schedule failures to operator-visible ch
 });
 ```
 
-- [ ] **Step 6: Run RED**
+- [x] **Step 6: Run RED**
 
 Run:
 
@@ -183,7 +183,7 @@ npm test -- --runInBand __tests__/app/admin-artwork-create-revalidate-contract.t
 
 Expected: FAIL because `app/actions/admin-artworks.ts` still logs missing env only with `console.error`.
 
-- [ ] **Step 7: Update scheduler implementation**
+- [x] **Step 7: Update scheduler implementation**
 
 Modify `app/actions/admin-artworks.ts`:
 
@@ -289,7 +289,7 @@ schedulePublicArtworkSurfaceRevalidation([artistName], {
 });
 ```
 
-- [ ] **Step 8: Run GREEN**
+- [x] **Step 8: Run GREEN**
 
 Run:
 
@@ -317,7 +317,7 @@ Expected: PASS.
 - Produces: default cron behavior remains the existing 5~28 minute window when `scope` is absent.
 - Consumes: existing `ensureTossPaymentRecord` and `reconcileMissingDoneOrder` flow.
 
-- [ ] **Step 1: Add failing backfill contract test**
+- [x] **Step 1: Add failing backfill contract test**
 
 Create `__tests__/app/reconcile-payments-backfill-contract.test.ts`:
 
@@ -344,7 +344,7 @@ describe('reconcile-payments missing-payment backfill mode', () => {
 });
 ```
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run:
 
@@ -354,7 +354,7 @@ npm test -- --runInBand __tests__/app/reconcile-payments-backfill-contract.test.
 
 Expected: FAIL because backfill mode is not present.
 
-- [ ] **Step 3: Add bounded query parsing helpers in route**
+- [x] **Step 3: Add bounded query parsing helpers in route**
 
 Add near the top of `app/api/internal/reconcile-payments/route.ts`:
 
@@ -374,7 +374,7 @@ function parseBackfillLimit(searchParams: URLSearchParams): number {
 }
 ```
 
-- [ ] **Step 4: Implement backfill branch without changing cron branch**
+- [x] **Step 4: Implement backfill branch without changing cron branch**
 
 Inside `GET(request: NextRequest)`, after Supabase admin client creation and before normal `minAge/maxAge` query:
 
@@ -472,7 +472,7 @@ if (scope === 'missing-payments-backfill') {
 }
 ```
 
-- [ ] **Step 5: Run GREEN**
+- [x] **Step 5: Run GREEN**
 
 Run:
 
@@ -482,7 +482,7 @@ npm test -- --runInBand __tests__/app/reconcile-payments-backfill-contract.test.
 
 Expected: PASS.
 
-- [ ] **Step 6: Manual runtime command for operator use**
+- [x] **Step 6: Manual runtime command for operator use**
 
 After deploy, run the protected backfill once from a trusted shell with the production `CRON_SECRET`:
 
@@ -514,7 +514,7 @@ Expected: JSON with `scope:"missing-payments-backfill"`, `checked`, `reconciled`
 - Produces: `formatBankTransferDueDate(date: Date, locale: 'ko' | 'en'): string`
 - Produces: checkout and admin SMS resend both import the helper instead of duplicating account constants.
 
-- [ ] **Step 1: Add failing helper tests**
+- [x] **Step 1: Add failing helper tests**
 
 Create `__tests__/lib/bank-transfer-info.test.ts`:
 
@@ -556,7 +556,7 @@ describe('bank transfer info', () => {
 });
 ```
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run:
 
@@ -566,7 +566,7 @@ npm test -- --runInBand __tests__/lib/bank-transfer-info.test.ts
 
 Expected: FAIL with module not found.
 
-- [ ] **Step 3: Add helper implementation**
+- [x] **Step 3: Add helper implementation**
 
 Create `lib/payments/bank-transfer-info.ts`:
 
@@ -610,7 +610,7 @@ export function formatBankTransferDueDate(date: Date, locale: 'ko' | 'en') {
 }
 ```
 
-- [ ] **Step 4: Run GREEN for helper**
+- [x] **Step 4: Run GREEN for helper**
 
 Run:
 
@@ -620,7 +620,7 @@ npm test -- --runInBand __tests__/lib/bank-transfer-info.test.ts
 
 Expected: PASS.
 
-- [ ] **Step 5: Replace checkout duplicate constants**
+- [x] **Step 5: Replace checkout duplicate constants**
 
 In `app/actions/checkout.ts`, remove local `BANK_TRANSFER_INFO`, `DEPOSIT_DEADLINE_HOURS`, and local `formatBankTransferDueDate`. Add:
 
@@ -645,7 +645,7 @@ const bankTransferMetadata = {
 
 Use `bankTransferInfo.bankName`, `bankTransferInfo.accountNumber`, and `bankTransferInfo.holderName` in the admin notification fields.
 
-- [ ] **Step 6: Replace admin SMS fallback duplicate constants**
+- [x] **Step 6: Replace admin SMS fallback duplicate constants**
 
 In `app/actions/admin-sms.ts`, remove local `BANK_TRANSFER_FALLBACK`, `DEPOSIT_DEADLINE_HOURS`, and local `formatBankTransferDueDate`. Add:
 
@@ -684,7 +684,7 @@ return {
 };
 ```
 
-- [ ] **Step 7: Document env names**
+- [x] **Step 7: Document env names**
 
 Add to `.env.local.example`:
 
@@ -697,7 +697,7 @@ BANK_TRANSFER_HOLDER_NAME="한국스마트협동조합"
 BANK_TRANSFER_DEADLINE_HOURS="24"
 ```
 
-- [ ] **Step 8: Run GREEN**
+- [x] **Step 8: Run GREEN**
 
 Run:
 
@@ -719,7 +719,7 @@ Expected: PASS.
 
 - Produces: a short Korean walkthrough with changed files, commands run, backfill URL, and operational caveats.
 
-- [ ] **Step 1: Run full local verification**
+- [x] **Step 1: Run full local verification**
 
 Run:
 
@@ -737,7 +737,7 @@ Expected:
 - `test`: all suites pass
 - `validate-artworks`: exit 0; existing warnings may remain and must be reported as warnings, not failures
 
-- [ ] **Step 2: Check whether build changed generated files before deciding to run it**
+- [x] **Step 2: Check whether build changed generated files before deciding to run it**
 
 Run:
 
@@ -753,7 +753,7 @@ npm run build
 
 Expected: exit 0. If `content/changelog.json`, `lib/site-stats.ts`, or generated hero quality files change, inspect and either commit them with the implementation or explicitly leave build unrun in the final report.
 
-- [ ] **Step 3: Write walkthrough**
+- [x] **Step 3: Write walkthrough**
 
 Update `walkthrough.md` with:
 
@@ -784,7 +784,7 @@ curl -fsS \
 
 ````
 
-- [ ] **Step 4: Final clean-tree check**
+- [x] **Step 4: Final clean-tree check**
 
 Run:
 
