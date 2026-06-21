@@ -23,6 +23,7 @@ curl -fsS \
 
 - 응답의 `checked`는 실제로 payment row가 없는 주문 수다.
 - `errors`가 있으면 주문번호별 Toss 상태와 SAF 주문 상태를 확인한 뒤 재실행한다.
+- backfill은 누락 payment row와 주문 상태를 복구하지만 고객 알림을 자동 재발송하지 않는다. 결과 JSON을 확인한 뒤 필요한 고객 안내는 운영자가 별도로 판단한다.
 - `lookbackDays`는 1~90, `limit`은 1~500으로 제한된다.
 
 ## 검증
