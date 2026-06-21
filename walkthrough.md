@@ -31,7 +31,7 @@ curl -fsS \
   - 기존 Browserslist stale 경고와 대형 generated 파일 Babel deopt 안내만 출력.
 - `npm run type-check` 통과
 - `npm test -- --runInBand` 통과
-  - 195 suites / 1456 tests
+  - 196 suites / 1457 tests
 - `npm run validate-artworks` 통과
   - exit 0, 기존 작품 데이터 경고 63개 출력.
 
