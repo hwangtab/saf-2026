@@ -176,6 +176,23 @@ describe('reconcile-payments missing-payment backfill mode', () => {
     );
   });
 
+  it('uses documented backfill defaults when lookbackDays and limit are omitted', async () => {
+    jest.spyOn(Date, 'now').mockReturnValue(new Date('2026-06-20T00:00:00.000Z').getTime());
+    queuedOrderResults = [{ data: [], error: null }];
+
+    const res = await run('/api/internal/reconcile-payments?scope=missing-payments-backfill');
+    const body = await res.json();
+
+    expect(body).toEqual(
+      expect.objectContaining({
+        lookbackDays: 30,
+        limit: 100,
+      })
+    );
+    expect(ordersBuilders[0].gte).toHaveBeenCalledWith('created_at', '2026-05-21T00:00:00.000Z');
+    expect(ordersBuilders[0].limit).toHaveBeenCalledWith(100);
+  });
+
   it('does not report normal manual bank-transfer orders as Toss backfill errors', async () => {
     queuedOrderResults = [
       {
