@@ -10,7 +10,7 @@
   - 오래된 `paid`/`awaiting_deposit` 주문 중 `payments` row가 없는 주문만 PostgREST anti-join으로 조회한다.
   - Toss 증거가 없으면 성공처럼 숨기지 않고 응답 `errors`에 남긴다.
 - 계좌이체 안내 계좌/기한 정보를 `lib/payments/bank-transfer-info.ts` 단일 출처로 통합했다.
-  - checkout metadata, 관리자 알림, 구매자 SMS 재발송, 성공 화면, 주문조회 화면이 같은 payload를 사용한다.
+  - checkout metadata, 관리자 알림, 구매자 이메일/SMS, SMS 재발송, 성공 화면, 주문조회 화면이 같은 payload를 사용한다.
   - Toss 가상계좌와 SAF 수동 계좌이체 fallback을 분리해 잘못된 계좌 재발송을 막았다.
 
 ## 운영 명령
@@ -31,7 +31,7 @@ curl -fsS \
   - 기존 Browserslist stale 경고와 대형 generated 파일 Babel deopt 안내만 출력.
 - `npm run type-check` 통과
 - `npm test -- --runInBand` 통과
-  - 195 suites / 1453 tests
+  - 195 suites / 1455 tests
 - `npm run validate-artworks` 통과
   - exit 0, 기존 작품 데이터 경고 63개 출력.
 
