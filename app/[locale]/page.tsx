@@ -24,7 +24,7 @@ import {
   createBreadcrumbSchema,
 } from '@/lib/seo-utils';
 import { generateMechanismHowTo } from '@/lib/schemas/howto';
-import { getSupabaseArtworksByCategories, getSupabaseFAQs } from '@/lib/supabase-data';
+import { getHomepageCategoryArtworks, getSupabaseFAQs } from '@/lib/supabase-data';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { getMediumHubSlug } from '@/lib/artwork-medium-hub';
 import { buildLocaleUrl, createLocaleAlternates } from '@/lib/locale-alternates';
@@ -284,10 +284,10 @@ async function CategorySections({ locale }: { locale: string }) {
   // 전체 카테고리는 viewAllHref(/artworks/category/...)에서 그리드로 안내됨.
   const [paintingArtworks, printArtworks, photoMediaArtworks, sculptureArtworks] =
     await Promise.all([
-      getSupabaseArtworksByCategories(['회화', '한국화', '드로잉'], 8),
-      getSupabaseArtworksByCategories(['판화', '사후판화', '아트프린트'], 8),
-      getSupabaseArtworksByCategories(['사진', '디지털아트', '혼합매체'], 8),
-      getSupabaseArtworksByCategories(['조각', '도자공예'], 8),
+      getHomepageCategoryArtworks(['회화', '한국화', '드로잉'], 8),
+      getHomepageCategoryArtworks(['판화', '사후판화', '아트프린트'], 8),
+      getHomepageCategoryArtworks(['사진', '디지털아트', '혼합매체'], 8),
+      getHomepageCategoryArtworks(['조각', '도자공예'], 8),
     ]);
 
   const sections: {

@@ -11,6 +11,7 @@ import { newsArticles } from '@/content/news';
 import { faqs, faqsEn, getFaqsByLocale } from '@/content/faq';
 import { testimonials } from '@/content/testimonials';
 import { exhibitionReviews } from '@/content/reviews';
+import { composeHomepageCategoryArtworks } from '@/lib/homepage-category-artworks';
 import type {
   Artwork,
   EditionType,
@@ -310,6 +311,85 @@ const getSupabaseArtworksByCategoriesCached = unstable_cache(
 export const getSupabaseArtworksByCategories = cache(
   async (categories: string[], limit = 20): Promise<Artwork[]> =>
     pickRandomItems(await getSupabaseArtworksByCategoriesCached(categories, limit), limit)
+);
+
+const mapLightArtworkRow = (item: LightArtworkWithArtistRow): Artwork =>
+  mapArtworkRow(
+    item as unknown as ArtworkRow,
+    pickArtist(item.artists as unknown as ArtistRow | ArtistRow[] | null)
+  );
+
+const composeHomepageCategoryFallback = (categories: string[], limit: number): Artwork[] => {
+  const matching = fallbackArtworks.filter((a) => categories.includes(a.category || ''));
+  return composeHomepageCategoryArtworks({
+    available: pickRandomItems(
+      matching.filter((a) => !a.sold && !a.reserved),
+      limit
+    ),
+    sold: matching
+      .filter((a) => a.sold)
+      .sort((a, b) => String(b.sold_at || '').localeCompare(String(a.sold_at || ''))),
+    limit,
+  });
+};
+
+const getHomepageCategoryArtworksUncached = async (
+  categories: string[],
+  limit: number
+): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return composeHomepageCategoryFallback(categories, limit);
+  }
+
+  const [availableResult, soldResult] = await Promise.all([
+    supabase
+      .from('artworks')
+      .select(`${LIGHT_ARTWORK_COLUMNS}, artists (${LIGHT_ARTIST_COLUMNS})`)
+      .eq('is_hidden', false)
+      .eq('status', 'available')
+      .in('category', categories)
+      .limit(limit * 3)
+      .returns<LightArtworkWithArtistRow[]>(),
+    supabase
+      .from('artworks')
+      .select(`${LIGHT_ARTWORK_COLUMNS}, artists (${LIGHT_ARTIST_COLUMNS})`)
+      .eq('is_hidden', false)
+      .eq('status', 'sold')
+      .not('sold_at', 'is', null)
+      .in('category', categories)
+      .order('sold_at', { ascending: false })
+      .limit(3)
+      .returns<LightArtworkWithArtistRow[]>(),
+  ]);
+
+  if (availableResult.error || soldResult.error) {
+    console.error('Error fetching homepage category artworks from Supabase:', {
+      availableError: availableResult.error,
+      soldError: soldResult.error,
+    });
+    return composeHomepageCategoryFallback(categories, limit);
+  }
+
+  return composeHomepageCategoryArtworks({
+    available: pickRandomItems((availableResult.data || []).map(mapLightArtworkRow), limit),
+    sold: (soldResult.data || []).map(mapLightArtworkRow),
+    limit,
+  });
+};
+
+const getHomepageCategoryArtworksCached = unstable_cache(
+  async (categories: string[], limit: number) =>
+    getHomepageCategoryArtworksUncached(categories, limit),
+  ['supabase-homepage-category-artworks-v1'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getHomepageCategoryArtworks = cache(
+  async (categories: string[], limit = 8): Promise<Artwork[]> =>
+    getHomepageCategoryArtworksCached(categories, limit)
 );
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
