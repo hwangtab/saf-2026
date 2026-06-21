@@ -158,7 +158,7 @@ describe('reconcile-payments missing-payment backfill mode', () => {
 
     const query = ordersBuilders[0];
     expect(query.select).toHaveBeenCalledWith(expect.stringContaining('payments!left(id)'));
-    expect(query.is).toHaveBeenCalledWith('payments.id', null);
+    expect(query.is).toHaveBeenCalledWith('payments', null);
     expect(query.limit).toHaveBeenCalledWith(2);
     expect(mockEnsureTossPaymentRecord).toHaveBeenCalledWith(
       expect.objectContaining({ orderId: 'order-1' })

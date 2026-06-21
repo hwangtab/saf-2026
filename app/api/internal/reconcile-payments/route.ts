@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
       )
       .in('status', ['paid', 'awaiting_deposit'])
       .gte('created_at', since)
-      .is('payments.id', null)
+      .is('payments', null)
       .order('created_at', { ascending: false })
       .limit(backfillLimit);
 
