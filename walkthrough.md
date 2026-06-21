@@ -1,3 +1,48 @@
+# 최근 회귀 리스크 개선 결과 (2026-06-21)
+
+## 변경 요약
+
+- 관리자 신규 작품 등록 후 공개 작품 캐시 갱신 예약 실패를 `notifyEmail`과 `logSystemAction`으로 남기도록 개선했다.
+  - `NEXT_PUBLIC_SITE_URL`/`VERCEL_URL` 또는 `CRON_SECRET` 누락을 조용히 넘기지 않는다.
+  - 내부 revalidation route의 HTTP 실패도 운영자 가시 채널에 남긴다.
+- `/api/internal/reconcile-payments?scope=missing-payments-backfill` 수동 backfill 모드를 추가했다.
+  - 기존 scheduled cron의 5~28분 윈도우는 유지한다.
+  - 오래된 `paid`/`awaiting_deposit` 주문 중 `payments` row가 없는 주문만 PostgREST anti-join으로 조회한다.
+  - Toss 증거가 없으면 성공처럼 숨기지 않고 응답 `errors`에 남긴다.
+- 계좌이체 안내 계좌/기한 정보를 `lib/payments/bank-transfer-info.ts` 단일 출처로 통합했다.
+  - checkout metadata, 관리자 알림, 구매자 SMS 재발송, 성공 화면, 주문조회 화면이 같은 payload를 사용한다.
+  - Toss 가상계좌와 SAF 수동 계좌이체 fallback을 분리해 잘못된 계좌 재발송을 막았다.
+
+## 운영 명령
+
+```bash
+curl -fsS \
+  -H "Authorization: Bearer $CRON_SECRET" \
+  "https://www.saf2026.com/api/internal/reconcile-payments?scope=missing-payments-backfill&lookbackDays=30&limit=200"
+```
+
+- 응답의 `checked`는 실제로 payment row가 없는 주문 수다.
+- `errors`가 있으면 주문번호별 Toss 상태와 SAF 주문 상태를 확인한 뒤 재실행한다.
+- `lookbackDays`는 1~90, `limit`은 1~500으로 제한된다.
+
+## 검증
+
+- `npm run lint` 통과
+  - 기존 Browserslist stale 경고와 대형 generated 파일 Babel deopt 안내만 출력.
+- `npm run type-check` 통과
+- `npm test -- --runInBand` 통과
+  - 195 suites / 1453 tests
+- `npm run validate-artworks` 통과
+  - exit 0, 기존 작품 데이터 경고 63개 출력.
+
+## 남은 운영 주의사항
+
+- `npm run build`는 이번 최종 검증에서 실행하지 않았다. 현재 작업트리에 이번 작업과 무관한 매거진 초안 변경과 `_workspace/`가 있어 generated-file churn 판단을 분리해야 한다.
+- 배포 후에는 위 backfill URL을 보호된 Bearer header로 1회 실행해 실제 운영 DB에서 누락 row와 `errors` 여부를 확인한다.
+- Vercel CLI가 오래된 상태라 배포/로그 확인 전에 `vercel@latest` 업데이트를 권장한다.
+
+---
+
 # 최근 결제·관리자 등록 회귀 개선 (2026-06-20)
 
 ## 변경 사항
