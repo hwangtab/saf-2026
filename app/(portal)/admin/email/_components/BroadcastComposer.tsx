@@ -134,7 +134,7 @@ export function BroadcastComposer() {
       return;
     }
     if (!confirmed) {
-      setError('발송 확인 체크박스를 선택해주세요.');
+      setError('발송 확인 체크박스를 선택해 주세요.');
       return;
     }
     setError(null);

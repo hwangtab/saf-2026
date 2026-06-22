@@ -162,7 +162,7 @@ export async function updateArtist(id: string, formData: FormData) {
   const supabase = await requireAdminClient();
 
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
-  if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
+  if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해 주세요.');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
   const careerTierRaw = getString(formData, 'career_tier').trim();
   const career_tier = (CAREER_TIERS as readonly string[]).includes(careerTierRaw)
@@ -330,7 +330,7 @@ export async function createAdminArtist(formData: FormData) {
   const supabase = await requireAdminClient();
 
   const name_ko = validateTextLength(getString(formData, 'name_ko'), 100, '한국어 이름');
-  if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해주세요.');
+  if (!name_ko.trim()) throw new Error('작가명(한국어)을 입력해 주세요.');
   const name_en = validateTextLength(getString(formData, 'name_en'), 100, '영어 이름');
   const careerTierRawCreate = getString(formData, 'career_tier').trim();
   const career_tier = (CAREER_TIERS as readonly string[]).includes(careerTierRawCreate)
@@ -634,13 +634,13 @@ export async function setArtistNotice(
   }
 
   const message = (data.message ?? '').trim();
-  if (!message) throw new Error('공지 메시지(한국어)를 입력해주세요.');
+  if (!message) throw new Error('공지 메시지(한국어)를 입력해 주세요.');
   if (message.length > NOTICE_MESSAGE_MAX) {
-    throw new Error(`공지 메시지는 ${NOTICE_MESSAGE_MAX}자 이내로 입력해주세요.`);
+    throw new Error(`공지 메시지는 ${NOTICE_MESSAGE_MAX}자 이내로 입력해 주세요.`);
   }
   const message_en_raw = (data.message_en ?? '').trim();
   if (message_en_raw.length > NOTICE_MESSAGE_MAX) {
-    throw new Error(`영문 공지 메시지는 ${NOTICE_MESSAGE_MAX}자 이내로 입력해주세요.`);
+    throw new Error(`영문 공지 메시지는 ${NOTICE_MESSAGE_MAX}자 이내로 입력해 주세요.`);
   }
   const message_en = message_en_raw || null;
   const active_until = parseNoticeActiveUntil(data.active_until);

@@ -527,7 +527,7 @@ export async function revertActivityLog(
 
     if (lockError) throw lockError;
     if (!lockRows || lockRows.length !== 1) {
-      throw new Error('이미 다른 관리자가 복구를 진행 중입니다. 페이지를 새로고침해주세요.');
+      throw new Error('이미 다른 관리자가 복구를 진행 중입니다. 페이지를 새로고침해 주세요.');
     }
 
     // For creation actions, we use after_snapshot to identify what to delete
@@ -588,7 +588,7 @@ export async function revertActivityLog(
 
             if (missingArtistCount > 0) {
               throw new Error(
-                '복구할 작품과 연결된 작가 정보가 없어 복구를 중단합니다. 먼저 작가를 복구해주세요.'
+                '복구할 작품과 연결된 작가 정보가 없어 복구를 중단합니다. 먼저 작가를 복구해 주세요.'
               );
             }
           }
@@ -633,7 +633,7 @@ export async function revertActivityLog(
             .maybeSingle();
           if (!existingArtist) {
             throw new Error(
-              '복구할 작품과 연결된 작가 정보가 없어 복구를 중단합니다. 먼저 작가를 복구해주세요.'
+              '복구할 작품과 연결된 작가 정보가 없어 복구를 중단합니다. 먼저 작가를 복구해 주세요.'
             );
           }
 

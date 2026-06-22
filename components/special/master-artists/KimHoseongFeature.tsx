@@ -168,7 +168,7 @@ export default async function KimHoseongFeature({
     name: isEnglish ? 'Kim Hoseong — SAF Online' : '김호성 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Hoseong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김호성 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김호성 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -723,8 +723,7 @@ export default async function KimHoseongFeature({
                         사진과 영상, 그리고 그 사이의 개념 작업을 가로지르며 일관된 한 줄기는
                         머무르기를 거부하는 태도다 — 예술이 무엇인지, 누구를 위한 것인지, 한 사람이
                         허락을 기다리지 않고 어떻게 매달 계속 만들 수 있는지를 거듭 묻는 작업. 그는
-                        씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서
-                        함께한다.
+                        씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다.
                       </p>
                     </>
                   )}
@@ -746,8 +745,8 @@ export default async function KimHoseongFeature({
                     <>
                       24시간 무인 갤러리에서 전시라는 관념 자체를 묻는 전시까지, 김호성의 작업은
                       하나의 끊임없음을 추구한다 — 매체의 경계를 계속 넘고, 예술과 사회가 서로에게
-                      무엇을 빚지는지를 거듭 묻는 일. 그는 동료 예술인과의 연대자로서 이 캠페인에
-                      함께한다 — 다음 세대의 예술인들이 허락을 기다리지 않고 계속 만들 수 있도록.
+                      무엇을 빚지는지를 거듭 묻는 일. 동료 예술인과의 연대자로 이 캠페인에 함께한다
+                      — 다음 세대의 예술인들이 허락을 기다리지 않고 계속 만들 수 있도록.
                     </>
                   )}
                 </p>
@@ -775,7 +774,7 @@ export default async function KimHoseongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -843,9 +842,9 @@ export default async function KimHoseongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

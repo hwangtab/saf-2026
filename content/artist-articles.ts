@@ -20,7 +20,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.hani.co.kr/arti/culture/music/989903.html',
       title: '“암벽 비탈에 버틴 소나무에서 ‘경지에 오른 사람’ 봤죠”',
       description:
-        '한국 최초의 여성 클라이밍 사진작가 강레아(53)씨의 개인전 ‘소나무-바위에 깃들다’. 암벽과 소나무를 통해 인간의 의지와 자연의 생명력을 포착한 작품 세계 소개.',
+        '한국 최초의 여성 클라이밍 사진작가 강레아(53)씨의 개인전 ‘소나무-바위에 깃들다’. 암벽과 소나무에서 인간의 의지와 자연의 생명력을 포착한 작품 세계 소개.',
       source: '한겨레',
     },
     {
@@ -55,7 +55,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.joongang.co.kr/article/24026915',
       title: '모질게 살아남은 바위 틈 소나무…절벽서 40m 오르락내리락 찍었다',
       description:
-        '7번째 개인전 ‘산(山)에 들다’를 연 강레아 작가. 절벽을 오르내리며 촬영한 흑백의 소나무 사진들. 척박한 환경을 이겨낸 소나무를 통해 전하는 위로와 희망의 메시지.',
+        '7번째 개인전 ‘산(山)에 들다’를 연 강레아 작가. 절벽을 오르내리며 촬영한 흑백의 소나무 사진들. 척박한 환경을 이겨낸 소나무가 전하는 위로와 희망의 메시지.',
       source: '중앙일보',
     },
   ],
@@ -196,14 +196,14 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.morningsunday.com/sub_read.html?uid=18584',
       title: '김동석 작가, 삶의 길을 담아내는 회화 세계',
       description:
-        '모닝선데이 보도. 씨앗과 나뭇잎 등 자연의 오브제를 통해 삶의 궤적과 생명력을 표현하는 김동석 작가의 독창적인 예술 세계 조명.',
+        '모닝선데이 보도. 씨앗과 나뭇잎 등 자연의 오브제로 삶의 궤적과 생명력을 표현하는 김동석 작가의 독창적인 예술 세계 조명.',
       source: '모닝선데이',
     },
     {
       url: 'https://www.artworldnews.co.kr/news/articleView.html?idxno=3870',
       title: '김동석 展 - 우공이산의 꿈, 초월적 조형의 미학',
       description:
-        '아트월드뉴스 전시 리뷰. 수만 개의 씨앗 오브제를 캔버스에 붙이는 고된 작업을 통해 탄생한 김동석 작가의 숭고한 조형미와 철학적 사유.',
+        '아트월드뉴스 전시 리뷰. 수만 개의 씨앗 오브제를 캔버스에 붙이는 고된 작업 끝에 탄생한 김동석 작가의 숭고한 조형미와 철학적 사유.',
       source: '아트월드뉴스',
     },
     {
@@ -217,7 +217,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.artkoreatv.com/news/articleView.html?idxno=100050',
       title: "인사아트프라자갤러리-김동석 개인전 '점으로 부터의 성찰과 사유'",
       description:
-        '인사동 인사아트프라자갤러리 전시. 30여 년간의 작업 세계를 정리하며 시대적 변화와 내면의 사유를 점을 통해 조형화한 김동석 작가의 개인전.',
+        '인사동 인사아트프라자갤러리 전시. 30여 년간의 작업 세계를 정리하며 시대적 변화와 내면의 사유를 점으로 조형화한 김동석 작가의 개인전.',
       source: '아트코리아방송',
     },
   ],
@@ -226,28 +226,28 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.artsnculture.com/news/articleView.html?idxno=6679',
       title: '김레이시 - 화면 위에 쌓인 선과 색의 층위',
       description:
-        '아츠앤컬쳐 기사. 화면 안팎으로 연장되는 선들과 색채의 층을 통해 존재의 순간들을 기록하는 김레이시 작가의 추상 작업 세계 소개.',
+        '아츠앤컬쳐 기사. 화면 안팎으로 연장되는 선들과 색채의 층으로 존재의 순간들을 기록하는 김레이시 작가의 추상 작업 세계 소개.',
       source: '아츠앤컬쳐',
     },
     {
       url: 'https://cicamuseum.com/lacey-kim-solo-exhibition/',
       title: 'Lacey Kim Solo Exhibition: Before Mind',
       description:
-        'CICA 미술관 전시 정보. 선과 색의 조합을 통해 찰나의 경험과 내면의 진실을 캔버스 위에 펼쳐 보인 김레이시 작가의 개인전.',
+        'CICA 미술관 전시 정보. 선과 색의 조합으로 찰나의 경험과 내면의 진실을 캔버스 위에 펼쳐 보인 김레이시 작가의 개인전.',
       source: 'CICA 미술관',
     },
     {
       url: 'https://www.misulin.co.kr/news/articleView.html?idxno=3728',
       title: '김레이시 개인전: 익명의 시간 (Anonymous Moments)',
       description:
-        '미술여행신문 보도. 겹겹이 쌓인 선과 색채의 직관적인 제스처를 통해 자유로운 존재로서의 자신을 표현하는 김레이시 작가의 신작 전시 소식.',
+        '미술여행신문 보도. 겹겹이 쌓인 선과 색채의 직관적인 제스처로 자유로운 존재로서의 자신을 표현하는 김레이시 작가의 신작 전시 소식.',
       source: '미술여행신문',
     },
     {
       url: 'https://www.artbava.com/exhibits/%EA%B9%80%EB%A0%88%EC%9D%B4%EC%8B%9C-%EA%B7%B8-%EC%96%B4%EB%96%A4-%EB%A7%90%EB%B3%B4%EB%8B%A4-_-before-any-words',
       title: '김레이시: 그 어떤 말보다 (Before Any Words)',
       description:
-        '아트바바 전시 정보. 갤러리도스에서 열린 김레이시 작가의 개인전. 언어 이전의 순수한 감각과 선의 움직임을 통해 소통하는 작품들.',
+        '아트바바 전시 정보. 갤러리도스에서 열린 김레이시 작가의 개인전. 언어 이전의 순수한 감각과 선의 움직임으로 소통하는 작품들.',
       source: '아트바바',
     },
     {
@@ -277,7 +277,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.news-art.co.kr/news/article.html?no=27256',
       title: '삶과 죽음을 아우르는 ‘높은 오름’',
       description:
-        '뉴스아트 기사. 죽은 자들을 지켜주는 듯한 구좌공설공원묘지 인근 높은 오름의 풍경을 통해 삶과 죽음의 경계를 포착한 사진 작업.',
+        '뉴스아트 기사. 죽은 자들을 지켜주는 듯한 구좌공설공원묘지 인근 높은 오름의 풍경에서 삶과 죽음의 경계를 포착한 사진 작업.',
       source: '뉴스아트',
     },
     {
@@ -307,14 +307,14 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.handmk.com/news/articleView.html?idxno=20600',
       title: '‘한국은행이 선정한 우리 시대의 젊은 작가들’展',
       description:
-        '핸드메이커 보도. 한국은행 신진작가 공모전을 통해 선정된 김우주 작가를 포함한 6인의 젊은 작가들의 실험 정신과 개성 넘치는 작품 세계 소개.',
+        '핸드메이커 보도. 한국은행 신진작가 공모전에 선정된 김우주 작가를 포함한 6인의 젊은 작가들의 실험 정신과 개성 넘치는 작품 세계 소개.',
       source: '핸드메이커',
     },
     {
       url: 'https://www.ibulgyo.com/news/articleView.html?idxno=417101',
       title: '신인 작가 6명이 함께 이뤄내는 ‘예술적 도약’',
       description:
-        '불교신문 기사. 탑골미술관의 신인 작가 지원 사업인 ‘도약의 단초10’ 전시를 통해 첫 개인전과 예술적 도전을 시작하는 김우주 작가의 소식.',
+        '불교신문 기사. 탑골미술관의 신인 작가 지원 사업인 ‘도약의 단초10’ 전시에서 첫 개인전과 예술적 도전을 시작하는 김우주 작가의 소식.',
       source: '불교신문',
     },
     {
@@ -337,7 +337,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.artsnculture.com/news/articleView.html?idxno=4796',
       title: '김주희 - 그리움과 시간의 중첩을 담다',
       description:
-        '아츠앤컬쳐 인터뷰. ‘그리다’라는 행위를 통해 그리운 장소와 찰나의 순간을 겹쳐 그리는 김주희 작가의 예술적 영감과 작업 철학 탐구.',
+        '아츠앤컬쳐 인터뷰. ‘그리다’라는 행위로 그리운 장소와 찰나의 순간을 겹쳐 그리는 김주희 작가의 예술적 영감과 작업 철학 탐구.',
       source: '아츠앤컬쳐',
     },
     {
@@ -485,7 +485,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.nyjnews.net/19369',
       title: '소녀는 항해하면서 푸른 빛 판타지를 펼친다',
       description:
-        '류준화 작가의 작품세계. "나는 치명적이다"라는 제목의 작품을 통해 소녀의 항해와 푸른 빛 판타지를 표현.',
+        '류준화 작가의 작품세계. "나는 치명적이다"라는 제목의 작품에서 소녀의 항해와 푸른 빛 판타지를 표현.',
       source: '남양주뉴스',
     },
     {
@@ -515,14 +515,14 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.hani.co.kr/arti/culture/culture_general/972511.html',
       title: '오묘한 빛과 색감…세월이 만든 도시 변두리 집들',
       description:
-        '도시 변두리 달동네의 밤, 어둠 속에서 빛을 내며 드러나는 작은 집들. 각양각색의 생긴 꼴을 한 집들을 통해 세월이 만든 도시 변두리의 풍경을 담은 밤의 집 시리즈.',
+        '도시 변두리 달동네의 밤, 어둠 속에서 빛을 내며 드러나는 작은 집들. 각양각색의 생긴 꼴을 한 집들로 세월이 만든 도시 변두리의 풍경을 담은 밤의 집 시리즈.',
       source: '한겨레',
     },
     {
       url: 'https://artlecture.com/article/3269',
       title: '그 집에 산다 - 손은영의 집',
       description:
-        '회화 같은 리터칭을 통해 완성한 프레임으로 작가의 심상에서 길어 낸 한 장면을 보여주는 작업. 집을 주제로 꾸준히 작업하는 손은영 작가의 마음의 풍경.',
+        '회화 같은 리터칭으로 완성한 프레임으로 작가의 심상에서 길어 낸 한 장면을 보여주는 작업. 집을 주제로 꾸준히 작업하는 손은영 작가의 마음의 풍경.',
       source: 'artlecture',
     },
   ],
@@ -538,7 +538,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.yna.co.kr/view/AKR20170512165600005',
       title: '"자연은 역사가 배어있는 현장"…민중미술가 손장섭 개인전',
       description:
-        '2017년 학고재갤러리 회고전 보도. 1960년대 작품부터 신작까지 38점을 통해 손장섭의 역사화, 나무 연작, 민중미술 맥락을 소개한다.',
+        '2017년 학고재갤러리 회고전 보도. 1960년대 작품부터 신작까지 38점으로 손장섭의 역사화, 나무 연작, 민중미술 맥락을 소개한다.',
       source: '연합뉴스',
     },
     {
@@ -586,7 +586,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.gallerykim.com/%EB%B3%B5%EC%A0%9C-%EA%B3%A0%EC%A0%95%EB%82%A8',
       title: '이수철 작가 프로필 - 김영섭사진화랑',
       description:
-        '흔적과 빛에 관한 이야기. 과거의 역사적 사실과 시간의 흐름에 따라 변화하는 인간의 의식과 기억의 오류를 디지털사진으로 표현. 근대문화유산을 통해 세월과 함께 희미해지는 역사의 기억을 시각화.',
+        '흔적과 빛에 관한 이야기. 과거의 역사적 사실과 시간의 흐름에 따라 변화하는 인간의 의식과 기억의 오류를 디지털사진으로 표현. 근대문화유산에 남은, 세월과 함께 희미해지는 역사의 기억을 시각화.',
       source: '김영섭사진화랑',
     },
     {
@@ -602,7 +602,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://brunch.co.kr/@6d18ba65f0a04b0/23',
       title: '사진작가 이열 - 느린인간과 나무이야기',
       description:
-        '파인 아트 사진 작가 이열의 느린인간 프로젝트. 사진은 카메라 프레임을 통해 실제 존재하는 사물의 일부분을 잘라내어 사진가의 의도와 생각을 담아내는 작업. 나무를 주제로 한 포토에세이.',
+        '파인 아트 사진 작가 이열의 느린인간 프로젝트. 사진은 카메라 프레임으로 실제 존재하는 사물의 일부분을 잘라내어 사진가의 의도와 생각을 담아내는 작업. 나무를 주제로 한 포토에세이.',
       source: 'Brunch',
     },
     {
@@ -857,7 +857,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.incheonilbo.com/news/articleView.html?idxno=1312020',
       title: '책이 숲이 되다⋯천지수 9th 개인전 ‘도서관 환타지(Library Fantasy)’',
       description:
-        '지식과 생명, 책과 자연의 경계를 허무는 회화 연작. 아프리카 체류 경험이 투영된 ‘정글 도서관’ 세계관을 통해 현대 사회의 사유와 상상의 힘을 회복시키는 시각적 서사 제시.',
+        '지식과 생명, 책과 자연의 경계를 허무는 회화 연작. 아프리카 체류 경험이 투영된 ‘정글 도서관’ 세계관으로 현대 사회의 사유와 상상의 힘을 회복시키는 시각적 서사 제시.',
       source: '인천일보',
     },
   ],
@@ -866,7 +866,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://kiaf.org/insights/44956',
       title: 'Floating In Colors - 히든엠갤러리 3인전',
       description:
-        '최경선, 최우, 황도유 작가 3인전. 자연을 소재로 삶의 생동, 슬픔, 치유를 화폭에 담는 최경선 작가. 마음의 유영을 표현한 작품들. 고요한 수면, 야트막하게 핀 꽃, 흔들리는 풀숲을 통해 생명의 언어를 표현.',
+        '최경선, 최우, 황도유 작가 3인전. 자연을 소재로 삶의 생동, 슬픔, 치유를 화폭에 담는 최경선 작가. 마음의 유영을 표현한 작품들. 고요한 수면, 야트막하게 핀 꽃, 흔들리는 풀숲으로 생명의 언어를 표현.',
       source: 'Kiaf SEOUL',
     },
     {
@@ -972,7 +972,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://kiaf.org/insights/14272',
       title: 'Besides - 한애규 개인전',
       description:
-        '아트사이드 갤러리 개인전 (2022.06.17-07.09). 한국의 테라코타 작업을 선두에서 이끈 여성작가. 많은 미술관에 소장. 온전히 흙을 통해 자신만의 작품세계를 구축.',
+        '아트사이드 갤러리 개인전 (2022.06.17-07.09). 한국의 테라코타 작업을 선두에서 이끈 여성작가. 많은 미술관에 소장. 온전히 흙으로 자신만의 작품세계를 구축.',
       source: 'Kiaf SEOUL',
     },
   ],
@@ -1088,7 +1088,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.idaegu.co.kr/news/articleView.html?idxno=449035',
       title: '기조 개인전 “부정적 기억 꺼내 곱씹는 과정이 제 작업”',
       description:
-        '대구신문 인터뷰. 자화상 캐릭터인 ‘반인반수 토끼’를 통해 부정적인 기억과 내면의 갈등을 예술로 승화시키는 기조 작가의 작업 세계 소개.',
+        '대구신문 인터뷰. 자화상 캐릭터인 ‘반인반수 토끼’로 부정적인 기억과 내면의 갈등을 예술로 승화시키는 기조 작가의 작업 세계 소개.',
       source: '대구신문',
     },
     {
@@ -1133,7 +1133,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.primeherald.co.kr/27090',
       title: '김종환 작가, 예술을 통한 변신과 성찰의 기록',
       description:
-        '프라임헤럴드 보도. 독창적인 조형미와 철학적 사유를 통해 현대인의 내면을 포착하는 김종환 작가의 작품 세계와 전시 관련 심층 기사.',
+        '프라임헤럴드 보도. 독창적인 조형미와 철학적 사유로 현대인의 내면을 포착하는 김종환 작가의 작품 세계와 전시 관련 심층 기사.',
       source: '프라임헤럴드',
     },
   ],
@@ -1149,14 +1149,14 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'http://www.bsnews.kr/news/articleView.html?idxno=78435',
       title: '도예가 김지영 - 흙과 불로 빚은 삶의 층위',
       description:
-        '백제신문 보도. 자연과의 교감을 통해 탄생한 도자 작품들과 일상의 소소한 행복을 흙으로 빚어내는 김지영 작가의 예술적 행보 조명.',
+        '백제신문 보도. 자연과의 교감에서 탄생한 도자 작품들과 일상의 소소한 행복을 흙으로 빚어내는 김지영 작가의 예술적 행보 조명.',
       source: '백제신문(BS News)',
     },
     {
       url: 'https://www.ccnnews.co.kr/news/articleView.html?idxno=395149',
       title: '대전문화재단 차세대artiStar 김지영 도예가 개인전 ‘겹’',
       description:
-        '충청뉴스 전시 뉴스. 시간과 감정의 축적을 주제로 한 개인전 ‘겹’을 통해 흙의 변화와 생명력을 보여주는 김지영 청년 도예가의 전시 소식.',
+        '충청뉴스 전시 뉴스. 시간과 감정의 축적을 주제로 한 개인전 ‘겹’에서 흙의 변화와 생명력을 보여주는 김지영 청년 도예가의 전시 소식.',
       source: '충청뉴스(CCN News)',
     },
   ],
@@ -1362,7 +1362,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.jungle.co.kr/magazine/8820',
       title: '하찮은 것들의 귀환 : 박불똥 - 정글매거진',
       description:
-        '정글매거진 기사. 트렁크갤러리 "못-쓸-것" 전시 리뷰. 주변의 하찮은 사물들을 통해 자본주의와 권력을 비판하는 박불똥 작가의 사진 작업 소개.',
+        '정글매거진 기사. 트렁크갤러리 "못-쓸-것" 전시 리뷰. 주변의 하찮은 사물들로 자본주의와 권력을 비판하는 박불똥 작가의 사진 작업 소개.',
       source: '정글매거진',
     },
     {
@@ -1407,7 +1407,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.photoart.co.kr/bbs/m/mcb_data_view.php?type=mcb&ep=ep1260394525d70b6363602a&gp=all&item=md404406056648efb1e6de05',
       title: '김호성 《blur》 Gallery Vista (서울) | 6. 15 ~ 7. 10',
       description:
-        'Google Earth 프로그램을 통해 캡처한 이미지로 사진의 현장성에 대한 본질적 관념을 비틀고 가상 세계를 사진 작품으로 표현한 김호성 작가의 개인전 소식.',
+        'Google Earth 프로그램으로 캡처한 이미지로 사진의 현장성에 대한 본질적 관념을 비틀고 가상 세계를 사진 작품으로 표현한 김호성 작가의 개인전 소식.',
       source: 'photoart.co.kr',
     },
     {
@@ -1444,7 +1444,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://segyelocalnews.com/article/1065592327225698',
       title: '강석태 작가 “따뜻한 감성 전하고파”',
       description:
-        '세계로컬타임즈 인터뷰. 어린 왕자를 통해 순수한 동심과 위로를 전하는 강석태 작가의 예술 철학. 잃어버린 감성을 되찾아주는 치유의 그림.',
+        '세계로컬타임즈 인터뷰. 어린 왕자로 순수한 동심과 위로를 전하는 강석태 작가의 예술 철학. 잃어버린 감성을 되찾아주는 치유의 그림.',
       source: '세계로컬타임즈',
     },
     {
@@ -1488,7 +1488,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.mediapen.com/news/view/761713',
       title: "김영서 작가 '사라지는 것들의 아름다움' 전시",
       description:
-        '미디어펜 기사. 유년의 추억, 오래된 아파트, 비눗방울 모티브를 통해 사라지는 것들의 아름다움을 기록하고 기억하려는 작가의 작업 의도를 전한다.',
+        '미디어펜 기사. 유년의 추억, 오래된 아파트, 비눗방울 모티브로 사라지는 것들의 아름다움을 기록하고 기억하려는 작가의 작업 의도를 전한다.',
       source: '미디어펜',
     },
     {
@@ -1550,7 +1550,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.joongang.co.kr/article/24001501',
       title: "박생광의 오색찬란 '무당' 그림, 팬데믹 시대에 다시 보니 - 중앙일보",
       description:
-        '중앙일보 기사. 팬데믹 시대에 다시 보는 박생광의 "무당" 시리즈. 강렬한 오방색과 무속적 도상을 통해 치유와 기원의 메시지를 전하는 작가의 예술 세계 조명.',
+        '중앙일보 기사. 팬데믹 시대에 다시 보는 박생광의 "무당" 시리즈. 강렬한 오방색과 무속적 도상으로 치유와 기원의 메시지를 전하는 작가의 예술 세계 조명.',
       source: '중앙일보',
     },
     {
@@ -1801,7 +1801,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.daljin.com/display/D079693',
       title: '변경희 : 점을 찍다',
       description:
-        '서울아트가이드 전시 아카이브. 2022년 개인전 개요와 함께 점을 통해 인연과 전체의 관계를 확장해 온 작업 맥락, 주요 전시 이력을 확인할 수 있다.',
+        '서울아트가이드 전시 아카이브. 2022년 개인전 개요와 함께 점으로 인연과 전체의 관계를 확장해 온 작업 맥락, 주요 전시 이력을 확인할 수 있다.',
       source: '서울아트가이드',
     },
     {
@@ -1824,7 +1824,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'http://artlogicspace.com/gnuboard4/bbs/board.php?bo_table=003&wr_id=4&page=15',
       title: '조이락 개인전 : 숨은 꽃-님에게 가는 길 — 아트로직 스페이스',
       description:
-        '아트로직 스페이스 전시 기록. 고려불화 모사와 드로잉을 통해 만물에 깃든 부처를 표현한 조이락 작가의 개인전.',
+        '아트로직 스페이스 전시 기록. 고려불화 모사와 드로잉으로 만물에 깃든 부처를 표현한 조이락 작가의 개인전.',
       source: '아트로직 스페이스',
     },
     {
@@ -2060,7 +2060,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.jeollailbo.com/news/articleView.html?idxno=789661',
       title: '전북문화관광재단 16일부터 우용민 작가 초대전 ‘전북의 산하-지리은운(智異隱韻)’',
       description:
-        '전북특별자치도문화관광재단은 수묵화가 우용민 작가를 초대해 ‘전북의 산하-지리은운’전 개최. 지리산의 사계와 운무를 수묵이라는 전통적 매체를 통해 재해석.',
+        '전북특별자치도문화관광재단은 수묵화가 우용민 작가를 초대해 ‘전북의 산하-지리은운’전 개최. 지리산의 사계와 운무를 수묵이라는 전통적 매체로 재해석.',
       source: '전라일보',
     },
     {
@@ -2076,21 +2076,21 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://blog.naver.com/k-auction/223218107767',
       title: '[Artist Interview] 선으로 잇는 몽환적 세계, 윤겸 작가',
       description:
-        'K-Auction 아티스트 인터뷰. 가느다란 선을 반복적으로 중첩시켜 생동감 있는 화면을 구성하고, 자연을 통해 스스로를 되돌아보는 윤겸 작가의 예술 세계.',
+        'K-Auction 아티스트 인터뷰. 가느다란 선을 반복적으로 중첩시켜 생동감 있는 화면을 구성하고, 자연 속에서 스스로를 되돌아보는 윤겸 작가의 예술 세계.',
       source: '케이옥션 블로그',
     },
     {
       url: 'https://brunch.co.kr/@7pictures/186',
       title: "'현기증 나는 풍경' 윤겸 작가",
       description:
-        '선 긋기, 혹은 선 그리기를 통해 반복되는 노동의 조형적 변주를 탐구하는 윤겸 작가 인터뷰. 불안과 몰입을 통해 자연의 이미지를 형상화한 작품 세계 소개.',
+        '선 긋기, 혹은 선 그리기로 반복되는 노동의 조형적 변주를 탐구하는 윤겸 작가 인터뷰. 불안과 몰입 속에서 자연의 이미지를 형상화한 작품 세계 소개.',
       source: 'Brunch',
     },
     {
       url: 'https://www.kmisul.com/news/articleView.html?idxno=1771',
       title: "윤겸 작가 '반복 그리고 몰입'",
       description:
-        '일정한 패턴의 선을 긋는 반복적인 행위를 통해 조형적 이미지를 구축하는 윤겸 작가의 인터뷰. 작업의 키워드인 반복과 몰입(FLOW)에 대한 철학적 사유.',
+        '일정한 패턴의 선을 긋는 반복 행위로 조형적 이미지를 구축하는 윤겸 작가의 인터뷰. 작업의 키워드인 반복과 몰입(FLOW)에 대한 철학적 사유.',
       source: '한국미술신문',
     },
     {
@@ -2114,7 +2114,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.hyunbulnews.com/news/articleView.html?idxno=417686',
       title: '전등사 서운갤러리, 이유지 작가 ‘KARMADISE’ 展',
       description:
-        '업(Karma)과 파라다이스(Paradise)의 합성어인 ‘KARMADISE’를 통해 삶의 순환과 치유를 표현하는 이유지 작가의 전시 리뷰 및 예술 철학 소개.',
+        '업(Karma)과 파라다이스(Paradise)의 합성어인 ‘KARMADISE’로 삶의 순환과 치유를 표현하는 이유지 작가의 전시 리뷰 및 예술 철학 소개.',
       source: '현대불교',
     },
   ],
@@ -2139,14 +2139,14 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://kpinews.kr/newsView/1065586246276471',
       title: '이은화 작가 "욕망은 미래 위한 중요한 동기지만 과하면 재앙"',
       description:
-        'KPI뉴스 인터뷰. 미술평론가이자 저술가인 이은화 작가가 개인전 ‘욕망의 방’을 통해 인간의 욕망에 대해 고찰하고 대중과 소통하는 인터뷰.',
+        'KPI뉴스 인터뷰. 미술평론가이자 저술가인 이은화 작가가 개인전 ‘욕망의 방’에서 인간의 욕망을 고찰하고 대중과 소통하는 인터뷰.',
       source: 'KPI뉴스',
     },
     {
       url: 'https://www.artkoreatv.com/news/articleView.html?idxno=99108',
       title: '제12회 경남국제아트페어, 이은화 작가 개인전 ‘환대의 방: 웰컴 VIP’',
       description:
-        '아트코리아방송 보도. 문자와 기호, 색을 통해 인간의 욕망과 심리를 탐구하는 이은화 작가의 경남국제아트페어(GIAF) 개인전 및 관객 참여형 작품 소개.',
+        '아트코리아방송 보도. 문자와 기호, 색으로 인간의 욕망과 심리를 탐구하는 이은화 작가의 경남국제아트페어(GIAF) 개인전 및 관객 참여형 작품 소개.',
       source: '아트코리아방송',
     },
     {
@@ -2223,7 +2223,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://m.artinpost.co.kr/product/contents.html?product_no=4934&cate_no=26&display_group=1',
       title: '작가 이현정 ‘제2회 후쿠오카 아트 어워드’ 수상',
       description:
-        '이현정 작가가 일본 후쿠오카시 미술관에서 마련한 ‘제2회 후쿠오카 아트 어워드’를 수상했다는 소식. 괄목할 만한 활동과 앞으로의 도약에 대한 기대를 반영.',
+        '이현정 작가가 일본 후쿠오카시 미술관에서 마련한 ‘제2회 후쿠오카 아트 어워드’를 수상했다는 소식. 뚜렷한 활동과 앞으로의 도약에 대한 기대를 반영.',
       source: 'Public Art',
     },
     {
@@ -2269,7 +2269,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.iartpark.com/exhibitions/82-the-bright-holic-time/',
       title: '이호철 : The Bright Holic Time — ARTPARK',
       description:
-        '세브란스아트스페이스에서 열린 이호철 개인전. 일상 사물의 극사실적 표현을 통해 실물이 만져질 듯한 착시 효과와 회화적 서정성을 선사하는 작품들.',
+        '세브란스아트스페이스에서 열린 이호철 개인전. 일상 사물의 극사실적 표현으로 실물이 만져질 듯한 착시 효과와 회화적 서정성을 선사하는 작품들.',
       source: 'ARTPARK',
     },
     {
@@ -2338,7 +2338,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.newsverse.kr/news/articleView.html?idxno=4167',
       title: '온 몸으로 끌어안은 ‘생활 추상’(life abstract) — 장희진 작가',
       description:
-        '뉴스버스 미술 비평. 역(逆)페인팅 기법을 통해 대상 이면의 정감과 정취를 이끌어내는 장희진의 독창적인 추상 언어와 빛의 공간에 대한 고찰.',
+        '뉴스버스 미술 비평. 역(逆)페인팅 기법으로 대상 이면의 정감과 정취를 이끌어내는 장희진의 독창적인 추상 언어와 빛의 공간에 대한 고찰.',
       source: '뉴스버스',
     },
     {
@@ -2427,7 +2427,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://brunch.co.kr/@azza927/59',
       title: '정연수 개인전 - 버리는 것들이 얻게 하는 것',
       description:
-        '일상의 소소한 사물들(페트병, 설거지통 등)을 통해 버려지는 것들의 의미와 남겨야 할 것들에 대한 통찰을 담은 정연수 작가의 개인전 리뷰.',
+        '일상의 소소한 사물들(페트병, 설거지통 등)로 버려지는 것들의 의미와 남겨야 할 것들에 대한 통찰을 담은 정연수 작가의 개인전 리뷰.',
       source: 'Brunch',
     },
     {
@@ -2485,7 +2485,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://photomarketing.co.kr/%EC%B5%9C%EC%9E%AC%EB%9E%80-%EC%9E%91%EA%B0%80-%EA%B0%9C%EC%9D%B8%EC%A0%84-%EA%BF%88%EA%BE%B8%EB%8A%94-%EC%97%B0%EA%B0%80%E8%93%AE%E6%AD%8C-%EA%B0%9C%EC%B5%9C/',
       title: '최재란 작가, 개인전 ‘꿈꾸는 연가(蓮歌)’ 개최',
       description:
-        '수원 화령전에서 펼쳐진 개인전 ‘꿈꾸는 연가’ 소식. 연꽃을 통해 내면의 정서와 시간의 흐름을 핀홀 카메라의 독특한 시선으로 담아낸 작업 소개.',
+        '수원 화령전에서 펼쳐진 개인전 ‘꿈꾸는 연가’ 소식. 연꽃으로 내면의 정서와 시간의 흐름을 핀홀 카메라의 독특한 시선으로 담아낸 작업 소개.',
       source: '포토마케팅',
     },
   ],
@@ -2510,7 +2510,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://artgg.ggcf.kr/pastArtists/%ED%99%8D%EC%A7%84%ED%9D%AC',
       title: '아트경기 - 이전 아트경기 작가 홍진희',
       description:
-        '실을 재료로 작업하며 부드럽고 거친 질감을 담아내는 홍진희 작가. 반복적이고 인내가 필요한 과정을 통해 치유와 생명 존중, 장수의 기원을 작품에 녹여낸다. 숲을 모티프로 정신과 육체를 치유하는 따뜻함과 위로를 전달하는 작품 세계.',
+        '실을 재료로 작업하며 부드럽고 거친 질감을 담아내는 홍진희 작가. 반복적이고 인내가 필요한 과정 속에서 치유와 생명 존중, 장수의 기원을 작품에 녹여낸다. 숲을 모티프로 정신과 육체를 치유하는 따뜻함과 위로를 전달하는 작품 세계.',
       source: '아트경기',
     },
   ],
@@ -2616,7 +2616,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.newsis.com/view/NISX20250220_0003072011',
       title: '"겸재 정선 그림인 줄"... 금릉 김현철 \'금강내산도\' 깜짝',
       description:
-        '뉴시스 보도. 겸재 정선을 오마주한 ‘금강내산도’와 한라산 영실을 주제로 한 신작 ‘영실’을 통해 한국화의 새로운 지평을 열어가는 김현철 작가의 예술적 성과 조명.',
+        '뉴시스 보도. 겸재 정선을 오마주한 ‘금강내산도’와 한라산 영실을 주제로 한 신작 ‘영실’로 한국화의 새로운 지평을 열어가는 김현철 작가의 예술적 성과 조명.',
       source: '뉴시스',
     },
   ],
@@ -2811,7 +2811,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'http://tongingallery.com/646',
       title: '통인갤러리 <New Year My Living room> 전시',
       description:
-        '통인갤러리 전시 정보. 공예트렌드페어 참여 신진 작가들을 조명하며 현대인의 개인 공간 리빙룸을 통해 창의적인 공간과 새로운 라이프스타일을 제시하는 전시에 류호식 작가 참여.',
+        '통인갤러리 전시 정보. 공예트렌드페어 참여 신진 작가들을 조명하며 현대인의 개인 공간 리빙룸으로 창의적인 공간과 새로운 라이프스타일을 제시하는 전시에 류호식 작가 참여.',
       source: '통인갤러리',
     },
   ],
@@ -2850,7 +2850,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://woodplanet.co.kr/news/view/1065544628226327',
       title: '하선영 작가의 ‘His Garden展’',
       description:
-        '‘His Garden’ 시리즈를 통해 자연에 순응하며 조화를 이루는 노자의 무위(無爲)를 상기시키는 작업. 3년간 포착한 자연의 변화를 12계절의 사색적 시선으로 표현한 전시.',
+        '‘His Garden’ 시리즈로 자연에 순응하며 조화를 이루는 노자의 무위(無爲)를 상기시키는 작업. 3년간 포착한 자연의 변화를 12계절의 사색적 시선으로 표현한 전시.',
       source: '우드플래닛',
     },
   ],
@@ -2875,7 +2875,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.artkoreatv.com/news/articleView.html?idxno=70762',
       title: "정채희 작가 초대전 '너머의 풍경' — 아트코리아방송",
       description:
-        '갤러리 내일에서 열린 정채희 초대전 소식. 옻칠 고유의 깊은 색감과 조형미를 통해 기억 속 퇴적된 심상의 풍경을 담아낸 작품 세계 조명.',
+        '갤러리 내일에서 열린 정채희 초대전 소식. 옻칠 고유의 깊은 색감과 조형미로 기억 속 퇴적된 심상의 풍경을 담아낸 작품 세계 조명.',
       source: '아트코리아방송',
     },
     {
@@ -2913,7 +2913,7 @@ export const artistArticles: Record<string, Article[]> = {
       url: 'https://www.artkoreatv.com/news/articleView.html?idxno=75423',
       title: '‘기억의 목소리 II’ 고현주 작가의 두 번째 4·3 사진집',
       description:
-        '고현주 작가의 두 번째 4·3 사진집 발간 소식. 제주 여성의 보따리 속 사물을 통해 제주 4·3의 아픔과 디아스포라의 기억을 섬세하게 기록.',
+        '고현주 작가의 두 번째 4·3 사진집 발간 소식. 제주 여성의 보따리 속 사물로 제주 4·3의 아픔과 디아스포라의 기억을 섬세하게 기록.',
       source: '아트코리아방송',
     },
     {

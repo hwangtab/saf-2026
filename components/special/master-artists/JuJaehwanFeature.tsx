@@ -167,7 +167,7 @@ export default async function JuJaehwanFeature({
     name: isEnglish ? 'Ju Jae-hwan — SAF Online' : '주재환 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Ju Jae-hwan from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 주재환 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 주재환 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -938,8 +938,8 @@ export default async function JuJaehwanFeature({
                       하나의 물음을 추구해왔다: 가장 싸구려 재료와 가장 익숙한 오브제, 가장 접근하기
                       쉬운 유머를 가져다 — 모든 것이 걸린 말을 하는 데 쓰면 어떤 일이 일어나는가.
                       40년에 걸쳐 구축된 그 대답은 한국 현대미술에서 가장 독보적인 실천 중 하나다.
-                      그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서
-                      함께한다 — 다음 세대의 예술인들이 그가 짊어진 무게 없이 일할 수 있도록.
+                      씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 다음
+                      세대의 예술인들이 그가 짊어진 무게 없이 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -967,7 +967,7 @@ export default async function JuJaehwanFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -1035,9 +1035,9 @@ export default async function JuJaehwanFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

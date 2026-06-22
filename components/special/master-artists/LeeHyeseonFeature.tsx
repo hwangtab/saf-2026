@@ -157,7 +157,7 @@ export default async function LeeHyeseonFeature({
     name: isEnglish ? 'Lee Hye-seon — SAF Online' : '이혜선 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Hye-seon from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이혜선 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이혜선 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -615,10 +615,9 @@ export default async function LeeHyeseonFeature({
                       </p>
                       <p>
                         그것이 이 작업이 이 캠페인에 속하는 이유이기도 하다. 이혜선은 이 운동이
-                        구해야 할 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 작품을
-                        내어 그 수익이 금융 차별을 헤쳐가는 동료들의 상호부조 기금이 되도록. 그의
-                        그림이 그리는 도약은, 그가 그들에게 바라는 도약이다. 존엄한 삶과, 그것을
-                        이룰 여지.
+                        구해야 할 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 작품을 내어 그
+                        수익이 금융 차별을 헤쳐가는 동료들의 상호부조 기금이 되도록. 그의 그림이
+                        그리는 도약은, 그가 그들에게 바라는 도약이다. 존엄한 삶과, 그것을 이룰 여지.
                       </p>
                     </>
                   )}
@@ -640,8 +639,8 @@ export default async function LeeHyeseonFeature({
                     <>
                       파도는 잠시 형태를 얻었다가 부서지고 다시 일어서는 운동이다. 이혜선의 그림은
                       그 리듬을 물감으로 붙든다. 몸의 운동, 표면의 균열, 깊이로 열리는 블루. 그는
-                      씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다
-                      — 그의 작업이 상상하는 도약이, 다음에 올 이들에게도 가능해지도록.
+                      씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 그의
+                      작업이 상상하는 도약이, 다음에 올 이들에게도 가능해지도록.
                     </>
                   )}
                 </p>
@@ -669,7 +668,7 @@ export default async function LeeHyeseonFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -737,9 +736,9 @@ export default async function LeeHyeseonFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

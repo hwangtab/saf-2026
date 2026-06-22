@@ -39,7 +39,7 @@ const PAGE_COPY = {
   ko: {
     title: '이지은 — Hollowed Colors, 입체와 회화의 경계',
     description:
-      '입체와 회화의 경계를 탐구하는 추상 작가 이지은(1984–). 국민대 입체미술전공 학사·석사를 마치고 독일 브레멘 국립예술대학교를 거쳐 뒤셀도르프 쿤스트아카데미에서 프란카 훼렌쉐메이어 교수반의 마이스터슐러를 수료했다. 비워진 색(hollowed colors)과 구조, 안과 밖의 관계를 묻는 형식 실험. 씨앗페 온라인에서 이지은의 작품을 만나보세요.',
+      '입체와 회화의 경계를 탐구하는 추상 작가 이지은(1984–). 국민대 입체미술전공 학사·석사를 마치고 독일 브레멘 국립예술대학교를 거쳐 뒤셀도르프 쿤스트아카데미에서 프란카 훼렌쉐메이어 교수반의 마이스터슐러를 수료했다. 비워진 색(hollowed colors)과 구조, 안과 밖의 관계를 묻는 형식 실험. 씨앗페 온라인에서 이지은의 작품을 만날 수 있습니다.',
     ogDescription:
       '입체와 회화의 경계를 탐구하는 추상 작가 이지은. 비워진 색·구조·뒤집힘 — 한국과 독일을 오가며 쌓은 형식 실험.',
     ogAlt: '이지은 대표 작품',
@@ -172,7 +172,7 @@ export default async function LeeJieunFeature({
     name: isEnglish ? 'Lee Jieun — SAF Online' : '이지은 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Jieun from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이지은 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이지은 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -836,9 +836,9 @@ export default async function LeeJieunFeature({
                     <>
                       서울에서 다진 입체의 토대에서 뒤셀도르프 아카데미의 교수반까지, 이지은은
                       하나의 물음을 추구해 왔다: 형태는 어디서 끝나고 색은 어디서 시작되는가, 그리고
-                      둘 사이의 비워진 자리에는 무엇이 사는가. 그는 씨앗페에 이 캠페인의
-                      대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 다음 세대의
-                      예술인들이 그의 실험이 찾아온 자유 안에서 일할 수 있도록.
+                      둘 사이의 비워진 자리에는 무엇이 사는가. 씨앗페에는 이 캠페인의 대상이 아니라,
+                      동료 예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 그의 실험이 찾아온
+                      자유 안에서 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -866,7 +866,7 @@ export default async function LeeJieunFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -934,9 +934,9 @@ export default async function LeeJieunFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

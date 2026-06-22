@@ -170,7 +170,7 @@ export default async function KimYeongseoFeature({
     name: isEnglish ? 'Kim Yeong-seo — SAF Online' : '김영서 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Yeong-seo from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김영서 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김영서 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -764,8 +764,8 @@ export default async function KimYeongseoFeature({
                     <>
                       첫 개인전부터 최근의 단체전까지, 김영서의 작업은 하나의 차분한 물음을 추구해
                       왔다 — 사라지는 것들에 깃든 시간의 결을 어떻게 기록할 것인가. 한 겹 한 겹 쌓아
-                      올린 대답이 일상의 미세한 결을 향한 먹의 작업이다. 그는 씨앗페에 이 캠페인의
-                      대상으로 서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 다음 세대의
+                      올린 대답이 일상의 미세한 결을 향한 먹의 작업이다. 씨앗페에는 이 캠페인의
+                      대상으로 서가 아니라, 동료 예술인과의 연대자로 함께한다 — 다음 세대의
                       예술인들이 한국 예술인에게 지워진 금융 차별의 무게를 조금이라도 덜 짊어진 채
                       일할 수 있도록.
                     </>
@@ -795,7 +795,7 @@ export default async function KimYeongseoFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -863,9 +863,9 @@ export default async function KimYeongseoFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

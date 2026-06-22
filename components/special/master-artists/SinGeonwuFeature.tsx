@@ -167,7 +167,7 @@ export default async function SinGeonwuFeature({
     name: isEnglish ? 'Sin Geonwu — SAF Online' : '신건우 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Sin Geonwu from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 신건우 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 신건우 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -775,9 +775,9 @@ export default async function SinGeonwuFeature({
                       〈셀프장례〉에서 〈Cropped City〉까지, 신건우의 작업은 하나의 물음을 추구해
                       왔다: 도시는 어떻게 짜이는가, 그리고 그 한 조각을 잘라내어 풍경이라 부른다는
                       것은 무엇을 뜻하는가. 한국과 프랑스의 갤러리와 레지던시를 거쳐 구축된 대답이
-                      잘라내고 다시 쌓는 건축적 어휘다. 그는 씨앗페에 이 캠페인의 대상으로서가
-                      아니라, 동료 예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 지을
-                      자리를 가질 수 있도록.
+                      잘라내고 다시 쌓는 건축적 어휘다. 씨앗페에는 이 캠페인의 대상으로서가 아니라,
+                      동료 예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 지을 자리를 가질 수
+                      있도록.
                     </>
                   )}
                 </p>
@@ -805,7 +805,7 @@ export default async function SinGeonwuFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -873,9 +873,9 @@ export default async function SinGeonwuFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

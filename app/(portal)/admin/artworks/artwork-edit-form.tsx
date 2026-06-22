@@ -174,14 +174,14 @@ export function ArtworkEditForm({
     }
 
     if (!isEditing && uploadingImages) {
-      const message = '이미지 업로드 중입니다. 완료 후 등록해주세요.';
+      const message = '이미지 업로드 중입니다. 완료 후 등록해 주세요.';
       setError(message);
       toast.error(message);
       return;
     }
 
     if (!isEditing && !draftImagePrefix) {
-      const message = '이미지 업로드 준비 중입니다. 잠시 후 다시 시도해주세요.';
+      const message = '이미지 업로드 준비 중입니다. 잠시 후 다시 시도해 주세요.';
       setError(message);
       toast.error(message);
       return;
@@ -212,7 +212,7 @@ export function ArtworkEditForm({
       }
     } catch (error) {
       console.error('[admin-artwork-edit-form] Artwork save failed:', error);
-      setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       toast.error('An error occurred while saving.');
     } finally {
       setSaving(false);
@@ -303,7 +303,7 @@ export function ArtworkEditForm({
       router.refresh();
     } catch (error) {
       console.error('[admin-artwork-edit-form] Artwork image save failed:', error);
-      setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       toast.error('An error occurred while saving image.');
     } finally {
       setSavingImages(false);
@@ -403,7 +403,7 @@ export function ArtworkEditForm({
               )}
             />
             {showErrors && !title.trim() && (
-              <p className="mt-1 text-xs text-danger-a11y">작품명을 입력해주세요.</p>
+              <p className="mt-1 text-xs text-danger-a11y">작품명을 입력해 주세요.</p>
             )}
           </div>
 
@@ -479,7 +479,7 @@ export function ArtworkEditForm({
               ))}
             </AdminSelect>
             {showErrors && !selectedArtistId ? (
-              <p className="mt-1 text-xs text-danger-a11y">작가를 선택해주세요.</p>
+              <p className="mt-1 text-xs text-danger-a11y">작가를 선택해 주세요.</p>
             ) : (
               <p className="mt-1 text-xs text-gray-500">검색 결과 {filteredArtists.length}명</p>
             )}
@@ -633,7 +633,7 @@ export function ArtworkEditForm({
                 }
               }}
             >
-              <option value="">선택해주세요</option>
+              <option value="">선택해 주세요</option>
               {ARTWORK_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
@@ -676,7 +676,7 @@ export function ArtworkEditForm({
                 )}
               />
               {showErrors && editionType === 'limited' && !editionLimit && (
-                <p className="mt-1 text-xs text-danger-a11y">한정판은 수량을 입력해주세요.</p>
+                <p className="mt-1 text-xs text-danger-a11y">한정판은 수량을 입력해 주세요.</p>
               )}
             </div>
           )}

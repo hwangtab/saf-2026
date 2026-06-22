@@ -38,7 +38,7 @@ const PAGE_COPY = {
   ko: {
     title: '윤겸 — 평온의 요새를 짓는 회화',
     description:
-      '회화 작가 윤겸. 대구대학교 회화과를 졸업하고, 회복과 평온의 정서를 유화의 부드러운 색채와 몽환적 형상으로 옮겨 온 작가다. 〈Serenity Fortress(평온의 요새)〉를 비롯한 작업으로 마음의 결을 풀어내며, 아르코미술관·메이크샵아트스페이스 등에 작품이 소장되어 있다. 씨앗페 온라인에서 윤겸의 작품을 만나보세요.',
+      '회화 작가 윤겸. 대구대학교 회화과를 졸업하고, 회복과 평온의 정서를 유화의 부드러운 색채와 몽환적 형상으로 옮겨 온 작가다. 〈Serenity Fortress(평온의 요새)〉를 비롯한 작업으로 마음의 결을 풀어내며, 아르코미술관·메이크샵아트스페이스 등에 작품이 소장되어 있다. 씨앗페 온라인에서 윤겸의 작품을 만날 수 있습니다.',
     ogDescription:
       '회화 작가 윤겸. 회복과 평온의 정서를 유화의 부드러운 색채와 몽환적 풍경으로 옮긴다 — 마음이 머물 수 있는 한 채의 요새.',
     ogAlt: '윤겸 대표 작품',
@@ -166,7 +166,7 @@ export default async function YoonGyeomFeature({
     name: isEnglish ? 'Yoon Gyeom — SAF Online' : '윤겸 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Yoon Gyeom from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 윤겸 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 윤겸 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -802,9 +802,8 @@ export default async function YoonGyeomFeature({
                     <>
                       대구에서 서울로. 윤겸은 하나의 정서 — 평온으로의 돌아옴 — 를 중심으로 인내하는
                       작업을 이어 왔고, 그것을 들어설 수 있을 만큼 부드러운 한 채의 요새로 지어
-                      냈다. 그는 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대의 뜻으로
-                      씨앗페에 함께한다 — 다음 세대의 예술인들도 쉬며 일할 자신의 자리를 찾을 수
-                      있도록.
+                      냈다. 그는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대의 뜻으로 씨앗페에
+                      함께한다 — 다음 세대의 예술인들도 쉬며 일할 자신의 자리를 찾을 수 있도록.
                     </>
                   )}
                 </p>
@@ -832,7 +831,7 @@ export default async function YoonGyeomFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -900,9 +899,9 @@ export default async function YoonGyeomFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

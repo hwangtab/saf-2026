@@ -22,7 +22,7 @@ const PAGE_COPY = {
   ko: {
     title: '아카이브',
     description:
-      '서울 현대미술 전시회 일정과 기록을 한눈에. 씨앗페 온라인 전시회 아카이브에서 2023·2026 전시 일정, 추천 전시 작품, 전시회 포스터를 만나보세요. 역대 씨앗페 전시 기록 — 2023·2026 예술인 연대의 발자취.',
+      '서울 현대미술 전시 일정과 기록을 한눈에 볼 수 있습니다. 씨앗페 온라인 아카이브에서 2023·2026 전시 일정, 추천 작품, 전시 포스터를 만나보세요. 씨앗페가 남긴 2023·2026 예술인 연대의 발자취입니다.',
   },
   en: {
     title: 'Archive',
@@ -131,7 +131,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
         description={
           isEnglish
             ? 'The SAF journey for artist mutual-aid.'
-            : '예술인 상호부조를 위한 씨앗페의 발자취입니다.'
+            : '예술인 상호부조를 이어온 씨앗페의 발자취입니다.'
         }
         breadcrumbItems={breadcrumbItems}
       />
@@ -171,10 +171,8 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
                       </>
                     ) : (
                       <>
-                        <span className="block">
-                          예술인 상호부조 기금 마련을 위한 두 번째 축제.
-                        </span>
-                        <span className="mt-1 block">인사아트센터에서 펼쳐진 연대의 현장.</span>
+                        <span className="block">예술인 상호부조 기금을 마련한 두 번째 축제.</span>
+                        <span className="mt-1 block">인사아트센터에서 만난 연대의 현장.</span>
                       </>
                     )}
                   </p>
@@ -213,7 +211,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
                     ) : (
                       <>
                         <span className="block">씨앗페의 시작.</span>
-                        <span className="mt-1 block">예술인들이 함께 쏘아올린 첫 번째 신호탄.</span>
+                        <span className="mt-1 block">예술인들이 함께 쏘아 올린 첫 번째 신호.</span>
                       </>
                     )}
                   </p>
@@ -232,7 +230,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
         locale={locale}
         eyebrow={{ ko: '시리즈 읽기', en: 'Series Reading' }}
         title={{
-          ko: '씨앗페 행사의 흐름을 따라가기',
+          ko: '씨앗페 행사의 흐름 따라가기',
           en: "Follow the SAF's Journey",
         }}
       />

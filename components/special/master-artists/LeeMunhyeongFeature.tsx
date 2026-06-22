@@ -159,7 +159,7 @@ export default async function LeeMunhyeongFeature({
     name: isEnglish ? 'Lee Mun-hyeong — SAF Online' : '이문형 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Mun-hyeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이문형 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이문형 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -690,9 +690,9 @@ export default async function LeeMunhyeongFeature({
                     <>
                       조선 살림집의 병풍에서 동시대의 캔버스까지, 이문형의 작업은 하나의 물음을
                       추구한다: 옛 토착 언어는 어떻게 계속 말하는가. 그의 대답은 반복이다 — 구조가
-                      될 때까지 되풀이된 길상의 도상, 오늘로 이어진 민화의 밝은 염원. 그는 씨앗페에
-                      이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 다음
-                      세대의 예술인들이 금융 차별의 무게 없이 일할 수 있도록.
+                      될 때까지 되풀이된 길상의 도상, 오늘로 이어진 민화의 밝은 염원. 씨앗페에는 이
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 다음 세대의
+                      예술인들이 금융 차별의 무게 없이 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -720,7 +720,7 @@ export default async function LeeMunhyeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -790,9 +790,9 @@ export default async function LeeMunhyeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

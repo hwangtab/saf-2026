@@ -454,7 +454,7 @@ export async function uploadEmailBroadcastImage(
   const file = formData.get('file');
 
   if (!(file instanceof File)) {
-    return { message: '이미지 파일을 선택해주세요.', error: true };
+    return { message: '이미지 파일을 선택해 주세요.', error: true };
   }
   if (!EMAIL_IMAGE_UPLOAD.allowedMimeTypes.includes(file.type as never)) {
     return { message: 'JPG, PNG, GIF 이미지만 업로드할 수 있습니다.', error: true };

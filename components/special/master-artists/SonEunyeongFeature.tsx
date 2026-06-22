@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '손은영 — 회화와 사진 사이, 도시의 밤',
     description:
-      '회화와 사진의 경계에서 작업하는 작가 손은영. 이화여자대학교 서양화과를 졸업하고 홍익대학교 산업미술대학원에서 사진을 전공한 그는, 「밤의 집」 연작을 통해 불 켜진 도시의 밤과 그 안의 삶을 응시해왔다. 씨앗페 온라인에서 손은영의 작품을 만나보세요.',
+      '회화와 사진의 경계에서 작업하는 작가 손은영. 이화여자대학교 서양화과를 졸업하고 홍익대학교 산업미술대학원에서 사진을 전공한 그는, 「밤의 집」 연작을 통해 불 켜진 도시의 밤과 그 안의 삶을 응시해왔다. 씨앗페 온라인에서 손은영의 작품을 만날 수 있습니다.',
     ogDescription:
       '회화와 사진 사이의 작가 손은영. 「밤의 집」 연작으로 잠들지 않는 도시의 밤과 불 켜진 집들을 응시한다.',
     ogAlt: '손은영 대표 작품',
@@ -173,7 +173,7 @@ export default async function SonEunyeongFeature({
     name: isEnglish ? 'Son Eunyeong — SAF Online' : '손은영 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Son Eunyeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 손은영 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 손은영 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -643,7 +643,7 @@ export default async function SonEunyeongFeature({
                     <>
                       캔버스와 카메라 사이, 불 켜진 창과 어두운 창 사이에서, 손은영은 우리가 현대
                       도시에서 어떻게 서로 가까이 사는가에 관한 조용하고 꾸준한 작업을 쌓아왔다.
-                      그는 동료 예술인과의 연대의 뜻으로 씨앗페에 함께한다 — 다음 세대의 예술인들이
+                      동료 예술인과의 연대의 뜻으로 씨앗페에 함께한다 — 다음 세대의 예술인들이
                       자신의 창에 계속 불을 밝힐 수 있도록.
                     </>
                   )}
@@ -672,7 +672,7 @@ export default async function SonEunyeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -740,9 +740,9 @@ export default async function SonEunyeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

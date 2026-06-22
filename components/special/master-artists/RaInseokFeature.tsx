@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '라인석 — 반듯한 곡선, 휘어진 세계로부터',
     description:
-      '순수 사진부터 사진을 매체로 한 시각예술까지 넘나드는 중견 작가 라인석. 인화지를 긁어 그 사이로 잉크가 스며들게 하는 촉각적 사진으로, 카메라에 포착된 직선을 곡선으로 보는 ‘반듯한 곡선’의 시선을 펼친다. 「TOUCH」·「사진은 세계를 만지고」·「휘어진 세계로부터」 연작을 씨앗페 온라인에서 만나보세요.',
+      '순수 사진부터 사진을 매체로 한 시각예술까지 넘나드는 중견 작가 라인석. 인화지를 긁어 그 사이로 잉크가 스며들게 하는 촉각적 사진으로, 카메라에 포착된 직선을 곡선으로 보는 ‘반듯한 곡선’의 시선을 펼친다. 「TOUCH」·「사진은 세계를 만지고」·「휘어진 세계로부터」 연작을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '순수 사진과 시각예술을 넘나드는 작가 라인석. 인화지를 긁어 잉크가 스며드는 촉각적 사진으로, 휘어진 세계와 ‘반듯한 곡선’을 응시한다.',
     ogAlt: '라인석 대표 작품',
@@ -158,7 +158,7 @@ export default async function RaInseokFeature({
     name: isEnglish ? 'Ra Inseok — SAF Online' : '라인석 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Ra Inseok from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 라인석 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 라인석 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -678,9 +678,8 @@ export default async function RaInseokFeature({
                     <>
                       긁힌 인화지와 휘어진 선 사이에서, 라인석은 사진이 보이는 만큼 만져지기를
                       청하는 작업을 — 그리고 사진이 기록하는 반듯한 세계가 사실은 휘어진 세계임을
-                      인정하는 작업을 — 쌓아왔다. 그는 동료 예술인과의 연대의 뜻으로 씨앗페에
-                      함께한다 — 다음 세대의 예술인들이 자신의 매체의 가장자리에서 계속 일할 수
-                      있도록.
+                      인정하는 작업을 — 쌓아왔다. 동료 예술인과의 연대의 뜻으로 씨앗페에 함께한다 —
+                      다음 세대의 예술인들이 자신의 매체의 가장자리에서 계속 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -708,7 +707,7 @@ export default async function RaInseokFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -776,9 +775,9 @@ export default async function RaInseokFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

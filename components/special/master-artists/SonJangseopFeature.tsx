@@ -184,7 +184,7 @@ export default async function SonJangseopFeature({
     name: isEnglish ? 'Son Jangseop — SAF Online' : '손장섭 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Son Jangseop from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 손장섭 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 손장섭 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -815,7 +815,7 @@ export default async function SonJangseopFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -884,9 +884,9 @@ export default async function SonJangseopFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

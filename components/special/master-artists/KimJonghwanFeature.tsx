@@ -172,7 +172,7 @@ export default async function KimJonghwanFeature({
     name: isEnglish ? 'Kim Jong-hwan — SAF Online' : '김종환 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Jong-hwan from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김종환 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김종환 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -795,9 +795,9 @@ export default async function KimJonghwanFeature({
                   ) : (
                     <>
                       판에서 그림책까지, 김종환은 하나의 손작업을 두 방향으로 밀고 왔습니다. 공방의
-                      규율과 옛이야기의 따뜻함을, 같은 새김의 손이 함께 붙잡습니다. 그는 씨앗페에 이
-                      캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께합니다 — 다음
-                      세대의 예술인들이 한 판, 한 페이지씩 계속 일할 수 있도록.
+                      규율과 옛이야기의 따뜻함을, 같은 새김의 손이 함께 붙잡습니다. 씨앗페에는 이
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께합니다 — 다음 세대의
+                      예술인들이 한 판, 한 페이지씩 계속 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -825,7 +825,7 @@ export default async function KimJonghwanFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -893,9 +893,9 @@ export default async function KimJonghwanFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

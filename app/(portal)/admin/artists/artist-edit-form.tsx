@@ -326,7 +326,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       }
     } catch (error) {
       console.error('[admin-artist-edit-form] Artist save failed:', error);
-      setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       toast.error('An error occurred while saving.');
     } finally {
       setSaving(false);
@@ -344,7 +344,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       router.refresh();
     } catch (error) {
       console.error('[admin-artist-edit-form] Profile image save failed:', error);
-      setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       toast.error('An error occurred while saving image.');
     } finally {
       setSavingImage(false);
@@ -371,7 +371,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       }
     } catch (error) {
       console.error('[admin-artist-edit-form] User link failed:', error);
-      setError('사용자 연결 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError('사용자 연결 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       toast.error('An error occurred while linking user account.');
     } finally {
       setIsLinking(false);
@@ -391,7 +391,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
       }
     } catch (error) {
       console.error('[admin-artist-edit-form] User unlink failed:', error);
-      setError('연결 해제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      setError('연결 해제 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       toast.error('An error occurred while unlinking user account.');
     } finally {
       setIsLinking(false);
@@ -650,7 +650,7 @@ export function ArtistEditForm({ artist = {}, returnTo }: ArtistEditFormProps) {
               )}
             />
             {showErrors && !nameKo.trim() && (
-              <p className="mt-1 text-xs text-danger-a11y">작가 이름을 입력해주세요.</p>
+              <p className="mt-1 text-xs text-danger-a11y">작가 이름을 입력해 주세요.</p>
             )}
           </div>
 

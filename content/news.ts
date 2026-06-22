@@ -9,7 +9,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://mixing.co.kr/37028',
     thumbnail: 'https://mmagimg.speedgabia.com/2025/11/img-1762384976993-f5326e9fdfd4713d.jpeg',
     description:
-      '월간 믹싱 박찬울 칼럼 | 예술인 금융 사각지대의 구조적 문제와 한국스마트협동조합이 95% 상환율을 기록한 상호부조 대출 사례를 짚으며 민관 협력 금융 모델의 필요성을 제안한다.',
+      '월간 믹싱 박찬울 칼럼 | 예술인 금융 사각지대의 구조를 짚고 95% 상환율을 기록한 한국스마트협동조합의 상호부조 대출 사례를 바탕으로 민관 협력 금융 모델의 필요성을 제안한다.',
   },
   {
     id: 'news-ndn-923967',
@@ -20,7 +20,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.ndnnews.co.kr/news/articleView.html?idxno=923967',
     thumbnail: 'https://cdn.ndnnews.co.kr/news/photo/202511/923967_934058_123.png',
     description:
-      '공직신문 | 양문석 의원이 예술인 금융재난 토론회에서 문화체육관광부, 예술인복지재단, 한국스마트협동조합의 민관 협업을 통해 대출의 신속성과 효능감을 동시에 달성해야 한다고 강조했다.',
+      '공직신문 | 양문석 의원이 예술인 금융재난 토론회에서 문화체육관광부, 예술인복지재단, 한국스마트협동조합의 민관 협업으로 대출의 신속성과 효능감을 함께 높여야 한다고 강조했다.',
   },
   {
     id: 'news-ebn-1685475',
@@ -30,7 +30,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.ebn.co.kr/news/articleView.html?idxno=1685475',
     thumbnail: 'https://cdn.ebn.co.kr/news/thumbnail/202511/1685475_703389_313_v150.jpg',
     description:
-      "EBN 김지성 기자 | 국회 토론회에서 공개된 '2025 예술인 금융재난 보고서'가 예술인의 84.9%가 제1금융권 대출을 받지 못한 현실과 95% 상환율을 기록한 상호부조 대출 모델을 소개했다.",
+      "EBN 김지성 기자 | 국회 토론회에서 공개된 '2025 예술인 금융재난 보고서'가 예술인 84.9%가 제1금융권 대출을 받지 못한 현실과 95% 상환율을 기록한 상호부조 대출 모델을 소개했다.",
   },
   {
     id: 'news-asiae-20251105',
@@ -40,7 +40,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.asiae.co.kr/article/2025110517572066097',
     thumbnail: 'https://cphoto.asiae.co.kr/listimglink/1/2025110517522196297_1762332741.jpg',
     description:
-      "아시아경제 이이슬 기자 | '2025 예술인 금융재난 보고서'를 통해 고금리 대출과 창작 중단 사례가 공유되고, 한국스마트협동조합의 95% 상환율 모델과 민관 협력 필요성이 제시됐다.",
+      "아시아경제 이이슬 기자 | '2025 예술인 금융재난 보고서'에 담긴 고금리 대출과 창작 중단 사례를 전하며, 한국스마트협동조합의 95% 상환율 모델과 민관 협력 필요성을 제시했다.",
   },
   {
     id: 'news-32865',
@@ -50,7 +50,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=32865',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20251145/art_17623403153642_d40d7b.jpg',
     description:
-      "뉴스아트 편집부 | '2025 예술인 금융재난 보고서'가 밝힌 배제·약탈·파괴의 악순환과 한국스마트협동조합의 상호부조 대출 95% 상환율을 통해 시스템 변화를 촉구한다.",
+      "뉴스아트 편집부 | '2025 예술인 금융재난 보고서'가 밝힌 배제·약탈·파괴의 악순환과 한국스마트협동조합 상호부조 대출의 95% 상환율을 근거로 시스템 변화를 촉구한다.",
   },
   {
     id: 'news-hani-1227472',
@@ -71,7 +71,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.ggoverallnews.co.kr/news/articleView.html?idxno=92298',
     thumbnail: 'https://cdn.ggoverallnews.co.kr/news/thumbnail/202510/92298_83427_5931_v150.jpg',
     description:
-      '경기종합뉴스 | 국정감사에서 양문석 의원이 예술인생활안정자금(Art-Loan)의 지원 대상과 집행 속도를 지적하며 제도 개선과 실효성 제고 방안을 촉구한 기사.',
+      '경기종합뉴스 | 국정감사에서 양문석 의원이 예술인생활안정자금(Art-Loan)의 지원 대상과 집행 속도를 지적하고 제도 개선과 실효성 제고를 촉구한 기사.',
   },
   {
     id: 'news-asiae-20251022',
@@ -92,7 +92,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=32840',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20250938/art_17581738708772_15d4c1.png',
     description:
-      '뉴스아트 편집부 | 이재명 정부가 야심 차게 내놓은 ‘예술인 복지금고’가 기로에 섰다. 현장에서는 수년간 예술가들에게 ‘위험 떠넘기기’로 비판받아 온 공공의 전철을 밟을지, 아니면 공동체의 신뢰를 바탕으로 과감히 리스크를 감수한 한국스마트협동조합의 길을 따를지 다룬다.',
+      '뉴스아트 편집부 | 이재명 정부가 내놓은 ‘예술인 복지금고’가 기로에 섰다. 공공이 수년간 예술가들에게 ‘위험 떠넘기기’로 비판받아 온 전철을 밟을지, 공동체의 신뢰를 바탕으로 리스크를 감수한 한국스마트협동조합의 길을 따를지 다룬다.',
   },
   {
     id: 'news-32836',
@@ -112,7 +112,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=32826',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20250937/art_17574805036594_823433.png',
     description:
-      '뉴스아트 편집부 | 금융 사각지대에 놓인 예술인들을 위해 한국스마트협동조합이 운영하는 예술인상호부조대출이 누적 7억 원을 돌파한 소식을 전하는 기사.',
+      '뉴스아트 편집부 | 금융 사각지대에 놓인 예술인을 위해 한국스마트협동조합이 운영하는 예술인상호부조대출이 누적 7억 원을 돌파했다는 소식을 전한다.',
   },
   {
     id: 'news-32773',
@@ -132,7 +132,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=32749',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20250313/art_17429771615682_0f2f90.jpg',
     description:
-      '뉴스아트 편집부 | 누적 대출 건수 300건·총액 6억원을 돌파한 ‘예술인상호부조대출’이 예술계의 사회안전망으로 성장하고 있으며, 대위변제율은 5.01%로 안정적이라는 분석을 담았다.',
+      '뉴스아트 편집부 | 누적 대출 건수 300건·총액 6억원을 돌파한 ‘예술인상호부조대출’이 예술계 사회안전망으로 자리 잡고 있으며, 대위변제율은 5.01%로 안정적이라는 분석을 담았다.',
   },
   {
     id: 'news-29518',
@@ -142,7 +142,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=29518',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20240101/art_17041725871048_15ff42.jpg',
     description:
-      '뉴스아트 김시우 기자 | 한국스마트협동조합이 익일 소액대출 서비스를 공개하며 신용불량 상태라도 연 5% 저금리로 자금을 지원하는 구조를 설명한다.',
+      '뉴스아트 김시우 기자 | 한국스마트협동조합이 공개한 익일 소액대출 서비스를 소개하고 신용불량 상태라도 연 5% 저금리로 자금을 지원하는 구조를 설명한다.',
   },
   {
     id: 'news-29471',
@@ -192,7 +192,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.socialimpactnews.net/news/articleView.html?idxno=378',
     thumbnail: 'https://cdn.socialimpactnews.net/news/thumbnail/202304/378_512_4128_v150.jpg',
     description:
-      '소셜임팩트뉴스 정재훈 기자 | 한국스마트협동조합 서인형 이사장을 인터뷰하며 상호부조대출이 금융 사각지대 예술인에게 안전망이 되는 이유를 전한다.',
+      '소셜임팩트뉴스 정재훈 기자 | 한국스마트협동조합 서인형 이사장 인터뷰를 통해 상호부조대출이 금융 사각지대 예술인에게 안전망이 되는 이유를 전한다.',
   },
   {
     id: 'news-26536',
@@ -202,7 +202,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=26536',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20230414/art_1680483844.jpg',
     description:
-      '뉴스아트 이명신 기자 | 3월 24일 진행된 씨앗페 오프닝 퍼포먼스를 영상으로 소개하며, 예술인 고리대금 문제를 다룬 공연의 메시지를 재조명한다.',
+      '뉴스아트 이명신 기자 | 3월 24일 열린 씨앗페 오프닝 퍼포먼스를 영상으로 소개하며, 예술인 고리대금 문제를 다룬 공연의 메시지를 다시 조명한다.',
   },
   {
     id: 'news-26480',
@@ -212,7 +212,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=26480',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20230313/art_16800665997266_a23405.jpg',
     description:
-      '뉴스아트 이명신 기자 | 씨앗페 공연 일정과 함께 예술인상호부조대출 기금 마련이 순조롭게 진행 중임을 알리며 현장의 분위기를 전한다.',
+      '뉴스아트 이명신 기자 | 씨앗페 공연 일정과 예술인상호부조대출 기금 마련 진행 상황을 알리며 현장의 분위기를 전한다.',
   },
   {
     id: 'news-26436',
@@ -222,7 +222,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=26436',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20230313/art_16798812721326_6631d2.jpg',
     description:
-      '뉴스아트 이명신 기자 | 씨앗페 주말 공연 라인업을 소개하며 다양한 장르 예술가들이 참여하는 현장의 열기를 전달한다.',
+      '뉴스아트 이명신 기자 | 씨앗페 주말 공연 라인업을 소개하고 다양한 장르 예술가들이 참여한 현장의 열기를 전한다.',
   },
   {
     id: 'news-26421',
@@ -242,7 +242,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=26420',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20230312/art_16797188293039_3e82e4.jpg',
     description:
-      '뉴스아트 이명신 기자 | 씨앗페 오프닝 행사 현장 스케치를 통해 예술인상호부조대출 기금 마련 취지를 조명한다.',
+      '뉴스아트 이명신 기자 | 씨앗페 오프닝 행사 현장 스케치로 예술인상호부조대출 기금 마련의 취지를 조명한다.',
   },
   {
     id: 'news-26383',
@@ -262,7 +262,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=26278',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20230311/shp_1679022767.jpg',
     description:
-      '뉴스아트 김시우 기자 | 100여 팀이 참여하는 씨앗페 축제의 규모와 함께 예술인상호부조대출 기금 확충 목표를 소개한다.',
+      '뉴스아트 김시우 기자 | 100여 팀이 참여하는 씨앗페 축제의 규모와 예술인상호부조대출 기금 확충 목표를 소개한다.',
   },
   {
     id: 'news-26276',
@@ -282,7 +282,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.abcn.kr/news/articleView.html?idxno=71851',
     thumbnail: 'https://cdn.abcn.kr/news/thumbnail/202303/71851_22311_3055_v150.jpg',
     description:
-      'ABC뉴스 이재욱 기자 | 씨앗페 2023 축제 현장을 소개하며 예술인상호부조대출 기금 마련 취지와 참여 예술인들의 활동을 전한다.',
+      'ABC뉴스 이재욱 기자 | 씨앗페 2023 축제 현장을 소개하고 예술인상호부조대출 기금 마련 취지와 참여 예술인들의 활동을 전한다.',
   },
   {
     id: 'news-26232',
@@ -302,7 +302,7 @@ export const newsArticles: NewsArticle[] = [
     link: 'https://www.news-art.co.kr/news/article.html?no=26216',
     thumbnail: 'https://www.news-art.co.kr/data/photos/20230311/art_16790426553832_413106.jpg',
     description:
-      '뉴스아트 이명신 기자 | 씨앗페 뮤직 라인업을 공개하며 축제 기간과 장소, 참여 아티스트 정보를 안내한다.',
+      '뉴스아트 이명신 기자 | 씨앗페 뮤직 라인업과 함께 축제 기간, 장소, 참여 아티스트 정보를 안내한다.',
   },
   {
     id: 'news-26112',

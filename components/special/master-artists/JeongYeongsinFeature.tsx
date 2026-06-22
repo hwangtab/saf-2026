@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '정영신 — 바람의 여행자, 전국 6백 장터를 기록하다',
     description:
-      '40년째 전국의 오일장을 탐구해 온 기록사진가이자 소설가 정영신(1958–). 전국 6백여 곳 오일장을 모두 기록한 〈바람의 여행자〉. 사라져가는 시골 장터의 사람과 표정, 삶을 문화유산으로 남기는 따뜻한 기록 사진을 씨앗페 온라인에서 만나보세요.',
+      '40년째 전국의 오일장을 탐구해 온 기록사진가이자 소설가 정영신(1958–). 전국 6백여 곳 오일장을 모두 기록한 〈바람의 여행자〉. 사라져가는 시골 장터의 사람과 표정, 삶을 문화유산으로 남기는 따뜻한 기록 사진을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '40년째 전국 오일장을 기록해 온 사진가 정영신. 전국 6백여 곳 장터를 모두 기록한 바람의 여행자, 사라져가는 시골 장터를 문화유산으로.',
     ogAlt: '정영신 대표 작품',
@@ -167,7 +167,7 @@ export default async function JeongYeongsinFeature({
     name: isEnglish ? 'Jeong Yeongsin — SAF Online' : '정영신 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Jeong Yeongsin from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 정영신 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 정영신 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -762,9 +762,9 @@ export default async function JeongYeongsinFeature({
                   ) : (
                     <>
                       전라도의 한 시골 장에서 전국 6백 장터까지, 정영신의 작업은 한 가지를 추구해
-                      왔다 — 사라지는 것 곁에 충분히 오래 머물러 다음으로 건네는 일. 그는 씨앗페에
-                      이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 이런
-                      기록을 이어가는 이들이 금융 차별의 무게 없이 일할 수 있도록.
+                      왔다 — 사라지는 것 곁에 충분히 오래 머물러 다음으로 건네는 일. 씨앗페에는 이
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 이런 기록을
+                      이어가는 이들이 금융 차별의 무게 없이 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -792,7 +792,7 @@ export default async function JeongYeongsinFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -862,9 +862,9 @@ export default async function JeongYeongsinFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

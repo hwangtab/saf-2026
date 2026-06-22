@@ -166,7 +166,7 @@ export default async function HanMiyeongFeature({
     name: isEnglish ? 'Han Miyeong — SAF Online' : '한미영 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Han Miyeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 한미영 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 한미영 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -341,7 +341,7 @@ export default async function HanMiyeongFeature({
                       추진력으로 읽힌다 — 아직 자기 폭을 찾아가는 손의 꾸준한 축적.
                     </p>
                     <p>
-                      한미영은 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서
+                      한미영은 씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로
                       함께한다. 이곳에 선 그의 자리는 가능성에 거는 한 표다 — 시작의 신선한 에너지가
                       그 나름의 가치를 지니며, 작품 한 점을 내놓는 일이 오늘 금융 차별을 겪는 또
                       다른 예술인에게 보탬이 될 수 있다는 믿음.
@@ -691,8 +691,8 @@ export default async function HanMiyeongFeature({
                       </p>
                       <p>
                         이 응시의 윤리는 씨앗페에 함께하기로 한 그의 선택에서 자연스러운 연장을
-                        찾는다. 그는 캠페인의 대상으로서가 아니라, 연대하는 동료 예술인으로서
-                        참여한다. 이곳에서 판매되는 작품은 전액{' '}
+                        찾는다. 그는 캠페인의 대상이 아니라, 연대하는 동료 예술인으로서 참여한다.
+                        이곳에서 판매되는 작품은 전액{' '}
                         <strong className="font-bold text-charcoal-deep">
                           예술인 상호부조 대출 기금
                         </strong>
@@ -723,9 +723,9 @@ export default async function HanMiyeongFeature({
                       졸업전시부터 최근의 단체전까지, 한미영의 작업은 하나의 신선한 물음을 추구해
                       왔다 — 일상의 정서를 어떻게 화면 위로 옮길 것인가. 한 점 한 점 쌓아 올린
                       대답이 일상의 질감에 주의를 기울이고 그 향방에 열려 있는 회화의 작업이다. 그는
-                      씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다
-                      — 다음 세대의 예술인들이 한국 예술인에게 지워진 금융 차별의 무게를 조금이라도
-                      덜 짊어진 채 일할 수 있도록.
+                      씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 다음
+                      세대의 예술인들이 한국 예술인에게 지워진 금융 차별의 무게를 조금이라도 덜
+                      짊어진 채 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -753,7 +753,7 @@ export default async function HanMiyeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -821,9 +821,9 @@ export default async function HanMiyeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

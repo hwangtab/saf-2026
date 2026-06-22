@@ -172,7 +172,7 @@ export default async function YangUncheolFeature({
     name: isEnglish ? 'Yang Un-cheol — SAF Online' : '양운철 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Yang Un-cheol from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 양운철 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 양운철 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -720,7 +720,7 @@ export default async function YangUncheolFeature({
                       </p>
                       <p>
                         양운철은 같은 마음으로 이 캠페인에 함께한다 — 이 캠페인의 대상으로서가
-                        아니라, 동료 예술인과의 연대자로서. 느리고 사려 깊은 작업의 조건이 그것을
+                        아니라, 동료 예술인과의 연대자로. 느리고 사려 깊은 작업의 조건이 그것을
                         필요로 하는 이들에게 닿을 수 있도록.
                       </p>
                     </>
@@ -742,9 +742,9 @@ export default async function YangUncheolFeature({
                   ) : (
                     <>
                       종교미술의 도상적 문법에서 철학의 물음까지, 양운철의 작업은 하나의 공간을
-                      추구해 왔다 — 빈 간격, 의미가 명명되기 전에 모이는 치워진 간극. 그는 이
-                      캠페인에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다
-                      — 다른 이들이 스스로를 위해 일어설 자리를 가질 수 있도록.
+                      추구해 왔다 — 빈 간격, 의미가 명명되기 전에 모이는 치워진 간극. 그는 이 이
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 다른 이들이
+                      스스로를 위해 일어설 자리를 가질 수 있도록.
                     </>
                   )}
                 </p>
@@ -772,7 +772,7 @@ export default async function YangUncheolFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -840,9 +840,9 @@ export default async function YangUncheolFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

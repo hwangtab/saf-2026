@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '이재정 — 신화와 일상 사이, 한국 사회를 횡단하는 카메라',
     description:
-      '사회와 풍경, 신화와 일상 사이를 사진으로 횡단해 온 사진가 이재정. 제주신화부터 DMZ, 화산도, 그리고 조선의 카메라 옵스큐라 칠실파려안까지, 한국 사회의 결을 묵직한 다큐멘터리의 시선으로 기록해왔다. 씨앗페 온라인에서 이재정의 작품을 만나보세요.',
+      '사회와 풍경, 신화와 일상 사이를 사진으로 횡단해 온 사진가 이재정. 제주신화부터 DMZ, 화산도, 그리고 조선의 카메라 옵스큐라 칠실파려안까지, 한국 사회의 결을 묵직한 다큐멘터리의 시선으로 기록해왔다. 씨앗페 온라인에서 이재정의 작품을 만날 수 있습니다.',
     ogDescription:
       '신화와 일상 사이를 횡단하는 사진가 이재정. 제주신화·DMZ·화산도·칠실파려안까지, 한국 사회의 결을 기록하는 다큐멘터리 사진.',
     ogAlt: '이재정 대표 작품',
@@ -159,7 +159,7 @@ export default async function LeeJaejeongFeature({
     name: isEnglish ? 'Lee Jaejeong — SAF Online' : '이재정 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Jaejeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이재정 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이재정 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -310,8 +310,8 @@ export default async function LeeJaejeongFeature({
                     </p>
                     <p>
                       〈제주신화전〉(2016) 이후의 개인전과 사진제들을 거치며, 그의 작업은 두 결을
-                      동시에 품어 왔다 — 기록된 것의 다큐멘터리적 무게, 그리고 그것이 보여지는
-                      방식의 신화적· 서사적 저음. 그 결과는 증거이자 이야기인 사진이다.
+                      동시에 품어 왔다 — 기록된 것의 다큐멘터리적 무게, 그리고 그것이 보이는 방식의
+                      신화적· 서사적 저음. 그 결과는 증거이자 이야기인 사진이다.
                     </p>
                     <p>
                       근래 그의 탐구는 사진 이미지의 기원 그 자체로 향했다. 조선시대 카메라
@@ -718,7 +718,7 @@ export default async function LeeJaejeongFeature({
                     <>
                       제주의 신화에서 조선 실학자의 어두운 방까지, 이재정은 한국 사회를 — 그 풍경과
                       공적 사건과 일상을 — 하나의 시선에 머물지 않고 횡단하는 다큐멘터리 작업을
-                      쌓아왔다. 그는 동료 예술인과의 연대의 뜻으로 씨앗페에 함께한다 — 다음 세대의
+                      쌓아왔다. 동료 예술인과의 연대의 뜻으로 씨앗페에 함께한다 — 다음 세대의
                       예술인들이 계속 횡단하고, 계속 기록할 수 있도록.
                     </>
                   )}
@@ -747,7 +747,7 @@ export default async function LeeJaejeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -815,9 +815,9 @@ export default async function LeeJaejeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

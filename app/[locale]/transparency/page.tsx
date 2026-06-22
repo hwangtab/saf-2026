@@ -35,7 +35,7 @@ const PAGE_COPY = {
   ko: {
     // 끝에 "| 씨앗페" 브랜드 추가 — 트위터/링크드인 카드는 siteName 미노출, title 단독 표시.
     title: `예술인 상호부조 대출 운용 보고서 · ${LOAN_COUNT}건 누적·95% 상환 | 씨앗페`,
-    description: `2022년 12월 시작된 예술인 상호부조 대출 운영 현황. 누적 ${LOAN_COUNT}건, 상환율 95%, 총 7억 원 이상 지원의 성과를 연간 보고서로 투명하게 공개합니다.`,
+    description: `2022년 12월 시작된 예술인 상호부조 대출 운영 현황. 누적 ${LOAN_COUNT}건, 상환율 95%, 총 7억 원 이상 지원 내역을 연간 보고서로 투명하게 공개합니다.`,
   },
   en: {
     title: `Transparency Reports · ${LOAN_COUNT} Loans, 95% Repayment | SAF`,
@@ -406,7 +406,7 @@ export default async function TransparencyPage({
       <JsonLdScript data={[breadcrumbSchema, webPageSchema, reportsSchema]} />
       <PageHero
         title="운용 보고서"
-        description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금 운용 전 과정을 투명하게 공개합니다."
+        description="대출 한 건, 상환 한 건, 원 단위까지. 예술인 상호부조 대출 기금의 운용 과정을 투명하게 공개합니다."
         descriptionId="transparency-hero-description"
         breadcrumbItems={breadcrumbItems}
         customBackgroundImage={getHeroOverride('transparency')}
@@ -414,7 +414,7 @@ export default async function TransparencyPage({
         <ShareButtonsWrapper
           url={PAGE_URL}
           title="운용 보고서 - 씨앗페 온라인"
-          description="예술인 상호부조 대출 연간 운용 보고서. 데이터로 확인하세요."
+          description="예술인 상호부조 대출 연간 운용 보고서. 데이터로 직접 확인하세요."
         />
       </PageHero>
 
@@ -471,7 +471,7 @@ export default async function TransparencyPage({
         <div id="transparency-stats-section" className="container-max">
           <SectionTitle className="mb-4">연도별 성장 추이</SectionTitle>
           <p className="text-charcoal-muted text-center mb-12">
-            2022년 12월 출범 이후 매년 증가하는 대출 규모와 안정적인 상환율을 확인할 수 있습니다.
+            2022년 12월 출범 이후 대출 규모는 매년 늘었고, 상환율은 안정적으로 유지되고 있습니다.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
@@ -546,7 +546,7 @@ export default async function TransparencyPage({
             </p>
             <p className="text-base text-charcoal-muted">
               한국스마트협동조합은 대출 실행, 상환, 대위변제 등 모든 운용 데이터를 조합원과
-              후원자에게 연간 보고서 형태로 공개하고 있습니다. 위 PDF를 내려받아 직접 확인하세요.
+              후원자에게 연간 보고서로 공개합니다. 위 PDF를 내려받아 직접 확인하세요.
             </p>
           </div>
         </div>
@@ -558,18 +558,18 @@ export default async function TransparencyPage({
           <SectionTitle className="mb-8">이 흐름에 함께해 주세요</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
-              <h3 className="text-card-title mb-3">작품을 구매해 기금에 참여하세요</h3>
+              <h3 className="text-card-title mb-3">작품 구매로 기금에 참여하세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                판매 수익은 상호부조 기금으로 귀속되어 더 많은 예술인에게 저금리 대출로 이어집니다.
+                판매 수익은 상호부조 기금에 귀속되어 더 많은 예술인의 저금리 대출로 이어집니다.
               </p>
               <LinkButton href="/artworks" variant="secondary" size="md">
                 작품 구매하기
               </LinkButton>
             </div>
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
-              <h3 className="text-card-title mb-3">조합원이 되어 연대해주세요</h3>
+              <h3 className="text-card-title mb-3">조합원으로 함께 연대해 주세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                조합원 가입으로 기금 조성에 직접 참여하고 대출 가능 금액을 늘릴 수 있습니다.
+                조합원 가입은 기금 조성에 직접 보태지고, 대출 가능 금액을 넓힙니다.
               </p>
               <TrackedDonateButton position="transparency-ko" variant="primary" size="md">
                 조합원 가입하기

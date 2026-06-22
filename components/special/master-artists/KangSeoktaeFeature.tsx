@@ -178,7 +178,7 @@ export default async function KangSeoktaeFeature({
     name: isEnglish ? 'Kang Seoktae — SAF Online' : '강석태 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kang Seoktae from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 강석태 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 강석태 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -775,10 +775,9 @@ export default async function KangSeoktaeFeature({
                         단일 주제로 20년 이상 지속하는 작업은 어느 맥락에서도 드문 일이다. 새로움과
                         범위를 보상하는 현대 미술계에서는 특히 그렇다. 강석태는 넓이 대신 깊이를
                         선택했다: 같은 만남, 같은 모티프, 같은 물음 — 매번 조금 다른 각도로, 조금
-                        다른 색감으로 접근하며, 매번 더 깊은 무언가를 발견한다. 그는 씨앗페에 이
-                        캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 다음
-                        세대의 예술인들이 금융 배제의 벽 없이 일할 수 있도록, 깊이 또한 가능할 수
-                        있도록.
+                        다른 색감으로 접근하며, 매번 더 깊은 무언가를 발견한다. 씨앗페에는 이
+                        캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 다음 세대의
+                        예술인들이 금융 배제의 벽 없이 일할 수 있도록, 깊이 또한 가능할 수 있도록.
                       </p>
                     </>
                   )}
@@ -828,7 +827,7 @@ export default async function KangSeoktaeFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -896,9 +895,9 @@ export default async function KangSeoktaeFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

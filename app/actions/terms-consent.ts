@@ -143,7 +143,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
   if (needsArtistConsent && !artistTermsReadComplete) {
     return {
       kind: 'state',
-      state: { message: '전시·판매위탁 계약서 전문을 끝까지 확인해주세요.', error: true },
+      state: { message: '전시·판매위탁 계약서 전문을 끝까지 확인해 주세요.', error: true },
     };
   }
 
@@ -151,7 +151,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
     return {
       kind: 'state',
       state: {
-        message: '최신 전시·판매위탁 계약서 확인 후 다시 동의해주세요.',
+        message: '최신 전시·판매위탁 계약서 확인 후 다시 동의해 주세요.',
         error: true,
       },
     };
@@ -167,7 +167,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
   if (needsExhibitorConsent && !exhibitorTermsReadComplete) {
     return {
       kind: 'state',
-      state: { message: '출품자 전시위탁 계약서 전문을 끝까지 확인해주세요.', error: true },
+      state: { message: '출품자 전시위탁 계약서 전문을 끝까지 확인해 주세요.', error: true },
     };
   }
 
@@ -175,7 +175,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
     return {
       kind: 'state',
       state: {
-        message: '최신 출품자 전시위탁 계약서 확인 후 다시 동의해주세요.',
+        message: '최신 출품자 전시위탁 계약서 확인 후 다시 동의해 주세요.',
         error: true,
       },
     };
@@ -192,7 +192,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
     return {
       kind: 'state',
       state: {
-        message: '최신 개인정보처리방침 확인 후 다시 동의해주세요.',
+        message: '최신 개인정보처리방침 확인 후 다시 동의해 주세요.',
         error: true,
       },
     };
@@ -206,7 +206,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
     return {
       kind: 'state',
       state: {
-        message: '최신 이용약관 확인 후 다시 동의해주세요.',
+        message: '최신 이용약관 확인 후 다시 동의해 주세요.',
         error: true,
       },
     };
@@ -298,7 +298,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
       kind: 'state',
       state: {
         message:
-          '동의를 저장할 신청 정보를 찾지 못했습니다. 신청서 정보가 누락된 것 같습니다. 관리자에게 문의해주세요.',
+          '동의를 저장할 신청 정보를 찾지 못했습니다. 신청서 정보가 누락된 것 같습니다. 관리자에게 문의해 주세요.',
         error: true,
       },
     };
@@ -323,7 +323,7 @@ async function computeTermsConsentOutcome(formData: FormData): Promise<Outcome> 
     return {
       kind: 'state',
       state: {
-        message: `${targets} 계약서 동의를 저장하지 못했습니다. 계정 상태를 확인 후 다시 시도해주세요.`,
+        message: `${targets} 계약서 동의를 저장하지 못했습니다. 계정 상태를 확인 후 다시 시도해 주세요.`,
         error: true,
       },
     };

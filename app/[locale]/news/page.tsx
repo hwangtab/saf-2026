@@ -48,15 +48,15 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
   ko: {
     pageTitle: '언론 보도',
     pageDescription:
-      '언론이 주목한 씨앗페 온라인. 예술인 금융 차별과 상호부조를 다룬 주요 언론 보도·인터뷰·칼럼을 모아 씨앗페의 사회적 의미와 예술 현장의 목소리를 전합니다.',
+      '언론이 주목한 씨앗페 온라인. 예술인 금융 차별과 상호부조를 다룬 주요 보도·인터뷰·칼럼을 모아 씨앗페의 사회적 의미와 예술 현장의 목소리를 전합니다.',
     heroTitle: '언론 보도',
     heroDescription: '씨앗페를 조명한 기사와 인터뷰를 모았습니다.',
     shareTitle: '언론 보도 | 씨앗페 온라인',
-    shareDescription: '씨앗페를 다룬 언론 보도를 한 눈에 확인해보세요.',
+    shareDescription: '씨앗페를 다룬 언론 보도를 한눈에 확인해보세요.',
     highlightsBadge: '언론 하이라이트',
     highlightsTitle: '언론이 짚어낸 예술인 금융 위기의 핵심 메시지',
     highlightsDescription:
-      '언론이 기록한 현장의 목소리와 데이터를 통해,\n예술인이 마주한 금융 사각지대의 현실과 상호부조의 필요성을 확인합니다.',
+      '언론이 기록한 현장의 목소리와 데이터로,\n예술인이 마주한 금융 사각지대와 상호부조의 필요성을 확인합니다.',
     coverageSuffix: '보도',
     noImage: '이미지 없음',
     readMore: '자세히 보기',
@@ -105,7 +105,7 @@ export async function generateMetadata({
   const dynamicDescription =
     locale === 'en'
       ? `${count} press articles and interviews about SAF Online and Korean artist financial exclusion. Curated by major outlets.`
-      : `씨앗페와 예술인 금융 차별을 다룬 주요 언론의 기사·인터뷰 ${count}건. 한겨레·경향신문·KBS 등 보도 원문 링크와 인용 모음.`;
+      : `씨앗페와 예술인 금융 차별을 다룬 주요 언론 기사·인터뷰 ${count}건. 한겨레·경향신문·KBS 등 보도 원문 링크와 인용 모음.`;
   const pageUrl = buildLocaleUrl('/news', locale);
 
   return {
@@ -196,7 +196,7 @@ const highlightQuotesByLocale: Record<LocaleCode, HighlightQuote[]> = {
       label: '2025.05.22',
       source: '뉴스아트',
       excerpt:
-        '대출금 상환 성과도 괄목할 만하다. 대위변제율은 금액 기준 5.10%로, 일반 금융기관의 저신용자 대출 연체율과 비교해 낮은 수준을 유지하고 있다. 이는 신용점수가 낮아도 예술인들의 상환 의지와 책임감이 결코 낮지 않다는 것을 증명한다.',
+        '대출금 상환 성과도 뚜렷하다. 대위변제율은 금액 기준 5.10%로, 일반 금융기관의 저신용자 대출 연체율보다 낮은 수준을 유지하고 있다. 신용점수가 낮아도 예술인들의 상환 의지와 책임감이 결코 낮지 않다는 사실을 보여준다.',
       highlights: ['대위변제율', '5.10%', '상환 의지'],
     },
     {

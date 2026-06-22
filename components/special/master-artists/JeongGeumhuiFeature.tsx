@@ -37,7 +37,7 @@ const PAGE_COPY = {
   ko: {
     title: '정금희 — 화락이토와 동해선, 사라지는 것의 시간',
     description:
-      '부산을 중심으로 활동하는 사진가 정금희. 홍익대학교 대학원에서 사진학 박사를 받은 그는, 꽃이 떨어져 흙이 되는 순환을 담은 「화락이토(花落以土)」 연작과 동해선 폐역사(驛舍)의 역사(歷史)를 기록한 작업으로 풍경과 시간의 결을 응시해왔다. 사진과 사진집으로 사라지는 것을 기록하는 정금희의 작품을 씨앗페 온라인에서 만나보세요.',
+      '부산을 중심으로 활동하는 사진가 정금희. 홍익대학교 대학원에서 사진학 박사를 받은 그는, 꽃이 떨어져 흙이 되는 순환을 담은 「화락이토(花落以土)」 연작과 동해선 폐역사(驛舍)의 역사(歷史)를 기록한 작업으로 풍경과 시간의 결을 응시해왔다. 사진과 사진집으로 사라지는 것을 기록하는 정금희의 작품을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '부산의 사진가 정금희. 「화락이토(花落以土)」와 동해선 폐역사 연작으로 사라지는 것의 시간을 기록한다.',
     ogAlt: '정금희 대표 작품',
@@ -167,7 +167,7 @@ export default async function JeongGeumhuiFeature({
     name: isEnglish ? 'Jeong Geumhui — SAF Online' : '정금희 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Jeong Geumhui from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 정금희 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 정금희 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -745,7 +745,7 @@ export default async function JeongGeumhuiFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -813,9 +813,9 @@ export default async function JeongGeumhuiFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

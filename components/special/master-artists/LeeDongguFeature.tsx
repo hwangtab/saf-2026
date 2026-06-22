@@ -171,7 +171,7 @@ export default async function LeeDongguFeature({
     name: isEnglish ? 'Lee Donggu — SAF Online' : '이동구 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Donggu from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이동구 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이동구 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -715,9 +715,8 @@ export default async function LeeDongguFeature({
                     <>
                       물레 위 중심 잡힌 흙에서 가마의 판결에 이르기까지, 이동구의 작업은 도예의
                       인내로운 궤적을 따른다 — 자기 이름의 공방에서 날마다 지켜 가는 공예. 그는
-                      씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다
-                      — 작품 판매 수익이 오늘 금융 차별을 겪는 예술인에게 저금리의 버팀목이 될 수
-                      있도록.
+                      씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 작품
+                      판매 수익이 오늘 금융 차별을 겪는 예술인에게 저금리의 버팀목이 될 수 있도록.
                     </>
                   )}
                 </p>
@@ -745,7 +744,7 @@ export default async function LeeDongguFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -813,9 +812,9 @@ export default async function LeeDongguFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

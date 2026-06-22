@@ -217,7 +217,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
         description={
           isEnglish
             ? 'Data from the 2025 report exposes the structural financial exclusion faced by artists in Korea.'
-            : '2025 예술인 금융 재난 보고서가 밝혀낸 한국 예술인의 금융 위기의 구조적 현실'
+            : '2025 예술인 금융 재난 보고서가 드러낸 한국 예술인 금융 위기의 구조'
         }
         breadcrumbItems={breadcrumbItems}
       >
@@ -686,27 +686,27 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
               <>
                 <p>
                   예술인 금융 위기는 개인의 나태나 불성실의 결과가 아닙니다. 이는{' '}
-                  <strong>프로젝트 기반 고용이라는 산업 구조적 현실</strong>을 전혀 인정하지 않는
-                  금융 시스템의 구조적 실패입니다.
+                  <strong>프로젝트 기반 고용이라는 산업 구조</strong>를 전혀 인정하지 않는 금융
+                  시스템의 구조적 실패입니다.
                 </p>
                 <p>
                   고용보험, 실업급여 등 대부분의 사회 안전망도 전통적 &lsquo;상시 고용&rsquo;을
-                  기준으로 설계되어, 예술인들은{' '}
+                  기준으로 설계되어 예술인들은{' '}
                   <strong>사회적으로도 금융적으로도 체계적으로 배제</strong>되어 있습니다.
                 </p>
                 <p>
-                  따라서 이것은 단순한 개인의 빈곤 문제가 아닌,
+                  이것은 단순한 개인의 빈곤 문제가 아니라
                   <strong> 한국 문화예술 생태계의 지속가능성을 위협하는 사회적 재난</strong>입니다.
                 </p>
                 <p>
-                  씨앗페는 이 구조적 문제에 대한 대안으로{' '}
+                  씨앗페는 이 구조적 문제의 대안으로{' '}
                   <Link
                     href="/our-proof"
                     className="text-primary-strong hover:underline font-medium"
                   >
                     예술인 상호부조 대출
                   </Link>
-                  을 실행하고 있으며, 데이터로 그 성과를 증명하고 있습니다.{' '}
+                  을 실행하고 있고 데이터로 그 성과를 확인하고 있습니다.{' '}
                   <Link
                     href="/artworks"
                     className="text-primary-strong hover:underline font-medium"
@@ -758,7 +758,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
                   <strong> 예측 불가능한 소득 공백기를 버텨낼 안정적인 금융</strong>입니다.
                 </p>
                 <p>
-                  복지는 물고기를 주는 것이라면, 금융은 물고기를 잡으러 나갈 다음 기회까지 버틸 수
+                  복지가 물고기를 주는 일이라면 금융은 물고기를 잡으러 나갈 다음 기회까지 버틸 수
                   있게 해주는 <strong>산소호흡기</strong>입니다.
                 </p>
               </>
@@ -774,7 +774,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
               <p className="text-sm text-charcoal-muted">
                 {isEnglish
                   ? 'Stable finance carries artists through income gaps so they can stay focused on the work.'
-                  : '안정적인 금융으로 소득 공백기를 버티며 창작에 집중할 수 있습니다'}
+                  : '안정적인 금융으로 소득 공백기를 버티고 창작에 집중할 수 있습니다'}
               </p>
             </div>
 
@@ -798,7 +798,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
               <p className="text-sm text-charcoal-muted">
                 {isEnglish
                   ? 'A diverse, sustainable cultural ecosystem becomes possible — and stays that way.'
-                  : '문화예술 생태계의 다양성과 지속가능성을 확보할 수 있습니다'}
+                  : '문화예술 생태계의 다양성과 지속가능성을 지킬 수 있습니다'}
               </p>
             </div>
           </div>
@@ -822,7 +822,7 @@ export default async function OurReality({ params }: { params: Promise<{ locale:
               </>
             ) : (
               <>
-                한국 예술인들의 창작 시간을 살려내는 일에 함께해주세요.
+                한국 예술인들의 창작 시간을 살려내는 일에 함께해 주세요.
                 <br />
                 조합원 가입과 작품 구매가 예술이 계속 숨 쉬게 하는{' '}
                 <span className="text-charcoal-deep font-semibold">산소호흡기</span>가 됩니다.

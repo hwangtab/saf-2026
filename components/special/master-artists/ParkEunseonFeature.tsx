@@ -37,7 +37,7 @@ const PAGE_COPY = {
   ko: {
     title: '박은선 — 한국·로마·인도를 잇는 화가',
     description:
-      '동국대학교 서양화과와 이탈리아 로마국립아카데미를 졸업하고, 인도 캘커타·샨티니케탄의 Birla Academy와 프랑스 트로아·파리의 국제 레지던시를 거친 화가 박은선. 18회의 개인전과 200회 이상의 국내외 기획전을 통해 이동과 체류 속에서 형성된 회화 세계를 씨앗페 온라인에서 만나보세요.',
+      '동국대학교 서양화과와 이탈리아 로마국립아카데미를 졸업하고, 인도 캘커타·샨티니케탄의 Birla Academy와 프랑스 트로아·파리의 국제 레지던시를 거친 화가 박은선. 18회의 개인전과 200회 이상의 국내외 기획전을 통해 이동과 체류 속에서 형성된 회화 세계를 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '한국에서 로마로, 인도 샨티니케탄과 프랑스 파리의 국제 레지던시를 잇는 화가 박은선. 이동과 체류 속에서 빚어진 회화.',
     ogAlt: '박은선 대표 작품',
@@ -174,7 +174,7 @@ export default async function ParkEunseonFeature({
     name: isEnglish ? 'Park Eunseon — SAF Online' : '박은선 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Park Eunseon from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 박은선 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 박은선 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -692,8 +692,8 @@ export default async function ParkEunseonFeature({
                   ) : (
                     <>
                       서울과 로마에서 샨티니케탄과 트로아, 파리까지, 박은선의 작업은 도시와
-                      레지던시를 건너오며 빚어졌다 — 이동 속에서 만들어진 회화. 그는 씨앗페에 이
-                      캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다. 다음 세대의
+                      레지던시를 건너오며 빚어졌다 — 이동 속에서 만들어진 회화. 씨앗페에는 이
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다. 다음 세대의
                       예술인들이 조금 더 단단한 땅 위에서 계속 작업하고, 계속 나아갈 수 있도록.
                     </>
                   )}
@@ -722,7 +722,7 @@ export default async function ParkEunseonFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -790,9 +790,9 @@ export default async function ParkEunseonFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

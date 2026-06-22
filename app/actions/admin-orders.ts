@@ -307,7 +307,7 @@ export async function refundOrder(input: RefundInput) {
 
   const { orderId, cancelReason, refundReceiveAccount } = input;
 
-  if (!cancelReason.trim()) throw new Error('취소 사유를 입력해주세요.');
+  if (!cancelReason.trim()) throw new Error('취소 사유를 입력해 주세요.');
 
   // 1. Fetch order + payment (must be paid | preparing)
   const { data: order, error: orderError } = await supabase
@@ -570,7 +570,7 @@ export async function updateOrderStatus(
 
   if (updateError) throw updateError;
   if (!updatedRows || updatedRows.length === 0) {
-    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+    throw new Error('주문 상태가 변경되었습니다. 새로고침한 뒤 다시 시도해 주세요.');
   }
 
   // paid → cancelled: artwork_sales void + 작품 상태 복원 (다품목 카트 주문 지원)
@@ -826,7 +826,7 @@ export async function confirmDeposit(orderId: string) {
   if (confirmError) {
     console.error('[confirmDeposit] confirm_bank_transfer_order RPC failed:', confirmError);
     throw new Error(
-      '판매 기록 생성에 실패해 입금 확인을 중단했습니다. 작품 판매 상태와 주문을 확인해주세요.'
+      '판매 기록 생성에 실패해 입금 확인을 중단했습니다. 작품 판매 상태와 주문을 확인해 주세요.'
     );
   }
 
@@ -841,7 +841,7 @@ export async function confirmDeposit(orderId: string) {
       confirmedRows,
     });
     throw new Error(
-      '판매 기록 생성에 실패해 입금 확인을 중단했습니다. 작품 판매 상태와 주문을 확인해주세요.'
+      '판매 기록 생성에 실패해 입금 확인을 중단했습니다. 작품 판매 상태와 주문을 확인해 주세요.'
     );
   }
 
@@ -973,7 +973,7 @@ export async function setDepositAutoCancelPaused(orderId: string, paused: boolea
 
   if (updateError) throw updateError;
   if (!updatedRows || updatedRows.length === 0) {
-    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+    throw new Error('주문 상태가 변경되었습니다. 새로고침한 뒤 다시 시도해 주세요.');
   }
 
   await logAdminAction(
@@ -1002,7 +1002,7 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
   const admin = await requireAdmin();
   const supabase = await requireAdminClient();
 
-  if (!cancelReason.trim()) throw new Error('취소 사유를 입력해주세요.');
+  if (!cancelReason.trim()) throw new Error('취소 사유를 입력해 주세요.');
 
   const { data: order, error } = await supabase
     .from('orders')
@@ -1029,7 +1029,7 @@ export async function cancelAwaitingOrder(orderId: string, cancelReason: string)
 
   if (updateError) throw updateError;
   if (!updatedRows || updatedRows.length === 0) {
-    throw new Error('주문 상태가 변경되었습니다. 새로고침 후 다시 시도해주세요.');
+    throw new Error('주문 상태가 변경되었습니다. 새로고침한 뒤 다시 시도해 주세요.');
   }
 
   // 2. artwork reserved→available 직접 복원 — order_items 라인별 (다품목 카트 주문 지원).
@@ -1161,7 +1161,8 @@ export async function setOrderEscalation(
   const { data, error } = await query.select('order_no').maybeSingle();
 
   if (error) throw error;
-  if (!data) throw new Error('주문 상태가 변경되었습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+  if (!data)
+    throw new Error('주문 상태가 변경되었습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.');
 
   // 에스컬레이션 메모는 admin-only 테이블에 별도 저장 (orders 테이블에서 PII 격리)
   if (note) {

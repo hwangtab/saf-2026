@@ -207,7 +207,7 @@ export const batch007: Artwork[] = [
     title_en: 'Green Feet',
     description: '',
     size: '72.7x60.6cm',
-    material: '캔버스위에 아크릴, 콘테, 석회',
+    material: '캔버스 위에 아크릴, 콘테, 석회',
     year: '2015',
     edition: '',
     price: '₩5,000,000',

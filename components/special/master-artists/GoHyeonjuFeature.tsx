@@ -38,7 +38,7 @@ const PAGE_COPY = {
   ko: {
     title: '고현주 — 사진으로 전한 희망과 기억',
     description:
-      '사진가 고현주(1964–2022). 안양소년원 아이들에게 사진 찍기를 가르친 〈꿈꾸는 카메라〉, 제주 4·3 체험자의 기억을 유품과 사물에 담아 기록한 《기억의 목소리》의 작가. 사진을 통한 희망과 치유, 그리고 증언의 작업을 씨앗페 온라인에서 만나보세요.',
+      '사진가 고현주(1964–2022). 안양소년원 아이들에게 사진 찍기를 가르친 〈꿈꾸는 카메라〉, 제주 4·3 체험자의 기억을 유품과 사물에 담아 기록한 《기억의 목소리》의 작가. 사진을 통한 희망과 치유, 그리고 증언의 작업을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '사진가 고현주. 소년원 아이들에게 사진을 가르친 〈꿈꾸는 카메라〉, 제주 4·3의 기억을 사물에 담은 《기억의 목소리》 — 희망과 증언의 사진.',
     ogAlt: '고현주 대표 작품',
@@ -168,7 +168,7 @@ export default async function GoHyeonjuFeature({
     name: isEnglish ? 'Go Hyeonju — SAF Online' : '고현주 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Go Hyeonju from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 고현주 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 고현주 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -704,7 +704,7 @@ export default async function GoHyeonjuFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -774,9 +774,9 @@ export default async function GoHyeonjuFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

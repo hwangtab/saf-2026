@@ -19,7 +19,7 @@ export function LiveAudienceCount({ audience }: { audience: ResolvedAudience }) 
       aria-live="polite"
     >
       {audience.status === 'needs-selection' && (
-        <span>{audience.needsSelectionReason ?? '대상을 선택해주세요.'}</span>
+        <span>{audience.needsSelectionReason ?? '대상을 선택해 주세요.'}</span>
       )}
 
       {audience.status === 'loading' && <span>수신자 수 확인 중…</span>}

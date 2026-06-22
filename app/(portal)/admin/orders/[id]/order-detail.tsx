@@ -332,7 +332,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
 
   function handleCancelAwaitingOrder() {
     if (!cancelAwaitingReason.trim()) {
-      toast.error('취소 사유를 입력해주세요.');
+      toast.error('취소 사유를 입력해 주세요.');
       return;
     }
     startTransition(async () => {
@@ -349,11 +349,11 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
 
   function handleRefund() {
     if (!cancelReason.trim()) {
-      toast.error('취소 사유를 입력해주세요.');
+      toast.error('취소 사유를 입력해 주세요.');
       return;
     }
     if (isVirtualAccount && (!refundBank.trim() || !refundAccount.trim() || !refundHolder.trim())) {
-      toast.error('가상계좌 결제는 환불 계좌 정보를 모두 입력해주세요.');
+      toast.error('가상계좌 결제는 환불 계좌 정보를 모두 입력해 주세요.');
       return;
     }
 
@@ -415,7 +415,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
 
   function handleEscalate() {
     if (!escalationNote.trim()) {
-      toast.error('에스컬레이션 사유를 입력해주세요.');
+      toast.error('에스컬레이션 사유를 입력해 주세요.');
       return;
     }
     startEscalationTransition(async () => {

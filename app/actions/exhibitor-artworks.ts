@@ -126,7 +126,7 @@ export async function createExhibitorArtwork(formData: FormData) {
   const category = getString(formData, 'category') || null;
   const artist_id = getString(formData, 'artist_id');
 
-  if (!artist_id) throw new Error('작가를 선택해주세요.');
+  if (!artist_id) throw new Error('작가를 선택해 주세요.');
 
   const { data: artist, error: artistError } = await supabase
     .from('artists')

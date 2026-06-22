@@ -23,7 +23,7 @@ const MATERIAL_EN_MAP: Record<string, string> = {
   '캔버스에 유채, 아크릴채색': 'Oil and acrylic on canvas',
   '캔버스에 아크릴, 유화': 'Acrylic and oil on canvas',
   '캔버스에 한지, 아크릴': 'Hanji and acrylic on canvas',
-  '캔버스위에 아크릴, 콘테, 석회': 'Acrylic, conté, and lime on canvas',
+  '캔버스 위에 아크릴, 콘테, 석회': 'Acrylic, conté, and lime on canvas',
 
   // Hanji (Korean paper)
   '한지에 먹': 'Ink on hanji',

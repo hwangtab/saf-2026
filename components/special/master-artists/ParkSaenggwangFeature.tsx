@@ -1010,7 +1010,7 @@ export default async function ParkSaenggwangFeature({
                           현재 박생광 드로잉전 작품 정보를 정리하고 있습니다.
                         </span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

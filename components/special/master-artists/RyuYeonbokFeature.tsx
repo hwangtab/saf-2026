@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '류연복 — 칼로 새긴 민중의 삶과 국토의 영혼',
     description:
-      '목판화가 류연복(1958–). 홍익대 회화과를 나와 1980년대 민중판화 운동에 참여했고, 1993년 안성에 자리 잡은 이후 백두산·독도·금강산·DMZ 등 국토를 몸소 순례하며 칼로 새긴 산천과 생명의 목판화를 작업해왔다. 씨앗페 온라인에서 류연복의 작품을 만나보세요.',
+      '목판화가 류연복(1958–). 홍익대 회화과를 나와 1980년대 민중판화 운동에 참여했고, 1993년 안성에 자리 잡은 이후 백두산·독도·금강산·DMZ 등 국토를 몸소 순례하며 칼로 새긴 산천과 생명의 목판화를 작업해왔다. 씨앗페 온라인에서 류연복의 작품을 만날 수 있습니다.',
     ogDescription:
       '목판화가 류연복. 칼로 새긴 민중과 국토 — 1980년대 민중판화 운동에서 안성의 자연·생명 연작까지, 한국 목판화의 중요한 한 축.',
     ogAlt: '류연복 대표 목판화 작품',
@@ -168,7 +168,7 @@ export default async function RyuYeonbokFeature({
     name: isEnglish ? 'Ryu Yeonbok — SAF Online' : '류연복 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected woodblock prints by Ryu Yeonbok from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 류연복 목판화 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 류연복 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -839,9 +839,9 @@ export default async function RyuYeonbokFeature({
                     <>
                       1980년대의 벽화에서 안성 작업실의 산 정상과 강줄기까지 — 류연복은 같은 행위를
                       이어왔다: 중요한 것을 나무에 새겨, 종이에 찍어내고, 손에 쥘 수 있게 하는 일.
-                      그는 씨앗페에 금융 차별의 당사자로서가 아니라, 동료 예술인과의 연대자로서
-                      함께한다 — 그의 손 안의 칼이 언제나 섬겨온 자유 안에서 다음 세대의 예술인들이
-                      일할 수 있도록.
+                      씨앗페에는 금융 차별의 당사자가 아니라, 동료 예술인과의 연대자로 함께한다 —
+                      그의 손 안의 칼이 언제나 섬겨온 자유 안에서 다음 세대의 예술인들이 일할 수
+                      있도록.
                     </>
                   )}
                 </p>
@@ -869,7 +869,7 @@ export default async function RyuYeonbokFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -937,9 +937,9 @@ export default async function RyuYeonbokFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

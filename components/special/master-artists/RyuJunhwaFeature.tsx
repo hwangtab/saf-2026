@@ -157,7 +157,7 @@ export default async function RyuJunhwaFeature({
     name: isEnglish ? 'Ryu Junhwa — SAF Online' : '류준화 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Ryu Junhwa from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 류준화 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 류준화 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -610,8 +610,8 @@ export default async function RyuJunhwaFeature({
                       <p>
                         류준화 작업의 중심에는 &lsquo;누가 볼 권리를 갖는가&rsquo;라는 물음이 있다.
                         서양과 한국의 이미지 문법 모두에서, 관찰하는 시선은 오랫동안 남성의 것으로
-                        가정되었고 여성은 보여지는 대상으로 등장했다. 그의 작업은 이 배치를 거부한다
-                        — 관찰하는 시선을 빼앗아 남성을 관찰의 대상으로 치환한다.
+                        가정되었고 여성은 보이는 대상으로 등장했다. 그의 작업은 이 배치를 거부한다 —
+                        관찰하는 시선을 빼앗아 남성을 관찰의 대상으로 치환한다.
                       </p>
                       <p>
                         이는 단순한 역전을 위한 역전이 아니라 구조를 가시화하는 방법이다. 사회가
@@ -778,9 +778,8 @@ export default async function RyuJunhwaFeature({
                     <>
                       현재의 폭력을 호명한 초기 화면에서 가려진 역사를 복원하는 최근 작업까지,
                       류준화의 작업은 하나의 물음을 추구해 왔다: 누가 볼 권리를, 말할 권리를, 기억될
-                      권리를 갖는가. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
-                      연대자로서 함께한다 — 다음 세대의 여성 예술인들이 자신의 언어로 일하고, 보여질
-                      수 있도록.
+                      권리를 갖는가. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로
+                      함께한다 — 다음 세대의 여성 예술인들이 자신의 언어로 일하고, 보여질 수 있도록.
                     </>
                   )}
                 </p>
@@ -808,7 +807,7 @@ export default async function RyuJunhwaFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -876,9 +875,9 @@ export default async function RyuJunhwaFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

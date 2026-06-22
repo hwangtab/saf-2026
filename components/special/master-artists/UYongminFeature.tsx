@@ -160,7 +160,7 @@ export default async function UYongminFeature({
     name: isEnglish ? 'U Yongmin — SAF Online' : '우용민 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by U Yongmin from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 우용민 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 우용민 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -763,8 +763,8 @@ export default async function UYongminFeature({
                     <>
                       2000년대의 개인전에서 2020년대의 대형 한지 작업까지, 우용민의 작업은 하나의
                       규율을 추구해 왔다: 두 번째 획을 허락하지 않는 매체로, 남도의 산에게 그 무게에
-                      걸맞은 한 면을 내어 주는 일. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라,
-                      동료 예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 결코 그들의 몫이
+                      걸맞은 한 면을 내어 주는 일. 씨앗페에는 이 캠페인의 대상이 아니라, 동료
+                      예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 결코 그들의 몫이
                       아니었을 금융의 무게 없이 일할 수 있도록.
                     </>
                   )}
@@ -793,7 +793,7 @@ export default async function UYongminFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -861,9 +861,9 @@ export default async function UYongminFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

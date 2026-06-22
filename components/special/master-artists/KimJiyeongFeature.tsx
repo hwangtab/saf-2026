@@ -166,7 +166,7 @@ export default async function KimJiyeongFeature({
     name: isEnglish ? 'Kim Jiyeong — SAF Online' : '김지영 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Jiyeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김지영 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김지영 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -634,9 +634,9 @@ export default async function KimJiyeongFeature({
                       </p>
                       <p>
                         여기서의 단순함은 어렵게 얻어진 것이다. 나무를 깨끗한 형상 하나로 줄인다는
-                        것은 나무가 본질적으로 무엇인지를 정하고, 나머지 전부를 놓아 버리는 일이다.
-                        그 덜어냄에서 살아남는 것은 일반적인 형태가 아니라 하나의 고유한 현존이다 —
-                        이 나무, 선 채로, 살아 있는. 자연주의는 본질을 지키고 그것이 나머지를
+                        것은 나무가 무엇인지를 정하고, 나머지 전부를 놓아 버리는 일이다. 그
+                        덜어냄에서 살아남는 것은 일반적인 형태가 아니라 하나의 고유한 현존이다 — 이
+                        나무, 선 채로, 살아 있는. 자연주의는 본질을 지키고 그것이 나머지를
                         감당하리라 믿는 일이다.
                       </p>
                       <p>
@@ -668,9 +668,9 @@ export default async function KimJiyeongFeature({
                       돋는 새순에서 홀로 선 나무 한 그루까지, 김지영의 도자는 하나의 차분한 물음을
                       추구한다 — 살아 있는 것의 생명력을 어떻게 흙이라는 지속하는 물성 속으로 옮길
                       것인가. 그 대답은 손으로, 자람에 귀 기울이는 심플하고 자연주의적인 형상으로
-                      빚어진다. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
-                      연대자로서 함께한다 — 작품 판매 수익이 오늘 금융 차별을 겪는 예술인에게
-                      저금리의 버팀목이 될 수 있도록.
+                      빚어진다. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로
+                      함께한다 — 작품 판매 수익이 오늘 금융 차별을 겪는 예술인에게 저금리의 버팀목이
+                      될 수 있도록.
                     </>
                   )}
                 </p>
@@ -698,7 +698,7 @@ export default async function KimJiyeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -766,9 +766,9 @@ export default async function KimJiyeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

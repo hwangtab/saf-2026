@@ -160,7 +160,7 @@ export default async function JoMunhoFeature({ params }: { params: Promise<{ loc
     name: isEnglish ? 'Jo Munho — SAF Online' : '조문호 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Jo Munho from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 조문호 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 조문호 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -879,8 +879,8 @@ export default async function JoMunhoFeature({ params }: { params: Promise<{ loc
                       청량리에서 동자동까지, 조문호의 작업은 50년에 걸쳐 하나의 물음을 던져왔다:
                       사람을 찍는다는 것은 무엇인가 — 조건도, 장소도, 사회 문제도 아닌, 한 사람을.
                       기록하는 삶들 안에서 수십 년을 살아온 그 대답은 한국 사진에서 가장 지속적인
-                      인간 주목의 실천 중 하나다. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라,
-                      동료 예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 그가 안에서 오래
+                      인간 주목의 실천 중 하나다. 씨앗페에는 이 캠페인의 대상이 아니라, 동료
+                      예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 그가 안에서 오래
                       이해해온 불안정함 없이 일할 수 있도록.
                     </>
                   )}
@@ -909,7 +909,7 @@ export default async function JoMunhoFeature({ params }: { params: Promise<{ loc
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -977,9 +977,9 @@ export default async function JoMunhoFeature({ params }: { params: Promise<{ loc
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

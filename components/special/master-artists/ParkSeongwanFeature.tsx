@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '박성완 — 이 땅의 풍경, 이웃의 얼굴',
     description:
-      '광주·전남을 기반으로 활동하는 회화 작가 박성완. 전남대학교 예술대학 미술학과를 졸업하고 동 대학원에서 서양화를 전공한 그는, 굵고 힘 있는 필치와 생생한 색채로 지역의 일상과 풍경, 동시대 사람들의 정서와 기억을 화면에 새겨왔다. 씨앗페 온라인에서 박성완의 작품을 만나보세요.',
+      '광주·전남을 기반으로 활동하는 회화 작가 박성완. 전남대학교 예술대학 미술학과를 졸업하고 동 대학원에서 서양화를 전공한 그는, 굵고 힘 있는 필치와 생생한 색채로 지역의 일상과 풍경, 동시대 사람들의 정서와 기억을 화면에 새겨왔다. 씨앗페 온라인에서 박성완의 작품을 만날 수 있습니다.',
     ogDescription:
       '광주·전남의 삶과 풍경을 그리는 회화 작가 박성완. 굵은 필치와 생생한 색채로 평범한 일상과 공동체의 기억을 화면에 새긴다.',
     ogAlt: '박성완 대표 작품',
@@ -183,7 +183,7 @@ export default async function ParkSeongwanFeature({
     name: isEnglish ? 'Park Seongwan — SAF Online' : '박성완 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Park Seongwan from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 박성완 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 박성완 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -846,7 +846,7 @@ export default async function ParkSeongwanFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -914,9 +914,9 @@ export default async function ParkSeongwanFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

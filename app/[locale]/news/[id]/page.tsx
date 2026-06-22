@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? localizedRawDesc.substring(0, 160)
     : isEn
       ? `Coverage by ${localizedSource}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
-      : `${localizedSource}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
+      : `${localizedSource}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별과 상호부조 캠페인을 조명합니다.`;
 
   return {
     title: localizedTitle,
@@ -129,7 +129,7 @@ export default async function NewsArticlePage({ params }: Props) {
     ? localizedDescriptionRaw.substring(0, 160)
     : isEn
       ? `Coverage by ${localizedSource}${article.date ? ` (${article.date})` : ''}. Reporting on financial discrimination against Korean artists and the mutual aid campaign.`
-      : `${localizedSource}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별 문제와 상호부조 캠페인을 조명합니다.`;
+      : `${localizedSource}의 씨앗페 온라인 보도${article.date ? ` (${article.date})` : ''}. 예술인 금융 차별과 상호부조 캠페인을 조명합니다.`;
 
   const articleSchema = generateNewsArticleSchema({
     title: localizedTitle,
@@ -211,14 +211,14 @@ export default async function NewsArticlePage({ params }: Props) {
                 </>
               ) : (
                 <>
-                  예술인 금융 배제의 구조적 원인은{' '}
+                  예술인 금융 배제의 구조는{' '}
                   <Link
                     href="/our-reality"
                     className="text-primary-strong hover:underline font-medium"
                   >
                     우리의 현실
                   </Link>
-                  에서, 참여 작가들의 작품은{' '}
+                  에서 살펴보고 참여 작가들의 작품은{' '}
                   <Link
                     href="/artworks"
                     className="text-primary-strong hover:underline font-medium"

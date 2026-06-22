@@ -35,7 +35,7 @@ export default function GlobalError({
           message={
             isEnglish
               ? 'A problem occurred while loading the page. Please try again later.'
-              : '페이지를 불러오는 도중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.'
+              : '페이지를 불러오는 도중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.'
           }
           retryLabel={isEnglish ? 'Try again' : '다시 시도하기'}
           homeLabel={isEnglish ? 'Go to home' : '홈으로 돌아가기'}

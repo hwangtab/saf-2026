@@ -164,7 +164,7 @@ export default async function SeoGeumjaengFeature({
     name: isEnglish ? 'Seo Geumjaeng — SAF Online' : '서금앵 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Seo Geumjaeng from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 서금앵 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 서금앵 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -702,9 +702,9 @@ export default async function SeoGeumjaengFeature({
                   ) : (
                     <>
                       방에서 흔적으로, 흔적에서 평범한 하루로, 서금앵의 작업은 하나의 인내로운
-                      물음을 추구한다: 공간은 그것을 지나간 것을 어떻게 간직하는가. 그는 씨앗페에 이
-                      캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 오늘 금융
-                      차별을 헤쳐 가는 예술인들이 길을 찾을 수 있도록 자신의 작품을 내놓는다.
+                      물음을 추구한다: 공간은 그것을 지나간 것을 어떻게 간직하는가. 씨앗페에는 이
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 오늘 금융 차별을
+                      헤쳐 가는 예술인들이 길을 찾을 수 있도록 자신의 작품을 내놓는다.
                     </>
                   )}
                 </p>
@@ -732,7 +732,7 @@ export default async function SeoGeumjaengFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -800,9 +800,9 @@ export default async function SeoGeumjaengFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

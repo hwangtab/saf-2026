@@ -165,7 +165,7 @@ export default async function RihoFeature({
     name: isEnglish ? 'Riho — SAF Online' : '리호 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Riho from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 리호 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 리호 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -347,8 +347,8 @@ export default async function RihoFeature({
                     <p>
                       루브르 카루젤(FOCUS ART FAIR PARIS, 파리, 2022)에서 부산 BAMA(2023)까지, 그의
                       작품은 같은 세대 화가로서는 드물게 멀리 움직여 왔다. 리호는 씨앗페에 이
-                      캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 다른
-                      이들이 일할 바탕을 넓히는 한 사람의 젊은 화가로.
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 다른 이들이 일할
+                      바탕을 넓히는 한 사람의 젊은 화가로.
                     </p>
                   </>
                 )}
@@ -758,8 +758,8 @@ export default async function RihoFeature({
                       성신여대와 홍익대의 강의실에서 카루젤 뒤 루브르까지, 리호는 하나의 물음을
                       추구해 왔다: 동양화라는 오래된 매체는 여전히 무엇을 담을 수 있는가. 아직 쌓여
                       가는 그의 대답은 보이지 않는 것을 그리는 사색적이고 실험적인 작업이다 — 신진의
-                      시선이 안에서부터 확장한 전통. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라,
-                      동료 예술인과의 연대자로서 함께한다 — 뒤따라올 이들이 딛고 일할 바탕을 넓히며.
+                      시선이 안에서부터 확장한 전통. 씨앗페에는 이 캠페인의 대상이 아니라, 동료
+                      예술인과의 연대자로 함께한다 — 뒤따라올 이들이 딛고 일할 바탕을 넓히며.
                     </>
                   )}
                 </p>
@@ -787,7 +787,7 @@ export default async function RihoFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -855,9 +855,9 @@ export default async function RihoFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

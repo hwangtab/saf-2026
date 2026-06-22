@@ -38,7 +38,7 @@ const PAGE_COPY = {
   ko: {
     title: '정미정 — 시간을 겹겹이 쌓아, 기억이 되다',
     description:
-      '회화 작가 정미정. 세종대학교 회화과(서양화)를 졸업하고 런던 첼시 예술대학교(Chelsea College of Arts, UAL)에서 MA Fine Art를 마친 그는, 시간과 공간, 기억의 결을 다층적으로 쌓아 올리는 회화로 국립현대미술관 미술은행 등 주요 기관에 소장되어 있다. 씨앗페 온라인에서 정미정의 작품을 만나보세요.',
+      '회화 작가 정미정. 세종대학교 회화과(서양화)를 졸업하고 런던 첼시 예술대학교(Chelsea College of Arts, UAL)에서 MA Fine Art를 마친 그는, 시간과 공간, 기억의 결을 다층적으로 쌓아 올리는 회화로 국립현대미술관 미술은행 등 주요 기관에 소장되어 있다. 씨앗페 온라인에서 정미정의 작품을 만날 수 있습니다.',
     ogDescription:
       '회화 작가 정미정. 시간과 공간, 기억의 결을 켜켜이 쌓아 올린 다층 회화 — 유화의 물성이 기억의 층위와 시간의 깊이를 드러낸다.',
     ogAlt: '정미정 대표 작품',
@@ -175,7 +175,7 @@ export default async function JeongMijeongFeature({
     name: isEnglish ? 'Jeong Mijeong — SAF Online' : '정미정 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Jeong Mijeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 정미정 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 정미정 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -787,7 +787,7 @@ export default async function JeongMijeongFeature({
                     <>
                       서울에서 런던으로, 그리고 다시 서울로. 정미정은 시간과 기억이 어떻게
                       지속되는가라는 물음에 뿌리를 둔, 인내하고 층층이 쌓는 회화 작업을 이어왔다.
-                      그는 동료 예술인과의 연대의 뜻으로 씨앗페에 함께한다 — 다음 세대의 예술인들도
+                      동료 예술인과의 연대의 뜻으로 씨앗페에 함께한다 — 다음 세대의 예술인들도
                       자신의 층을 계속 쌓아나갈 수 있도록.
                     </>
                   )}
@@ -816,7 +816,7 @@ export default async function JeongMijeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -884,9 +884,9 @@ export default async function JeongMijeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

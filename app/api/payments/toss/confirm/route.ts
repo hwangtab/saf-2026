@@ -516,7 +516,7 @@ export async function POST(req: NextRequest) {
           notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
             주문번호: orderId,
             paymentKey: paymentKey as string,
-            참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해주세요.',
+            참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해 주세요.',
           }),
       ]);
     });

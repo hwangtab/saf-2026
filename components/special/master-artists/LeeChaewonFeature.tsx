@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '이채원 — 이어지는 그림, 매릴랜드의 신진 회화 작가',
     description:
-      '미국 매릴랜드에서 활동하는 신진 회화 작가 이채원. 2024년 Maryland Institute College of Art(MICA) 회화과를 summa cum laude로 졸업하고, 같은 해 볼티모어 Lazarus Hall Gallery에서 첫 개인전 〈To Be Continued〉를 열었다. 유학에서 졸업, 첫 개인전으로 이어지는 한 화가의 여정을 씨앗페 온라인에서 만나보세요.',
+      '미국 매릴랜드에서 활동하는 신진 회화 작가 이채원. 2024년 Maryland Institute College of Art(MICA) 회화과를 summa cum laude로 졸업하고, 같은 해 볼티모어 Lazarus Hall Gallery에서 첫 개인전 〈To Be Continued〉를 열었다. 유학에서 졸업, 첫 개인전으로 이어지는 한 화가의 여정을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '매릴랜드의 신진 회화 작가 이채원. MICA 회화과 summa cum laude 졸업, 첫 개인전 〈To Be Continued〉로 이어지는 여정.',
     ogAlt: '이채원 대표 작품',
@@ -163,7 +163,7 @@ export default async function LeeChaewonFeature({
     name: isEnglish ? 'Lee Chaewon — SAF Online' : '이채원 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Chaewon from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이채원 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이채원 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -754,10 +754,9 @@ export default async function LeeChaewonFeature({
                   ) : (
                     <>
                       볼티모어의 한 강의실에서 첫 갤러리 벽면까지, 이채원의 작업은 이제 막 시작됐다
-                      — 그리고 그것이 그 작업의 조용한 힘이다. 그는 이 캠페인에 이 대의의
-                      대상으로서가 아니라 동료 예술인과의 연대자로서 함께한다. 다음 세대의
-                      예술인들이 금융 차별의 무게 없이 시작할 수 있도록. 이야기는, 그의 첫 전시가
-                      선언했듯, 계속 이어진다.
+                      — 그리고 그것이 그 작업의 조용한 힘이다. 그는 이 캠페인에 이 대의의 대상이
+                      아니라 동료 예술인과의 연대자로 함께한다. 다음 세대의 예술인들이 금융 차별의
+                      무게 없이 시작할 수 있도록. 이야기는, 그의 첫 전시가 선언했듯, 계속 이어진다.
                     </>
                   )}
                 </p>
@@ -785,7 +784,7 @@ export default async function LeeChaewonFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -853,9 +852,9 @@ export default async function LeeChaewonFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

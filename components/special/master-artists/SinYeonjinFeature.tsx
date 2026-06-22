@@ -38,7 +38,7 @@ const PAGE_COPY = {
   ko: {
     title: '신연진 — 일상적인 것들의 꼴라주',
     description:
-      '일상의 풍경과 미세한 정서를 회화의 콜라주 언어로 옮겨 온 작가 신연진. 홍익대 회화과와 동 대학원을 마치고 〈킵티크〉 연작과 〈일상적인 것들의 꼴라주〉를 이어온 신진 작가의 섬세하고 따뜻한 화면을 씨앗페 온라인에서 만나보세요.',
+      '일상의 풍경과 미세한 정서를 회화의 콜라주 언어로 옮겨 온 작가 신연진. 홍익대 회화과와 동 대학원을 마치고 〈킵티크〉 연작과 〈일상적인 것들의 꼴라주〉를 이어온 신진 작가의 섬세하고 따뜻한 화면을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '일상의 풍경과 미세한 정서를 회화의 콜라주 언어로 옮겨 온 작가 신연진. 조각조각 중첩되어 빛나는 일상, 〈킵티크〉 연작.',
     ogAlt: '신연진 대표 작품',
@@ -166,7 +166,7 @@ export default async function SinYeonjinFeature({
     name: isEnglish ? 'Sin Yeonjin — SAF Online' : '신연진 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Sin Yeonjin from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 신연진 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 신연진 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -676,9 +676,9 @@ export default async function SinYeonjinFeature({
                   ) : (
                     <>
                       첫 개인전에서 이어지는 〈킵티크〉 연작까지, 신연진의 작업은 한 가지를 추구해
-                      왔다 — 평범한 하루의 조각을 모아, 빛나는 무언가로 겹쳐 쌓는 일. 그는 씨앗페에
-                      이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 이런
-                      조용한 주목을 이어가는 이들이 금융 차별의 무게 없이 일할 수 있도록.
+                      왔다 — 평범한 하루의 조각을 모아, 빛나는 무언가로 겹쳐 쌓는 일. 씨앗페에는 이
+                      캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 이런 조용한 주목을
+                      이어가는 이들이 금융 차별의 무게 없이 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -706,7 +706,7 @@ export default async function SinYeonjinFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -774,9 +774,9 @@ export default async function SinYeonjinFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

@@ -124,7 +124,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
   const pageTitle = `${PAGE_COPY[locale].title} | ${isEnglish ? 'SAF 2026' : '씨앗페 2026'}`;
   const pageDescription = isEnglish
     ? 'A look back at SAF 2023 exhibitions, performances, and campaign outcomes.'
-    : '씨앗페의 활동 기록과 성과들을 담아냅니다.';
+    : '씨앗페의 활동 기록과 성과를 담았습니다.';
 
   // JSON-LD Schema for CollectionPage with Articles
   const collectionSchema = {
@@ -263,7 +263,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
             <p className="text-charcoal-muted mb-4">
               {isEnglish
                 ? 'From March 21 to 31, 2023, exhibitions and performances were held in Insadong, Seoul. More than 50 artists across music, visual art, and dance joined the campaign and helped raise KRW 34 million for the mutual-aid fund after event operating costs.'
-                : '2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와 인디프레스 갤러리에서 전시와 공연이 펼쳐졌습니다. 국내 저명 뮤지션, 화가, 무용가 등 50명 이상의 예술인이 참여하여 예술인 금융 위기의 심각성을 알리고, 작품 판매 수익을 포함해 총 6,000만원을 조성하여 화가들에게 작품비를 지급하고, 대관 등 행사진행비를 제외하고 3,400만원의 기금을 조성하였습니다.'}
+                : '2023년 3월 21일부터 3월 31일까지 서울시 종로구 인사동의 오디오가이 스튜디오와 인디프레스 갤러리에서 전시와 공연이 열렸습니다. 국내 저명 뮤지션, 화가, 무용가 등 50명 이상의 예술인이 참여해 예술인 금융 위기의 심각성을 알렸고, 작품 판매 수익을 포함해 총 6,000만원을 조성했습니다. 이 가운데 화가들에게 작품비를 지급하고 대관 등 행사 진행비를 제외한 3,400만원을 기금으로 마련했습니다.'}
             </p>
           </Card>
 
@@ -304,9 +304,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
                     ? 'Mar 22-28: daily performances by diverse musicians'
                     : '3월 22-28일: 매일 다양한 뮤지션 공연'}
                 </li>
-                <li>
-                  {isEnglish ? 'Rotating sets every 30 minutes' : '30분 간격으로 번갈아가며 진행'}
-                </li>
+                <li>{isEnglish ? 'Rotating sets every 30 minutes' : '30분 간격으로 순차 진행'}</li>
                 <li>
                   {isEnglish ? 'Free admission (first come, first served)' : '선착순 무료입장'}
                 </li>
@@ -389,7 +387,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
           <p className="text-center text-charcoal-muted mt-12 text-sm">
             {isEnglish
               ? 'Scenes from SAF 2023 in Insadong (Mar 21-31, 2023).'
-              : '2023년 3월 21일부터 3월 31일까지 인사동에서 펼쳐진 씨앗페 2023의 생생한 현장 모습입니다.'}
+              : '2023년 3월 21일부터 3월 31일까지 인사동에서 열린 씨앗페 2023의 현장입니다.'}
           </p>
         </div>
       </Section>
@@ -406,7 +404,7 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
           <p className="mb-8 text-sm text-charcoal-muted">
             {isEnglish
               ? 'Open each dedicated watch page to see the primary video and metadata details.'
-              : '각 영상을 전용 시청 페이지에서 확인하면 대표 영상과 메타데이터 정보를 함께 볼 수 있습니다.'}
+              : '각 영상의 전용 시청 페이지에서 대표 영상과 메타데이터를 함께 확인할 수 있습니다.'}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video, index) => {
@@ -463,11 +461,11 @@ export default async function Archive2023Page({ params }: { params: Promise<{ lo
           <p className="text-lg text-charcoal-muted mb-8 max-w-2xl mx-auto text-balance">
             {isEnglish
               ? 'SAF grows through participation and solidarity.'
-              : '씨앗페의 역사는 당신의 참여와 연대로 이어집니다.'}{' '}
+              : '씨앗페의 역사는 참여와 연대로 이어집니다.'}{' '}
             <br className="hidden md:block" />
             {isEnglish
               ? 'Join the cooperative and purchase artworks to strengthen mutual-aid finance for artists.'
-              : '조합원 가입과 작품 구매로 예술인 상호부조의 미래를 함께 만들어주세요.'}
+              : '조합원 가입과 작품 구매로 예술인 상호부조의 다음을 함께 만들어주세요.'}
           </p>
           <CTAButtonGroup
             variant="large"
