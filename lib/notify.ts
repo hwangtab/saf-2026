@@ -371,7 +371,7 @@ export async function sendArtistApprovalEmail(to: string, artistName: string): P
       <p style="margin:0 0 12px;font-size:15px;color:${BRAND_COLORS.charcoal.deep};">${safeArtistName} 선생님, 안녕하세요.</p>
       <p style="margin:0 0 16px;font-size:14px;color:${BRAND_COLORS.charcoal.DEFAULT};line-height:1.6;">
         씨앗페 작가 대시보드 이용 안내를 드립니다.<br>
-        아래 링크를 통해 작품을 등록하고 프로필을 관리하실 수 있습니다.
+        아래 링크에서 작품을 등록하고 프로필을 관리할 수 있습니다.
       </p>
       <a href="${dashboardUrl}" style="display:inline-block;background:${BRAND_COLORS.primary.DEFAULT};color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:6px;font-size:14px;font-weight:600;">작가 대시보드 바로가기</a>
     </div>

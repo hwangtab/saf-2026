@@ -52,7 +52,7 @@ const NEWS_COPY: Record<LocaleCode, NewsPageCopy> = {
     heroTitle: '언론 보도',
     heroDescription: '씨앗페를 조명한 기사와 인터뷰를 모았습니다.',
     shareTitle: '언론 보도 | 씨앗페 온라인',
-    shareDescription: '씨앗페를 다룬 언론 보도를 한눈에 확인해보세요.',
+    shareDescription: '씨앗페를 다룬 언론 보도를 한눈에 확인해 보세요.',
     highlightsBadge: '언론 하이라이트',
     highlightsTitle: '언론이 짚어낸 예술인 금융 위기의 핵심 메시지',
     highlightsDescription:
@@ -196,7 +196,7 @@ const highlightQuotesByLocale: Record<LocaleCode, HighlightQuote[]> = {
       label: '2025.05.22',
       source: '뉴스아트',
       excerpt:
-        '대출금 상환 성과도 뚜렷하다. 대위변제율은 금액 기준 5.10%로, 일반 금융기관의 저신용자 대출 연체율보다 낮은 수준을 유지하고 있다. 신용점수가 낮아도 예술인들의 상환 의지와 책임감이 결코 낮지 않다는 사실을 보여준다.',
+        '대출금 상환 성과도 뚜렷하다. 대위변제율은 금액 기준 5.10%로, 일반 금융기관의 저신용자 대출 연체율보다 낮은 수준을 유지한다. 신용점수가 낮아도 예술인들의 상환 의지와 책임감이 결코 낮지 않다는 사실을 보여준다.',
       highlights: ['대위변제율', '5.10%', '상환 의지'],
     },
     {

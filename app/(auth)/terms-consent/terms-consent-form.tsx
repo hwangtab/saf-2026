@@ -81,7 +81,7 @@ const TERMS_CONSENT_COPY: Record<
     viewExhibitorContract: '계약서 원문 보기',
     viewPrivacy: '개인정보처리방침 원문 보기',
     viewTos: '이용약관 원문 보기',
-    privacyLinkGuide: '아래 링크에서 개인정보처리방침 전문을 확인하실 수 있습니다.',
+    privacyLinkGuide: '아래 링크에서 개인정보처리방침 전문을 확인할 수 있습니다.',
     privacyOpenNew: '개인정보처리방침 전문 보기 (새 창)',
     continueAfterConsent: '동의하고 계속하기',
     incompleteTitle: '아직 완료되지 않은 항목이 있어요',

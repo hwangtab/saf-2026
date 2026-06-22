@@ -265,19 +265,19 @@ export function generateSAFCoreQA(
         },
         {
           question: '씨앗페 전시 도록은 어디서 볼 수 있나요?',
-          answer: `씨앗페 온라인 갤러리(saf2026.com/artworks)가 디지털 전시 도록 역할을 합니다. ${artistCount}명 작가의 ${artworkCount}점 작품 전체를 온라인에서 확인·구매하실 수 있으며, 아카이브 페이지(saf2026.com/archive/2026)에서는 오프라인 전시 기록과 포스터도 제공됩니다.`,
+          answer: `씨앗페 온라인 갤러리(saf2026.com/artworks)가 디지털 전시 도록 역할을 합니다. ${artistCount}명 작가의 ${artworkCount}점 작품 전체를 온라인에서 확인·구매할 수 있으며, 아카이브 페이지(saf2026.com/archive/2026)에서는 오프라인 전시 기록과 포스터도 제공됩니다.`,
           url: `${SITE_URL}/artworks`,
         },
         {
           question: '씨앗페 전시회 포스터는 어디서 확인할 수 있나요?',
           answer:
-            '씨앗페 2026 전시회 포스터와 오프라인 전시 현장 사진은 아카이브 페이지(saf2026.com/archive/2026)에서 확인하실 수 있습니다. 전시 기록, 관람객 후기, 작품 목록도 함께 제공됩니다.',
+            '씨앗페 2026 전시회 포스터와 오프라인 전시 현장 사진은 아카이브 페이지(saf2026.com/archive/2026)에서 확인할 수 있습니다. 전시 기록, 관람객 후기, 작품 목록도 함께 제공됩니다.',
           url: `${SITE_URL}/archive/2026`,
         },
         {
           question: '전시회를 영어로 어떻게 표현하나요?',
           answer:
-            '전시회는 영어로 "Exhibition" 또는 "Art Exhibition"이라고 합니다. 씨앗페(SAF, Seed Art Festival)는 한국 현대미술 전시회(Korean Contemporary Art Exhibition)로, 영문 페이지(saf2026.com/en)에서 영어로도 이용하실 수 있습니다.',
+            '전시회는 영어로 "Exhibition" 또는 "Art Exhibition"이라고 합니다. 씨앗페(SAF, Seed Art Festival)는 한국 현대미술 전시회(Korean Contemporary Art Exhibition)로, 영문 페이지(saf2026.com/en)에서 영어로도 이용할 수 있습니다.',
           url: `${SITE_URL}/en`,
         },
         {
@@ -300,7 +300,7 @@ export function generateSAFCoreQA(
         {
           question: '외국에서도 작품을 구매할 수 있나요?',
           answer:
-            '네, 가능합니다. 씨앗페 온라인 갤러리는 해외 주문도 접수합니다. saf2026.com/en 에서 영문 사이트를 이용하실 수 있으며, 작품 검색, 작가 프로필 확인, 구매까지 모두 온라인으로 가능합니다.',
+            '네, 가능합니다. 씨앗페 온라인 갤러리는 해외 주문도 접수합니다. saf2026.com/en 에서 영문 사이트를 이용할 수 있으며, 작품 검색, 작가 프로필 확인, 구매까지 모두 온라인으로 가능합니다.',
           url: `${SITE_URL}/artworks`,
         },
       ];

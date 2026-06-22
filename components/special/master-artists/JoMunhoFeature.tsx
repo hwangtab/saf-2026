@@ -343,9 +343,9 @@ export default async function JoMunhoFeature({ params }: { params: Promise<{ loc
                       사람들의 얼굴을 남겼다.
                     </p>
                     <p>
-                      현재 조문호는 동자동 쪽방촌에 살며 빈민의 삶을 기록하고 있다. 방법은 변하지
-                      않았다: <strong className="font-bold text-charcoal">먼저 이웃</strong>이 되고,
-                      그다음 사진을 찍는다.
+                      현재 조문호는 동자동 쪽방촌에 살며 빈민의 삶을 기록한다. 방법은 변하지 않았다:{' '}
+                      <strong className="font-bold text-charcoal">먼저 이웃</strong>이 되고, 그다음
+                      사진을 찍는다.
                     </p>
                   </>
                 )}
