@@ -30,6 +30,7 @@ import type { StoryCategory, Artwork } from '@/types';
 import { ArrowRight } from 'lucide-react';
 import { getStorySeoOverride } from '@/lib/stories-seo-overrides';
 import { resolveEnRobots, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
+import { isStoryNoindex } from '@/lib/story-noindex';
 import { extractFaqFromBody, generateFaqPageSchema } from '@/lib/markdown-faq';
 import { extractArtworkIdsFromBody } from '@/lib/markdown-artwork-refs';
 import { generateInlineCrossLinks, insertCrossLinksBeforeFinalCta } from '@/lib/inline-cross-links';
@@ -140,6 +141,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: ogImages,
     },
     ...(() => {
+      // thin·중복 매거진은 KO 포함 전 locale noindex (GSC 색인 거부 + 최근 28일 클릭 0 확정).
+      // follow:true로 내부링크 equity는 유지. 해제는 콘텐츠 개선 후 lib/story-noindex.ts에서 slug 제거.
+      if (isStoryNoindex(story.slug)) {
+        return { robots: { index: false, follow: true } };
+      }
       const enRobots = resolveEnRobots(locale, isEnIndexable);
       return enRobots ? { robots: enRobots } : {};
     })(),
