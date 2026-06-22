@@ -33,7 +33,7 @@ describe('admin artwork create image upload source wiring', () => {
 
     expect(source).toContain('const [uploadingImages, setUploadingImages] = useState(false)');
     expect(source).toContain('if (!isEditing && uploadingImages)');
-    expect(source).toContain('이미지 업로드 중입니다. 완료 후 등록해주세요.');
+    expect(source).toContain('이미지 업로드 중입니다. 완료 후 등록해 주세요.');
     expect(source).toContain('onUploadingChange={setUploadingImages}');
     expect(source).toContain('disabled={!isEditing && (uploadingImages || !draftImagePrefix)}');
   });
