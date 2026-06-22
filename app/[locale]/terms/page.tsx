@@ -143,7 +143,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
       <JsonLdScript data={breadcrumbSchema} />
       <PageHero
         title="이용약관"
-        description="씨앗페 온라인 웹사이트와 관련 서비스 이용 시 적용되는 기본 약관입니다."
+        description="씨앗페 온라인 웹사이트와 관련 서비스를 이용할 때 적용되는 기본 약관입니다."
         breadcrumbItems={breadcrumbItems}
       />
 
@@ -246,7 +246,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
                   역할별 계약서
                 </h2>
                 <p className="mb-3 leading-7 text-charcoal-muted">
-                  아티스트 또는 출품자로 가입 신청 시에는 아래 역할별 계약서 동의가 추가로
+                  아티스트 또는 출품자로 가입을 신청할 때는 아래 역할별 계약서 동의가 추가로
                   필요합니다.
                 </p>
                 <ul className="list-disc space-y-2 pl-5 text-charcoal-muted">

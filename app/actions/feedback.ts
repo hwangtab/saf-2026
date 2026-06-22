@@ -20,7 +20,7 @@ export async function submitFeedback(formData: FormData) {
 
   const limit = await rateLimit(`feedback:${user.id}`, { limit: 3, windowMs: 60_000 });
   if (!limit.success) {
-    return { error: '요청이 너무 잦습니다. 잠시 후 다시 시도해주세요.' };
+    return { error: '요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요.' };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -31,13 +31,13 @@ export async function submitFeedback(formData: FormData) {
   const pageUrl = sanitizeSingleLineTextForRscPayload(getString(formData, 'page_url'));
 
   if (!VALID_CATEGORIES.includes(category)) {
-    return { error: '올바른 카테고리를 선택해주세요.' };
+    return { error: '올바른 카테고리를 선택해 주세요.' };
   }
   if (!title) {
-    return { error: '제목을 입력해주세요.' };
+    return { error: '제목을 입력해 주세요.' };
   }
   if (!description) {
-    return { error: '내용을 입력해주세요.' };
+    return { error: '내용을 입력해 주세요.' };
   }
 
   const { error } = await supabase.from('feedback').insert({

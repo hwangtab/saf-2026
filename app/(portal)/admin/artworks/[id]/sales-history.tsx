@@ -103,7 +103,7 @@ export function SalesHistory({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!salePrice) {
-      toast.error('판매 금액을 입력해주세요.');
+      toast.error('판매 금액을 입력해 주세요.');
       return;
     }
 
@@ -189,7 +189,7 @@ export function SalesHistory({
   async function confirmVoid(saleId: string) {
     if (isVoiding) return;
     if (!voidReason.trim()) {
-      toast.error('취소 사유를 입력해주세요.');
+      toast.error('취소 사유를 입력해 주세요.');
       return;
     }
     setIsVoiding(true);

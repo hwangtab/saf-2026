@@ -159,7 +159,7 @@ export default async function ChilmoeKimGuFeature({
     name: isEnglish ? 'Chilmoe Kim Gu — SAF Online' : '칡뫼 김구 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Chilmoe Kim Gu from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 칡뫼 김구 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 칡뫼 김구 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -778,7 +778,7 @@ export default async function ChilmoeKimGuFeature({
                       </p>
                       <p>
                         바로 그 마음으로, 2023년 칡뫼 김구는 인디프레스에서 열린 씨앗페 예술인지원
-                        기금마련전에 함께했다. 그는 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
+                        기금마련전에 함께했다. 그는 이 캠페인의 대상이 아니라, 동료 예술인과의
                         연대자로 함께한다 — 상실을 그토록 가까이 들여다본 사람이, 다음에 올 동료들을
                         향해 손을 내민다.
                       </p>
@@ -802,9 +802,9 @@ export default async function ChilmoeKimGuFeature({
                     <>
                       1985년 거리의 전시에서 2025년 황무지의 벌판까지, 칡뫼 김구의 작업은 하나의
                       규율을 추구해 왔다: 한 시대의 비극을 외면하지 않고 들여다보는 것, 그리고
-                      그것을 화면 위에 간직하는 것. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라,
-                      동료 예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 그가 짊어진 무게
-                      없이 일할 수 있도록.
+                      그것을 화면 위에 간직하는 것. 씨앗페에는 이 캠페인의 대상이 아니라, 동료
+                      예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 그가 짊어진 무게 없이
+                      일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -832,7 +832,7 @@ export default async function ChilmoeKimGuFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -904,9 +904,9 @@ export default async function ChilmoeKimGuFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

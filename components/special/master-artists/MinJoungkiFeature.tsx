@@ -45,7 +45,7 @@ const PAGE_COPY = {
   ko: {
     title: '민정기 — 한국 현실주의 풍경화의 거장',
     description:
-      '한국 현실주의 풍경화의 거장 민정기(1949–). 「현실과 발언」 결성 동인으로(1979) 민중미술 운동의 핵심에 섰던 작가가, 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아온 반세기의 여정을 씨앗페 온라인에서 만나보세요.',
+      '한국 현실주의 풍경화의 거장 민정기(1949–). 「현실과 발언」 결성 동인으로(1979) 민중미술 운동의 핵심에 섰던 작가가, 사라져가는 한국의 산하와 민중의 삶을 대형 화폭에 담아온 반세기의 여정을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '한국 현실주의 풍경화의 거장 민정기. 민중미술 운동의 핵심으로서 한국의 산하와 민중의 삶을 담아온 반세기의 여정.',
     ogAlt: '민정기 대표 작품',
@@ -179,7 +179,7 @@ export default async function MinJoungkiFeature({
     name: isEnglish ? 'Min Joung-ki — SAF Online' : '민정기 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Min Joung-ki from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 민정기 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 민정기 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -1058,8 +1058,8 @@ export default async function MinJoungkiFeature({
                     <>
                       1980년 촛불전시에서 2018년 판문점 평화의 집까지, 민정기의 작업은 거리와 산
                       사이를, 저항과 파노라마 사이를 오가며 항상 같은 질문을 던져왔습니다: 이 땅은
-                      무엇을 담고 있는가, 누가 그것을 감당해왔는가. 그는 씨앗페에 금융 어려움의
-                      당사자가 아닌, 동료 예술인과의 연대자로서 함께합니다 — 다음 세대의 예술인들이
+                      무엇을 담고 있는가, 누가 그것을 감당해왔는가. 씨앗페에는 금융 어려움의
+                      당사자가 아닌, 동료 예술인과의 연대자로 함께합니다 — 다음 세대의 예술인들이
                       그가 치워야 했던 장애물 없이 일할 수 있도록.
                     </>
                   )}
@@ -1088,7 +1088,7 @@ export default async function MinJoungkiFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -1156,9 +1156,9 @@ export default async function MinJoungkiFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

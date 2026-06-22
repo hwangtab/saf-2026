@@ -166,7 +166,7 @@ export default async function SimHyeonhuiFeature({
     name: isEnglish ? 'Sim Hyeonhui — SAF Online' : '심현희 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Sim Hyeonhui from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 심현희 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 심현희 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -709,9 +709,9 @@ export default async function SimHyeonhuiFeature({
                       <p>
                         이분법의 거절, 겹쳐 그린 기념비적 얼굴, 재료의 경계 넘기 — 이 모두를 한데
                         모으면, 그의 작업은 하나의 끈질긴 시선의 선을 따른다. 심현희는 씨앗페에 이
-                        캠페인의 대상으로서가 아니라 동료 예술인과의 연대자로서 함께한다. 그의
-                        뒤에서 그림을 그릴 이들이, 금융 차별이 예술인의 삶에 지우는 무게를
-                        조금이라도 덜고 일할 수 있도록.
+                        캠페인의 대상이 아니라 동료 예술인과의 연대자로 함께한다. 그의 뒤에서 그림을
+                        그릴 이들이, 금융 차별이 예술인의 삶에 지우는 무게를 조금이라도 덜고 일할 수
+                        있도록.
                       </p>
                     </>
                   )}
@@ -761,7 +761,7 @@ export default async function SimHyeonhuiFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -829,9 +829,9 @@ export default async function SimHyeonhuiFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

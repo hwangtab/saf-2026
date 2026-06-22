@@ -178,7 +178,7 @@ export default async function KimDongseokFeature({
     name: isEnglish ? 'Kim Dong-seok — SAF Online' : '김동석 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Dong-seok from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김동석 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김동석 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -716,7 +716,7 @@ export default async function KimDongseokFeature({
                         (사)한국미술협회와 송파미술가협회에서 맡은 직무, 그리고 여러 미술대전의
                         심사·운영. 길을 그린 화가는 다른 이들이 걷는 길도 지켜 왔다 — 학생들,
                         동료들, 공동체를 지탱하는 제도들. 곁에 선 이들을 돌보는 이 같은 마음이, 그를
-                        동료 예술인과의 연대자로서 이 캠페인에 함께하게 한다.
+                        동료 예술인과의 연대자로 이 캠페인에 함께하게 한다.
                       </p>
                     </>
                   )}
@@ -736,8 +736,8 @@ export default async function KimDongseokFeature({
                   ) : (
                     <>
                       평생 붙든 한 단어, 국경을 넘어 걸었다가 다시 캔버스로 가져온 하나의 길.
-                      김동석은 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서
-                      함께한다 — 뒤에 올 예술인들에게도 그 길이 열려 있도록.
+                      김동석은 씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다
+                      — 뒤에 올 예술인들에게도 그 길이 열려 있도록.
                     </>
                   )}
                 </p>
@@ -765,7 +765,7 @@ export default async function KimDongseokFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -833,9 +833,9 @@ export default async function KimDongseokFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

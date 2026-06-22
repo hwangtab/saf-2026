@@ -167,7 +167,7 @@ export default async function SongGwangyeonFeature({
     name: isEnglish ? 'Song Gwangyeon — SAF Online' : '송광연 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Song Gwangyeon from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 송광연 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 송광연 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -629,7 +629,7 @@ export default async function SongGwangyeonFeature({
                       <p>
                         그것은 조용히 야심 찬 제안이다. 한국적 모티프를 유리 너머에 보존할 유산으로
                         다루는 대신, 작업은 그것을 가장 동시대적인 어법 속에서 살게 한다 — 밝고,
-                        다가서기 쉽고, 보여지는 일에 거리낌이 없는.
+                        다가서기 쉽고, 보이는 일에 거리낌이 없는.
                       </p>
                     </>
                   )}
@@ -708,9 +708,8 @@ export default async function SongGwangyeonFeature({
                     <>
                       나비의 꿈에서 팝의 밝은 문법까지, 송광연의 작업은 하나의 물음을 추구한다:
                       한국적 도상은 어떻게 가장 동시대적인 어법 속에서 온전히 살아 있을 수 있는가.
-                      그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서
-                      함께한다 — 오늘 금융 차별을 헤쳐 가는 예술인들이 길을 찾을 수 있도록 자신의
-                      작품을 내놓는다.
+                      씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 오늘
+                      금융 차별을 헤쳐 가는 예술인들이 길을 찾을 수 있도록 자신의 작품을 내놓는다.
                     </>
                   )}
                 </p>
@@ -738,7 +737,7 @@ export default async function SongGwangyeonFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -808,9 +807,9 @@ export default async function SongGwangyeonFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

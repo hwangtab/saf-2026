@@ -164,7 +164,7 @@ export default async function BaekGeumaFeature({
     name: isEnglish ? 'Baek Geuma — SAF Online' : '백금아 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Baek Geuma from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 백금아 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 백금아 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -697,17 +697,16 @@ export default async function BaekGeumaFeature({
                         <strong className="font-bold text-charcoal-deep">
                           예술인협동조합전(2024–25)
                         </strong>
-                        이 들어 있다. 작은 사항이지만 시사하는 바가 있다 — 고독한 작업실만이 아니라
-                        협회와 협동조합을 통해 전시의 삶을 이어 온 수채화가라는 것. 협동조합 전시에
+                        이 들어 있다. 작지만 분명한 의미가 있다 — 고독한 작업실만이 아니라 협회와
+                        협동조합을 통해 전시의 삶을 이어 온 수채화가라는 것. 협동조합 전시에
                         참여한다는 것은 이미 일종의 연대를 실천하는 일이다. 자신의 작품을 다른
                         이들의 작품 곁에 놓고, 한 공간을 나누는 것.
                       </p>
                       <p>
-                        그 성향이 그를 이 캠페인으로 이끈다. 그는 씨앗페에 이 캠페인의 대상으로서가
+                        그 성향이 그를 이 캠페인으로 이끈다. 씨앗페에는 이 캠페인의 대상으로서가
                         아니라 — 구제가 필요한 작가로서가 아니라 — 한국 예술인이 자주 마주하는 금융
-                        차별에 함께 맞서는 동료 예술인과의 연대자로서 함께한다. 협동조합 전시를
-                        채우는 바로 그 마음이 이 전시를 채운다. 예술인은 함께 설 때 더 강하다는
-                        믿음.
+                        차별에 함께 맞서는 동료 예술인과의 연대자로 함께한다. 협동조합 전시를 채우는
+                        바로 그 마음이 이 전시를 채운다. 예술인은 함께 설 때 더 강하다는 믿음.
                       </p>
                       <p>
                         이렇게 보면 그의 수채가 지닌 가벼움은 두 번째 의미를 얻는다. 한 줄기 물은
@@ -739,9 +738,9 @@ export default async function BaekGeumaFeature({
                       한국수채화협회에서 제주신화전과 예술인협동조합전까지, 백금아의 작업은 하나의
                       차분한 물음을 추구해 왔다 — 움직이고 흐려지는 것을, 멈춰 세우지 않으면서
                       어떻게 기록할 것인가. 투명한 물로 건넨 그의 대답은, 한국의 자연·신화·일상을 빛
-                      속에서 가볍게 간직하는 그림이다. 그는 씨앗페에 이 캠페인의 대상으로서가
-                      아니라, 동료 예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 한국
-                      예술인에게 지워진 금융 차별의 무게를 조금이라도 덜 짊어진 채 일할 수 있도록.
+                      속에서 가볍게 간직하는 그림이다. 씨앗페에는 이 캠페인의 대상으로서가 아니라,
+                      동료 예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 한국 예술인에게
+                      지워진 금융 차별의 무게를 조금이라도 덜 짊어진 채 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -769,7 +768,7 @@ export default async function BaekGeumaFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -837,9 +836,9 @@ export default async function BaekGeumaFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

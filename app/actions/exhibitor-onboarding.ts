@@ -41,14 +41,14 @@ export async function submitExhibitorApplication(
     if (profile.role === 'artist' && profile.status === 'active') {
       return {
         message:
-          '활성 작가 계정에서는 출품자 신청이 불가능합니다. 관리자에게 역할 전환을 요청해주세요.',
+          '활성 작가 계정에서는 출품자 신청이 불가능합니다. 관리자에게 역할 전환을 요청해 주세요.',
         error: true,
       };
     }
 
     if (profile.role === 'artist' && profile.status === 'pending') {
       return {
-        message: '작가 신청이 진행 중입니다. 관리자 승인 후 역할 전환을 요청해주세요.',
+        message: '작가 신청이 진행 중입니다. 관리자 승인 후 역할 전환을 요청해 주세요.',
         error: true,
       };
     }
@@ -57,7 +57,7 @@ export async function submitExhibitorApplication(
     // 페이지 컴포넌트 redirect와 별개로 서버 액션은 직접 POST로 호출 가능하므로 이중 방어.
     if (profile.status === 'suspended') {
       return {
-        message: '정지된 계정은 재신청할 수 없습니다. 관리자에게 문의해주세요.',
+        message: '정지된 계정은 재신청할 수 없습니다. 관리자에게 문의해 주세요.',
         error: true,
       };
     }
@@ -71,7 +71,7 @@ export async function submitExhibitorApplication(
     const termsReadComplete = formData.get('terms_read_complete') === '1';
 
     if (!representativeName || !contact || !bio) {
-      return { message: '모든 필수 항목을 입력해주세요.', error: true };
+      return { message: '모든 필수 항목을 입력해 주세요.', error: true };
     }
 
     if (!termsAccepted) {
@@ -79,12 +79,12 @@ export async function submitExhibitorApplication(
     }
 
     if (!termsReadComplete) {
-      return { message: '계약서 전문을 끝까지 확인해주세요.', error: true };
+      return { message: '계약서 전문을 끝까지 확인해 주세요.', error: true };
     }
 
     if (termsVersion !== EXHIBITOR_APPLICATION_TERMS_VERSION) {
       return {
-        message: '최신 출품자 전시위탁 계약서 확인 후 다시 동의해주세요.',
+        message: '최신 출품자 전시위탁 계약서 확인 후 다시 동의해 주세요.',
         error: true,
       };
     }

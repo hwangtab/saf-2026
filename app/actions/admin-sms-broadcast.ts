@@ -42,7 +42,7 @@ function gateAdvertisementBody(
   if (isNightInKst()) {
     return {
       ok: false,
-      message: '광고 문자는 야간(21:00~08:00)에 발송할 수 없습니다. 주간에 다시 시도해주세요.',
+      message: '광고 문자는 야간(21:00~08:00)에 발송할 수 없습니다. 주간에 다시 시도해 주세요.',
     };
   }
   const corrected = buildAdvertisementText(bodyText, optOutNumber());

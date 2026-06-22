@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '정서온 — 집, 공간과 존재 사이',
     description:
-      "'집'이라는 형상을 매개로 공간·사물·인간과 세계의 관계를 탐구하는 작가 정서온(1984–). 대구와 베를린을 오가며 물리적 공간을 넘어 정신적 공간까지 다루는 회화로, 존재와 관계에 대한 통찰을 제시한다. 「슈필렌」, 「이동하는 세계」 등으로 이어지는 정서온의 작품을 씨앗페 온라인에서 만나보세요.",
+      "'집'이라는 형상을 매개로 공간·사물·인간과 세계의 관계를 탐구하는 작가 정서온(1984–). 대구와 베를린을 오가며 물리적 공간을 넘어 정신적 공간까지 다루는 회화로, 존재와 관계에 대한 통찰을 제시한다. 「슈필렌」, 「이동하는 세계」 등으로 이어지는 정서온의 작품을 씨앗페 온라인에서 만날 수 있습니다.",
     ogDescription:
       "'집'이라는 형상을 매개로 공간과 존재의 관계를 탐구하는 작가 정서온. 대구와 베를린을 오간 사유의 회화.",
     ogAlt: '정서온 대표 작품',
@@ -165,7 +165,7 @@ export default async function JeongSeoonFeature({
     name: isEnglish ? 'Jeong Seoon — SAF Online' : '정서온 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Jeong Seoon from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 정서온 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 정서온 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -701,7 +701,7 @@ export default async function JeongSeoonFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -769,9 +769,9 @@ export default async function JeongSeoonFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

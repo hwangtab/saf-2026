@@ -39,7 +39,7 @@ const PAGE_COPY = {
   ko: {
     title: '민병산 — 거리의 철학자, 글씨로 남은 삶',
     description:
-      '‘거리의 철학자’, ‘한국의 디오게네스’로 불린 문필가·서예가 민병산(1928–1990). 충북 청주에서 태어나, 세속을 초월한 자유분방한 삶과 독특한 ‘민병산체’ 서체, 산문집 『철학의 즐거움』으로 한 시대를 기렸다. 글씨와 글로 남은 그의 삶을 씨앗페 온라인에서 만나보세요.',
+      '‘거리의 철학자’, ‘한국의 디오게네스’로 불린 문필가·서예가 민병산(1928–1990). 충북 청주에서 태어나, 세속을 초월한 자유분방한 삶과 독특한 ‘민병산체’ 서체, 산문집 『철학의 즐거움』으로 한 시대를 기렸다. 글씨와 글로 남은 그의 삶을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '민병산(1928–1990) — ‘거리의 철학자’로 불린 문필가·서예가. 세속을 초월한 삶과 ‘민병산체’ 글씨가 후대에 남긴 울림.',
     ogAlt: '민병산 대표 작품',
@@ -171,7 +171,7 @@ export default async function MinByeongsanFeature({
     name: isEnglish ? 'Min Byungsan — SAF Online' : '민병산 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Min Byungsan from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 민병산 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 민병산 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -747,7 +747,7 @@ export default async function MinByeongsanFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -816,9 +816,9 @@ export default async function MinByeongsanFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

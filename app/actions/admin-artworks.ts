@@ -478,7 +478,7 @@ async function createAdminArtworkRecord(formData: FormData) {
     if (imageValidation.error) throw new Error(imageValidation.error);
   }
 
-  if (!artist_id) throw new Error('작가를 선택해주세요.');
+  if (!artist_id) throw new Error('작가를 선택해 주세요.');
 
   const { data: artwork, error } = await supabase
     .from('artworks')
@@ -564,7 +564,7 @@ export async function updateArtworkImages(id: string, images: string[]) {
 
   if (error) throw error;
   if (!updatedRows || updatedRows.length === 0) {
-    throw new Error('다른 관리자가 먼저 수정했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+    throw new Error('다른 관리자가 먼저 수정했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.');
   }
 
   // storage cleanup은 UPDATE 성공 분기에서만 실행 (race 패배 시 orphan 삭제 방지)
@@ -998,7 +998,7 @@ export async function voidArtworkSale(saleId: string, reason: string) {
   const supabase = await requireAdminClient();
 
   if (!saleId) throw new Error('판매 기록 ID가 필요합니다.');
-  if (!reason.trim()) throw new Error('취소 사유를 입력해주세요.');
+  if (!reason.trim()) throw new Error('취소 사유를 입력해 주세요.');
 
   const { data: existing } = await supabase
     .from('artwork_sales')

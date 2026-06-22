@@ -161,7 +161,7 @@ export default async function HongJinhuiFeature({
     name: isEnglish ? 'Hong Jinhui — SAF Online' : '홍진희 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Hong Jinhui from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 홍진희 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 홍진희 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -350,9 +350,9 @@ export default async function HongJinhuiFeature({
                       곳 — 에 작품이 소장되어 있다.
                     </p>
                     <p>
-                      홍진희는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서
-                      함께한다 — 작품 판매 수익이 금융 차별을 겪는 예술인을 위한 상호부조 대출
-                      기금으로 이어지도록.
+                      홍진희는 씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다
+                      — 작품 판매 수익이 금융 차별을 겪는 예술인을 위한 상호부조 대출 기금으로
+                      이어지도록.
                     </p>
                   </>
                 )}
@@ -749,7 +749,7 @@ export default async function HongJinhuiFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -817,9 +817,9 @@ export default async function HongJinhuiFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

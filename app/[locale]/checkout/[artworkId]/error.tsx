@@ -22,10 +22,10 @@ export default function CheckoutError({
   const message = error.message?.includes('configured')
     ? isEnglish
       ? 'The payment system is not ready yet. Please try again shortly.'
-      : '결제 시스템이 아직 준비 중입니다. 잠시 후 다시 시도해주세요.'
+      : '결제 시스템이 아직 준비 중입니다. 잠시 후 다시 시도해 주세요.'
     : isEnglish
       ? 'An error occurred while loading the checkout page. Please try again shortly.'
-      : '결제 페이지를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      : '결제 페이지를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.';
   const backLabel = isEnglish ? 'Back to artworks' : '작품 목록으로';
 
   return (

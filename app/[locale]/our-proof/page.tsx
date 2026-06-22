@@ -595,7 +595,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
       />
       <PageHero
         title="우리의 증명"
-        description={`예술인 상호부조 대출의 실제 성과. ${LOAN_COUNT}건, 약 7억 원의 신뢰가 데이터로 증명되었습니다.`}
+        description={`예술인 상호부조 대출의 실제 성과. ${LOAN_COUNT}건, 약 7억 원의 신뢰를 데이터로 확인했습니다.`}
         descriptionId="proof-hero-description"
         breadcrumbItems={breadcrumbItems}
         customBackgroundImage={getHeroOverride('our-proof')}
@@ -619,8 +619,8 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
               <span className="text-primary-strong font-bold">95%</span>의 상환율이 증명합니다
             </SectionTitle>
             <p className="text-xl text-charcoal">
-              신용점수에 상관없이 빌려준 {LOAN_COUNT}건, 약 7억 원 가운데 95%가 제때 돌아왔고 빚을
-              대신 갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
+              신용점수와 상관없이 빌려준 {LOAN_COUNT}건, 약 7억 원 가운데 95%가 제때 돌아왔습니다.
+              빚을 대신 갚아야 했던 비율도 5.10%뿐이라 흔한 저신용 대출보다 오히려 안정적입니다.
             </p>
           </div>
 
@@ -642,7 +642,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
               소개한 것처럼 일반 금융기관 저신용 대출 연체율보다 낮은 수준이 유지되고 있습니다.
             </p>
             <p className="text-sm text-charcoal-muted mb-6">
-              예술인이 처한 금융 배제의 구조적 원인은{' '}
+              예술인이 처한 금융 배제의 구조는{' '}
               <Link href="/our-reality" className="text-primary-strong hover:underline font-medium">
                 우리의 현실
               </Link>
@@ -671,12 +671,12 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                   >
                     한국스마트협동조합
                   </a>
-                  이 일정한 기금을 조성하면, 협약금융기관이 그 기금의 약 7배까지 예술인들에게{' '}
+                  이 일정한 기금을 조성하면 협약금융기관이 그 기금의 약 7배까지 예술인들에게{' '}
                   <strong>저금리</strong>로 대출하는 시스템입니다.
                 </p>
                 <p>
-                  이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고, 그들의 성실함에 베팅하는
-                  &lsquo;상호부조&rsquo;의 정신이 담겨있습니다.
+                  이는 단순한 금융상품이 아닙니다. 예술인들을 신뢰하고 그들의 성실함에 베팅하는
+                  &lsquo;상호부조&rsquo;의 정신이 담겨 있습니다.
                 </p>
                 <p className="font-semibold">
                   기존 금융이 &ldquo;정기 소득을 증명할 수 없으니 불가능&rdquo;이라고 말할 때,
@@ -699,7 +699,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
             <StatCard
               value={`${LOAN_COUNT}건`}
               label="누적 대출 실행"
-              description={`2022년 12월부터 2025년 9월말까지 ${LOAN_COUNT}건의 상호부조 대출이 실행되었습니다.`}
+              description={`2022년 12월부터 2025년 9월말까지 ${LOAN_COUNT}건의 상호부조 대출을 실행했습니다.`}
               variant="bordered"
             />
             <StatCard
@@ -728,7 +728,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                   <h3 className="text-card-title mb-2">기금과 특별조합비</h3>
                   <p className="text-charcoal-muted text-balance">
                     조합이 조성한 7,700만원의 기금과 대출자 특별조합비로 안정기금 잔액
-                    35,608,224원을 유지하며 리스크를 공동으로 감당합니다.
+                    35,608,224원을 유지하고 리스크를 공동으로 감당합니다.
                   </p>
                 </div>
               </div>
@@ -763,7 +763,7 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
                 <div>
                   <h3 className="text-card-title mb-2">투명한 리스크 관리</h3>
                   <p className="text-charcoal-muted text-balance">
-                    대위변제 20건(6.56%) 중 11,396,305원을 회수했고, 실시간 모니터링과 회수 계획으로
+                    대위변제 20건(6.56%) 중 11,396,305원을 회수했고 실시간 모니터링과 회수 계획으로
                     상호부조 신뢰를 지켜가고 있습니다.
                   </p>
                 </div>
@@ -932,10 +932,10 @@ export default async function OurProof({ params }: { params: Promise<{ locale: s
           <SectionTitle className="mb-8">당신도 이 신뢰의 체계에 참여할 수 있습니다</SectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto text-balance">
             <div className="flex flex-col min-h-[200px] p-6 border border-gray-200 rounded-2xl bg-white text-left shadow-sm">
-              <h3 className="text-card-title mb-3">조합원이 되어 연대해주세요</h3>
+              <h3 className="text-card-title mb-3">조합원이 되어 연대해 주세요</h3>
               <p className="text-charcoal-muted mb-4 flex-grow">
-                한국스마트협동조합의 조합원이 되어 예술인 상호부조 대출 기금 조성과 운영에 함께하실
-                수 있습니다.
+                한국스마트협동조합의 조합원이 되어 예술인 상호부조 대출 기금 조성과 운영에 함께해
+                주세요.
               </p>
               <TrackedDonateButton position="our-proof-ko" variant="primary" size="md">
                 조합원 가입하기

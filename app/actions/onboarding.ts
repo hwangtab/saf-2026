@@ -36,7 +36,7 @@ export async function submitArtistApplication(
     // 정지된 계정은 재신청 불가. 서버 액션은 페이지 가드와 독립적이므로 여기에서 명시 차단.
     if (profile?.status === 'suspended') {
       return {
-        message: '정지된 계정은 재신청할 수 없습니다. 관리자에게 문의해주세요.',
+        message: '정지된 계정은 재신청할 수 없습니다. 관리자에게 문의해 주세요.',
         error: true,
       };
     }
@@ -50,7 +50,7 @@ export async function submitArtistApplication(
     const termsReadComplete = formData.get('terms_read_complete') === '1';
 
     if (!artistName || !contact || !bio) {
-      return { message: '모든 항목을 입력해주세요.', error: true };
+      return { message: '모든 항목을 입력해 주세요.', error: true };
     }
 
     if (!termsAccepted) {
@@ -58,12 +58,12 @@ export async function submitArtistApplication(
     }
 
     if (!termsReadComplete) {
-      return { message: '계약서 전문을 끝까지 확인해주세요.', error: true };
+      return { message: '계약서 전문을 끝까지 확인해 주세요.', error: true };
     }
 
     if (termsVersion !== ARTIST_APPLICATION_TERMS_VERSION) {
       return {
-        message: '최신 전시·판매위탁 계약서 확인 후 다시 동의해주세요.',
+        message: '최신 전시·판매위탁 계약서 확인 후 다시 동의해 주세요.',
         error: true,
       };
     }

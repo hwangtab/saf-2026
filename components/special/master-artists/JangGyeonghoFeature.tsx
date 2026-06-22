@@ -166,7 +166,7 @@ export default async function JangGyeonghoFeature({
     name: isEnglish ? 'Jang Kyungho — SAF Online' : '장경호 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Jang Kyungho from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 장경호 작품을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 장경호 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -330,8 +330,8 @@ export default async function JangGyeonghoFeature({
                     <p>
                       그는 <strong className="font-bold text-charcoal-deep">관훈미술관장</strong>{' '}
                       시절부터 지속적으로 한국현대 형상회화전을 열면서, 형상미술의 실체를 대중에게
-                      보여주기 위해 노력해 왔다. 이를 통해, 그림으로 잘못된 세상을 부정하고 스스로를
-                      반성하는 진정한 형상미술 작가를 발굴하고자 했다.
+                      보여주기 위해 노력해 왔다. 그림으로 잘못된 세상을 부정하고 스스로를 성찰하는
+                      진정한 형상미술 작가를 발굴하고자 했다.
                     </p>
                     <p>
                       그의 작업은 하나의 양식이라기보다 하나의 태도에 가깝다 — 그림이 잘못된 세상을
@@ -593,8 +593,8 @@ export default async function JangGyeonghoFeature({
                     <>
                       1970년대의 〈새로운 형상성〉에서 지금까지 이어 온 형상회화전까지, 장경호의
                       작업은 하나의 물음을 추구해 왔다 — 그림은 어떻게 인간과 시대를 한 화면에 담을
-                      수 있는가. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
-                      연대자로서 함께한다 — 다음 세대의 예술인들이 자리를 마련받아 그릴 수 있도록.
+                      수 있는가. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로
+                      함께한다 — 다음 세대의 예술인들이 자리를 마련받아 그릴 수 있도록.
                     </>
                   )}
                 </p>
@@ -622,7 +622,7 @@ export default async function JangGyeonghoFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -690,9 +690,9 @@ export default async function JangGyeonghoFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

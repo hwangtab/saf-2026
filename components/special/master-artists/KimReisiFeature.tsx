@@ -38,7 +38,7 @@ const PAGE_COPY = {
   ko: {
     title: '김레이시 — 형상을 비우고, 균형에 이르다',
     description:
-      '추상 회화 작가 김레이시. 서울여자대학교 서양화과를 졸업하고 영국 노팅엄 트렌트 대학교와 미국 프랫 인스티튜트에서 석사학위를 받은 그는, 구상에서 추상으로 전환하며 선과 색으로 내면의 균형과 존재의 본질을 탐구해 왔다. 씨앗페 온라인에서 김레이시의 작품을 만나보세요.',
+      '추상 회화 작가 김레이시. 서울여자대학교 서양화과를 졸업하고 영국 노팅엄 트렌트 대학교와 미국 프랫 인스티튜트에서 석사학위를 받은 그는, 구상에서 추상으로 전환하며 선과 색으로 내면의 균형과 존재의 본질을 탐구해 왔다. 씨앗페 온라인에서 김레이시의 작품을 만날 수 있습니다.',
     ogDescription:
       '추상 회화 작가 김레이시. 구상에서 추상으로 — 직관적인 선과 켜켜이 쌓인 층들로 내면의 균형과 존재의 연결을 빚어낸다.',
     ogAlt: '김레이시 대표 작품',
@@ -173,7 +173,7 @@ export default async function KimReisiFeature({ params }: { params: Promise<{ lo
     name: isEnglish ? 'Kim Reisi — SAF Online' : '김레이시 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Reisi from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김레이시 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김레이시 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -813,7 +813,7 @@ export default async function KimReisiFeature({ params }: { params: Promise<{ lo
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -882,9 +882,9 @@ export default async function KimReisiFeature({ params }: { params: Promise<{ lo
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

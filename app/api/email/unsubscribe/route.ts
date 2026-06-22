@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   const ip = getClientIp(request.headers);
   const rl = await rateLimit(`unsubscribe:${ip}`, { limit: 20, windowMs: 60_000 });
   if (!rl.success) {
-    return htmlResponse('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', 429);
+    return htmlResponse('요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.', 429);
   }
 
   // RFC 8058 List-Unsubscribe-Post: token은 form-data 또는 query에서 받음.
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   try {
     supabase = createSupabaseAdminClient();
   } catch {
-    return htmlResponse('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 500);
+    return htmlResponse('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', 500);
   }
 
   const { error: suppressError } = await supabase
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
   if (suppressError) {
     console.error('[unsubscribe] suppression upsert error:', suppressError);
-    return htmlResponse('처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 500);
+    return htmlResponse('처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', 500);
   }
 
   return htmlResponse(

@@ -186,7 +186,7 @@ export default async function ParkBuldongFeature({
     name: isEnglish ? 'Park Bul-ttong — SAF Online' : '박불똥 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Park Bul-ttong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 박불똥 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 박불똥 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -902,9 +902,9 @@ export default async function ParkBuldongFeature({
                       1985년 아랍미술관에서 오늘의 갤러리 벽까지, 박불똥의 작업은 하나의 물음을
                       추구해 왔습니다: 권력이 말하는 데 쓰는 이미지를 잘라내면 어떤 일이 일어나는가.
                       가위와 신문지로 40년에 걸쳐 구축된 그 대답은 한국 현대미술에서 가장 지속적인
-                      시각 비평의 실천 중 하나입니다. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라,
-                      동료 예술인과의 연대자로서 함께합니다 — 다음 세대의 예술인들이 그가 마주한
-                      압력 없이 일할 수 있도록.
+                      시각 비평의 실천 중 하나입니다. 씨앗페에는 이 캠페인의 대상이 아니라, 동료
+                      예술인과의 연대자로 함께합니다 — 다음 세대의 예술인들이 그가 마주한 압력 없이
+                      일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -932,7 +932,7 @@ export default async function ParkBuldongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -1002,9 +1002,9 @@ export default async function ParkBuldongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

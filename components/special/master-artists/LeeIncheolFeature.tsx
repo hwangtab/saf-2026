@@ -168,7 +168,7 @@ export default async function LeeIncheolFeature({
     name: isEnglish ? 'Lee In-cheol — SAF Online' : '이인철 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee In-cheol from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이인철 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이인철 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -768,9 +768,8 @@ export default async function LeeIncheolFeature({
                     <>
                       1980년대 말의 「우리들의 일상」에서 2025년 파리의 「홀로이즘」까지, 이인철의
                       작업은 하나의 실을 따라왔다: 가까이서 바라보고 기록으로 남기는, 평범한 하루의
-                      단면. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
-                      연대자로서 함께한다 — 다른 이들 또한 금융 차별의 무게 없이 저마다의 일상을
-                      계속 그릴 수 있도록.
+                      단면. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다
+                      — 다른 이들 또한 금융 차별의 무게 없이 저마다의 일상을 계속 그릴 수 있도록.
                     </>
                   )}
                 </p>
@@ -798,7 +797,7 @@ export default async function LeeIncheolFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -866,9 +865,9 @@ export default async function LeeIncheolFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

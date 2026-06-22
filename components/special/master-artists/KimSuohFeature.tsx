@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '김수오 — 신들의 땅, 사라지기 전에 담는 화산섬',
     description:
-      '낮에는 사람을 고치고 밤에는 땅을 기록하는 한의사·사진가 김수오. 제주 중산간 오름의 어둠과 고요 속에서 개발과 오염으로 사라져가는 원초적 풍광을 응시한다. 첫 개인전 〈신들의 땅〉, 두 번째 개인전 〈가닿음으로〉의 작가 김수오를 씨앗페 온라인에서 만나보세요.',
+      '낮에는 사람을 고치고 밤에는 땅을 기록하는 한의사·사진가 김수오. 제주 중산간 오름의 어둠과 고요 속에서 개발과 오염으로 사라져가는 원초적 풍광을 응시한다. 첫 개인전 〈신들의 땅〉, 두 번째 개인전 〈가닿음으로〉의 작가 김수오를 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '한의사이자 사진가 김수오. 제주 중산간 오름의 깊은 밤, 사라져가는 화산섬의 원초적 풍광을 〈신들의 땅〉으로 담아낸다.',
     ogAlt: '김수오 대표 작품',
@@ -173,7 +173,7 @@ export default async function KimSuohFeature({
     name: isEnglish ? 'Kim Suoh — SAF Online' : '김수오 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Suoh from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김수오 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김수오 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -725,9 +725,9 @@ export default async function KimSuohFeature({
                     <>
                       낮에는 사람을 고치고 밤에는 땅을 기록하며, 김수오는 사라지기 전의 화산섬을
                       사진으로 담는다 — 아름답지만 사라지고 있는 것들, 말없이 살아가는 존재들을 향한
-                      깊고 애정 어린 눈길. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료
-                      예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 삶의 자리를 지킬 수
-                      있도록 작품을 내놓으며.
+                      깊고 애정 어린 눈길. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의
+                      연대자로 함께한다 — 다음 세대의 예술인들이 삶의 자리를 지킬 수 있도록 작품을
+                      내놓으며.
                     </>
                   )}
                 </p>
@@ -755,7 +755,7 @@ export default async function KimSuohFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -823,9 +823,9 @@ export default async function KimSuohFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

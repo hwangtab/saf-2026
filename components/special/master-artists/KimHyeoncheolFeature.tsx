@@ -170,7 +170,7 @@ export default async function KimHyeoncheolFeature({
     name: isEnglish ? 'Kim Hyeoncheol — SAF Online' : '김현철 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Hyeoncheol from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김현철 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김현철 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -363,12 +363,11 @@ export default async function KimHyeoncheolFeature({
                       는 길이다.
                     </p>
                     <p>
-                      그의 주목할 만한 작업 중 하나가 한국에서 가장 사랑받는 고전의 주인공을 봉안한
-                      영정, <strong className="font-bold text-charcoal">《춘향영정》</strong>의
-                      제작이다 — 전신 초상의 전통을 직접 끌어다 쓴 작업이다. 2025년 서울 겸재정선
-                      미술관은 그의 작업을 두 차례 연이은 초대 개인전 《전신(傳神)》과
-                      《진경(眞景)》 으로 선보였다 — 그의 작업을 떠받치는 두 기둥을 차례로 호명한
-                      셈이다.
+                      그의 주요 작업 중 하나가 한국에서 가장 사랑받는 고전의 주인공을 봉안한 영정,{' '}
+                      <strong className="font-bold text-charcoal">《춘향영정》</strong>의 제작이다 —
+                      전신 초상의 전통을 직접 끌어다 쓴 작업이다. 2025년 서울 겸재정선 미술관은 그의
+                      작업을 두 차례 연이은 초대 개인전 《전신(傳神)》과 《진경(眞景)》 으로
+                      선보였다 — 그의 작업을 떠받치는 두 기둥을 차례로 호명한 셈이다.
                     </p>
                   </>
                 )}
@@ -790,8 +789,8 @@ export default async function KimHyeoncheolFeature({
                       간송의 공부방에서 자신의 화실까지, 김현철의 작업은 하나의 물음을 추구해 왔다.
                       전통을 박제하지 않고 어떻게 물려받을 것인가 — 옛것은 어떻게 현재에 머무는가.
                       한 생애에 걸쳐 구축된 대답이, 우리 땅을 직접 보고 한 사람의 정신을 담으며
-                      쪽빛으로 빛나는 그림이다. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료
-                      예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 그가 마땅하다고 믿는
+                      쪽빛으로 빛나는 그림이다. 씨앗페에는 이 캠페인의 대상이 아니라, 동료
+                      예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 그가 마땅하다고 믿는
                       안정 속에서 일할 수 있도록.
                     </>
                   )}
@@ -820,7 +819,7 @@ export default async function KimHyeoncheolFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -890,9 +889,9 @@ export default async function KimHyeoncheolFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

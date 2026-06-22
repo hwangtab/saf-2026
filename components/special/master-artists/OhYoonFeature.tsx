@@ -45,7 +45,7 @@ const PAGE_COPY = {
     description:
       '민중미술의 거장 오윤(1946–1986) 40주기 특별전. 목판화에 시대의 아픔과 민중의 생명력을 새긴 오윤의 대표작을 씨앗페 온라인에서 감상하고 소장하세요. 현실, 한(恨), 함께하는 미술이라는 세 가지 테마로 오윤의 예술 세계와 민중미술의 역사를 조명하는 온라인 전시입니다.',
     ogDescription:
-      '민중미술의 거장 오윤 40주기 특별전. 목판화로 시대를 기록한 오윤의 대표작을 씨앗페 온라인에서 만나보세요.',
+      '민중미술의 거장 오윤 40주기 특별전. 목판화로 시대를 기록한 오윤의 대표작을 씨앗페 온라인에서 만날 수 있습니다.',
     ogAlt: '오윤 40주기 특별전 대표 이미지',
     twitterTitle: '오윤 40주기 특별전',
     twitterDescription: '민중미술의 거장 오윤의 작품 세계를 만나는 온라인 특별전',
@@ -199,7 +199,7 @@ export default async function OhYoonFeature({
     name: isEnglish ? 'Oh Yoon 40th Anniversary Special Exhibition' : '오윤 40주기 특별전',
     description: isEnglish
       ? "A special online exhibition honoring the 40th anniversary of Oh Yoon's passing, presenting his selected works from the SAF Online collection."
-      : '민중미술의 거장 오윤 화백의 40주기를 기념하는 온라인 특별전. 씨앗페 온라인에 소장된 오윤 작품들을 선보입니다.',
+      : '민중미술의 거장 오윤 화백의 40주기를 기념하는 온라인 특별전. 씨앗페 온라인에서 만날 수 있는 오윤 작품을 선보입니다.',
     url: pageUrl,
     // EventCompleted/EventInProgress는 schema.org EventStatusType enum에 없는 값.
     // 본 전시(event.ts)와 동일하게 EventScheduled 유지 — 종료 행사도 상태 변경 없이 과거 일자로 표현 (Google 권장).
@@ -703,7 +703,7 @@ export default async function OhYoonFeature({
                           현재 오윤 특별전 작품 정보를 정리하고 있습니다.
                         </span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

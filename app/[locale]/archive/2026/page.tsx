@@ -43,7 +43,7 @@ export async function generateMetadata({
   const pageCopy = {
     ko: {
       title: '2026 오프라인 전시 기록',
-      description: `서울 인사동 전시회 기록. 2026년 1월 14일~26일 인사아트센터에서 열린 씨앗페 전시 일정·포스터·도록을 확인하세요. ${artistCount}명 작가의 ${artworkCount}점 작품, 12일간의 전시 현장과 관람객 후기.`,
+      description: `서울 인사동 전시 기록. 2026년 1월 14일~26일 인사아트센터에서 열린 씨앗페 전시 일정·포스터·도록을 확인하세요. ${artistCount}명 작가의 ${artworkCount}점 작품, 12일간의 현장과 관람객 후기.`,
     },
     en: {
       title: '2026 Offline Exhibition Archive',
@@ -79,7 +79,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
   const shareDescription =
     locale === 'en'
       ? 'Records from the SAF 2026 offline exhibition at Insa Art Center.'
-      : '씨앗페 2026 오프라인 전시의 기록. 인사아트센터에서의 뜨거웠던 연대의 현장.';
+      : '씨앗페 2026 오프라인 전시 기록. 인사아트센터에서 만난 뜨거운 연대의 현장.';
   const exhibitionSummary =
     locale === 'en'
       ? {
@@ -234,7 +234,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
       <PageHero
         customBackgroundImage={getHeroOverride('archive/2026')}
         title="2026 오프라인 전시"
-        description="인사아트센터에서 진행된 12일간의 기록"
+        description="인사아트센터에서 열린 12일간의 기록"
         dividerColor="text-danger/10"
         breadcrumbItems={breadcrumbItems}
       >
@@ -397,7 +397,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
             <ul className="text-charcoal-muted space-y-2 text-sm">
               <li>✓ 장애인 휠체어 접근 가능</li>
               <li>✓ 엘리베이터 및 휠체어 화장실 보유</li>
-              <li>✓ 휠체어 사용자 주차 공간 가능</li>
+              <li>✓ 휠체어 사용자 주차 공간 이용 가능</li>
               <li>
                 자세한 문의:{' '}
                 <a
@@ -425,7 +425,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
                   <div className="flex-1">
                     <p className="font-semibold">개막식 & 오프닝 퍼포먼스</p>
                     <p className="text-charcoal-muted text-sm">
-                      참여 예술인들의 개막 퍼포먼스와 캠페인 소개, 주요 후원자 라운드테이블
+                      참여 예술인들의 개막 퍼포먼스, 캠페인 소개, 주요 후원자 라운드테이블
                     </p>
                   </div>
                 </div>
@@ -508,7 +508,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
           </div>
           <div className="mt-8 text-center">
             <p className="text-sm text-charcoal-muted">
-              현장에 비치된 방명록에서 더 많은 응원의 목소리를 확인하실 수 있습니다.
+              현장에 비치된 방명록에서 더 많은 응원의 목소리를 확인할 수 있습니다.
             </p>
           </div>
         </div>
@@ -518,7 +518,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
           <SectionTitle className="mb-8">문의사항</SectionTitle>
           <div className="space-y-4">
             <p className="text-lg text-charcoal-muted">
-              행사와 관련하여 궁금한 점이 있으시면 아래로 연락주세요.
+              행사와 관련해 궁금한 점이 있으시면 아래로 연락해 주세요.
             </p>
             <div className="space-y-2">
               <p className="font-semibold">

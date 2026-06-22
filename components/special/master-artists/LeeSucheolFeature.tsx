@@ -37,7 +37,7 @@ const PAGE_COPY = {
   ko: {
     title: '이수철 — 순수 사진, 그 존재론의 경계',
     description:
-      '순수 사진의 자리에서 사진의 존재론적 경계를 확장해온 사진가 이수철. 일본 오사카예술대학교에서 사진을 전공한 그는, 카메라와 필름 없이 인화 과정만으로도 이미지를 창조하며 「기억의 여정」·「비동시성」 연작의 명상적 화면을 만들어왔다. 씨앗페 온라인에서 이수철의 작품을 만나보세요.',
+      '순수 사진의 자리에서 사진의 존재론적 경계를 확장해온 사진가 이수철. 일본 오사카예술대학교에서 사진을 전공한 그는, 카메라와 필름 없이 인화 과정만으로도 이미지를 창조하며 「기억의 여정」·「비동시성」 연작의 명상적 화면을 만들어왔다. 씨앗페 온라인에서 이수철의 작품을 만날 수 있습니다.',
     ogDescription:
       '순수 사진의 사진가 이수철. 카메라를 현상을 포착하는 하나의 메커니즘으로 보고, 인화의 물성으로 사진의 경계를 확장한다.',
     ogAlt: '이수철 대표 작품',
@@ -173,7 +173,7 @@ export default async function LeeSucheolFeature({
     name: isEnglish ? 'Lee Sucheol — SAF Online' : '이수철 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Sucheol from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이수철 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이수철 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -737,7 +737,7 @@ export default async function LeeSucheolFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -805,9 +805,9 @@ export default async function LeeSucheolFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

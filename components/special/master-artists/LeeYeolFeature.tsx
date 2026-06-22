@@ -38,7 +38,7 @@ const PAGE_COPY = {
   ko: {
     title: '이열 — 밤의 나무, 빛으로 깨어나는 신목',
     description:
-      "회화처럼 빛을 다루는 '나무 사진가' 이열(Yoll Lee). 낮에 나무를 찾고 밤에 조명을 주어 촬영하는 작업으로, 히말라야 랄리구라스부터 마다가스카르 바오밥, 제주·신안·통영·남해의 섬 신목(神木)까지 나무와 지역의 역사를 응시해왔다. 씨앗페 온라인에서 이열의 작품을 만나보세요.",
+      "회화처럼 빛을 다루는 '나무 사진가' 이열(Yoll Lee). 낮에 나무를 찾고 밤에 조명을 주어 촬영하는 작업으로, 히말라야 랄리구라스부터 마다가스카르 바오밥, 제주·신안·통영·남해의 섬 신목(神木)까지 나무와 지역의 역사를 응시해왔다. 씨앗페 온라인에서 이열의 작품을 만날 수 있습니다.",
     ogDescription:
       "'나무 사진가' 이열. 밤에 조명을 주어 깨어나는 나무 — 기록 위에 주관적 빛의 흐름을 더한 신목(神木) 사진.",
     ogAlt: '이열 대표 작품',
@@ -177,7 +177,7 @@ export default async function LeeYeolFeature({
     name: isEnglish ? 'Yoll Lee — SAF Online' : '이열 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Yoll Lee from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이열 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이열 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -766,9 +766,8 @@ export default async function LeeYeolFeature({
                     <>
                       2013년의 푸른 나무에서 오늘의 섬 신목과 느린 인간까지, 이열은 낮에 나무를 찾고
                       밤에 빛으로 깨우는 작업을 쌓아 왔다 — 지켜진 기록, 그리고 그 위에 빛으로 더한
-                      감정. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
-                      연대자로서 함께한다 — 다음 세대의 예술인들이, 한 그루 나무가 계속 서 있듯 계속
-                      일할 수 있도록.
+                      감정. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다
+                      — 다음 세대의 예술인들이, 한 그루 나무가 계속 서 있듯 계속 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -796,7 +795,7 @@ export default async function LeeYeolFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -864,9 +863,9 @@ export default async function LeeYeolFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

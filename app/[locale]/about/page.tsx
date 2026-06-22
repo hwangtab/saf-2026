@@ -573,7 +573,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, saf2026Schema, saf2023Schema]} />
       <PageHero
         title="씨앗페 소개"
-        description={`작품 한 점이 동료 작가의 다음 한 달이 되는 플랫폼. ${artistCount}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 한국스마트협동조합이 운영해온 예술인 상호부조의 구조를 소개합니다.`}
+        description={`작품 한 점이 동료 작가의 다음 한 달이 되는 플랫폼. ${artistCount}명의 연대 작가, ${LOAN_COUNT}건의 저금리 대출, 95%의 상환율 — 한국스마트협동조합이 운영해온 예술인 상호부조 구조를 소개합니다.`}
         breadcrumbItems={breadcrumbItems}
         customBackgroundImage={getHeroOverride('about')}
       >
@@ -639,13 +639,13 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 step: '01',
                 Icon: Handshake,
                 label: '작가 연대',
-                desc: `${artistCount}명의 작가가 동료 예술인의 금융 차별에 맞서 자발적으로 작품을 출품합니다. 피해 당사자가 아닌, 연대자로서.`,
+                desc: `${artistCount}명의 작가가 동료 예술인의 금융 차별에 맞서 자발적으로 작품을 출품합니다. 피해 당사자가 아니라 연대자로서 참여합니다.`,
               },
               {
                 step: '02',
                 Icon: ImageIcon,
                 label: '작품 판매',
-                desc: '씨앗페 온라인 갤러리에서 작품이 판매됩니다. 모든 수익이 상호부조 기금으로 직접 연결됩니다.',
+                desc: '씨앗페 온라인 갤러리에서 작품을 판매합니다. 모든 수익이 상호부조 기금으로 직접 연결됩니다.',
               },
               {
                 step: '03',
@@ -711,7 +711,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               {
                 Icon: Leaf,
                 title: '생태계를 지속가능하게',
-                desc: '상환금이 다시 기금으로 돌아와 새로운 예술인을 지원합니다. 순환하는 상호부조의 선순환.',
+                desc: '상환금이 다시 기금으로 돌아와 새로운 예술인을 지원합니다. 상호부조의 순환 구조입니다.',
               },
             ].map((item) => (
               <div
@@ -827,7 +827,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 href: '/our-proof',
                 Icon: CheckCircle2,
                 title: '우리의 증명',
-                desc: `${LOAN_COUNT}건 대출, 95% 상환율, 연체율 0%. 상호부조 대출이 실제로 작동한다는 수치 증명.`,
+                desc: `${LOAN_COUNT}건 대출, 95% 상환율, 연체율 0%. 상호부조 대출이 실제로 작동한다는 수치입니다.`,
               },
               {
                 href: '/transparency',
@@ -865,8 +865,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <div className="container-max max-w-3xl text-center">
           <SectionTitle className="mb-4">지금, 연대에 동참하세요</SectionTitle>
           <p className="text-lg text-charcoal mb-8 text-balance">
-            작품 한 점의 구매가 상호부조 기금이 됩니다. 조합원 가입이 안전망을 강화합니다. 당신의
-            선택이 금융 차별에 맞서는 가장 구체적인 행동이 됩니다.
+            작품 한 점의 구매가 상호부조 기금이 됩니다. 조합원 가입은 안전망을 강화합니다. 당신의
+            선택이 금융 차별에 맞서는 구체적인 행동이 됩니다.
           </p>
           <CTAButtonGroup
             donateText="조합원 가입"

@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '김준권 — 나무에 스민 수묵, 칼끝의 산하',
     description:
-      '수묵 목판화가 김준권(1956–). 홍익대 미술교육과를 졸업하고 미술교사로 일하다 1989년 전교조 해직 이후 판화가의 길로 들어선 그는 중국 루쉰미술대학에서 목판화를 연마하고 1997년 충북 진천에 한국목판문화연구소를 열었다. 40년을 한결같이 나무를 파온 수묵 목판화의 대가. 씨앗페 온라인에서 김준권의 작품을 만나보세요.',
+      '수묵 목판화가 김준권(1956–). 홍익대 미술교육과를 졸업하고 미술교사로 일하다 1989년 전교조 해직 이후 판화가의 길로 들어선 그는 중국 루쉰미술대학에서 목판화를 연마하고 1997년 충북 진천에 한국목판문화연구소를 열었다. 40년을 한결같이 나무를 파온 수묵 목판화의 대가. 씨앗페 온라인에서 김준권의 작품을 만날 수 있습니다.',
     ogDescription:
       '수묵 목판화가 김준권. 나무에 스민 수묵, 칼끝의 산하 — 전교조 해직교사에서 수묵 목판화 거장으로, 40년 외길의 판화 인생과 한반도 국토를 담은 대작들.',
     ogAlt: '김준권 대표 수묵 목판화 작품',
@@ -176,7 +176,7 @@ export default async function KimJungwonFeature({
     name: isEnglish ? 'Kim Jungwon — SAF Online' : '김준권 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected ink-wash woodblock prints by Kim Jungwon from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김준권 수묵 목판화 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김준권 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -883,9 +883,9 @@ export default async function KimJungwonFeature({
                     <>
                       1980년대 민중판화에서 판문점 평화의 집 벽면까지, 김준권은 같은 실천을
                       이어왔다: 한국이 어떻게 생겼는지 — 산과 계절과 긴 정치의 날씨로 — 를 나무결에
-                      새기고, 종이에 찍어 다른 이들이 손에 쥘 수 있게 하는 일. 그는 씨앗페에 금융
-                      차별의 당사자로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 40년의
-                      판화가 섬겨온 자유 안에서 다음 세대의 예술인들이 일할 수 있도록.
+                      새기고, 종이에 찍어 다른 이들이 손에 쥘 수 있게 하는 일. 씨앗페에는 금융
+                      차별의 당사자로서가 아니라, 동료 예술인과의 연대자로 함께한다 — 40년의 판화가
+                      섬겨온 자유 안에서 다음 세대의 예술인들이 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -913,7 +913,7 @@ export default async function KimJungwonFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -981,9 +981,9 @@ export default async function KimJungwonFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

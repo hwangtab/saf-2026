@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '이현정 — 김치, 그리고 DMZ: 발효된 정체성과 경계',
     description:
-      '〈김치〉 연작과 평화·DMZ를 주제로 한국적 정체성과 현대사의 흔적을 시각화해 온 중견 작가 이현정. 발효와 숨의 시간을 담은 〈김치〉 작업과 베를린 장벽에서 DMZ로 이어지는 탈경계의 예술로, 분단과 현대사를 가로지른다. 2024 후쿠오카 아트 어워드 우수상, 2026 홍티아트센터 입주작가. 씨앗페 온라인에서 이현정의 작품을 만나보세요.',
+      '〈김치〉 연작과 평화·DMZ를 주제로 한국적 정체성과 현대사의 흔적을 시각화해 온 중견 작가 이현정. 발효와 숨의 시간을 담은 〈김치〉 작업과 베를린 장벽에서 DMZ로 이어지는 탈경계의 예술로, 분단과 현대사를 가로지른다. 2024 후쿠오카 아트 어워드 우수상, 2026 홍티아트센터 입주작가. 씨앗페 온라인에서 이현정의 작품을 만날 수 있습니다.',
     ogDescription:
       '〈김치〉 연작과 평화·DMZ를 주제로 한국적 정체성과 경계를 시각화하는 작가 이현정. 발효된 정체성에서 탈경계의 예술로.',
     ogAlt: '이현정 대표 작품',
@@ -162,7 +162,7 @@ export default async function LeeHyeonjeongFeature({
     name: isEnglish ? 'Lee Hyeonjeong — SAF Online' : '이현정 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Hyeonjeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이현정 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이현정 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -798,9 +798,9 @@ export default async function LeeHyeonjeongFeature({
                       유예된 시간의 공간, 기다림 속에 멈춰 선 변형의 공간임을 알아채기 전까지는.
                       이현정의 작업은 그 둘 사이를 오간다, 발효된 정체성에서 그어진 경계까지, 한
                       민족이 어떻게 자기 자신이 되는가와 분단이 언젠가 어떻게 풀릴 수 있는가를
-                      물으며. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
-                      연대자로서 함께한다 — 다음 세대의 예술인들이 그가 작업으로 그려 온 경계를 더
-                      수월히 건널 수 있도록.
+                      물으며. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로
+                      함께한다 — 다음 세대의 예술인들이 그가 작업으로 그려 온 경계를 더 수월히 건널
+                      수 있도록.
                     </>
                   )}
                 </p>
@@ -828,7 +828,7 @@ export default async function LeeHyeonjeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -898,9 +898,9 @@ export default async function LeeHyeonjeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

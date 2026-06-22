@@ -157,7 +157,7 @@ export default async function KimTaegyunFeature({
     name: isEnglish ? 'Kim Tae-gyun — SAF Online' : '김태균 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kim Tae-gyun from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 김태균 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 김태균 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -327,7 +327,7 @@ export default async function KimTaegyunFeature({
                       부산현대미술관과 서울시립미술관 신소장 작품전, 국립현대미술관
                       고양창작스튜디오, 아모레퍼시픽 미술관 APMAP, 「바덴-뷔템베르크를 위한 60인의
                       작업」(2012, 독일 징엔 시립미술관) 등. 이 맥락들을 가로질러 물음은 한결같다:
-                      한 조각의 땅은 어떻게 보여지는가, 그리고 그 봄을 누가 배치하는가.
+                      한 조각의 땅은 어떻게 보이는가, 그리고 그 봄을 누가 배치하는가.
                     </p>
                   </>
                 )}
@@ -732,7 +732,7 @@ export default async function KimTaegyunFeature({
                         주의 깊게 바라보아야 할 무엇으로 다룬다 — 풍경과 역사, 그리고 가르는 행위가
                         만나는 자리로서. 김태균의 몫은 시각의 층위에 머문다: 경계가 어떻게
                         나타나는가, 완충지대가 화면 안에서 어떻게 구성되는가, 갈라진 지형이 어떻게
-                        보여지는가. 그가 던지는 물음은 봄에 관한 물음이며, 보는 이에게 열린 채로
+                        보이는가. 그가 던지는 물음은 봄에 관한 물음이며, 보는 이에게 열린 채로
                         남겨진다.
                       </p>
                     </>
@@ -756,11 +756,11 @@ export default async function KimTaegyunFeature({
                   ) : (
                     <>
                       슈투트가르트의 화랑에서 서울과 경기의 미술관까지, 김태균의 작업은 하나의
-                      물음을 추구해 왔다: 영토는 어떻게 보여지는가, 그리고 그 봄을 누가 배치하는가.
+                      물음을 추구해 왔다: 영토는 어떻게 보이는가, 그리고 그 봄을 누가 배치하는가.
                       10여 년에 걸친 개인전과 단체전을 통해 구축된 대답은, 영토가 각색되고
-                      재배치되는 다층의 풍경이다. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라,
-                      동료 예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 조금 더 단단한 땅
-                      위에서 일할 수 있도록.
+                      재배치되는 다층의 풍경이다. 씨앗페에는 이 캠페인의 대상이 아니라, 동료
+                      예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 조금 더 단단한 땅 위에서
+                      일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -788,7 +788,7 @@ export default async function KimTaegyunFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -856,9 +856,9 @@ export default async function KimTaegyunFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

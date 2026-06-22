@@ -163,7 +163,7 @@ export default async function NamJinhyunFeature({
     name: isEnglish ? 'Nam Jin Hyun — SAF Online' : '남진현 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Nam Jin Hyun from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 남진현 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 남진현 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -831,9 +831,9 @@ export default async function NamJinhyunFeature({
                     <>
                       1981년의 공대 강의실에서 2020년대의 캔버스까지, 남진현의 작업은 하나의 물음을
                       추구해 왔다: 얼굴은 어떻게 한 생애의 무게를 감당하는가, 그리고 색은 어떻게 그
-                      얼굴을 감당하는가. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료
-                      예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 그가 견딘 혹독함 없이
-                      그릴 수 있도록.
+                      얼굴을 감당하는가. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의
+                      연대자로 함께한다 — 다음 세대의 예술인들이 그가 견딘 혹독함 없이 그릴 수
+                      있도록.
                     </>
                   )}
                 </p>
@@ -861,7 +861,7 @@ export default async function NamJinhyunFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -929,9 +929,9 @@ export default async function NamJinhyunFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

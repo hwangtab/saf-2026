@@ -182,7 +182,7 @@ export default async function ParkSohyeongFeature({
     name: isEnglish ? 'Park Sohyeong — SAF Online' : '박소형 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Park Sohyeong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 박소형 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 박소형 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -798,8 +798,8 @@ export default async function ParkSohyeongFeature({
                     <>
                       뉴욕과 보스턴의 작업실에서 강릉과 부산의 갤러리까지, 박소형의 작업은 하나의
                       물음을 추구한다: 어떻게 하나의 형태가 살아 있는 시간을 — 스러지는 포자와 아직
-                      오지 않은 이미지를 — 품을 수 있는가. 그는 씨앗페에 이 캠페인의 대상으로서가
-                      아니라, 동료 예술인과의 연대자로서 함께한다 — 다음 세대의 예술인들이 오늘 많은
+                      오지 않은 이미지를 — 품을 수 있는가. 씨앗페에는 이 캠페인의 대상으로서가
+                      아니라, 동료 예술인과의 연대자로 함께한다 — 다음 세대의 예술인들이 오늘 많은
                       이가 짊어진 금융의 무게 없이 일할 수 있도록.
                     </>
                   )}
@@ -828,7 +828,7 @@ export default async function ParkSohyeongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -896,9 +896,9 @@ export default async function ParkSohyeongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

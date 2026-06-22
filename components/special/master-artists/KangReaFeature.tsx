@@ -167,7 +167,7 @@ export default async function KangReaFeature({
     name: isEnglish ? 'Kang Rea — SAF Online' : '강레아 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Kang Rea from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 강레아 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 강레아 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -726,9 +726,9 @@ export default async function KangReaFeature({
                       </p>
                       <p>
                         강인하면서 서정적인 그의 이미지는 산의 두 결을 함께 품는다 — 바위의 준엄함과
-                        운무의 다정함, 클라이머의 노출과 머무르기로 한 나무의 고요. 그는 씨앗페에 이
-                        캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 또 다른
-                        예술인이 조금 더 오래 버틸 수 있도록 자신의 산을 내놓으며.
+                        운무의 다정함, 클라이머의 노출과 머무르기로 한 나무의 고요. 씨앗페에는 이
+                        캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 또 다른 예술인이
+                        조금 더 오래 버틸 수 있도록 자신의 산을 내놓으며.
                       </p>
                     </>
                   )}
@@ -781,7 +781,7 @@ export default async function KangReaFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -849,9 +849,9 @@ export default async function KangReaFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

@@ -166,7 +166,7 @@ export default async function ChoeByeongsuFeature({
     name: isEnglish ? 'Choe Byeongsu — SAF Online' : '최병수 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Choe Byeongsu from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 최병수 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 최병수 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -789,8 +789,8 @@ export default async function ChoeByeongsuFeature({
                         비평가 김진송과 함께 펴낸 책 『목수, 화가에게 말 걸다』(현실문화, 2006)는
                         노동에서 저항 미술로, 다시 생태 실천으로 이어진 그의 여정을 가장 충실하게
                         담고 있다 — 40년에 걸쳐 정치적 긴박함과 환경적 긴박함 사이의 연결선을
-                        추적하는 전기다. 최병수의 삶이 시사하는 바에 따르면, 그것은 서로 다른 관심이
-                        아니라 다른 스케일의 같은 관심이다.
+                        추적하는 전기다. 최병수의 삶은 그것이 서로 다른 관심이 아니라 다른 스케일의
+                        같은 관심임을 보여준다.
                       </p>
                     </>
                   )}
@@ -815,9 +815,9 @@ export default async function ChoeByeongsuFeature({
                       1986년 벽화 현장의 비계에서, 1987년 거리로, 여러 대륙의 환경 설치 작업으로
                       이어지는 최병수의 작업은 하나의 확신을 추구해 왔다: 미술은 세상에서 분리된
                       것이 아니라 세상 안에 있어야 하고, 세상은 절실히 말 걸어오는 것을 필요로
-                      한다는 것. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라 동료 예술인과의
-                      연대자로서 함께한다 — 다음 세대의 예술인들이 그가 걸어온 길에서 결여됐던
-                      지지와 함께 일할 수 있도록.
+                      한다는 것. 씨앗페에는 이 캠페인의 대상이 아니라 동료 예술인과의 연대자로
+                      함께한다 — 다음 세대의 예술인들이 그가 걸어온 길에서 결여됐던 지지와 함께 일할
+                      수 있도록.
                     </>
                   )}
                 </p>
@@ -845,7 +845,7 @@ export default async function ChoeByeongsuFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -913,9 +913,9 @@ export default async function ChoeByeongsuFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

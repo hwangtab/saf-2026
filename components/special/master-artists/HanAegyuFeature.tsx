@@ -170,7 +170,7 @@ export default async function HanAegyuFeature({
     name: isEnglish ? 'Han Ae-gyu — SAF Online' : '한애규 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Han Ae-gyu from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 한애규 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 한애규 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -775,9 +775,9 @@ export default async function HanAegyuFeature({
                       서울에서 앙굴렘으로, 그리고 다시 돌아와, 한 가지 재료로 보낸 40년에 걸쳐
                       한애규의 작업은 하나의 끈질긴 물음을 추구해 왔다: 흙은 자신이 품은 삶들을
                       어떻게 기억하는가. 그의 대답은 불로 영원해져 대륙을 향해 걷는 무수한 흙의
-                      여인들이다. 그는 씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의
-                      연대자로서 함께한다 — 다음 세대의 예술인들이, 그가 흙에서 일군 그 자유로 계속
-                      작업할 수 있도록.
+                      여인들이다. 씨앗페에는 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로
+                      함께한다 — 다음 세대의 예술인들이, 그가 흙에서 일군 그 자유로 계속 작업할 수
+                      있도록.
                     </>
                   )}
                 </p>
@@ -805,7 +805,7 @@ export default async function HanAegyuFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -873,9 +873,9 @@ export default async function HanAegyuFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

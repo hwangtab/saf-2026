@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '박재동 — 한국 시사만화의 대부',
     description:
-      '한국 시사만화의 대부 박재동(1952–). 1988년 한겨레신문 창간과 함께 8년간 연재한 「한겨레 그림판」으로 "한국의 시사만화는 박재동 이전과 이후로 나뉜다"는 평을 받은 만화가. 날카로운 캐리커처와 풍자로 한국 언론 민주화의 역사에 선 굵은 자취를 남긴 그의 그림을 씨앗페 온라인에서 만나보세요.',
+      '한국 시사만화의 대부 박재동(1952–). 1988년 한겨레신문 창간과 함께 8년간 연재한 「한겨레 그림판」으로 "한국의 시사만화는 박재동 이전과 이후로 나뉜다"는 평을 받은 만화가. 날카로운 캐리커처와 풍자로 한국 언론 민주화의 역사에 선 굵은 자취를 남긴 그의 그림을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '한국 시사만화의 대부 박재동. 1988년 한겨레 창간과 함께 8년간 「한겨레 그림판」을 연재하며 시사만화의 새 지평을 열었다.',
     ogAlt: '박재동 대표 작품',
@@ -170,7 +170,7 @@ export default async function ParkJaedongFeature({
     name: isEnglish ? 'Park Jae-dong — SAF Online' : '박재동 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Park Jae-dong from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 박재동 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 박재동 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -873,9 +873,9 @@ export default async function ParkJaedongFeature({
                       1970년대 서울의 미술 교실에서 한겨레 창간호까지, 애니메이션 스튜디오에서
                       한예종 강의실까지 — 박재동은 한 가지 명제를 추구해왔다: 적절한 순간에 내놓는
                       그린 이미지는 다른 어떤 발언 형식도 하지 못하는 일을 할 수 있다는 것. 그는
-                      씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다
-                      — 수십 년의 작업으로 타인을 위해 지켜온 자유 안에서 다음 세대의 예술인들이
-                      일할 수 있도록.
+                      씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 수십
+                      년의 작업으로 타인을 위해 지켜온 자유 안에서 다음 세대의 예술인들이 일할 수
+                      있도록.
                     </>
                   )}
                 </p>
@@ -903,7 +903,7 @@ export default async function ParkJaedongFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -971,9 +971,9 @@ export default async function ParkJaedongFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

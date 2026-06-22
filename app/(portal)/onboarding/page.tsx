@@ -27,7 +27,7 @@ export default async function OnboardingPage({
     .single();
 
   if (profileError) {
-    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    throw new Error('계정 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
   }
 
   if (profile?.role === 'admin') {
@@ -71,7 +71,7 @@ export default async function OnboardingPage({
   ]);
 
   if (artistApplicationResult.error || exhibitorApplicationResult.error) {
-    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    throw new Error('신청 정보를 확인하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
   }
 
   const application = artistApplicationResult.data;

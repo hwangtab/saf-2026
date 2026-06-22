@@ -37,7 +37,7 @@ const PAGE_COPY = {
   ko: {
     title: '이익태 — 장르의 경계를 지운 토탈 아티스트 (1947–2025)',
     description:
-      '이익태(1947–2025) — 영화·연극·퍼포먼스·회화·설치를 넘나든 한국 실험·전위미술의 선구자. 한국 최초 독립영화 「아침과 저녁 사이」(1970), 제4집단, Theater 1981, 빙벽(Ice Wall) 시리즈. 그의 작품을 씨앗페 온라인에서 만나보세요.',
+      '이익태(1947–2025) — 영화·연극·퍼포먼스·회화·설치를 넘나든 한국 실험·전위미술의 선구자. 한국 최초 독립영화 「아침과 저녁 사이」(1970), 제4집단, Theater 1981, 빙벽(Ice Wall) 시리즈. 그의 작품을 씨앗페 온라인에서 만날 수 있습니다.',
     ogDescription:
       '이익태(1947–2025) — 영화·연극·퍼포먼스·회화·설치를 가로지른 토탈 아티스트. 한국 최초 독립영화, LA 퍼포먼스, 빙벽 시리즈까지 50년의 실험.',
     ogAlt: '이익태 대표 작품',
@@ -164,7 +164,7 @@ export default async function LeeIktaeFeature({ params }: { params: Promise<{ lo
     name: isEnglish ? 'Lee Iktae — SAF Online' : '이익태 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Lee Iktae from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 이익태 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 이익태 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -921,9 +921,9 @@ export default async function LeeIktaeFeature({ params }: { params: Promise<{ lo
                       1970년 「아침과 저녁 사이」의 16mm 프레임에서 2010년대 마당의 한지까지,
                       이익태의 실천은 하나의 물음을 여러 형식으로 추구해왔다: 담을 수 없는 것들 —
                       역사, 공동체, 빛과 물과 바람의 보이지 않는 움직임 — 에 어떻게 현존하는가. 그는
-                      씨앗페에 이 캠페인의 대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다
-                      — 다음 세대의 예술인들이 그가 짊어진 무게 없이, 그가 평생 연습한 자유로 일할
-                      수 있도록.
+                      씨앗페에 이 캠페인의 대상이 아니라, 동료 예술인과의 연대자로 함께한다 — 다음
+                      세대의 예술인들이 그가 짊어진 무게 없이, 그가 평생 연습한 자유로 일할 수
+                      있도록.
                     </>
                   )}
                 </p>
@@ -951,7 +951,7 @@ export default async function LeeIktaeFeature({ params }: { params: Promise<{ lo
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -1019,9 +1019,9 @@ export default async function LeeIktaeFeature({ params }: { params: Promise<{ lo
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

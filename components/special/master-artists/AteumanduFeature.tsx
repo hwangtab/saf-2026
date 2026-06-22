@@ -166,7 +166,7 @@ export default async function AteumanduFeature({
     name: isEnglish ? 'Ateumandu — SAF Online' : '아트만두 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Ateumandu from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 아트만두 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 아트만두 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -747,9 +747,9 @@ export default async function AteumanduFeature({
                     <>
                       판화 작업실에서 프랑스·일본의 시사만화 살롱까지, 아트만두의 작업은 하나의
                       본능을 추구해 왔다: 익숙한 것을 그 숨은 형태가 드러날 때까지 비트는 것, 그리고
-                      그것을 웃기면서 동시에 베는 선으로 해내는 것. 그는 씨앗페에 이 캠페인의
-                      대상으로서가 아니라, 동료 예술인과의 연대자로서 함께한다 — 그와 나란히 시대를
-                      비트는 동료들이 금융 차별의 무게 없이 일할 수 있도록.
+                      그것을 웃기면서 동시에 베는 선으로 해내는 것. 씨앗페에는 이 캠페인의 대상이
+                      아니라, 동료 예술인과의 연대자로 함께한다 — 그와 나란히 시대를 비트는 동료들이
+                      금융 차별의 무게 없이 일할 수 있도록.
                     </>
                   )}
                 </p>
@@ -777,7 +777,7 @@ export default async function AteumanduFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -846,9 +846,9 @@ export default async function AteumanduFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

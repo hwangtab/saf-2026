@@ -80,3 +80,6 @@ saf2026_*.dump
 
 # understand-anything 산출물 (제거됨 — 더는 사용 안 함)
 .understand-anything/
+
+# humanize-korean 스킬 작업 디렉토리 (스크래치)
+_workspace/

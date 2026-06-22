@@ -36,7 +36,7 @@ const PAGE_COPY = {
   ko: {
     title: '최재란 — 쿼크의 시간, 시든 정물에 깃든 우주',
     description:
-      '사진과 정물 사이에서 시간의 층위를 응시하는 작가 최재란. 매일의 산책에서 모은 시든 자연물을 검은 배경에 매달고 그 위에 별자리·우주·전통문양을 드로잉하는 「쿼크(Quarks)의 시간」 연작으로, 가장 사소한 사물에 스며든 시간을 사진으로 길어 올린다. 씨앗페 온라인에서 최재란의 작품을 만나보세요.',
+      '사진과 정물 사이에서 시간의 층위를 응시하는 작가 최재란. 매일의 산책에서 모은 시든 자연물을 검은 배경에 매달고 그 위에 별자리·우주·전통문양을 드로잉하는 「쿼크(Quarks)의 시간」 연작으로, 가장 사소한 사물에 스며든 시간을 사진으로 길어 올린다. 씨앗페 온라인에서 최재란의 작품을 만날 수 있습니다.',
     ogDescription:
       '시간의 층위를 응시하는 작가 최재란. 시든 정물을 검은 배경에 매달아 우주와 별자리를 드로잉한 「쿼크의 시간」 연작.',
     ogAlt: '최재란 대표 작품',
@@ -172,7 +172,7 @@ export default async function ChoiJaeranFeature({
     name: isEnglish ? 'Choi Jaeran — SAF Online' : '최재란 — 씨앗페 온라인',
     description: isEnglish
       ? 'Selected works by Choi Jaeran from the SAF Online collection.'
-      : '씨앗페 온라인에 소장된 최재란 작품들을 소개합니다.',
+      : '씨앗페 온라인에서 만날 수 있는 최재란 작품을 소개합니다.',
     url: pageUrl,
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
@@ -733,7 +733,7 @@ export default async function ChoiJaeranFeature({
                 ) : (
                   <>
                     총 <span className="text-white font-bold text-xl">{artworkCountLabel}</span>
-                    점의 작품을 만나보실 수 있습니다.
+                    점의 작품을 볼 수 있습니다.
                   </>
                 )}
               </p>
@@ -801,9 +801,9 @@ export default async function ChoiJaeranFeature({
                       </>
                     ) : (
                       <>
-                        <span className="block">현재 작품 정보를 정리하고 있습니다.</span>
+                        <span className="block">작품 정보를 정리 중입니다.</span>
                         <span className="mt-1 block">
-                          전체 출품작 목록에서 다른 작품들을 먼저 감상하실 수 있습니다.
+                          전체 출품작 목록에서 다른 작품을 먼저 감상할 수 있습니다.
                         </span>
                       </>
                     )}

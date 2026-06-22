@@ -44,7 +44,7 @@ export default async function TermsConsentPage({
           consentHeading: '계약 재동의가 필요합니다',
           privacyHeading: '개인정보처리방침 재동의가 필요합니다',
           description:
-            '문서 내용이 업데이트되었습니다. 변경된 내용을 확인하고 다시 동의해주세요. 동의 후 기존 화면으로 자동 이동합니다.',
+            '문서 내용이 업데이트되었습니다. 변경된 내용을 확인하고 다시 동의해 주세요. 동의 후 기존 화면으로 자동 이동합니다.',
         };
 
   const user = await requireAuth();
