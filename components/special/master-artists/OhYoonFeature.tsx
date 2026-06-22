@@ -772,6 +772,34 @@ export default async function OhYoonFeature({
                 })}
               </ul>
             )}
+            {/* 오윤 클러스터 허브 — 추도식·청원 액션 자산. 갤러리 허브가 매거진뿐 아니라
+                추도식·청원까지 가리켜 클러스터 internal link를 완성한다(매거진 카드 아래 = 읽고 난 뒤 행동). */}
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Link
+                href="/event/oh-yoon-memorial"
+                className="group block rounded-2xl border border-gallery-hairline bg-white p-6 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+              >
+                <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-widest text-primary-strong">
+                  {isEnglish ? 'Memorial · Jul 5, 2026' : '추도식 · 2026.7.5'}
+                </span>
+                <span className="block text-base font-bold text-charcoal-deep transition-colors group-hover:text-primary-strong">
+                  {isEnglish ? 'Join the 40th-anniversary memorial' : '오윤 40주기 추도식 함께하기'}
+                </span>
+              </Link>
+              <Link
+                href="/petition/oh-yoon"
+                className="group block rounded-2xl border border-gallery-hairline bg-white p-6 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl"
+              >
+                <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-widest text-primary-strong">
+                  {isEnglish ? 'Petition' : '벽화 지키기 청원'}
+                </span>
+                <span className="block text-base font-bold text-charcoal-deep transition-colors group-hover:text-primary-strong">
+                  {isEnglish
+                    ? "Save Oh Yoon's mural — add your signature"
+                    : '멸실 위기의 오윤 벽화 — 서명 동참'}
+                </span>
+              </Link>
+            </div>
           </div>
         </section>
       </div>

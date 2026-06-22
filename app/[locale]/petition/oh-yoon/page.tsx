@@ -767,6 +767,15 @@ export default async function PetitionOhYoonPage({
                 구의동 벽화 이전과 이후 — 오윤이 남긴 판화·드로잉·삶의 흔적
               </div>
             </Link>
+            <Link
+              href="/event/oh-yoon-memorial"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">40주기 추도식 · 2026.7.5</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                오윤 40주기 추도식 — 7월 5일 인사동, 함께 추모하고 참가 신청하기
+              </div>
+            </Link>
           </div>
         </div>
       </Section>

@@ -152,6 +152,77 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
       <Section variant="white">
         <EventFAQ />
       </Section>
+
+      {/* 오윤 클러스터 retention — 추도식은 GA4 트래픽 2위 진입로지만 다른 오윤 자산으로의
+          internal link가 0인 dead-end였다. 신청 CTA(상단) 하단에 배치해 신청 전환은 방해하지
+          않으면서, 행사 관심 방문자를 갤러리·청원·매거진으로 흘려보내 link equity를 허브로 모은다. */}
+      <Section variant="canvas-soft" className="py-14 md:py-20">
+        <div className="container-max max-w-4xl">
+          <h2 className="mb-3 text-center font-section text-2xl font-bold text-charcoal-deep md:text-3xl">
+            {t('relatedHub.heading')}
+          </h2>
+          <p className="mb-8 text-center text-sm text-charcoal-muted break-keep md:text-base">
+            {t('relatedHub.intro')}
+          </p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Link
+              href="/artworks/artist/오윤"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('relatedHub.galleryEyebrow')}
+              </div>
+              <div className="text-base font-medium leading-snug text-charcoal-deep">
+                {t('relatedHub.galleryTitle')}
+              </div>
+            </Link>
+            <Link
+              href="/petition/oh-yoon"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('relatedHub.petitionEyebrow')}
+              </div>
+              <div className="text-base font-medium leading-snug text-charcoal-deep">
+                {t('relatedHub.petitionTitle')}
+              </div>
+            </Link>
+            <Link
+              href="/stories/oh-yun-40th-anniversary"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('relatedHub.story40thEyebrow')}
+              </div>
+              <div className="text-base font-medium leading-snug text-charcoal-deep">
+                {t('relatedHub.story40thTitle')}
+              </div>
+            </Link>
+            <Link
+              href="/stories/oh-yun-song-of-the-blade"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('relatedHub.storyBladeEyebrow')}
+              </div>
+              <div className="text-base font-medium leading-snug text-charcoal-deep">
+                {t('relatedHub.storyBladeTitle')}
+              </div>
+            </Link>
+            <Link
+              href="/stories/oh-yoon-estate-print-guide"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong md:col-span-2"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('relatedHub.storyPrintEyebrow')}
+              </div>
+              <div className="text-base font-medium leading-snug text-charcoal-deep">
+                {t('relatedHub.storyPrintTitle')}
+              </div>
+            </Link>
+          </div>
+        </div>
+      </Section>
     </main>
   );
 }

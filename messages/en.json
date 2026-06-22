@@ -1535,7 +1535,21 @@
       "manageVerifyBtn": "Verify",
       "manageVerifying": "Verifying...",
       "manageResend": "Resend code",
-      "managePhoneNotFound": "No paid registration was found for this number."
+      "managePhoneNotFound": "No paid registration was found for this number.",
+      "relatedHub": {
+        "heading": "Go Deeper into Oh Yoon",
+        "intro": "Carry the Oh Yoon you met at the memorial into his works and stories.",
+        "galleryEyebrow": "View works at SAF",
+        "galleryTitle": "Oh Yoon's full collection — posthumous prints and canonical works",
+        "petitionEyebrow": "Petition to save the mural",
+        "petitionTitle": "Oh Yoon's mural at risk, back to the public — add your signature",
+        "story40thEyebrow": "40th anniversary tribute",
+        "story40thTitle": "Oh Yoon at 40 years — the SAF magazine on his life and work",
+        "storyBladeEyebrow": "Reading a masterwork",
+        "storyBladeTitle": "Song of the Blade — a close look at the peak of Oh Yoon's printmaking",
+        "storyPrintEyebrow": "Posthumous print collector's guide",
+        "storyPrintTitle": "Oh Yoon posthumous prints — authentication, editions, and museum works"
+      }
     }
   }
 }
