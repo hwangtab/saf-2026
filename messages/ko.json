@@ -1535,7 +1535,21 @@
       "manageVerifyBtn": "확인",
       "manageVerifying": "확인 중...",
       "manageResend": "인증번호 다시 받기",
-      "managePhoneNotFound": "해당 번호로 결제 완료된 신청을 찾을 수 없습니다."
+      "managePhoneNotFound": "해당 번호로 결제 완료된 신청을 찾을 수 없습니다.",
+      "relatedHub": {
+        "heading": "오윤을 더 깊이 만나기",
+        "intro": "추도식에서 만난 오윤의 세계를 작품과 이야기로 이어가 보세요.",
+        "galleryEyebrow": "씨앗페에서 작품 보기",
+        "galleryTitle": "오윤 출품작 전체 — 사후판화 컬렉션과 정전 작품들",
+        "petitionEyebrow": "벽화를 지키는 청원",
+        "petitionTitle": "멸실 위기의 오윤 벽화, 시민의 품으로 — 서명에 동참하기",
+        "story40thEyebrow": "40주기 헌정",
+        "story40thTitle": "오윤 40주기 — 작가의 삶과 작품 세계를 정리한 씨앗페 매거진",
+        "storyBladeEyebrow": "대표작 읽기",
+        "storyBladeTitle": "칼노래 — 오윤 판화의 정점을 깊이 들여다보기",
+        "storyPrintEyebrow": "사후판화 컬렉터 가이드",
+        "storyPrintTitle": "오윤 사후판화 — 진품 인증·에디션·미술관 소장작과의 차이"
+      }
     }
   }
 }
