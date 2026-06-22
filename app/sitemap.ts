@@ -8,6 +8,7 @@ import { STORY_CATEGORIES } from '@/types';
 import { EN_INDEXABLE_PAGES, EN_INDEXABLE_STORY_SLUGS } from '@/lib/en-indexable';
 import { SPACE_COLLECTIONS } from '@/lib/space-collections';
 import { isCanonicalHub } from '@/lib/story-canonical-hubs';
+import { isStoryNoindex } from '@/lib/story-noindex';
 
 export const revalidate = 3600;
 
@@ -421,32 +422,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  const storyPages: MetadataRoute.Sitemap = allStories.map((story) => {
-    const storyPath = `/stories/${story.slug}`;
-    const enIndexable = EN_INDEXABLE_STORY_SLUGS.has(story.slug);
+  // noindex 처리한 thin·중복 매거진은 sitemap에서 제외 — "sitemap 색인요청 vs 메타 noindex"
+  // 모순 신호 차단 (lib/story-noindex.ts, 2026-06-22 색인 위생 정리).
+  const storyPages: MetadataRoute.Sitemap = allStories
+    .filter((story) => !isStoryNoindex(story.slug))
+    .map((story) => {
+      const storyPath = `/stories/${story.slug}`;
+      const enIndexable = EN_INDEXABLE_STORY_SLUGS.has(story.slug);
 
-    // light fetch라 body 없음 — thumbnail만 사용. body 첫 이미지 fallback은 빌드 시
-    // statement timeout 회귀 트레이드오프로 포기 (story가 thumbnail 안 채운 경우 image 누락).
-    const storyImageUrl: string | null = story.thumbnail || null;
-    const absoluteStoryImage =
-      storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
+      // light fetch라 body 없음 — thumbnail만 사용. body 첫 이미지 fallback은 빌드 시
+      // statement timeout 회귀 트레이드오프로 포기 (story가 thumbnail 안 채운 경우 image 누락).
+      const storyImageUrl: string | null = story.thumbnail || null;
+      const absoluteStoryImage =
+        storyImageUrl && storyImageUrl.startsWith('http') ? storyImageUrl : null;
 
-    // 정전 hub 글은 priority 0.85 + weekly로 차별화 — 매체·주제 hub의 검색엔진 크롤링 우선순위 강화.
-    // 그 외 일반 글은 0.7 + monthly 유지 (기존 정책 보존).
-    const isHub = isCanonicalHub(story.slug);
-    return {
-      url: koUrl(baseUrl, storyPath),
-      lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
-      changeFrequency: isHub ? ('weekly' as const) : ('monthly' as const),
-      priority: isHub ? 0.85 : 0.7,
-      alternates: enIndexable
-        ? bilingualAlternates(baseUrl, storyPath)
-        : koAlternates(baseUrl, storyPath),
-      ...(safeSitemapImageUrl(absoluteStoryImage)
-        ? { images: [safeSitemapImageUrl(absoluteStoryImage)!] }
-        : {}),
-    };
-  });
+      // 정전 hub 글은 priority 0.85 + weekly로 차별화 — 매체·주제 hub의 검색엔진 크롤링 우선순위 강화.
+      // 그 외 일반 글은 0.7 + monthly 유지 (기존 정책 보존).
+      const isHub = isCanonicalHub(story.slug);
+      return {
+        url: koUrl(baseUrl, storyPath),
+        lastModified: story.updated_at ? new Date(story.updated_at) : new Date(story.published_at),
+        changeFrequency: isHub ? ('weekly' as const) : ('monthly' as const),
+        priority: isHub ? 0.85 : 0.7,
+        alternates: enIndexable
+          ? bilingualAlternates(baseUrl, storyPath)
+          : koAlternates(baseUrl, storyPath),
+        ...(safeSitemapImageUrl(absoluteStoryImage)
+          ? { images: [safeSitemapImageUrl(absoluteStoryImage)!] }
+          : {}),
+      };
+    });
 
   // EN_INDEXABLE_STORY_SLUGS의 영문 URL 별도 entry.
   const storyEnPages: MetadataRoute.Sitemap = allStories
