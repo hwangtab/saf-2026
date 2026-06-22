@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
-import { getPaymentMode, getTossDomesticClientKey } from '@/lib/integrations/toss/config';
+import { getCheckoutAvailability, getTossDomesticClientKey } from '@/lib/integrations/toss/config';
 import CartCheckoutClient from './CartCheckoutClient';
 
 export const dynamic = 'force-dynamic';
@@ -35,7 +35,8 @@ export default async function CartCheckoutPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  if (getPaymentMode() !== 'toss') {
+  const checkoutAvailability = getCheckoutAvailability();
+  if (!checkoutAvailability.enabled || !checkoutAvailability.domestic) {
     notFound();
   }
 

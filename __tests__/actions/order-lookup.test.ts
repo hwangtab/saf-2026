@@ -1054,8 +1054,42 @@ describe('cancelBuyerOrder', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error).toBe('ORDER_CANCEL_FAILED');
-    expect(capturedPaymentUpdates).toHaveLength(0);
+    expect(capturedPaymentUpdates).toEqual([
+      expect.objectContaining({ status: 'CANCELED', cancelled_at: expect.any(String) }),
+    ]);
     expect(capturedSaleUpdates).toHaveLength(0);
+  });
+
+  it('Toss 취소 성공 후 주문 refunded 전환이 실패하면 운영 알림을 남긴다', async () => {
+    mockOrdersSingleResult = {
+      data: {
+        id: 'ord-1',
+        order_no: 'SAF-001',
+        status: 'paid',
+        total_amount: 5000000,
+        artwork_id: 'art-1',
+        buyer_email: 'buyer@test.com',
+        buyer_name: '홍길동',
+      },
+      error: null,
+    };
+    mockPaymentResult = {
+      data: { id: 'pay-1', payment_key: 'pk_test', method: '카드' },
+      error: null,
+    };
+    mockCancelResult = { success: true };
+    mockOrderUpdateSelectRows = { data: [], error: null };
+
+    const { notifyEmail } = jest.requireMock('@/lib/notify') as { notifyEmail: jest.Mock };
+    const result = await cancelBuyerOrder('SAF-001', 'buyer@test.com', '단순변심');
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error).toBe('ORDER_CANCEL_FAILED');
+    expect(notifyEmail).toHaveBeenCalledWith(
+      'error',
+      expect.stringContaining('Toss 취소 후 주문 상태 반영 실패'),
+      expect.objectContaining({ 주문번호: 'SAF-001', paymentKey: 'pk_test' })
+    );
   });
 
   it('FIX-5b: awaiting_deposit 다품목 취소 시 모든 작품의 예약을 해제한다', async () => {

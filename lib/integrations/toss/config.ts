@@ -95,6 +95,46 @@ export function getPaymentMode(): 'toss' | 'disabled' {
     : 'disabled';
 }
 
+export type CheckoutAvailability =
+  | { enabled: true; domestic: boolean; overseas: boolean }
+  | {
+      enabled: false;
+      domestic: false;
+      overseas: false;
+      reason: 'payment_mode_disabled' | 'no_checkout_provider';
+    };
+
+/**
+ * Checkout availability is stricter than getPaymentMode().
+ *
+ * `api_v1` and `widget` remain valid for legacy confirm/cancel/reconcile flows, but
+ * the current checkout UI can only create new orders through domestic and overseas MIDs.
+ */
+export function getCheckoutAvailability(): CheckoutAvailability {
+  if (process.env.NEXT_PUBLIC_PAYMENT_MODE === 'disabled') {
+    return {
+      enabled: false,
+      domestic: false,
+      overseas: false,
+      reason: 'payment_mode_disabled',
+    };
+  }
+
+  const domestic = getTossConfig('domestic') !== null;
+  const overseas = getTossConfig('overseas') !== null;
+
+  if (!domestic && !overseas) {
+    return {
+      enabled: false,
+      domestic: false,
+      overseas: false,
+      reason: 'no_checkout_provider',
+    };
+  }
+
+  return { enabled: true, domestic, overseas };
+}
+
 export function calculateShippingFee(itemAmount: number): number {
   return itemAmount >= SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 }

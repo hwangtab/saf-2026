@@ -1,3 +1,18 @@
+# 결제/환불 상태 불일치 차단 체크리스트
+
+- [x] confirm route 주문 상태 전이 실패 RED 테스트 추가
+- [x] confirm route hard-stop 구현
+- [x] 환불 경로 Toss 취소 후 DB 불일치 알림 테스트 추가
+- [x] 관리자/구매자 환불 경로 운영 알림 구현
+- [x] 이벤트 reconcile 환불 후 상태 갱신 실패 테스트/구현
+- [x] checkout availability helper 및 CTA/route gating 정리
+- [x] targeted tests 통과
+- [x] lint/type/full Jest/validate-artworks 실행
+- [x] walkthrough.md 업데이트
+- [x] 기존 dirty generated files와 이번 변경 분리 확인
+
+---
+
 # 배송 검증 및 작품 공개 캐시 개선 체크리스트
 
 - [x] `implementation_plan.md`에 승인 전 구현 계획 추가

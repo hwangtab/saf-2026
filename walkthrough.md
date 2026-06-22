@@ -1,3 +1,43 @@
+# 결제/환불 상태 불일치 차단 결과 (2026-06-22)
+
+## 변경 요약
+
+- Toss 결제 승인 후 내부 주문 상태 전이가 실패하면 성공 알림, 매출 기록, 공개 캐시 갱신, 성공 응답으로 이어지지 않도록 차단했다.
+  - `orders` update error와 0행 update를 분리해 운영자 알림/시스템 로그를 남긴다.
+  - 0행 update라도 재조회 결과 이미 목표 상태이면 idempotent 성공으로 응답하되 중복 알림은 보내지 않는다.
+- 구매자 self-cancel과 관리자 환불에서 Toss 취소 성공 후 내부 주문 상태 반영이 실패하면 운영자 알림과 감사 로그를 남기도록 보강했다.
+  - 구매자 self-cancel은 외부 Toss 취소가 성공한 뒤 `payments.status='CANCELED'`를 먼저 반영해 외부 결제 truth와 맞춘다.
+- 이벤트 reconcile에서 환불 성공 후 `event_registrations.status='cancelled'` 갱신이 실패하면 고객 환불 알림과 `reconciled++`를 건너뛰도록 수정했다.
+- 결제 CTA와 checkout route guard를 `getCheckoutAvailability()` 기준으로 정리했다.
+  - legacy `api_v1`/widget 키만 있는 상태에서는 신규 checkout CTA를 열지 않는다.
+  - 영문 checkout은 domestic/overseas provider 가능 여부에 따라 실제 가능한 결제수단만 표시한다.
+
+## 검증
+
+- targeted Jest 통과
+  - `__tests__/app/toss-confirm-payment-record-failure.test.ts`
+  - `__tests__/actions/order-lookup.test.ts`
+  - `__tests__/actions/admin-orders.test.ts`
+  - `__tests__/app/api/internal/reconcile-event-registrations/route.test.ts`
+  - `__tests__/lib/integrations/toss/config.test.ts`
+  - `__tests__/app/checkout-payment-availability-source.test.ts`
+  - 6 suites / 77 tests
+- `npm run lint` 통과
+  - 기존 Browserslist stale 경고와 대형 generated 파일 Babel deopt 안내만 출력.
+- `npm run type-check` 통과
+- `npm test -- --runInBand` 통과
+  - 199 suites / 1484 tests
+- `npm run validate-artworks` 통과
+  - exit 0, 기존 작품 데이터 경고 63개 출력.
+- 미실행: `npm run build`는 generated dirty files를 덮을 수 있어 별도 승인 전에는 실행하지 않았다.
+
+## 남은 항목
+
+- `validate-artworks`의 기존 데이터 경고는 이번 결제/환불 코드 수정 범위가 아니라 별도 데이터 정정 작업으로 분리한다.
+- Vercel CLI가 오래된 상태라 배포/로그 확인 전에 `npm i -g vercel@latest` 또는 `pnpm add -g vercel@latest` 업데이트를 권장한다.
+
+---
+
 # 배송 검증 및 작품 공개 캐시 개선 결과 (2026-06-22)
 
 ## 변경 요약

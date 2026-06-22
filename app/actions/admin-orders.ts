@@ -378,9 +378,36 @@ export async function refundOrder(input: RefundInput) {
     .in('status', ['paid', 'preparing'])
     .select('id');
 
-  if (orderUpdateError) throw orderUpdateError;
-  // 0행 = 이미 다른 경로에서 환불 처리됨 (동시 요청 등) — 중복 이메일 방지
-  if (!updatedRows || updatedRows.length === 0) return;
+  if (orderUpdateError || !updatedRows || updatedRows.length === 0) {
+    const refundSyncError = orderUpdateError?.message ?? 'orders update affected 0 rows';
+    if (orderUpdateError) {
+      console.error('[refundOrder] order status UPDATE failed:', orderUpdateError);
+    }
+    after(() =>
+      runAllSettled('adminOrders.refundOrder.orderSyncFailed.notifications', [
+        () =>
+          notifyEmail('error', 'Toss 취소 후 주문 상태 반영 실패', {
+            주문번호: order.order_no,
+            주문ID: order.id,
+            paymentKey: payment?.payment_key ?? '',
+            환불사유: cancelReason.trim(),
+            에러: refundSyncError,
+            참고: hasTossPayment
+              ? 'Toss 취소는 성공했지만 내부 주문 상태가 refunded로 바뀌지 않았습니다.'
+              : '환불 처리 중 내부 주문 상태가 refunded로 바뀌지 않았습니다.',
+          }),
+        () =>
+          logAdminAction('order_refund_sync_failed', 'order', order.id, {
+            order_no: order.order_no,
+            payment_key: payment?.payment_key ?? null,
+            reason: cancelReason.trim(),
+            error: refundSyncError,
+            has_toss_payment: hasTossPayment,
+          }),
+      ])
+    );
+    return { success: false, error: 'ORDER_REFUND_SYNC_FAILED' };
+  }
 
   // 4. 관리자 + 구매자 환불 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
   after(async () => {

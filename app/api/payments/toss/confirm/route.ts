@@ -421,105 +421,148 @@ export async function POST(req: NextRequest) {
     .eq('status', 'pending_payment') // optimistic lock — 레이스로 cancelled 된 경우 스킵
     .select('id');
 
-  if (orderUpdateError) {
-    console.error('[confirm] order UPDATE 실패:', orderUpdateError);
-    const updateErrMsg = orderUpdateError.message;
-    after(async () => {
-      await notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
-        주문번호: orderId,
-        에러: updateErrMsg,
-        참고: '결제는 완료, 주문 상태 반영 실패 — reconciliation cron이 보정 예정',
+  const orderPromoted = Array.isArray(updatedOrders) && updatedOrders.length > 0;
+
+  if (orderUpdateError || !orderPromoted) {
+    const { data: latestOrder } = await supabase
+      .from('orders')
+      .select('id,status')
+      .eq('id', order.id)
+      .single();
+    const latestStatus =
+      typeof latestOrder === 'object' && latestOrder && 'status' in latestOrder
+        ? String(latestOrder.status)
+        : null;
+
+    if (!orderUpdateError && latestStatus === newOrderStatus) {
+      const paidNotifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
+      return NextResponse.json({
+        success: true,
+        alreadyPromoted: true,
+        status: tossResponse.status,
+        virtualAccount: isVirtualAccount ? (tossResponse.virtualAccount ?? null) : null,
+        analyticsItem: isDone
+          ? buildAnalyticsItem(order, paidNotifyInfo, tossResponse.totalAmount)
+          : null,
+        analyticsPurchase: isDone
+          ? buildAnalyticsPurchase(order, lineItems, paidNotifyInfo, tossResponse.totalAmount)
+          : null,
       });
-      await logSystemAction('payment_failed', 'order', order.id, {
-        stage: '결제 후 주문 상태 업데이트 실패',
-        order_no: orderId,
-        error: updateErrMsg,
+    }
+
+    const updateErrMsg = orderUpdateError?.message ?? 'orders update affected 0 rows';
+    console.error('[confirm] order UPDATE failed after Toss approval:', updateErrMsg);
+
+    if (isVirtualAccount && !orderUpdateError) {
+      await releaseReservedArtworksIfUnowned(
+        supabase,
+        reservedForVirtualAccount,
+        new Date().toISOString()
+      );
+      after(async () => {
+        const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+        let cancelOk = false;
+        let cancelError: unknown = null;
+        try {
+          const cancelResult = await cancelPayment(
+            paymentKey,
+            { cancelReason: '주문 상태 경합으로 가상계좌 주문 자동 취소' },
+            `auto-cancel-race-${orderId}`,
+            provider
+          );
+          cancelOk = cancelResult.success;
+          if (!cancelResult.success) cancelError = cancelResult.error;
+        } catch (err) {
+          cancelError = err;
+        }
+
+        if (cancelOk) {
+          const { error: paymentSyncError } = await supabase
+            .from('payments')
+            .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+            .eq('order_id', order.id);
+          if (paymentSyncError) {
+            console.error('[confirm] VA race payment sync failed:', paymentSyncError);
+          }
+        }
+
+        await runAllSettled('toss-confirm.virtual-account-race-cancel.notification', [
+          () =>
+            notifyEmail(
+              cancelOk ? 'warning' : 'error',
+              '가상계좌 주문 상태 경합 — 입금 안내 보류',
+              {
+                주문번호: orderId,
+                paymentKey,
+                Toss취소: cancelOk ? '성공' : '실패',
+                ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
+                참고: '가상계좌는 발급됐지만 주문 상태가 이미 바뀌어 입금 안내를 보내지 않았습니다.',
+              }
+            ),
+        ]);
       });
-    });
+    }
+
+    if (isDone && !orderUpdateError) {
+      after(async () => {
+        const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+        try {
+          await cancelPayment(
+            paymentKey as string,
+            { cancelReason: '주문 취소 후 결제 승인 — 자동 환불' },
+            `auto-refund-${orderId}`,
+            provider
+          );
+        } catch (err) {
+          console.error('[confirm] auto-refund failed:', err);
+        }
+        await runAllSettled('toss-confirm.cancelled-order-refund.notification', [
+          () =>
+            notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
+              주문번호: orderId,
+              paymentKey: paymentKey as string,
+              참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해 주세요.',
+            }),
+        ]);
+      });
+    }
+
+    after(() =>
+      runAllSettled('tossConfirm.orderStatusSyncFailed.notifications', [
+        () =>
+          notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
+            주문번호: orderId,
+            목표상태: newOrderStatus,
+            현재상태: latestStatus ?? '확인 실패',
+            에러: updateErrMsg,
+            참고: 'Toss 승인은 확인됐지만 내부 주문 상태 전이에 실패해 성공 알림과 매출 기록을 중단했습니다.',
+          }),
+        () =>
+          logSystemAction('payment_failed', 'order', order.id, {
+            stage: '결제 후 주문 상태 업데이트 실패',
+            order_no: orderId,
+            target_status: newOrderStatus,
+            latest_status: latestStatus,
+            error: updateErrMsg,
+          }),
+      ])
+    );
+
+    return NextResponse.json(
+      {
+        error: apiError('payment_confirmation_failed', buyerLocale),
+        code: 'ORDER_STATUS_SYNC_FAILED',
+      },
+      { status: orderUpdateError ? 500 : 409 }
+    );
   }
 
-  if (isVirtualAccount && updatedOrders && updatedOrders.length > 0) {
+  if (isVirtualAccount) {
     for (const artworkId of reservedForVirtualAccount) {
       revalidatePath(`/artworks/${artworkId}`);
       revalidatePath(`/en/artworks/${artworkId}`);
     }
     revalidatePublicArtworkSurfaces();
-  }
-
-  if (isVirtualAccount && !orderUpdateError && (!updatedOrders || updatedOrders.length === 0)) {
-    await releaseReservedArtworksIfUnowned(
-      supabase,
-      reservedForVirtualAccount,
-      new Date().toISOString()
-    );
-    after(async () => {
-      const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
-      let cancelOk = false;
-      let cancelError: unknown = null;
-      try {
-        const cancelResult = await cancelPayment(
-          paymentKey,
-          { cancelReason: '주문 상태 경합으로 가상계좌 주문 자동 취소' },
-          `auto-cancel-race-${orderId}`,
-          provider
-        );
-        cancelOk = cancelResult.success;
-        if (!cancelResult.success) cancelError = cancelResult.error;
-      } catch (err) {
-        cancelError = err;
-      }
-
-      if (cancelOk) {
-        const { error: paymentSyncError } = await supabase
-          .from('payments')
-          .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
-          .eq('order_id', order.id);
-        if (paymentSyncError) {
-          console.error('[confirm] VA race payment sync failed:', paymentSyncError);
-        }
-      }
-
-      await runAllSettled('toss-confirm.virtual-account-race-cancel.notification', [
-        () =>
-          notifyEmail(cancelOk ? 'warning' : 'error', '가상계좌 주문 상태 경합 — 입금 안내 보류', {
-            주문번호: orderId,
-            paymentKey,
-            Toss취소: cancelOk ? '성공' : '실패',
-            ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
-            참고: '가상계좌는 발급됐지만 주문 상태가 이미 바뀌어 입금 안내를 보내지 않았습니다.',
-          }),
-      ]);
-    });
-    return NextResponse.json(
-      { error: apiError('invalid_order_status', buyerLocale) },
-      { status: 409 }
-    );
-  }
-
-  // 레이스 컨디션: Toss 결제 성공 but 주문이 이미 취소된 경우 — 자동 환불
-  // (cancelPendingOrder가 confirm API 호출 중 동시에 실행된 경우)
-  if (isDone && !orderUpdateError && (!updatedOrders || updatedOrders.length === 0)) {
-    after(async () => {
-      const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
-      try {
-        await cancelPayment(
-          paymentKey as string,
-          { cancelReason: '주문 취소 후 결제 승인 — 자동 환불' },
-          `auto-refund-${orderId}`,
-          provider
-        );
-      } catch (err) {
-        console.error('[confirm] auto-refund failed:', err);
-      }
-      await runAllSettled('toss-confirm.cancelled-order-refund.notification', [
-        () =>
-          notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
-            주문번호: orderId,
-            paymentKey: paymentKey as string,
-            참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해 주세요.',
-          }),
-      ]);
-    });
   }
 
   // If fully paid, insert artwork_sales record

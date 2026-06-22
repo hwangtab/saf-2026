@@ -91,7 +91,18 @@ function makeConfirmRequest() {
   };
 }
 
-function createConfirmMock() {
+function createConfirmMock(
+  options: {
+    orderUpdateRows?: unknown[];
+    orderUpdateError?: { message: string } | null;
+    latestOrderStatus?: string;
+  } = {}
+) {
+  const {
+    orderUpdateRows = [{ id: 'order-1' }],
+    orderUpdateError = null,
+    latestOrderStatus = 'pending_payment',
+  } = options;
   const orderStatusUpdates: string[] = [];
   const order = {
     id: 'order-1',
@@ -112,7 +123,11 @@ function createConfirmMock() {
   const makeBuilder = (table: string) => {
     const builder = {
       patch: undefined as Record<string, unknown> | undefined,
-      select: jest.fn(() => builder),
+      selectedColumns: undefined as string | undefined,
+      select: jest.fn((columns?: string) => {
+        builder.selectedColumns = columns;
+        return builder;
+      }),
       eq: jest.fn(() => builder),
       in: jest.fn(() => builder),
       is: jest.fn(() => builder),
@@ -125,12 +140,23 @@ function createConfirmMock() {
         return builder;
       }),
       insert: jest.fn(async () => ({ error: { message: 'db down' } })),
-      single: jest.fn(async () => ({ data: table === 'orders' ? order : null, error: null })),
+      single: jest.fn(async () => ({
+        data:
+          table === 'orders'
+            ? {
+                ...order,
+                status: builder.selectedColumns === 'id,status' ? latestOrderStatus : order.status,
+              }
+            : null,
+        error: null,
+      })),
       maybeSingle: jest.fn(async () => ({ data: null, error: null })),
-      then: (resolve: (value: { data: unknown[]; error: null }) => unknown) => {
+      then: (
+        resolve: (value: { data: unknown[] | null; error: { message: string } | null }) => unknown
+      ) => {
         return resolve({
-          data: table === 'orders' && builder.patch ? [{ id: 'order-1' }] : [],
-          error: null,
+          data: table === 'orders' && builder.patch ? orderUpdateRows : [],
+          error: table === 'orders' && builder.patch ? orderUpdateError : null,
         });
       },
     };
@@ -177,5 +203,41 @@ describe('Toss confirm payment record failure handling', () => {
 
     expect(response.status).toBeGreaterThanOrEqual(500);
     expect(supabase.orderStatusUpdates).not.toContain('paid');
+  });
+
+  it('does not send success notifications when Toss DONE but order status update errors', async () => {
+    const supabase = createConfirmMock({
+      orderUpdateError: { message: 'orders update failed' },
+    });
+    mockCreateSupabaseAdminClient.mockReturnValue(supabase.client);
+    mockEnsureTossPaymentRecord.mockResolvedValue({ ok: true, paymentId: 'pay-1', created: true });
+
+    const { POST } = await import('@/app/api/payments/toss/confirm/route');
+    const response = await POST(makeConfirmRequest() as never);
+
+    expect(response.status).toBeGreaterThanOrEqual(500);
+    expect(mockRecordOrderArtworkSales).not.toHaveBeenCalled();
+    expect(
+      mockNotifyEmail.mock.calls.some(
+        ([type, subject]) => type === 'payment' && subject === '결제 승인 완료'
+      )
+    ).toBe(false);
+  });
+
+  it('does not treat a raced zero-row order update as payment success unless the order is already promoted', async () => {
+    const supabase = createConfirmMock({
+      orderUpdateRows: [],
+      latestOrderStatus: 'cancelled',
+    });
+    mockCreateSupabaseAdminClient.mockReturnValue(supabase.client);
+    mockEnsureTossPaymentRecord.mockResolvedValue({ ok: true, paymentId: 'pay-1', created: true });
+
+    const { POST } = await import('@/app/api/payments/toss/confirm/route');
+    const response = await POST(makeConfirmRequest() as never);
+    const body = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(body.error).toBeTruthy();
+    expect(mockRecordOrderArtworkSales).not.toHaveBeenCalled();
   });
 });

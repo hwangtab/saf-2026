@@ -52,6 +52,8 @@ let mockOrderRow: Record<string, unknown> | null = null;
 let mockOrderSelectError: unknown = null;
 let mockOrderUpdateRows: Array<{ id: string }> = [{ id: 'ord-1' }];
 let mockOrderUpdateError: unknown = null;
+let mockPaymentRow: Record<string, unknown> | null = null;
+let mockPaymentUpdateError: unknown = null;
 let mockSalesResult: unknown = { inserted: true, rows: 1 };
 let mockActiveOrderItemsCountResult: { count: number | null; error: unknown } = {
   count: 0,
@@ -67,6 +69,7 @@ let mockRpcResult: { data: unknown; error: unknown } = {
 };
 let mockArtworkUpdateError: { message: string } | null = null;
 const capturedOrderUpdates: Array<Record<string, unknown>> = [];
+const capturedPaymentUpdates: Array<Record<string, unknown>> = [];
 const capturedRpcCalls: Array<{ name: string; args: Record<string, unknown> }> = [];
 
 jest.mock('@/lib/auth/guards', () => ({
@@ -99,7 +102,30 @@ jest.mock('@/lib/auth/guards', () => ({
                 ? { data: null, error: mockOrderUpdateError }
                 : { data: mockOrderUpdateRows, error: null }
             );
-            const eq: jest.Mock = jest.fn(() => ({ eq, select, error: mockOrderUpdateError }));
+            const inFn = jest.fn(() => ({ select, error: mockOrderUpdateError }));
+            const eq: jest.Mock = jest.fn(() => ({
+              eq,
+              in: inFn,
+              select,
+              error: mockOrderUpdateError,
+            }));
+            return { eq };
+          }),
+        };
+      }
+      if (table === 'payments') {
+        return {
+          select: jest.fn(() => {
+            const limit = jest.fn(() => ({
+              maybeSingle: jest.fn(() => ({ data: mockPaymentRow, error: null })),
+            }));
+            const order = jest.fn(() => ({ limit }));
+            const eq: jest.Mock = jest.fn(() => ({ eq, order }));
+            return { eq };
+          }),
+          update: jest.fn((patch: Record<string, unknown>) => {
+            capturedPaymentUpdates.push(patch);
+            const eq: jest.Mock = jest.fn(() => ({ eq, error: mockPaymentUpdateError }));
             return { eq };
           }),
         };
@@ -148,6 +174,7 @@ jest.mock('@/lib/orders/record-artwork-sales', () => {
 
 let confirmDeposit: typeof import('@/app/actions/admin-orders').confirmDeposit;
 let cancelAwaitingOrder: typeof import('@/app/actions/admin-orders').cancelAwaitingOrder;
+let refundOrder: typeof import('@/app/actions/admin-orders').refundOrder;
 
 beforeEach(async () => {
   jest.resetModules();
@@ -169,6 +196,8 @@ beforeEach(async () => {
   mockOrderSelectError = null;
   mockOrderUpdateRows = [{ id: 'ord-1' }];
   mockOrderUpdateError = null;
+  mockPaymentRow = null;
+  mockPaymentUpdateError = null;
   mockActiveOrderItemsCountResult = { count: 0, error: null };
   mockActiveLegacyOrdersCountResult = { count: 0, error: null };
   mockArtworkUpdateError = null;
@@ -178,11 +207,13 @@ beforeEach(async () => {
     error: null,
   };
   capturedOrderUpdates.length = 0;
+  capturedPaymentUpdates.length = 0;
   capturedRpcCalls.length = 0;
 
   const mod = await import('@/app/actions/admin-orders');
   confirmDeposit = mod.confirmDeposit;
   cancelAwaitingOrder = mod.cancelAwaitingOrder;
+  refundOrder = mod.refundOrder;
 });
 
 describe('cancelAwaitingOrder', () => {
@@ -219,6 +250,45 @@ describe('cancelAwaitingOrder', () => {
     } finally {
       consoleSpy.mockRestore();
     }
+  });
+});
+
+describe('refundOrder', () => {
+  it('관리자 환불에서 Toss 취소 성공 후 주문 refunded 전환이 실패하면 운영 알림을 남긴다', async () => {
+    mockOrderRow = {
+      id: 'ord-1',
+      order_no: 'SAF-001',
+      status: 'paid',
+      artwork_id: 'art-1',
+      total_amount: 5000000,
+      buyer_name: '홍길동',
+      buyer_phone: '010-0000-0000',
+      buyer_email: 'buyer@example.com',
+      metadata: { locale: 'ko' },
+      order_items: [{ artwork_id: 'art-1', quantity: 1, unit_price: 5000000 }],
+    };
+    mockPaymentRow = { id: 'pay-1', payment_key: 'pk_test', status: 'DONE', method: '카드' };
+    mockOrderUpdateRows = [];
+
+    const { cancelPayment } = jest.requireMock('@/lib/integrations/toss/cancel') as {
+      cancelPayment: jest.Mock;
+    };
+    cancelPayment.mockResolvedValue({ success: true });
+    const { notifyEmail } = jest.requireMock('@/lib/notify') as { notifyEmail: jest.Mock };
+
+    await expect(refundOrder({ orderId: 'ord-1', cancelReason: '관리자 환불' })).resolves.toEqual({
+      success: false,
+      error: 'ORDER_REFUND_SYNC_FAILED',
+    });
+
+    expect(notifyEmail).toHaveBeenCalledWith(
+      'error',
+      expect.stringContaining('Toss 취소 후 주문 상태 반영 실패'),
+      expect.objectContaining({ 주문번호: 'SAF-001', paymentKey: 'pk_test' })
+    );
+    expect(capturedPaymentUpdates).toEqual([
+      expect.objectContaining({ status: 'CANCELED', cancelled_at: expect.any(String) }),
+    ]);
   });
 });
 

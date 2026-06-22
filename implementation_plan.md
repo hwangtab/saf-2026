@@ -1,3 +1,718 @@
+# 결제/환불 상태 불일치 차단 Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` to implement this plan task-by-task after user approval. Steps use checkbox (`- [ ]`) syntax for tracking. 현재 상태는 **승인 전 계획 단계**이며, 아래 코드 변경은 사용자가 승인한 뒤에만 수행한다.
+
+**Goal:** Toss 결제/환불의 외부 상태와 SAF 내부 주문/등록 상태가 갈라진 채 성공 응답, 성공 알림, 매출/캐시 후속 처리가 진행되는 일을 막는다.
+
+**Architecture:** 결제 승인 경로는 내부 주문 상태 전이가 확인된 뒤에만 알림, analytics, 매출 기록, 공개 캐시 갱신으로 진행한다. 환불 경로는 Toss 취소가 성공한 뒤 내부 DB 반영이 실패할 수 있다는 현실을 인정하고, 그 경우 결제 외부 상태를 숨기지 않고 운영자 알림/감사 로그를 남겨 수동 복구가 가능하게 만든다. 결제 CTA는 "키가 하나라도 있음"이 아니라 "해당 checkout 화면에서 실제로 제공할 결제수단이 있음"을 기준으로 노출한다.
+
+**Tech Stack:** Next.js App Router Route Handler, Server Actions, Supabase JS v2, TossPayments API, Jest, TypeScript.
+
+## Global Constraints
+
+- `AGENTS.md`: 계획은 한국어로 작성하고, 승인 전에는 운영 코드를 수정하지 않는다.
+- `AGENTS.md`: 복잡한 작업은 `implementation_plan.md`와 `task.md`로 추적하고, 완료 후 `walkthrough.md`에 결과를 남긴다.
+- 운영 의도: 기술적 우회가 아니라 운영자가 한 달 뒤 결제/환불 상태를 덜 헷갈리게 만드는 구조를 우선한다.
+- 결제 불변조건: Toss 승인 증거가 있어도 내부 주문 상태 전이가 실패하면 구매자/운영자에게 결제 완료로 말하지 않는다.
+- 환불 불변조건: Toss 취소가 성공했는데 내부 주문/결제/매출 상태 반영이 실패하면 조용히 실패하지 않고 운영자에게 복구 가능한 증거를 남긴다.
+- 기존 dirty files `content/changelog.json`, `lib/site-stats.ts`는 이번 작업 범위가 아니며 되돌리거나 섞지 않는다.
+- `npm run build`는 `generate-changelog`, `sync-site-stats`를 포함하므로, 기존 dirty generated files가 있는 동안에는 명시 승인 없이 실행하지 않는다.
+
+---
+
+### Task 1: Toss confirm 주문 전이 실패 시 성공 후속 처리 차단
+
+**Files:**
+
+- Modify: `app/api/payments/toss/confirm/route.ts`
+- Modify Test: `__tests__/app/toss-confirm-payment-record-failure.test.ts`
+
+**Interfaces:**
+
+- Produces: `orders` update가 실제로 1행 이상 성공한 경우에만 `payment_confirmed` buyer/admin 알림, `recordOrderArtworkSales`, `deriveAndSyncArtworkStatus`, `revalidatePublicArtworkSurfaces`, 성공 analytics를 실행한다.
+- Produces: update error 또는 target 상태가 아닌 0행 update는 `ORDER_STATUS_SYNC_FAILED` 응답과 `notifyEmail('error', ...)` + `logSystemAction('payment_failed', ...)`로 중단한다.
+- Produces: 0행 update라도 재조회한 주문이 이미 목표 상태(`paid` 또는 `awaiting_deposit`)이면 idempotent 성공으로 응답하되, 중복 알림/중복 매출 기록은 실행하지 않는다.
+
+- [ ] **Step 1: confirm route 테스트 mock을 주문 update 결과 주입 가능하게 확장**
+
+Update `createConfirmMock` in `__tests__/app/toss-confirm-payment-record-failure.test.ts` to accept options:
+
+```ts
+function createConfirmMock(
+  options: {
+    orderUpdateRows?: unknown[];
+    orderUpdateError?: { message: string } | null;
+    latestOrderStatus?: string;
+  } = {}
+) {
+  const {
+    orderUpdateRows = [{ id: 'order-1' }],
+    orderUpdateError = null,
+    latestOrderStatus = 'pending_payment',
+  } = options;
+
+  // Keep the existing order object and builder shape.
+  // In the builder.then branch for table === 'orders' && builder.patch,
+  // resolve with { data: orderUpdateRows, error: orderUpdateError }.
+  // In the status re-read single() branch, return { data: { ...order, status: latestOrderStatus }, error: null }.
+}
+```
+
+- [ ] **Step 2: order update error RED 테스트 추가**
+
+Add this test to `__tests__/app/toss-confirm-payment-record-failure.test.ts`:
+
+```ts
+it('does not send success notifications when Toss DONE but order status update errors', async () => {
+  const supabase = createConfirmMock({
+    orderUpdateError: { message: 'orders update failed' },
+  });
+  mockCreateSupabaseAdminClient.mockReturnValue(supabase.client);
+  mockEnsureTossPaymentRecord.mockResolvedValue({ ok: true, paymentId: 'pay-1', created: true });
+
+  const { POST } = await import('@/app/api/payments/toss/confirm/route');
+  const response = await POST(makeConfirmRequest() as never);
+
+  expect(response.status).toBeGreaterThanOrEqual(500);
+  expect(mockRecordOrderArtworkSales).not.toHaveBeenCalled();
+  expect(
+    mockNotifyEmail.mock.calls.some(
+      ([type, subject]) => type === 'payment' && subject === '결제 승인 완료'
+    )
+  ).toBe(false);
+});
+```
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/app/toss-confirm-payment-record-failure.test.ts
+```
+
+Expected: FAIL because the current route continues to success handling after `orderUpdateError`.
+
+- [ ] **Step 3: 0행 update RED 테스트 추가**
+
+Add:
+
+```ts
+it('does not treat a raced zero-row order update as payment success unless the order is already promoted', async () => {
+  const supabase = createConfirmMock({
+    orderUpdateRows: [],
+    latestOrderStatus: 'cancelled',
+  });
+  mockCreateSupabaseAdminClient.mockReturnValue(supabase.client);
+  mockEnsureTossPaymentRecord.mockResolvedValue({ ok: true, paymentId: 'pay-1', created: true });
+
+  const { POST } = await import('@/app/api/payments/toss/confirm/route');
+  const response = await POST(makeConfirmRequest() as never);
+  const body = await response.json();
+
+  expect(response.status).toBe(409);
+  expect(body.error).toBeTruthy();
+  expect(mockRecordOrderArtworkSales).not.toHaveBeenCalled();
+});
+```
+
+Run the same targeted test command. Expected: FAIL because current code does not reject 0행 update.
+
+- [ ] **Step 4: route handler 최소 구현**
+
+Modify `app/api/payments/toss/confirm/route.ts` immediately after the `orders.update(...).select('id')` block:
+
+```ts
+const orderPromoted = Array.isArray(updatedOrders) && updatedOrders.length > 0;
+
+if (orderUpdateError || !orderPromoted) {
+  const { data: latestOrder } = await supabase
+    .from('orders')
+    .select('id,status')
+    .eq('id', order.id)
+    .single();
+
+  const alreadyPromoted = latestOrder?.status === newOrderStatus;
+  if (alreadyPromoted) {
+    const paidNotifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
+    return NextResponse.json({
+      success: true,
+      alreadyPromoted: true,
+      status: tossResponse.status,
+      virtualAccount: isVirtualAccount ? (tossResponse.virtualAccount ?? null) : null,
+      analyticsItem: isDone
+        ? buildAnalyticsItem(order, paidNotifyInfo, tossResponse.totalAmount)
+        : null,
+      analyticsPurchase: isDone
+        ? buildAnalyticsPurchase(order, lineItems, paidNotifyInfo, tossResponse.totalAmount)
+        : null,
+    });
+  }
+
+  const updateErrMsg = orderUpdateError?.message ?? 'orders update affected 0 rows';
+  console.error('[confirm] order UPDATE failed after Toss approval:', updateErrMsg);
+  after(() =>
+    runAllSettled('tossConfirm.orderStatusSyncFailed.notifications', [
+      () =>
+        notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
+          주문번호: orderId,
+          목표상태: newOrderStatus,
+          현재상태: latestOrder?.status ?? '확인 실패',
+          에러: updateErrMsg,
+          참고: 'Toss 승인은 확인됐지만 내부 주문 상태 전이에 실패해 성공 알림과 매출 기록을 중단했습니다.',
+        }),
+      () =>
+        logSystemAction('payment_failed', 'order', order.id, {
+          stage: '결제 후 주문 상태 업데이트 실패',
+          order_no: orderId,
+          target_status: newOrderStatus,
+          latest_status: latestOrder?.status ?? null,
+          error: updateErrMsg,
+        }),
+    ])
+  );
+  return NextResponse.json(
+    {
+      error: apiError('payment_confirmation_failed', buyerLocale),
+      code: 'ORDER_STATUS_SYNC_FAILED',
+    },
+    { status: orderUpdateError ? 500 : 409 }
+  );
+}
+```
+
+- [ ] **Step 5: targeted GREEN 확인**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/app/toss-confirm-payment-record-failure.test.ts
+```
+
+Expected: PASS.
+
+---
+
+### Task 2: 관리자/구매자 환불 경로의 Toss 취소 후 DB 불일치 관찰성 보강
+
+**Files:**
+
+- Modify: `app/actions/admin-orders.ts`
+- Modify: `app/actions/order-lookup.ts`
+- Modify Test: `__tests__/actions/admin-orders.test.ts`
+- Modify Test: `__tests__/actions/order-lookup.test.ts`
+
+**Interfaces:**
+
+- Produces: Toss `cancelPayment` success 이후 `orders` update error/0행이 발생하면 `notifyEmail('error', ...)`와 감사 로그를 남긴다.
+- Produces: 구매자 self-cancel은 Toss 취소 성공 후 `payments.status='CANCELED'` 반영을 먼저 시도하고, 주문 update 실패 시에도 외부 결제 취소 증거(`payment_key`, `order_no`, reason)를 운영자 알림에 포함한다.
+- Consumes: existing `logAdminAction`, `logBuyerAction`, `notifyEmail`, `runAllSettled`.
+
+- [ ] **Step 1: 구매자 self-cancel DB 불일치 RED 테스트 추가**
+
+Append to `describe('cancelBuyerOrder')` in `__tests__/actions/order-lookup.test.ts`:
+
+```ts
+it('Toss 취소 성공 후 주문 refunded 전환이 실패하면 운영 알림을 남긴다', async () => {
+  mockOrdersSingleResult = {
+    data: {
+      id: 'ord-1',
+      order_no: 'SAF-001',
+      status: 'paid',
+      total_amount: 5000000,
+      artwork_id: 'art-1',
+      buyer_email: 'buyer@test.com',
+      buyer_name: '홍길동',
+    },
+    error: null,
+  };
+  mockPaymentResult = {
+    data: { id: 'pay-1', payment_key: 'pk_test', method: '카드' },
+    error: null,
+  };
+  mockCancelResult = { success: true };
+  mockOrderUpdateSelectRows = { data: [], error: null };
+
+  const { notifyEmail } = jest.requireMock('@/lib/notify') as { notifyEmail: jest.Mock };
+  const result = await cancelBuyerOrder('SAF-001', 'buyer@test.com', '단순변심');
+
+  expect(result.success).toBe(false);
+  if (!result.success) expect(result.error).toBe('ORDER_CANCEL_FAILED');
+  expect(notifyEmail).toHaveBeenCalledWith(
+    'error',
+    expect.stringContaining('Toss 취소 후 주문 상태 반영 실패'),
+    expect.objectContaining({ 주문번호: 'SAF-001', paymentKey: 'pk_test' })
+  );
+});
+```
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/actions/order-lookup.test.ts
+```
+
+Expected: FAIL because the current path returns `ORDER_CANCEL_FAILED` without operator notification.
+
+- [ ] **Step 2: 구매자 self-cancel 구현**
+
+Modify `app/actions/order-lookup.ts` after `cancelResult.success`:
+
+```ts
+const paymentCancelledAt = new Date().toISOString();
+const { error: paymentCancelError } = await adminClient
+  .from('payments')
+  .update({ status: 'CANCELED', cancelled_at: paymentCancelledAt })
+  .eq('id', payment.id);
+
+if (paymentCancelError) {
+  console.error('[cancelBuyerOrder] payment update failed after Toss cancel:', paymentCancelError);
+}
+```
+
+When `orderCancelError` or `cancelledRows.length === 0`, schedule:
+
+```ts
+after(() =>
+  runAllSettled('cancelBuyerOrder.orderSyncFailed.notifications', [
+    () =>
+      notifyEmail('error', 'Toss 취소 후 주문 상태 반영 실패', {
+        주문번호: order.order_no,
+        주문ID: order.id,
+        paymentKey: payment.payment_key,
+        구매자: order.buyer_name ?? '',
+        구매자이메일: trimmedEmail,
+        취소사유: trimmedReason,
+        에러: orderCancelError?.message ?? 'orders update affected 0 rows',
+        참고: 'Toss 결제 취소는 성공했지만 내부 주문 상태가 refunded로 바뀌지 않았습니다.',
+      }),
+    () =>
+      logBuyerAction('order_cancel_sync_failed', 'order', order.id, trimmedEmail, {
+        order_no: order.order_no,
+        payment_key: payment.payment_key,
+        reason: trimmedReason,
+        error: orderCancelError?.message ?? 'orders update affected 0 rows',
+      }),
+  ])
+);
+```
+
+- [ ] **Step 3: 관리자 환불 DB 불일치 RED 테스트 추가**
+
+Extend `__tests__/actions/admin-orders.test.ts` to import `refundOrder`, add a paid order fixture with `payments`, set `mockOrderUpdateRows = []`, and assert:
+
+```ts
+it('관리자 환불에서 Toss 취소 성공 후 주문 refunded 전환이 실패하면 운영 알림을 남긴다', async () => {
+  mockOrderRow = {
+    id: 'ord-1',
+    order_no: 'SAF-001',
+    status: 'paid',
+    artwork_id: 'art-1',
+    total_amount: 5000000,
+    buyer_name: '홍길동',
+    buyer_phone: '010-0000-0000',
+    buyer_email: 'buyer@example.com',
+    metadata: { locale: 'ko' },
+    payments: [{ id: 'pay-1', payment_key: 'pk_test', status: 'DONE', method: '카드' }],
+    order_items: [{ artwork_id: 'art-1', quantity: 1, unit_price: 5000000 }],
+  };
+  mockOrderUpdateRows = [];
+
+  const { cancelPayment } = jest.requireMock('@/lib/integrations/toss/cancel') as {
+    cancelPayment: jest.Mock;
+  };
+  cancelPayment.mockResolvedValue({ success: true });
+  const { notifyEmail } = jest.requireMock('@/lib/notify') as { notifyEmail: jest.Mock };
+
+  await expect(
+    refundOrder({ orderId: 'ord-1', reason: '관리자 환불', refundReceiveAccount: null })
+  ).resolves.toEqual({ success: false, error: 'ORDER_REFUND_SYNC_FAILED' });
+
+  expect(notifyEmail).toHaveBeenCalledWith(
+    'error',
+    expect.stringContaining('Toss 취소 후 주문 상태 반영 실패'),
+    expect.objectContaining({ 주문번호: 'SAF-001', paymentKey: 'pk_test' })
+  );
+});
+```
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/actions/admin-orders.test.ts
+```
+
+Expected: FAIL before implementation.
+
+- [ ] **Step 4: 관리자 환불 구현**
+
+Modify `app/actions/admin-orders.ts` around the `orderUpdateError` and 0행 branch:
+
+```ts
+const refundSyncError = orderUpdateError?.message ?? 'orders update affected 0 rows';
+if (orderUpdateError || !updatedRows || updatedRows.length === 0) {
+  after(() =>
+    runAllSettled('adminOrders.refundOrder.orderSyncFailed.notifications', [
+      () =>
+        notifyEmail('error', 'Toss 취소 후 주문 상태 반영 실패', {
+          주문번호: order.order_no,
+          주문ID: order.id,
+          paymentKey: payment?.payment_key ?? '',
+          환불사유: cancelReason.trim(),
+          에러: refundSyncError,
+          참고: 'Toss 취소는 성공했지만 내부 주문 상태가 refunded로 바뀌지 않았습니다.',
+        }),
+      () =>
+        logAdminAction('order_refund_sync_failed', 'order', order.id, {
+          order_no: order.order_no,
+          payment_key: payment?.payment_key ?? null,
+          reason: cancelReason.trim(),
+          error: refundSyncError,
+        }),
+    ])
+  );
+  return { success: false, error: 'ORDER_REFUND_SYNC_FAILED' };
+}
+```
+
+- [ ] **Step 5: targeted GREEN 확인**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/actions/order-lookup.test.ts __tests__/actions/admin-orders.test.ts
+```
+
+Expected: PASS.
+
+---
+
+### Task 3: 이벤트 reconcile 환불 후 상태 갱신 실패 처리 정정
+
+**Files:**
+
+- Modify: `app/api/internal/reconcile-event-registrations/route.ts`
+- Modify Test: `__tests__/app/api/internal/reconcile-event-registrations/route.test.ts`
+
+**Interfaces:**
+
+- Produces: 환불 성공 후 `event_registrations.status='cancelled'` update가 실패하면 `reconciled++` 하지 않는다.
+- Produces: 상태 갱신 실패 시 `bumpAttempt` 또는 동등한 attempts 증가와 `notifyEmail('error', ...)`를 실행한다.
+- Produces: 고객 환불 알림은 내부 상태 갱신 성공 후 1회만 발송한다.
+
+- [ ] **Step 1: update error mock 주입 추가**
+
+In `__tests__/app/api/internal/reconcile-event-registrations/route.test.ts`, add:
+
+```ts
+let updateResult: { error: { message: string } | null } = { error: null };
+```
+
+Change `builder.then`:
+
+```ts
+builder.then = (resolve: (v: unknown) => void) =>
+  resolve(builder._isUpdate ? updateResult : selectResult);
+```
+
+Reset `updateResult = { error: null }` in `beforeEach`.
+
+- [ ] **Step 2: RED 테스트 추가**
+
+Add:
+
+```ts
+it('환불 성공 후 cancelled 상태 갱신이 실패하면 reconciled로 세지 않고 고객 환불 알림을 보내지 않는다', async () => {
+  selectResult = { data: [{ ...REG, status: 'expired', reconcile_attempts: 0 }], error: null };
+  updateResult = { error: { message: 'update failed' } };
+
+  const res = await run();
+  const body = await res.json();
+
+  expect(mockCancelPayment).toHaveBeenCalled();
+  expect(body.reconciled).toBe(0);
+  expect(mockSendSms).not.toHaveBeenCalledWith(
+    expect.anything(),
+    'refunded',
+    expect.anything(),
+    expect.anything()
+  );
+  expect(mockNotifyEmail).toHaveBeenCalledWith(
+    'error',
+    expect.stringContaining('환불 후 상태 갱신 실패'),
+    expect.objectContaining({ 주문번호: REG.order_no })
+  );
+});
+```
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/app/api/internal/reconcile-event-registrations/route.test.ts
+```
+
+Expected: FAIL because current code still notifies customer and increments `reconciled`.
+
+- [ ] **Step 3: route 구현**
+
+Modify the `if (refund.success)` branch in `app/api/internal/reconcile-event-registrations/route.ts`:
+
+```ts
+if (updateError) {
+  errors.push(`${reg.order_no}: 환불 후 상태 갱신 실패: ${updateError.message}`);
+  await bumpAttempt(supabase, reg);
+  await notifyEmail('error', '추도식 회비 환불 후 상태 갱신 실패', {
+    주문번호: reg.order_no,
+    등록ID: reg.id,
+    에러: updateError.message,
+    참고: 'Toss 환불은 성공했지만 event_registrations 상태를 cancelled로 기록하지 못했습니다.',
+  });
+  continue;
+}
+await notifyCustomer(reg, 'refunded');
+reconciled++;
+```
+
+- [ ] **Step 4: targeted GREEN 확인**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/app/api/internal/reconcile-event-registrations/route.test.ts
+```
+
+Expected: PASS.
+
+---
+
+### Task 4: 결제 CTA/checkout 가능 조건을 실제 provider 요구사항과 일치
+
+**Files:**
+
+- Modify: `lib/integrations/toss/config.ts`
+- Modify Test: `__tests__/lib/integrations/toss/config.test.ts`
+- Modify: `app/[locale]/artworks/[id]/page.tsx`
+- Modify: `app/[locale]/checkout/[artworkId]/page.tsx`
+- Modify: `app/[locale]/checkout/page.tsx`
+
+**Interfaces:**
+
+- Produces: `getCheckoutAvailability(): { enabled: boolean; domestic: boolean; overseas: boolean; reason?: string }`
+- Produces: KO checkout is available only when domestic client+secret are configured and `NEXT_PUBLIC_PAYMENT_MODE !== 'disabled'`.
+- Produces: EN checkout is available when at least one EN-visible method is available. If only overseas PayPal is configured, route must not 404 but UI must not render domestic card/easyPay methods.
+- Produces: artwork CTA uses checkout availability, not provider-agnostic `getPaymentMode()`.
+
+- [ ] **Step 1: config helper RED 테스트 추가**
+
+Add to `__tests__/lib/integrations/toss/config.test.ts`:
+
+```ts
+it('checkout availability is disabled when only legacy api_v1 keys exist', () => {
+  process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY = 'legacy_client';
+  process.env.TOSS_PAYMENTS_SECRET_KEY = 'legacy_secret';
+  expect(getCheckoutAvailability()).toEqual({
+    enabled: false,
+    domestic: false,
+    overseas: false,
+    reason: 'no_checkout_provider',
+  });
+});
+
+it('checkout availability exposes domestic and overseas separately', () => {
+  process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY = 'dom_client';
+  process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY = 'dom_secret';
+  process.env.NEXT_PUBLIC_TOSS_OVERSEAS_CLIENT_KEY = 'over_client';
+  process.env.TOSS_PAYMENTS_OVERSEAS_SECRET_KEY = 'over_secret';
+  expect(getCheckoutAvailability()).toEqual({
+    enabled: true,
+    domestic: true,
+    overseas: true,
+  });
+});
+
+it('payment disabled kill switch disables checkout availability even when keys exist', () => {
+  process.env.NEXT_PUBLIC_PAYMENT_MODE = 'disabled';
+  process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY = 'dom_client';
+  process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY = 'dom_secret';
+  expect(getCheckoutAvailability()).toEqual({
+    enabled: false,
+    domestic: false,
+    overseas: false,
+    reason: 'payment_mode_disabled',
+  });
+});
+```
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/lib/integrations/toss/config.test.ts
+```
+
+Expected: FAIL because `getCheckoutAvailability` does not exist.
+
+- [ ] **Step 2: config helper 구현**
+
+Add to `lib/integrations/toss/config.ts`:
+
+```ts
+export type CheckoutAvailability =
+  | { enabled: true; domestic: boolean; overseas: boolean }
+  | {
+      enabled: false;
+      domestic: false;
+      overseas: false;
+      reason: 'payment_mode_disabled' | 'no_checkout_provider';
+    };
+
+export function getCheckoutAvailability(): CheckoutAvailability {
+  if (process.env.NEXT_PUBLIC_PAYMENT_MODE === 'disabled') {
+    return { enabled: false, domestic: false, overseas: false, reason: 'payment_mode_disabled' };
+  }
+
+  const domestic = getTossConfig('domestic') !== null;
+  const overseas = getTossConfig('overseas') !== null;
+
+  if (!domestic && !overseas) {
+    return { enabled: false, domestic: false, overseas: false, reason: 'no_checkout_provider' };
+  }
+
+  return { enabled: true, domestic, overseas };
+}
+```
+
+- [ ] **Step 3: route gating 구현**
+
+In `app/[locale]/artworks/[id]/page.tsx`, replace `getPaymentMode() === 'toss'` with:
+
+```ts
+const checkoutAvailability = getCheckoutAvailability();
+const isTossEnabled = checkoutAvailability.enabled;
+```
+
+In `app/[locale]/checkout/[artworkId]/page.tsx` and `app/[locale]/checkout/page.tsx`, replace the provider-agnostic guard:
+
+```ts
+const checkoutAvailability = getCheckoutAvailability();
+if (!checkoutAvailability.enabled) notFound();
+```
+
+For KO pages, keep `getTossDomesticClientKey()` required. For EN artwork checkout, pass availability flags to `OverseasCheckoutClient` and hide domestic card/easyPay choices when `domestic === false`, hide PayPal when `overseas === false`.
+
+- [ ] **Step 4: source contract 테스트 추가**
+
+Create or extend a lightweight source test `__tests__/app/checkout-payment-availability-source.test.ts`:
+
+```ts
+import { readFileSync } from 'fs';
+
+const read = (path: string) => readFileSync(path, 'utf8');
+
+it('artwork detail and checkout pages use checkout availability instead of provider-agnostic payment mode', () => {
+  expect(read('app/[locale]/artworks/[id]/page.tsx')).toContain('getCheckoutAvailability');
+  expect(read('app/[locale]/checkout/[artworkId]/page.tsx')).toContain('getCheckoutAvailability');
+  expect(read('app/[locale]/checkout/page.tsx')).toContain('getCheckoutAvailability');
+});
+```
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/lib/integrations/toss/config.test.ts __tests__/app/checkout-payment-availability-source.test.ts
+```
+
+Expected: PASS.
+
+---
+
+### Task 5: 작업 체크리스트, 검증, 완료 보고
+
+**Files:**
+
+- Modify: `task.md`
+- Modify: `walkthrough.md`
+- Do not modify: `content/changelog.json`
+- Do not modify: `lib/site-stats.ts`
+
+**Interfaces:**
+
+- Produces: `task.md` top section with this work's checklist and checked verification commands.
+- Produces: `walkthrough.md` summary with changed files, tests, skipped build reason, remaining data warnings.
+
+- [ ] **Step 1: `task.md`에 이번 작업 체크리스트 추가**
+
+Add a top section:
+
+```md
+# 결제/환불 상태 불일치 차단 체크리스트
+
+- [ ] confirm route 주문 상태 전이 실패 RED 테스트 추가
+- [ ] confirm route hard-stop 구현
+- [ ] 환불 경로 Toss 취소 후 DB 불일치 알림 테스트 추가
+- [ ] 관리자/구매자 환불 경로 운영 알림 구현
+- [ ] 이벤트 reconcile 환불 후 상태 갱신 실패 테스트/구현
+- [ ] checkout availability helper 및 CTA/route gating 정리
+- [ ] targeted tests 통과
+- [ ] lint/type/full Jest/validate-artworks 실행
+- [ ] walkthrough.md 업데이트
+- [ ] 기존 dirty generated files와 이번 변경 분리 확인
+```
+
+- [ ] **Step 2: targeted 검증 실행**
+
+Run:
+
+```bash
+npm test -- --runInBand __tests__/app/toss-confirm-payment-record-failure.test.ts
+npm test -- --runInBand __tests__/actions/order-lookup.test.ts __tests__/actions/admin-orders.test.ts
+npm test -- --runInBand __tests__/app/api/internal/reconcile-event-registrations/route.test.ts
+npm test -- --runInBand __tests__/lib/integrations/toss/config.test.ts __tests__/app/checkout-payment-availability-source.test.ts
+```
+
+Expected: all PASS.
+
+- [ ] **Step 3: 전체 검증 실행**
+
+Run:
+
+```bash
+npm run lint
+npm run type-check
+npm test -- --runInBand
+npm run validate-artworks
+```
+
+Expected: lint/type/Jest PASS. `validate-artworks` may still report existing data warnings but should exit 0.
+
+- [ ] **Step 4: build 실행 여부 확인**
+
+Read `package.json` before running build. If `npm run build` still mutates `content/changelog.json` and `lib/site-stats.ts`, do not run it without separate approval while those files are already dirty.
+
+- [ ] **Step 5: 완료 보고 작성**
+
+Update `walkthrough.md` with:
+
+```md
+## 결제/환불 상태 불일치 차단
+
+- Toss 결제 승인 후 내부 주문 상태 전이가 실패하면 성공 알림/매출/캐시 후속 처리를 중단하도록 정리했다.
+- Toss 취소 성공 후 내부 환불 상태 반영이 실패하면 운영자 알림과 감사 로그를 남기도록 보강했다.
+- 이벤트 reconcile 환불 성공 후 등록 상태 갱신 실패를 reconciled로 세지 않도록 수정했다.
+- 결제 CTA/checkout route gating을 실제 checkout provider 가능 조건과 맞췄다.
+- 검증: targeted Jest, `npm run lint`, `npm run type-check`, `npm test -- --runInBand`, `npm run validate-artworks`.
+- 미실행: `npm run build`는 generated dirty files를 덮을 수 있어 별도 승인 전에는 실행하지 않았다.
+```
+
+- [ ] **Step 6: final status 확인**
+
+Run:
+
+```bash
+git status --short --branch
+```
+
+Expected: 이번 작업 파일과 기존 dirty files가 분리되어 보인다. 최종 보고에는 기존 `content/changelog.json`, `lib/site-stats.ts`를 되돌리지 않았다고 명시한다.
+
+---
+
 # SAF 최근 회귀 리스크 개선 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. 구현은 승인 후에만 진행하고, 각 task는 실패 테스트 확인 -> 최소 구현 -> 통과 확인 순서로 수행한다.
