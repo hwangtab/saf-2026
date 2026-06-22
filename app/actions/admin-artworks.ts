@@ -23,7 +23,10 @@ import {
   validateSaleInput,
 } from '@/lib/actions/artwork-validation';
 import { normalizeAdminTagInput, type AdminTagInput } from '@/lib/admin-artwork-tags';
-import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import {
+  revalidatePublicArtworkDetails,
+  revalidatePublicArtworkSurfaces,
+} from '@/lib/utils/revalidate';
 import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
 
 type EditionType = Database['public']['Enums']['edition_type'];
@@ -416,8 +419,7 @@ export async function updateArtworkDetails(id: string, formData: FormData) {
     artistNames.push(artist?.name_ko ?? null);
   }
   revalidatePublicArtworkSurfaces(artistNames);
-  revalidatePath(`/artworks/${id}`);
-  revalidatePath(`/en/artworks/${id}`);
+  revalidatePublicArtworkDetails([id]);
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${id}`);
 
@@ -589,7 +591,7 @@ export async function updateArtworkImages(id: string, images: string[]) {
     .single();
 
   revalidatePublicArtworkSurfaces();
-  revalidatePath(`/artworks/${id}`);
+  revalidatePublicArtworkDetails([id]);
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${id}`);
 
@@ -689,6 +691,7 @@ export async function batchUpdateArtworkStatus(
     .in('id', ids);
 
   revalidatePublicArtworkSurfaces();
+  revalidatePublicArtworkDetails(ids);
   revalidatePath('/admin/artworks');
 
   await logAdminAction(
@@ -739,7 +742,7 @@ export async function updateArtworkCategory(id: string, category: string | null)
   if (error) throw error;
 
   revalidatePublicArtworkSurfaces();
-  revalidatePath(`/artworks/${id}`);
+  revalidatePublicArtworkDetails([id]);
   revalidatePath('/admin/artworks');
   revalidatePath(`/admin/artworks/${id}`);
 
@@ -849,10 +852,6 @@ export async function recordArtworkSale(formData: FormData) {
 
   if (error) throw error;
 
-  revalidatePublicArtworkSurfaces();
-  revalidatePath('/admin/artworks');
-  revalidatePath(`/admin/artworks/${artworkId}`);
-
   await logAdminAction(
     'artwork_sold',
     'artwork',
@@ -874,6 +873,10 @@ export async function recordArtworkSale(formData: FormData) {
   );
 
   await deriveAndSyncArtworkStatus(supabase, artworkId);
+  revalidatePublicArtworkDetails([artworkId]);
+  revalidatePublicArtworkSurfaces();
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${artworkId}`);
 
   return { success: true };
 }
@@ -963,13 +966,6 @@ export async function updateArtworkSale(formData: FormData) {
 
   if (error) throw error;
 
-  revalidatePublicArtworkSurfaces();
-  revalidatePath('/admin/artworks');
-  revalidatePath(`/admin/artworks/${artworkId}`);
-  revalidatePath('/admin/buyers');
-  revalidatePath('/admin/revenue');
-  revalidatePath('/admin/artist-sales');
-
   await logAdminAction(
     'artwork_sale_updated',
     'artwork',
@@ -989,6 +985,13 @@ export async function updateArtworkSale(formData: FormData) {
   );
 
   await deriveAndSyncArtworkStatus(supabase, artworkId);
+  revalidatePublicArtworkDetails([artworkId]);
+  revalidatePublicArtworkSurfaces();
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${artworkId}`);
+  revalidatePath('/admin/buyers');
+  revalidatePath('/admin/revenue');
+  revalidatePath('/admin/artist-sales');
 
   return { success: true };
 }
@@ -1017,13 +1020,6 @@ export async function voidArtworkSale(saleId: string, reason: string) {
 
   const artworkId = existing.artwork_id;
 
-  revalidatePublicArtworkSurfaces();
-  revalidatePath('/admin/artworks');
-  revalidatePath(`/admin/artworks/${artworkId}`);
-  revalidatePath('/admin/buyers');
-  revalidatePath('/admin/revenue');
-  revalidatePath('/admin/artist-sales');
-
   const { data: artwork } = await supabase
     .from('artworks')
     .select('title')
@@ -1049,6 +1045,13 @@ export async function voidArtworkSale(saleId: string, reason: string) {
   );
 
   await deriveAndSyncArtworkStatus(supabase, artworkId);
+  revalidatePublicArtworkDetails([artworkId]);
+  revalidatePublicArtworkSurfaces();
+  revalidatePath('/admin/artworks');
+  revalidatePath(`/admin/artworks/${artworkId}`);
+  revalidatePath('/admin/buyers');
+  revalidatePath('/admin/revenue');
+  revalidatePath('/admin/artist-sales');
 
   return { success: true };
 }
@@ -1089,6 +1092,7 @@ export async function batchToggleHidden(
     .in('id', ids);
 
   revalidatePublicArtworkSurfaces();
+  revalidatePublicArtworkDetails(ids);
   revalidatePath('/admin/artworks');
 
   await logAdminAction(
@@ -1172,6 +1176,7 @@ export async function batchDeleteArtworks(ids: string[]) {
   }
 
   revalidatePublicArtworkSurfaces();
+  revalidatePublicArtworkDetails(foundIds);
   revalidatePath('/admin/artworks');
 
   await logAdminAction(

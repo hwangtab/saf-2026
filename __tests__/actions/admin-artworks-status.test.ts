@@ -8,6 +8,7 @@ const mockRequireAdmin = jest.fn();
 const mockRequireAdminClient = jest.fn();
 const mockLogAdminAction = jest.fn(async () => {});
 const mockRevalidatePath = jest.fn();
+const mockRevalidatePublicArtworkDetails = jest.fn();
 const mockRevalidatePublicArtworkSurfaces = jest.fn();
 
 jest.mock('@/lib/auth/guards', () => ({
@@ -24,6 +25,8 @@ jest.mock('next/cache', () => ({
 }));
 
 jest.mock('@/lib/utils/revalidate', () => ({
+  revalidatePublicArtworkDetails: (...args: unknown[]) =>
+    mockRevalidatePublicArtworkDetails(...args),
   revalidatePublicArtworkSurfaces: (...args: unknown[]) =>
     mockRevalidatePublicArtworkSurfaces(...args),
 }));

@@ -539,6 +539,12 @@ export async function updateBuyerShipping(
 
   const trimmedOrderNo = orderNo.trim();
   const trimmedEmail = buyerEmail.trim().toLowerCase();
+  const shippingNameTrimmed = data.shippingName.trim();
+  const shippingPhoneTrimmed = data.shippingPhone.trim();
+  const shippingAddressTrimmed = data.shippingAddress.trim();
+  const shippingAddressDetailTrimmed = data.shippingAddressDetail?.trim() ?? '';
+  const shippingPostalCodeTrimmed = data.shippingPostalCode?.trim() ?? '';
+  const shippingMemoTrimmed = data.shippingMemo?.trim() ?? '';
 
   if (trimmedEmail) {
     const emailRl = await rateLimit(`updateBuyerShipping:email:${hashEmail(trimmedEmail)}`, {
@@ -559,15 +565,19 @@ export async function updateBuyerShipping(
     return { success: false, error: 'REQUIRED' };
   }
 
+  if (!shippingNameTrimmed || !shippingPhoneTrimmed || !shippingAddressTrimmed) {
+    return { success: false, error: 'INVALID_INPUT' };
+  }
+
   if (
     trimmedOrderNo.length > 50 ||
     trimmedEmail.length > 254 ||
-    data.shippingName.length > 50 ||
-    data.shippingPhone.length > 20 ||
-    (data.shippingPostalCode?.length ?? 0) > 10 ||
-    data.shippingAddress.length > 200 ||
-    (data.shippingAddressDetail?.length ?? 0) > 200 ||
-    (data.shippingMemo?.length ?? 0) > 500
+    shippingNameTrimmed.length > 50 ||
+    shippingPhoneTrimmed.length > 20 ||
+    shippingPostalCodeTrimmed.length > 10 ||
+    shippingAddressTrimmed.length > 200 ||
+    shippingAddressDetailTrimmed.length > 200 ||
+    shippingMemoTrimmed.length > 500
   ) {
     return { success: false, error: 'INVALID_INPUT' };
   }
@@ -591,18 +601,18 @@ export async function updateBuyerShipping(
     return { success: false, error: 'INVALID_STATUS' };
   }
 
-  const postalCodeUpdate = data.shippingPostalCode?.trim()
-    ? { shipping_postal_code: data.shippingPostalCode.trim() }
+  const postalCodeUpdate = shippingPostalCodeTrimmed
+    ? { shipping_postal_code: shippingPostalCodeTrimmed }
     : {};
 
   const { error: updateError } = await adminClient
     .from('orders')
     .update({
-      shipping_name: data.shippingName.trim(),
-      shipping_phone: data.shippingPhone.trim(),
-      shipping_address: data.shippingAddress.trim(),
-      shipping_address_detail: data.shippingAddressDetail?.trim() ?? null,
-      shipping_memo: data.shippingMemo?.trim() ?? null,
+      shipping_name: shippingNameTrimmed,
+      shipping_phone: shippingPhoneTrimmed,
+      shipping_address: shippingAddressTrimmed,
+      shipping_address_detail: shippingAddressDetailTrimmed || null,
+      shipping_memo: shippingMemoTrimmed || null,
       ...postalCodeUpdate,
     })
     .eq('id', order.id)

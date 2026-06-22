@@ -1,3 +1,23 @@
+# 배송 검증 및 작품 공개 캐시 개선 체크리스트
+
+- [x] `implementation_plan.md`에 승인 전 구현 계획 추가
+- [x] 사용자 승인 확인
+- [x] checkout 공백 필수값 실패 테스트 작성 및 RED 확인
+- [x] checkout 서버 action trim 기반 검증/저장 구현
+- [x] checkout targeted 테스트 GREEN 확인
+- [x] order lookup 배송정보 공백 실패 테스트 작성 및 RED 확인
+- [x] order lookup 서버 action trim 기반 검증/저장 구현
+- [x] order lookup targeted 테스트 GREEN 확인
+- [x] 작품 상세 KO/EN revalidation helper 실패 테스트 작성 및 RED 확인
+- [x] 작품 mutation revalidation 순서/범위 contract 테스트 작성 및 RED 확인
+- [x] admin/artist artwork mutation revalidation helper 적용
+- [x] targeted cache/status 테스트 GREEN 확인
+- [x] lint/type/full Jest/validate-artworks 검증
+- [x] `walkthrough.md` 결과 정리
+- [x] 기존 unrelated dirty files와 이번 변경 분리 확인
+
+---
+
 # CI 실패 수정 체크리스트
 
 - [x] 원격 CI 실패 로그와 Playwright 리포트 원인 확인

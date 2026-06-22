@@ -1,5 +1,21 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 
+export function revalidatePublicArtworkDetails(ids: Array<string | null | undefined>): void {
+  const uniqueIds = Array.from(
+    new Set(
+      ids
+        .filter((id): id is string => typeof id === 'string')
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0)
+    )
+  );
+
+  uniqueIds.forEach((id) => {
+    revalidatePath(`/artworks/${id}`);
+    revalidatePath(`/en/artworks/${id}`);
+  });
+}
+
 export function revalidatePublicArtworkSurfaces(
   artistNames: Array<string | null | undefined> = []
 ): void {

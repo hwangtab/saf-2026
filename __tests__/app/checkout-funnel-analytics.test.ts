@@ -47,8 +47,11 @@ describe('checkout funnel ecommerce analytics', () => {
     expect(form).toContain('optionalField');
     expect(form).toContain('addressDetailOptionalHint');
     expect(form).not.toContain('next.shippingAddressDetail = t');
-    expect(action).toContain('if (!shippingAddress || !shippingPostalCode)');
-    expect(action).toContain('shipping_address_detail: shippingAddressDetail?.trim() || null');
+    expect(action).toContain('!shippingNameTrimmed');
+    expect(action).toContain('!shippingPhoneTrimmed');
+    expect(action).toContain('!shippingAddressTrimmed');
+    expect(action).toContain('!shippingPostalCodeTrimmed');
+    expect(action).toContain('shipping_address_detail: shippingAddressDetailTrimmed || null');
     expect(koCheckout).toContain('transferTrustTitle');
     expect(enCheckout).toContain('transferTrustTitle');
   });

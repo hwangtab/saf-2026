@@ -264,7 +264,15 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     locale,
   } = input;
   const buyerLocale: ApiLocale = locale === 'en' ? 'en' : 'ko';
+  const buyerNameTrimmed = buyerName.trim();
   const buyerEmailNorm = buyerEmail.trim().toLowerCase();
+  const buyerPhoneTrimmed = buyerPhone.trim();
+  const shippingNameTrimmed = shippingName.trim();
+  const shippingPhoneTrimmed = shippingPhone.trim();
+  const shippingAddressTrimmed = shippingAddress.trim();
+  const shippingAddressDetailTrimmed = shippingAddressDetail?.trim() ?? '';
+  const shippingPostalCodeTrimmed = shippingPostalCode.trim();
+  const shippingMemoTrimmed = shippingMemo?.trim() ?? '';
 
   // 단건(artworkId) / 다건(items[]) 입력을 단일 OrderItemInput[]로 정규화
   const orderItems = normalizeOrderItems({ artworkId: input.artworkId, items: input.items });
@@ -281,24 +289,29 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   }
 
   // Basic validation
-  if (!buyerName || !buyerEmail || !buyerPhone) {
+  if (!buyerNameTrimmed || !buyerEmailNorm || !buyerPhoneTrimmed) {
     return { success: false, error: apiError('required_buyer_info', buyerLocale) };
   }
-  if (!shippingAddress || !shippingPostalCode) {
+  if (
+    !shippingNameTrimmed ||
+    !shippingPhoneTrimmed ||
+    !shippingAddressTrimmed ||
+    !shippingPostalCodeTrimmed
+  ) {
     return { success: false, error: apiError('required_shipping_info', buyerLocale) };
   }
 
   // 입력 길이 상한 — 거대 페이로드로 DB INSERT/이메일 렌더 비용 폭주 방지
   if (
-    buyerName.length > 50 ||
+    buyerNameTrimmed.length > 50 ||
     buyerEmail.length > 254 ||
-    buyerPhone.length > 20 ||
-    shippingName.length > 50 ||
-    shippingPhone.length > 20 ||
-    shippingAddress.length > 200 ||
-    (shippingAddressDetail?.length ?? 0) > 200 ||
-    shippingPostalCode.length > 10 ||
-    (shippingMemo?.length ?? 0) > 500
+    buyerPhoneTrimmed.length > 20 ||
+    shippingNameTrimmed.length > 50 ||
+    shippingPhoneTrimmed.length > 20 ||
+    shippingAddressTrimmed.length > 200 ||
+    shippingAddressDetailTrimmed.length > 200 ||
+    shippingPostalCodeTrimmed.length > 10 ||
+    shippingMemoTrimmed.length > 500
   ) {
     return { success: false, error: apiError('invalid_input_length', buyerLocale) };
   }
@@ -309,17 +322,17 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return { success: false, error: apiError('invalid_email_format', buyerLocale) };
   }
   // 전화번호: ITU E.164 — 국가코드 포함 7-15 digits 허용 (한국 9-11도 포함)
-  const phoneDigits = buyerPhone.replace(/\D/g, '');
+  const phoneDigits = buyerPhoneTrimmed.replace(/\D/g, '');
   if (phoneDigits.length < 7 || phoneDigits.length > 15) {
     return { success: false, error: apiError('invalid_phone_format', buyerLocale) };
   }
-  const shippingPhoneDigits = shippingPhone.replace(/\D/g, '');
-  if (shippingPhone && (shippingPhoneDigits.length < 7 || shippingPhoneDigits.length > 15)) {
+  const shippingPhoneDigits = shippingPhoneTrimmed.replace(/\D/g, '');
+  if (shippingPhoneDigits.length < 7 || shippingPhoneDigits.length > 15) {
     return { success: false, error: apiError('invalid_shipping_phone_format', buyerLocale) };
   }
   // 우편번호: ko는 5자리 숫자, en은 알파+숫자+공백+하이픈 3-10자
   // (예: US 12345 / 12345-6789, UK SW1A 1AA, Canada K1A 0B1, Japan 123-4567)
-  const trimmedPostal = shippingPostalCode.trim();
+  const trimmedPostal = shippingPostalCodeTrimmed;
   const postalValid =
     buyerLocale === 'ko'
       ? /^\d{5}$/.test(trimmedPostal)
@@ -465,16 +478,16 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
           itemRows.length === 1
             ? itemRows[0].quantity
             : itemRows.reduce((s, i) => s + i.quantity, 0),
-        buyer_name: buyerName,
+        buyer_name: buyerNameTrimmed,
         buyer_email: buyerEmailNorm,
-        buyer_phone: buyerPhone,
+        buyer_phone: buyerPhoneTrimmed,
         buyer_user_id: buyerUserId,
-        shipping_name: shippingName,
-        shipping_phone: shippingPhone,
-        shipping_address: shippingAddress,
-        shipping_address_detail: shippingAddressDetail?.trim() || null,
-        shipping_postal_code: shippingPostalCode,
-        shipping_memo: shippingMemo ?? null,
+        shipping_name: shippingNameTrimmed,
+        shipping_phone: shippingPhoneTrimmed,
+        shipping_address: shippingAddressTrimmed,
+        shipping_address_detail: shippingAddressDetailTrimmed || null,
+        shipping_postal_code: trimmedPostal,
+        shipping_memo: shippingMemoTrimmed || null,
         item_amount: itemAmount,
         shipping_amount: shippingAmount,
         total_amount: totalAmount,

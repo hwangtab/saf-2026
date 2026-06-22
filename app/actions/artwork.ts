@@ -16,7 +16,10 @@ import {
 } from '@/lib/actions/artwork-validation';
 import { getString, buildArtworkSizeFields } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
-import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
+import {
+  revalidatePublicArtworkDetails,
+  revalidatePublicArtworkSurfaces,
+} from '@/lib/utils/revalidate';
 import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
 import type { ActionState } from '@/types';
 
@@ -350,7 +353,7 @@ export async function updateArtwork(
     );
 
     revalidatePath('/dashboard/artworks');
-    revalidatePath(`/artworks/${id}`);
+    revalidatePublicArtworkDetails([id]);
     revalidatePublicArtworkSurfaces([artist.name_ko]);
   } catch (error: unknown) {
     if (supabase && artistId && cleanupUrls.length > 0) {
@@ -418,6 +421,7 @@ export async function deleteArtwork(id: string): Promise<ActionState> {
     }
 
     revalidatePath('/dashboard/artworks');
+    revalidatePublicArtworkDetails([id]);
     revalidatePublicArtworkSurfaces([artist.name_ko]);
 
     try {

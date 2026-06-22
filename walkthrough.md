@@ -1,3 +1,34 @@
+# 배송 검증 및 작품 공개 캐시 개선 결과 (2026-06-22)
+
+## 변경 요약
+
+- 주문 생성 서버 action에서 구매자/배송 필수값을 `trim()` 기준으로 검증하고 저장하도록 바꿨다.
+  - 공백뿐인 구매자 이름, 수령인, 배송 연락처, 배송 주소, 우편번호가 DB까지 내려가지 않는다.
+  - 저장되는 구매자/배송 문자열도 같은 정규화 값을 사용한다.
+- 구매자 주문조회의 배송정보 수정 action도 수령인/연락처/주소 공백 입력을 `INVALID_INPUT`으로 차단한다.
+- 공개 작품 상세 revalidation helper `revalidatePublicArtworkDetails()`를 추가했다.
+  - `/artworks/:id`와 `/en/artworks/:id`를 항상 같이 무효화한다.
+  - 이미지/카테고리/상태 일괄변경/숨김/삭제/작가 수정 경로가 helper를 사용한다.
+- 수동 판매 기록 추가/수정/취소는 `deriveAndSyncArtworkStatus()`가 끝난 뒤 공개 상세/목록 캐시를 무효화하도록 순서를 정리했다.
+
+## 검증
+
+- `npm run lint` 통과
+  - 기존 Browserslist stale 경고와 대형 generated 파일 Babel deopt 안내만 출력.
+- `npm run type-check` 통과
+- `npm test -- --runInBand` 통과
+  - 198 suites / 1475 tests
+- `npm run validate-artworks` 통과
+  - exit 0, 기존 작품 데이터 경고 63개 출력.
+
+## 남은 항목
+
+- `validate-artworks` 경고는 `content/artworks-batches/batch-db-generated.ts`의 auto-generated 데이터와 원천 DB 정정이 필요한 항목이라 이번 코드 수정에서는 직접 손대지 않았다.
+- `npm run build`는 이번 검증에서 실행하지 않았다. build script가 changelog/site-stats/이미지 측정 산출물을 갱신할 수 있고, 현재 `content/changelog.json`, `lib/site-stats.ts`는 이번 작업 전부터 수정 상태였다.
+- Vercel CLI가 오래된 상태라 배포/로그 확인 전에 `npm i -g vercel@latest` 업데이트를 권장한다.
+
+---
+
 # 최근 회귀 리스크 개선 결과 (2026-06-21)
 
 ## 변경 요약

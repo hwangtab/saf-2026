@@ -833,6 +833,23 @@ describe('updateBuyerShipping', () => {
     if (!result.success) expect(result.error).toBe('REQUIRED');
   });
 
+  it.each([
+    [
+      'shippingName',
+      { shippingName: '   ', shippingPhone: '01012345678', shippingAddress: '서울' },
+    ],
+    ['shippingPhone', { shippingName: '홍길동', shippingPhone: '   ', shippingAddress: '서울' }],
+    [
+      'shippingAddress',
+      { shippingName: '홍길동', shippingPhone: '01012345678', shippingAddress: '   ' },
+    ],
+  ])('%s 공백 입력 시 INVALID_INPUT 반환', async (_field, payload) => {
+    const result = await updateBuyerShipping('SAF-001', 'buyer@test.com', payload);
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error).toBe('INVALID_INPUT');
+  });
+
   it('주문 없으면 NOT_FOUND 반환', async () => {
     mockOrdersSingleResult = { data: null, error: { message: 'not found' } };
     const result = await updateBuyerShipping('SAF-999', 'test@test.com', {

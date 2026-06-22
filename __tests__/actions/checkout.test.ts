@@ -424,12 +424,52 @@ describe('createOrder', () => {
     }
   });
 
+  it('구매자 이름이 공백뿐이면 주문을 생성하지 않는다', async () => {
+    const result = await createOrder({ ...validInput, buyerName: '   ' });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain('필수 정보');
+    }
+    expect(capturedInsertedRows).toHaveLength(0);
+  });
+
   it('배송지 정보 누락 시 에러 반환', async () => {
     const result = await createOrder({ ...validInput, shippingAddress: '' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error).toContain('배송지');
     }
+  });
+
+  it('수령인 이름이 공백뿐이면 주문을 생성하지 않는다', async () => {
+    const result = await createOrder({ ...validInput, shippingName: '   ' });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain('배송지');
+    }
+    expect(capturedInsertedRows).toHaveLength(0);
+  });
+
+  it('배송 연락처가 비어 있으면 주문을 생성하지 않는다', async () => {
+    const result = await createOrder({ ...validInput, shippingPhone: '' });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain('배송지');
+    }
+    expect(capturedInsertedRows).toHaveLength(0);
+  });
+
+  it('배송 주소가 공백뿐이면 주문을 생성하지 않는다', async () => {
+    const result = await createOrder({ ...validInput, shippingAddress: '   ' });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toContain('배송지');
+    }
+    expect(capturedInsertedRows).toHaveLength(0);
   });
 
   it('상세주소가 없어도 주문 생성 성공', async () => {
