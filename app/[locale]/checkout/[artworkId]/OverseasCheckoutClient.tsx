@@ -114,7 +114,9 @@ interface Props {
   price: number;
   displayPrice: string;
   imageUrl: string;
-  clientKey: string;
+  clientKey: string | null;
+  domesticPaymentsEnabled: boolean;
+  overseasPaymentsEnabled: boolean;
   prefillName?: string;
   prefillEmail?: string;
 }
@@ -193,6 +195,8 @@ export default function OverseasCheckoutClient({
   displayPrice,
   imageUrl,
   clientKey,
+  domesticPaymentsEnabled,
+  overseasPaymentsEnabled,
   prefillName,
   prefillEmail,
 }: Props) {
@@ -200,11 +204,23 @@ export default function OverseasCheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalKrw = price + shippingFee;
   const usdTotal = krwToUsd(totalKrw);
+  const availablePaymentChoices = PAYMENT_CHOICES.filter((choice) => {
+    if (choice.value === 'PAYPAL') return overseasPaymentsEnabled;
+    if (choice.value === 'TRANSFER') return true;
+    return domesticPaymentsEnabled;
+  });
+  const defaultPaymentChoice = availablePaymentChoices[0]?.value ?? 'TRANSFER';
 
-  const [paymentChoice, setPaymentChoice] = useState<EnPaymentChoice>('PAYPAL');
+  const [paymentChoice, setPaymentChoice] = useState<EnPaymentChoice>(defaultPaymentChoice);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfoHandle | null>(null);
+
+  useEffect(() => {
+    if (!availablePaymentChoices.some((choice) => choice.value === paymentChoice)) {
+      setPaymentChoice(defaultPaymentChoice);
+    }
+  }, [availablePaymentChoices, defaultPaymentChoice, paymentChoice]);
 
   useEffect(() => {
     trackEvent(
@@ -408,6 +424,24 @@ export default function OverseasCheckoutClient({
 
       // Card / 간편결제 흐름: Toss saf202i818 MID + KRW + SDK v2.
       // KAKAOPAY/TOSSPAY/NAVERPAY는 cardOptions로 자체창 직행, CARD는 통합결제창(DEFAULT).
+      if (!clientKey) {
+        const message = t('errorPayment');
+        setError(message);
+        trackEvent(
+          'checkout_error',
+          buildCheckoutTrackingParams({
+            artworkId,
+            artworkTitle,
+            artist,
+            value: totalKrw,
+            currency: 'KRW',
+            payment_type: paymentChoice,
+            error_code: 'DOMESTIC_PAYMENT_UNAVAILABLE',
+            error_message: message,
+          })
+        );
+        return;
+      }
       const { loadTossPayments } = await import('@tosspayments/tosspayments-sdk');
       const tossPayments = await loadTossPayments(clientKey);
       const payment = tossPayments.payment({ customerKey: orderNo });
@@ -545,7 +579,7 @@ export default function OverseasCheckoutClient({
             aria-label={t('paymentMethodSelect')}
             className="border-t border-gray-200"
           >
-            {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
+            {availablePaymentChoices.map(({ value, labelKey, brand }, i) => {
               const selected = paymentChoice === value;
               const description =
                 value === 'PAYPAL'

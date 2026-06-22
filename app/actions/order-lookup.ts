@@ -839,6 +839,18 @@ export async function cancelBuyerOrder(
 
   const now = new Date().toISOString();
 
+  const { error: paymentCancelError } = await adminClient
+    .from('payments')
+    .update({ status: 'CANCELED', cancelled_at: now })
+    .eq('id', payment.id);
+
+  if (paymentCancelError) {
+    console.error(
+      '[cancelBuyerOrder] payment update failed after Toss cancel:',
+      paymentCancelError
+    );
+  }
+
   const { data: cancelledRows, error: orderCancelError } = await adminClient
     .from('orders')
     .update({ status: 'refunded', refunded_at: now })
@@ -846,23 +858,34 @@ export async function cancelBuyerOrder(
     .eq('status', 'paid')
     .select('id');
 
-  if (orderCancelError) {
-    console.error('[cancelBuyerOrder] order update failed:', orderCancelError);
+  if (orderCancelError || !cancelledRows || cancelledRows.length === 0) {
+    const syncError = orderCancelError?.message ?? 'orders update affected 0 rows';
+    if (orderCancelError) {
+      console.error('[cancelBuyerOrder] order update failed:', orderCancelError);
+    }
+    after(() =>
+      runAllSettled('cancelBuyerOrder.orderSyncFailed.notifications', [
+        () =>
+          notifyEmail('error', 'Toss 취소 후 주문 상태 반영 실패', {
+            주문번호: order.order_no,
+            주문ID: order.id,
+            paymentKey: payment.payment_key,
+            구매자: order.buyer_name ?? '',
+            구매자이메일: trimmedEmail,
+            취소사유: trimmedReason,
+            에러: syncError,
+            참고: 'Toss 결제 취소는 성공했지만 내부 주문 상태가 refunded로 바뀌지 않았습니다.',
+          }),
+        () =>
+          logBuyerAction('order_cancel_sync_failed', 'order', order.id, trimmedEmail, {
+            order_no: order.order_no,
+            payment_key: payment.payment_key,
+            reason: trimmedReason,
+            error: syncError,
+          }),
+      ])
+    );
     return { success: false, error: 'ORDER_CANCEL_FAILED' };
-  }
-  if (!cancelledRows || cancelledRows.length === 0) {
-    return { success: false, error: 'ORDER_CANCEL_FAILED' };
-  }
-
-  const { error: paymentCancelError } = await adminClient
-    .from('payments')
-    .update({ status: 'CANCELED', cancelled_at: now })
-    .eq('id', payment.id);
-
-  if (paymentCancelError) {
-    console.error('[cancelBuyerOrder] payment update failed:', paymentCancelError);
-    // 주문은 이미 취소됨 — 결제 레코드 불일치 경고 로그
-    // Toss 환불은 이미 처리되었으므로 주문 취소를 되돌리지 않음
   }
 
   // 판매기록 void — 다품목 주문은 해당 order의 active 매출 전부 void (단건 주문은 1행만 영향)

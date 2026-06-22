@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
-import { getPaymentMode, getTossDomesticClientKey } from '@/lib/integrations/toss/config';
+import { getCheckoutAvailability, getTossDomesticClientKey } from '@/lib/integrations/toss/config';
 import { parsePrice } from '@/lib/parsePrice';
 import { formatPriceForDisplay, resolveArtworkImageUrl } from '@/lib/utils';
 import CheckoutClient from './CheckoutClient';
@@ -29,7 +29,8 @@ interface Props {
 export default async function CheckoutPage({ params }: Props) {
   const { artworkId, locale } = await params;
 
-  if (getPaymentMode() !== 'toss') {
+  const checkoutAvailability = getCheckoutAvailability();
+  if (!checkoutAvailability.enabled) {
     notFound();
   }
 
@@ -86,8 +87,8 @@ export default async function CheckoutPage({ params }: Props) {
     : pickArtistName(artistRow ?? undefined);
   const artworkTitle = isEnglish ? artwork.title_en?.trim() || artwork.title : artwork.title;
 
-  const clientKey = getTossDomesticClientKey();
-  if (!clientKey) {
+  const clientKey = checkoutAvailability.domestic ? getTossDomesticClientKey() : null;
+  if (locale === 'ko' && !clientKey) {
     notFound();
   }
 
@@ -101,10 +102,16 @@ export default async function CheckoutPage({ params }: Props) {
         displayPrice={displayPrice}
         imageUrl={imageUrl}
         clientKey={clientKey}
+        domesticPaymentsEnabled={checkoutAvailability.domestic}
+        overseasPaymentsEnabled={checkoutAvailability.overseas}
         prefillName={prefillName}
         prefillEmail={prefillEmail}
       />
     );
+  }
+
+  if (!clientKey) {
+    notFound();
   }
 
   return (

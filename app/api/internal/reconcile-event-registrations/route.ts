@@ -130,6 +130,14 @@ export async function GET(request: NextRequest) {
             .eq('status', reg.status);
           if (updateError) {
             errors.push(`${reg.order_no}: 환불 후 상태 갱신 실패: ${updateError.message}`);
+            await bumpAttempt(supabase, reg);
+            await notifyEmail('error', '추도식 회비 환불 후 상태 갱신 실패', {
+              주문번호: reg.order_no,
+              등록ID: reg.id,
+              에러: updateError.message,
+              참고: 'Toss 환불은 성공했지만 event_registrations 상태를 cancelled로 기록하지 못했습니다.',
+            });
+            continue;
           }
           await notifyCustomer(reg, 'refunded');
           reconciled++;

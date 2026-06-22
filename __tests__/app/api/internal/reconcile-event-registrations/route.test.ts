@@ -14,6 +14,7 @@ let selectResult: { data: unknown[] | null; error: { message: string } | null } 
   data: [],
   error: null,
 };
+let updateResult: { error: { message: string } | null } = { error: null };
 const updateCalls: Array<Record<string, unknown>> = [];
 
 function makeBuilder() {
@@ -30,7 +31,7 @@ function makeBuilder() {
     return builder;
   });
   builder.then = (resolve: (v: unknown) => void) =>
-    resolve(builder._isUpdate ? { error: null } : selectResult);
+    resolve(builder._isUpdate ? updateResult : selectResult);
   return builder;
 }
 
@@ -81,6 +82,7 @@ describe('reconcile-event-registrations cron', () => {
     jest.clearAllMocks();
     updateCalls.length = 0;
     selectResult = { data: [], error: null };
+    updateResult = { error: null };
     mockValidate.mockReturnValue(null); // 인증 통과
     mockCancelPayment.mockResolvedValue({ success: true, data: {} });
     mockRpc.mockResolvedValue({ data: { ok: true, code: 'CONFIRMED' }, error: null });
@@ -204,6 +206,28 @@ describe('reconcile-event-registrations cron', () => {
       'refunded',
       expect.anything(),
       expect.anything()
+    );
+  });
+
+  it('환불 성공 후 cancelled 상태 갱신이 실패하면 reconciled로 세지 않고 고객 환불 알림을 보내지 않는다', async () => {
+    selectResult = { data: [{ ...REG, status: 'expired', reconcile_attempts: 0 }], error: null };
+    updateResult = { error: { message: 'update failed' } };
+
+    const res = await run();
+    const body = await res.json();
+
+    expect(mockCancelPayment).toHaveBeenCalled();
+    expect(body.reconciled).toBe(0);
+    expect(mockSendSms).not.toHaveBeenCalledWith(
+      expect.anything(),
+      'refunded',
+      expect.anything(),
+      expect.anything()
+    );
+    expect(mockNotifyEmail).toHaveBeenCalledWith(
+      'error',
+      expect.stringContaining('환불 후 상태 갱신 실패'),
+      expect.objectContaining({ 주문번호: REG.order_no })
     );
   });
 });

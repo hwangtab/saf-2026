@@ -2,6 +2,7 @@ import {
   getTossConfig,
   getTossAuthHeader,
   getTossWidgetClientKey,
+  getCheckoutAvailability,
   resolveOrderProvider,
   type PaymentProvider,
 } from '@/lib/integrations/toss/config';
@@ -19,6 +20,7 @@ describe('toss/config — provider switch', () => {
     delete process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY;
     delete process.env.NEXT_PUBLIC_TOSS_OVERSEAS_CLIENT_KEY;
     delete process.env.TOSS_PAYMENTS_OVERSEAS_SECRET_KEY;
+    delete process.env.NEXT_PUBLIC_PAYMENT_MODE;
   });
 
   afterAll(() => {
@@ -95,6 +97,41 @@ describe('toss/config — provider switch', () => {
 
   it('returns null widget client key when not configured', () => {
     expect(getTossWidgetClientKey()).toBeNull();
+  });
+
+  it('checkout availability is disabled when only legacy api_v1 keys exist', () => {
+    process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY = 'legacy_client';
+    process.env.TOSS_PAYMENTS_SECRET_KEY = 'legacy_secret';
+    expect(getCheckoutAvailability()).toEqual({
+      enabled: false,
+      domestic: false,
+      overseas: false,
+      reason: 'no_checkout_provider',
+    });
+  });
+
+  it('checkout availability exposes domestic and overseas separately', () => {
+    process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY = 'dom_client';
+    process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY = 'dom_secret';
+    process.env.NEXT_PUBLIC_TOSS_OVERSEAS_CLIENT_KEY = 'over_client';
+    process.env.TOSS_PAYMENTS_OVERSEAS_SECRET_KEY = 'over_secret';
+    expect(getCheckoutAvailability()).toEqual({
+      enabled: true,
+      domestic: true,
+      overseas: true,
+    });
+  });
+
+  it('payment disabled kill switch disables checkout availability even when keys exist', () => {
+    process.env.NEXT_PUBLIC_PAYMENT_MODE = 'disabled';
+    process.env.NEXT_PUBLIC_TOSS_DOMESTIC_CLIENT_KEY = 'dom_client';
+    process.env.TOSS_PAYMENTS_DOMESTIC_SECRET_KEY = 'dom_secret';
+    expect(getCheckoutAvailability()).toEqual({
+      enabled: false,
+      domestic: false,
+      overseas: false,
+      reason: 'payment_mode_disabled',
+    });
   });
 
   it('PaymentProvider type accepts only known values', () => {

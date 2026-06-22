@@ -45,7 +45,7 @@ import { shuffleArray } from '@/lib/utils';
 import type { Artwork } from '@/types';
 import ArtworkPurchaseCTA from '@/components/features/ArtworkPurchaseCTA';
 import ArtworkPurchaseStickyMobile from '@/components/features/ArtworkPurchaseStickyMobile';
-import { getPaymentMode } from '@/lib/integrations/toss/config';
+import { getCheckoutAvailability } from '@/lib/integrations/toss/config';
 import TrustBadges from '@/components/features/TrustBadges';
 import PosthumousPrintDetails from '@/components/features/PosthumousPrintDetails';
 import ArtworkCardActions from '@/components/features/ArtworkCardActions';
@@ -307,11 +307,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const displayTitle = locale === 'en' && artwork.title_en ? artwork.title_en : artwork.title;
   const displayArtist = locale === 'en' && artwork.artist_en ? artwork.artist_en : artwork.artist;
   const hasActionablePrice = parsedPrice !== Infinity;
-  // 결제 모드 단일 출처 (2026-06-12 감사): CTA는 NEXT_PUBLIC_PAYMENT_MODE 환경변수,
-  // 체크아웃 페이지는 Toss 키 존재(getPaymentMode)로 각각 판정해 어긋날 수 있었다 —
-  // 변수 누락 시 키가 있어도 CTA 전체가 '연동 준비 중'으로 강등되거나, 반대로 404 체크아웃
-  // 링크가 노출됨. 서버에서 getPaymentMode() 하나로 판정해 prop으로 내린다.
-  const isTossEnabled = getPaymentMode() === 'toss';
+  // 신규 checkout이 실제로 받을 수 있는 domestic/overseas provider 기준으로 CTA를 노출한다.
+  const isTossEnabled = getCheckoutAvailability().enabled;
 
   // 매뉴얼 5.8 매체별 진품 라벨 — 11개 매체 전체 처리.
   const mediumLabel = getMediumLabel({
