@@ -415,7 +415,7 @@ export default async function RyuYeonbokFeature({
                       <p className="text-charcoal leading-relaxed text-lg">
                         {isEnglish
                           ? 'Unlike a brushstroke, a woodcut is irreversible. The resistance of the grain — what Ryu describes as an exchange akin to poetry — forces choices that cannot be undone. What remains after carving is what the artist truly decided to say.'
-                          : '붓 자국과 달리 목판의 칼선은 되돌릴 수 없다. 나뭇결의 저항 — 류연복이 시와 같다고 말하는 그 교환 — 은 취소할 수 없는 선택을 강요한다. 새긴 뒤에 남는 것이 작가가 진정으로 말하기로 한 것이다.'}
+                          : '붓 자국과 달리 목판의 칼선은 되돌릴 수 없다. 나뭇결의 저항 — 류연복이 시와 같다고 말하는 그 교환 — 은 취소할 수 없는 선택을 강요한다. 새긴 뒤에 남는 것이 작가가 진정으로 말하기로 한 말이다.'}
                       </p>
                     </div>
                   </li>

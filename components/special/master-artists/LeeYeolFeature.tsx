@@ -732,10 +732,9 @@ export default async function LeeYeolFeature({
                       <p>
                         이열에게 나무를 찍는 일과 지키는 일은 같은 작업에 속한다. 2013년 그는
                         &lsquo;양재천 둑방길 나무 지키기 운동&rsquo;을 주도해 성공시켰다 — 그가 찍는
-                        바로 그 나무를 서 있게 한 것이다. 이 실천에서 더 큰 꿈이 자랐다: 자연과
-                        예술이 함께하는{' '}
-                        <strong className="font-bold text-charcoal-deep">예술의숲</strong>. 그는
-                        지금 예술의숲 사회적협동조합 이사장으로서 그 꿈을 이어 간다.
+                        바로 그 나무를 서 있게 했다. 이 실천에서 더 큰 꿈이 자랐다: 자연과 예술이
+                        함께하는 <strong className="font-bold text-charcoal-deep">예술의숲</strong>.
+                        그는 지금 예술의숲 사회적협동조합 이사장으로서 그 꿈을 이어 간다.
                       </p>
                       <p>
                         같은 인내가 그의 저서에도 나타난다. 2025년 그는 글·사진집 <em>느린 인간</em>

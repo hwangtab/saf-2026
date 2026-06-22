@@ -345,7 +345,7 @@ export function generateArtworkSpecificFAQ(
           : []),
         {
           question: `${artistName} 작가의 다른 작품도 볼 수 있나요?`,
-          answer: `네. ${artistName} 작가가 씨앗페 2026에 출품한 모든 작품을 ${artistUrl} 에서 확인하실 수 있습니다.`,
+          answer: `네. ${artistName} 작가가 씨앗페 2026에 출품한 모든 작품을 ${artistUrl} 에서 확인할 수 있습니다.`,
         },
         {
           question: `"${title}"은 원본 작품이며 진품 보증서가 제공되나요?`,

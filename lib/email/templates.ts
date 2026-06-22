@@ -49,7 +49,7 @@ export const BROADCAST_TEMPLATES: BroadcastTemplate[] = [
     isAdvertisement: false,
     subject: '작품 판매 및 정산 안내',
     ...body(
-      '{{name}}님께 작품 판매 및 정산 관련 내용을 안내드립니다.\n\n자세한 내역은 아래에서 확인하실 수 있습니다. 확인 후 궁금하신 점은 언제든 회신 주세요.'
+      '{{name}}님께 작품 판매 및 정산 관련 내용을 안내드립니다.\n\n자세한 내역은 아래에서 확인할 수 있습니다. 확인 후 궁금하신 점은 언제든 회신 주세요.'
     ),
   },
   {
