@@ -1,5 +1,6 @@
 /** @jest-environment node */
 import { NextRequest, NextResponse } from 'next/server';
+import { readFileSync } from 'node:fs';
 
 const mockValidateInternalCronRequest = jest.fn();
 const mockCreateSupabaseAdminClient = jest.fn();
@@ -269,5 +270,13 @@ describe('reconcile-payments missing-payment backfill mode', () => {
     expect(ordersBuilders[0].is).not.toHaveBeenCalled();
     expect(ordersBuilders[1].is).not.toHaveBeenCalled();
     expect(mockFetchPaymentByOrderId).not.toHaveBeenCalled();
+  });
+
+  it('routes DONE payment promotion through the shared payment lifecycle helper', () => {
+    const source = readFileSync('app/api/internal/reconcile-payments/route.ts', 'utf8');
+
+    expect(source).toContain('@/lib/commerce/payment-lifecycle/mark-order-paid');
+    expect(source).toContain('markOrderPaid({');
+    expect(source).not.toContain('async function reconcileMissingDoneOrder');
   });
 });

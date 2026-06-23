@@ -1,10 +1,10 @@
 // 메타·SEO 카피·i18n 메시지·JSON-LD 스키마에 들어가는 작품/작가 수의 단일 출처.
 // 빌드 전 scripts/sync-site-stats.js 가 Supabase DB에서 자동 갱신 (prebuild 훅).
 // 수동 수정 불필요 — 갱신 방법: npm run build 또는 node scripts/sync-site-stats.js
-// 최종 갱신: 2026-06-18 (artworks.is_hidden=false 기준 449건, 작가 112명)
-export const ARTWORK_COUNT = 449;
+// 최종 갱신: 2026-06-22 (artworks.is_hidden=false 기준 468건, 작가 112명)
+export const ARTWORK_COUNT = 468;
 // 노출 작품이 있는 작가 수 (is_hidden=false 작품 보유 기준).
-// 최종 갱신: 2026-06-18
+// 최종 갱신: 2026-06-22
 export const ARTIST_COUNT = 112;
 
 // 예술인 상호부조 대출 누적 건수 (한국스마트협동조합 운영 데이터, 수기 갱신).

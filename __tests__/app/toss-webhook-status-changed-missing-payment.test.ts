@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 const mockAfter = jest.fn((callback: () => unknown) => callback());
 const mockCreateSupabaseAdminClient = jest.fn();
 const mockFetchPayment = jest.fn();
@@ -231,5 +233,15 @@ describe('Toss STATUS_CHANGED missing payment row repair', () => {
     expect(response.status).toBe(200);
     expect(supabase.insertedPayment).toEqual(expect.objectContaining({ payment_key: 'pay-key' }));
     expect(supabase.orderStatusUpdates).toContain('paid');
+  });
+
+  it('routes STATUS_CHANGED DONE promotion through the shared lifecycle helper', () => {
+    const source = readFileSync('app/api/webhooks/toss/route.ts', 'utf8');
+    const branchStart = source.indexOf('// PAYMENT_STATUS_CHANGED DONE');
+    const branchEnd = source.indexOf("} else if (newStatus === 'CANCELED'", branchStart);
+    const statusDoneBranch = source.slice(branchStart, branchEnd);
+
+    expect(statusDoneBranch).toContain('markOrderPaidWithOutcome({');
+    expect(statusDoneBranch).not.toContain('recordOrderArtworkSales(');
   });
 });

@@ -1,6 +1,5 @@
 'use server';
 
-import crypto from 'crypto';
 import { after } from 'next/server';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -31,6 +30,25 @@ import {
   buildAdminNotificationFields,
 } from '@/lib/utils/get-order-notification-info';
 import { runAllSettled } from '@/lib/server/after-response';
+import {
+  CHECKOUT_COOKIE_MAX_AGE_SECONDS,
+  CHECKOUT_TOKEN_HASH_KEY,
+  checkoutCookieName,
+  decodeCheckoutCookie,
+  encodeCheckoutCookie,
+  generateCheckoutToken,
+  getCheckoutTokenHash,
+  hashCheckoutToken,
+  isCheckoutTokenValid,
+  latestCheckoutCookieName,
+} from '@/lib/commerce/checkout/checkout-session';
+import {
+  buildBankTransferDisplay,
+  type BankTransferDisplay as CheckoutBankTransferDisplay,
+} from '@/lib/commerce/checkout/bank-transfer';
+import { isManualBankTransferMetadata } from '@/lib/commerce/order-metadata';
+
+export type { BankTransferDisplay } from '@/lib/commerce/checkout/bank-transfer';
 
 export type CreateOrderInput = {
   /** 단건 바로구매(quantity 1). items가 있으면 무시됨. */
@@ -62,27 +80,11 @@ export type CreateOrderResult =
     }
   | { success: false; error: string; unavailable?: string[] };
 
-export type BankTransferDisplay = {
-  bankName: string;
-  accountNumber: string;
-  holderName: string;
-  dueDate: string;
-};
-
 export type BankTransferLandingResult =
-  | { ok: true; bankTransfer: BankTransferDisplay }
+  | { ok: true; bankTransfer: CheckoutBankTransferDisplay }
   | { ok: false };
 
 const MAX_ORDER_NO_INSERT_RETRIES = 3;
-const CHECKOUT_TOKEN_BYTES = 32;
-const CHECKOUT_TOKEN_HASH_KEY = 'checkout_token_hash';
-const CHECKOUT_COOKIE_MAX_AGE_SECONDS = 60 * 60;
-
-type CheckoutCookiePayload = {
-  orderId: string;
-  checkoutToken: string;
-  currency?: 'KRW' | 'USD';
-};
 
 function isOrderNoUniqueViolation(error: unknown) {
   const typed = error as { code?: string; message?: string } | null;
@@ -93,114 +95,6 @@ function isOrderNoUniqueViolation(error: unknown) {
     typed.message?.includes('duplicate key value') ||
     false
   );
-}
-
-function generateCheckoutToken() {
-  return crypto.randomBytes(CHECKOUT_TOKEN_BYTES).toString('base64url');
-}
-
-function hashCheckoutToken(token: string) {
-  return crypto.createHash('sha256').update(token).digest('hex');
-}
-
-function getCheckoutTokenHash(metadata: unknown): string | null {
-  if (!metadata || typeof metadata !== 'object') return null;
-  const value = (metadata as Record<string, unknown>)[CHECKOUT_TOKEN_HASH_KEY];
-  return typeof value === 'string' && value.length > 0 ? value : null;
-}
-
-function isCheckoutTokenValid(metadata: unknown, checkoutToken: string) {
-  const storedHash = getCheckoutTokenHash(metadata);
-  if (!storedHash || !checkoutToken) return false;
-  const providedHash = hashCheckoutToken(checkoutToken);
-  const stored = Buffer.from(storedHash);
-  const provided = Buffer.from(providedHash);
-  return stored.length === provided.length && crypto.timingSafeEqual(stored, provided);
-}
-
-function asMetadataRecord(metadata: unknown): Record<string, unknown> {
-  return metadata && typeof metadata === 'object' && !Array.isArray(metadata)
-    ? (metadata as Record<string, unknown>)
-    : {};
-}
-
-function getBuyerLocaleFromMetadata(metadata: unknown): ApiLocale {
-  return asMetadataRecord(metadata).locale === 'en' ? 'en' : 'ko';
-}
-
-function isManualBankTransferMetadata(metadata: unknown): boolean {
-  return asMetadataRecord(metadata).payment_provider === 'manual_bank_transfer';
-}
-
-function buildBankTransferDisplay(
-  metadata: unknown,
-  createdAt: string | null | undefined
-): BankTransferDisplay {
-  const meta = asMetadataRecord(metadata);
-  const bankTransfer =
-    meta.bank_transfer &&
-    typeof meta.bank_transfer === 'object' &&
-    !Array.isArray(meta.bank_transfer)
-      ? (meta.bank_transfer as Record<string, unknown>)
-      : {};
-  const fallback = getBankTransferInfo();
-  const baseTime = createdAt ? new Date(createdAt).getTime() : NaN;
-  const base = Number.isFinite(baseTime) ? baseTime : Date.now();
-  const fallbackDueDate = formatBankTransferDueDate(
-    new Date(base + fallback.deadlineHours * 60 * 60 * 1000),
-    getBuyerLocaleFromMetadata(metadata)
-  );
-
-  return {
-    bankName:
-      typeof bankTransfer.bankName === 'string' && bankTransfer.bankName.trim()
-        ? bankTransfer.bankName
-        : fallback.bankName,
-    accountNumber:
-      typeof bankTransfer.accountNumber === 'string' && bankTransfer.accountNumber.trim()
-        ? bankTransfer.accountNumber
-        : fallback.accountNumber,
-    holderName:
-      typeof bankTransfer.holderName === 'string' && bankTransfer.holderName.trim()
-        ? bankTransfer.holderName
-        : fallback.holderName,
-    dueDate:
-      typeof bankTransfer.dueDate === 'string' && bankTransfer.dueDate.trim()
-        ? bankTransfer.dueDate
-        : fallbackDueDate,
-  };
-}
-
-function checkoutCookieName(orderId: string) {
-  return `saf_checkout_${orderId}`;
-}
-
-function latestCheckoutCookieName(artworkId: string) {
-  const key = crypto.createHash('sha256').update(artworkId).digest('hex').slice(0, 32);
-  return `saf_checkout_latest_${key}`;
-}
-
-function encodeCheckoutCookie(payload: CheckoutCookiePayload) {
-  return Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
-}
-
-function decodeCheckoutCookie(value: string | undefined): CheckoutCookiePayload | null {
-  if (!value) return null;
-  try {
-    const parsed = JSON.parse(Buffer.from(value, 'base64url').toString('utf8')) as unknown;
-    if (!parsed || typeof parsed !== 'object') return null;
-    const payload = parsed as Partial<CheckoutCookiePayload>;
-    if (typeof payload.orderId !== 'string' || typeof payload.checkoutToken !== 'string') {
-      return null;
-    }
-    return {
-      orderId: payload.orderId,
-      checkoutToken: payload.checkoutToken,
-      currency: payload.currency === 'USD' ? 'USD' : payload.currency === 'KRW' ? 'KRW' : undefined,
-    };
-  } catch {
-    return null;
-  }
 }
 
 /** 주문별 쿠키 단일 출처 헬퍼 — 쿠키 옵션/이름/인코딩이 한 곳에서 관리됨. */

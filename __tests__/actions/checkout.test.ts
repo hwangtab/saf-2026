@@ -1494,3 +1494,15 @@ describe('bank transfer success clients', () => {
     }
   });
 });
+
+describe('checkout commerce util wiring', () => {
+  it('uses shared checkout-session and bank-transfer helpers instead of local duplicates', () => {
+    const src = readSource('app/actions/checkout.ts');
+
+    expect(src).toContain('@/lib/commerce/checkout/checkout-session');
+    expect(src).toContain('@/lib/commerce/checkout/bank-transfer');
+    expect(src).toContain('@/lib/commerce/order-metadata');
+    expect(src).not.toContain('function hashCheckoutToken(token: string)');
+    expect(src).not.toContain('function buildBankTransferDisplay(');
+  });
+});
