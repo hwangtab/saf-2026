@@ -61,6 +61,11 @@ const config: Config = {
         'zoom-in-95': 'zoomIn95 0.2s ease-out forwards',
         stamp: 'stampIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
         'hero-breathing': 'heroBreathing 40s ease-in-out infinite',
+        // Hero 진입 연출 — 모두 컴포지터 전용(transform/opacity), main thread 0, CLS 0.
+        // ken-burns: LCP 이미지가 첫 프레임 scale(1)이라 paint 지연 없음(LCP 무영향).
+        // hero-reveal: 텍스트 staggered fade-up. `both` fill + 전역 reduced-motion 0.01ms로 자동 안전.
+        'ken-burns': 'kenBurns 30s ease-in-out infinite alternate',
+        'hero-reveal': 'heroReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both',
         'toast-in': 'toastIn 0.2s ease-out forwards',
         'toast-out': 'toastOut 0.2s ease-out forwards',
         'slide-in-right': 'slideInRight 0.25s ease-out forwards',
@@ -93,6 +98,19 @@ const config: Config = {
         heroBreathing: {
           '0%, 100%': { transform: 'scale(1.1)' },
           '50%': { transform: 'scale(1.0)' },
+        },
+        // Ken Burns — 느린 줌 + 미세 패닝. 첫 프레임 scale(1) translate(0,0)이라 LCP 시점
+        // 이미지가 1:1로 paint → LCP 영향 없음. alternate로 되돌아와 끊김 없이 순환.
+        kenBurns: {
+          '0%': { transform: 'scale(1) translate(0, 0)' },
+          '100%': { transform: 'scale(1.06) translate(-1.5%, -1%)' },
+        },
+        // Hero 텍스트 staggered 등장 — translateY는 transform이라 layout shift(CLS) 없음.
+        // fadeInUp(opacity-only)과 별개 키프레임 — 이건 server 정적 클래스로만 적용(hydration
+        // 토글 없음)이라 2026-05-13 SSR/hydration mismatch CLS 회귀와 무관.
+        heroReveal: {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         toastIn: {
           '0%': { opacity: '0', transform: 'translateY(-20px) scale(0.95)' },

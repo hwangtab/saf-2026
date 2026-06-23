@@ -121,19 +121,19 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           한 번 더 노출(매거진 톤). 정적 SSR, hydration 0.
           Variant B(2026-06-17, PM 패널 #5): Hero 직후 첫 섹션 = 쇼핑 가능한 그리드.
           명분 섹션(About·Mechanism)은 그리드 아래로 이동(상품 우선 재배열). Hero sawtooth(canvas-soft)와 정합. */}
-      <HomeTrackedSection section="now-showing">
+      <HomeTrackedSection section="now-showing" className="reveal-on-scroll">
         <NowShowing locale={locale} />
       </HomeTrackedSection>
 
       {/* 한국 현대미술의 거장 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2.
           시한성 NowShowing[D] 직후 영구 거장 라인업 [E]. 페르소나 B "왜 이 사이트인가" 첫 인지 자산. */}
-      <HomeTrackedSection section="master">
+      <HomeTrackedSection section="master" className="reveal-on-scroll">
         <MasterArtists locale={locale} />
       </HomeTrackedSection>
 
       {/* 30만원 이하 첫 그림 — 매뉴얼 6.4 [H] + 9.2 컬렉션 4.
           페르소나 A·1단 첫 구매자 진입 동선. 가격 ₩100,000~₩300,000 + 작가 단위 dedupe + sold/reserved 제외. */}
-      <HomeTrackedSection section="entry-level">
+      <HomeTrackedSection section="entry-level" className="reveal-on-scroll">
         <EntryLevelArtworks locale={locale} />
       </HomeTrackedSection>
 
@@ -147,7 +147,7 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
 
       {/* 신진 작가 발견 — 매뉴얼 6.4 [G] + 9.2 컬렉션 3.
           페르소나 B "내가 먼저 발견" 자긍심 자극. 거장 6명 제외 + 작가별 1점 dedupe + sold/reserved 제외. */}
-      <HomeTrackedSection section="emerging">
+      <HomeTrackedSection section="emerging" className="reveal-on-scroll">
         <EmergingArtists locale={locale} />
       </HomeTrackedSection>
 

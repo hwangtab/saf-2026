@@ -437,6 +437,31 @@ button:focus:not(:focus-visible) {
   }
 }
 
+/* 스크롤 기반 등장 — 순수 CSS scroll-timeline. JS·IntersectionObserver 0줄.
+   - opacity-only: full-bleed 컬러 섹션(카테고리 dark/light 밴드)이 translateY로 움직이면
+     sawtooth seam에 24px 틈이 생기므로 transform 대신 fade만. CLS·layout·seam 모두 안전.
+   - @supports 가드: Chrome/Edge만 동작. Safari/Firefox 등 미지원 브라우저는 규칙 미적용 →
+     opacity:1 기본값 유지(콘텐츠 항상 보임, graceful degradation).
+   - prefers-reduced-motion: no-preference 안에 둬 reduce 사용자는 즉시 표시. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal-on-scroll {
+      animation: revealOnScroll linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 30%;
+    }
+
+    @keyframes revealOnScroll {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 @media (hover: none) {
   /* 터치 디바이스 sticky hover 차단. 카드 그리드(MasterArtists, NowShowing,
      ArtworkGridCard, ArtworkCategoryGrid, MagazineSection, RelatedStoriesGrid)에서
