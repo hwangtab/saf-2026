@@ -14,6 +14,7 @@ import {
   isPaymentStatusChanged,
   isEventOrderId,
 } from '@/lib/integrations/toss/webhook';
+import { isFundingOrderId } from '@/lib/funding/order-id';
 import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
@@ -118,6 +119,13 @@ export async function POST(req: NextRequest) {
   // 즉시 200으로 ack(Toss 재시도 중단)한 뒤 무시한다.
   if (isEventOrderId(payload.data.orderId)) {
     return NextResponse.json({ received: true, status: 'ignored_event' }, { status: 200 });
+  }
+
+  // 펀딩 결제는 /api/webhooks/funding/toss 가 처리. 작품 webhook은 즉시 ack 후 무시.
+  // FND- 주문을 이 경로에서 처리하면 payments/orders 조회 실패 → 거짓알림 + 500 재시도 폭주
+  // (2026-06-15 EVT- 회귀와 동일 패턴 예방).
+  if (isFundingOrderId(payload.data.orderId)) {
+    return NextResponse.json({ received: true, status: 'ignored_funding' }, { status: 200 });
   }
 
   const supabase = createSupabaseAdminClient();
