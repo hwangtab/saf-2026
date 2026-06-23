@@ -117,15 +117,24 @@ export async function POST(req: NextRequest) {
         })
       );
     }
-    await supabase
+    const { error: cancelUpdateError } = await supabase
       .from('funding_pledges')
       .update({
         status: refunded ? 'cancelled' : 'expired',
-        cancelled_at: new Date().toISOString(),
+        ...(refunded ? { cancelled_at: new Date().toISOString() } : {}),
         hold_expires_at: null,
         updated_at: new Date().toISOString(),
       })
       .eq('order_no', orderId);
+    if (cancelUpdateError) {
+      console.error('[funding-confirm] cancelled status update failed:', cancelUpdateError);
+      after(() =>
+        notifyEmail('error', '후원 자동환불 후 상태 변경 실패', {
+          주문번호: orderId,
+          결제키: toss.paymentKey,
+        })
+      );
+    }
     return NextResponse.json(
       {
         error: refunded
