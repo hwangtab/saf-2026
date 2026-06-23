@@ -1,10 +1,30 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: '14.5';
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
   public: {
     Tables: {
@@ -1219,6 +1239,220 @@ export type Database = {
         };
         Relationships: [];
       };
+      funding_payments: {
+        Row: {
+          amount: number;
+          approved_at: string | null;
+          cancelled_at: string | null;
+          confirm_response: Json | null;
+          created_at: string;
+          currency: string;
+          id: string;
+          idempotency_key: string | null;
+          method: string | null;
+          payment_key: string | null;
+          pledge_id: string;
+          status: string;
+          toss_order_id: string | null;
+          updated_at: string;
+          webhook_responses: Json;
+        };
+        Insert: {
+          amount: number;
+          approved_at?: string | null;
+          cancelled_at?: string | null;
+          confirm_response?: Json | null;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          idempotency_key?: string | null;
+          method?: string | null;
+          payment_key?: string | null;
+          pledge_id: string;
+          status: string;
+          toss_order_id?: string | null;
+          updated_at?: string;
+          webhook_responses?: Json;
+        };
+        Update: {
+          amount?: number;
+          approved_at?: string | null;
+          cancelled_at?: string | null;
+          confirm_response?: Json | null;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          idempotency_key?: string | null;
+          method?: string | null;
+          payment_key?: string | null;
+          pledge_id?: string;
+          status?: string;
+          toss_order_id?: string | null;
+          updated_at?: string;
+          webhook_responses?: Json;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'funding_payments_pledge_id_fkey';
+            columns: ['pledge_id'];
+            isOneToOne: false;
+            referencedRelation: 'funding_pledges';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      funding_pledges: {
+        Row: {
+          agreed_privacy: boolean;
+          agreed_terms: boolean;
+          agreed_withdrawal_waiver: boolean;
+          backer_email: string;
+          backer_name: string;
+          backer_phone: string;
+          backer_user_id: string | null;
+          cancelled_at: string | null;
+          created_at: string;
+          hold_expires_at: string | null;
+          id: string;
+          ip_hash: string | null;
+          is_anonymous: boolean;
+          message_public: boolean;
+          order_no: string | null;
+          paid_at: string | null;
+          project_id: string;
+          refunded_at: string | null;
+          shipping_address: string | null;
+          shipping_memo: string | null;
+          shipping_name: string | null;
+          shipping_phone: string | null;
+          shipping_postal_code: string | null;
+          status: string;
+          supporter_message: string | null;
+          total_amount: number;
+          updated_at: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          agreed_privacy: boolean;
+          agreed_terms: boolean;
+          agreed_withdrawal_waiver?: boolean;
+          backer_email: string;
+          backer_name: string;
+          backer_phone: string;
+          backer_user_id?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          hold_expires_at?: string | null;
+          id?: string;
+          ip_hash?: string | null;
+          is_anonymous?: boolean;
+          message_public?: boolean;
+          order_no?: string | null;
+          paid_at?: string | null;
+          project_id: string;
+          refunded_at?: string | null;
+          shipping_address?: string | null;
+          shipping_memo?: string | null;
+          shipping_name?: string | null;
+          shipping_phone?: string | null;
+          shipping_postal_code?: string | null;
+          status: string;
+          supporter_message?: string | null;
+          total_amount: number;
+          updated_at?: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          agreed_privacy?: boolean;
+          agreed_terms?: boolean;
+          agreed_withdrawal_waiver?: boolean;
+          backer_email?: string;
+          backer_name?: string;
+          backer_phone?: string;
+          backer_user_id?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          hold_expires_at?: string | null;
+          id?: string;
+          ip_hash?: string | null;
+          is_anonymous?: boolean;
+          message_public?: boolean;
+          order_no?: string | null;
+          paid_at?: string | null;
+          project_id?: string;
+          refunded_at?: string | null;
+          shipping_address?: string | null;
+          shipping_memo?: string | null;
+          shipping_name?: string | null;
+          shipping_phone?: string | null;
+          shipping_postal_code?: string | null;
+          status?: string;
+          supporter_message?: string | null;
+          total_amount?: number;
+          updated_at?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'funding_pledges_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'funding_projects';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      funding_projects: {
+        Row: {
+          category: string | null;
+          cover_image: string | null;
+          created_at: string;
+          end_at: string | null;
+          funding_type: string;
+          goal_amount: number;
+          id: string;
+          slug: string;
+          start_at: string | null;
+          status: string;
+          story: string | null;
+          summary: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          category?: string | null;
+          cover_image?: string | null;
+          created_at?: string;
+          end_at?: string | null;
+          funding_type?: string;
+          goal_amount: number;
+          id?: string;
+          slug: string;
+          start_at?: string | null;
+          status?: string;
+          story?: string | null;
+          summary?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          category?: string | null;
+          cover_image?: string | null;
+          created_at?: string;
+          end_at?: string | null;
+          funding_type?: string;
+          goal_amount?: number;
+          id?: string;
+          slug?: string;
+          start_at?: string | null;
+          status?: string;
+          story?: string | null;
+          summary?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       gsc_metrics: {
         Row: {
           clicks: number;
@@ -1795,6 +2029,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      pledge_items: {
+        Row: {
+          id: string;
+          option_values: Json;
+          pledge_id: string;
+          quantity: number;
+          reward_tier_id: string;
+          unit_amount: number;
+        };
+        Insert: {
+          id?: string;
+          option_values?: Json;
+          pledge_id: string;
+          quantity: number;
+          reward_tier_id: string;
+          unit_amount: number;
+        };
+        Update: {
+          id?: string;
+          option_values?: Json;
+          pledge_id?: string;
+          quantity?: number;
+          reward_tier_id?: string;
+          unit_amount?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'pledge_items_pledge_id_fkey';
+            columns: ['pledge_id'];
+            isOneToOne: false;
+            referencedRelation: 'funding_pledges';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'pledge_items_reward_tier_id_fkey';
+            columns: ['reward_tier_id'];
+            isOneToOne: false;
+            referencedRelation: 'reward_tiers';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
@@ -1902,6 +2178,56 @@ export type Database = {
           role_en?: string | null;
         };
         Relationships: [];
+      };
+      reward_tiers: {
+        Row: {
+          amount: number;
+          created_at: string;
+          description: string | null;
+          estimated_delivery: string | null;
+          id: string;
+          is_made_to_order: boolean;
+          project_id: string;
+          requires_shipping: boolean;
+          sort_order: number;
+          title: string;
+          total_quantity: number | null;
+        };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          description?: string | null;
+          estimated_delivery?: string | null;
+          id?: string;
+          is_made_to_order?: boolean;
+          project_id: string;
+          requires_shipping?: boolean;
+          sort_order?: number;
+          title: string;
+          total_quantity?: number | null;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          description?: string | null;
+          estimated_delivery?: string | null;
+          id?: string;
+          is_made_to_order?: boolean;
+          project_id?: string;
+          requires_shipping?: boolean;
+          sort_order?: number;
+          title?: string;
+          total_quantity?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reward_tiers_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'funding_projects';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       sms_broadcast_recipients: {
         Row: {
@@ -2379,11 +2705,15 @@ export type Database = {
         Returns: {
           artwork_ids: string[];
           order_id: string;
-          order_no: string | null;
+          order_no: string;
         }[];
       };
       confirm_event_bank_transfer: { Args: { p_id: string }; Returns: Json };
       confirm_event_registration: {
+        Args: { p_amount: number; p_order_no: string; p_payment_key: string };
+        Returns: Json;
+      };
+      confirm_funding_pledge: {
         Args: { p_amount: number; p_order_no: string; p_payment_key: string };
         Returns: Json;
       };
@@ -2428,6 +2758,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      create_funding_pledge: { Args: { p_payload: Json }; Returns: Json };
       event_occupied_seats: { Args: { p_slug: string }; Returns: number };
       event_seat_status: { Args: { p_slug: string }; Returns: Json };
       execute_sql: { Args: { sql: string }; Returns: undefined };
@@ -2435,6 +2766,8 @@ export type Database = {
         Args: { key: string; qs: string };
         Returns: string;
       };
+      funding_project_status: { Args: { p_slug: string }; Returns: Json };
+      funding_tier_claimed: { Args: { p_tier_id: string }; Returns: number };
       get_artist_commerce_dashboard: {
         Args: { lim?: number; since_ts: string };
         Returns: {
@@ -3071,6 +3404,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       artwork_status: ['available', 'sold', 'reserved', 'hidden'],
