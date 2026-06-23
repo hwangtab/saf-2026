@@ -1251,7 +1251,9 @@
       "formPrivacyPolicyLink": "Full details including overseas data transfer (Supabase, Vercel, Google) are in our",
       "formPrivacyPolicyLinkText": "Privacy Policy",
       "formSubmitting": "Submitting…",
-      "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close."
+      "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close.",
+      "fundingCtaEyebrow": "Terracotta Preservation Fund",
+      "fundingCtaTitle": "Support the Oh Yoon Terracotta Project — help move the mural into public hands"
     }
   },
   "wishlist": {

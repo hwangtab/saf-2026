@@ -776,6 +776,15 @@ export default async function PetitionOhYoonPage({
                 오윤 40주기 추도식 — 7월 5일 인사동, 함께 추모하고 참가 신청하기
               </div>
             </Link>
+            <Link
+              href="/funding/oh-yoon-terracotta"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">{t('fundingCtaEyebrow')}</div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                {t('fundingCtaTitle')}
+              </div>
+            </Link>
           </div>
         </div>
       </Section>
