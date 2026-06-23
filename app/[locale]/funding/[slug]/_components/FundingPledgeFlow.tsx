@@ -389,6 +389,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
           {/* 약관 동의 */}
           <fieldset className="space-y-3 rounded-lg border border-gray-200 p-4">
+            <legend className="sr-only">{t('consentGroupLabel')}</legend>
             <label className="flex cursor-pointer items-start gap-3 text-sm text-charcoal">
               <input
                 type="checkbox"
@@ -424,7 +425,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
           )}
 
           <Button type="submit" variant="primary" size="lg" disabled={pending} className="w-full">
-            {pending ? '처리 중...' : t('support')}
+            {pending ? t('submitting') : t('support')}
           </Button>
         </form>
       )}

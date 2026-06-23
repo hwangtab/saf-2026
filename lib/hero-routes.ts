@@ -77,10 +77,21 @@ export function isArtworkDetail(pathname: string): boolean {
   return true;
 }
 
+/**
+ * 펀딩 터미널 서브라우트(`/funding/<slug>/success`, `/funding/<slug>/fail`)인지 판정.
+ * 이 경로들은 PageHero가 없는 결제 완료/실패 터미널 페이지 — hero 레이아웃 대상 아님.
+ */
+export function isFundingTerminal(pathname: string): boolean {
+  const normalized = stripLocale(pathname);
+  // /funding/<slug>/success 또는 /funding/<slug>/fail — 슬러그 이후 세그먼트가 더 있는 경우
+  return /^\/funding\/[^/]+\/(success|fail)(\/.*)?$/.test(normalized);
+}
+
 /** 주어진 pathname이 hero 레이아웃(상단 투명 헤더) 대상인지 판정. */
 export function isHeroRoute(pathname: string): boolean {
   const normalized = stripLocale(pathname);
   if (isArtworkDetail(normalized)) return false;
+  if (isFundingTerminal(normalized)) return false;
   if (HERO_EXACT.has(normalized)) return true;
   return HERO_PREFIXES.some((prefix) => normalized.startsWith(prefix));
 }

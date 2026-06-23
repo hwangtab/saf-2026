@@ -1577,6 +1577,10 @@
     "support": "Back this project",
     "termsConsent": "I agree to the pledge and payment terms.",
     "thankYou": "Thank you for your support!",
-    "thankYouDesc": "Your generous pledge helps artists achieve financial independence."
+    "thankYouDesc": "Your generous pledge helps artists achieve financial independence.",
+    "consentGroupLabel": "Pledge consent",
+    "paymentFailed": "Payment Failed",
+    "paymentFailedDesc": "There was a problem processing your payment. Please try again.",
+    "backToProject": "Back to project"
   }
 }

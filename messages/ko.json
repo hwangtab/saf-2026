@@ -1577,6 +1577,10 @@
     "support": "후원하기",
     "termsConsent": "후원 및 결제 약관에 동의합니다.",
     "thankYou": "후원해 주셔서 감사합니다!",
-    "thankYouDesc": "소중한 후원이 예술인들의 금융 자립을 돕는 씨앗이 됩니다."
+    "thankYouDesc": "소중한 후원이 예술인들의 금융 자립을 돕는 씨앗이 됩니다.",
+    "consentGroupLabel": "후원 동의",
+    "paymentFailed": "결제에 실패했습니다",
+    "paymentFailedDesc": "결제 처리 중 문제가 발생했습니다. 다시 시도해 주세요.",
+    "backToProject": "프로젝트로 돌아가기"
   }
 }
