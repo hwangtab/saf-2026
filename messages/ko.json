@@ -1569,8 +1569,12 @@
     "privacyConsent": "개인정보 수집 및 이용에 동의합니다.",
     "rewardListTitle": "리워드 선택",
     "rewardSoldOut": "품절",
+    "confirmFail": "결제 확인 중 오류가 발생했습니다. 고객센터로 문의해 주세요.",
+    "confirming": "결제를 확인하는 중...",
     "submitting": "처리 중...",
     "support": "후원하기",
-    "termsConsent": "후원 및 결제 약관에 동의합니다."
+    "termsConsent": "후원 및 결제 약관에 동의합니다.",
+    "thankYou": "후원해 주셔서 감사합니다!",
+    "thankYouDesc": "소중한 후원이 예술인들의 금융 자립을 돕는 씨앗이 됩니다."
   }
 }

@@ -1569,8 +1569,12 @@
     "privacyConsent": "I agree to the collection and use of personal information.",
     "rewardListTitle": "Choose a Reward",
     "rewardSoldOut": "Sold out",
+    "confirmFail": "An error occurred while confirming your payment. Please contact support.",
+    "confirming": "Confirming payment...",
     "submitting": "Processing...",
     "support": "Back this project",
-    "termsConsent": "I agree to the pledge and payment terms."
+    "termsConsent": "I agree to the pledge and payment terms.",
+    "thankYou": "Thank you for your support!",
+    "thankYouDesc": "Your generous pledge helps artists achieve financial independence."
   }
 }
