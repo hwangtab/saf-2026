@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 const mockAfter = jest.fn((callback: () => unknown) => callback());
 const mockCreateSupabaseAdminClient = jest.fn();
 const mockFetchPayment = jest.fn();
@@ -206,5 +208,18 @@ describe('Toss DEPOSIT_CALLBACK missing payment row repair', () => {
       expect.objectContaining({ orderId: 'order-1' })
     );
     expect(supabase.orderStatusUpdates).toContain('paid');
+  });
+
+  it('routes DEPOSIT_CALLBACK DONE promotion through the shared lifecycle helper', () => {
+    const source = readFileSync('app/api/webhooks/toss/route.ts', 'utf8');
+    const branchStart = source.indexOf("if (payload.data.paymentStatus === 'DONE')");
+    const branchEnd = source.indexOf(
+      "} else if (payload.data.paymentStatus === 'CANCELED')",
+      branchStart
+    );
+    const depositDoneBranch = source.slice(branchStart, branchEnd);
+
+    expect(depositDoneBranch).toContain('markOrderPaidWithOutcome({');
+    expect(depositDoneBranch).not.toContain('recordOrderArtworkSales(');
   });
 });

@@ -13,6 +13,6 @@ describe('reconcile-payments missing payment row contract', () => {
     const src = readFileSync('app/api/internal/reconcile-payments/route.ts', 'utf8');
 
     expect(src).toContain("order.status === 'awaiting_deposit' && tossPayment.status === 'DONE'");
-    expect(src).toContain('reconcileMissingDoneOrder');
+    expect(src).toContain('markOrderPaid({');
   });
 });

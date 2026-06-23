@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { readFileSync } from 'node:fs';
 
 const mockAfter = jest.fn((callback: () => unknown) => callback());
 const mockCreateSupabaseAdminClient = jest.fn();
@@ -239,5 +240,13 @@ describe('Toss confirm payment record failure handling', () => {
     expect(response.status).toBe(409);
     expect(body.error).toBeTruthy();
     expect(mockRecordOrderArtworkSales).not.toHaveBeenCalled();
+  });
+
+  it('routes Toss DONE promotion through the shared payment lifecycle helper', () => {
+    const source = readFileSync('app/api/payments/toss/confirm/route.ts', 'utf8');
+
+    expect(source).toContain('@/lib/commerce/payment-lifecycle/mark-order-paid');
+    expect(source).toContain('markOrderPaidWithOutcome({');
+    expect(source).not.toContain('recordOrderArtworkSales(supabase');
   });
 });

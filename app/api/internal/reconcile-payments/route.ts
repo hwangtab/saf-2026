@@ -6,31 +6,16 @@ import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { notifyEmail } from '@/lib/notify';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
-import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
-import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
+import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import {
   releaseReservedArtworksIfUnowned,
   reserveUniqueArtworksOrRollback,
 } from '@/lib/orders/reservations';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
+import { markOrderPaid } from '@/lib/commerce/payment-lifecycle/mark-order-paid';
 
 export const runtime = 'nodejs';
-
-type AdminClient = ReturnType<typeof createSupabaseAdminClient>;
-type ReconcileDonePayment = NonNullable<Awaited<ReturnType<typeof fetchPaymentByOrderId>>>;
-type ReconcileOrder = {
-  id: string;
-  order_no: string;
-  artwork_id?: string | null;
-  total_amount?: number | null;
-  buyer_name?: string | null;
-  buyer_phone?: string | null;
-  metadata?: unknown;
-  order_items?: unknown;
-  payments?: unknown;
-  status?: string | null;
-};
 
 function clampInteger(raw: string | null, fallback: number, min: number, max: number): number {
   if (raw == null || raw.trim() === '') return fallback;
@@ -60,115 +45,6 @@ function metadataRecord(metadata: unknown): Record<string, unknown> {
 
 function isManualBankTransferOrder(metadata: unknown): boolean {
   return metadataRecord(metadata).payment_provider === 'manual_bank_transfer';
-}
-
-async function reconcileMissingDoneOrder({
-  supabase,
-  order,
-  tossPayment,
-  provider,
-  now,
-  sourceStatuses,
-  idempotencyKey,
-  errors,
-}: {
-  supabase: AdminClient;
-  order: ReconcileOrder;
-  tossPayment: ReconcileDonePayment;
-  provider: ReturnType<typeof resolveOrderProvider>;
-  now: string;
-  sourceStatuses: Array<'pending_payment' | 'awaiting_deposit'>;
-  idempotencyKey: string;
-  errors: string[];
-}): Promise<boolean> {
-  const paymentRecordResult = await ensureTossPaymentRecord({
-    supabase,
-    orderId: order.id,
-    tossPayment,
-    idempotencyKey,
-  });
-
-  if (!paymentRecordResult.ok) {
-    errors.push(`${order.order_no}: payment insert failed: ${paymentRecordResult.error}`);
-    return false;
-  }
-
-  const { data: updatedOrders, error: orderUpdateError } = await supabase
-    .from('orders')
-    .update({
-      status: 'paid',
-      paid_at: tossPayment.approvedAt ?? now,
-      metadata: {
-        ...metadataRecord(order.metadata),
-        payment_method: tossPayment.method ?? null,
-        reconciled: true,
-      },
-    })
-    .eq('id', order.id)
-    .in('status', sourceStatuses)
-    .select('id');
-
-  if (orderUpdateError) {
-    errors.push(`${order.order_no}: order update failed: ${orderUpdateError.message}`);
-    return false;
-  }
-
-  if (!updatedOrders || updatedOrders.length === 0) {
-    console.error(
-      `[reconcile-payments] SKIP: ${order.order_no} — order no longer ${sourceStatuses.join('/')}, skipping artwork_sales`
-    );
-    return false;
-  }
-
-  const lineItems = extractLineItems(order);
-  const salesLines =
-    lineItems.length > 0
-      ? lineItems
-      : order.artwork_id
-        ? [
-            {
-              artwork_id: order.artwork_id,
-              quantity: 1,
-              unit_price: order.total_amount ?? tossPayment.totalAmount,
-            },
-          ]
-        : [];
-
-  if (salesLines.length > 0) {
-    const salesResult = await recordOrderArtworkSales(supabase, {
-      orderId: order.id,
-      orderNo: order.order_no,
-      lineItems: salesLines,
-      source: 'toss',
-      sourceDetail: provider === 'widget' ? 'toss_widget' : 'toss_api',
-      buyerName: order.buyer_name ?? null,
-      buyerPhone: order.buyer_phone ?? null,
-      soldAt: tossPayment.approvedAt ?? now,
-    });
-
-    if (salesResult.inserted === false && salesResult.reason === 'artwork_taken') {
-      errors.push(
-        `${order.order_no}: artwork already taken by another order (동시 구매 경합 — 수동 환불 검토 필요)`
-      );
-      return false;
-    }
-
-    if (salesResult.inserted === false && salesResult.reason === 'error') {
-      errors.push(`${order.order_no}: artwork_sales insert failed: ${salesResult.error}`);
-      return false;
-    }
-
-    for (const item of salesLines) {
-      await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
-    }
-    revalidatePublicArtworkSurfaces();
-    for (const item of salesLines) {
-      revalidatePath(`/artworks/${item.artwork_id}`);
-      revalidatePath(`/en/artworks/${item.artwork_id}`);
-    }
-  }
-
-  return true;
 }
 
 /**
@@ -243,7 +119,7 @@ export async function GET(request: NextRequest) {
         }
 
         if (order.status === 'awaiting_deposit' && tossPayment.status === 'DONE') {
-          const repaired = await reconcileMissingDoneOrder({
+          const repaired = await markOrderPaid({
             supabase,
             order,
             tossPayment,
@@ -357,7 +233,7 @@ export async function GET(request: NextRequest) {
 
       if (tossPayment.status === 'DONE') {
         // ── 결제 완료인데 DB에 반영 안 된 케이스 → 보정 ──
-        const repaired = await reconcileMissingDoneOrder({
+        const repaired = await markOrderPaid({
           supabase,
           order,
           tossPayment,
@@ -531,7 +407,7 @@ export async function GET(request: NextRequest) {
       if (!tossPayment) continue;
 
       if (order.status === 'awaiting_deposit' && tossPayment.status === 'DONE') {
-        const repaired = await reconcileMissingDoneOrder({
+        const repaired = await markOrderPaid({
           supabase,
           order,
           tossPayment,

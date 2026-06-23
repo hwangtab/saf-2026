@@ -1,7 +1,6 @@
 import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import crypto from 'crypto';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { confirmPayment } from '@/lib/integrations/toss/confirm';
@@ -14,55 +13,24 @@ import {
   getOrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
-import { recordOrderArtworkSales, extractLineItems } from '@/lib/orders/record-artwork-sales';
+import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import {
   releaseReservedArtworksIfUnowned,
   reserveUniqueArtworksOrRollback,
 } from '@/lib/orders/reservations';
-import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
 import { apiError, getRequestLocale } from '@/lib/api-locale';
 import { runAllSettled } from '@/lib/server/after-response';
 import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
+import { markOrderPaidWithOutcome } from '@/lib/commerce/payment-lifecycle/mark-order-paid';
+import {
+  checkoutCookieName,
+  decodeCheckoutCookie,
+  isCheckoutTokenValid,
+} from '@/lib/commerce/checkout/checkout-session';
 
 export const runtime = 'nodejs';
 
 type OrderNotificationInfo = Awaited<ReturnType<typeof getOrderNotificationInfo>>;
-const CHECKOUT_TOKEN_HASH_KEY = 'checkout_token_hash';
-
-function hashCheckoutToken(token: string) {
-  return crypto.createHash('sha256').update(token).digest('hex');
-}
-
-function checkoutCookieName(orderId: string) {
-  return `saf_checkout_${orderId}`;
-}
-
-function decodeCheckoutCookie(value: string | undefined): { checkoutToken: string } | null {
-  if (!value) return null;
-  try {
-    const parsed = JSON.parse(Buffer.from(value, 'base64url').toString('utf8')) as unknown;
-    if (!parsed || typeof parsed !== 'object') return null;
-    const checkoutToken = (parsed as { checkoutToken?: unknown }).checkoutToken;
-    return typeof checkoutToken === 'string' && checkoutToken ? { checkoutToken } : null;
-  } catch {
-    return null;
-  }
-}
-
-function getCheckoutTokenHash(metadata: unknown): string | null {
-  if (!metadata || typeof metadata !== 'object') return null;
-  const value = (metadata as Record<string, unknown>)[CHECKOUT_TOKEN_HASH_KEY];
-  return typeof value === 'string' && value.length > 0 ? value : null;
-}
-
-function isCheckoutTokenValid(metadata: unknown, checkoutToken: string) {
-  const storedHash = getCheckoutTokenHash(metadata);
-  if (!storedHash || !checkoutToken) return false;
-  const providedHash = hashCheckoutToken(checkoutToken);
-  const stored = Buffer.from(storedHash);
-  const provided = Buffer.from(providedHash);
-  return stored.length === provided.length && crypto.timingSafeEqual(stored, provided);
-}
 
 function buildAnalyticsItem(
   order: { artwork_id: string | null; total_amount: number },
@@ -299,16 +267,8 @@ export async function POST(req: NextRequest) {
   const isDone = tossResponse.status === 'DONE';
   const existingMetadata = (order.metadata as Record<string, unknown>) ?? {};
 
-  const paymentRecordResult = await ensureTossPaymentRecord({
-    supabase,
-    orderId: order.id,
-    tossPayment: tossResponse,
-    idempotencyKey,
-  });
-
-  if (!paymentRecordResult.ok) {
-    console.error('[confirm] payment INSERT 실패:', paymentRecordResult.error);
-    const insertErrMsg = paymentRecordResult.error;
+  const buildPaymentRecordFailureResponse = (insertErrMsg: string) => {
+    console.error('[confirm] payment INSERT 실패:', insertErrMsg);
     after(async () => {
       await notifyEmail('error', '결제 기록 저장 실패', {
         주문번호: orderId,
@@ -325,149 +285,283 @@ export async function POST(req: NextRequest) {
       { error: apiError('payment_confirmation_failed', buyerLocale) },
       { status: 500 }
     );
-  }
+  };
 
   let reservedForVirtualAccount: string[] = [];
-
-  // 가상계좌는 실제 입금 안내를 보내기 전에 unique 작품 예약이 먼저 성공해야 한다.
-  if (isVirtualAccount) {
-    const reservationNow = new Date().toISOString();
-    const reservationResult = await reserveUniqueArtworksOrRollback(
-      supabase,
-      lineItems.map((item) => item.artwork_id),
-      reservationNow
-    );
-
-    if (!reservationResult.ok) {
-      const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
-      let cancelOk = false;
-      let cancelError: unknown = null;
-      try {
-        const cancelResult = await cancelPayment(
-          paymentKey,
-          { cancelReason: '작품 예약 실패로 가상계좌 주문 자동 취소' },
-          `auto-cancel-reservation-${orderId}`,
-          provider
-        );
-        cancelOk = cancelResult.success;
-        if (!cancelResult.success) cancelError = cancelResult.error;
-      } catch (err) {
-        cancelError = err;
-      }
-
-      const cancelledAt = new Date().toISOString();
-      const { error: orderCancelError } = await supabase
-        .from('orders')
-        .update({ status: 'cancelled', cancelled_at: cancelledAt })
-        .eq('id', order.id)
-        .eq('status', 'pending_payment');
-      if (orderCancelError) {
-        console.error('[confirm] VA reservation failure order cancel failed:', orderCancelError);
-      }
-
-      if (cancelOk) {
-        const { error: paymentCancelError } = await supabase
-          .from('payments')
-          .update({ status: 'CANCELED', cancelled_at: cancelledAt })
-          .eq('order_id', order.id);
-        if (paymentCancelError) {
-          console.error(
-            '[confirm] VA reservation failure payment sync failed:',
-            paymentCancelError
-          );
-        }
-      }
-
-      after(() =>
-        runAllSettled('toss-confirm.virtual-account-reservation-failed.notifications', [
-          () =>
-            notifyEmail(
-              cancelOk ? 'warning' : 'error',
-              '가상계좌 주문 작품 예약 실패 — 자동 취소',
-              {
-                주문번호: orderId,
-                paymentKey,
-                작품ID: reservationResult.failedArtworkId,
-                Toss취소: cancelOk ? '성공' : '실패',
-                ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
-                참고: cancelOk
-                  ? '가상계좌는 발급됐지만 작품 예약에 실패해 입금 안내 없이 주문을 취소했습니다.'
-                  : '가상계좌는 발급됐지만 작품 예약에 실패했고 Toss 취소가 실패했습니다. 구매자 입금 안내는 보내지 않았으니 Toss 관리자에서 수동 확인이 필요합니다.',
-              }
-            ),
-        ])
-      );
-
-      return NextResponse.json(
-        { error: apiError('artwork_sold_out', buyerLocale) },
-        { status: 409 }
-      );
-    }
-
-    reservedForVirtualAccount = reservationResult.reservedArtworkIds;
-  }
-
-  // Update order status with optimistic lock (.eq status guard) + metadata merge
   const newOrderStatus = isDone ? 'paid' : isVirtualAccount ? 'awaiting_deposit' : order.status;
+  let paidWarnings: Array<
+    { code: 'ARTWORK_SALES_FAILED'; error: string } | { code: 'NO_LINE_ITEMS' }
+  > = [];
 
-  const { data: updatedOrders, error: orderUpdateError } = await supabase
-    .from('orders')
-    .update({
-      status: newOrderStatus,
-      paid_at: isDone ? new Date().toISOString() : null,
-      metadata: { ...existingMetadata, payment_method: tossResponse.method ?? null },
-    })
-    .eq('id', order.id)
-    .eq('status', 'pending_payment') // optimistic lock — 레이스로 cancelled 된 경우 스킵
-    .select('id');
+  if (isDone) {
+    const paidOutcome = await markOrderPaidWithOutcome({
+      supabase,
+      order,
+      tossPayment: tossResponse,
+      provider,
+      now: new Date().toISOString(),
+      sourceStatuses: ['pending_payment'],
+      idempotencyKey,
+      errors: [],
+      continueOnSalesRecordFailure: true,
+      metadataPatch: { payment_method: tossResponse.method ?? null },
+    });
 
-  const orderPromoted = Array.isArray(updatedOrders) && updatedOrders.length > 0;
+    if (!paidOutcome.ok) {
+      if (paidOutcome.code === 'PAYMENT_RECORD_FAILED') {
+        return buildPaymentRecordFailureResponse(paidOutcome.error);
+      }
 
-  if (orderUpdateError || !orderPromoted) {
-    const { data: latestOrder } = await supabase
-      .from('orders')
-      .select('id,status')
-      .eq('id', order.id)
-      .single();
-    const latestStatus =
-      typeof latestOrder === 'object' && latestOrder && 'status' in latestOrder
-        ? String(latestOrder.status)
-        : null;
+      if (
+        paidOutcome.code === 'ORDER_UPDATE_FAILED' ||
+        paidOutcome.code === 'ORDER_STATE_MISMATCH'
+      ) {
+        const { data: latestOrder } = await supabase
+          .from('orders')
+          .select('id,status')
+          .eq('id', order.id)
+          .single();
+        const latestStatus =
+          typeof latestOrder === 'object' && latestOrder && 'status' in latestOrder
+            ? String(latestOrder.status)
+            : null;
 
-    if (!orderUpdateError && latestStatus === newOrderStatus) {
-      const paidNotifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
-      return NextResponse.json({
-        success: true,
-        alreadyPromoted: true,
-        status: tossResponse.status,
-        virtualAccount: isVirtualAccount ? (tossResponse.virtualAccount ?? null) : null,
-        analyticsItem: isDone
-          ? buildAnalyticsItem(order, paidNotifyInfo, tossResponse.totalAmount)
-          : null,
-        analyticsPurchase: isDone
-          ? buildAnalyticsPurchase(order, lineItems, paidNotifyInfo, tossResponse.totalAmount)
-          : null,
-      });
+        if (paidOutcome.code === 'ORDER_STATE_MISMATCH' && latestStatus === newOrderStatus) {
+          const paidNotifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
+          return NextResponse.json({
+            success: true,
+            alreadyPromoted: true,
+            status: tossResponse.status,
+            virtualAccount: null,
+            analyticsItem: buildAnalyticsItem(order, paidNotifyInfo, tossResponse.totalAmount),
+            analyticsPurchase: buildAnalyticsPurchase(
+              order,
+              lineItems,
+              paidNotifyInfo,
+              tossResponse.totalAmount
+            ),
+          });
+        }
+
+        const updateErrMsg =
+          paidOutcome.code === 'ORDER_UPDATE_FAILED'
+            ? paidOutcome.error
+            : 'orders update affected 0 rows';
+        console.error('[confirm] order UPDATE failed after Toss approval:', updateErrMsg);
+
+        if (paidOutcome.code === 'ORDER_STATE_MISMATCH') {
+          after(async () => {
+            const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+            try {
+              await cancelPayment(
+                paymentKey as string,
+                { cancelReason: '주문 취소 후 결제 승인 — 자동 환불' },
+                `auto-refund-${orderId}`,
+                provider
+              );
+            } catch (err) {
+              console.error('[confirm] auto-refund failed:', err);
+            }
+            await runAllSettled('toss-confirm.cancelled-order-refund.notification', [
+              () =>
+                notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
+                  주문번호: orderId,
+                  paymentKey: paymentKey as string,
+                  참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해 주세요.',
+                }),
+            ]);
+          });
+        }
+
+        after(() =>
+          runAllSettled('tossConfirm.orderStatusSyncFailed.notifications', [
+            () =>
+              notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
+                주문번호: orderId,
+                목표상태: newOrderStatus,
+                현재상태: latestStatus ?? '확인 실패',
+                에러: updateErrMsg,
+                참고: 'Toss 승인은 확인됐지만 내부 주문 상태 전이에 실패해 성공 알림과 매출 기록을 중단했습니다.',
+              }),
+            () =>
+              logSystemAction('payment_failed', 'order', order.id, {
+                stage: '결제 후 주문 상태 업데이트 실패',
+                order_no: orderId,
+                target_status: newOrderStatus,
+                latest_status: latestStatus,
+                error: updateErrMsg,
+              }),
+          ])
+        );
+
+        return NextResponse.json(
+          {
+            error: apiError('payment_confirmation_failed', buyerLocale),
+            code: 'ORDER_STATUS_SYNC_FAILED',
+          },
+          { status: paidOutcome.code === 'ORDER_UPDATE_FAILED' ? 500 : 409 }
+        );
+      }
+
+      if (paidOutcome.code === 'ARTWORK_TAKEN') {
+        console.error('[confirm] unique 작품 경합 패배 — 자동 환불 진행:', orderId);
+
+        const { error: refundMarkError } = await supabase
+          .from('orders')
+          .update({ status: 'refunded', refunded_at: new Date().toISOString() })
+          .eq('id', order.id)
+          .eq('status', 'paid');
+        if (refundMarkError) {
+          console.error('[confirm] 경합 패배 주문 refunded 마킹 실패:', refundMarkError);
+        }
+
+        const takenReleaseIds = paidOutcome.salesLines.map((item) => item.artwork_id);
+        if (takenReleaseIds.length > 0) {
+          const releaseResult = await releaseReservedArtworksIfUnowned(
+            supabase,
+            takenReleaseIds,
+            new Date().toISOString()
+          );
+          if (releaseResult.errors) {
+            console.error(
+              '[confirm] 경합 패배 reserved→available 해제 실패:',
+              releaseResult.errors
+            );
+          }
+          for (const artworkId of takenReleaseIds) {
+            revalidatePath(`/artworks/${artworkId}`);
+            revalidatePath(`/en/artworks/${artworkId}`);
+          }
+          revalidatePublicArtworkSurfaces();
+        }
+
+        after(async () => {
+          const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+          let refundOk = false;
+          try {
+            const result = await cancelPayment(
+              paymentKey,
+              { cancelReason: '동시 구매 경합으로 작품이 이미 판매되어 자동 환불' },
+              `auto-refund-taken-${orderId}`,
+              provider
+            );
+            refundOk = result.success;
+            if (!result.success) {
+              console.error('[confirm] 경합 패배 자동 환불 거부:', result.error);
+            }
+          } catch (err) {
+            console.error('[confirm] 경합 패배 자동 환불 실패:', err);
+          }
+
+          if (refundOk) {
+            const { error: paymentSyncError } = await supabase
+              .from('payments')
+              .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+              .eq('order_id', order.id);
+            if (paymentSyncError) {
+              console.error('[confirm] 경합 패배 payments status 정합 실패:', paymentSyncError);
+            }
+            await runAllSettled('toss-confirm.artwork-taken-refund.successNotifications', [
+              () =>
+                notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
+                  주문번호: orderId,
+                  paymentKey,
+                  참고: '다른 주문이 unique 작품을 먼저 가져가 자동 환불 완료.',
+                }),
+              ...(order.buyer_email
+                ? [
+                    () =>
+                      sendBuyerEmail(
+                        order.buyer_email!,
+                        'refunded',
+                        {
+                          orderNo: orderId,
+                          buyerName: order.buyer_name ?? '',
+                          artworkTitle: '',
+                          artistName: '',
+                          amount: tossResponse.totalAmount,
+                        },
+                        buyerLocale
+                      ),
+                  ]
+                : []),
+              () =>
+                sendBuyerSms(
+                  order.buyer_phone,
+                  'refunded',
+                  {
+                    buyerName: order.buyer_name ?? '',
+                    artworkTitle: '',
+                    amount: tossResponse.totalAmount,
+                  },
+                  buyerLocale,
+                  orderId
+                ),
+            ]);
+          } else {
+            await runAllSettled('toss-confirm.artwork-taken-refund.failureNotifications', [
+              () =>
+                notifyEmail('error', '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요', {
+                  주문번호: orderId,
+                  paymentKey,
+                  금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
+                  참고: '결제는 캡처됐으나 작품은 타인 선점, 자동 환불 실패. 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
+                }),
+            ]);
+          }
+        });
+
+        return NextResponse.json({
+          success: true,
+          status: 'REFUNDED',
+          refunded: true,
+          reason: 'artwork_taken',
+        });
+      }
+
+      if (paidOutcome.code === 'ARTWORK_SALES_FAILED') {
+        console.error('[confirm] artwork_sales INSERT 실패:', paidOutcome.error);
+        after(() =>
+          notifyEmail('error', '결제 후 판매 기록 생성 실패', {
+            주문번호: orderId,
+            에러: paidOutcome.error,
+            참고: '결제+주문 완료, 판매 기록 누락 — reconciliation cron 보정 예정',
+          })
+        );
+      }
+    } else {
+      paidWarnings = paidOutcome.warnings;
+    }
+  } else {
+    const paymentRecordResult = await ensureTossPaymentRecord({
+      supabase,
+      orderId: order.id,
+      tossPayment: tossResponse,
+      idempotencyKey,
+    });
+
+    if (!paymentRecordResult.ok) {
+      return buildPaymentRecordFailureResponse(paymentRecordResult.error);
     }
 
-    const updateErrMsg = orderUpdateError?.message ?? 'orders update affected 0 rows';
-    console.error('[confirm] order UPDATE failed after Toss approval:', updateErrMsg);
-
-    if (isVirtualAccount && !orderUpdateError) {
-      await releaseReservedArtworksIfUnowned(
+    // 가상계좌는 실제 입금 안내를 보내기 전에 unique 작품 예약이 먼저 성공해야 한다.
+    if (isVirtualAccount) {
+      const reservationNow = new Date().toISOString();
+      const reservationResult = await reserveUniqueArtworksOrRollback(
         supabase,
-        reservedForVirtualAccount,
-        new Date().toISOString()
+        lineItems.map((item) => item.artwork_id),
+        reservationNow
       );
-      after(async () => {
+
+      if (!reservationResult.ok) {
         const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
         let cancelOk = false;
         let cancelError: unknown = null;
         try {
           const cancelResult = await cancelPayment(
             paymentKey,
-            { cancelReason: '주문 상태 경합으로 가상계좌 주문 자동 취소' },
-            `auto-cancel-race-${orderId}`,
+            { cancelReason: '작품 예약 실패로 가상계좌 주문 자동 취소' },
+            `auto-cancel-reservation-${orderId}`,
             provider
           );
           cancelOk = cancelResult.success;
@@ -476,248 +570,197 @@ export async function POST(req: NextRequest) {
           cancelError = err;
         }
 
+        const cancelledAt = new Date().toISOString();
+        const { error: orderCancelError } = await supabase
+          .from('orders')
+          .update({ status: 'cancelled', cancelled_at: cancelledAt })
+          .eq('id', order.id)
+          .eq('status', 'pending_payment');
+        if (orderCancelError) {
+          console.error('[confirm] VA reservation failure order cancel failed:', orderCancelError);
+        }
+
         if (cancelOk) {
-          const { error: paymentSyncError } = await supabase
+          const { error: paymentCancelError } = await supabase
             .from('payments')
-            .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+            .update({ status: 'CANCELED', cancelled_at: cancelledAt })
             .eq('order_id', order.id);
-          if (paymentSyncError) {
-            console.error('[confirm] VA race payment sync failed:', paymentSyncError);
+          if (paymentCancelError) {
+            console.error(
+              '[confirm] VA reservation failure payment sync failed:',
+              paymentCancelError
+            );
           }
         }
 
-        await runAllSettled('toss-confirm.virtual-account-race-cancel.notification', [
-          () =>
-            notifyEmail(
-              cancelOk ? 'warning' : 'error',
-              '가상계좌 주문 상태 경합 — 입금 안내 보류',
-              {
-                주문번호: orderId,
-                paymentKey,
-                Toss취소: cancelOk ? '성공' : '실패',
-                ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
-                참고: '가상계좌는 발급됐지만 주문 상태가 이미 바뀌어 입금 안내를 보내지 않았습니다.',
-              }
-            ),
-        ]);
-      });
-    }
+        after(() =>
+          runAllSettled('toss-confirm.virtual-account-reservation-failed.notifications', [
+            () =>
+              notifyEmail(
+                cancelOk ? 'warning' : 'error',
+                '가상계좌 주문 작품 예약 실패 — 자동 취소',
+                {
+                  주문번호: orderId,
+                  paymentKey,
+                  작품ID: reservationResult.failedArtworkId,
+                  Toss취소: cancelOk ? '성공' : '실패',
+                  ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
+                  참고: cancelOk
+                    ? '가상계좌는 발급됐지만 작품 예약에 실패해 입금 안내 없이 주문을 취소했습니다.'
+                    : '가상계좌는 발급됐지만 작품 예약에 실패했고 Toss 취소가 실패했습니다. 구매자 입금 안내는 보내지 않았으니 Toss 관리자에서 수동 확인이 필요합니다.',
+                }
+              ),
+          ])
+        );
 
-    if (isDone && !orderUpdateError) {
-      after(async () => {
-        const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
-        try {
-          await cancelPayment(
-            paymentKey as string,
-            { cancelReason: '주문 취소 후 결제 승인 — 자동 환불' },
-            `auto-refund-${orderId}`,
-            provider
-          );
-        } catch (err) {
-          console.error('[confirm] auto-refund failed:', err);
-        }
-        await runAllSettled('toss-confirm.cancelled-order-refund.notification', [
-          () =>
-            notifyEmail('error', '결제 승인 후 주문 취소 감지 — 자동 환불 시도', {
-              주문번호: orderId,
-              paymentKey: paymentKey as string,
-              참고: '결제 승인과 주문 취소가 동시에 발생. 자동 환불을 시도했으나 결과를 수동 확인해 주세요.',
-            }),
-        ]);
-      });
-    }
-
-    after(() =>
-      runAllSettled('tossConfirm.orderStatusSyncFailed.notifications', [
-        () =>
-          notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
-            주문번호: orderId,
-            목표상태: newOrderStatus,
-            현재상태: latestStatus ?? '확인 실패',
-            에러: updateErrMsg,
-            참고: 'Toss 승인은 확인됐지만 내부 주문 상태 전이에 실패해 성공 알림과 매출 기록을 중단했습니다.',
-          }),
-        () =>
-          logSystemAction('payment_failed', 'order', order.id, {
-            stage: '결제 후 주문 상태 업데이트 실패',
-            order_no: orderId,
-            target_status: newOrderStatus,
-            latest_status: latestStatus,
-            error: updateErrMsg,
-          }),
-      ])
-    );
-
-    return NextResponse.json(
-      {
-        error: apiError('payment_confirmation_failed', buyerLocale),
-        code: 'ORDER_STATUS_SYNC_FAILED',
-      },
-      { status: orderUpdateError ? 500 : 409 }
-    );
-  }
-
-  if (isVirtualAccount) {
-    for (const artworkId of reservedForVirtualAccount) {
-      revalidatePath(`/artworks/${artworkId}`);
-      revalidatePath(`/en/artworks/${artworkId}`);
-    }
-    revalidatePublicArtworkSurfaces();
-  }
-
-  // If fully paid, insert artwork_sales record
-  // (DB trigger update_artwork_status_on_sale will mark artwork as sold)
-  if (isDone && updatedOrders && updatedOrders.length > 0) {
-    const salesResult = await recordOrderArtworkSales(supabase, {
-      orderId: order.id,
-      orderNo: order.order_no,
-      lineItems,
-      source: 'toss',
-      sourceDetail: provider === 'widget' ? 'toss_widget' : 'toss_api',
-      buyerName: order.buyer_name,
-      buyerPhone: order.buyer_phone,
-      soldAt: new Date().toISOString(),
-    });
-
-    if (salesResult.inserted === false && salesResult.reason === 'artwork_taken') {
-      // 동시 구매 경합 패배: 다른 주문이 이 unique 작품의 active 매출을 먼저 기록했고
-      // (enforce_unique_edition_single_active_sale 트리거가 INSERT 차단), 이쪽은 결제가 이미
-      // 캡처된 상태다. 작품을 줄 수 없으므로 자동 환불 + 주문 refunded 마킹.
-      // ⚠ 이 분기에서는 deriveAndSyncArtworkStatus / 추가 매출 기록을 하지 않는다
-      //   (이 주문엔 작품이 없고, 작품은 승자 주문 소유라 건드리면 안 됨).
-      console.error('[confirm] unique 작품 경합 패배 — 자동 환불 진행:', orderId);
-
-      // 주문 paid → refunded (optimistic lock: 방금 paid로 올린 이 주문만)
-      const { error: refundMarkError } = await supabase
-        .from('orders')
-        .update({ status: 'refunded', refunded_at: new Date().toISOString() })
-        .eq('id', order.id)
-        .eq('status', 'paid');
-      if (refundMarkError) {
-        console.error('[confirm] 경합 패배 주문 refunded 마킹 실패:', refundMarkError);
+        return NextResponse.json(
+          { error: apiError('artwork_sold_out', buyerLocale) },
+          { status: 409 }
+        );
       }
 
-      // 재고 누수 방지: 이 주문의 다른(안 팔린) 라인 작품이 reserved로 남으면 해제한다.
-      // 승자 주문이 소유한 sold 작품은 .eq('status','reserved') 가드로 제외됨. (card 경로는
-      // reserved가 없어 no-op이지만 가상계좌·동시진행 케이스 대비 방어적으로 둠.)
-      const takenReleaseIds = lineItems.map((item) => item.artwork_id);
-      if (takenReleaseIds.length > 0) {
-        const releaseResult = await releaseReservedArtworksIfUnowned(
+      reservedForVirtualAccount = reservationResult.reservedArtworkIds;
+    }
+
+    // Update order status with optimistic lock (.eq status guard) + metadata merge
+    const { data: updatedOrders, error: orderUpdateError } = await supabase
+      .from('orders')
+      .update({
+        status: newOrderStatus,
+        paid_at: null,
+        metadata: { ...existingMetadata, payment_method: tossResponse.method ?? null },
+      })
+      .eq('id', order.id)
+      .eq('status', 'pending_payment') // optimistic lock — 레이스로 cancelled 된 경우 스킵
+      .select('id');
+
+    const orderPromoted = Array.isArray(updatedOrders) && updatedOrders.length > 0;
+
+    if (orderUpdateError || !orderPromoted) {
+      const { data: latestOrder } = await supabase
+        .from('orders')
+        .select('id,status')
+        .eq('id', order.id)
+        .single();
+      const latestStatus =
+        typeof latestOrder === 'object' && latestOrder && 'status' in latestOrder
+          ? String(latestOrder.status)
+          : null;
+
+      if (!orderUpdateError && latestStatus === newOrderStatus) {
+        return NextResponse.json({
+          success: true,
+          alreadyPromoted: true,
+          status: tossResponse.status,
+          virtualAccount: isVirtualAccount ? (tossResponse.virtualAccount ?? null) : null,
+          analyticsItem: null,
+          analyticsPurchase: null,
+        });
+      }
+
+      const updateErrMsg = orderUpdateError?.message ?? 'orders update affected 0 rows';
+      console.error('[confirm] order UPDATE failed after Toss approval:', updateErrMsg);
+
+      if (isVirtualAccount && !orderUpdateError) {
+        await releaseReservedArtworksIfUnowned(
           supabase,
-          takenReleaseIds,
+          reservedForVirtualAccount,
           new Date().toISOString()
         );
-        if (releaseResult.errors) {
-          console.error('[confirm] 경합 패배 reserved→available 해제 실패:', releaseResult.errors);
-        }
-        for (const artworkId of takenReleaseIds) {
-          revalidatePath(`/artworks/${artworkId}`);
-          revalidatePath(`/en/artworks/${artworkId}`);
-        }
-        revalidatePublicArtworkSurfaces();
-      }
-
-      // 자동 환불 + 결과별 알림 — 결제 응답을 블로킹하지 않도록 after()로 처리.
-      // 환불 성공이 확인된 뒤에만 구매자에게 '환불' 안내(실패했는데 환불됐다고 잘못 알리는 것 방지).
-      after(async () => {
-        const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
-        let refundOk = false;
-        try {
-          const result = await cancelPayment(
-            paymentKey,
-            { cancelReason: '동시 구매 경합으로 작품이 이미 판매되어 자동 환불' },
-            `auto-refund-taken-${orderId}`,
-            provider
-          );
-          refundOk = result.success;
-          if (!result.success) {
-            console.error('[confirm] 경합 패배 자동 환불 거부:', result.error);
+        after(async () => {
+          const { cancelPayment } = await import('@/lib/integrations/toss/cancel');
+          let cancelOk = false;
+          let cancelError: unknown = null;
+          try {
+            const cancelResult = await cancelPayment(
+              paymentKey,
+              { cancelReason: '주문 상태 경합으로 가상계좌 주문 자동 취소' },
+              `auto-cancel-race-${orderId}`,
+              provider
+            );
+            cancelOk = cancelResult.success;
+            if (!cancelResult.success) cancelError = cancelResult.error;
+          } catch (err) {
+            cancelError = err;
           }
-        } catch (err) {
-          console.error('[confirm] 경합 패배 자동 환불 실패:', err);
-        }
 
-        if (refundOk) {
-          // 주문은 refunded인데 payments가 DONE으로 남는 불일치 해소.
-          const { error: paymentSyncError } = await supabase
-            .from('payments')
-            .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
-            .eq('order_id', order.id);
-          if (paymentSyncError) {
-            console.error('[confirm] 경합 패배 payments status 정합 실패:', paymentSyncError);
+          if (cancelOk) {
+            const { error: paymentSyncError } = await supabase
+              .from('payments')
+              .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+              .eq('order_id', order.id);
+            if (paymentSyncError) {
+              console.error('[confirm] VA race payment sync failed:', paymentSyncError);
+            }
           }
-          await runAllSettled('toss-confirm.artwork-taken-refund.successNotifications', [
+
+          await runAllSettled('toss-confirm.virtual-account-race-cancel.notification', [
             () =>
-              notifyEmail('info', '동시 구매 경합 — 자동 환불 완료', {
-                주문번호: orderId,
-                paymentKey,
-                참고: '다른 주문이 unique 작품을 먼저 가져가 자동 환불 완료.',
-              }),
-            ...(order.buyer_email
-              ? [
-                  () =>
-                    sendBuyerEmail(
-                      order.buyer_email!,
-                      'refunded',
-                      {
-                        orderNo: orderId,
-                        buyerName: order.buyer_name ?? '',
-                        artworkTitle: '',
-                        artistName: '',
-                        amount: tossResponse.totalAmount,
-                      },
-                      buyerLocale
-                    ),
-                ]
-              : []),
-            () =>
-              sendBuyerSms(
-                order.buyer_phone,
-                'refunded',
+              notifyEmail(
+                cancelOk ? 'warning' : 'error',
+                '가상계좌 주문 상태 경합 — 입금 안내 보류',
                 {
-                  buyerName: order.buyer_name ?? '',
-                  artworkTitle: '',
-                  amount: tossResponse.totalAmount,
-                },
-                buyerLocale,
-                orderId
+                  주문번호: orderId,
+                  paymentKey,
+                  Toss취소: cancelOk ? '성공' : '실패',
+                  ...(cancelError ? { 에러: JSON.stringify(cancelError).slice(0, 500) } : {}),
+                  참고: '가상계좌는 발급됐지만 주문 상태가 이미 바뀌어 입금 안내를 보내지 않았습니다.',
+                }
               ),
           ]);
-        } else {
-          // 환불 실패 — 구매자에게 '환불' 안내하지 않고 운영팀에 즉시 수동환불 요청.
-          await runAllSettled('toss-confirm.artwork-taken-refund.failureNotifications', [
-            () =>
-              notifyEmail('error', '🚨 동시 구매 경합 자동 환불 실패 — 즉시 수동 환불 필요', {
-                주문번호: orderId,
-                paymentKey,
-                금액: `₩${tossResponse.totalAmount.toLocaleString('ko-KR')}`,
-                참고: '결제는 캡처됐으나 작품은 타인 선점, 자동 환불 실패. 구매자 안내 보류 — 즉시 수동 환불 처리 요망.',
-              }),
-          ]);
-        }
-      });
+        });
+      }
 
-      // 정상 결제완료 알림/상태동기화는 건너뛰고 응답 반환 (환불된 주문)
-      return NextResponse.json({
-        success: true,
-        status: 'REFUNDED',
-        refunded: true,
-        reason: 'artwork_taken',
-      });
+      after(() =>
+        runAllSettled('tossConfirm.orderStatusSyncFailed.notifications', [
+          () =>
+            notifyEmail('error', '결제 후 주문 상태 업데이트 실패', {
+              주문번호: orderId,
+              목표상태: newOrderStatus,
+              현재상태: latestStatus ?? '확인 실패',
+              에러: updateErrMsg,
+              참고: 'Toss 승인은 확인됐지만 내부 주문 상태 전이에 실패해 성공 알림과 매출 기록을 중단했습니다.',
+            }),
+          () =>
+            logSystemAction('payment_failed', 'order', order.id, {
+              stage: '결제 후 주문 상태 업데이트 실패',
+              order_no: orderId,
+              target_status: newOrderStatus,
+              latest_status: latestStatus,
+              error: updateErrMsg,
+            }),
+        ])
+      );
+
+      return NextResponse.json(
+        {
+          error: apiError('payment_confirmation_failed', buyerLocale),
+          code: 'ORDER_STATUS_SYNC_FAILED',
+        },
+        { status: orderUpdateError ? 500 : 409 }
+      );
     }
 
-    if (salesResult.inserted === false && salesResult.reason === 'error') {
-      console.error('[confirm] artwork_sales INSERT 실패:', salesResult.error);
+    if (isVirtualAccount) {
+      for (const artworkId of reservedForVirtualAccount) {
+        revalidatePath(`/artworks/${artworkId}`);
+        revalidatePath(`/en/artworks/${artworkId}`);
+      }
+      revalidatePublicArtworkSurfaces();
+    }
+  }
+
+  for (const warning of paidWarnings) {
+    if (warning.code === 'ARTWORK_SALES_FAILED') {
+      console.error('[confirm] artwork_sales INSERT 실패:', warning.error);
       after(() =>
         notifyEmail('error', '결제 후 판매 기록 생성 실패', {
           주문번호: orderId,
-          에러: salesResult.error,
+          에러: warning.error,
           참고: '결제+주문 완료, 판매 기록 누락 — reconciliation cron 보정 예정',
         })
       );
-    } else if (salesResult.inserted === false && salesResult.reason === 'no_line_items') {
-      // 결제 완료(paid)인데 order_items가 비어 매출이 기록되지 않음 — 정상 흐름에선
-      // createOrder가 항상 order_items를 쓰므로 발생 불가. 발생 시 데이터 정합성 이상이라 알림.
+    } else if (warning.code === 'NO_LINE_ITEMS') {
       console.error('[confirm] paid order with no order_items:', orderId);
       after(() =>
         notifyEmail('error', '결제 완료 주문에 품목 없음 — 판매 기록 누락', {
@@ -726,24 +769,10 @@ export async function POST(req: NextRequest) {
         })
       );
     }
-
-    // BUG 40: DB 트리거 실패 대비 방어적으로 artwork 상태 동기화
-    for (const item of lineItems) {
-      await deriveAndSyncArtworkStatus(supabase, item.artwork_id);
-    }
   }
 
   // 알림용 주문 컨텍스트 (작품/작가/배송지/항목별 금액 포함) — admin/buyer 공통
   const notifyInfo = await getOrderNotificationInfo(supabase, { id: order.id });
-
-  // 결제 완료 시 공개 작품 페이지 캐시 무효화
-  if (isDone) {
-    for (const item of lineItems) {
-      revalidatePath(`/artworks/${item.artwork_id}`);
-      revalidatePath(`/en/artworks/${item.artwork_id}`);
-    }
-    revalidatePublicArtworkSurfaces();
-  }
 
   // 결제 성공 알림 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
   if (isDone) {

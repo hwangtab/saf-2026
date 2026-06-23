@@ -29,13 +29,15 @@ describe('checkout success purchase analytics', () => {
     expect(src).toContain('shippingAmount');
   });
 
-  it('requires checkoutToken before calling Toss confirm', () => {
+  it('confirm route reads checkout token from request body or shared cookie helper before validating metadata', () => {
     const src = read(CONFIRM_ROUTE);
 
+    expect(src).toContain('@/lib/commerce/checkout/checkout-session');
     expect(src).toContain('checkoutToken');
     expect(src).toContain('decodeCheckoutCookie');
     expect(src).toContain('resolvedCheckoutToken');
     expect(src).toContain('invalid_checkout_token');
     expect(src).toContain('isCheckoutTokenValid(order.metadata, resolvedCheckoutToken)');
+    expect(src).not.toContain('function hashCheckoutToken(token: string)');
   });
 });
