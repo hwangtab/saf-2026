@@ -111,7 +111,9 @@ export default async function HomeHero({ locale }: { locale: string }) {
           )}
           {status}
         </span>
-        <h1 className="animate-hero-reveal [animation-delay:110ms] text-hero text-white mb-5 drop-shadow-lg break-keep text-balance max-w-4xl whitespace-pre-line">
+        {/* h1은 reveal 애니 제외 — LCP element 후보(텍스트)가 opacity:0에서 시작하면 LCP가
+            밀릴 수 있어 이론적 리스크를 0으로. 제목은 즉시 완성, 주변(뱃지·desc·CTA)만 staggered. */}
+        <h1 className="text-hero text-white mb-5 drop-shadow-lg break-keep text-balance max-w-4xl whitespace-pre-line">
           {title}
         </h1>
         <p className="animate-hero-reveal [animation-delay:220ms] text-body-large text-white/90 mb-8 max-w-2xl break-keep text-balance">
