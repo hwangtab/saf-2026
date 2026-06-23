@@ -1251,7 +1251,9 @@
       "formPrivacyPolicyLink": "국외 이전(Supabase·Vercel·Google) 포함 전체 개인정보 처리 내역은",
       "formPrivacyPolicyLinkText": "개인정보처리방침",
       "formSubmitting": "제출 중…",
-      "formFooter": "서명은 30초입니다. 입력하신 정보는 청원 운영에만 사용되며, 청원 종료 후 6개월 내 파기됩니다."
+      "formFooter": "서명은 30초입니다. 입력하신 정보는 청원 운영에만 사용되며, 청원 종료 후 6개월 내 파기됩니다.",
+      "fundingCtaEyebrow": "테라코타 후원 프로젝트",
+      "fundingCtaTitle": "오윤 테라코타 보존 후원 — 벽화를 시민의 품으로 옮기는 일에 함께하기"
     }
   },
   "wishlist": {
@@ -1551,5 +1553,34 @@
         "storyPrintTitle": "오윤 사후판화 — 진품 인증·에디션·미술관 소장작과의 차이"
       }
     }
+  },
+  "funding": {
+    "agreeRequired": "필수 약관에 동의해 주세요.",
+    "backerListTitle": "후원자 명단",
+    "backers": "{count}명 후원",
+    "closed": "이 프로젝트는 현재 후원을 받지 않습니다.",
+    "daysLeft": "{days}일 남음",
+    "error": {
+      "INTERNAL_ERROR": "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      "INVALID_INPUT": "입력한 정보를 다시 확인해 주세요.",
+      "PROJECT_CLOSED": "이 프로젝트는 마감되었습니다.",
+      "RATE_LIMITED": "잠시 후 다시 시도해 주세요.",
+      "TIER_SOLD_OUT": "선택한 리워드가 품절되었습니다."
+    },
+    "goalLabel": "목표 금액",
+    "privacyConsent": "개인정보 수집 및 이용에 동의합니다.",
+    "rewardListTitle": "리워드 선택",
+    "rewardSoldOut": "품절",
+    "confirmFail": "결제 확인 중 오류가 발생했습니다. 고객센터로 문의해 주세요.",
+    "confirming": "결제를 확인하는 중...",
+    "submitting": "처리 중...",
+    "support": "후원하기",
+    "termsConsent": "후원 및 결제 약관에 동의합니다.",
+    "thankYou": "후원해 주셔서 감사합니다!",
+    "thankYouDesc": "소중한 후원이 예술인들의 금융 자립을 돕는 씨앗이 됩니다.",
+    "consentGroupLabel": "후원 동의",
+    "paymentFailed": "결제에 실패했습니다",
+    "paymentFailedDesc": "결제 처리 중 문제가 발생했습니다. 다시 시도해 주세요.",
+    "backToProject": "프로젝트로 돌아가기"
   }
 }

@@ -2186,9 +2186,11 @@ export type Database = {
           description: string | null;
           estimated_delivery: string | null;
           id: string;
+          image_url: string | null;
           is_made_to_order: boolean;
           project_id: string;
           requires_shipping: boolean;
+          reward_kind: string;
           sort_order: number;
           title: string;
           total_quantity: number | null;
@@ -2199,9 +2201,11 @@ export type Database = {
           description?: string | null;
           estimated_delivery?: string | null;
           id?: string;
+          image_url?: string | null;
           is_made_to_order?: boolean;
           project_id: string;
           requires_shipping?: boolean;
+          reward_kind?: string;
           sort_order?: number;
           title: string;
           total_quantity?: number | null;
@@ -2212,9 +2216,11 @@ export type Database = {
           description?: string | null;
           estimated_delivery?: string | null;
           id?: string;
+          image_url?: string | null;
           is_made_to_order?: boolean;
           project_id?: string;
           requires_shipping?: boolean;
+          reward_kind?: string;
           sort_order?: number;
           title?: string;
           total_quantity?: number | null;
@@ -2767,7 +2773,17 @@ export type Database = {
         Returns: string;
       };
       funding_project_status: { Args: { p_slug: string }; Returns: Json };
+      funding_public_backers: {
+        Args: { p_limit?: number; p_slug: string };
+        Returns: {
+          amount: number;
+          created_at: string;
+          display_name: string;
+          message: string;
+        }[];
+      };
       funding_tier_claimed: { Args: { p_tier_id: string }; Returns: number };
+      funding_tier_remaining: { Args: { p_slug: string }; Returns: Json };
       get_artist_commerce_dashboard: {
         Args: { lim?: number; since_ts: string };
         Returns: {

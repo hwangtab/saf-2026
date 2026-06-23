@@ -1251,7 +1251,9 @@
       "formPrivacyPolicyLink": "Full details including overseas data transfer (Supabase, Vercel, Google) are in our",
       "formPrivacyPolicyLinkText": "Privacy Policy",
       "formSubmitting": "Submitting…",
-      "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close."
+      "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close.",
+      "fundingCtaEyebrow": "Terracotta Preservation Fund",
+      "fundingCtaTitle": "Support the Oh Yoon Terracotta Project — help move the mural into public hands"
     }
   },
   "wishlist": {
@@ -1551,5 +1553,34 @@
         "storyPrintTitle": "Oh Yoon posthumous prints — authentication, editions, and museum works"
       }
     }
+  },
+  "funding": {
+    "agreeRequired": "Please agree to the required terms.",
+    "backerListTitle": "Backers",
+    "backers": "{count} backers",
+    "closed": "This project is not currently accepting pledges.",
+    "daysLeft": "{days} days left",
+    "error": {
+      "INTERNAL_ERROR": "A temporary error occurred. Please try again shortly.",
+      "INVALID_INPUT": "Please check the information you entered.",
+      "PROJECT_CLOSED": "This project has closed.",
+      "RATE_LIMITED": "Please try again shortly.",
+      "TIER_SOLD_OUT": "The selected reward is sold out."
+    },
+    "goalLabel": "Goal",
+    "privacyConsent": "I agree to the collection and use of personal information.",
+    "rewardListTitle": "Choose a Reward",
+    "rewardSoldOut": "Sold out",
+    "confirmFail": "An error occurred while confirming your payment. Please contact support.",
+    "confirming": "Confirming payment...",
+    "submitting": "Processing...",
+    "support": "Back this project",
+    "termsConsent": "I agree to the pledge and payment terms.",
+    "thankYou": "Thank you for your support!",
+    "thankYouDesc": "Your generous pledge helps artists achieve financial independence.",
+    "consentGroupLabel": "Pledge consent",
+    "paymentFailed": "Payment Failed",
+    "paymentFailedDesc": "There was a problem processing your payment. Please try again.",
+    "backToProject": "Back to project"
   }
 }

@@ -42,6 +42,10 @@ describe('isHeroRoute', () => {
       ['/terms/artist', true],
       ['/terms/exhibitor', true],
       ['/archive/2023/videos/abc123', true],
+      ['/funding/oh-yoon-terracotta', true],
+      // 펀딩 터미널 서브라우트 — hero 레이아웃 대상 아님 (PageHero 없음, 헤더 투명화 금지)
+      ['/funding/oh-yoon-terracotta/success', false],
+      ['/funding/oh-yoon-terracotta/fail', false],
     ] as const)('%s → %s', (path, expected) => {
       expect(isHeroRoute(path)).toBe(expected);
     });
