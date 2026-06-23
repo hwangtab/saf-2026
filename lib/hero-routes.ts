@@ -56,6 +56,7 @@ const HERO_EXACT = new Set<string>([
 const HERO_PREFIXES = [
   '/artworks/artist/',
   '/artworks/category/',
+  '/funding/',
   '/stories/',
   '/news/',
   '/terms/',

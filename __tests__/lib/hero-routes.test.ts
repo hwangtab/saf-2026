@@ -42,6 +42,7 @@ describe('isHeroRoute', () => {
       ['/terms/artist', true],
       ['/terms/exhibitor', true],
       ['/archive/2023/videos/abc123', true],
+      ['/funding/oh-yoon-terracotta', true],
     ] as const)('%s → %s', (path, expected) => {
       expect(isHeroRoute(path)).toBe(expected);
     });

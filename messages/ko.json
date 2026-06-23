@@ -1551,5 +1551,26 @@
         "storyPrintTitle": "오윤 사후판화 — 진품 인증·에디션·미술관 소장작과의 차이"
       }
     }
+  },
+  "funding": {
+    "agreeRequired": "필수 약관에 동의해 주세요.",
+    "backerListTitle": "후원자 명단",
+    "backers": "{count}명 후원",
+    "closed": "이 프로젝트는 현재 후원을 받지 않습니다.",
+    "daysLeft": "{days}일 남음",
+    "error": {
+      "INTERNAL_ERROR": "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      "INVALID_INPUT": "입력한 정보를 다시 확인해 주세요.",
+      "PROJECT_CLOSED": "이 프로젝트는 마감되었습니다.",
+      "RATE_LIMITED": "잠시 후 다시 시도해 주세요.",
+      "TIER_SOLD_OUT": "선택한 리워드가 품절되었습니다."
+    },
+    "goalLabel": "목표 금액",
+    "privacyConsent": "개인정보 수집 및 이용에 동의합니다.",
+    "rewardListTitle": "리워드 선택",
+    "rewardSoldOut": "품절",
+    "submitting": "처리 중...",
+    "support": "후원하기",
+    "termsConsent": "후원 및 결제 약관에 동의합니다."
   }
 }

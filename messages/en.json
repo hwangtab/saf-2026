@@ -1551,5 +1551,26 @@
         "storyPrintTitle": "Oh Yoon posthumous prints — authentication, editions, and museum works"
       }
     }
+  },
+  "funding": {
+    "agreeRequired": "Please agree to the required terms.",
+    "backerListTitle": "Backers",
+    "backers": "{count} backers",
+    "closed": "This project is not currently accepting pledges.",
+    "daysLeft": "{days} days left",
+    "error": {
+      "INTERNAL_ERROR": "A temporary error occurred. Please try again shortly.",
+      "INVALID_INPUT": "Please check the information you entered.",
+      "PROJECT_CLOSED": "This project has closed.",
+      "RATE_LIMITED": "Please try again shortly.",
+      "TIER_SOLD_OUT": "The selected reward is sold out."
+    },
+    "goalLabel": "Goal",
+    "privacyConsent": "I agree to the collection and use of personal information.",
+    "rewardListTitle": "Choose a Reward",
+    "rewardSoldOut": "Sold out",
+    "submitting": "Processing...",
+    "support": "Back this project",
+    "termsConsent": "I agree to the pledge and payment terms."
   }
 }
