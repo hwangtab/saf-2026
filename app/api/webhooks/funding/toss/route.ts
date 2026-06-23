@@ -1,3 +1,4 @@
+import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { fetchPayment } from '@/lib/integrations/toss/confirm';
@@ -7,6 +8,7 @@ import {
   isPaymentStatusChanged,
 } from '@/lib/integrations/toss/webhook';
 import { isFundingOrderId } from '@/lib/funding/order-id';
+import { notifyEmail } from '@/lib/notify';
 
 export const runtime = 'nodejs';
 
@@ -69,6 +71,20 @@ export async function POST(req: NextRequest) {
   });
 
   const c = confirmData as { ok: boolean; code?: string } | null;
+
+  // I2/I3: 결제는 완료됐으나 RPC가 CONFIRMED/ALREADY_PAID 외 코드를 반환한 경우
+  // (예: TIER_SOLD_OUT, AMOUNT_MISMATCH, INVALID_STATE) — 후원자는 돈을 냈지만 리워드가 없음.
+  // 운영자 수동 확인이 필요하므로 알림 발송. after()로 응답 후 실행(serverless abort 방지).
+  if (c && !c.ok && c.code !== 'ALREADY_PAID') {
+    after(async () => {
+      await notifyEmail('error', '[펀딩 웹훅] 결제 완료 후 확정 실패 — 수동 확인 필요', {
+        주문번호: orderId,
+        'Payment Key': paymentKey,
+        'RPC 코드': c.code ?? '(코드 없음)',
+        처리: 'Toss DONE 확인됨. pledge 미확정. 환불 여부 수동 결정 필요.',
+      });
+    });
+  }
 
   if (c?.ok && c.code === 'CONFIRMED') {
     // funding_payments INSERT — pledge_id NOT NULL이므로 funding_pledges에서 조회

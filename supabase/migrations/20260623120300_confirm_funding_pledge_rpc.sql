@@ -34,13 +34,18 @@ BEGIN
 
   -- 단일 티어(1차) — 한정 티어면 잔량 재검증
   SELECT * INTO v_item FROM public.pledge_items WHERE pledge_id = v_pledge.id LIMIT 1;
+  IF NOT FOUND THEN
+    -- 결제 가능 pledge는 반드시 item이 있어야 함. 없으면 한정 티어 검증을 건너뛰는 버그가 되므로 거부.
+    RETURN jsonb_build_object('ok', false, 'code', 'INVALID_STATE');
+  END IF;
   SELECT * INTO v_tier FROM public.reward_tiers WHERE id = v_item.reward_tier_id;
   IF v_tier.total_quantity IS NOT NULL THEN
     PERFORM pg_advisory_xact_lock(hashtext('reward:' || v_tier.id::text));
     IF v_pledge.hold_expires_at IS NULL OR v_pledge.hold_expires_at <= now() THEN
       v_claimed := public.funding_tier_claimed(v_tier.id);
-      -- 미만료 pending(자기 자신 hold 만료 시 제외됨)이 한도를 넘으면 거부
-      IF (v_tier.total_quantity - v_claimed) < 0 THEN
+      -- hold 만료 경로: funding_tier_claimed는 이 pledge를 제외한 claimed 수량 반환.
+      -- 이 pledge의 수량까지 담을 공간이 있어야 하므로 v_item.quantity 기준으로 비교.
+      IF (v_tier.total_quantity - v_claimed) < v_item.quantity THEN
         RETURN jsonb_build_object('ok', false, 'code', 'TIER_SOLD_OUT');
       END IF;
     END IF;
