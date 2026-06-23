@@ -2768,6 +2768,7 @@ export type Database = {
       };
       funding_project_status: { Args: { p_slug: string }; Returns: Json };
       funding_tier_claimed: { Args: { p_tier_id: string }; Returns: number };
+      funding_tier_remaining: { Args: { p_slug: string }; Returns: Json };
       get_artist_commerce_dashboard: {
         Args: { lim?: number; since_ts: string };
         Returns: {
