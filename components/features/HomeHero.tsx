@@ -67,7 +67,7 @@ export default async function HomeHero({ locale }: { locale: string }) {
         fetchPriority="high"
         quality={60}
         sizes="100vw"
-        className="object-cover"
+        className="object-cover animate-ken-burns"
       />
 
       {/* 저해상도/흐린 작품 사진(softTreatment) 비네팅 — 블러는 작품을 죽이므로 폐기(2026-06-17 PM).
@@ -97,7 +97,7 @@ export default async function HomeHero({ locale }: { locale: string }) {
       {/* 텍스트 블록 — 중앙 정렬, hero 톤 */}
       <div className="relative z-10 flex h-full min-h-[70svh] md:min-h-[85svh] flex-col items-center justify-center px-4 pt-24 pb-32 md:pb-40 text-center text-white">
         <span
-          className={`mb-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase ${
+          className={`animate-hero-reveal mb-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase ${
             slideStatus === 'on'
               ? 'bg-success/90 text-white'
               : 'bg-white/15 text-white backdrop-blur-sm'
@@ -111,17 +111,17 @@ export default async function HomeHero({ locale }: { locale: string }) {
           )}
           {status}
         </span>
-        <h1 className="text-hero text-white mb-5 drop-shadow-lg break-keep text-balance max-w-4xl whitespace-pre-line">
+        <h1 className="animate-hero-reveal [animation-delay:110ms] text-hero text-white mb-5 drop-shadow-lg break-keep text-balance max-w-4xl whitespace-pre-line">
           {title}
         </h1>
-        <p className="text-body-large text-white/90 mb-8 max-w-2xl break-keep text-balance">
+        <p className="animate-hero-reveal [animation-delay:220ms] text-body-large text-white/90 mb-8 max-w-2xl break-keep text-balance">
           {desc}
         </p>
         {/* Variant B(2026-06-17, PM 패널 #5): ghost → solid primary CTA로 행동 유도 강화.
             bg-primary-strong (6.98:1 AA) — CLAUDE.md 색 규칙(bg-primary+text-white small text 금지) 준수.
             hover는 white 반전으로 AA 유지. */}
         <span
-          className={`inline-flex items-center gap-2 rounded-lg px-7 py-3 text-base md:text-lg font-bold shadow-lg transition-colors ${
+          className={`animate-hero-reveal [animation-delay:330ms] inline-flex items-center gap-2 rounded-lg px-7 py-3 text-base md:text-lg font-bold shadow-lg transition-colors ${
             slide.href
               ? 'bg-primary-strong text-white hover:bg-white hover:text-primary-strong'
               : 'bg-white/20 text-white'

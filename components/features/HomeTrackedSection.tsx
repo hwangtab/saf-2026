@@ -18,9 +18,11 @@ import { trackEvent } from '@/lib/analytics/track';
 export default function HomeTrackedSection({
   section,
   children,
+  className,
 }: {
   section: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -85,7 +87,7 @@ export default function HomeTrackedSection({
   }
 
   return (
-    <div ref={ref} onClickCapture={handleClick}>
+    <div ref={ref} onClickCapture={handleClick} className={className}>
       {children}
     </div>
   );
