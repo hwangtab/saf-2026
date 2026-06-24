@@ -1,7 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
+import { buttonVariants } from '@/components/ui/button-base';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,8 +16,8 @@ export default async function AdminFundingListPage() {
     <div className="p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-charcoal-deep">펀딩 프로젝트</h1>
-        <Link href="/admin/funding/new">
-          <Button variant="primary">새 프로젝트</Button>
+        <Link href="/admin/funding/new" className={buttonVariants({ variant: 'primary' })}>
+          새 프로젝트
         </Link>
       </div>
       <table className="mt-6 w-full text-sm">
