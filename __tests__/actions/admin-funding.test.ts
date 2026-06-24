@@ -25,17 +25,29 @@ const { cancelPayment } = require('@/lib/integrations/toss/cancel');
 beforeEach(() => jest.clearAllMocks());
 
 it('deleteRewardTier blocks when paid pledges exist', async () => {
-  // Mock chain: from('pledge_items').select(...).eq(...).eq(...).limit(1) → { data: [...], error: null }
+  // 2-step mock: pledge_items → returns pledge_ids; funding_pledges → returns paid pledge
   createSupabaseAdminClient.mockReturnValue({
-    from: (_t: string) => ({
-      select: () => ({
-        eq: () => ({
-          eq: () => ({
-            limit: () => ({ data: [{ pledge_id: 'x' }], error: null }),
+    from: (t: string) => {
+      if (t === 'pledge_items') {
+        return {
+          select: () => ({
+            eq: () => ({ data: [{ pledge_id: 'p1' }], error: null }),
           }),
-        }),
-      }),
-    }),
+        };
+      }
+      if (t === 'funding_pledges') {
+        return {
+          select: () => ({
+            in: () => ({
+              eq: () => ({
+                limit: () => ({ data: [{ id: 'p1' }], error: null }),
+              }),
+            }),
+          }),
+        };
+      }
+      return {};
+    },
   });
   const res = await deleteRewardTier('tier1');
   expect(res).toEqual({ ok: false, error: 'TIER_HAS_PLEDGES' });
@@ -44,18 +56,19 @@ it('deleteRewardTier blocks when paid pledges exist', async () => {
 it('deleteRewardTier deletes when no paid pledges', async () => {
   const deleteFn = jest.fn().mockReturnValue({ eq: () => ({ error: null }) });
   createSupabaseAdminClient.mockReturnValue({
-    from: (t: string) =>
-      t === 'pledge_items'
-        ? {
-            select: () => ({
-              eq: () => ({
-                eq: () => ({
-                  limit: () => ({ data: [], error: null }),
-                }),
-              }),
-            }),
-          }
-        : { delete: deleteFn },
+    from: (t: string) => {
+      if (t === 'pledge_items') {
+        return {
+          select: () => ({
+            eq: () => ({ data: [], error: null }),
+          }),
+        };
+      }
+      if (t === 'reward_tiers') {
+        return { delete: deleteFn };
+      }
+      return {};
+    },
   });
   const res = await deleteRewardTier('tier1');
   expect(res.ok).toBe(true);
@@ -88,7 +101,13 @@ it('refundFundingPledge refunds paid pledge via Toss cancel', async () => {
   cancelPayment.mockResolvedValue({ success: true });
   const res = await refundFundingPledge('p1');
   expect(res.ok).toBe(true);
-  expect(cancelPayment).toHaveBeenCalled();
+  // idempotency key must match `fnd-admin-refund-${order_no}`
+  expect(cancelPayment).toHaveBeenCalledWith(
+    expect.anything(),
+    expect.anything(),
+    'fnd-admin-refund-FND-1',
+    expect.anything()
+  );
 });
 
 it('refundFundingPledge rejects non-paid pledge', async () => {
@@ -103,6 +122,41 @@ it('refundFundingPledge rejects non-paid pledge', async () => {
   });
   const res = await refundFundingPledge('p1');
   expect(res).toEqual({ ok: false, error: 'NOT_REFUNDABLE' });
+});
+
+it('refundFundingPledge returns SYNC_FAILED when Toss cancelled but DB update fails', async () => {
+  // pledge is paid, payment_key present, cancelPayment succeeds, but funding_pledges UPDATE fails
+  let pledgeSelectCalled = false;
+  createSupabaseAdminClient.mockReturnValue({
+    from: (t: string) => {
+      if (t === 'funding_pledges') {
+        return {
+          select: () => ({
+            eq: () => ({
+              single: () => {
+                if (!pledgeSelectCalled) {
+                  pledgeSelectCalled = true;
+                  return { data: { id: 'p1', status: 'paid', order_no: 'FND-1' }, error: null };
+                }
+                return { data: null, error: null };
+              },
+            }),
+          }),
+          update: () => ({ eq: () => ({ error: { message: 'db down' } }) }),
+        };
+      }
+      // funding_payments
+      return {
+        select: () => ({
+          eq: () => ({ single: () => ({ data: { payment_key: 'pk1' }, error: null }) }),
+        }),
+        update: () => ({ eq: () => ({ error: null }) }),
+      };
+    },
+  });
+  cancelPayment.mockResolvedValue({ success: true });
+  const res = await refundFundingPledge('p1');
+  expect(res).toEqual({ ok: false, error: 'SYNC_FAILED' });
 });
 
 it('updateFulfillment writes status + tracking', async () => {

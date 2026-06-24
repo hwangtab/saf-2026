@@ -130,15 +130,23 @@ export async function updateRewardTier(id: string, input: Record<string, unknown
 export async function deleteRewardTier(id: string) {
   await requireAdmin();
   const db = createSupabaseAdminClient();
-  // paid 후원이 묶인 티어 삭제 차단
-  // pledge_items → funding_pledges embedded join으로 paid 존재 여부 확인
-  const { data: paid } = await db
+  // paid 후원이 묶인 티어 삭제 차단 — 2-step (embedded join 비사용)
+  // 1) 이 티어를 가진 pledge_item들의 pledge_id 수집
+  const { data: items } = await db
     .from('pledge_items')
-    .select('pledge_id, funding_pledges!inner(status)')
-    .eq('reward_tier_id', id)
-    .eq('funding_pledges.status', 'paid')
-    .limit(1);
-  if (paid && paid.length > 0) return { ok: false, error: 'TIER_HAS_PLEDGES' };
+    .select('pledge_id')
+    .eq('reward_tier_id', id);
+  const pledgeIds = (items ?? []).map((r) => r.pledge_id);
+  // 2) 그 중 status='paid'인 pledge가 하나라도 있으면 삭제 차단
+  if (pledgeIds.length > 0) {
+    const { data: paidPledges } = await db
+      .from('funding_pledges')
+      .select('id')
+      .in('id', pledgeIds)
+      .eq('status', 'paid')
+      .limit(1);
+    if (paidPledges && paidPledges.length > 0) return { ok: false, error: 'TIER_HAS_PLEDGES' };
+  }
   const { error } = await db.from('reward_tiers').delete().eq('id', id);
   return error ? { ok: false, error: error.message } : { ok: true };
 }
@@ -184,7 +192,7 @@ export async function refundFundingPledge(pledgeId: string) {
     after(() =>
       notifyEmail('error', '펀딩 환불 실패(수동확인)', {
         주문번호: pledgeData.order_no,
-        에러: cancelResult.error.message || cancelResult.error.code,
+        에러: cancelResult.error?.message ?? cancelResult.error?.code ?? '알 수 없는 오류',
       })
     );
     return { ok: false, error: 'TOSS_CANCEL_FAILED' };
