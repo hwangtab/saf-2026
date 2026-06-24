@@ -50,7 +50,9 @@
     "artistsIndex": "작가별 보기",
     "ohYoon40th": "오윤 40주기",
     "ohYoonMemorial": "추도식 신청",
-    "ohYoonMemorialDesc": "7월 5일 추도식 참가 신청 (선착순)"
+    "ohYoonMemorialDesc": "7월 5일 추도식 참가 신청 (선착순)",
+    "ohYoonFunding": "테라코타 이전 펀딩",
+    "ohYoonFundingDesc": "철거 위기의 구의동 테라코타 부조 — 시민 모금으로 이전 비용을 함께 마련합니다"
   },
   "footer": {
     "links": "링크",
