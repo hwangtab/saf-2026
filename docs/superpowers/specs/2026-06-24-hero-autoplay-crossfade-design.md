@@ -55,7 +55,7 @@ JS-driven carousel**(embla + hydration + idleCallback + forced reflow)이었음.
 
 ### 3. CSS autoplay 메커니즘
 
-- 새 `@keyframes heroCrossfade`(`styles/globals.css`): `opacity` 0↔1 사이클. 각 슬라이드는
+- 새 `@keyframes heroCrossfade`(`tailwind.config.ts`의 keyframes/animation): `opacity` 0↔1 사이클. 각 슬라이드는
   동일 keyframe + `animation-delay` stagger로 무한 순환. **`opacity`만** 변화 → compositor 스레드.
 - 켄번스는 슬라이드별 `animate-ken-burns` 그대로 → 페이드되며 천천히 줌.
 - 슬라이드 수에 따라 주기 가변(2장/3장). N장 기준 1장 표시구간 + 페이드 겹침을 keyframe %로 계산.
