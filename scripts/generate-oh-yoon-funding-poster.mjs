@@ -160,7 +160,7 @@ function html(qrDataUrl) {
     <div class="artist">
       <div class="face"><img src="${OHYOON}" alt="오윤 초상"></div>
       <div>
-        <div class="name">오윤 <span style="font-size:22px;color:${C.inkSoft};font-weight:500;">1946–1986</span></div>
+        <div class="name">故 오윤 <span style="font-size:22px;color:${C.inkSoft};font-weight:500;">1946–1986</span></div>
         <div class="sub">그가 스물여덟에 새긴 벽</div>
       </div>
     </div>
