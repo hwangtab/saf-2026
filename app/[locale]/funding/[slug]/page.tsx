@@ -146,7 +146,7 @@ export default async function FundingPage({ params }: Props) {
       />
 
       <Section>
-        <div className="mx-auto max-w-3xl">
+        <div className="container-max max-w-3xl">
           {/* 진행률 바 — 클라이언트 컴포넌트, 5분마다 폴링 */}
           <FundingProgressBar
             slug={slug}
