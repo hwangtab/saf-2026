@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { SITE_URL } from '@/lib/constants';
 import { getTossDomesticClientKey } from '@/lib/integrations/toss/config';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
@@ -38,12 +39,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!project) return { title: 'Not Found' };
 
+  // OG 이미지는 절대 URL 필수 — 상대경로면 SITE_URL을 붙여 절대화.
+  const ogImage = project.cover_image
+    ? project.cover_image.startsWith('http')
+      ? project.cover_image
+      : `${SITE_URL}${project.cover_image}`
+    : undefined;
+
   return {
     title: project.title,
     description: project.summary ?? undefined,
-    openGraph: project.cover_image
+    openGraph: ogImage
       ? {
-          images: [{ url: project.cover_image }],
+          images: [{ url: ogImage }],
         }
       : undefined,
   };
