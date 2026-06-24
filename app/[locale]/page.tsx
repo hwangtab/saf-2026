@@ -7,7 +7,6 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import MechanismSection from '@/components/features/MechanismSection';
 import HomeHero from '@/components/features/HomeHero';
 import AboutIdentity from '@/components/features/AboutIdentity';
-import NowShowing from '@/components/features/NowShowing';
 import MasterArtists from '@/components/features/MasterArtists';
 import EntryLevelArtworks from '@/components/features/EntryLevelArtworks';
 import EmergingArtists from '@/components/features/EmergingArtists';
@@ -115,14 +114,6 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           feedback_hero_server_island_regression.md. */}
       <HomeTrackedSection section="hero">
         <HomeHero locale={locale} />
-      </HomeTrackedSection>
-
-      {/* Now Showing 그리드 — fold-below 시한성 큐레이션 카드. hero에 노출된 동일 슬라이드도 카드로
-          한 번 더 노출(매거진 톤). 정적 SSR, hydration 0.
-          Variant B(2026-06-17, PM 패널 #5): Hero 직후 첫 섹션 = 쇼핑 가능한 그리드.
-          명분 섹션(About·Mechanism)은 그리드 아래로 이동(상품 우선 재배열). Hero sawtooth(canvas-soft)와 정합. */}
-      <HomeTrackedSection section="now-showing" className="reveal-on-scroll">
-        <NowShowing locale={locale} />
       </HomeTrackedSection>
 
       {/* 한국 현대미술의 거장 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2.

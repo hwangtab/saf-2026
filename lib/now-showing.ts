@@ -1,7 +1,7 @@
 /**
  * Now Showing — 시한성 큐레이션 전시·캠페인 데이터.
  *
- * 메인 페이지 hero(`HomeHero`) + hero 직하 `NowShowing` 그리드 양쪽에서 사용.
+ * 메인 페이지 hero(`HomeHero`) autoplay 슬라이드 풀로 사용.
  * endDate가 지난 항목은 자동 제외.
  *
  * 새 전시 추가 시 이 배열에 항목 추가 + messages/ko.json·en.json의
@@ -9,8 +9,8 @@
  *
  * **HeroSpotlight 폐기 이력 (2026-05-12)**: 과거 hero 슬라이더(embla)에서 발생한 PSI mobile
  * LCP 회귀 4종(server island/idleCallback/DOM enhance/font preload:false) 본질 회피를 위해
- * hero를 정적 단일 이미지로 단순화. 이 모듈은 hero가 어떤 슬라이드를 띄울지 결정하는
- * `getHeroSlide()`와 fold-below 그리드용 `getNowShowingCards()` 두 가지 셀렉터를 제공.
+ * hero를 정적 단일 이미지로 단순화. fold-below NowShowing 그리드는 hero autoplay(Task 4)로
+ * 흡수·제거됨(2026-06-24). 이 모듈은 hero 슬라이드 선택(`getHeroSlide`·`getHeroSlides`)만 제공.
  */
 export type NowShowingStatus = 'on' | 'coming-soon';
 
@@ -50,7 +50,7 @@ export interface NowShowingItem {
    * - `0` (또는 미지정) — 평상시 fallback (강석태 슬라이드: "예술인 동료를 위해 내놓은 작품")
    * - `5`~`10` — 활성 특별전. 특별전 기간엔 자동으로 hero를 점유.
    *
-   * fold-below 그리드(`getNowShowingCards()`)는 priority와 무관하게 모든 활성 항목 노출.
+   * `getHeroSlides()`는 priority 내림차순 상위 3장만 반환.
    */
   heroPriority?: number;
   /**
@@ -163,26 +163,6 @@ export function getHeroSlides(now: Date = new Date()): NowShowingItem[] {
   const active = getActiveShowingItems(now);
   const pool = active.length > 0 ? active : [NOW_SHOWING[0]];
   return [...pool].sort((a, b) => (b.heroPriority ?? 0) - (a.heroPriority ?? 0)).slice(0, 3);
-}
-
-/**
- * fold-below "Now Showing" 그리드에 노출할 카드 목록.
- *
- * **`getActiveShowingItems()`와 다른 점**: `startDate` 미래(coming-soon) 항목도 노출한다.
- * 박생광 드로잉전처럼 "곧 시작" 예고 카드는 그리드에 미리 보여 사용자 기대감 형성.
- * 만료(endDate < now)만 필터.
- *
- * hero 선택(`getHeroSlide()`)은 별도로 활성(`getActiveShowingItems()`) 풀에서만 결정하므로
- * coming-soon 항목이 hero를 점유하지 않는다 — 그리드 카드만 미리 노출.
- *
- * status 'coming-soon'은 카드 UI에서 자동으로 "준비 중" 배지(어두운 톤) + 클릭 가능
- * (작가 페이지 등 임시 진입처)으로 렌더된다.
- */
-export function getNowShowingCards(now: Date = new Date()): NowShowingItem[] {
-  return NOW_SHOWING.filter((item) => {
-    if (item.endDate && new Date(item.endDate) < now) return false;
-    return true;
-  });
 }
 
 /**
