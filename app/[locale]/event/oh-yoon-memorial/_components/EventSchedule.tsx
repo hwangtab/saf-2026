@@ -22,13 +22,13 @@ export default async function EventSchedule() {
         </h2>
 
         {/* 행사 포스터 — 행사 전체를 한눈에 보여주는 비주얼 */}
-        <div className="mx-auto mt-8 max-w-sm">
+        <div className="mx-auto mt-8 max-w-2xl">
           <SafeImage
             src="/images/oh-yoon-memorial-poster.png"
             alt={t('posterAlt')}
             width={1080}
             height={1350}
-            className="w-full rounded-2xl border border-gallery-hairline shadow-lg"
+            className="w-full rounded-2xl border border-gallery-hairline shadow-xl"
           />
         </div>
 
