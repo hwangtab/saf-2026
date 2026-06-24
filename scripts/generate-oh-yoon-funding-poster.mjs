@@ -32,17 +32,19 @@ const QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=
   APPLY_URL
 )}`;
 
-// ─── 색상 (브랜드 토큰 — Gallery White Cube) ───
-// 추모 다크 톤 대신 갤러리 화이트: chrome은 무채색, 색은 작품(테라코타 컬러)에서.
+// ─── 색상 (Aged Hanji — 오래된 한지의 ochre·오렌지 톤) ───
+// 오윤이 즐겨 쓰던 한지가 세월에 물든 빛. 텍스트는 한지 위 먹/안료처럼 밝은 아이보리,
+// 강조(숫자·CTA)는 페일골드. 전체 웜톤 단색조.
 const C = {
-  base: '#FAFAFC', // Gallery Pearl
-  ink: '#1F2428', // charcoal.deep (14.68:1)
-  inkSoft: '#555E67', // charcoal.muted (6.60:1)
-  inkFaint: '#6A7378', // charcoal.soft (4.84:1)
-  gold: '#E3AC0D', // sun.strong — 화이트 위 숫자 강조(AA)
-  primary: '#0E4ECF', // primary.strong — CTA/링크 (6.98:1)
-  primaryDot: '#2176FF', // primary.DEFAULT — 장식 도트
-  hairline: '#E0E0E0', // gallery.hairline
+  base: '#B5542B', // Aged Hanji Orange (deep)
+  baseDeep: '#9A4421', // 가장자리 음영용 더 진한 오렌지
+  ink: '#F8F1E2', // Hanji Ivory — 본문/헤딩
+  inkSoft: 'rgba(248,241,226,0.74)', // 보조
+  inkFaint: 'rgba(248,241,226,0.52)', // 캡션
+  gold: '#FCE3A0', // Pale Gold — 숫자 강조 (오렌지 위 가독)
+  primary: '#FCE3A0', // CTA 강조 (페일골드)
+  primaryDot: '#FCE3A0', // 장식 도트
+  hairline: 'rgba(248,241,226,0.26)',
 };
 
 async function fetchDataUrl(url) {
@@ -76,8 +78,8 @@ function html(qrDataUrl) {
   .vignette {
     position:absolute; inset:0; z-index:1; pointer-events:none;
     background:
-      radial-gradient(120% 60% at 50% 0%, rgba(33,118,255,0.05) 0%, transparent 52%),
-      linear-gradient(180deg, transparent 70%, rgba(31,36,40,0.025) 100%);
+      radial-gradient(110% 65% at 50% 4%, rgba(255,214,150,0.14) 0%, transparent 56%),
+      radial-gradient(130% 80% at 50% 102%, ${C.baseDeep} 0%, transparent 58%);
   }
   .wrap {
     position:relative; z-index:3;
@@ -98,12 +100,12 @@ function html(qrDataUrl) {
   .mural {
     width:100%; height:392px; position:relative;
     border-radius:6px; overflow:hidden;
-    box-shadow:0 24px 56px rgba(31,36,40,0.18);
-    border:1px solid ${C.hairline};
+    box-shadow:0 26px 60px rgba(60,22,8,0.42);
+    border:2px solid ${C.hairline};
   }
   .mural img {
     width:100%; height:100%; object-fit:cover; object-position:50% 42%;
-    filter:contrast(1.04) saturate(1.04);
+    filter:contrast(1.06) saturate(1.06);
   }
   .caption {
     margin-top:13px; font-size:22px; letter-spacing:0.5px; color:${C.inkFaint};
