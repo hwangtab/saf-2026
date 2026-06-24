@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import AxeBuilder from '@axe-core/playwright';
 
 test('/ko/archive 아카이브 — WCAG AA a11y 위반 없음', async ({ page }) => {
