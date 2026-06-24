@@ -1312,6 +1312,7 @@ export type Database = {
           backer_user_id: string | null;
           cancelled_at: string | null;
           created_at: string;
+          fulfillment_status: string;
           hold_expires_at: string | null;
           id: string;
           ip_hash: string | null;
@@ -1329,6 +1330,8 @@ export type Database = {
           status: string;
           supporter_message: string | null;
           total_amount: number;
+          tracking_company: string | null;
+          tracking_number: string | null;
           updated_at: string;
           user_agent: string | null;
         };
@@ -1342,6 +1345,7 @@ export type Database = {
           backer_user_id?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
+          fulfillment_status?: string;
           hold_expires_at?: string | null;
           id?: string;
           ip_hash?: string | null;
@@ -1359,6 +1363,8 @@ export type Database = {
           status: string;
           supporter_message?: string | null;
           total_amount: number;
+          tracking_company?: string | null;
+          tracking_number?: string | null;
           updated_at?: string;
           user_agent?: string | null;
         };
@@ -1372,6 +1378,7 @@ export type Database = {
           backer_user_id?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
+          fulfillment_status?: string;
           hold_expires_at?: string | null;
           id?: string;
           ip_hash?: string | null;
@@ -1389,6 +1396,8 @@ export type Database = {
           status?: string;
           supporter_message?: string | null;
           total_amount?: number;
+          tracking_company?: string | null;
+          tracking_number?: string | null;
           updated_at?: string;
           user_agent?: string | null;
         };
