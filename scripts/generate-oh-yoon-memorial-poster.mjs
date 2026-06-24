@@ -105,13 +105,13 @@ function html(qrDataUrl) {
   /* 초상 — 흑백 영정 톤 */
   .portrait-area { margin-top:20px; display:flex; justify-content:center; }
   .portrait {
-    width:336px; height:458px;
+    width:420px; height:280px;
     border-radius:6px; overflow:hidden; position:relative;
     box-shadow:0 30px 70px rgba(0,0,0,0.55);
     border:1px solid rgba(244,241,234,0.12);
   }
   .portrait img {
-    width:100%; height:100%; object-fit:cover; object-position:50% 18%;
+    width:100%; height:100%; object-fit:cover; object-position:50% 35%;
     filter:grayscale(1) contrast(1.05) brightness(1.02);
   }
   .quote {
