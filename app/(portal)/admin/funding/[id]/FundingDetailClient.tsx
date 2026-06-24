@@ -86,10 +86,11 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const PLEDGE_STATUS_LABEL: Record<string, string> = {
-  pending: '결제대기',
+  pending_payment: '결제대기',
   paid: '결제완료',
   refunded: '환불완료',
   cancelled: '취소',
+  expired: '만료',
 };
 
 const INPUT_CLASS =
@@ -755,8 +756,19 @@ function BackersSection({ pledges }: { pledges: FundingPledge[] }) {
   const router = useRouter();
 
   function downloadCsv() {
-    const headers = ['이름', '이메일', '전화', '금액', '상태', '배송지', '발송상태', '송장'];
+    const headers = [
+      '주문번호',
+      '이름',
+      '이메일',
+      '전화',
+      '금액',
+      '상태',
+      '배송지',
+      '발송상태',
+      '송장',
+    ];
     const rows = pledges.map((p) => [
+      p.order_no ?? '',
       p.is_anonymous ? '(익명)' : (p.backer_name ?? ''),
       p.backer_email ?? '',
       p.backer_phone ?? '',
