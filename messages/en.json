@@ -246,6 +246,12 @@
       "subtitle": "The artists shaping the next chapter of Korean contemporary art — works the most discerning collectors spot first.",
       "viewAll": "Discover emerging artists"
     },
+    "hero": {
+      "campaignStatus": "Originals · Direct from artists",
+      "campaignTitle": "Originals offered by artists\nfor their fellow creators",
+      "campaignDesc": "{artistCount} Korean artists have contributed their work to help fellow artists facing financial discrimination. 10% of each sale funds a low-interest mutual-aid pool.",
+      "campaignCta": "Browse all artworks"
+    },
     "nowShowing": {
       "title": "Spotlight",
       "subtitle": "One artist's chapter, gathered in one corner — time-limited",

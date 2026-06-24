@@ -246,6 +246,12 @@
       "subtitle": "한국 현대미술의 다음을 만들어 갈 작가들. 안목 있는 컬렉터가 먼저 알아본 작품들입니다.",
       "viewAll": "신진 작가 더 보기"
     },
+    "hero": {
+      "campaignStatus": "원본 · 작가 직거래",
+      "campaignTitle": "예술인 동료를 위해\n작가들이 내놓은 원본",
+      "campaignDesc": "한국 작가 {artistCount}인이 동료 예술인의 금융 차별 해결을 위해 작품을 내놓았습니다. 구매 수익의 10%는 저금리 상호부조 기금이 됩니다.",
+      "campaignCta": "전체 작품 보기"
+    },
     "nowShowing": {
       "title": "스포트라이트",
       "subtitle": "한 작가의 한 시기를 한 자리에 — 기간 한정 코너",
