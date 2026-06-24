@@ -108,16 +108,16 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
 
   return (
     <>
-      {/* Hero — 단일 정적 LCP 이미지 + 캠페인 메시지 (HeroSpotlight 폐기 후속, 회귀 trauma 회피).
-          carousel 자체를 fold-below `<NowShowing />` 그리드로 이동해 LCP element를 정적 hero와 분리.
-          상세 설계 의도: components/features/HomeHero.tsx 헤더 주석 + 메모리
-          feedback_hero_server_island_regression.md. */}
+      {/* Hero — CSS-only 크로스페이드 autoplay(최대 3장) + 고정 캠페인 메시지.
+          순수 CSS @keyframes(opacity-only)로 자동 순환 — JS 0/hydration 0, embla carousel 회귀 회피.
+          첫 슬라이드만 fetchPriority=high로 단일 확정 LCP. 상세: components/features/HomeHero.tsx
+          헤더 주석 + 메모리 feedback_hero_server_island_regression.md. */}
       <HomeTrackedSection section="hero">
         <HomeHero locale={locale} />
       </HomeTrackedSection>
 
       {/* 한국 현대미술의 거장 — 매뉴얼 6.4 [E] + 9.2 컬렉션 2.
-          시한성 NowShowing[D] 직후 영구 거장 라인업 [E]. 페르소나 B "왜 이 사이트인가" 첫 인지 자산. */}
+          Hero(autoplay) 직후 영구 거장 라인업 [E]. 페르소나 B "왜 이 사이트인가" 첫 인지 자산. */}
       <HomeTrackedSection section="master" className="reveal-on-scroll">
         <MasterArtists locale={locale} />
       </HomeTrackedSection>
