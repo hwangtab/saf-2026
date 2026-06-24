@@ -74,17 +74,11 @@ export default async function HomeHero({ locale }: { locale: string }) {
                 animationDelay: crossfadeClass ? `-${i * delayStep}s` : undefined,
               }}
             >
-              {/* LCP 회피: 첫 장만 priority+high(단일 확정 LCP). 2·3장은 lazy + low로
-                  LCP 이후로 다운로드를 미뤄 첫 장 대역폭 경쟁을 제거(PSI 실측: lazy 없이는
-                  3장 동시 로드가 LCP +1.6s → 81점. 첫 LCP 이미지는 prod와 동일하므로
-                  나머지를 미루면 회복 기대). opacity:0이라 첫 화면엔 안 보이고, 첫 autoplay
-                  전환(수 초 후)까지 로드되면 충분. */}
               <SafeImage
                 src={slide.imageUrl}
                 alt={i === 0 ? title : ''}
                 fill
                 priority={i === 0}
-                loading={i === 0 ? undefined : 'lazy'}
                 fetchPriority={i === 0 ? 'high' : 'low'}
                 quality={60}
                 sizes="100vw"
