@@ -151,6 +151,21 @@ export function getHeroSlide(now: Date = new Date()): NowShowingItem {
 }
 
 /**
+ * Hero 크로스페이드 autoplay에 노출할 슬라이드 풀(최대 3장).
+ *
+ * `getHeroSlide()`(단일 LCP)의 다중 버전. 활성 항목(`getActiveShowingItems`)을
+ * `heroPriority` 내림차순으로 정렬해 반환. 활성이 없으면 영구 fallback(강석태) 1장.
+ *
+ * - 1장이면 호출부에서 크로스페이드 없이 정적 단일 hero = 현행과 동일하게 degrade.
+ * - slice(0, 3): hero는 최대 3장만 순환(payload 가드). 활성이 4개 이상으로 늘어도 안전.
+ */
+export function getHeroSlides(now: Date = new Date()): NowShowingItem[] {
+  const active = getActiveShowingItems(now);
+  const pool = active.length > 0 ? active : [NOW_SHOWING[0]];
+  return [...pool].sort((a, b) => (b.heroPriority ?? 0) - (a.heroPriority ?? 0)).slice(0, 3);
+}
+
+/**
  * fold-below "Now Showing" 그리드에 노출할 카드 목록.
  *
  * **`getActiveShowingItems()`와 다른 점**: `startDate` 미래(coming-soon) 항목도 노출한다.
