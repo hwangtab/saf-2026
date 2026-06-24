@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { CalendarDays, MapPin, Bus, Ticket } from 'lucide-react';
+import SafeImage from '@/components/common/SafeImage';
 import { OH_YOON_MEMORIAL_SCHEDULE } from '@/content/events/oh-yoon-memorial';
 
 /** 추도식 안내 — 핵심 정보 카드 + 당일 일정 타임라인. */
@@ -19,6 +20,17 @@ export default async function EventSchedule() {
         <h2 className="text-center font-display text-2xl font-bold text-charcoal-deep md:text-3xl">
           {t('infoTitle')}
         </h2>
+
+        {/* 행사 포스터 — 행사 전체를 한눈에 보여주는 비주얼 */}
+        <div className="mx-auto mt-8 max-w-sm">
+          <SafeImage
+            src="/images/oh-yoon-memorial-poster.png"
+            alt={t('posterAlt')}
+            width={1080}
+            height={1350}
+            className="w-full rounded-2xl border border-gallery-hairline shadow-lg"
+          />
+        </div>
 
         {/* 핵심 정보 카드 */}
         <dl className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-gallery-hairline bg-gallery-hairline sm:grid-cols-2">
