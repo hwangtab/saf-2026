@@ -20,22 +20,34 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const supabase = createSupabaseAdminClient();
-  const { data } = await supabase.from('funding_projects').select('slug');
-  if (!data) return [];
-  return data.flatMap((row) => routing.locales.map((locale) => ({ locale, slug: row.slug })));
+  // CI/placeholder 빌드 환경에는 service role key가 없어 admin client가 throw —
+  // graceful 처리(빈 배열)로 빌드 실패 방지. (event 페이지 동일 패턴)
+  try {
+    const supabase = createSupabaseAdminClient();
+    const { data } = await supabase.from('funding_projects').select('slug');
+    if (!data) return [];
+    return data.flatMap((row) => routing.locales.map((locale) => ({ locale, slug: row.slug })));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const supabase = createSupabaseAdminClient();
-  const { data: project } = await supabase
-    .from('funding_projects')
-    .select('title, summary, cover_image')
-    .eq('slug', slug)
-    .single();
+  let project: { title: string; summary: string | null; cover_image: string | null } | null = null;
+  try {
+    const supabase = createSupabaseAdminClient();
+    const { data } = await supabase
+      .from('funding_projects')
+      .select('title, summary, cover_image')
+      .eq('slug', slug)
+      .single();
+    project = data;
+  } catch {
+    // CI/placeholder 빌드 환경 — admin client 미설정. 메타데이터는 기본값으로.
+  }
 
   if (!project) return { title: 'Not Found' };
 
@@ -61,7 +73,15 @@ export default async function FundingPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'funding' });
-  const supabase = createSupabaseAdminClient();
+
+  // CI/placeholder 빌드 환경에는 service role key가 없어 admin client가 throw —
+  // notFound()로 graceful 처리(빌드 시 정적 페이지 생성만 건너뜀). (event 페이지 동일 패턴)
+  let supabase: ReturnType<typeof createSupabaseAdminClient>;
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch {
+    notFound();
+  }
 
   // 프로젝트 상태 — not found 처리
   const { data: statusRaw } = await supabase.rpc('funding_project_status', { p_slug: slug });
