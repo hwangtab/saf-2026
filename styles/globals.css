@@ -207,8 +207,16 @@
     @apply my-2;
   }
   .markdown-content blockquote {
-    @apply border-l-4 border-primary bg-primary-surface rounded-r-lg py-2 px-6 my-6;
+    @apply border-l-4 border-primary bg-primary-surface rounded-r-lg py-3 px-6 my-6;
     font-style: normal;
+  }
+  /* 내부 <p>의 mb-6가 blockquote 하단 패딩에 더해져 아래만 넓어지던 문제 차단 —
+     상하 패딩이 blockquote의 py로만 결정되도록 첫/마지막 문단 마진 제거. */
+  .markdown-content blockquote p:first-of-type {
+    @apply mt-0;
+  }
+  .markdown-content blockquote p:last-of-type {
+    @apply mb-0;
   }
   /* prose 기본값의 자동 따옴표 제거 — 본문에 이미 따옴표 있을 때 중복 방지 */
   .markdown-content blockquote p:first-of-type::before,
