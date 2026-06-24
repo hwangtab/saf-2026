@@ -74,6 +74,10 @@ export default async function HomeHero({ locale }: { locale: string }) {
                 animationDelay: crossfadeClass ? `-${i * delayStep}s` : undefined,
               }}
             >
+              {/* LCP 보호(방안 A, 전문가 패널): 첫 장만 100vw 풀해상도(단일 확정 LCP).
+                  2·3장은 sizes를 작게(640px) 줘 next/image srcset이 작은 변형을 받게 해
+                  payload·대역폭 경쟁을 축소 — 어차피 다크 오버레이+비네팅+전환 중 잠깐이라
+                  화질 영향 최소. (lazy는 opacity:0 풀스크린서 무력해 실패 → sizes 차등으로 대체) */}
               <SafeImage
                 src={slide.imageUrl}
                 alt={i === 0 ? title : ''}
@@ -81,7 +85,7 @@ export default async function HomeHero({ locale }: { locale: string }) {
                 priority={i === 0}
                 fetchPriority={i === 0 ? 'high' : 'low'}
                 quality={60}
-                sizes="100vw"
+                sizes={i === 0 ? '100vw' : '640px'}
                 className="object-cover animate-ken-burns"
               />
               {/* 저해상도 작품 비네팅(soft) — 가장자리를 radial로 묻고 중앙 작품은 살림. */}
