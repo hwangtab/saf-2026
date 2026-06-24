@@ -30,10 +30,15 @@ export function useLocalizedNavigation(): NavigationItem[] {
       ],
     },
     {
-      // 오윤 40주기 캠페인 묶음: 추도식(시기성 행동) + 청원(시민 행동) + 오윤 작품.
+      // 오윤 40주기 캠페인 묶음: 펀딩(이전 모금) + 추도식(시기성 행동) + 청원(시민 행동) + 오윤 작품.
       name: t('ohYoon40th'),
       href: '/event/oh-yoon-memorial',
       items: [
+        {
+          name: t('ohYoonFunding'),
+          href: '/funding/oh-yoon-terracotta',
+          description: t('ohYoonFundingDesc'),
+        },
         {
           name: t('ohYoonMemorial'),
           href: '/event/oh-yoon-memorial',
