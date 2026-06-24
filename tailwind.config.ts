@@ -66,6 +66,11 @@ const config: Config = {
         // hero-reveal: 텍스트 staggered fade-up. `both` fill + 전역 reduced-motion 0.01ms로 자동 안전.
         'ken-burns': 'kenBurns 20s ease-in-out infinite alternate',
         'hero-reveal': 'heroReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both',
+        // Hero 크로스페이드 autoplay — opacity-only(컴포지터 전용), main thread 0, CLS 0.
+        // 슬라이드별 음수 animation-delay(호출부 inline)로 phase 분리. 0% opacity:1이라
+        // 첫 슬라이드(delay 0)는 첫 프레임에 paint → LCP 무영향. 2장/3장 전용 주기.
+        'hero-crossfade-2': 'heroCrossfade2 14s ease-in-out infinite',
+        'hero-crossfade-3': 'heroCrossfade3 18s ease-in-out infinite',
         'toast-in': 'toastIn 0.2s ease-out forwards',
         'toast-out': 'toastOut 0.2s ease-out forwards',
         'slide-in-right': 'slideInRight 0.25s ease-out forwards',
@@ -111,6 +116,22 @@ const config: Config = {
         heroReveal: {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        // 2장 크로스페이드 — 한 장 ~5.5s 노출 + ~1.5s 페이드. delay step 7s.
+        heroCrossfade2: {
+          '0%': { opacity: '1' },
+          '40%': { opacity: '1' },
+          '50%': { opacity: '0' },
+          '90%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        // 3장 크로스페이드 — 한 장 ~5s 노출 + ~1s 페이드. delay step 6s.
+        heroCrossfade3: {
+          '0%': { opacity: '1' },
+          '28%': { opacity: '1' },
+          '33%': { opacity: '0' },
+          '94%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
         toastIn: {
           '0%': { opacity: '0', transform: 'translateY(-20px) scale(0.95)' },
