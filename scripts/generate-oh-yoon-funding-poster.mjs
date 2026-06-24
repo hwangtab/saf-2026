@@ -32,14 +32,17 @@ const QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=
   APPLY_URL
 )}`;
 
-// ─── 색상 (브랜드 토큰) ───
+// ─── 색상 (브랜드 토큰 — Gallery White Cube) ───
+// 추모 다크 톤 대신 갤러리 화이트: chrome은 무채색, 색은 작품(테라코타 컬러)에서.
 const C = {
-  base: '#1F2428',
-  ink: '#F4F1EA',
-  inkSoft: 'rgba(244,241,234,0.62)',
-  inkFaint: 'rgba(244,241,234,0.34)',
-  gold: '#FDCA40',
-  hairline: 'rgba(244,241,234,0.16)',
+  base: '#FAFAFC', // Gallery Pearl
+  ink: '#1F2428', // charcoal.deep (14.68:1)
+  inkSoft: '#555E67', // charcoal.muted (6.60:1)
+  inkFaint: '#6A7378', // charcoal.soft (4.84:1)
+  gold: '#E3AC0D', // sun.strong — 화이트 위 숫자 강조(AA)
+  primary: '#0E4ECF', // primary.strong — CTA/링크 (6.98:1)
+  primaryDot: '#2176FF', // primary.DEFAULT — 장식 도트
+  hairline: '#E0E0E0', // gallery.hairline
 };
 
 async function fetchDataUrl(url) {
@@ -73,12 +76,8 @@ function html(qrDataUrl) {
   .vignette {
     position:absolute; inset:0; z-index:1; pointer-events:none;
     background:
-      radial-gradient(120% 70% at 50% 6%, rgba(255,255,255,0.06) 0%, transparent 55%),
-      radial-gradient(140% 90% at 50% 100%, rgba(0,0,0,0.55) 0%, transparent 60%);
-  }
-  .grain {
-    position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0.05;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      radial-gradient(120% 60% at 50% 0%, rgba(33,118,255,0.05) 0%, transparent 52%),
+      linear-gradient(180deg, transparent 70%, rgba(31,36,40,0.025) 100%);
   }
   .wrap {
     position:relative; z-index:3;
@@ -90,7 +89,7 @@ function html(qrDataUrl) {
     display:flex; align-items:center; gap:14px;
     font-size:23px; font-weight:600; letter-spacing:5px; color:${C.inkSoft};
   }
-  .eyebrow .dot { width:9px; height:9px; border-radius:50%; background:${C.gold}; flex-shrink:0; }
+  .eyebrow .dot { width:9px; height:9px; border-radius:50%; background:${C.primaryDot}; flex-shrink:0; }
 
   .slogan { margin-top:22px; font-size:74px; font-weight:700; line-height:1.12; letter-spacing:1px; }
 
@@ -99,12 +98,12 @@ function html(qrDataUrl) {
   .mural {
     width:100%; height:392px; position:relative;
     border-radius:6px; overflow:hidden;
-    box-shadow:0 30px 70px rgba(0,0,0,0.55);
-    border:1px solid rgba(244,241,234,0.12);
+    box-shadow:0 24px 56px rgba(31,36,40,0.18);
+    border:1px solid ${C.hairline};
   }
   .mural img {
     width:100%; height:100%; object-fit:cover; object-position:50% 42%;
-    filter:grayscale(1) contrast(1.08) brightness(0.96);
+    filter:contrast(1.04) saturate(1.04);
   }
   .caption {
     margin-top:13px; font-size:22px; letter-spacing:0.5px; color:${C.inkFaint};
@@ -114,15 +113,15 @@ function html(qrDataUrl) {
   .artist { margin-top:24px; display:flex; align-items:center; gap:20px; }
   .artist .face {
     width:78px; height:78px; border-radius:50%; overflow:hidden; flex-shrink:0;
-    border:1px solid rgba(244,241,234,0.18);
+    border:1px solid ${C.hairline};
   }
-  .artist .face img { width:100%; height:100%; object-fit:cover; object-position:50% 16%; filter:grayscale(1) contrast(1.04); }
+  .artist .face img { width:100%; height:100%; object-fit:cover; object-position:50% 16%; filter:contrast(1.02); }
   .artist .name { font-family:'Noto Serif KR',serif; font-size:30px; font-weight:600; }
   .artist .sub { margin-top:5px; font-size:24px; color:${C.inkSoft}; }
 
   /* 서사 */
   .story {
-    margin-top:26px; font-size:31px; font-weight:500; line-height:1.55; color:rgba(244,241,234,0.86);
+    margin-top:26px; font-size:31px; font-weight:500; line-height:1.55; color:${C.ink};
   }
 
   .rule { height:1px; background:${C.hairline}; margin:26px 0 22px; }
@@ -138,15 +137,14 @@ function html(qrDataUrl) {
 
   /* CTA + QR */
   .cta { margin-top:26px; display:flex; align-items:center; justify-content:space-between; }
-  .cta-text .apply { font-size:24px; font-weight:600; letter-spacing:4px; color:${C.gold}; }
+  .cta-text .apply { font-size:24px; font-weight:700; letter-spacing:4px; color:${C.primary}; }
   .cta-text .url { margin-top:10px; font-size:30px; font-weight:600; color:${C.ink}; }
   .cta-text .host { margin-top:14px; font-size:21px; color:${C.inkFaint}; }
-  .qr { width:138px; height:138px; flex-shrink:0; background:${C.ink}; border-radius:14px; padding:13px; box-shadow:0 14px 36px rgba(0,0,0,0.45); }
+  .qr { width:138px; height:138px; flex-shrink:0; background:#FFFFFF; border:1px solid ${C.hairline}; border-radius:14px; padding:13px; box-shadow:0 12px 30px rgba(31,36,40,0.12); }
   .qr img { width:100%; height:100%; display:block; }
 </style></head>
 <body>
   <div class="vignette"></div>
-  <div class="grain"></div>
   <div class="wrap">
     <div class="eyebrow"><span class="dot"></span>시민 모금 · 씨앗페 2026</div>
 
