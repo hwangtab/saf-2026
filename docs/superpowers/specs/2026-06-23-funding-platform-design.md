@@ -262,3 +262,34 @@ PageHero(다크) → 진행률 바(달성률%·모금액·후원자수·D-day, [
 ### 약관 (Phase B 최소)
 
 결제 전 핵심 고지(운영주체·환불/청약철회·기부금영수증 불가·Keep-it-All·목적불능 전용) 요약 + 동의 체크박스. 약관 전문 페이지는 Phase D.
+
+## 13. Phase C 확정 사항 (2026-06-23, admin 펀딩 관리)
+
+**풀 admin** — 프로젝트 개설·수정·티어 CRUD + 후원자 운영(명단·환불·발송). 범용(다른 작가 펀딩 대비). 한국어·**i18n 비스코프**(admin 정책).
+
+### 데이터 보강 (발송 관리)
+
+`funding_pledges`에 컬럼 추가(마이그레이션 1건):
+
+- `fulfillment_status text DEFAULT 'none'` (`none`|`preparing`|`shipped`|`delivered`)
+- `tracking_company text NULL`, `tracking_number text NULL`
+
+### admin server actions (`app/actions/admin-funding.ts` — 전부 `requireAdmin()` + service_role RPC)
+
+- `createFundingProject` / `updateFundingProject` — 제목·요약·스토리·커버·목표·기간·status
+- `createRewardTier` / `updateRewardTier` / `deleteRewardTier` — paid 후원이 묶인 티어 삭제는 차단
+- `listFundingBackers(projectId)` — admin은 PII 포함(배송지·이메일·전화·상태)
+- `refundFundingPledge(pledgeId)` — `funding_payments.payment_key`로 Toss `cancelPayment` → `funding_pledges.status='refunded'`, `refunded_at`, funding_payments cancelled. **전액 환불만**(1차 단일 티어). Toss 취소 성공과 내부 sync 실패를 분리해 operator alert.
+- `updateFulfillment(pledgeId, status, company?, number?)` — 발송상태·송장
+
+### admin 페이지 (`app/(portal)/admin/funding/`, 기존 [event admin](<../../../app/(portal)/admin/event/oh-yoon-memorial/>) 패턴 미러)
+
+- `/admin/funding` — 프로젝트 목록(달성률·후원자수·status)
+- `/admin/funding/new` — 개설 폼
+- `/admin/funding/[id]` — 프로젝트 수정 + 티어 CRUD + 후원자 명단(배송지·상태·환불 버튼·발송 입력) + CSV 내보내기
+
+### 무결성 가드
+
+- 프로젝트 status 전이 `draft→active→closed→settled` admin RPC에서만, 역행 금지.
+- 환불은 `status='paid'`에서만. RPC role 검사 `auth.role()='service_role'`(§5).
+- 티어 금액·수량 수정은 이미 paid 후원에 소급 안 됨(pledge_items.unit_amount 시점가 보존).

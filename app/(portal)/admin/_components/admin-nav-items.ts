@@ -32,6 +32,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       items: [
         { href: '/admin/petition/oh-yoon', label: '오윤 청원 운영' },
         { href: '/admin/event/oh-yoon-memorial', label: '추도식 신청 운영' },
+        { href: '/admin/funding', label: '펀딩 운영' },
       ],
     },
     {
@@ -85,6 +86,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       items: [
         { href: '/admin/petition/oh-yoon', label: 'Oh Yoon Petition' },
         { href: '/admin/event/oh-yoon-memorial', label: 'Oh Yoon Memorial' },
+        { href: '/admin/funding', label: 'Funding' },
       ],
     },
     {
