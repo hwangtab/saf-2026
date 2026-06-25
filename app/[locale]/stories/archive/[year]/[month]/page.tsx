@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: buildLocaleUrl(path, locale),
       type: 'website',
-      siteName: isEn ? 'SAF Online' : '씨앗페 온라인',
+      siteName: isEn ? 'SAF Online' : '씨앗페',
       locale: isEn ? 'en_US' : 'ko_KR',
       images: [
         {

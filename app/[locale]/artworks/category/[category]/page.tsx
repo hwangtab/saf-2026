@@ -131,7 +131,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: buildLocaleUrl(categoryPath, locale),
       type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
-      siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
+      siteName: isEnglish ? 'SAF Online' : '씨앗페',
       ...(imageUrl && {
         images: [
           {

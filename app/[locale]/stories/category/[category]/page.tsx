@@ -415,7 +415,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: buildLocaleUrl(categoryPath, locale),
       type: 'website',
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
-      siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
+      siteName: locale === 'en' ? 'SAF Online' : '씨앗페',
       images: [
         {
           url: representativeImage || OG_IMAGE.url,

@@ -120,7 +120,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: pageUrl,
       type: 'article',
-      siteName: isEn ? 'SAF Online' : '씨앗페 온라인',
+      siteName: isEn ? 'SAF Online' : '씨앗페',
       locale: isEn ? 'en_US' : 'ko_KR',
       publishedTime: story.published_at,
       modifiedTime: story.updated_at ?? story.published_at,

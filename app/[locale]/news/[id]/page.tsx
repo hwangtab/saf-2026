@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: pageUrl,
       type: 'article',
-      siteName: isEn ? 'SAF Online' : '씨앗페 온라인',
+      siteName: isEn ? 'SAF Online' : '씨앗페',
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
       publishedTime: article.date,
       modifiedTime: article.date,

@@ -278,7 +278,7 @@ export function generateArtworkMetadata(artwork: Artwork, locale: 'ko' | 'en' = 
       ...baseOpenGraph,
       type: 'website',
       locale: isEnglish ? 'en_US' : 'ko_KR',
-      siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
+      siteName: isEnglish ? 'SAF Online' : '씨앗페',
       // 가격+SOLD 배지+SAF 브랜딩 디자인 카드(opengraph-image.tsx)를 비-리다이렉트 URL로 명시.
       images: ogImages,
     },
@@ -344,7 +344,7 @@ export function buildArtworkProductMeta(
     { property: 'product:condition', content: 'new' },
     { property: 'product:retailer_item_id', content: `SAF2026-${artwork.id}` },
     // Facebook Merchant Catalog 추가 필드 — 카탈로그 매칭 정확도 강화
-    { property: 'product:brand', content: isEnglish ? 'SAF Online' : '씨앗페 온라인' },
+    { property: 'product:brand', content: isEnglish ? 'SAF Online' : '씨앗페' },
     ...(categoryForLocale ? [{ property: 'product:category', content: categoryForLocale }] : []),
   ];
 }
@@ -522,7 +522,7 @@ export function generateArtworkJsonLd(
     // brand는 Product 타입에서 유효 (dual-type 복원으로 schema.org range 충족)
     brand: {
       '@type': 'Brand',
-      name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
+      name: isEnglish ? 'SAF Online' : '씨앗페',
       url: SITE_URL,
     },
     creator: {
