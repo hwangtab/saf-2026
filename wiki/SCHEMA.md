@@ -26,8 +26,6 @@ last_ingested: YYYY-MM-DD | null
 sources: [psk-finance-survey-2024, ...]
 ```
 
----
-
 - `status: seed` — 골격만 있고 내용 없음(부트스트랩 직후).
 - `status: active` — 최소 1개 소스가 합성됨.
 - `status: stale` — 더 최신 소스 존재 추정, 재검토 필요(lint가 표시).
