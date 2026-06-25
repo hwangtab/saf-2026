@@ -69,7 +69,7 @@ export async function generateMetadata({
     alternates: createLocaleAlternates('/', locale),
     openGraph: {
       type: 'website',
-      siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
+      siteName: locale === 'en' ? 'SAF Online' : '씨앗페',
       title: t('metaTitle', counts),
       description: t('ogDescription', counts),
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
@@ -182,7 +182,7 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
           '@type': 'WebPage',
           '@id': `${buildLocaleUrl('/', locale)}#webpage`,
           url: buildLocaleUrl('/', locale),
-          name: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
+          name: locale === 'en' ? 'SAF Online' : '씨앗페',
           isPartOf: { '@id': `${SITE_URL}#website` },
           inLanguage: locale === 'en' ? 'en-US' : 'ko-KR',
           datePublished: '2026-01-26',

@@ -666,7 +666,7 @@ async function buildArtistMetadata({ params }: Props): Promise<Metadata> {
       url: pageUrl,
       type: 'website',
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
-      siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
+      siteName: locale === 'en' ? 'SAF Online' : '씨앗페',
       images: ogImages,
     },
     twitter: {

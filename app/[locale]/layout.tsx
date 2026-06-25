@@ -126,7 +126,7 @@ export async function generateMetadata({
     openGraph: {
       type: 'website',
       locale: isEn ? 'en_US' : 'ko_KR',
-      siteName: isEn ? 'SAF Online' : '씨앗페 온라인',
+      siteName: isEn ? 'SAF Online' : '씨앗페',
       title: ogTitle,
       description: ogDescription,
       images: [

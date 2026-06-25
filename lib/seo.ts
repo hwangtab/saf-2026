@@ -26,8 +26,9 @@ export function createPageMetadata(
   const url = buildLocaleUrl(path, locale);
   // title suffix용 brand — messages JSON `seo.siteTitle`, layout.tsx template과 일치
   const siteTitle = locale === 'en' ? 'SAF Online Gallery' : '씨앗페 온라인 갤러리';
-  // OG `siteName`은 entity name (organization.ts WebSite name과 동일) — Facebook/Twitter UI에서 site name과 title이 동시 노출되므로 짧게 유지
-  const siteName = locale === 'en' ? 'SAF Online' : '씨앗페 온라인';
+  // OG `siteName`은 브랜드명 (organization.ts WebSite name과 동일) — 구글 사이트네임/소셜 카드에 그대로 노출되므로
+  // 도메인(saf2026.com) 폴백을 막기 위해 가장 짧은 브랜드 검색어 "씨앗페"로 통일. "씨앗페 온라인"은 alternateName.
+  const siteName = locale === 'en' ? 'SAF Online' : '씨앗페';
   const ogLocale = locale === 'en' ? 'en_US' : 'ko_KR';
   const ogAlt = imageAlt ?? (locale === 'en' ? OG_IMAGE.altEn : OG_IMAGE.alt);
   const finalUrl = imageUrl || OG_IMAGE.url;
@@ -110,7 +111,7 @@ export function createStandardPageMetadata(
       description,
       url: localizedPageUrl || pageUrl,
       locale: locale === 'en' ? 'en_US' : 'ko_KR',
-      siteName: locale === 'en' ? 'SAF Online' : '씨앗페 온라인',
+      siteName: locale === 'en' ? 'SAF Online' : '씨앗페',
       images: [
         {
           url: OG_IMAGE.url,

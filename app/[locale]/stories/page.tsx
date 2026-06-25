@@ -121,7 +121,7 @@ export async function generateMetadata({
       description: dynamicDescription,
       url: pageUrl,
       type: 'website',
-      siteName: isEnglish ? 'SAF Online' : '씨앗페 온라인',
+      siteName: isEnglish ? 'SAF Online' : '씨앗페',
       locale: isEnglish ? 'en_US' : 'ko_KR',
       images: [
         {

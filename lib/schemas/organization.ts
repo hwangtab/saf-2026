@@ -106,8 +106,10 @@ export function generateWebsiteSchema(
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${SITE_URL}#website`,
-    name: isEnglish ? 'SAF Online' : '씨앗페 온라인',
-    alternateName: 'SAF Online',
+    // 구글 사이트네임/검색 결과에 노출되는 1순위 신호 — 가장 짧은 브랜드명 "씨앗페"로 고정해
+    // 도메인(saf2026.com) 폴백을 막는다. 기존 명칭은 alternateName으로 보존.
+    name: isEnglish ? 'SAF Online' : '씨앗페',
+    alternateName: isEnglish ? ['SAF', 'Seed Art Festival'] : ['씨앗페 온라인', 'SAF Online'],
     url: SITE_URL,
     description: isEnglish
       ? `A Seoul Korean art exhibition and online gallery raising mutual-aid funds for artists. Browse and purchase ${artworkCount} contemporary artworks — paintings, prints, photography, and sculpture.`
