@@ -519,7 +519,8 @@ button:focus:not(:focus-visible) {
   }
 
   /* Disable group hover scale effects (additional) */
-  .group:hover .group-hover\:scale-\[1\.01\] {
+  .group:hover .group-hover\:scale-\[1\.01\],
+  .group:hover .group-hover\:scale-\[1\.02\] {
     transform: none;
   }
 

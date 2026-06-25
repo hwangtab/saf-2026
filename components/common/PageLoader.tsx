@@ -1,10 +1,12 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { isProtectedSurfacePath } from '@/lib/path-rules';
 
 export default function PageLoader() {
   const pathname = usePathname();
+  const tA11y = useTranslations('a11y');
   const isProtectedSurface = isProtectedSurfacePath(pathname);
 
   return (
@@ -19,7 +21,8 @@ export default function PageLoader() {
       {isProtectedSurface && (
         <div className="pointer-events-none fixed inset-0 -z-10 bg-gradient-portal" />
       )}
-      <div className="relative w-12 h-12">
+      <output aria-label={tA11y('loading')} className="sr-only" />
+      <div className="relative w-12 h-12" aria-hidden="true">
         <div className="absolute top-0 left-0 w-full h-full border-4 border-gray-200 rounded-full"></div>
         <div className="absolute top-0 left-0 w-full h-full border-4 border-primary rounded-full animate-spin [animation-duration:0.8s] border-t-transparent"></div>
       </div>
