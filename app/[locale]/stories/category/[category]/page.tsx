@@ -392,7 +392,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const allStories = await getSupabaseStories();
   // 카테고리 페이지: 정전 hub 글을 top, 그 외는 기존 정렬(published_at desc) 보존.
-  // 'artist-story' 카테고리는 hub 개념 부재 → 영향 없음(모든 글 sortKey=1로 동일).
+  // 'artist-story'는 오윤 40주기 매거진 1편만 hub → 그 카테고리에서 단독으로 top 부상.
   const stories = allStories
     .filter((s) => s.category === category)
     .sort((a, b) => (isCanonicalHub(a.slug) ? 0 : 1) - (isCanonicalHub(b.slug) ? 0 : 1));
@@ -463,7 +463,7 @@ export default async function StoryCategoryPage({ params }: Props) {
 
   const allStories = await getSupabaseStories();
   // 카테고리 페이지: 정전 hub 글을 top, 그 외는 기존 정렬(published_at desc) 보존.
-  // 'artist-story' 카테고리는 hub 개념 부재 → 영향 없음(모든 글 sortKey=1로 동일).
+  // 'artist-story'는 오윤 40주기 매거진 1편만 hub → 그 카테고리에서 단독으로 top 부상.
   const stories = allStories
     .filter((s) => s.category === category)
     .sort((a, b) => (isCanonicalHub(a.slug) ? 0 : 1) - (isCanonicalHub(b.slug) ? 0 : 1));

@@ -13,7 +13,9 @@
  * Hub 선정 기준 (Sprint 8·19·20·21·22에서 매핑 hub로 채택된 글 + 거장급 introductory 글):
  *   - art-knowledge: 매체별 종합 큐레이션 hub + 입문 가이드(dansaekhwa-intro 등)
  *   - buying-guide: entry-level commerce hub (first-time-buying-art 등)
- *   - artist-story: hub 개념 부재 → 정렬 영향 없음
+ *   - artist-story: 원래 hub 부재였으나, 오윤 40주기 매거진(거장 클러스터 종합 hub) 1편
+ *     승격. 해당 글은 published_at이 오래돼 카테고리 fold 아래로 묻혀 있어 hub 승격으로만
+ *     top 노출 가능 — 다른 작가 글은 여전히 hub 아님.
  */
 
 export const CANONICAL_HUB_SLUGS = new Set<string>([
@@ -45,6 +47,12 @@ export const CANONICAL_HUB_SLUGS = new Set<string>([
   'prints-vs-originals-and-edition-numbers',
   'budget-guide-10k-to-5m',
   'saf-under-one-million',
+  // artist-story — 거장 클러스터 hub (단일). 오윤 40주기 매거진은 #49·#50·#53과 판화
+  //   hub를 묶는 작가 종합 정전 글이지만 published_at(2026-04-07)이 오래돼 '작가 이야기'
+  //   카테고리(published_at desc) fold 아래로 묻혀 있었다. hub로 승격해 그 카테고리에서
+  //   결정론적 top 노출 → "오윤" navigational query authority 집중. 홈/stories featured는
+  //   hub끼리 published_at desc라 이 오래된 글이 top을 침범하지 않음(카테고리 단독 hub).
+  'oh-yun-40th-anniversary',
 ]);
 
 /** 정전 hub 글 여부. category page 정렬 우선순위 결정에 사용. */
