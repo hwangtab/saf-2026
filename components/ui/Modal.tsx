@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils/cn';
 import Button from './Button';
 
@@ -20,6 +21,7 @@ let activeModalCount = 0;
 export default function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
   const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDialogElement>(null);
+  const tA11y = useTranslations('a11y');
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -128,7 +130,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
             size="sm"
             onClick={onClose}
             className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-gray-500 hover:text-charcoal"
-            aria-label="Close modal"
+            aria-label={tA11y('close')}
           >
             ✕
           </Button>

@@ -50,6 +50,15 @@ export default function SafeImage({ src, alt, onError, ...props }: ImageProps) {
   const normalized = normalizeSrc(src);
   const [failed, setFailed] = useState(false);
 
+  // src가 바뀌면 직전 실패 상태를 리셋한다. 그렇지 않으면 한 번 깨진 이미지 슬롯을
+  // 재사용(슬라이더·갤러리 교체)할 때 새 src도 계속 투명 PNG로 표시됨.
+  // 렌더 중 state 조정 — React 공식 권장 패턴(이펙트 불필요).
+  const [prevSrc, setPrevSrc] = useState(src);
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setFailed(false);
+  }
+
   const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     onError?.(event);
     if (!failed) setFailed(true);

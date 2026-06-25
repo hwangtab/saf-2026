@@ -25,6 +25,7 @@ import {
   INTEREST_SAVING,
   BORROWER_FIELDS,
 } from '@/content/transparency-data';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 
 export const dynamic = 'force-static';
 export const revalidate = false;
@@ -372,7 +373,7 @@ export default async function TransparencyPage({
         />
 
         {/* 3-hub cross-link chips (EN) — Sprint 67: trust cluster cross-link */}
-        <Section variant="white" prevVariant="canvas-soft" className="pb-16">
+        <Section variant="white" prevVariant="canvas-soft" className={SAWTOOTH_TOP_SAFE_PADDING}>
           <div className="container-max max-w-4xl">
             <p className="text-sm font-medium text-charcoal-muted mb-3">Related trust hubs</p>
             <div className="flex flex-wrap gap-2">
@@ -595,7 +596,7 @@ export default async function TransparencyPage({
       />
 
       {/* 3-hub cross-link chips (KO) — Sprint 67: trust cluster cross-link */}
-      <Section variant="white" prevVariant="canvas-soft" className="pb-16">
+      <Section variant="white" prevVariant="canvas-soft" className={SAWTOOTH_TOP_SAFE_PADDING}>
         <div className="container-max max-w-4xl">
           <p className="text-sm font-medium text-charcoal-muted mb-3">신뢰의 다른 기록</p>
           <div className="flex flex-wrap gap-2">

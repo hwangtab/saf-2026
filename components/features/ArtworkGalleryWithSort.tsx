@@ -202,6 +202,7 @@ function ArtworkGalleryWithSort({ artworks, initialArtist }: ArtworkGalleryWithS
           <GalleryEmptyState
             onReset={() => {
               setSearchQuery('');
+              setStatusFilter('all');
               setCategoryFilter(null);
               setPriceBucket(null);
               setSizeBucket(null);
