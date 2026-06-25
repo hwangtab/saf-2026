@@ -6,6 +6,8 @@ import Section from '@/components/ui/Section';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { buildLocaleUrl } from '@/lib/locale-alternates';
 import { resolveLocale } from '@/lib/server-locale';
+import { JsonLdScript } from '@/components/common/JsonLdScript';
+import { generateOhYoonMemorialEventSchema, generateFAQSchema } from '@/lib/schemas';
 import { SITE_URL } from '@/lib/constants';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { getTossDomesticClientKey } from '@/lib/integrations/toss/config';
@@ -90,8 +92,21 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
   const isOpen = seat?.is_open ?? false;
   const feePerPerson = seat?.fee_per_person ?? 30000;
 
+  // 구조화 데이터: Event(행사 일시·집결지·회비) + FAQPage(EventFAQ와 동일한 6문항).
+  // Google Event rich result + AI "오윤 추도식 언제/회비" 인용 대상.
+  const schemaLocale = locale === 'en' ? 'en' : 'ko';
+  const eventSchema = generateOhYoonMemorialEventSchema(schemaLocale);
+  const faqSchema = generateFAQSchema(
+    [1, 2, 3, 4, 5, 6].map((n) => ({
+      question: t(`faqQ${n}`),
+      answer: t(`faqA${n}`),
+    })),
+    schemaLocale
+  );
+
   return (
     <main className="bg-canvas text-pretty">
+      <JsonLdScript data={[eventSchema, faqSchema]} />
       <PageHero
         title={t('heroTitle')}
         description={t('heroSubtitle')}

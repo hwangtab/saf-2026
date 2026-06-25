@@ -64,6 +64,9 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '3mb',
     },
+    // 배럴 import tree-shaking — named import 시 패키지 전체가 번들에 끌려오는 것을 방지.
+    // lucide-react(아이콘 named import 광범위)·recharts(차트, dynamic 분리돼도 자체 배럴 큼).
+    optimizePackageImports: ['lucide-react', 'recharts'],
     // 빌드 워커 3개 × 기본 8 = 24 동시 페이지 in-flight. 페이지당 9 Supabase 쿼리면
     // ~216 동시 쿼리로 Cloudflare 522 / statement timeout 회귀 가능. 4로 낮춰 12 in-flight
     // (~108 쿼리)로 안전 margin 확보.

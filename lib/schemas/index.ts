@@ -40,7 +40,11 @@ export {
 } from './organization';
 
 // Event
-export { generateExhibitionSchema, isExhibitionCompleted } from './event';
+export {
+  generateExhibitionSchema,
+  generateOhYoonMemorialEventSchema,
+  isExhibitionCompleted,
+} from './event';
 
 // Content
 export type {

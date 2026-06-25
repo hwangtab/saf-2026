@@ -1,5 +1,10 @@
 import { SITE_URL, OG_IMAGE, EXHIBITION, CONTACT } from '@/lib/constants';
 import { ARTIST_COUNT } from '@/lib/site-stats';
+import {
+  OH_YOON_MEMORIAL_DATE,
+  OH_YOON_MEMORIAL_FEE,
+  OH_YOON_MEMORIAL_PATH,
+} from '@/content/events/oh-yoon-memorial';
 import { ExhibitionReview } from '@/types';
 
 export const EXHIBITION_START_DATE = '2026-01-14T10:00:00+09:00';
@@ -147,5 +152,72 @@ export function generateExhibitionSchema(
         datePublished: rev.date,
       })),
     }),
+  };
+}
+
+/**
+ * 오윤 40주기 추도식(2026-07-05) Event 스키마.
+ *
+ * 씨앗페 전시(ExhibitionEvent)와 별개의 단발 오프라인 추도 행사다. Google Event rich
+ * result + AI "오윤 추도식 언제/어디서/회비" 인용 대상. 페이지 자체는 좌석 실시간 조회로
+ * force-dynamic이지만, 이 스키마는 정적 행사 정보(일시·집결지·회비)만 노출하므로 안전.
+ * 행사 정보 단일 출처는 `content/events/oh-yoon-memorial.ts`.
+ */
+export function generateOhYoonMemorialEventSchema(locale: 'ko' | 'en' = 'ko') {
+  const isEnglish = locale === 'en';
+  const eventUrl = `${SITE_URL}${OH_YOON_MEMORIAL_PATH}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    '@id': `${eventUrl}#event`,
+    name: isEnglish ? 'Oh Yoon 40th Anniversary Memorial' : '오윤 40주기 추도식',
+    description: isEnglish
+      ? 'A memorial for Oh Yoon (1946–1986), a master of Korean Minjung art, on July 5, 2026. A chartered bus departs from Insa-dong, Seoul. First-come registration.'
+      : '2026년 7월 5일(일) 오윤 40주기 추도식. 인사동 출발 전세버스 동행, 선착순 참가 신청. 한국 민중미술의 거장 오윤을 기립니다.',
+    // 집결 09:30 → 추도식 11:00~12:00 → 점심 13:30. 전체 종료를 14:30로 근사.
+    startDate: `${OH_YOON_MEMORIAL_DATE}T09:30:00+09:00`,
+    endDate: `${OH_YOON_MEMORIAL_DATE}T14:30:00+09:00`,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    location: {
+      '@type': 'Place',
+      name: isEnglish
+        ? 'Insa-dong (meeting & departure point)'
+        : '인사동 수운회관 옆 (집결·출발지)',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: isEnglish ? 'Jongno-gu, Seoul' : '서울시 종로구 인사동',
+        addressCountry: 'KR',
+      },
+    },
+    image: [OG_IMAGE.url],
+    url: eventUrl,
+    organizer: {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}#organization`,
+      name: isEnglish ? CONTACT.ORGANIZATION_NAME_EN : CONTACT.ORGANIZATION_NAME,
+      url: SITE_URL,
+    },
+    about: {
+      '@type': 'Person',
+      name: isEnglish ? 'Oh Yoon' : '오윤',
+      alternateName: isEnglish ? '오윤' : 'Oh Yoon',
+      birthDate: '1946',
+      deathDate: '1986',
+      description: isEnglish
+        ? 'A master of Korean Minjung (people’s) art, renowned for his woodcut prints.'
+        : '한국 민중미술의 거장. 목판화로 시대를 기록했다.',
+    },
+    offers: {
+      '@type': 'Offer',
+      price: String(OH_YOON_MEMORIAL_FEE),
+      priceCurrency: 'KRW',
+      availability: 'https://schema.org/InStock',
+      url: eventUrl,
+      category: isEnglish ? 'Participation fee (incl. lunch)' : '회비 (점심 포함)',
+    },
+    inLanguage: isEnglish ? 'en-US' : 'ko-KR',
+    isAccessibleForFree: false,
   };
 }
