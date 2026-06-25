@@ -22,7 +22,7 @@ description: 씨앗페(SAF) 캠페인 지식 위키를 운영한다. 캠페인 r
    프레임이면 교정한다. **날조 금지(SCHEMA §6)**: 인터뷰/가공/미검증이면 보류하고 사용자에게 알린다.
 6. 어느 기존 페이지(`wiki/pages/*`)에 통합할지 판단한다. 없으면 새 페이지를 SCHEMA §3
    규약으로 제안한다.
-7. 대상 페이지를 갱신한다: 사실 추가 + 각주 인용(`[^id]`) + 필요 시 `[[cross-ref]]`.
+7. 대상 페이지를 갱신한다: 사실 추가 + 본문에 각주 인용(`[^id]`) + 페이지 하단에 각주 정의 라인 추가(SCHEMA §3 형식: `[^id]: 제목, 발행처, 연도 (sources/<id>.<ext>)`) + 필요 시 `[[cross-ref]]`.
    frontmatter의 `sources`에 ID 추가, `last_ingested` 갱신, `status`를 `active`로.
 8. `wiki/index.md`의 해당 행 상태·요약을 갱신한다.
 9. `wiki/log.md`에 한 줄 추가한다(날짜·`ingest`·대상 페이지·비고).
