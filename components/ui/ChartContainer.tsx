@@ -10,7 +10,6 @@ interface ChartDimensions {
   pieInnerRadius: number;
   yAxisWidth: number;
   tickFontSize: number;
-  chartMargin: { top: number; right: number; left: number; bottom: number };
 }
 
 interface DataTableRow {
