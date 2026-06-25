@@ -39,7 +39,10 @@ export default function CollectionCard({
               priority={priority}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          {/* 그라디언트 오버레이는 cover 이미지가 있을 때만 — 빈 흰 배경 위 검은 그라디언트 방지 */}
+          {cover?.images?.[0] && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          )}
           <span
             className="absolute left-3 top-3 inline-flex items-center rounded-full bg-charcoal-deep/85 px-3 py-1.5 text-xl backdrop-blur-sm"
             aria-hidden="true"

@@ -141,10 +141,9 @@ interface ToastContainerProps {
 
 export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   return (
-    <div
-      className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pt-[env(safe-area-inset-top,0px)]"
-      aria-live="polite"
-    >
+    // 개별 Toast가 각자 live region(polite) 또는 role="alert"(error)을 가지므로
+    // 컨테이너에는 aria-live를 두지 않는다 — 중첩 live region 이중 발화 방지.
+    <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pt-[env(safe-area-inset-top,0px)]">
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />
       ))}
