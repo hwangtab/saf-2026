@@ -170,7 +170,8 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
 
       {/* 오윤 클러스터 retention — 추도식은 GA4 트래픽 2위 진입로지만 다른 오윤 자산으로의
           internal link가 0인 dead-end였다. 신청 CTA(상단) 하단에 배치해 신청 전환은 방해하지
-          않으면서, 행사 관심 방문자를 갤러리·청원·매거진으로 흘려보내 link equity를 허브로 모은다. */}
+          않으면서, 행사 관심 방문자를 갤러리·청원·펀딩·매거진으로 흘려보내 link equity를
+          허브로 모은다. (펀딩 카드는 청원과 대칭 — petition도 funding을 링크.) */}
       <Section variant="canvas-soft" className="py-14 md:py-20">
         <div className="container-max max-w-4xl">
           <h2 className="mb-3 text-center font-section text-2xl font-bold text-charcoal-deep md:text-3xl">
@@ -203,6 +204,17 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
               </div>
             </Link>
             <Link
+              href="/funding/oh-yoon-terracotta"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('relatedHub.fundingEyebrow')}
+              </div>
+              <div className="text-base font-medium leading-snug text-charcoal-deep">
+                {t('relatedHub.fundingTitle')}
+              </div>
+            </Link>
+            <Link
               href="/stories/oh-yun-40th-anniversary"
               className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
             >
@@ -226,7 +238,7 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
             </Link>
             <Link
               href="/stories/oh-yoon-estate-print-guide"
-              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong md:col-span-2"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
             >
               <div className="text-eyebrow mb-2 text-primary-strong">
                 {t('relatedHub.storyPrintEyebrow')}
