@@ -60,6 +60,10 @@ for (const locale of ['ko', 'en'] as const) {
 
   test(`/${locale}/checkout 결제(카트 시드) — WCAG AA a11y 위반 없음`, async ({ page }) => {
     // 빈 카트면 체크아웃이 빈 상태로 렌더되므로 항목을 시드해 실제 결제 UI를 스캔.
+    // 이 페이지(CartCheckoutClient)는 단건 바로구매 `/checkout/[artworkId]`와 동일한
+    // `BuyerInfoForm`(성함·연락처·주소·약관 동의)과 결제수단 라디오를 그대로 렌더하므로,
+    // 결제 입력 폼 a11y는 두 경로 공통으로 여기서 커버된다. 단건 경로는 서버사이드 작품
+    // 조회에 의존해 CI의 placeholder Supabase에선 404 → 별도 spec 불가(중복이기도 함).
     await seedCart(page, [{ artworkId: SEED_ARTWORK_ID, quantity: 1 }]);
     await page.goto(`/${locale}/checkout`, { waitUntil: 'domcontentloaded' });
     await expect(
