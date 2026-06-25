@@ -9,6 +9,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { createBreadcrumbSchema } from '@/lib/seo-utils';
+import { generateOhYoonQA } from '@/lib/schemas';
 import { createStandardPageMetadata } from '@/lib/seo';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL } from '@/lib/constants';
@@ -213,9 +214,15 @@ export default async function PetitionOhYoonPage({
 
   const statementText = `${t('statementLine1')} ${t('statementLine2')} ${t('statementLine3')}`;
 
+  // AEO/GEO: "오윤은 누구·생몰·대표작·구의동 벽화·작품 어디서" 정의형 쿼리에 AI 검색이
+  // 인용할 QAPage. 이 페이지는 GA4 트래픽 1위 진입로지만 정의형 Q&A 구조가 없었다.
+  const ohYoonQA = generateOhYoonQA(PAGE_URL, isEnglish ? 'en' : 'ko');
+
   return (
     <main className="bg-canvas text-pretty">
-      <JsonLdScript data={[breadcrumbSchema, aboutPageSchema, ohYoonPerson, muralArtworkSchema]} />
+      <JsonLdScript
+        data={[breadcrumbSchema, aboutPageSchema, ohYoonPerson, muralArtworkSchema, ohYoonQA]}
+      />
       <PaperGrain />
 
       {/* 1부 HERO — 제목·부제·D-N·진행률·CTA가 모바일 한 화면에 (PRD §6.1 FR-LP-01) */}

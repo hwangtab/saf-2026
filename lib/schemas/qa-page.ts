@@ -307,3 +307,86 @@ export function generateSAFCoreQA(
 
   return generateQAPageSchema(items, pageUrl, locale);
 }
+
+/**
+ * 오윤(1946–1986) 정의형 Q&A — AEO/GEO용 QAPage.
+ *
+ * "오윤은 누구", "오윤 생몰", "오윤 대표작", "오윤 구의동 벽화", "오윤 작품 어디서"
+ * 같은 정의형/네비게이셔널 쿼리에 AI 검색엔진이 인용할 수 있는 명확한 답변 블록.
+ * petition/oh-yoon(GA4 트래픽 1위 페이지)에서 소비. 사실은 모두 페이지 본문·기존
+ * Person/VisualArtwork 스키마와 일치(날조 금지).
+ *
+ * @param pageUrl 소비 페이지 절대/상대 URL (QAPage @id·각 답변 url 기준)
+ */
+export function generateOhYoonQA(pageUrl: string, locale: 'ko' | 'en' = 'ko') {
+  const galleryUrl = `${SITE_URL}/artworks/artist/${encodeURIComponent('오윤')}`;
+
+  const items: QAItem[] =
+    locale === 'en'
+      ? [
+          {
+            question: 'Who was Oh Yoon?',
+            answer:
+              "Oh Yoon (1946–1986) was a leading figure in Korean people's art (minjung misul), best known for bold woodblock prints depicting the lives of workers and farmers. He took part in founding the Reality and Utterance (Hyeonsil-gwa Bareon) group in 1979.",
+            url: pageUrl,
+          },
+          {
+            question: 'When was Oh Yoon born and when did he die?',
+            answer:
+              'Oh Yoon was born in 1946 and died in July 1986 at the age of 40, shortly after his first solo exhibition. He was the son of the novelist Oh Young-su.',
+            url: pageUrl,
+          },
+          {
+            question: 'What are Oh Yoon’s representative works?',
+            answer:
+              'His representative woodblock prints include “Sword Song (Kalnorae),” “Singer (Sorikkun),” and “Daytime Goblin (Natdokkaebi).” He chose woodblock printing as the most democratic art form — works that could be printed by hand, even with a spoon, and shared widely.',
+            url: galleryUrl,
+          },
+          {
+            question: 'What is Oh Yoon’s 1974 Guui-dong mural?',
+            answer:
+              'It is a two-sided terracotta relief that the 28-year-old Oh Yoon carved into the interior and exterior walls of the former Sangup Bank Guui-dong branch in Seoul — a work placed where workers passed every day.',
+            url: pageUrl,
+          },
+          {
+            question: 'Where can I see Oh Yoon’s works?',
+            answer:
+              'Oh Yoon’s posthumous prints exhibited at the Seed Art Festival can be viewed in the SAF online gallery at saf2026.com/en/artworks/artist/오윤.',
+            url: galleryUrl,
+          },
+        ]
+      : [
+          {
+            question: '오윤은 누구인가요?',
+            answer:
+              '오윤(1946–1986)은 한국 민중미술의 대표 작가입니다. 노동자·농민의 삶을 담은 역동적인 목판화로 한국 현대미술에 큰 족적을 남겼고, 1979년 「현실과 발언」 창립에 참여했습니다.',
+            url: pageUrl,
+          },
+          {
+            question: '오윤은 언제 태어나고 사망했나요?',
+            answer:
+              '1946년에 태어나 1986년 7월 마흔의 나이로 별세했습니다. 소설가 오영수의 아들로, 첫 개인전을 연 직후 짧은 생을 마쳤습니다.',
+            url: pageUrl,
+          },
+          {
+            question: '오윤의 대표 작품은 무엇인가요?',
+            answer:
+              '〈칼노래〉〈소리꾼〉〈낮도깨비〉 등 목판화가 대표적입니다. 프레스기 없이 숟가락으로도 찍어 나눌 수 있는, 가장 민주적인 예술로서 목판화를 택했습니다.',
+            url: galleryUrl,
+          },
+          {
+            question: '오윤의 1974년 구의동 벽화는 무엇인가요?',
+            answer:
+              '스물여덟의 오윤이 옛 상업은행 구의동지점 내외벽에 새긴 양면 테라코타 부조입니다. 노동자였던 청년이, 노동자들이 매일 드나드는 자리에 새긴 작품입니다.',
+            url: pageUrl,
+          },
+          {
+            question: '오윤 작품은 어디서 볼 수 있나요?',
+            answer:
+              '씨앗페 온라인 갤러리(saf2026.com/artworks/artist/오윤)에서 오윤의 사후판화 출품작을 볼 수 있습니다.',
+            url: galleryUrl,
+          },
+        ];
+
+  return generateQAPageSchema(items, pageUrl, locale);
+}

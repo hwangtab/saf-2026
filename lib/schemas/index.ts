@@ -74,4 +74,4 @@ export {
 
 // QAPage (AEO/GEO)
 export type { QAItem } from './qa-page';
-export { generateQAPageSchema, generateSAFCoreQA } from './qa-page';
+export { generateQAPageSchema, generateSAFCoreQA, generateOhYoonQA } from './qa-page';
