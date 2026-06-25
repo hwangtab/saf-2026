@@ -62,7 +62,7 @@ export default memo(function HighInterestProductChart() {
               labelStyle={tooltipLabelStyle}
               itemStyle={tooltipItemStyle}
             />
-            <Bar dataKey="percentage" fill={CHART_COLORS.accent} name={copy.usageRate} />
+            <Bar dataKey="percentage" fill={CHART_COLORS.primary} name={copy.usageRate} />
           </BarChart>
         </ResponsiveContainer>
       )}

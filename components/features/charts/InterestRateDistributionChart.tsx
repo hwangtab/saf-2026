@@ -49,7 +49,7 @@ export default memo(function InterestRateDistributionChart() {
               labelStyle={tooltipLabelStyle}
               itemStyle={tooltipItemStyle}
             />
-            <Bar dataKey="count" fill={CHART_COLORS.sun} name={copy.respondents} />
+            <Bar dataKey="count" fill={CHART_COLORS.primary} name={copy.respondents} />
           </BarChart>
         </ResponsiveContainer>
       )}

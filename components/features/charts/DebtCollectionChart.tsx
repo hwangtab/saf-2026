@@ -29,7 +29,8 @@ export default memo(function DebtCollectionChart() {
           ariaLabel: '채권추심 경험 여부: 경험함 38%, 경험 없음 62%',
           description: '예술인의 38%가 채권추심 경험을 겪었습니다.',
         };
-  const COLORS = [CHART_COLORS.danger, CHART_COLORS.charcoal];
+  // [경고 통계 = danger, 보완 = primary] — FirstBankAccessChart와 동일 페어링으로 통일
+  const COLORS = [CHART_COLORS.danger, CHART_COLORS.primary];
 
   return (
     <ChartContainer title={copy.title} ariaLabel={copy.ariaLabel} description={copy.description}>
