@@ -463,7 +463,7 @@ export function TermsConsentForm({
                 {copy.agreeArtist} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadArtistTerms ? copy.readGuide : copy.readRequired}
+                {hasReadArtistTerms ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms/artist" className="underline underline-offset-2">
@@ -539,7 +539,7 @@ export function TermsConsentForm({
                 {copy.agreeExhibitor} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadExhibitorTerms ? copy.readGuide : copy.readRequired}
+                {hasReadExhibitorTerms ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms/exhibitor" className="underline underline-offset-2">
@@ -613,7 +613,7 @@ export function TermsConsentForm({
                 {copy.agreePrivacy} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadPrivacy ? copy.readGuide : copy.readRequired}
+                {hasReadPrivacy ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/privacy" className="underline underline-offset-2">
@@ -699,7 +699,7 @@ export function TermsConsentForm({
                 {copy.agreeTos} <span className="text-danger">*</span>
               </label>
               <p className="mt-1 text-gray-500">
-                {hasReadTos ? copy.readGuide : copy.readRequired}
+                {hasReadTos ? copy.readRequired : copy.readGuide}
               </p>
               <p className="mt-1 text-xs text-charcoal-soft">
                 <Link href="/terms" className="underline underline-offset-2">

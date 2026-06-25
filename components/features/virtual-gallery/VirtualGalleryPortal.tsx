@@ -121,6 +121,16 @@ export default function VirtualGalleryPortal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  // 풀스크린 3D 오버레이가 열린 동안 배경 페이지 스크롤 잠금.
+  // 이전 overflow 값을 저장·복원해 다른 오버레이의 lock을 덮어쓰지 않는다.
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
+
   // 모달 마운트 시 첫 번째 포커스 가능 요소에 포커스 + Tab 순환으로 focus trap 구현
   useEffect(() => {
     const dialog = dialogRef.current;

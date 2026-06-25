@@ -657,7 +657,14 @@ export default async function StoryCategoryPage({ params }: Props) {
                         </p>
                       )}
                       <div className="flex items-center gap-2 text-xs text-charcoal-muted/60">
-                        <span>{story.published_at}</span>
+                        <span>
+                          {story.published_at
+                            ? new Date(story.published_at).toLocaleDateString(
+                                locale === 'en' ? 'en-US' : 'ko-KR',
+                                { year: 'numeric', month: 'short', day: 'numeric' }
+                              )
+                            : ''}
+                        </span>
                         <>
                           <span>·</span>
                           <span>{localizeStoryAuthor(story.author, locale)}</span>
