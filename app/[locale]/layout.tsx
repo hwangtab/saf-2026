@@ -35,8 +35,13 @@ import '@/styles/globals.css';
 
 /**
  * Pretendard Variable (v1.3.9) — 92개 dynamic-subset 청크로 분할 self-host.
- * @font-face / unicode-range / preload 모두 `styles/pretendard-subset.css`에 선언.
- * 본 layout은 별도 폰트 import 없이 globals.css 경유로 적용된다.
+ * @font-face / unicode-range는 `styles/pretendard-subset.css`에 선언, globals.css 경유로 적용.
+ *
+ * preload: CSS @font-face로는 `<link rel=preload>`를 만들 수 없어(브라우저는 글리프가 실제
+ * 필요해질 때까지 fetch를 미룸 → hero h1이 FOUT 후 swap), 최빈출 청크만 아래 <head>에서
+ * 직접 preload한다. 청크는 희귀→빈출 순서라 마지막 [91](기본 라틴+최빈출 한글 ~30자),
+ * [90](다음 빈출 한글 ~96자)이 거의 모든 UI/hero 텍스트를 커버하는 critical chunk다.
+ * 나머지 90개는 종전대로 lazy fetch.
  *
  * 회귀 이력:
  *  - 단일 PretendardStdVariable.woff2(291KB): "Std"는 Adobe 명명체계이지 한글 subset이
@@ -213,6 +218,23 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        {/* Pretendard 최빈출 subset 청크 preload — CSS @font-face는 preload를 못 만들어
+            hero h1이 swap 폰트를 lazy fetch한다. [91](라틴+최빈출 한글)·[90](다음 빈출 한글)이
+            거의 모든 본문/hero 글리프를 덮는다. 상세는 파일 상단 주석 참고. */}
+        <link
+          rel="preload"
+          href="/fonts/pretendard-subset/PretendardVariable.subset.91.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/pretendard-subset/PretendardVariable.subset.90.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         {/* LCP 이미지가 Supabase Storage origin에서 변환되므로 preconnect로 DNS+TLS 병렬화. */}
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>
