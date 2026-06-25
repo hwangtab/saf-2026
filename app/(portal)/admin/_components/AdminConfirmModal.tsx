@@ -91,7 +91,8 @@ export function AdminConfirmModal({
             {resolvedCancelText}
           </Button>
           <Button
-            variant={variant === 'danger' ? 'primary' : 'primary'} // Button doesn't have danger variant, will use primary
+            // Button에 danger variant가 없어 기본 primary 사용. danger일 때만 className으로 오버라이드.
+            variant="primary"
             className={cn(
               variant === 'danger' &&
                 'bg-danger-a11y hover:bg-danger-a11y text-white border-danger-a11y'

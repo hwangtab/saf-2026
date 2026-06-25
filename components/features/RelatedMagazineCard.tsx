@@ -63,6 +63,7 @@ export default function RelatedMagazineCard({
             src={thumbUrl}
             alt={storyTitle}
             fill
+            sizes="(max-width: 1024px) 100vw, 320px"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
@@ -80,7 +81,13 @@ export default function RelatedMagazineCard({
           </p>
         )}
         <span className="text-[10px] text-charcoal-soft mt-2 block">
-          {story.published_at ? `${story.published_at} · ` : ''}
+          {story.published_at
+            ? `${new Date(story.published_at).toLocaleDateString(isEn ? 'en-US' : 'ko-KR', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })} · `
+            : ''}
           {localizeStoryAuthor(null, isEn ? 'en' : 'ko')}
         </span>
       </div>

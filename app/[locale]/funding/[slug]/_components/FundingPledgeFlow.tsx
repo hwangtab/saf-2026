@@ -263,88 +263,90 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
             />
           </div>
 
-          {/* 배송지 정보 — 모든 티어 requires_shipping */}
-          <div className="space-y-4 rounded-lg bg-canvas p-4">
-            <p className="text-sm font-semibold text-charcoal-deep">배송지 정보</p>
+          {/* 배송지 정보 — 실물 배송이 필요한 티어에만 표시 (디지털 리워드는 숨김) */}
+          {selected.requires_shipping && (
+            <div className="space-y-4 rounded-lg bg-canvas p-4">
+              <p className="text-sm font-semibold text-charcoal-deep">배송지 정보</p>
 
-            <div>
-              <label htmlFor="pledge-shipping-name" className={LABEL_BASE}>
-                수령인 <span className="text-danger">*</span>
-              </label>
-              <input
-                id="pledge-shipping-name"
-                type="text"
-                value={form.shippingName}
-                onChange={(e) => updateForm('shippingName', e.target.value)}
-                maxLength={100}
-                required
-                className={INPUT_BASE}
-              />
-            </div>
+              <div>
+                <label htmlFor="pledge-shipping-name" className={LABEL_BASE}>
+                  수령인 <span className="text-danger">*</span>
+                </label>
+                <input
+                  id="pledge-shipping-name"
+                  type="text"
+                  value={form.shippingName}
+                  onChange={(e) => updateForm('shippingName', e.target.value)}
+                  maxLength={100}
+                  required
+                  className={INPUT_BASE}
+                />
+              </div>
 
-            <div>
-              <label htmlFor="pledge-shipping-phone" className={LABEL_BASE}>
-                수령인 연락처 <span className="text-danger">*</span>
-              </label>
-              <input
-                id="pledge-shipping-phone"
-                type="tel"
-                value={form.shippingPhone}
-                onChange={(e) => updateForm('shippingPhone', e.target.value)}
-                maxLength={30}
-                required
-                placeholder="010-1234-5678"
-                className={INPUT_BASE}
-              />
-            </div>
+              <div>
+                <label htmlFor="pledge-shipping-phone" className={LABEL_BASE}>
+                  수령인 연락처 <span className="text-danger">*</span>
+                </label>
+                <input
+                  id="pledge-shipping-phone"
+                  type="tel"
+                  value={form.shippingPhone}
+                  onChange={(e) => updateForm('shippingPhone', e.target.value)}
+                  maxLength={30}
+                  required
+                  placeholder="010-1234-5678"
+                  className={INPUT_BASE}
+                />
+              </div>
 
-            <div>
-              <label htmlFor="pledge-postal-code" className={LABEL_BASE}>
-                우편번호 <span className="text-danger">*</span>
-              </label>
-              <input
-                id="pledge-postal-code"
-                type="text"
-                inputMode="numeric"
-                value={form.shippingPostalCode}
-                onChange={(e) => updateForm('shippingPostalCode', e.target.value)}
-                maxLength={10}
-                required
-                placeholder="12345"
-                className={INPUT_BASE}
-              />
-            </div>
+              <div>
+                <label htmlFor="pledge-postal-code" className={LABEL_BASE}>
+                  우편번호 <span className="text-danger">*</span>
+                </label>
+                <input
+                  id="pledge-postal-code"
+                  type="text"
+                  inputMode="numeric"
+                  value={form.shippingPostalCode}
+                  onChange={(e) => updateForm('shippingPostalCode', e.target.value)}
+                  maxLength={10}
+                  required
+                  placeholder="12345"
+                  className={INPUT_BASE}
+                />
+              </div>
 
-            <div>
-              <label htmlFor="pledge-address" className={LABEL_BASE}>
-                주소 <span className="text-danger">*</span>
-              </label>
-              <input
-                id="pledge-address"
-                type="text"
-                value={form.shippingAddress}
-                onChange={(e) => updateForm('shippingAddress', e.target.value)}
-                maxLength={300}
-                required
-                className={INPUT_BASE}
-              />
-            </div>
+              <div>
+                <label htmlFor="pledge-address" className={LABEL_BASE}>
+                  주소 <span className="text-danger">*</span>
+                </label>
+                <input
+                  id="pledge-address"
+                  type="text"
+                  value={form.shippingAddress}
+                  onChange={(e) => updateForm('shippingAddress', e.target.value)}
+                  maxLength={300}
+                  required
+                  className={INPUT_BASE}
+                />
+              </div>
 
-            <div>
-              <label htmlFor="pledge-memo" className={LABEL_BASE}>
-                배송 메모
-              </label>
-              <input
-                id="pledge-memo"
-                type="text"
-                value={form.shippingMemo}
-                onChange={(e) => updateForm('shippingMemo', e.target.value)}
-                maxLength={200}
-                placeholder="문 앞에 놔주세요"
-                className={INPUT_BASE}
-              />
+              <div>
+                <label htmlFor="pledge-memo" className={LABEL_BASE}>
+                  배송 메모
+                </label>
+                <input
+                  id="pledge-memo"
+                  type="text"
+                  value={form.shippingMemo}
+                  onChange={(e) => updateForm('shippingMemo', e.target.value)}
+                  maxLength={200}
+                  placeholder="문 앞에 놔주세요"
+                  className={INPUT_BASE}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* 응원 메시지 (선택) */}
           <div>

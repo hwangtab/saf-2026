@@ -25,6 +25,14 @@ export default function DesktopNavItem({ item, isActive, textColor }: DesktopNav
       <li
         className="h-full flex items-center group relative"
         onMouseLeave={() => setDismissed(false)}
+        onBlur={(e) => {
+          // 키보드 포커스가 이 nav 항목 바깥으로 나가면 dismissed 해제.
+          // Header가 layout에 상주해 client 네비게이션 후에도 dismissed가 남아
+          // 같은 항목 드롭다운을 키보드로 다시 열 수 없던 문제 방지.
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+            setDismissed(false);
+          }
+        }}
       >
         <div className="relative h-full flex items-center">
           <NavLink
