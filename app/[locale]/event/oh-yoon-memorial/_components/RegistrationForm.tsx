@@ -281,7 +281,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
           >
             +
           </button>
-          <span className="ml-1 text-sm text-charcoal-muted">명</span>
+          <span className="ml-1 text-sm text-charcoal-muted">{t('partySizeUnit')}</span>
         </div>
         {err('partySize') && <p className={ERROR_TEXT}>{err('partySize')}</p>}
       </div>

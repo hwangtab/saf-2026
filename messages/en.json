@@ -1554,7 +1554,29 @@
         "storyBladeTitle": "Song of the Blade — a close look at the peak of Oh Yoon's printmaking",
         "storyPrintEyebrow": "Posthumous print collector's guide",
         "storyPrintTitle": "Oh Yoon posthumous prints — authentication, editions, and museum works"
-      }
+      },
+      "resultConfirming": "Confirming your payment…",
+      "resultDoneTitle": "Your registration is complete",
+      "resultDoneBody": "We've sent confirmation details via KakaoTalk (and email).",
+      "resultOrderNoLabel": "Order number",
+      "resultOrderNoHint": "(for reference when contacting us)",
+      "resultBackToInfo": "Back to memorial info",
+      "resultManageLink": "View / cancel registration (phone verification)",
+      "resultErrorTitle": "There was a problem confirming your payment",
+      "resultErrorBody": "If you don't receive a confirmation shortly, please contact the office.",
+      "resultSoldOutTitle": "Seats sold out — your payment was cancelled",
+      "resultSoldOutBody": "The payment was automatically cancelled and refunded. It may take time to reflect on your card statement.",
+      "resultRefundedTitle": "A problem occurred while confirming — your payment was cancelled",
+      "resultRefundedBody": "The payment was automatically cancelled and refunded. Please try registering again shortly.",
+      "resultManualReviewTitle": "Your payment is being reviewed manually",
+      "resultManualReviewBody": "Registration could not be confirmed and the automatic refund did not complete. The office will review your payment record.",
+      "failTitle": "Your payment was cancelled",
+      "failBody": "To try again, please return to the registration page.",
+      "failErrorCodeLabel": "Error code",
+      "failOrderNoLabel": "Order number",
+      "failCleanupCancelled": "Your pending registration has been cancelled.",
+      "failBackLink": "To the registration page",
+      "partySizeUnit": "people"
     }
   },
   "funding": {

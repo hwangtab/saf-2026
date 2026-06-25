@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { setRequestLocale } from 'next-intl/server';
 import SafeImage from '@/components/common/SafeImage';
 import Section from '@/components/ui/Section';
+import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import PageHero from '@/components/ui/PageHero';
 import { getSupabaseStories } from '@/lib/supabase-data';
 import { isCanonicalHub } from '@/lib/story-canonical-hubs';
@@ -258,7 +259,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
       </Section>
 
       {stories.length === 0 ? (
-        <Section variant="canvas" prevVariant="white" className="pb-16 md:pb-24">
+        <Section variant="canvas" prevVariant="white" className={SAWTOOTH_TOP_SAFE_PADDING}>
           <div className="flex flex-col items-center justify-center py-20">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <svg
@@ -341,7 +342,7 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
 
           {/* Story Grid */}
           {rest.length > 0 && (
-            <Section variant="white" prevVariant="canvas" className="pb-16 md:pb-24">
+            <Section variant="white" prevVariant="canvas" className={SAWTOOTH_TOP_SAFE_PADDING}>
               <div className="max-w-6xl mx-auto px-4 sm:px-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {rest.map((story, i) => {

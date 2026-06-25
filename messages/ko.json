@@ -1554,7 +1554,29 @@
         "storyBladeTitle": "칼노래 — 오윤 판화의 정점을 깊이 들여다보기",
         "storyPrintEyebrow": "사후판화 컬렉터 가이드",
         "storyPrintTitle": "오윤 사후판화 — 진품 인증·에디션·미술관 소장작과의 차이"
-      }
+      },
+      "resultConfirming": "결제 확인 중입니다...",
+      "resultDoneTitle": "신청이 완료되었습니다",
+      "resultDoneBody": "확인 안내를 알림톡(및 이메일)으로 보내드렸습니다.",
+      "resultOrderNoLabel": "주문번호",
+      "resultOrderNoHint": "(문의 시 참고용)",
+      "resultBackToInfo": "추도식 안내로 돌아가기",
+      "resultManageLink": "신청 조회·취소 (휴대폰 인증)",
+      "resultErrorTitle": "결제 확인에 문제가 있습니다",
+      "resultErrorBody": "잠시 후에도 안내를 받지 못하면 사무국으로 연락 주세요.",
+      "resultSoldOutTitle": "정원이 마감되어 결제를 취소했습니다",
+      "resultSoldOutBody": "결제 승인은 자동 취소·환불 처리했습니다. 카드사 반영까지 시간이 걸릴 수 있습니다.",
+      "resultRefundedTitle": "신청 확정 중 문제가 있어 결제를 취소했습니다",
+      "resultRefundedBody": "결제 승인은 자동 취소·환불 처리했습니다. 잠시 후 다시 신청해 주세요.",
+      "resultManualReviewTitle": "결제 확인을 수동으로 처리 중입니다",
+      "resultManualReviewBody": "신청 확정에 실패했고 자동환불도 완료되지 않았습니다. 사무국에서 결제 내역을 확인하겠습니다.",
+      "failTitle": "결제가 취소되었습니다",
+      "failBody": "다시 시도하시려면 신청 페이지로 돌아가 주세요.",
+      "failErrorCodeLabel": "오류 코드",
+      "failOrderNoLabel": "주문번호",
+      "failCleanupCancelled": "결제대기 신청은 취소 처리했습니다.",
+      "failBackLink": "신청 페이지로",
+      "partySizeUnit": "명"
     }
   },
   "funding": {

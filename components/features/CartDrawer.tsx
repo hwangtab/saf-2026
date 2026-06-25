@@ -313,9 +313,9 @@ export default function CartDrawer() {
                           </div>
                         )}
 
-                        {/* Unit price */}
+                        {/* 단가 × 수량 합 (카트 페이지 항목 금액과 표시 일치) */}
                         <span className="text-sm font-semibold text-primary-a11y tabular-nums">
-                          {info ? formatKRW(info.price) : ' '}
+                          {info ? formatKRW(info.price * item.quantity) : ' '}
                         </span>
                       </div>
                     </div>
