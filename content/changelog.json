@@ -1,5 +1,15 @@
 [
   {
+    "hash": "8f8840ac",
+    "type": "fix",
+    "scope": "security",
+    "subject": "revoke PUBLIC EXECUTE on definer RPCs + audit fixes",
+    "summary": "코드베이스 감사 후속 수정 — SECURITY DEFINER RPC 5종의 anon 노출 차단 및 접근성·i18n·삭제가드·이메일 안정화 정비",
+    "body": "감사(전체 코드베이스, 13건 확정)에서 적발된 항목 수정:\n\n- security: get_purchase_click_summary/get_top_purchase_clicked_artworks,\n  cancel_stale_pending_orders_for_buyer_artworks, get_web_vitals_regressions(_count)\n  5개 SECURITY DEFINER 함수가 PUBLIC EXECUTE 노출 → REVOKE FROM PUBLIC + service_role GRANT.\n  특히 cancel_stale_pending_orders는 anon이 타인 결제 대기 주문 취소 가능한 griefing 벡터.\n  production 적용 + ACL 재검증 완료.\n- a11y: stories/guide 공개 CTA bg-primary+white+small text(WCAG AA 4.11:1 실패) → LinkButton variant=primary\n- i18n: category/error.tsx EN/KO 분기 추가(형제 error.tsx 패턴), 영어 locale 한국어 노출 차단\n- reliability: sendEventEmail에 5초 타임아웃+재시도(resendFetch 재사용) — after() 예산 잠식·무음 누락 방지\n- integrity: deleteExhibitorArtwork에 진행중 주문 가드 추가(작가·admin 경로와 일치)\n- docs: 최인범 레거시 주문 백필 SQL에 멱등 가드(ON CONFLICT)+적용완료 주석",
+    "date": "2026-06-26",
+    "author": "황경하"
+  },
+  {
     "hash": "f32f72e8",
     "type": "perf",
     "scope": "images",

@@ -852,6 +852,14 @@ export async function confirmDeposit(orderId: string) {
 
   if (confirmError) {
     console.error('[confirmDeposit] confirm_bank_transfer_order RPC failed:', confirmError);
+    // 더블셀 차단: enforce_unique_edition_single_active_sale 트리거가 다른 주문이 이미 이 unique
+    // 작품을 가져갔을 때 'UNIQUE_EDITION_TAKEN'(P0001)을 던진다. 일시적 DB 오류와 구분해, 운영자가
+    // '환불 안내가 필요한 경합 패배'인지 '재시도 가능한 오류'인지 판단할 수 있게 메시지를 분기한다.
+    if (confirmError.message.includes('UNIQUE_EDITION_TAKEN')) {
+      throw new Error(
+        '이미 다른 주문이 결제 완료한 작품입니다. 이 주문은 입금 확인할 수 없으니 구매자에게 환불을 안내해 주세요.'
+      );
+    }
     throw new Error(
       '판매 기록 생성에 실패해 입금 확인을 중단했습니다. 작품 판매 상태와 주문을 확인해 주세요.'
     );

@@ -59,6 +59,7 @@ export const BRAND_COLORS = {
     hairline: '#E0E0E0', // 작품 카드 1px border
     divider: '#F0F0F0', // 섹션 divider
     tile: '#1F2428', // 다크 챕터 단색 (= charcoal.deep)
+    well: '#15191C', // tile보다 어두운 움푹한 패널 (OG 작품 디스플레이 배경 등)
   },
   charcoal: {
     DEFAULT: '#31393C', // Gunmetal (11.79:1 on white - AAA compliant)

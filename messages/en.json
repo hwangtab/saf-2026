@@ -1578,7 +1578,9 @@
       "failOrderNoLabel": "Order number",
       "failCleanupCancelled": "Your pending registration has been cancelled.",
       "failBackLink": "To the registration page",
-      "partySizeUnit": "people"
+      "partySizeUnit": "people",
+      "decreasePartySize": "Decrease party size",
+      "increasePartySize": "Increase party size"
     }
   },
   "funding": {
@@ -1608,6 +1610,20 @@
     "consentGroupLabel": "Pledge consent",
     "paymentFailed": "Payment Failed",
     "paymentFailedDesc": "There was a problem processing your payment. Please try again.",
-    "backToProject": "Back to project"
+    "backToProject": "Back to project",
+    "formNameLabel": "Name",
+    "formEmailLabel": "Email",
+    "formPhoneLabel": "Phone",
+    "shippingSectionTitle": "Shipping information",
+    "shippingNameLabel": "Recipient",
+    "shippingPhoneLabel": "Recipient phone",
+    "postalCodeLabel": "Postal code",
+    "addressLabel": "Address",
+    "shippingMemoLabel": "Delivery note",
+    "shippingMemoPlaceholder": "Leave it at the door",
+    "supporterMessageLabel": "Support message (optional)",
+    "messagePublicLabel": "Make my support message public",
+    "anonymousLabel": "Support anonymously",
+    "amountSummary": "Pledge amount: {amount}"
   }
 }

@@ -47,6 +47,9 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
   const t = useTranslations('funding');
   const locale = useLocale();
 
+  const formatAmount = (n: number) =>
+    locale === 'en' ? `₩${n.toLocaleString('en-US')}` : `${n.toLocaleString('ko-KR')}원`;
+
   const [selected, setSelected] = useState<Tier | null>(null);
   const [form, setForm] = useState({
     backerName: '',
@@ -190,9 +193,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
                   className="mb-3 w-full rounded-lg object-cover"
                 />
               )}
-              <div className="font-bold text-charcoal-deep">
-                {tier.amount.toLocaleString('ko-KR')}원
-              </div>
+              <div className="font-bold text-charcoal-deep">{formatAmount(tier.amount)}</div>
               <div className="mt-0.5 text-sm text-charcoal">{tier.title}</div>
               {tier.description && (
                 <p className="mt-1 text-xs text-charcoal-muted">{tier.description}</p>
@@ -219,7 +220,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
           {/* 후원자 정보 */}
           <div>
             <label htmlFor="pledge-name" className={LABEL_BASE}>
-              이름 <span className="text-danger">*</span>
+              {t('formNameLabel')} <span className="text-danger">*</span>
             </label>
             <input
               id="pledge-name"
@@ -234,7 +235,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
           <div>
             <label htmlFor="pledge-email" className={LABEL_BASE}>
-              이메일 <span className="text-danger">*</span>
+              {t('formEmailLabel')} <span className="text-danger">*</span>
             </label>
             <input
               id="pledge-email"
@@ -249,7 +250,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
           <div>
             <label htmlFor="pledge-phone" className={LABEL_BASE}>
-              연락처 <span className="text-danger">*</span>
+              {t('formPhoneLabel')} <span className="text-danger">*</span>
             </label>
             <input
               id="pledge-phone"
@@ -266,11 +267,13 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
           {/* 배송지 정보 — 실물 배송이 필요한 티어에만 표시 (디지털 리워드는 숨김) */}
           {selected.requires_shipping && (
             <div className="space-y-4 rounded-lg bg-canvas p-4">
-              <p className="text-sm font-semibold text-charcoal-deep">배송지 정보</p>
+              <p className="text-sm font-semibold text-charcoal-deep">
+                {t('shippingSectionTitle')}
+              </p>
 
               <div>
                 <label htmlFor="pledge-shipping-name" className={LABEL_BASE}>
-                  수령인 <span className="text-danger">*</span>
+                  {t('shippingNameLabel')} <span className="text-danger">*</span>
                 </label>
                 <input
                   id="pledge-shipping-name"
@@ -285,7 +288,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
               <div>
                 <label htmlFor="pledge-shipping-phone" className={LABEL_BASE}>
-                  수령인 연락처 <span className="text-danger">*</span>
+                  {t('shippingPhoneLabel')} <span className="text-danger">*</span>
                 </label>
                 <input
                   id="pledge-shipping-phone"
@@ -301,7 +304,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
               <div>
                 <label htmlFor="pledge-postal-code" className={LABEL_BASE}>
-                  우편번호 <span className="text-danger">*</span>
+                  {t('postalCodeLabel')} <span className="text-danger">*</span>
                 </label>
                 <input
                   id="pledge-postal-code"
@@ -318,7 +321,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
               <div>
                 <label htmlFor="pledge-address" className={LABEL_BASE}>
-                  주소 <span className="text-danger">*</span>
+                  {t('addressLabel')} <span className="text-danger">*</span>
                 </label>
                 <input
                   id="pledge-address"
@@ -333,7 +336,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
               <div>
                 <label htmlFor="pledge-memo" className={LABEL_BASE}>
-                  배송 메모
+                  {t('shippingMemoLabel')}
                 </label>
                 <input
                   id="pledge-memo"
@@ -341,7 +344,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
                   value={form.shippingMemo}
                   onChange={(e) => updateForm('shippingMemo', e.target.value)}
                   maxLength={200}
-                  placeholder="문 앞에 놔주세요"
+                  placeholder={t('shippingMemoPlaceholder')}
                   className={INPUT_BASE}
                 />
               </div>
@@ -351,7 +354,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
           {/* 응원 메시지 (선택) */}
           <div>
             <label htmlFor="pledge-message" className={LABEL_BASE}>
-              응원 메시지 (선택)
+              {t('supporterMessageLabel')}
             </label>
             <textarea
               id="pledge-message"
@@ -370,7 +373,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
                 className="h-4 w-4 rounded"
               />
               <label htmlFor="pledge-public" className="text-xs text-charcoal-muted">
-                응원 메시지를 공개합니다
+                {t('messagePublicLabel')}
               </label>
             </div>
           </div>
@@ -385,7 +388,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
               className="h-4 w-4 rounded"
             />
             <label htmlFor="pledge-anonymous" className="text-sm text-charcoal">
-              익명으로 후원합니다
+              {t('anonymousLabel')}
             </label>
           </div>
 
@@ -416,7 +419,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
 
           {/* 결제 금액 요약 */}
           <p className="text-right text-sm font-semibold text-charcoal-deep">
-            후원 금액: {selected.amount.toLocaleString('ko-KR')}원
+            {t('amountSummary', { amount: formatAmount(selected.amount) })}
           </p>
 
           {/* 에러 메시지 */}

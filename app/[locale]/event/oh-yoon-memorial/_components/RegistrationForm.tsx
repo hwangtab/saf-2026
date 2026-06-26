@@ -256,7 +256,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
             type="button"
             onClick={() => setParty(partySize - 1)}
             disabled={partySize <= 1}
-            aria-label="인원 줄이기"
+            aria-label={t('decreasePartySize')}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-xl font-bold text-charcoal-deep transition hover:bg-canvas disabled:opacity-40"
           >
             −
@@ -276,7 +276,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
             type="button"
             onClick={() => setParty(partySize + 1)}
             disabled={partySize >= 20}
-            aria-label="인원 늘리기"
+            aria-label={t('increasePartySize')}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-xl font-bold text-charcoal-deep transition hover:bg-canvas disabled:opacity-40"
           >
             +
