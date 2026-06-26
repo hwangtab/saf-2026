@@ -167,7 +167,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
             <SectionTitle className="mb-8">Exhibition overview</SectionTitle>
             <div className="mb-12">
               <SafeImage
-                src="/images/safposter.png"
+                src="/images/safposter.webp"
                 alt="SAF 2026 official poster"
                 width={1200}
                 height={1700}
@@ -259,7 +259,7 @@ export default async function Archive2026Page({ params }: { params: Promise<{ lo
           {/* Poster - Full Width */}
           <div className="mb-12">
             <SafeImage
-              src="/images/safposter.png"
+              src="/images/safposter.webp"
               alt="씨앗페 2026 공식 포스터"
               width={1200}
               height={1700}

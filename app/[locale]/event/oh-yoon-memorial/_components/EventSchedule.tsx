@@ -24,7 +24,7 @@ export default async function EventSchedule() {
         {/* 행사 포스터 — 행사 전체를 한눈에 보여주는 비주얼 */}
         <div className="mx-auto mt-8 max-w-2xl">
           <SafeImage
-            src="/images/oh-yoon-memorial-poster.png"
+            src="/images/oh-yoon-memorial-poster.webp"
             alt={t('posterAlt')}
             width={1080}
             height={1350}

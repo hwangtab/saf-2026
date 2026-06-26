@@ -40,9 +40,9 @@ const MAINTENANCE_MODE = false;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
 const OH_YOON_PERSON_ID = `${SITE_URL}/artworks/artist/${encodeURIComponent('오윤')}#person-oh-yoon`;
-// 소셜/크롤러 미리보기 전용 OG 자산 (1200×630, ~119KB). 본문 SafeImage는 원본
-// mural-1.png를 next/image로 직접 최적화하므로 별개. OG는 next/image를 거치지 않아
-// 원본 2.1MB가 그대로 외부 봇에 전송되던 것을 사전 압축본으로 교체 (카카오 OG <1MB 권장).
+// 소셜/크롤러 미리보기 전용 OG 자산 (1200×630, ~119KB). 본문 SafeImage는
+// mural-1.webp를 next/image로 직접 최적화하므로 별개. OG는 next/image를 거치지 않아
+// 원본이 그대로 외부 봇에 전송되므로 사전 압축본을 둔다 (카카오 OG <1MB 권장).
 const MURAL_OG_IMAGE_URL = `${SITE_URL}/images/petition-oh-yoon/mural-1-og.jpg`;
 
 async function fetchPetitionActive(): Promise<boolean> {
@@ -236,7 +236,7 @@ export default async function PetitionOhYoonPage({
         {/* 작품 사진 배경 (mural-2: 인체 부조 정면) */}
         <div aria-hidden="true" className="absolute inset-0 -z-10">
           <SafeImage
-            src="/images/petition-oh-yoon/mural-2.png"
+            src="/images/petition-oh-yoon/mural-2.webp"
             alt={t('heroImageAlt')}
             fill
             priority
@@ -343,7 +343,7 @@ export default async function PetitionOhYoonPage({
           <figure className="mt-10 grid gap-3 md:grid-cols-3">
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <SafeImage
-                src="/images/petition-oh-yoon/mural-1.png"
+                src="/images/petition-oh-yoon/mural-1.webp"
                 alt={t('muralAltFront')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
@@ -352,7 +352,7 @@ export default async function PetitionOhYoonPage({
             </div>
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <SafeImage
-                src="/images/petition-oh-yoon/mural-2.png"
+                src="/images/petition-oh-yoon/mural-2.webp"
                 alt={t('muralAltDetail')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
@@ -361,7 +361,7 @@ export default async function PetitionOhYoonPage({
             </div>
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <SafeImage
-                src="/images/petition-oh-yoon/mural-3.png"
+                src="/images/petition-oh-yoon/mural-3.webp"
                 alt={t('muralAltBack')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
