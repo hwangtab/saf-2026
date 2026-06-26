@@ -152,44 +152,6 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
     );
   }
 
-  if (result?.ok && result.code === 'OK_DEPOSIT' && 'deposit' in result && result.deposit) {
-    const d = result.deposit;
-    return (
-      <div
-        className="mt-6 rounded-xl border border-primary/30 bg-white px-6 py-8"
-        aria-live="polite"
-      >
-        <h3 className="text-center font-display text-2xl font-bold text-charcoal-deep">
-          {t('depositTitle')}
-        </h3>
-        <p className="mt-3 text-center text-charcoal break-keep">{t('depositLead')}</p>
-        <dl className="mt-6 space-y-2 rounded-lg bg-canvas p-5 text-sm">
-          <div className="flex justify-between gap-4">
-            <dt className="text-charcoal-muted">{t('depositBankLabel')}</dt>
-            <dd className="font-semibold text-charcoal-deep">{d.bank}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-charcoal-muted">{t('depositAccountLabel')}</dt>
-            <dd className="font-bold text-charcoal-deep">{d.account}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-charcoal-muted">{t('depositHolderLabel')}</dt>
-            <dd className="font-semibold text-charcoal-deep">{d.holder}</dd>
-          </div>
-          <div className="flex justify-between gap-4 border-t border-gray-200 pt-2">
-            <dt className="text-charcoal-muted">{t('depositAmountLabel')}</dt>
-            <dd className="font-bold text-primary-strong">
-              {t('formFeeSummary', { amount: d.amount.toLocaleString('ko-KR') })}
-            </dd>
-          </div>
-        </dl>
-        <p className="mt-4 text-center text-sm text-charcoal-muted break-keep">
-          {t('depositNotice')}
-        </p>
-      </div>
-    );
-  }
-
   const err = (k: RegisterEventField) => (result && !result.ok ? result.errors?.[k] : undefined);
 
   return (
