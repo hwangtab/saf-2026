@@ -430,11 +430,16 @@ git commit -m "feat(event): memorial transfer opens Toss quick account transfer 
 - [ ] **Step 1: `createBankTransferOrder` 잔여 호출자 확인**
 
 Run: `grep -rn "createBankTransferOrder" app lib components`
-Expected: `app/actions/checkout.ts`의 정의(664행)만 남음. 호출자 0건. (남아 있으면 그 호출자도 카드 경로로 전환 후 진행)
+Expected: `app/actions/checkout.ts`의 정의(664행)와 `OverseasCheckoutClient.tsx`(en, 유지)만 남음.
+ko 컴포넌트(CheckoutClient.tsx, CartCheckoutClient.tsx)에는 없어야 함. 남아 있으면 해당
+호출자도 카드 경로로 전환 후 진행.
 
-- [ ] **Step 2: `createBankTransferOrder` 함수 본체 삭제 (664–878행)**
+- [ ] **Step 2: `createBankTransferOrder` 함수 본체 보존 — en이 사용**
 
-`export async function createBankTransferOrder(...)` 전체를 삭제한다. 이 함수만 쓰던 헬퍼/상수가 다른 곳에서 안 쓰이면 함께 정리 (예: bank-transfer-info import). `verifyBankTransferLanding`/`cancelLandingOrder` 등 다른 export는 **건드리지 않는다** (success 랜딩이 여전히 사용 가능 — 단 신규 무통장이 없으므로 사실상 dead, 본 plan에서는 보존).
+`OverseasCheckoutClient.tsx`(해외 en 결제)가 이 함수를 **SWIFT 무통장 송금용으로 여전히 호출**한다.
+퀵계좌이체는 한국 계좌 전용이라 en 구매자에게 적용 불가 — spec §2(국내 ko만 전환)와 일치.
+**함수 본체·en 호출·`verifyBankTransferLanding`/`cancelLandingOrder`/`cancelLatestLandingOrder`는
+모두 유지. 이 Step에서 코드 변경 없음.**
 
 - [ ] **Step 3: 무통장 success 랜딩 경로 확인 (보존 판단)**
 
