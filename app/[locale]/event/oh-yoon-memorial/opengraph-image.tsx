@@ -75,7 +75,7 @@ export default async function Image({ params }: Props) {
             width: '440px',
             height: '100%',
             flexShrink: 0,
-            backgroundColor: '#15191c',
+            backgroundColor: BRAND_COLORS.gallery.well,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
