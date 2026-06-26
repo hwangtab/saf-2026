@@ -77,15 +77,26 @@ async function main() {
   const loanMatch = existing.match(/^export const LOAN_COUNT = (\d+);/m);
   const loanCount = loanMatch ? Number(loanMatch[1]) : 354;
 
+  // 기존 카운트·"최종 갱신" 날짜 추출 (멱등 비교용)
+  const prevArtworkMatch = existing.match(/^export const ARTWORK_COUNT = (\d+);/m);
+  const prevArtistMatch = existing.match(/^export const ARTIST_COUNT = (\d+);/m);
+  const prevDateMatch = existing.match(/^\/\/ 최종 갱신: (\d{4}-\d{2}-\d{2})/m);
+  const prevArtworkCount = prevArtworkMatch ? Number(prevArtworkMatch[1]) : null;
+  const prevArtistCount = prevArtistMatch ? Number(prevArtistMatch[1]) : null;
+
+  // 카운트가 그대로면 기존 "최종 갱신" 날짜를 보존 — 실제 수치가 바뀐 날만 날짜 갱신.
+  // (날짜 파싱 실패 시 today로 fallback → 정보 손실 방지)
+  const countsUnchanged = artworkCount === prevArtworkCount && artistCount === prevArtistCount;
   const today = new Date().toISOString().slice(0, 10);
+  const updateDate = countsUnchanged && prevDateMatch ? prevDateMatch[1] : today;
 
   const content = `// 메타·SEO 카피·i18n 메시지·JSON-LD 스키마에 들어가는 작품/작가 수의 단일 출처.
 // 빌드 전 scripts/sync-site-stats.js 가 Supabase DB에서 자동 갱신 (prebuild 훅).
 // 수동 수정 불필요 — 갱신 방법: npm run build 또는 node scripts/sync-site-stats.js
-// 최종 갱신: ${today} (artworks.is_hidden=false 기준 ${artworkCount}건, 작가 ${artistCount}명)
+// 최종 갱신: ${updateDate} (artworks.is_hidden=false 기준 ${artworkCount}건, 작가 ${artistCount}명)
 export const ARTWORK_COUNT = ${artworkCount};
 // 노출 작품이 있는 작가 수 (is_hidden=false 작품 보유 기준).
-// 최종 갱신: ${today}
+// 최종 갱신: ${updateDate}
 export const ARTIST_COUNT = ${artistCount};
 
 // 예술인 상호부조 대출 누적 건수 (한국스마트협동조합 운영 데이터, 수기 갱신).
@@ -94,9 +105,15 @@ export const ARTIST_COUNT = ${artistCount};
 export const LOAN_COUNT = ${loanCount};
 `;
 
+  // 데이터가 실제로 바뀐 경우에만 쓴다 — 동일하면 working tree를 더럽히지 않음.
+  if (content === existing) {
+    console.log(`[sync-site-stats] unchanged — 작품 ${artworkCount}건, 작가 ${artistCount}명`);
+    return;
+  }
+
   fs.writeFileSync(STATS_PATH, content, 'utf8');
   console.log(
-    `[sync-site-stats] 갱신 완료 — 작품 ${artworkCount}건, 작가 ${artistCount}명 (${today})`
+    `[sync-site-stats] 갱신 완료 — 작품 ${artworkCount}건, 작가 ${artistCount}명 (${updateDate})`
   );
 }
 
