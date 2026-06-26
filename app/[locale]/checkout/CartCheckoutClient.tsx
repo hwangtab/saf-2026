@@ -12,7 +12,7 @@ import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
-import { createOrder, cancelPendingOrder, createBankTransferOrder } from '@/app/actions/checkout';
+import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from '../checkout/[artworkId]/BuyerInfoForm';
 import type { BuyerInfoHandle } from '../checkout/[artworkId]/BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from '../checkout/[artworkId]/PaymentBrandLogo';
@@ -40,28 +40,32 @@ interface PaymentChoiceConfig {
   value: PaymentChoice;
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   brand: KoBrand;
+  tossMethod: 'CARD' | 'TRANSFER';
   cardOptions?: CardOptions;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', brand: null },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
+  { value: 'CARD', labelKey: 'methodCard', brand: null, tossMethod: 'CARD' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null, tossMethod: 'TRANSFER' },
   {
     value: 'KAKAOPAY',
     labelKey: 'methodKakaopay',
     brand: 'kakaopay',
+    tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
   },
   {
     value: 'TOSSPAY',
     labelKey: 'methodTosspay',
     brand: 'tosspay',
+    tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
   },
   {
     value: 'NAVERPAY',
     labelKey: 'methodNaverpay',
     brand: 'naverpay',
+    tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
   },
 ];
@@ -196,36 +200,6 @@ export default function CartCheckoutClient({ clientKey }: Props) {
     let createdOrderNo: string | null = null;
 
     try {
-      // 계좌이체(TRANSFER): 단건과 동일하게 Toss 거치지 않고 무통장 입금 흐름.
-      // createBankTransferOrder가 awaiting_deposit 처리 후 success 페이지로 직접 redirect.
-      if (paymentChoice === 'TRANSFER') {
-        const result = await createBankTransferOrder({
-          items: orderItems,
-          cartCheckout: true,
-          buyerName,
-          buyerEmail,
-          buyerPhone,
-          shippingName,
-          shippingPhone,
-          shippingAddress,
-          shippingAddressDetail,
-          shippingPostalCode,
-          shippingMemo,
-          locale: 'ko',
-        });
-        if (!result.success) {
-          if (result.unavailable && result.unavailable.length > 0) {
-            setHighlightUnavailable(result.unavailable);
-          }
-          setError(result.error);
-          setSubmitting(false);
-          return;
-        }
-        // 성공 시 서버 액션이 직접 redirect — 이 줄 이후 도달하지 않음.
-        // 카트 비우기는 무통장 success 랜딩에서 처리.
-        return;
-      }
-
       const result = await createOrder({
         items: orderItems,
         buyerName,
@@ -268,17 +242,30 @@ export default function CartCheckoutClient({ clientKey }: Props) {
       });
 
       const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
-      await payment.requestPayment({
-        method: 'CARD',
-        amount: { currency: 'KRW', value: serverTotal },
-        orderId: orderNo,
-        orderName,
-        customerName: buyerName,
-        customerEmail: buyerEmail,
-        successUrl,
-        failUrl,
-        ...(choice?.cardOptions && { card: choice.cardOptions }),
-      });
+      if (choice?.tossMethod === 'TRANSFER') {
+        await payment.requestPayment({
+          method: 'TRANSFER',
+          amount: { currency: 'KRW', value: serverTotal },
+          orderId: orderNo,
+          orderName,
+          customerName: buyerName,
+          customerEmail: buyerEmail,
+          successUrl,
+          failUrl,
+        });
+      } else {
+        await payment.requestPayment({
+          method: 'CARD',
+          amount: { currency: 'KRW', value: serverTotal },
+          orderId: orderNo,
+          orderName,
+          customerName: buyerName,
+          customerEmail: buyerEmail,
+          successUrl,
+          failUrl,
+          ...(choice?.cardOptions && { card: choice.cardOptions }),
+        });
+      }
       // navigate 진행 중 — 페이지 unload까지 대기 (단건과 동일).
       await new Promise(() => {});
     } catch (err: unknown) {
