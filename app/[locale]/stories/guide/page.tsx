@@ -14,6 +14,7 @@ import { getHeroOverride, pickListingHeroImage } from '@/lib/hero-curation';
 import { resolveLocale } from '@/lib/server-locale';
 import { SITE_URL, CONTACT, OG_IMAGE } from '@/lib/constants';
 import { Link } from '@/i18n/navigation';
+import LinkButton from '@/components/ui/LinkButton';
 import { ArrowRight } from 'lucide-react';
 
 export const dynamic = 'force-static';
@@ -305,13 +306,14 @@ export default async function StoriesGuidePage({
       >
         <div className="max-w-3xl mx-auto px-4 sm:px-5 text-center">
           <p className="text-lg text-charcoal-muted mb-6">{copy.artworksCta}</p>
-          <Link
+          <LinkButton
             href="/artworks"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-strong hover:gap-3"
+            variant="primary"
+            className="rounded-full"
+            trailingIcon={<ArrowRight className="w-4 h-4" aria-hidden="true" />}
           >
             {copy.artworksCtaLabel}
-            <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
+          </LinkButton>
         </div>
       </Section>
     </>

@@ -2,7 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireExhibitor } from '@/lib/auth/guards';
-import { createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/auth/server';
+import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
 import type { Database } from '@/types/supabase';
 import {
   getStoragePathFromPublicUrl,
@@ -391,6 +392,13 @@ export async function deleteExhibitorArtwork(id: string) {
   }
   if (!artwork.artist_id) {
     throw new Error('작품 작가 정보를 찾을 수 없습니다.');
+  }
+
+  // 작가·관리자 삭제 경로와 동일하게 진행 중 주문 가드. order_items↔orders FK가 ON DELETE
+  // NO ACTION(회계 보존)이라, 활성 주문이 걸린 작품 삭제 시 FK 위반 raw 에러가 노출된다.
+  const adminClient = createSupabaseAdminClient();
+  if (await hasActiveOrdersForArtworks(adminClient, [id])) {
+    throw new Error('진행 중인 주문이 있어 삭제할 수 없습니다.');
   }
 
   const { error } = await supabase.from('artworks').delete().eq('id', id);

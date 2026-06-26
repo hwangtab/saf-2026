@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from '@react-email/render';
 import { sendSolapiAlimTalk, sendSolapiSms, type KakaoButton } from '@/lib/sms/solapi';
 import { normalizeKoreanMobile } from '@/lib/sms/phone';
+import { resendFetch } from '@/lib/notify';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import EventPaymentConfirmedEmail from '@/emails/event-payment-confirmed';
 import EventWaitlistEmail from '@/emails/event-waitlist';
@@ -162,12 +163,12 @@ export async function sendEventEmail(
     }
 
     const html = await render(el);
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to, subject: EVENT_EMAIL_SUBJECTS[type], html }),
-    });
-    if (!res.ok) console.error(`[event-email:${type}] resend ${res.status}`);
+    // 다른 발송기와 동일하게 5초 타임아웃 + 429/5xx·네트워크 1회 재시도로 통일.
+    // bare fetch는 after() 안에서 타임아웃 없이 멈춰 같은 배치의 SMS/관리자 알림 예산까지 잠식한다.
+    await resendFetch(
+      { apiKey, from, to, subject: EVENT_EMAIL_SUBJECTS[type], html },
+      `[event-email:${type}]`
+    );
   } catch (err) {
     console.error(`[event-email:${type}] failed:`, err);
   }
