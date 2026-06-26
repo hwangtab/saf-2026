@@ -147,7 +147,7 @@ export default async function ArchiveHubPage({ params }: { params: Promise<{ loc
               <div className="bg-canvas rounded-2xl overflow-hidden border border-gray-200 shadow-sm transition-shadow duration-300 hover:shadow-gallery-hover">
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <SafeImage
-                    src="/images/safposter.png"
+                    src="/images/safposter.webp"
                     alt={isEnglish ? 'SAF 2026 poster' : '씨앗페 2026 포스터'}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
