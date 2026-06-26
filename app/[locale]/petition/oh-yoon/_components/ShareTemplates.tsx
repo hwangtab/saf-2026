@@ -39,10 +39,11 @@ export default function ShareTemplates({ url }: ShareTemplatesProps) {
           window.location.href = `sms:?&body=${encodeURIComponent(text)}`;
           return;
         }
-        // 페이지의 명시적 OG 이미지(mural-1.png)와 동일 자산 사용 — 과거 참조하던
-        // /petition/oh-yoon/opengraph-image 라우트는 페이지 OG override에 가려진 2MB
-        // 사장 코드로 삭제됨 (2026-06-12 감사). 이 URL을 라우트로 되돌리지 말 것.
-        const ogImageUrl = `${url.split('/petition')[0]}/images/petition-oh-yoon/mural-1.png`;
+        // 페이지의 명시적 OG 이미지(mural-1-og.jpg, 1200×630 ~119KB)와 동일 자산 사용 —
+        // 과거 참조하던 /petition/oh-yoon/opengraph-image 라우트는 페이지 OG override에
+        // 가려진 2MB 사장 코드로 삭제됨 (2026-06-12 감사). 이 URL을 라우트로 되돌리지 말 것.
+        // 원본 mural-1.png(2.1MB)는 next/image를 거치지 않는 카카오 공유에 부적합 → OG 전용 압축본.
+        const ogImageUrl = `${url.split('/petition')[0]}/images/petition-oh-yoon/mural-1-og.jpg`;
         window.Kakao.Share.sendDefault({
           objectType: 'feed',
           content: {

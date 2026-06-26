@@ -40,7 +40,10 @@ const MAINTENANCE_MODE = false;
 
 const PAGE_URL = `${SITE_URL}${PETITION_OH_YOON_PATH}`;
 const OH_YOON_PERSON_ID = `${SITE_URL}/artworks/artist/${encodeURIComponent('오윤')}#person-oh-yoon`;
-const MURAL_IMAGE_URL = `${SITE_URL}/images/petition-oh-yoon/mural-1.png`;
+// 소셜/크롤러 미리보기 전용 OG 자산 (1200×630, ~119KB). 본문 SafeImage는 원본
+// mural-1.png를 next/image로 직접 최적화하므로 별개. OG는 next/image를 거치지 않아
+// 원본 2.1MB가 그대로 외부 봇에 전송되던 것을 사전 압축본으로 교체 (카카오 OG <1MB 권장).
+const MURAL_OG_IMAGE_URL = `${SITE_URL}/images/petition-oh-yoon/mural-1-og.jpg`;
 
 async function fetchPetitionActive(): Promise<boolean> {
   try {
@@ -79,7 +82,7 @@ export async function generateMetadata({
   // 카카오톡·페이스북 등 OG 크롤러 미리보기에 1974년 구의동 양면 부조 사진을 노출.
   // createStandardPageMetadata가 기본 OG 이미지(/images/og-image.jpg)를 강제하므로
   // 청원 페이지는 작품 사진으로 명시 override한다. 절대 URL 필수 (외부 봇이 접근).
-  const muralImageUrl = `${SITE_URL}/images/petition-oh-yoon/mural-1.png`;
+  const muralImageUrl = MURAL_OG_IMAGE_URL;
   const muralImageAlt =
     locale === 'en'
       ? 'Oh Yoon, 1974 — terracotta mural at the former Sangup Bank Guui-dong branch'
@@ -94,9 +97,9 @@ export async function generateMetadata({
         {
           url: muralImageUrl,
           secureUrl: muralImageUrl,
-          type: 'image/png',
-          width: 1280,
-          height: 960,
+          type: 'image/jpeg',
+          width: 1200,
+          height: 630,
           alt: muralImageAlt,
         },
       ],
@@ -191,7 +194,7 @@ export default async function PetitionOhYoonPage({
     inLanguage: isEnglish ? 'en-US' : 'ko-KR',
     isPartOf: { '@id': `${SITE_URL}#website` },
     about: { '@id': OH_YOON_PERSON_ID },
-    primaryImageOfPage: { '@type': 'ImageObject', url: MURAL_IMAGE_URL },
+    primaryImageOfPage: { '@type': 'ImageObject', url: MURAL_OG_IMAGE_URL },
   };
 
   const muralArtworkSchema = {
@@ -204,7 +207,7 @@ export default async function PetitionOhYoonPage({
     dateCreated: '1974',
     artMedium: isEnglish ? 'Terracotta' : '테라코타',
     artform: isEnglish ? 'Mural relief' : '부조',
-    image: MURAL_IMAGE_URL,
+    image: MURAL_OG_IMAGE_URL,
     contentLocation: {
       '@type': 'Place',
       name: isEnglish ? 'Former Sangup Bank Guui-dong branch, Seoul' : '옛 상업은행 구의동지점',
@@ -425,7 +428,7 @@ export default async function PetitionOhYoonPage({
                 url={PAGE_URL}
                 title={statementText}
                 description={t('metaDescription')}
-                imageUrl={`${SITE_URL}/images/petition-oh-yoon/mural-1.png`}
+                imageUrl={MURAL_OG_IMAGE_URL}
               />
             </div>
           </div>
