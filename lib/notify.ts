@@ -397,7 +397,8 @@ export async function sendArtistApprovalEmail(to: string, artistName: string): P
   if (!ok) throw new Error('이메일 발송에 실패했습니다. Resend API 응답을 확인하세요.');
 }
 
-async function resendFetch(
+/** Resend 이메일 전송 — 5초 타임아웃 + 429/5xx·네트워크 1회 재시도. never throw, boolean 반환. */
+export async function resendFetch(
   opts: {
     apiKey: string;
     from: string;
