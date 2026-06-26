@@ -9,7 +9,7 @@ import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee } from '@/lib/integrations/toss/config';
-import { createOrder, cancelPendingOrder, createBankTransferOrder } from '@/app/actions/checkout';
+import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
@@ -25,8 +25,8 @@ import { sessionSet } from '@/lib/storage';
  *   별도로 만들지 않으므로 SDK가 picker를 띄워 사용자가 카드사를 고르도록 위임.
  * - KAKAOPAY/TOSSPAY/NAVERPAY: `card: { flowMode: 'DIRECT', easyPay: '한국어 enum' }`로
  *   해당 간편결제 자체창 직행. easyPay 영문 enum('KAKAOPAY' 등)은 Toss 검증 단계에서 거부됨.
- * - TRANSFER: Toss 우회 + createBankTransferOrder → awaiting_deposit + artwork=reserved
- *   → 기업은행(IBK) 계좌번호 안내 (뱅크페이 인증서·앱 설치 UX 회피).
+ * - TRANSFER: 토스 퀵계좌이체 (method: 'TRANSFER'). 카드와 동일 파이프라인 —
+ *   실시간 출금 후 DONE으로 즉시 결제 완료. 가상계좌(WAITING_FOR_DEPOSIT) 아님.
  *
  * saf202i818 MID 자체창 직행은 토스페이먼츠 결제연동팀 한지형부장 회신(2026-05-09)으로
  * 활성화 — 테스트-라이브 sync 이슈 해결됨. 가상계좌는 별도 미계약(에러 2003) 제외.
@@ -59,6 +59,8 @@ interface PaymentChoiceConfig {
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
   brand: KoBrand;
+  /** Toss SDK v2 requestPayment의 method. 간편결제 4종은 'CARD'+cardOptions, 퀵계좌이체는 'TRANSFER'. */
+  tossMethod: 'CARD' | 'TRANSFER';
   /** Toss SDK v2 자체창 직행 옵션. undefined면 통합결제창 (DEFAULT). */
   cardOptions?: CardOptions;
 }
@@ -123,24 +125,27 @@ function buildCheckoutTrackingParams(input: {
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', brand: null },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
+  { value: 'CARD', labelKey: 'methodCard', brand: null, tossMethod: 'CARD' },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null, tossMethod: 'TRANSFER' },
   {
     value: 'KAKAOPAY',
     labelKey: 'methodKakaopay',
     brand: 'kakaopay',
+    tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
   },
   {
     value: 'TOSSPAY',
     labelKey: 'methodTosspay',
     brand: 'tosspay',
+    tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
   },
   {
     value: 'NAVERPAY',
     labelKey: 'methodNaverpay',
     brand: 'naverpay',
+    tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
   },
 ];
@@ -229,46 +234,6 @@ export default function CheckoutClient({
     let createdOrderNo: string | null = null;
 
     try {
-      // 계좌이체(TRANSFER): Toss 거치지 않고 무통장 입금 흐름.
-      // createBankTransferOrder가 awaiting_deposit + artwork=reserved 처리 후
-      // 우리 success page로 redirect하여 기업은행(IBK) 계좌번호 안내.
-      if (paymentChoice === 'TRANSFER') {
-        const result = await createBankTransferOrder({
-          artworkId,
-          buyerName,
-          buyerEmail,
-          buyerPhone,
-          shippingName,
-          shippingPhone,
-          shippingAddress,
-          shippingAddressDetail,
-          shippingPostalCode,
-          shippingMemo,
-          locale: 'ko',
-        });
-        if (!result.success) {
-          trackEvent(
-            'checkout_error',
-            buildCheckoutTrackingParams({
-              artworkId,
-              artworkTitle,
-              artist,
-              value: totalAmount,
-              currency: 'KRW',
-              payment_type: paymentChoice,
-              error_code: 'bank_transfer_order_failed',
-              error_message: result.error,
-            })
-          );
-          setError(result.error);
-          setSubmitting(false);
-          return;
-        }
-        // 성공 시 서버 액션이 직접 redirect — 이 줄 이후에는 도달하지 않음.
-        // add_payment_info 이벤트는 성공 확정 후 SuccessClient 에서 발화.
-        return;
-      }
-
       const result = await createOrder({
         artworkId,
         buyerName,
@@ -342,17 +307,30 @@ export default function CheckoutClient({
       );
 
       const choice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
-      await payment.requestPayment({
-        method: 'CARD',
-        amount: { currency: 'KRW', value: serverTotal },
-        orderId: orderNo,
-        orderName,
-        customerName: buyerName,
-        customerEmail: buyerEmail,
-        successUrl,
-        failUrl,
-        ...(choice?.cardOptions && { card: choice.cardOptions }),
-      });
+      if (choice?.tossMethod === 'TRANSFER') {
+        await payment.requestPayment({
+          method: 'TRANSFER',
+          amount: { currency: 'KRW', value: serverTotal },
+          orderId: orderNo,
+          orderName,
+          customerName: buyerName,
+          customerEmail: buyerEmail,
+          successUrl,
+          failUrl,
+        });
+      } else {
+        await payment.requestPayment({
+          method: 'CARD',
+          amount: { currency: 'KRW', value: serverTotal },
+          orderId: orderNo,
+          orderName,
+          customerName: buyerName,
+          customerEmail: buyerEmail,
+          successUrl,
+          failUrl,
+          ...(choice?.cardOptions && { card: choice.cardOptions }),
+        });
+      }
       // navigate 진행 중 — 페이지 unload까지 대기
       await new Promise(() => {});
     } catch (err: unknown) {
