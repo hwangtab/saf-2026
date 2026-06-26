@@ -1,5 +1,575 @@
 [
   {
+    "hash": "f32f72e8",
+    "type": "perf",
+    "scope": "images",
+    "subject": "convert 5 large source PNGs to webp (14.2MB → 1.2MB)",
+    "summary": "대형 원본 PNG 5개를 webp로 사전 변환해 repo·빌드 자산 14.2MB→1.2MB(91%↓)",
+    "body": "전부 SafeImage(next/image)로 렌더되어 사용자에게 가는 결과물은 어차피\nAVIF/WebP로 재변환되므로 CWV 직접 영향은 없으나, 무거운 원본은 repo 크기와\n빌드 시 소스 처리 비용을 키운다. 소스 자체를 webp로 교체.\n\n- oh-yoon-memorial-poster: 4.88MB → 125KB (q82, 해상도 유지)\n- safposter: 3.45MB → 701KB (2480px 다운스케일 + q80, next/image 최대\n  출력 1920px 대비 2x 여유. 포스터 텍스트 가독성 확인)\n- mural-1/2/3: 각 ~1.9MB → 100~190KB (q82, 해상도 유지)\n- 본문 SafeImage src 참조 .png → .webp 전량 교체 (archive·event·petition)\n- mural-1-og.jpg(소셜 OG 전용 압축본)는 직전 PR에서 분리 — 무관\n- 관련 주석을 webp 기준으로 갱신",
+    "date": "2026-06-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "80b86602",
+    "type": "perf",
+    "scope": "seo",
+    "subject": "swap petition OG asset to 1200×630 jpg (2.1MB → 119KB)",
+    "summary": "오윤 청원 공유(OG) 이미지를 2.1MB 원본 PNG에서 119KB 압축본으로 교체",
+    "body": "petition/oh-yoon의 소셜 공유·구조화데이터 미리보기가 mural-1.png 원본\n2.1MB를 그대로 외부 봇(카카오/트위터/페북)에 전송하고 있었음. OG 이미지는\nnext/image 최적화를 거치지 않아 원본이 그대로 나가며, 카카오는 OG <1MB 권장.\n\n- mural-1-og.jpg 생성: sharp cover crop 1200×630, mozjpeg q82 (94.5% 절감)\n- page.tsx: MURAL_IMAGE_URL → MURAL_OG_IMAGE_URL (JSON-LD image·\n  primaryImageOfPage), generateMetadata OG/twitter image + width/height\n  1280×960→1200×630, type image/png→image/jpeg\n- ShareTemplates.tsx: 카카오 sendDefault ogImageUrl 압축본으로 교체\n- 본문 SafeImage(page.tsx:346)는 원본 mural-1.png 유지 (next/image 최적화)",
+    "date": "2026-06-26",
+    "author": "황경하"
+  },
+  {
+    "hash": "30fb8a3a",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "close oh-yoon funding orphan — event→funding card + story cluster links",
+    "summary": "오윤 펀딩 페이지 고아 해소 — 이벤트에 펀딩 카드 추가 + 펀딩 본문에 클러스터 링크",
+    "body": "오윤 클러스터 internal link 그래프 전수조사 결과, 청원↔이벤트는 이미 상호 링크돼\n있었고(에이전트 지적 대부분 stale), 유일한 실재 고아는 /funding/oh-yoon-terracotta\n였다(인입만 있고 유출 0).\n\n- 이벤트 relatedHub에 펀딩 카드 추가 — petition은 funding을 링크하는데 event만\n  누락이던 비대칭 해소. i18n 키 fundingEyebrow/fundingTitle(ko·en) 추가, estate\n  카드 col-span-2 제거해 6카드 3×2 정렬.\n- (별도) funding_projects.oh-yoon-terracotta story 마크다운에 \"오윤을 더 만나는 길\"\n  클러스터 링크 섹션(청원·추도식·갤러리·매거진) production DB UPDATE 적용 — 펀딩\n  페이지의 in-content 유출 경로 0 → 4. (story 백업 후 단건 replace, rows 영향 1.)\n\n검증: type-check·i18n-keys 정합성·production build(460 HTML, i18n placeholder 0\n위반) 통과. DB: 클러스터 링크 4개 존재 확인(petition/event/gallery/story40=true).",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "298932a2",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "noindex funding success/fail landing pages",
+    "summary": "후원 결제 완료/실패 랜딩에 noindex 추가 — success/fail 색인 정책 비대칭 해소",
+    "body": "funding success/fail 페이지만 metadata export가 없어 root 기본값(색인 허용)으로\n폴백 중이었다. 다른 모든 트랜잭션 랜딩(checkout success/fail, event\nsuccess/fail/manage)은 robots: { index: false } 명시 → 비대칭.\n\n- funding/[slug]/success·fail에 export const metadata = { robots: index:false }.\n- 두 페이지 모두 force-static 유지(정적 robots 메타라 호환).\n\n검증: type-check·production build(460 HTML, i18n placeholder 0 위반) 통과.",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "c5931a7e",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "remove redundant/broken single-item checkout a11y spec",
+    "summary": "단건 결제 a11y 스펙 제거 — 결제 폼은 cart.spec이 이미 커버, CI에선 깨짐",
+    "body": "자기검증에서 #187의 단건 결제 a11y 스펙(checkout-single-item.spec.ts)이 두 가지\n문제를 가짐을 확인:\n\n1. CI에서 반드시 실패: e2e-a11y 잡은 NEXT_PUBLIC_SUPABASE_URL=placeholder.supabase.co\n   로 돈다(.github/workflows/ci.yml). /checkout/[artworkId]는 서버사이드\n   createSupabaseAdminClient() 작품 조회에 의존 → placeholder DB라 조회 실패 →\n   notFound() → 404 → 헤딩 assertion 실패. (cart 경로는 클라이언트 getCartArtworks\n   정적 fallback이라 placeholder에서도 렌더돼 무관.)\n2. 중복: CartCheckoutClient가 단건 경로와 동일한 BuyerInfoForm(성함·연락처·주소·\n   약관)과 결제수단 라디오를 그대로 import·렌더한다. 결제 입력 폼 a11y는 이미\n   cart.spec의 /checkout 테스트가 커버.\n\n조치: 깨지는 스펙 제거 + cart.spec에 \"BuyerInfoForm은 두 경로 공통 커버\" 명시(동일\n실수 재추가 방지). #187의 오윤 QAPage(별개 변경)는 유지.",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "abc2ac8e",
+    "type": "feat",
+    "scope": "seo,a11y",
+    "subject": "oh-yoon QAPage + single-item checkout a11y spec",
+    "summary": "오윤 정의형 Q&A 구조화 데이터 추가 + 단건 결제 폼 접근성 테스트 보강",
+    "body": "후속 최적화 레버 2건.\n\n1. AEO/GEO — petition/oh-yoon에 오윤 정의형 QAPage 추가\n   - \"오윤 누구/생몰/대표작/구의동 벽화/작품 어디서\" 정의형 쿼리에 AI 검색이\n     인용할 Q&A 5문항. 이 페이지는 GA4 트래픽 1위 진입로지만 Q&A 구조가 없었다.\n   - generateOhYoonQA(pageUrl, locale)를 lib/schemas/qa-page.ts에 추가. 사실은\n     모두 페이지 본문·기존 Person/VisualArtwork 스키마와 일치(날조 없음).\n   - event 페이지는 #184에서 이미 FAQPage(로지스틱스) 보유 → 중복 회피로 제외.\n\n2. a11y — 단건 바로구매 /checkout/[artworkId] 결제 폼 spec 추가\n   - 카트 결제(/checkout)는 cart.spec이 커버하지만 단건 경로(실제 BuyerInfoForm\n     결제 입력 폼)는 미커버였다. 결제 폼 a11y 미검증이 최대 리스크였음.\n   - 시드 작품은 오윤 open edition(개별 sold 안 됨 → redirect 회피, CI 안정).\n\n검증: type-check·eslint·schema 테스트 66개·production build(460 HTML, i18n\nplaceholder 0 위반) 통과.",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "996914a9",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "promote oh-yun-40th-anniversary to canonical story hub",
+    "summary": "오윤 40주기 매거진을 정전 hub로 승격 — \"오윤\" 카테고리 검색 권위 집중",
+    "body": "오윤 클러스터 통합(메모리상 \"유일 SEO 윈\")의 핵심 미적용 레버. 오윤 40주기\n매거진(거장 종합 hub, #49·#50·#53 + 판화 hub를 묶는 글)은 published_at이\n2026-04-07로 오래돼 '작가 이야기' 카테고리(published_at desc) fold 아래로\n묻혀 있었다.\n\n- CANONICAL_HUB_SLUGS에 oh-yun-40th-anniversary 추가 (artist-story 첫 hub).\n- 효과: /stories/category/artist-story에서 단독 hub로 결정론적 top 부상\n  + sitemap changeFrequency monthly→weekly.\n- 무교란 확인: 홈 MagazineSection·/stories featured는 hub끼리 published_at\n  desc 정렬이라, 오래된 이 글이 27개 hub 중 top을 침범하지 않음 — 자기\n  카테고리에서만 부상.\n- 모듈/카테고리 페이지의 \"artist-story hub 부재\" 주석을 실제에 맞게 갱신.\n\n검증: type-check·eslint·production build(460 HTML, i18n placeholder 0 위반) 통과.",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "ab868ada",
+    "type": "fix",
+    "scope": "wiki",
+    "subject": "lint 고아 정의 정합화 + SCHEMA 수평선 정리 + ingest index 행 추가 명시",
+    "summary": "최종 리뷰 findings 반영 — lint 고아 판정이 index 등재 페이지를 오탐하지 않도록 정의 명확화",
+    "body": "- lint 고아: index.md 카탈로그에도 없고 [[링크]]로도 안 닿는 페이지로 정의(부트스트랩 로그와 정합)\n- SCHEMA §3 코드블록 밖 고립 수평선 제거\n- ingest 신규 페이지 시 index 행 추가 지시 보강",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "90144da4",
+    "type": "fix",
+    "scope": "wiki",
+    "subject": "ingest 절차에 각주 정의 라인 추가 명시",
+    "summary": "반쪽 인용 방지 — 본문 참조와 함께 페이지 하단 각주 정의 추가",
+    "body": "- ingest step 7이 [^id] 참조뿐 아니라 SCHEMA §3 형식 각주 정의도 추가하도록 보강",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "109c4ddf",
+    "type": "feat",
+    "scope": "wiki",
+    "subject": "saf-wiki 운영 스킬 추가",
+    "summary": "ingest/query/lint 세 연산 절차, SCHEMA 선행 참조",
+    "body": "- 프레이밍 가드·날조 금지·인용 추적 내장\n- query 추측 금지, lint 진단 전용\n- .gitignore(.claude/) 예외로 force-add 추적",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "a1d505ef",
+    "type": "feat",
+    "scope": "wiki",
+    "subject": "index 카탈로그 + log 기록 추가",
+    "summary": "5개 seed 페이지 카탈로그 + bootstrap 로그 1행",
+    "body": "- query 후보 선정용 index, append-only log",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "a7f2bab9",
+    "type": "feat",
+    "scope": "wiki",
+    "subject": "초기 5개 페이지 seed 스텁 추가",
+    "summary": "금융차별·증언·프레이밍·작가작품·기금 페이지 골격(내용 없음)",
+    "body": "- frontmatter status:seed, 사실 미창작\n- cross-reference 골격 연결",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "2036ffc2",
+    "type": "feat",
+    "scope": "wiki",
+    "subject": "sources 레이어 — 소스 대장 추가",
+    "summary": "raw source 메타데이터 registry + 빈 sources 디렉토리",
+    "body": "- 6컬럼 테이블(ID·제목·출처·날짜·신뢰도·파일), ingest가 행 추가",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "4044c8fe",
+    "type": "feat",
+    "scope": "wiki",
+    "subject": "SAF LLM Wiki SCHEMA 헌법 추가",
+    "summary": "위키 규약·프레이밍 가드·신뢰도 등급·세 연산 정의",
+    "body": "- 페이지 frontmatter 규약, 인용 각주 형식, 소스 ID 규칙\n- 프레이밍 가드(작가≠피해자)·날조 금지 절대 규칙",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "b206ecad",
+    "type": "perf",
+    "scope": "seo",
+    "subject": "font preload, oh-yoon memorial Event/FAQ schema, bundle tree-shaking",
+    "summary": "폰트 preload 실제 적용 + 오윤 추도식 구조화 데이터 추가 + 번들 최적화",
+    "body": "심층 최적화 감사(성능/SEO·AEO/코드 건강성)에서 발견한 명확한 갭 3건 수정.\n\n- 폰트: layout <head>에 Pretendard 최빈출 subset 청크(91=라틴+최빈출 한글,\n  90=다음 빈출 한글) preload 추가. CSS @font-face로는 preload 불가라 hero h1이\n  FOUT 후 swap되던 문제 해결. \"preload 선언됨\"이라 단언하던 허위 주석도 실제\n  동작에 맞게 수정.\n- SEO/AEO: 오윤 40주기 추도식 페이지에 Event JSON-LD(일시·집결지·회비·about=오윤\n  Person) + FAQPage(6문항) 스키마 주입. 기존 JsonLd 0건이라 Google Event rich\n  result·AI \"추도식 언제/회비\" 인용을 통째로 놓치던 가장 명백한 구멍 해소.\n  generateOhYoonMemorialEventSchema를 lib/schemas/event.ts에 추가.\n- 번들: next.config experimental.optimizePackageImports에 lucide-react·recharts\n  추가 — named import 배럴 tree-shaking.\n\n검증: type-check·lint·schema/i18n 테스트 85개·production build(460 HTML,\ni18n placeholder 0 위반) 모두 통과.\n\n참고: 감사가 지목한 archive/2026 한국어 누수는 오탐(페이지가 locale==='en'\n별도 브랜치 return) — 미수정.",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "fbc5bd82",
+    "type": "fix",
+    "scope": "charts",
+    "subject": "unify chart accent color to primary, drop dead chartMargin",
+    "summary": "차트 색상 일관성 정리 (막대 4개 primary 통일·파이 보완색 통일·미사용 margin 제거)",
+    "body": "- 단일 시리즈 막대 차트 색을 모두 primary 블루로 통일:\n  - HighInterestProductChart: accent(=primary.strong 진한 파랑) → primary\n  - InterestRateDistributionChart: sun(=charcoal 어두운색) → primary\n- 파이 보완 슬라이스 통일: DebtCollectionChart charcoal → primary (FirstBankAccessChart와 동일 페어링)\n- 오해 소지의 redirect 키 CHART_COLORS.accent/sun 제거 (이번 불일치의 근본 원인)\n- 어떤 차트도 쓰지 않던 useChartDimensions.chartMargin 제거 + ChartContainer 타입 정리\n\n시각 변화: /our-reality Stage 2 막대 2개가 진한파랑/어두움 → primary 블루로 통일,\n채권추심 파이 보완 슬라이스가 charcoal → primary. 그 외 변화 없음.",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "5a21d699",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "2nd-round UI bug sweep — forms, dates, keyboard nav, scroll lock",
+    "summary": "2차 UI 버그 수정 (약관 안내문 반전·날짜 포맷·키보드 드롭다운·배송폼 조건·지도 에러노출·3D 스크롤락)",
+    "body": "- terms-consent: 읽음 상태에서 \"스크롤하세요\" 안내가 뜨던 조건 반전 수정(4곳)\n- KakaoMap: 에러 폴백에 내부 에러 문자열(앱키 등) 노출 제거\n- DesktopNavItem: client 네비 후 키보드로 드롭다운 재오픈 불가 → onBlur로 dismissed 해제\n- RelatedMagazineCard: raw ISO 날짜 → 로케일 포맷, fill 이미지 sizes 추가\n- stories category/archive: raw ISO 날짜 → 로케일 포맷\n- FundingPledgeFlow: 디지털 리워드 티어에도 배송지 폼 노출 → requires_shipping 조건 래핑\n- VirtualGalleryPortal: 풀스크린 3D 오버레이 열림 시 body scroll lock 추가\n- AdminConfirmModal: variant 삼항 dead code 정리",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "db9bdf3c",
+    "type": "fix",
+    "scope": "a11y",
+    "subject": "resolve follow-up UI/accessibility issues from audit",
+    "summary": "접근성·UI 후속 수정 (토스트 이중 발화·iframe sandbox·로더 라벨·검색 id 중복·컬렉션 그라디언트·터치 hover)",
+    "body": "- Toast: 컨테이너 중첩 aria-live 제거 — 개별 Toast로 일원화해 이중 발화 방지\n- VideoPlayer: YouTube iframe에 sandbox 추가 (재생 유지 최소 권한)\n- PageLoader: <output> + aria-label(loading) 추가 — 스크린리더 로딩 안내\n- SearchBar: 하드코딩 id → useId() — 동일 페이지 중복 id 방지\n- CollectionCard: cover 없을 때 검은 그라디언트 오버레이 미렌더\n- globals.css: group-hover:scale-[1.02] 터치 sticky hover 차단 보강(ArtworkImage)",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "04a15efa",
+    "type": "fix",
+    "scope": "ui",
+    "subject": "resolve UI bugs found in site-wide static audit",
+    "summary": "사이트 전반 UI 버그 일괄 수정 (필터 초기화·이미지 깨짐·카트 금액·sawtooth 여백·i18n 누출)",
+    "body": "- 갤러리 \"초기화\"가 statusFilter(판매중 전용)를 리셋하지 않아 0건 고착되던 문제 수정\n- Modal 닫기 aria-label을 a11y i18n 키로 (영어 하드코딩 제거)\n- SafeImage: src 변경 시 failed 상태 리셋 — 재사용 슬롯 이미지 영구 깨짐 해결\n- CartDrawer 항목 금액을 단가×수량으로 통일 (카트 페이지와 표시 일치)\n- transparency·stories 마지막 Section에 SAWTOOTH_TOP_SAFE_PADDING 적용 (footer 톱니 침범)\n- 작가 error boundary 한글 하드코딩 → pathname 기반 ko/en 분기\n- funding fail: next/link → @/i18n/navigation Link (locale prefix 누락)\n- event 오윤 추도식 success/fail/RegistrationForm i18n 적용 + 메시지 키 추가",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "d588ecfb",
+    "type": "fix",
+    "scope": "seo",
+    "subject": "set Google site name signal to \"씨앗페\" instead of domain",
+    "summary": "구글 검색 결과 사이트 이름을 도메인(saf2026.com) 대신 브랜드 \"씨앗페\"로 통일",
+    "body": "- WebSite 스키마 name·og:site_name(홈/layout/작품/stories/news/artworks 12개 라우트)을\n  \"씨앗페 온라인\"→\"씨앗페\"로 통일. 구글이 도메인으로 폴백하던 문제 해소\n- alternateName에 [\"씨앗페 온라인\",\"SAF Online\"] 보존, 영문은 \"SAF Online\" 유지\n- 홈 WebPage name·Product brand.name도 브랜드 일치. 이미지 creditText·PWA 앱명은 풀네임 유지",
+    "date": "2026-06-25",
+    "author": "황경하"
+  },
+  {
+    "hash": "8dd2e00c",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "restore mobile horizontal padding on project page",
+    "summary": "펀딩 프로젝트 페이지 모바일 좌우 여백 복구",
+    "body": "- Section 내부 컨테이너를 mx-auto max-w-3xl → container-max max-w-3xl로 교체\n- container-max의 px-4 sm:px-5가 모바일에서 본문이 화면 양끝에 붙던 문제 해결 (faq 페이지와 동일 패턴)",
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "c45fc4be",
+    "type": "fix",
+    "scope": "markdown",
+    "subject": "balance blockquote vertical padding",
+    "summary": "인용구 내부 문단 mb-6가 하단 패딩에 더해져 아래만 넓던 문제 수정 — 첫/마지막 문단 마진 제거 + py-3 균형",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "76345fd7",
+    "type": "fix",
+    "scope": "event",
+    "subject": "enlarge memorial poster (max-w-sm to max-w-2xl)",
+    "summary": "추도식 페이지 포스터 크기 확대 — 콘텐츠 폭에 맞게 키움",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "3bab89c6",
+    "type": "feat",
+    "scope": "event",
+    "subject": "오윤 40주기 추도식 모집 포스터 추가",
+    "summary": "추도식 페이지 안내 섹션에 행사 포스터 이미지 추가",
+    "body": "- SNS 세로형(1080x1350) 추모 톤 포스터 생성 스크립트 추가 (Playwright 렌더)\n- EventSchedule 상단에 SafeImage로 포스터 배치\n- posterAlt i18n 키(ko/en) 추가",
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "d9c45e06",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "CI placeholder 빌드에서 admin client throw 방지",
+    "summary": "펀딩 상세 페이지가 CI에서 빌드 실패하던 문제 수정",
+    "body": "force-static인 /funding/[slug]가 빌드 타임에 createSupabaseAdminClient()를\n호출하는데, CI에는 service role key가 없어 \"Configuration error\"를 throw →\n\"Failed to collect page data\"로 CI Build 단계가 매번 실패(실패 경고 메일 반복).\nevent 페이지와 동일하게 admin client 호출을 try/catch로 감싸 graceful 처리\n(generateStaticParams 빈 배열·generateMetadata 기본값·본문 notFound).\n\n- generateStaticParams: 실패 시 [] 반환\n- generateMetadata: 실패 시 'Not Found'\n- 본문: admin client init 실패 시 notFound()",
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "4afd3409",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "absolutize OG image for funding cover",
+    "summary": "펀딩 OG 이미지 절대 URL 처리 (cover_image 상대경로 대응) — 히어로 배경에 구의동 테라코타 부조 적용 위한 후속",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "9178e94a",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "surface oh-yoon terracotta funding in header nav",
+    "summary": "헤더 '오윤 40주기' 메뉴 맨 앞에 테라코타 이전 펀딩 링크 노출 (ko/en)",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "b96760a2",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "correct pledge status labels + add order_no to CSV (final review)",
+    "summary": "후원 상태 라벨 키 정정(pending_payment·expired)·CSV에 주문번호 컬럼 추가",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "99fd1fc1",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "use buttonVariants on server list page (no Button import in RSC)",
+    "summary": "admin 펀딩 목록 서버 컴포넌트에서 Button 직접 import 제거 (lint 규칙)",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "090c7086",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add admin funding detail (edit, tiers, backers, refund, fulfillment)",
+    "summary": "admin 펀딩 상세 — 프로젝트 수정·티어 CRUD·후원자 명단·환불·발송 관리·CSV",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "42a224fc",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add admin project creation form",
+    "summary": "admin 펀딩 프로젝트 개설 폼 (createFundingProject 연동)",
+    "body": "- NewProjectForm: slug/title/summary/story/goal_amount/end_at 필드\n- 클라이언트 필수값 가드 (slug·title 비어있거나 goal_amount ≤ 0)\n- 저장 중 버튼 비활성화, 서버 오류 인라인 표시\n- 성공 시 /admin/funding/{id}로 라우터 push",
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "c5d3f2cf",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add admin funding list page + nav",
+    "summary": "admin 펀딩 프로젝트 목록 + 네비 메뉴",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "68f55d5a",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "robust 2-step tier-delete guard, null-safe refund alert, SYNC_FAILED test",
+    "summary": "티어 삭제 paid 검사 2-step 전환·환불 알림 null 안전·동기화실패 테스트 추가 (리뷰)",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "c882b4a2",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add admin funding actions (project/tier CRUD, refund, fulfillment)",
+    "summary": "admin 펀딩 액션 — 프로젝트·티어 CRUD·후원자조회·환불·발송 (requireAdmin+service_role)",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "18ba6c5a",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add fulfillment tracking columns to funding_pledges",
+    "summary": "리워드 발송상태·송장 컬럼 추가 (admin 발송 관리)",
+    "body": null,
+    "date": "2026-06-24",
+    "author": "황경하"
+  },
+  {
+    "hash": "e19bc343",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "success/fail header carve-out + fail page + i18n leaks (final review)",
+    "summary": "펀딩 결제 완료/실패 페이지 헤더 투명화 버그 수정, /fail 페이지 신설, i18n 누락 수정",
+    "body": "- I1: lib/hero-routes.ts — isFundingTerminal() 카브아웃 추가. /funding/<slug>/success·fail은 HERO_PREFIXES 매칭에서 제외 → 헤더 solid 렌더\n- I1: __tests__/lib/hero-routes.test.ts — /funding/oh-yoon-terracotta → true 유지, /success·/fail → false 회귀 케이스 추가\n- M1: app/[locale]/funding/[slug]/fail/ — FailClient.tsx + page.tsx 신설 (HEADER_SAFE_TOP_PADDING 적용, force-static)\n- M2: FundingPledgeFlow.tsx — 하드코딩 '처리 중...' → t('submitting') 교체\n- M3: FundingPledgeFlow.tsx — <fieldset>에 sr-only <legend> 추가 (consentGroupLabel)\n- i18n: ko.json + en.json funding 네임스페이스에 consentGroupLabel·paymentFailed·paymentFailedDesc·backToProject 키 추가",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "a09364d6",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "link petition page to funding CTA",
+    "summary": "청원 페이지 retention에 펀딩 후원 CTA 연결",
+    "body": "- 청원 페이지 retention 섹션 마지막에 /funding/oh-yoon-terracotta 링크 카드 추가\n- 기존 카드 마크업 패턴 그대로 재사용 (rounded-2xl border border-gallery-hairline)\n- i18n 키 fundingCtaEyebrow·fundingCtaTitle을 petition.ohYoon 네임스페이스에 추가 (ko+en)",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "555dbd88",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add funding success landing (client confirm)",
+    "summary": "후원 결제 success — window.location.search confirm 호출, 성공/실패 UI",
+    "body": "- SuccessClient: window.location.search로 paymentKey/orderId/amount 읽기\n  (Next.js 16 middleware rewrite query 유실 회귀 방지)\n- POST /api/payments/funding/toss/confirm 호출, r.ok && j.success → ok state\n- page.tsx: force-static, setRequestLocale, HEADER_SAFE_TOP_PADDING 적용\n- i18n: funding 네임스페이스에 confirming/confirmFail/thankYou/thankYouDesc 추가",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "61b8fcc3",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add public funding page (hero, progress, rewards, backers)",
+    "summary": "공개 펀딩 페이지 — PageHero·진행률·스토리·리워드·후원자명단 + hero-route·i18n",
+    "body": "- app/[locale]/funding/[slug]/page.tsx: force-static SSG 서버 컴포넌트\n  - funding_project_status RPC → notFound() 처리\n  - FundingProgressBar(B4) + FundingPledgeFlow(B6) 마운트\n  - MarkdownRenderer로 프로젝트 스토리 렌더링\n  - 후원자 명단(최대 50명) 표시\n  - generateStaticParams + generateMetadata 포함\n- lib/hero-routes.ts: HERO_PREFIXES에 '/funding/' 추가\n- __tests__/lib/hero-routes.test.ts: /funding/oh-yoon-terracotta 케이스 추가\n- messages/ko.json, messages/en.json: funding 네임스페이스 추가\n  (backers, daysLeft, support, submitting, closed, rewardListTitle,\n   rewardSoldOut, backerListTitle, termsConsent, privacyConsent,\n   agreeRequired, goalLabel, error.INVALID_INPUT/RATE_LIMITED/\n   PROJECT_CLOSED/TIER_SOLD_OUT/INTERNAL_ERROR)",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "eeb678d3",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add pledge flow client (tier select, form, consent, Toss)",
+    "summary": "후원 플로우 — 티어 선택·후원자정보·배송지·약관동의·createPledge·Toss 결제창",
+    "body": "- Tier card grid with sold-out disable and selected state highlight\n- Backer info + shipping fields (name/email/phone/address/postal/memo)\n- Optional supporter message with public toggle + anonymous checkbox\n- agreedTerms / agreedPrivacy consent checkboxes (required)\n- createPledge server action → Toss SDK v2 requestPayment (CARD, redirect)\n- USER_CANCEL handled silently; other Toss errors surfaced as inline alert\n- clientKey prop (server passes getTossDomesticClientKey())\n- i18n via useTranslations('funding'), brand tokens only, no next/image",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "a11990cc",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add FundingProgressBar client (polling progress)",
+    "summary": "진행률 바 — 모금액·후원자수·달성률·D-day 5분 폴링",
+    "body": null,
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "670bc667",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "reward_tiers media + oh-yoon seed + public RPCs (Phase B1-B2, recovered)",
+    "summary": "reward_tiers image_url·reward_kind, 오윤 프로젝트·엽서7·판화 시드, 후원자명단·티어잔여 공개 RPC (유실 복구)",
+    "body": null,
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "ea9eb816",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add funding status API (progress + tier remaining)",
+    "summary": "진행률·티어잔여 폴링 API (ISR 60s)",
+    "body": "- GET /api/funding/[slug]/status → { goal_amount, raised_amount, backer_count, percent, is_open, end_at, tier_remaining }\n- funding_project_status + funding_tier_remaining RPC 소비\n- 타입 누락된 funding_tier_remaining RPC 타입 추가 (types/supabase.ts)\n- Jest 2 tests PASS",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "5106e938",
+    "type": "fix",
+    "scope": "home",
+    "subject": "exclude hero h1 from reveal animation to fully eliminate LCP risk",
+    "summary": "hero 제목(h1)을 등장 애니에서 제외 — LCP 이론적 리스크 0으로",
+    "body": "h1이 LCP element로 잡힐 경우 opacity:0 시작이 LCP를 ~0.8s 지연시킬 수 있는\n이론적 리스크를 완전 제거. 제목은 즉시 완성 paint, 뱃지·desc·CTA만 staggered 유지.",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "e7c60414",
+    "type": "fix",
+    "scope": "home",
+    "subject": "make hero Ken Burns perceptible + fix scroll-reveal duration bug",
+    "summary": "메인 hero 줌 안 보이던 것 강도 상향 + 스크롤 fade 안 되던 버그 수정",
+    "body": "- Ken Burns: scale 6%/30s(초당 0.2%, 사실상 인지 불가) → 10%/20s + 패닝 강화로\n  실제 보이게 조정\n- scroll-reveal: `animation` 단축 속성이 animation-duration을 0s로 리셋 →\n  scroll-driven 애니가 즉시 끝 상태로 점프해 fade 미동작. longhand +\n  animation-duration: auto로 수정. 범위도 entry 10%~70%로 정리",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "127c538f",
+    "type": "feat",
+    "scope": "home",
+    "subject": "add CSS-only entry motion to homepage hero + scroll reveal",
+    "summary": "메인 진입 시 인상적 감각을 주는 CSS 전용 모션 추가 (Ken Burns·텍스트 등장·스크롤 fade-in)",
+    "body": "PSI를 안 떨어뜨리는 제약(JS 0줄, hydration 0, CLS 0, 컴포지터 전용)에서\n회귀 trauma 5종을 모두 회피하며 진입 연출 추가.\n\n- Hero LCP 이미지 Ken Burns: scale(1)→scale(1.06) + 미세 패닝, 30s alternate.\n  첫 프레임 scale(1)이라 LCP paint 지연 없음\n- Hero 텍스트 staggered 등장: 뱃지→h1(110ms)→desc(220ms)→CTA(330ms),\n  translateY+opacity fade-up (transform이라 layout shift 없음)\n- 스크롤 등장 .reveal-on-scroll: 순수 CSS animation-timeline: view(),\n  IntersectionObserver 0줄. opacity-only로 full-bleed seam 깨짐 회피.\n  @supports 가드로 미지원 브라우저 graceful degradation\n- NowShowing·Master·Entry·Emerging 섹션에 적용 (category 350vh 밴드는 제외)\n- 전역 prefers-reduced-motion: reduce(0.01ms)로 전부 자동 정지",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "8ed355e1",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "correct tier oversell guard + webhook paid-but-stuck alert (final review)",
+    "summary": "한정 티어 hold 만료 경로의 oversell 검사 임계값 수정(< v_item.quantity), pledge_items NOT FOUND 누락 방어, 웹훅 결제 완료 후 RPC 확정 실패 시 운영자 알림 추가",
+    "body": "- C1: confirm_funding_pledge — hold 만료 시 (total_quantity - claimed) < 0 → < v_item.quantity\n  funding_tier_claimed가 자기 hold를 제외하므로 이 pledge 수량 기준으로 비교해야 oversell 방지\n- I1: pledge_items NOT FOUND 시 INVALID_STATE 반환 (한정 티어 검사 무조건 통과 버그 차단)\n- I2/I3: 웹훅에서 Toss DONE 확인 후 RPC가 CONFIRMED/ALREADY_PAID 외 코드를 반환한 경우\n  after()로 운영자 이메일 알림 발송 — 후원자 결제 완료·리워드 미확정 상태 방치 방지",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "c5d13021",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add funding webhook + isolate FND- from artwork webhook",
+    "summary": "후원 webhook 백업 + 작품 webhook의 FND 격리(거짓알림 폭주 방지)",
+    "body": "- app/api/webhooks/toss/route.ts: isFundingOrderId 즉시 ack 가드 추가\n  (FND- 주문이 payments/orders 조회 실패로 거짓알림 + 500 재시도 폭주하는\n  2026-06-15 EVT- 회귀와 동일 패턴 예방)\n- app/api/webhooks/funding/toss/route.ts: 신규 후원 결제 webhook 엔드포인트\n  PAYMENT_STATUS_CHANGED DONE만 처리, Toss 재조회(위·변조 방어), pledge_id 조회 후\n  funding_payments INSERT, idempotency_key UNIQUE 충돌(중복 webhook) 로그만\n- __tests__/app/funding-webhook-isolation.test.ts: FND-/SAF-/EVT- 판별식 계약 고정",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "d42ae00f",
+    "type": "fix",
+    "scope": "funding",
+    "subject": "capture auto-refund status-update error + conditional cancelled_at",
+    "summary": "자동환불 후 pledge 상태 업데이트 에러 무시 버그 수정 및 cancelled_at 조건부 설정",
+    "body": "- await supabase.from('funding_pledges').update(...) 반환값을 버리던 문제 수정\n  — cancelUpdateError 캡처 후 콘솔 에러 및 after() 알림 이메일 발송\n- refunded === false(status='expired') 시에도 cancelled_at이 세팅되던 버그 수정\n  — spread 조건부 객체로 refunded 시에만 cancelled_at 포함",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "9eee5dd8",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add funding payment confirm route (event-route mirror, auto-refund)",
+    "summary": "후원 결제 confirm — 토스 승인·확정 RPC·실패시 자동환불·결제기록",
+    "body": "- confirmPayment / cancelPayment 토스 헬퍼 사용 (domestic MID)\n- idempotency key: fnd-confirm-${orderId}, fnd-refund-${orderId}\n- DONE 상태만 수락; 비-DONE → 400 + warning notifyEmail\n- RPC confirm_funding_pledge 실패 시 cancelPayment 자동환불\n- funding_payments insert (idempotency_key UNIQUE 멱등)\n- revalidatePath + after(runAllSettled) 관리자 알림\n- Jest 3 cases: pledge not found → 404, alreadyPaid, amount mismatch → 400",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "149830bf",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add createPledge server action (validation, rate limit, RPC)",
+    "summary": "후원 생성 서버액션 — 입력검증·IP rate limit·create_funding_pledge 호출",
+    "body": "- CreatePledgeInput / CreatePledgeResult 타입 정의\n- 입력 검증: 약관동의·이름·이메일·전화·수량(1-50)·메시지 500자\n- rateLimit(limit:10, windowMs:60_000)으로 IP별 분당 10회 제한\n- getRequestMetadata()로 ip/userAgent 획득, ip는 SHA-256 해시 후 RPC 전달\n- RPC 결과 코드 매핑: PROJECT_CLOSED|NOT_FOUND→PROJECT_CLOSED, TIER_SOLD_OUT|NOT_FOUND→TIER_SOLD_OUT\n- Jest 15개 테스트 통과, tsc --noEmit 이상 없음",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "ce3e13ec",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add isFundingOrderId order-id discriminator",
+    "summary": "FND- 주문번호 판별 유틸(webhook 격리용)",
+    "body": null,
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "dd01f79b",
+    "type": "feat",
+    "scope": "funding",
+    "subject": "add funding backend schema and RPCs (Phase A Task 1-4)",
+    "summary": "크라우드펀딩 백엔드 테이블·RPC (로컬 dev DB 검증 완료)",
+    "body": "- funding_projects/reward_tiers/funding_pledges/pledge_items/funding_payments + 인덱스 + RLS 기본 deny\n- funding_tier_claimed/funding_project_status 파생 집계 RPC\n- create_funding_pledge (티어별 advisory lock·서버 금액계산·30분 hold)\n- confirm_funding_pledge (state guard·oversell 재검증·멱등)\n- 모든 RPC auth.role()='service_role' 가드, supabase db reset 로컬 검증 통과",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "cdcac601",
+    "type": "fix",
+    "scope": "content",
+    "subject": "오윤 작품·전기 데이터 연보 대조 정정",
+    "summary": "오윤 공식 연보(허진무, 학고재 1996) 대조로 작품 규격·전기 사실관계 오류 정정",
+    "body": "- OYN-107 〈인물(배)〉(1974) 규격 24.5x17.7 → 27.3x18.4cm (연보·원본 이미지 파일명 일치)\n- 〈칼의 노래〉 → 〈칼노래〉 작품명 정정 (12-minjung-art-intro)\n- 향년 표기 \"마흔한 살\" → \"마흔 살\"(별세 시 만 40세) 통일\n- 현실과 발언 1979 발기·1980 창립전 서술 정밀화",
+    "date": "2026-06-23",
+    "author": "황경하"
+  },
+  {
+    "hash": "e285fe30",
+    "type": "fix",
+    "scope": null,
+    "subject": "harden payment and refund state sync",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "3d44ce49",
+    "type": "fix",
+    "scope": null,
+    "subject": "harden shipping validation and artwork revalidation",
+    "summary": "버그 수정",
+    "body": null,
+    "date": "2026-06-22",
+    "author": "황경하"
+  },
+  {
+    "hash": "3068db56",
+    "type": "feat",
+    "scope": "seo",
+    "subject": "thin·중복 매거진 12편 noindex — 색인 위생 정리",
+    "summary": "GSC가 색인 거부한 thin·중복 매거진 12편을 noindex+sitemap 제외로 정리",
+    "body": "- 2026-06-22 GSC 감사: Crawled/Discovered-not-indexed + 최근 28일 클릭 0 확정 12편\n- lib/story-noindex.ts 단일 출처 + [slug] generateMetadata robots noindex,follow + sitemap 발행 제외(색인요청 vs noindex 모순 차단)\n- 크롤 예산 회복 + 도메인 품질 신호 개선, follow로 내부링크 equity는 유지\n- 캠페인 핵심(bank-vs-mutual-aid-comparison·testimonials-narrative)은 개선 대상으로 제외\n- meet-artist 17편은 이미 redirect 통합돼 중복 제외",
+    "date": "2026-06-22",
+    "author": "황경하"
+  },
+  {
     "hash": "654149cf",
     "type": "feat",
     "scope": "seo",
