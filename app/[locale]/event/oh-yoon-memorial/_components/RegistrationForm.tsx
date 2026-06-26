@@ -57,13 +57,16 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
   const amount = partySize * feePerPerson;
   const canSeat = isOpen && remaining >= partySize;
 
-  async function startTossPayment(payment: {
-    orderNo: string;
-    amount: number;
-    orderName: string;
-    customerName?: string;
-    customerEmail?: string;
-  }) {
+  async function startTossPayment(
+    payment: {
+      orderNo: string;
+      amount: number;
+      orderName: string;
+      customerName?: string;
+      customerEmail?: string;
+    },
+    method: 'CARD' | 'TRANSFER' = 'CARD'
+  ) {
     if (!clientKey) {
       setResult({ ok: false, code: 'INTERNAL_ERROR', message: t('errorGeneric') });
       return;
@@ -75,18 +78,33 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
     const tossPayments = await loadTossPayments(clientKey);
     const tossPayment = tossPayments.payment({ customerKey: payment.orderNo });
     try {
-      await tossPayment.requestPayment({
-        method: 'CARD',
-        amount: { currency: 'KRW', value: payment.amount },
-        orderId: payment.orderNo,
-        orderName: payment.orderName,
-        customerName: payment.customerName ?? applicantName,
-        ...((payment.customerEmail ?? email)
-          ? { customerEmail: payment.customerEmail ?? email }
-          : {}),
-        successUrl,
-        failUrl,
-      });
+      if (method === 'TRANSFER') {
+        await tossPayment.requestPayment({
+          method: 'TRANSFER',
+          amount: { currency: 'KRW', value: payment.amount },
+          orderId: payment.orderNo,
+          orderName: payment.orderName,
+          customerName: payment.customerName ?? applicantName,
+          ...((payment.customerEmail ?? email)
+            ? { customerEmail: payment.customerEmail ?? email }
+            : {}),
+          successUrl,
+          failUrl,
+        });
+      } else {
+        await tossPayment.requestPayment({
+          method: 'CARD',
+          amount: { currency: 'KRW', value: payment.amount },
+          orderId: payment.orderNo,
+          orderName: payment.orderName,
+          customerName: payment.customerName ?? applicantName,
+          ...((payment.customerEmail ?? email)
+            ? { customerEmail: payment.customerEmail ?? email }
+            : {}),
+          successUrl,
+          failUrl,
+        });
+      }
       // redirect 진행 중 — 페이지 unload까지 대기
       await new Promise(() => {});
     } catch (err) {
@@ -135,7 +153,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
       });
       setResult(res);
       if (res.ok && res.code === 'OK_PENDING' && 'payment' in res && res.payment) {
-        await startTossPayment(res.payment);
+        await startTossPayment(res.payment, paymentMethod === 'transfer' ? 'TRANSFER' : 'CARD');
       }
     });
   }
@@ -358,13 +376,7 @@ export default function RegistrationForm({ isOpen, remaining, feePerPerson, clie
       )}
 
       <Button type="submit" variant="primary" size="lg" disabled={pending} className="w-full">
-        {pending
-          ? t('submitting')
-          : !canSeat
-            ? t('submitWaitlist')
-            : paymentMethod === 'transfer'
-              ? t('submitTransfer')
-              : t('submitPay')}
+        {pending ? t('submitting') : !canSeat ? t('submitWaitlist') : t('submitPay')}
       </Button>
     </form>
   );
