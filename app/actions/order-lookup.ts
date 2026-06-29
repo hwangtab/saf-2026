@@ -60,6 +60,8 @@ export type OrderPublicInfo = {
   shippingAmount: number;
   totalAmount: number;
   paymentMethod: string | null;
+  /** 간편결제사 (payments.confirm_response.easyPay.provider — 예: '네이버페이'). 간편결제가 아니면 null */
+  easyPayProvider: string | null;
   paidAt: string | null;
   createdAt: string;
   shippingName: string;
@@ -437,6 +439,7 @@ async function fetchOrderDetailRow(
   const artworkId = rep.count > 0 ? rep.artworkId : (artworkRow?.id ?? null);
 
   let paymentMethod: string | null = null;
+  let easyPayProvider: string | null = null;
   let virtualAccount: OrderPublicInfo['virtualAccount'] = null;
   let bankTransfer: OrderPublicInfo['bankTransfer'] = null;
 
@@ -448,6 +451,14 @@ async function fetchOrderDetailRow(
 
   if (paymentRecord) {
     paymentMethod = paymentRecord.method ?? null;
+
+    if (paymentRecord.confirm_response) {
+      const easyPay = (paymentRecord.confirm_response as { easyPay?: { provider?: unknown } })
+        .easyPay;
+      if (typeof easyPay?.provider === 'string' && easyPay.provider.length > 0) {
+        easyPayProvider = easyPay.provider;
+      }
+    }
 
     if (order.status === 'awaiting_deposit' && paymentRecord.confirm_response) {
       const resp = paymentRecord.confirm_response as {
@@ -483,6 +494,7 @@ async function fetchOrderDetailRow(
       shippingAmount: order.shipping_amount,
       totalAmount: order.total_amount,
       paymentMethod,
+      easyPayProvider,
       paidAt: order.paid_at,
       createdAt: order.created_at,
       shippingName: order.shipping_name,
