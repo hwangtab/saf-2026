@@ -114,6 +114,7 @@
     "noResultsDesc": "Try a different keyword",
     "artworksSection": "Artworks",
     "artistsSection": "Artists",
+    "recommendedSection": "Recommended",
     "artworkCount": "{count} works",
     "viewAll": "View all {count} artwork results",
     "searching": "Searching...",
@@ -999,6 +1000,7 @@
   },
   "orderLookup": {
     "pageTitle": "Order Lookup",
+    "toggleOrderDetail": "Toggle order details",
     "pageDescription": "Look up your orders using the name, email, and phone number you provided at checkout.",
     "nameLabel": "Full Name",
     "namePlaceholder": "John Doe",

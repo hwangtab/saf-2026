@@ -668,6 +668,7 @@ function OrderCard({
   buyerEmail: string;
   initialDetail?: OrderPublicInfo | null;
 }) {
+  const t = useTranslations('orderLookup');
   const [open, setOpen] = useState(!!initialDetail);
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<OrderPublicInfo | null>(initialDetail ?? null);
@@ -695,40 +696,75 @@ function OrderCard({
     }
   }
 
+  const thumbAndInfo = (
+    <>
+      {item.artworkImage && (
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+          <SafeImage
+            src={item.artworkImage}
+            alt={item.artworkTitle}
+            width={64}
+            height={64}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold text-charcoal group-hover:underline">
+          {item.artworkTitle}
+        </p>
+        <p className="mt-0.5 text-sm font-bold text-primary-a11y">
+          {formatPriceForDisplay(item.totalAmount)}
+        </p>
+        <p className="mt-0.5 text-xs text-charcoal-soft">{formatKstDate(item.createdAt)}</p>
+      </div>
+    </>
+  );
+
+  const toggleControls = (
+    <>
+      <StatusBadge status={cardStatus} />
+      <span className="text-xs text-charcoal-soft">{loading ? '...' : open ? '▲' : '▼'}</span>
+    </>
+  );
+
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <button
-        type="button"
-        onClick={handleToggle}
-        aria-expanded={open}
-        className="w-full text-left"
-        disabled={loading}
-      >
+      {item.artworkId ? (
+        // 작품 식별 가능: 썸네일·제목·요약은 작품 상세로 이동, 우측 컨트롤만 주문 상세 토글.
         <div className="flex items-center gap-4">
-          {item.artworkImage && (
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-              <SafeImage
-                src={item.artworkImage}
-                alt={item.artworkTitle}
-                width={64}
-                height={64}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold text-charcoal">{item.artworkTitle}</p>
-            <p className="mt-0.5 text-sm font-bold text-primary-a11y">
-              {formatPriceForDisplay(item.totalAmount)}
-            </p>
-            <p className="mt-0.5 text-xs text-charcoal-soft">{formatKstDate(item.createdAt)}</p>
-          </div>
-          <div className="flex shrink-0 flex-col items-end gap-2">
-            <StatusBadge status={cardStatus} />
-            <span className="text-xs text-charcoal-soft">{loading ? '...' : open ? '▲' : '▼'}</span>
-          </div>
+          <Link
+            href={`/artworks/${item.artworkId}`}
+            className="group flex min-w-0 flex-1 items-center gap-4"
+          >
+            {thumbAndInfo}
+          </Link>
+          <button
+            type="button"
+            onClick={handleToggle}
+            aria-expanded={open}
+            aria-label={t('toggleOrderDetail')}
+            className="flex shrink-0 cursor-pointer flex-col items-end gap-2 self-stretch justify-center"
+            disabled={loading}
+          >
+            {toggleControls}
+          </button>
         </div>
-      </button>
+      ) : (
+        // 작품 식별 불가(삭제 등): 기존처럼 카드 전체가 주문 상세 토글.
+        <button
+          type="button"
+          onClick={handleToggle}
+          aria-expanded={open}
+          className="w-full text-left"
+          disabled={loading}
+        >
+          <div className="flex items-center gap-4">
+            {thumbAndInfo}
+            <div className="flex shrink-0 flex-col items-end gap-2">{toggleControls}</div>
+          </div>
+        </button>
+      )}
 
       {open && detail && (
         <OrderDetail
@@ -840,6 +876,7 @@ export default function OrderLookup() {
       status: autoDetail.status,
       artworkTitle: autoDetail.artworkTitle,
       artworkImage: autoDetail.artworkImage,
+      artworkId: autoDetail.artworkId,
       totalAmount: autoDetail.totalAmount,
       createdAt: autoDetail.createdAt,
     };
