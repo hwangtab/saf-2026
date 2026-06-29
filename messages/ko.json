@@ -1618,6 +1618,10 @@
     "supporterMessageLabel": "응원 메시지 (선택)",
     "messagePublicLabel": "응원 메시지를 공개합니다",
     "anonymousLabel": "익명으로 후원합니다",
-    "amountSummary": "후원 금액: {amount}"
+    "amountSummary": "후원 금액: {amount}",
+    "paymentMethodLabel": "결제 수단",
+    "paymentMethodCard": "카드 결제",
+    "paymentMethodTransfer": "퀵계좌이체",
+    "paymentTransferHelp": "토스 퀵계좌이체로 즉시 결제합니다. 한국 은행 계좌가 필요합니다."
   }
 }

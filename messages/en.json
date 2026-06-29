@@ -1618,6 +1618,10 @@
     "supporterMessageLabel": "Support message (optional)",
     "messagePublicLabel": "Make my support message public",
     "anonymousLabel": "Support anonymously",
-    "amountSummary": "Pledge amount: {amount}"
+    "amountSummary": "Pledge amount: {amount}",
+    "paymentMethodLabel": "Payment method",
+    "paymentMethodCard": "Card",
+    "paymentMethodTransfer": "Quick account transfer",
+    "paymentTransferHelp": "Pay instantly with Toss quick account transfer. A Korean bank account is required."
   }
 }

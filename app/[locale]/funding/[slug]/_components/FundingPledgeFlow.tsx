@@ -66,6 +66,7 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
   });
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer'>('card');
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -135,16 +136,31 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
         const tossPayments = await loadTossPayments(clientKey);
         // customerKey: orderNo — 비회원 결제, 매 결제마다 unique, 50자 이내
         const payment = tossPayments.payment({ customerKey: orderNo });
-        await payment.requestPayment({
-          method: 'CARD',
-          amount: { currency: 'KRW', value: amount },
-          orderId: orderNo,
-          orderName: selected.title,
-          customerName: form.backerName,
-          ...(form.backerEmail ? { customerEmail: form.backerEmail } : {}),
-          successUrl,
-          failUrl,
-        });
+        // Toss SDK v2는 method별 옵션 타입이 달라 단일 호출로 method를 변수화하면 타입 에러.
+        // CheckoutClient·RegistrationForm과 동일하게 if/else로 분기(퀵계좌이체=TRANSFER).
+        if (paymentMethod === 'transfer') {
+          await payment.requestPayment({
+            method: 'TRANSFER',
+            amount: { currency: 'KRW', value: amount },
+            orderId: orderNo,
+            orderName: selected.title,
+            customerName: form.backerName,
+            ...(form.backerEmail ? { customerEmail: form.backerEmail } : {}),
+            successUrl,
+            failUrl,
+          });
+        } else {
+          await payment.requestPayment({
+            method: 'CARD',
+            amount: { currency: 'KRW', value: amount },
+            orderId: orderNo,
+            orderName: selected.title,
+            customerName: form.backerName,
+            ...(form.backerEmail ? { customerEmail: form.backerEmail } : {}),
+            successUrl,
+            failUrl,
+          });
+        }
         // redirect 진행 중 — 페이지 unload까지 대기
         await new Promise(() => {});
       } catch (err: unknown) {
@@ -415,6 +431,52 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
               />
               <span>{t('privacyConsent')}</span>
             </label>
+          </fieldset>
+
+          {/* 결제 수단 선택 — 카드 / 퀵계좌이체 */}
+          <fieldset className="space-y-2">
+            <legend className={LABEL_BASE}>{t('paymentMethodLabel')}</legend>
+            <div className="grid grid-cols-2 gap-2">
+              <label
+                className={clsx(
+                  'flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm font-semibold transition',
+                  paymentMethod === 'card'
+                    ? 'border-primary bg-primary-surface text-primary-strong'
+                    : 'border-gray-300 bg-white text-charcoal'
+                )}
+              >
+                <input
+                  type="radio"
+                  name="pledge-payment"
+                  value="card"
+                  checked={paymentMethod === 'card'}
+                  onChange={() => setPaymentMethod('card')}
+                  className="sr-only"
+                />
+                {t('paymentMethodCard')}
+              </label>
+              <label
+                className={clsx(
+                  'flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm font-semibold transition',
+                  paymentMethod === 'transfer'
+                    ? 'border-primary bg-primary-surface text-primary-strong'
+                    : 'border-gray-300 bg-white text-charcoal'
+                )}
+              >
+                <input
+                  type="radio"
+                  name="pledge-payment"
+                  value="transfer"
+                  checked={paymentMethod === 'transfer'}
+                  onChange={() => setPaymentMethod('transfer')}
+                  className="sr-only"
+                />
+                {t('paymentMethodTransfer')}
+              </label>
+            </div>
+            {paymentMethod === 'transfer' && (
+              <p className="break-keep text-xs text-charcoal-muted">{t('paymentTransferHelp')}</p>
+            )}
           </fieldset>
 
           {/* 결제 금액 요약 */}
