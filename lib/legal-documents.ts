@@ -1319,7 +1319,7 @@ export const FUNDING_TERMS_DOCUMENT: LegalDocument = {
       bullets: [
         '상호: 한국스마트협동조합',
         `사업자등록번호: ${CONTACT.BUSINESS_REGISTRATION_NUMBER}`,
-        '통신판매업 신고번호: 제2026-서울은평-____호 (신고 완료, 신고번호 확정 후 기재)',
+        `통신판매업 신고번호: ${CONTACT.MAIL_ORDER_REPORT_NUMBER}`,
         `주소: ${CONTACT.ADDRESS}`,
         `이메일: ${CONTACT.EMAIL}`,
         `전화: ${CONTACT.PHONE} (평일 10:00~18:00, 주말·공휴일 제외)`,
