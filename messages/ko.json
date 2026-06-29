@@ -114,6 +114,7 @@
     "noResultsDesc": "다른 키워드로 검색해 보세요",
     "artworksSection": "작품",
     "artistsSection": "작가",
+    "recommendedSection": "추천 작품",
     "artworkCount": "{count}점",
     "viewAll": "작품 {count}개 전체 결과 보기",
     "searching": "검색 중...",
@@ -999,6 +1000,7 @@
   },
   "orderLookup": {
     "pageTitle": "주문 조회",
+    "toggleOrderDetail": "주문 상세 보기",
     "pageDescription": "주문 시 입력한 이름, 이메일, 휴대폰번호로 조회합니다.",
     "nameLabel": "주문자 이름",
     "namePlaceholder": "홍길동",

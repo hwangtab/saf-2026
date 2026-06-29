@@ -13,6 +13,8 @@
 export type RepresentativeArtwork = {
   /** 첫 품목 작품 제목 (없으면 null) */
   title: string | null;
+  /** 첫 품목 작품 id (작품 상세 링크용, select에 id 포함됐을 때만; 없으면 null) */
+  artworkId: string | null;
   /** 첫 품목 첫 이미지 (없으면 null) */
   image: string | null;
   /** 첫 품목 작가명(name_ko) (없으면 null) */
@@ -46,10 +48,11 @@ export function getRepresentativeArtwork(orderItems: unknown): RepresentativeArt
       : [];
 
   if (arr.length === 0) {
-    return { title: null, image: null, artistName: null, count: 0 };
+    return { title: null, artworkId: null, image: null, artistName: null, count: 0 };
   }
 
   const firstArtwork = firstOrSelf<{
+    id?: string | null;
     title?: string | null;
     images?: string[] | null;
     artists?: unknown;
@@ -59,6 +62,7 @@ export function getRepresentativeArtwork(orderItems: unknown): RepresentativeArt
 
   return {
     title: firstArtwork?.title ?? null,
+    artworkId: firstArtwork?.id ?? null,
     image: images && images.length > 0 ? images[0] : null,
     artistName: extractArtistName(firstArtwork?.artists),
     count: arr.length,

@@ -35,6 +35,8 @@ export type PublicOrderListItem = {
   status: string;
   artworkTitle: string;
   artworkImage: string | null;
+  /** 대표작품 id (작품 상세 링크용; 작품 삭제·식별 불가 시 null) */
+  artworkId: string | null;
   totalAmount: number;
   createdAt: string;
 };
@@ -51,6 +53,8 @@ export type OrderPublicInfo = {
   status: string;
   artworkTitle: string;
   artworkImage: string | null;
+  /** 대표작품 id (작품 상세 링크용; 작품 삭제·식별 불가 시 null) */
+  artworkId: string | null;
   artistName: string;
   itemAmount: number;
   shippingAmount: number;
@@ -120,11 +124,13 @@ export async function lookupOrders(
       created_at,
       metadata,
       artworks (
+        id,
         title,
         images
       ),
       order_items (
         artworks (
+          id,
           title,
           images
         )
@@ -166,7 +172,11 @@ export async function lookupOrders(
 
       // 다품목(orders.artwork_id NULL) 주문은 order_items 대표작품으로 표시. 단건/legacy는 artworks fallback.
       const rep = getRepresentativeArtwork(o.order_items);
-      const singleArtwork = o.artworks as unknown as { title: string; images: string[] } | null;
+      const singleArtwork = o.artworks as unknown as {
+        id: string;
+        title: string;
+        images: string[];
+      } | null;
       const singleImages = singleArtwork?.images ?? [];
 
       const artworkTitle =
@@ -175,12 +185,14 @@ export async function lookupOrders(
           : (singleArtwork?.title ?? unknownLabel);
       const artworkImage =
         rep.count > 0 ? rep.image : singleImages.length > 0 ? singleImages[0] : null;
+      const artworkId = rep.count > 0 ? rep.artworkId : (singleArtwork?.id ?? null);
 
       return {
         orderNo: o.order_no,
         status: o.status,
         artworkTitle,
         artworkImage,
+        artworkId,
         totalAmount: o.total_amount,
         createdAt: o.created_at,
       };
@@ -371,6 +383,7 @@ async function fetchOrderDetailRow(
       buyer_user_id,
       metadata,
       artworks (
+        id,
         title,
         images,
         artists (
@@ -379,6 +392,7 @@ async function fetchOrderDetailRow(
       ),
       order_items (
         artworks (
+          id,
           title,
           images,
           artists (
@@ -397,6 +411,7 @@ async function fetchOrderDetailRow(
   const unknownLabel = locale === 'en' ? 'Unknown' : '알 수 없음';
 
   const artworkRow = order.artworks as unknown as {
+    id: string;
     title: string;
     images: string[];
     artists: { name_ko: string } | { name_ko: string }[] | null;
@@ -419,6 +434,7 @@ async function fetchOrderDetailRow(
 
   const singleImages = artworkRow?.images ?? [];
   const artworkImage = rep.count > 0 ? rep.image : singleImages.length > 0 ? singleImages[0] : null;
+  const artworkId = rep.count > 0 ? rep.artworkId : (artworkRow?.id ?? null);
 
   let paymentMethod: string | null = null;
   let virtualAccount: OrderPublicInfo['virtualAccount'] = null;
@@ -461,6 +477,7 @@ async function fetchOrderDetailRow(
       status: order.status,
       artworkTitle,
       artworkImage,
+      artworkId,
       artistName,
       itemAmount: order.item_amount,
       shippingAmount: order.shipping_amount,
