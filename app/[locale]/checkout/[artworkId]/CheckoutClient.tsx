@@ -543,20 +543,20 @@ export default function CheckoutClient({
                 </td>
               </tr>
               <tr>
-                <td className="py-2 text-gray-600">{t('shippingFee')}</td>
-                <td className="py-2 text-right font-medium text-charcoal">
+                <td className="py-2 align-top text-gray-600">
+                  {t('shippingFee')}
+                  {shippingFee > 0 && (
+                    <span className="mt-1 block text-xs text-charcoal-soft">
+                      {t('freeShippingThresholdHint', {
+                        amount: formatPriceForDisplay(SHIPPING_THRESHOLD),
+                      })}
+                    </span>
+                  )}
+                </td>
+                <td className="py-2 align-top text-right font-medium text-charcoal">
                   {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
                 </td>
               </tr>
-              {shippingFee > 0 && (
-                <tr>
-                  <td colSpan={2} className="pb-2 pt-0 text-xs text-charcoal-soft">
-                    {t('freeShippingThresholdHint', {
-                      amount: formatPriceForDisplay(SHIPPING_THRESHOLD),
-                    })}
-                  </td>
-                </tr>
-              )}
               {activeChoice && (
                 <tr>
                   <td className="py-2 text-gray-600">{t('paymentMethod')}</td>
