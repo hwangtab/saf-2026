@@ -11,8 +11,9 @@ import { getLocale, getTranslations } from 'next-intl/server';
  * - topPages: organic 트래픽 받는 TOP 페이지 (clicks 우선 정렬)
  * - lowCtrQueries: 노출 50회+ but CTR 낮은 keyword — 메타태그·title 개선 신호
  *
- * 데이터는 cron(/api/internal/gsc-sync)이 매일 새벽 5시 KST에 fetch해
- * gsc_metrics 테이블에 캐시. GSC API 자체는 약 2일 lag.
+ * 데이터는 GitHub Actions(.github/workflows/gsc-sync.yml)가 매일 새벽 5시 KST
+ * (20:00 UTC)에 fetch해 gsc_metrics 테이블에 캐시. GSC API 자체는 약 2일 lag.
+ * (Vercel route /api/internal/gsc-sync는 수동 백필용 fallback으로만 잔존)
  */
 interface Props {
   data: AnalyticsData['gsc'];

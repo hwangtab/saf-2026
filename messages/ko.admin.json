@@ -579,7 +579,7 @@
       "gscTotalRows": "총 row 수",
       "gscLastFetched": "마지막 fetch",
       "gscNoDataTitle": "GSC 데이터 없음",
-      "gscNoDataDesc": "cron이 아직 실행 안 됐거나 GSC 자체에 데이터가 없습니다. /api/internal/gsc-sync를 수동 호출해 초기 데이터를 채울 수 있습니다.",
+      "gscNoDataDesc": "동기화(GitHub Actions gsc-sync 워크플로)가 아직 실행 안 됐거나 GSC 자체에 데이터가 없습니다. 워크플로를 수동 실행(workflow_dispatch)하거나 /api/internal/gsc-sync를 직접 호출해 초기 데이터를 채울 수 있습니다.",
       "gscDailyTrendTitle": "일별 organic 트래픽 추이",
       "gscDailyTrendDesc": "노출·클릭·CTR·평균 순위의 일별 변화. 최근 30일치.",
       "gscNoTrendData": "일별 추이 데이터 없음",

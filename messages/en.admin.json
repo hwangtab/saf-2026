@@ -579,7 +579,7 @@
       "gscTotalRows": "Total rows",
       "gscLastFetched": "Last fetched",
       "gscNoDataTitle": "No GSC data",
-      "gscNoDataDesc": "Cron has not run yet, or GSC has no data. You can manually call /api/internal/gsc-sync to seed initial data.",
+      "gscNoDataDesc": "The sync (GitHub Actions gsc-sync workflow) has not run yet, or GSC has no data. You can trigger the workflow manually (workflow_dispatch) or call /api/internal/gsc-sync directly to seed initial data.",
       "gscDailyTrendTitle": "Daily organic traffic trend",
       "gscDailyTrendDesc": "Day-by-day impressions, clicks, CTR, and average position over the last 30 days.",
       "gscNoTrendData": "No daily trend data",
