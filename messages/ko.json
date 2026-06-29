@@ -978,7 +978,7 @@
     "easyPayGroup": "간편결제",
     "transferDescription": "토스 퀵계좌이체 · 즉시 출금 후 바로 결제 완료",
     "transferTrustTitle": "고가 작품도 퀵계좌이체로 안전하게 결제됩니다.",
-    "transferTrustBody": "결제 즉시 주문이 확정되고, 검수·보증서·배송 일정을 별도로 안내합니다.",
+    "transferTrustBody": "연결된 계좌에서 바로 이체되어, 입금 확인을 기다릴 필요 없이 결제 즉시 주문이 확정됩니다. 검수·보증서·배송 일정은 별도로 안내해 드립니다.",
     "methodPaypal": "PayPal",
     "paypalCaption": "International accounts only",
     "paypalUsdNotice": "Charged in USD via PayPal at the rate fixed at order time.",

@@ -408,33 +408,6 @@ export default function CartCheckoutClient({ clientKey }: Props) {
           <BuyerInfoForm ref={buyerInfoRef} />
         </div>
 
-        {/* 금액 요약 — 배송비는 표시용 추정. 권위값은 createOrder의 totalAmount. */}
-        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentAmount')}</h3>
-          <table className="w-full text-sm">
-            <tbody className="divide-y divide-gray-100">
-              <tr>
-                <td className="py-2 text-gray-600">{t('artworkAmountLabel')}</td>
-                <td className="py-2 text-right font-medium text-charcoal">
-                  {loading && details.length === 0 ? '…' : formatPriceForDisplay(subtotal)}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2 text-gray-600">{t('shippingFee')}</td>
-                <td className="py-2 text-right font-medium text-charcoal">
-                  {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
-                <td className="py-2 text-right text-lg font-bold text-primary-a11y">
-                  {loading && details.length === 0 ? '…' : formatPriceForDisplay(estimatedTotal)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
         {/* 결제수단 — 단건 CheckoutClient와 동일 UI. */}
         <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
           <h3 className="flex items-center gap-2 px-6 pt-6 pb-4 text-base font-semibold text-charcoal">
@@ -451,7 +424,6 @@ export default function CartCheckoutClient({ clientKey }: Props) {
           >
             {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
               const selected = paymentChoice === value;
-              const description = value === 'TRANSFER' ? t('transferDescription') : null;
               return (
                 <label
                   key={value}
@@ -499,9 +471,6 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                         {t(labelKey)}
                       </span>
                     )}
-                    {description && (
-                      <span className="text-caption-meta text-charcoal-soft">{description}</span>
-                    )}
                   </span>
                 </label>
               );
@@ -514,6 +483,34 @@ export default function CartCheckoutClient({ clientKey }: Props) {
               <p className="mt-1">{t('transferTrustBody')}</p>
             </div>
           )}
+        </div>
+
+        {/* 금액 요약 — 결제 직전 최종 금액 (번호 단계 밖, 버튼 위).
+            배송비는 표시용 추정. 권위값은 createOrder의 totalAmount. */}
+        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentAmount')}</h3>
+          <table className="w-full text-sm">
+            <tbody className="divide-y divide-gray-100">
+              <tr>
+                <td className="py-2 text-gray-600">{t('artworkAmountLabel')}</td>
+                <td className="py-2 text-right font-medium text-charcoal">
+                  {loading && details.length === 0 ? '…' : formatPriceForDisplay(subtotal)}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 text-gray-600">{t('shippingFee')}</td>
+                <td className="py-2 text-right font-medium text-charcoal">
+                  {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
+                <td className="py-2 text-right text-lg font-bold text-primary-a11y">
+                  {loading && details.length === 0 ? '…' : formatPriceForDisplay(estimatedTotal)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {/* Error */}

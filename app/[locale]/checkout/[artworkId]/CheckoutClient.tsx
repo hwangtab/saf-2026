@@ -405,33 +405,6 @@ export default function CheckoutClient({
           />
         </div>
 
-        {/* Price breakdown */}
-        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentAmount')}</h3>
-          <table className="w-full text-sm">
-            <tbody className="divide-y divide-gray-100">
-              <tr>
-                <td className="py-2 text-gray-600">{t('artworkAmountLabel')}</td>
-                <td className="py-2 text-right font-medium text-charcoal">
-                  {formatPriceForDisplay(price)}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2 text-gray-600">{t('shippingFee')}</td>
-                <td className="py-2 text-right font-medium text-charcoal">
-                  {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
-                <td className="py-2 text-right text-lg font-bold text-primary-a11y">
-                  {formatPriceForDisplay(totalAmount)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
         {/* Payment method selector — 5개 옵션을 동일 list row로 통일.
             미술관 작품 라벨처럼 일관된 시각 리듬 + 좌측 selected indicator(primary 바)로
             현재 선택을 고정 위치에서 확인 가능. */}
@@ -450,7 +423,6 @@ export default function CheckoutClient({
           >
             {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
               const selected = paymentChoice === value;
-              const description = value === 'TRANSFER' ? t('transferDescription') : null;
               return (
                 <div key={value}>
                   <label
@@ -503,9 +475,6 @@ export default function CheckoutClient({
                           {t(labelKey)}
                         </span>
                       )}
-                      {description && (
-                        <span className="text-caption-meta text-charcoal-soft">{description}</span>
-                      )}
                     </span>
                   </label>
                 </div>
@@ -519,6 +488,33 @@ export default function CheckoutClient({
               <p className="mt-1">{t('transferTrustBody')}</p>
             </div>
           )}
+        </div>
+
+        {/* Price breakdown — 결제 직전 최종 금액 요약 (번호 단계 밖, 버튼 위) */}
+        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-base font-semibold text-charcoal">{t('paymentAmount')}</h3>
+          <table className="w-full text-sm">
+            <tbody className="divide-y divide-gray-100">
+              <tr>
+                <td className="py-2 text-gray-600">{t('artworkAmountLabel')}</td>
+                <td className="py-2 text-right font-medium text-charcoal">
+                  {formatPriceForDisplay(price)}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 text-gray-600">{t('shippingFee')}</td>
+                <td className="py-2 text-right font-medium text-charcoal">
+                  {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
+                <td className="py-2 text-right text-lg font-bold text-primary-a11y">
+                  {formatPriceForDisplay(totalAmount)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {/* Error */}
