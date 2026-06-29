@@ -42,3 +42,16 @@ export function shouldShowFooterSlider(pathname: string | null | undefined): boo
   if (FOOTER_SLIDER_EXCLUDE_PATHS.has(normalized)) return false;
   return !hasPrefix(normalized, FOOTER_SLIDER_EXCLUDE_PREFIXES);
 }
+
+/**
+ * 결제 입력 페이지(`/checkout` 장바구니, `/checkout/{id}` 단건·해외)에서는 사이트 Footer
+ * (출품작 캐러셀 + 풀 푸터)를 숨겨 결제 집중을 유지한다. 판매자 정보·약관은 결제 페이지
+ * 내부 CheckoutTrustNotice가 이미 노출하므로 중복도 제거된다.
+ * 결제 완료/실패(`/checkout/{id}/success|fail`)는 다음 행동 유도를 위해 Footer를 유지 —
+ * `/^\/checkout\/[^/]+$/`가 하위 세그먼트(success/fail)를 자연 제외한다.
+ */
+export function shouldHideSiteFooter(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  const normalized = stripLocale(pathname);
+  return normalized === '/checkout' || /^\/checkout\/[^/]+$/.test(normalized);
+}

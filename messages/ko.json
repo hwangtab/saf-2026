@@ -899,6 +899,8 @@
     "itemAmount": "상품 금액",
     "shippingFee": "배송비",
     "freeShipping": "무료",
+    "freeShippingThresholdHint": "{amount} 이상 구매 시 배송비 무료",
+    "freeShippingProgress": "{amount}만 더 담으면 배송비 무료",
     "totalAmount": "총 결제 금액",
     "shippingGuide": "20만원 이상 구매 시 무료배송",
     "payNow": "결제하기",

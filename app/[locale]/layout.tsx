@@ -10,6 +10,7 @@ import { getLiveStats } from '@/lib/live-stats';
 import { BRAND_COLORS } from '@/lib/colors';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import FooterGate from '@/components/common/FooterGate';
 import ToastProvider from '@/components/providers/ToastProvider';
 import WishlistProvider from '@/components/providers/WishlistProvider';
 import CartProvider from '@/components/providers/CartProvider';
@@ -266,7 +267,9 @@ export default async function LocaleLayout({
                   {children}
                 </main>
                 <Suspense fallback={null}>
-                  <Footer locale={locale} />
+                  <FooterGate>
+                    <Footer locale={locale} />
+                  </FooterGate>
                 </Suspense>
                 <JsonLdScript data={organizationSchema} />
                 <JsonLdScript data={websiteSchema} />

@@ -1,6 +1,7 @@
 import {
   belongsToSurface,
   isProtectedSurfacePath,
+  shouldHideSiteFooter,
   shouldShowFooterSlider,
 } from '../../lib/path-rules';
 
@@ -72,5 +73,28 @@ describe('shouldShowFooterSlider', () => {
     [null, false],
   ])('%s → %s', (path, expected) => {
     expect(shouldShowFooterSlider(path)).toBe(expected);
+  });
+});
+
+describe('shouldHideSiteFooter', () => {
+  it.each([
+    // 결제 입력 페이지 — Footer 숨김
+    ['/checkout', true],
+    ['/checkout/123', true],
+    ['/checkout/abc-def', true],
+    ['/ko/checkout/123', true],
+    ['/en/checkout/123', true],
+    // 결제 완료/실패는 다음 행동 유도 위해 Footer 유지 (하위 세그먼트 제외)
+    ['/checkout/123/success', false],
+    ['/checkout/123/fail', false],
+    // 형제 경로 차단
+    ['/checkout-history', false],
+    // 일반 공개 페이지 — Footer 유지
+    ['/', false],
+    ['/artworks/123', false],
+    [null, false],
+    [undefined, false],
+  ])('%s → %s', (path, expected) => {
+    expect(shouldHideSiteFooter(path)).toBe(expected);
   });
 });

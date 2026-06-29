@@ -899,6 +899,8 @@
     "itemAmount": "Item Price",
     "shippingFee": "Shipping",
     "freeShipping": "Free",
+    "freeShippingThresholdHint": "Free shipping on orders over {amount}",
+    "freeShippingProgress": "Add {amount} more for free shipping",
     "totalAmount": "Total",
     "shippingGuide": "Free shipping on orders over ₩200,000",
     "payNow": "Pay Now",

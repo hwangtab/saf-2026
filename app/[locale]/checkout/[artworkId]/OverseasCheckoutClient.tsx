@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
+import { CreditCard, Landmark, type LucideIcon } from 'lucide-react';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
@@ -79,13 +80,15 @@ interface PaymentChoiceConfig {
     | 'methodNaverpay'
     | 'methodTransfer';
   brand: EnBrand;
+  /** 브랜드 로고가 없는 수단(카드·계좌이체)의 단색 아이콘 — 행 시각 균형 통일 */
+  icon?: LucideIcon;
   /** Toss SDK v2 자체창 직행 옵션. CARD/PAYPAL/TRANSFER는 별도 흐름이라 undefined. */
   cardOptions?: CardOptions;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'PAYPAL', labelKey: 'methodPaypal', brand: 'paypal' },
-  { value: 'CARD', labelKey: 'methodCard', brand: null },
+  { value: 'CARD', labelKey: 'methodCard', brand: null, icon: CreditCard },
   {
     value: 'KAKAOPAY',
     labelKey: 'methodKakaopay',
@@ -104,7 +107,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
     brand: 'naverpay',
     cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
   },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null },
+  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null, icon: Landmark },
 ];
 
 interface Props {
@@ -579,7 +582,7 @@ export default function OverseasCheckoutClient({
             aria-label={t('paymentMethodSelect')}
             className="border-t border-gray-200"
           >
-            {availablePaymentChoices.map(({ value, labelKey, brand }, i) => {
+            {availablePaymentChoices.map(({ value, labelKey, brand, icon: Icon }, i) => {
               const selected = paymentChoice === value;
               const description =
                 value === 'PAYPAL'
@@ -629,10 +632,19 @@ export default function OverseasCheckoutClient({
                       ) : (
                         <span
                           className={clsx(
-                            'text-sm font-medium',
+                            'flex items-center gap-2 text-sm font-medium',
                             selected ? 'text-primary-strong' : 'text-charcoal'
                           )}
                         >
+                          {Icon && (
+                            <Icon
+                              aria-hidden="true"
+                              className={clsx(
+                                'h-5 w-5 shrink-0',
+                                selected ? 'text-primary-strong' : 'text-charcoal-soft'
+                              )}
+                            />
+                          )}
                           {t(labelKey)}
                         </span>
                       )}

@@ -42,12 +42,10 @@ export default function TrustBadges({ className, variant = 'detail' }: TrustBadg
 
   return (
     // detail: 구매 가능 상태까지 같은 크기의 2열 신뢰 그리드로 노출한다.
-    // checkout: flex-wrap 유지 (좁은 결제 박스 컨텍스트).
+    // checkout: flex-wrap로 좁은 화면에서 가로 스크롤 없이 자연 줄바꿈(신뢰 시그널은 한눈에).
     <div
       className={cn(
-        variant === 'detail'
-          ? 'grid grid-cols-2 gap-2'
-          : 'flex flex-nowrap justify-center gap-1.5 overflow-x-auto scrollbar-hide',
+        variant === 'detail' ? 'grid grid-cols-2 gap-2' : 'flex flex-wrap justify-center gap-1.5',
         className
       )}
     >

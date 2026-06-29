@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
+import { CreditCard, Landmark, type LucideIcon } from 'lucide-react';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { calculateShippingFee } from '@/lib/integrations/toss/config';
+import { calculateShippingFee, SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
@@ -59,6 +60,8 @@ interface PaymentChoiceConfig {
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
   brand: KoBrand;
+  /** 브랜드 로고가 없는 수단(카드·계좌이체)의 단색 아이콘 — 행 시각 균형 통일 */
+  icon?: LucideIcon;
   /** Toss SDK v2 requestPayment의 method. 간편결제 4종은 'CARD'+cardOptions, 퀵계좌이체는 'TRANSFER'. */
   tossMethod: 'CARD' | 'TRANSFER';
   /** Toss SDK v2 자체창 직행 옵션. undefined면 통합결제창 (DEFAULT). */
@@ -125,8 +128,14 @@ function buildCheckoutTrackingParams(input: {
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', brand: null, tossMethod: 'CARD' },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null, tossMethod: 'TRANSFER' },
+  { value: 'CARD', labelKey: 'methodCard', brand: null, icon: CreditCard, tossMethod: 'CARD' },
+  {
+    value: 'TRANSFER',
+    labelKey: 'methodTransfer',
+    brand: null,
+    icon: Landmark,
+    tossMethod: 'TRANSFER',
+  },
   {
     value: 'KAKAOPAY',
     labelKey: 'methodKakaopay',
@@ -421,7 +430,7 @@ export default function CheckoutClient({
             aria-label={t('paymentMethodSelect')}
             className="border-t border-gray-200"
           >
-            {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
+            {PAYMENT_CHOICES.map(({ value, labelKey, brand, icon: Icon }, i) => {
               const selected = paymentChoice === value;
               return (
                 <div key={value}>
@@ -468,10 +477,19 @@ export default function CheckoutClient({
                       ) : (
                         <span
                           className={clsx(
-                            'text-sm font-medium',
+                            'flex items-center gap-2 text-sm font-medium',
                             selected ? 'text-primary-strong' : 'text-charcoal'
                           )}
                         >
+                          {Icon && (
+                            <Icon
+                              aria-hidden="true"
+                              className={clsx(
+                                'h-5 w-5 shrink-0',
+                                selected ? 'text-primary-strong' : 'text-charcoal-soft'
+                              )}
+                            />
+                          )}
                           {t(labelKey)}
                         </span>
                       )}
@@ -507,6 +525,15 @@ export default function CheckoutClient({
                   {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
                 </td>
               </tr>
+              {shippingFee > 0 && (
+                <tr>
+                  <td colSpan={2} className="pb-2 pt-0 text-xs text-charcoal-soft">
+                    {t('freeShippingThresholdHint', {
+                      amount: formatPriceForDisplay(SHIPPING_THRESHOLD),
+                    })}
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
                 <td className="py-2 text-right text-lg font-bold text-primary-a11y">

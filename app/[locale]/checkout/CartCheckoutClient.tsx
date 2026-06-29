@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
+import { CreditCard, Landmark, type LucideIcon } from 'lucide-react';
 
 import { useCart } from '@/components/providers/CartProvider';
 import { getCartArtworks, type CartArtworkInfo } from '@/app/actions/cart-artworks';
@@ -11,7 +12,7 @@ import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
 import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
-import { calculateShippingFee } from '@/lib/integrations/toss/config';
+import { calculateShippingFee, SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import BuyerInfoForm from '../checkout/[artworkId]/BuyerInfoForm';
 import type { BuyerInfoHandle } from '../checkout/[artworkId]/BuyerInfoForm';
@@ -40,13 +41,20 @@ interface PaymentChoiceConfig {
   value: PaymentChoice;
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
   brand: KoBrand;
+  icon?: LucideIcon;
   tossMethod: 'CARD' | 'TRANSFER';
   cardOptions?: CardOptions;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', brand: null, tossMethod: 'CARD' },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null, tossMethod: 'TRANSFER' },
+  { value: 'CARD', labelKey: 'methodCard', brand: null, icon: CreditCard, tossMethod: 'CARD' },
+  {
+    value: 'TRANSFER',
+    labelKey: 'methodTransfer',
+    brand: null,
+    icon: Landmark,
+    tossMethod: 'TRANSFER',
+  },
   {
     value: 'KAKAOPAY',
     labelKey: 'methodKakaopay',
@@ -422,7 +430,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
             aria-label={t('paymentMethodSelect')}
             className="border-t border-gray-200"
           >
-            {PAYMENT_CHOICES.map(({ value, labelKey, brand }, i) => {
+            {PAYMENT_CHOICES.map(({ value, labelKey, brand, icon: Icon }, i) => {
               const selected = paymentChoice === value;
               return (
                 <label
@@ -464,10 +472,19 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                     ) : (
                       <span
                         className={clsx(
-                          'text-sm font-medium',
+                          'flex items-center gap-2 text-sm font-medium',
                           selected ? 'text-primary-strong' : 'text-charcoal'
                         )}
                       >
+                        {Icon && (
+                          <Icon
+                            aria-hidden="true"
+                            className={clsx(
+                              'h-5 w-5 shrink-0',
+                              selected ? 'text-primary-strong' : 'text-charcoal-soft'
+                            )}
+                          />
+                        )}
                         {t(labelKey)}
                       </span>
                     )}
@@ -503,6 +520,15 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                   {shippingFee === 0 ? t('freeShipping') : formatPriceForDisplay(shippingFee)}
                 </td>
               </tr>
+              {shippingFee > 0 && !(loading && details.length === 0) && (
+                <tr>
+                  <td colSpan={2} className="pb-2 pt-0 text-xs text-primary-strong">
+                    {t('freeShippingProgress', {
+                      amount: formatPriceForDisplay(Math.max(0, SHIPPING_THRESHOLD - subtotal)),
+                    })}
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
                 <td className="py-2 text-right text-lg font-bold text-primary-a11y">
