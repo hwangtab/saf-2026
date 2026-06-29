@@ -141,7 +141,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
   // 초기 true — 첫 fetch 완료 전 항목이 잠깐 '품절/없음'으로 깜빡이는 것 방지(missing 판정 억제).
   const [loading, setLoading] = useState(true);
   const [paymentChoice, setPaymentChoice] = useState<PaymentChoice>('CARD');
-  const activeHintKey = PAYMENT_CHOICES.find((c) => c.value === paymentChoice)?.hintKey;
+  const activeChoice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // createOrder가 unavailable[]을 돌려주거나 클라이언트가 품절을 감지했을 때 하이라이트할 ID들
@@ -515,9 +515,9 @@ export default function CartCheckoutClient({ clientKey }: Props) {
             })}
           </div>
 
-          {activeHintKey && (
+          {activeChoice && (
             <div className="border-t border-primary/10 bg-primary-surface px-6 py-3 text-sm leading-relaxed text-charcoal-muted">
-              {t(activeHintKey)}
+              {t(activeChoice.hintKey)}
             </div>
           )}
         </div>
@@ -546,6 +546,14 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                     {t('freeShippingProgress', {
                       amount: formatPriceForDisplay(Math.max(0, SHIPPING_THRESHOLD - subtotal)),
                     })}
+                  </td>
+                </tr>
+              )}
+              {activeChoice && (
+                <tr>
+                  <td className="py-2 text-gray-600">{t('paymentMethod')}</td>
+                  <td className="py-2 text-right font-medium text-charcoal">
+                    {t(activeChoice.labelKey)}
                   </td>
                 </tr>
               )}
@@ -580,7 +588,11 @@ export default function CartCheckoutClient({ clientKey }: Props) {
           size="lg"
           className="w-full"
         >
-          {submitting ? t('processingShort') : t('payNow')}
+          {submitting
+            ? t('processingShort')
+            : loading && details.length === 0
+              ? t('payNow')
+              : t('payNowWithAmount', { amount: formatPriceForDisplay(estimatedTotal) })}
         </Button>
 
         <CheckoutTrustNotice />

@@ -209,7 +209,7 @@ export default function CheckoutClient({
   const totalAmount = price + shippingFee;
 
   const [paymentChoice, setPaymentChoice] = useState<PaymentChoice>('CARD');
-  const activeHintKey = PAYMENT_CHOICES.find((c) => c.value === paymentChoice)?.hintKey;
+  const activeChoice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfoHandle | null>(null);
@@ -423,6 +423,9 @@ export default function CheckoutClient({
               <p className="text-xs text-charcoal-soft">{artist}</p>
               <p className="mt-0.5 font-semibold text-charcoal truncate">{artworkTitle}</p>
               <p className="mt-1 text-lg font-bold text-primary-a11y">{displayPrice}</p>
+              <p className="mt-0.5 text-xs text-charcoal-soft">
+                {t('summaryTotalWithShipping', { amount: formatPriceForDisplay(totalAmount) })}
+              </p>
             </div>
           </div>
         </div>
@@ -521,9 +524,9 @@ export default function CheckoutClient({
             })}
           </div>
 
-          {activeHintKey && (
+          {activeChoice && (
             <div className="border-t border-primary/10 bg-primary-surface px-6 py-3 text-sm leading-relaxed text-charcoal-muted">
-              {t(activeHintKey)}
+              {t(activeChoice.hintKey)}
             </div>
           )}
         </div>
@@ -554,6 +557,14 @@ export default function CheckoutClient({
                   </td>
                 </tr>
               )}
+              {activeChoice && (
+                <tr>
+                  <td className="py-2 text-gray-600">{t('paymentMethod')}</td>
+                  <td className="py-2 text-right font-medium text-charcoal">
+                    {t(activeChoice.labelKey)}
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td className="py-2 font-bold text-charcoal">{t('totalAmount')}</td>
                 <td className="py-2 text-right text-lg font-bold text-primary-a11y">
@@ -581,7 +592,9 @@ export default function CheckoutClient({
 
         {/* CTA */}
         <Button onClick={handlePayment} loading={submitting} size="lg" className="w-full">
-          {submitting ? t('processingShort') : t('payNow')}
+          {submitting
+            ? t('processingShort')
+            : t('payNowWithAmount', { amount: formatPriceForDisplay(totalAmount) })}
         </Button>
 
         <CheckoutTrustNotice />
