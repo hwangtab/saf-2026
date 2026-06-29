@@ -70,6 +70,8 @@ export type OrderDetail = AdminOrderListItem & {
   payment_method_detail: string | null;
   /** orders.metadata.payment_provider — 'domestic'|'overseas'|'manual_bank_transfer'|'widget'|'api_v1' */
   payment_provider: string | null;
+  /** 간편결제사 (payments.confirm_response.easyPay.provider — 예: '네이버페이', '카카오페이', '토스페이'). 간편결제가 아니면 null */
+  payment_easypay_provider: string | null;
   /** 관리자가 자동취소를 보류한 입금대기 주문 (입금 기한 무한 연장) */
   deposit_auto_cancel_paused: boolean;
   approved_at: string | null;
@@ -241,6 +243,9 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
   const confirmResponse = (payment?.confirm_response as Record<string, unknown> | null) ?? null;
   const virtualAccount =
     (confirmResponse?.virtualAccount as Record<string, unknown> | null) ?? null;
+  const easyPay = (confirmResponse?.easyPay as Record<string, unknown> | null) ?? null;
+  const easyPayProvider =
+    typeof easyPay?.provider === 'string' && easyPay.provider.length > 0 ? easyPay.provider : null;
 
   return {
     id: order.id,
@@ -271,6 +276,7 @@ export async function getOrderDetail(orderId: string): Promise<OrderDetail | nul
     payment_method_detail: payment?.method ?? null,
     payment_provider:
       (order.metadata as { payment_provider?: string } | null)?.payment_provider ?? null,
+    payment_easypay_provider: easyPayProvider,
     deposit_auto_cancel_paused: (order.deposit_auto_cancel_paused as boolean | null) ?? false,
     approved_at: payment?.approved_at ?? null,
     virtual_account_number:
