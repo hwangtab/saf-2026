@@ -6,6 +6,7 @@ import clsx from 'clsx';
 
 import Button from '@/components/ui/Button';
 import SafeImage from '@/components/common/SafeImage';
+import { Link } from '@/i18n/navigation';
 import { createPledge } from '@/app/actions/funding';
 import type { CreatePledgeResultCode } from '@/app/actions/funding';
 
@@ -419,7 +420,21 @@ export default function FundingPledgeFlow({ slug, tiers, remaining, isOpen, clie
                 required
                 className="mt-0.5 h-4 w-4 rounded"
               />
-              <span>{t('termsConsent')}</span>
+              <span>
+                {t.rich('termsConsent', {
+                  link: (chunks) => (
+                    <Link
+                      href="/funding-terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-strong underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </span>
             </label>
             <label className="flex cursor-pointer items-start gap-3 text-sm text-charcoal">
               <input

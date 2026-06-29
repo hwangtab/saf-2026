@@ -21,6 +21,7 @@ describe('isHeroRoute', () => {
       '/privacy',
       '/terms',
       '/refund-policy',
+      '/funding-terms',
       '/petition/oh-yoon',
       '/event/oh-yoon-memorial',
       '/wishlist',
