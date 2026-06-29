@@ -55,9 +55,18 @@ interface CardOptions {
   easyPay: EasyPayKo;
 }
 
+type MethodHintKey =
+  | 'methodCardHint'
+  | 'methodTransferHint'
+  | 'methodKakaopayHint'
+  | 'methodTosspayHint'
+  | 'methodNaverpayHint';
+
 interface PaymentChoiceConfig {
   value: PaymentChoice;
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
+  /** 선택 시 셀렉터 하단에 노출되는 한 줄 안내 메시지 키 */
+  hintKey: MethodHintKey;
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
   brand: KoBrand;
   /** 브랜드 로고가 없는 수단(카드·계좌이체)의 단색 아이콘 — 행 시각 균형 통일 */
@@ -128,10 +137,18 @@ function buildCheckoutTrackingParams(input: {
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', brand: null, icon: CreditCard, tossMethod: 'CARD' },
+  {
+    value: 'CARD',
+    labelKey: 'methodCard',
+    hintKey: 'methodCardHint',
+    brand: null,
+    icon: CreditCard,
+    tossMethod: 'CARD',
+  },
   {
     value: 'TRANSFER',
     labelKey: 'methodTransfer',
+    hintKey: 'methodTransferHint',
     brand: null,
     icon: Landmark,
     tossMethod: 'TRANSFER',
@@ -139,6 +156,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   {
     value: 'KAKAOPAY',
     labelKey: 'methodKakaopay',
+    hintKey: 'methodKakaopayHint',
     brand: 'kakaopay',
     tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
@@ -146,6 +164,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   {
     value: 'TOSSPAY',
     labelKey: 'methodTosspay',
+    hintKey: 'methodTosspayHint',
     brand: 'tosspay',
     tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
@@ -153,6 +172,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   {
     value: 'NAVERPAY',
     labelKey: 'methodNaverpay',
+    hintKey: 'methodNaverpayHint',
     brand: 'naverpay',
     tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
@@ -189,6 +209,7 @@ export default function CheckoutClient({
   const totalAmount = price + shippingFee;
 
   const [paymentChoice, setPaymentChoice] = useState<PaymentChoice>('CARD');
+  const activeHintKey = PAYMENT_CHOICES.find((c) => c.value === paymentChoice)?.hintKey;
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const buyerInfoRef = useRef<BuyerInfoHandle | null>(null);
@@ -500,10 +521,9 @@ export default function CheckoutClient({
             })}
           </div>
 
-          {paymentChoice === 'TRANSFER' && (
-            <div className="border-t border-primary/10 bg-primary-surface px-6 py-4 text-sm leading-relaxed text-charcoal-muted">
-              <p className="font-semibold text-charcoal">{t('transferTrustTitle')}</p>
-              <p className="mt-1">{t('transferTrustBody')}</p>
+          {activeHintKey && (
+            <div className="border-t border-primary/10 bg-primary-surface px-6 py-3 text-sm leading-relaxed text-charcoal-muted">
+              {t(activeHintKey)}
             </div>
           )}
         </div>

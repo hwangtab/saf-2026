@@ -37,9 +37,18 @@ interface CardOptions {
   easyPay: EasyPayKo;
 }
 
+type MethodHintKey =
+  | 'methodCardHint'
+  | 'methodTransferHint'
+  | 'methodKakaopayHint'
+  | 'methodTosspayHint'
+  | 'methodNaverpayHint';
+
 interface PaymentChoiceConfig {
   value: PaymentChoice;
   labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
+  /** 선택 시 셀렉터 하단에 노출되는 한 줄 안내 메시지 키 */
+  hintKey: MethodHintKey;
   brand: KoBrand;
   icon?: LucideIcon;
   tossMethod: 'CARD' | 'TRANSFER';
@@ -47,10 +56,18 @@ interface PaymentChoiceConfig {
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  { value: 'CARD', labelKey: 'methodCard', brand: null, icon: CreditCard, tossMethod: 'CARD' },
+  {
+    value: 'CARD',
+    labelKey: 'methodCard',
+    hintKey: 'methodCardHint',
+    brand: null,
+    icon: CreditCard,
+    tossMethod: 'CARD',
+  },
   {
     value: 'TRANSFER',
     labelKey: 'methodTransfer',
+    hintKey: 'methodTransferHint',
     brand: null,
     icon: Landmark,
     tossMethod: 'TRANSFER',
@@ -58,6 +75,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   {
     value: 'KAKAOPAY',
     labelKey: 'methodKakaopay',
+    hintKey: 'methodKakaopayHint',
     brand: 'kakaopay',
     tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
@@ -65,6 +83,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   {
     value: 'TOSSPAY',
     labelKey: 'methodTosspay',
+    hintKey: 'methodTosspayHint',
     brand: 'tosspay',
     tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
@@ -72,6 +91,7 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   {
     value: 'NAVERPAY',
     labelKey: 'methodNaverpay',
+    hintKey: 'methodNaverpayHint',
     brand: 'naverpay',
     tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
@@ -121,6 +141,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
   // 초기 true — 첫 fetch 완료 전 항목이 잠깐 '품절/없음'으로 깜빡이는 것 방지(missing 판정 억제).
   const [loading, setLoading] = useState(true);
   const [paymentChoice, setPaymentChoice] = useState<PaymentChoice>('CARD');
+  const activeHintKey = PAYMENT_CHOICES.find((c) => c.value === paymentChoice)?.hintKey;
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // createOrder가 unavailable[]을 돌려주거나 클라이언트가 품절을 감지했을 때 하이라이트할 ID들
@@ -494,10 +515,9 @@ export default function CartCheckoutClient({ clientKey }: Props) {
             })}
           </div>
 
-          {paymentChoice === 'TRANSFER' && (
-            <div className="border-t border-primary/10 bg-primary-surface px-6 py-4 text-sm leading-relaxed text-charcoal-muted">
-              <p className="font-semibold text-charcoal">{t('transferTrustTitle')}</p>
-              <p className="mt-1">{t('transferTrustBody')}</p>
+          {activeHintKey && (
+            <div className="border-t border-primary/10 bg-primary-surface px-6 py-3 text-sm leading-relaxed text-charcoal-muted">
+              {t(activeHintKey)}
             </div>
           )}
         </div>
