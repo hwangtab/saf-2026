@@ -515,6 +515,7 @@ function OrderDetail({
               {PAYMENT_METHOD_I18N_KEYS[order.paymentMethod]
                 ? t(PAYMENT_METHOD_I18N_KEYS[order.paymentMethod] as Parameters<typeof t>[0])
                 : order.paymentMethod}
+              {order.easyPayProvider ? ` (${order.easyPayProvider})` : ''}
             </span>
           </div>
         )}
