@@ -44,28 +44,29 @@ export interface NowShowingItem {
    */
   status?: NowShowingStatus;
   /**
-   * Hero 슬롯 우선순위. 활성 항목 중 값이 가장 높은 1개가 `HomeHero`의 단일 정적 LCP 이미지가 된다.
-   * 모든 활성 항목이 동률이거나 미지정이면 배열 순서를 따른다.
-   *
-   * - `0` (또는 미지정) — 평상시 fallback (강석태 슬라이드: "예술인 동료를 위해 내놓은 작품")
-   * - `5`~`10` — 활성 특별전. 특별전 기간엔 자동으로 hero를 점유.
-   *
-   * fold-below 그리드(`getNowShowingCards()`)는 priority와 무관하게 모든 활성 항목 노출.
-   */
-  heroPriority?: number;
-  /**
    * 히어로 배경 연출 모드.
    * - 'auto'(기본/미지정): 빌드 타임 해상도 측정 결과대로. lowRes면 자동 블러 연출.
    * - 'soft': 측정 무시하고 강제 연출. 해상도는 충분하나 초점이 나간 사진 등 자동이 못 잡는 케이스.
    * - 'sharp': 측정 무시하고 연출 off. 자동 판정 오탐 시 탈출구.
    */
   heroTreatment?: HeroTreatment;
+  /**
+   * Hero 전용 고정 항목 표시.
+   *
+   * `getHeroSlide()`가 반환하는 **고정 히어로**이자, fold-below "Now Showing" 그리드에선 제외된다.
+   * 그리드는 "지금 열리는 기간 한정 전시" 코너인데, 전체 작품 페이지로 보내는 상시 항목
+   * (`all-artworks`)은 그 성격에 맞지 않아 히어로로만 노출하고 그리드에선 숨긴다.
+   *
+   * 정확히 1개 항목에만 지정한다(현재 `all-artworks`). `getNowShowingCards()`가 이 플래그를 필터한다.
+   */
+  heroOnly?: boolean;
 }
 
 const STORAGE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public`;
 
 export const NOW_SHOWING: NowShowingItem[] = [
-  // 1번 — 본업: 전체 작품 페이지로 유도. 평상시 hero fallback, 구매 직결.
+  // 1번 — 고정 히어로: 전체 작품 페이지로 유도. 메인 히어로를 상시 점유, 구매 직결.
+  // heroOnly 항목이라 Now Showing 그리드(기간 한정 전시 코너)에는 노출되지 않는다.
   {
     slug: 'all-artworks',
     i18nKey: 'allArtworks',
@@ -73,7 +74,7 @@ export const NOW_SHOWING: NowShowingItem[] = [
     // 강석태 「부드러운 바람이 불던 날」 (id 82) — SAF 인기 라인업 비주얼
     imageUrl: `${STORAGE}/artworks/ad5f81de-e946-4883-b8c0-59e7756fb8a8/82__original.webp`,
     startDate: '2026-01-01',
-    heroPriority: 0,
+    heroOnly: true,
     // 제공받은 작품 사진이 hero 풀스크린엔 흐릿(저해상도/업스케일 뻥튀기) → 해상도 측정과
     // 무관하게 강제 soft 연출. 해상도 판정(generated.json)은 향후 추가될 hero 작품용 안전망으로 유지.
     heroTreatment: 'soft',
@@ -84,10 +85,9 @@ export const NOW_SHOWING: NowShowingItem[] = [
     href: '/artworks/artist/오윤',
     imageUrl: `${STORAGE}/artworks/398f3739-b81e-4ba8-bcd0-fed2e53d3dc8/151__original.webp`,
     startDate: '2026-04-01',
-    // PM 확정: 오윤 40주기 commemoration 2026년 말일까지. 2027-01-01 자동 fallback (강석태 hero).
+    // PM 확정: 오윤 40주기 commemoration 2026년 말일까지. 2027-01-01 그리드에서 자동 만료.
     endDate: '2026-12-31',
-    heroPriority: 0,
-    // 오윤 작품 사진도 hero 풀스크린엔 흐릿(세로형 1491px 폭 → 가로 풀폭 업스케일) → 강제 soft.
+    // 그리드 전용 카드. 히어로는 all-artworks 고정이므로 hero 점유 없음.
     heroTreatment: 'soft',
   },
   {
@@ -98,13 +98,11 @@ export const NOW_SHOWING: NowShowingItem[] = [
     // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-28(일) 폐막. (회기 연장: 6-08 → 6-28)
     // 장소: 갤러리 PEG (서울시 은평구 통일로 870 M타워 6층). 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)
     startDate: '2026-05-20',
-    // 운영 요청(2026-06-29): 폐막일(6-28) 도달로 자동 만료됐으나 PM이 수동 내림을 원해 endDate 해제.
-    // ⚠️ 수동 제어 상태 — heroPriority 5라 hero를 계속 점유한다. 내릴 때 이 항목을 제거하거나
-    //    endDate를 다시 지정할 것 (영구 점유 → fallback 복귀 불가 회귀 패턴 주의).
+    // 운영 요청(2026-06-29): 폐막(6-28) 후에도 그리드에 계속 노출 요청 → endDate 해제(무기한).
+    //   내려야 할 때 이 항목을 배열에서 제거하거나 endDate를 다시 지정.
     // endDate: '2026-06-28',
-    // status 미지정 — getCardStatus()가 startDate 기준 자동 derive.
-    // startDate(5/20) 경과 상태라 'on'(success 배지 + ping dot).
-    heroPriority: 5,
+    // 그리드 전용 카드. 히어로는 all-artworks 고정이므로 hero 점유 없음.
+    // status 미지정 — getCardStatus()가 startDate 기준 'on'으로 자동 derive.
     // 박생광 사진은 저화질 원본을 1920px로 업스케일("뻥튀기")한 것 — 픽셀 수만 충분하고 실제론
     // 흐림. 해상도 측정으로는 못 잡는 케이스라(자동 판정 사각지대) 강제 soft 연출.
     heroTreatment: 'soft',
@@ -112,19 +110,19 @@ export const NOW_SHOWING: NowShowingItem[] = [
 ];
 
 /**
- * **운영 정책 (2026-05-12 PM 회의 결정)**
+ * **운영 정책 (2026-06-29 PM: 큐레이션 자동전환 폐지)**
  *
- * - **영구 fallback** (강석태 `all-artworks`): `heroPriority: 0` + `endDate` 없음.
- *   다른 항목 모두 만료/비활성 시 hero를 영구 점유.
- * - **시한성 특별전** (oh-yoon-40th, park-saenggwang 등): `heroPriority >= 5` + **`endDate` 필수**.
- *   endDate 누락 시 영구 hero 점유 → fallback 복귀 불가 (회귀 패턴).
- * - **미래 시작 항목**: `startDate` 미래로 지정 시 `getActiveShowingItems()` 필터에 의해
- *   해당 일자까지 자동 숨김 + 활성 풀에서 제외.
+ * - **고정 히어로** (`all-artworks`): `heroOnly: true`. 메인 히어로를 상시 점유하고 그리드에선 제외.
+ *   시즌과 무관하게 항상 이 항목이 hero로 렌더된다.
+ * - **기간 한정 전시** (oh-yoon-40th, park-saenggwang 등): 그리드 전용 카드. `endDate`가 지나면
+ *   그리드에서 자동 제외. 더 이상 hero를 점유하지 않는다(heroPriority 메커니즘 제거됨).
+ * - **미래 시작 항목**: `startDate` 미래면 `getActiveShowingItems()`에서는 제외되지만,
+ *   그리드(`getNowShowingCards()`)는 coming-soon 예고 카드로 미리 노출.
  *
- * 신규 특별전 추가 절차:
- * 1. NOW_SHOWING 배열에 항목 추가 (slug, i18nKey, href, imageUrl, startDate, endDate, status, heroPriority).
+ * 신규 전시 추가 절차:
+ * 1. NOW_SHOWING 배열에 항목 추가 (slug, i18nKey, href, imageUrl, startDate, endDate, status).
  * 2. messages/{ko,en}.json `home.nowShowing.{i18nKey}{Title|Desc|Status|Cta}` 4종 추가.
- * 3. 특별전이 끝나면 endDate 도달로 자동 fallback. 별도 코드 수정 X.
+ * 3. 전시가 끝나면 endDate 도달로 그리드에서 자동 제외. 별도 코드 수정 X.
  */
 
 export function getActiveShowingItems(now: Date = new Date()): NowShowingItem[] {
@@ -136,21 +134,17 @@ export function getActiveShowingItems(now: Date = new Date()): NowShowingItem[] 
 }
 
 /**
- * `HomeHero`의 단일 정적 LCP 슬라이드를 결정.
+ * `HomeHero`의 단일 정적 LCP 히어로를 결정.
  *
- * 활성 항목(`endDate` 미경과) 중 `heroPriority`가 가장 높은 1개. 동률이면 배열 첫 항목.
- * 활성 항목이 없으면 배열의 첫 항목(평상시 fallback). 빈 배열 보호.
+ * **고정 히어로 (2026-06-29 PM: 큐레이션 자동전환 폐지)**: `heroOnly` 항목(`all-artworks`)을
+ * 항상 반환한다. 과거엔 `heroPriority`/`endDate`로 특별전이 시즌마다 자동으로 hero를 점유했으나,
+ * 운영 혼란(만료→fallback 전환이 "갑자기 문구가 바뀌는" 것으로 보임)으로 폐지하고 hero를 고정.
+ * 특별전 노출은 fold-below 그리드(`getNowShowingCards()`)가 전담한다.
  *
- * **특별전 기간 자동 전환 UX**: 활성 특별전(`heroPriority >= 5`)이 있으면 hero가 자동으로
- * 그 슬라이드로 교체된다. 특별전이 끝나면 `endDate` 필터에 의해 자동으로 fallback(priority 0,
- * 강석태 작품)으로 복귀. 코드 수정 없이 데이터만으로 hero가 시즌에 맞춰 갱신.
+ * heroOnly 항목이 없을 경우의 안전 폴백으로 배열 첫 항목을 반환(빈 배열 보호).
  */
-export function getHeroSlide(now: Date = new Date()): NowShowingItem {
-  const active = getActiveShowingItems(now);
-  const pool = active.length > 0 ? active : NOW_SHOWING;
-  // 빈 배열 안전장치 — 데이터가 완전히 비면 throw 대신 첫 fallback이 반드시 존재한다고 가정.
-  // NOW_SHOWING이 빈 배열일 가능성은 데이터 정의상 0 (강석태 fallback이 영구 보장).
-  return [...pool].sort((a, b) => (b.heroPriority ?? 0) - (a.heroPriority ?? 0))[0];
+export function getHeroSlide(): NowShowingItem {
+  return NOW_SHOWING.find((item) => item.heroOnly) ?? NOW_SHOWING[0];
 }
 
 /**
@@ -168,6 +162,7 @@ export function getHeroSlide(now: Date = new Date()): NowShowingItem {
  */
 export function getNowShowingCards(now: Date = new Date()): NowShowingItem[] {
   return NOW_SHOWING.filter((item) => {
+    if (item.heroOnly) return false; // 고정 히어로 항목은 그리드(기간 한정 코너)에서 제외
     if (item.endDate && new Date(item.endDate) < now) return false;
     return true;
   });

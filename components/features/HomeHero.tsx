@@ -26,8 +26,8 @@ import { getLiveStats } from '@/lib/live-stats';
  * - 단일 LCP element = SafeImage (fetchPriority="high")
  * - h1 = 캠페인 정체성 메시지 (`slide.title`)
  *
- * 특별전 자동 교체: `getHeroSlide()`가 `heroPriority` 최대값을 선택.
- * 평상시엔 강석태 fallback("예술인 동료를 위해 내놓은 작품"), 특별전 활성 시 자동 교체.
+ * 고정 히어로 (2026-06-29 PM): `getHeroSlide()`는 `heroOnly` 항목(`all-artworks`)을 항상 반환.
+ * 큐레이션 자동전환은 폐지됐고, 특별전은 fold-below `NowShowing` 그리드가 전담한다.
  *
  * Header 투명화: `<div data-hero-sentinel="true">` 마커가 lib/hero-routes.ts isHeroRoute 와
  * 별개로 헤더 IntersectionObserver의 sentinel로 동작 (PageHero와 동일 패턴).
