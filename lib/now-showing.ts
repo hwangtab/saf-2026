@@ -98,9 +98,12 @@ export const NOW_SHOWING: NowShowingItem[] = [
     // PM 확정 (공식 포스터): 박생광 드로잉전 2026-05-20(수) 개막 ~ 2026-06-28(일) 폐막. (회기 연장: 6-08 → 6-28)
     // 장소: 갤러리 PEG (서울시 은평구 통일로 870 M타워 6층). 관람 11am~8pm. (i18n parkSaenggwangDesc 참조)
     startDate: '2026-05-20',
-    endDate: '2026-06-28',
+    // 운영 요청(2026-06-29): 폐막일(6-28) 도달로 자동 만료됐으나 PM이 수동 내림을 원해 endDate 해제.
+    // ⚠️ 수동 제어 상태 — heroPriority 5라 hero를 계속 점유한다. 내릴 때 이 항목을 제거하거나
+    //    endDate를 다시 지정할 것 (영구 점유 → fallback 복귀 불가 회귀 패턴 주의).
+    // endDate: '2026-06-28',
     // status 미지정 — getCardStatus()가 startDate 기준 자동 derive.
-    // 5/20 이전엔 'coming-soon'(어두운 톤 배지), 5/20 ~ 6/28 동안 'on'(success 배지 + ping dot).
+    // startDate(5/20) 경과 상태라 'on'(success 배지 + ping dot).
     heroPriority: 5,
     // 박생광 사진은 저화질 원본을 1920px로 업스케일("뻥튀기")한 것 — 픽셀 수만 충분하고 실제론
     // 흐림. 해상도 측정으로는 못 잡는 케이스라(자동 판정 사각지대) 강제 soft 연출.
