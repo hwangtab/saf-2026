@@ -782,7 +782,14 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
                 isManualBankTransfer
                   ? '계좌이체 (무통장입금)'
                   : order.payment_key
-                    ? (METHOD_LABELS[order.payment_method ?? ''] ?? order.payment_method ?? '—')
+                    ? (() => {
+                        const base =
+                          METHOD_LABELS[order.payment_method ?? ''] ?? order.payment_method ?? '—';
+                        // 간편결제는 결제사(네이버페이/카카오페이 등)를 함께 노출
+                        return order.payment_easypay_provider
+                          ? `${base} (${order.payment_easypay_provider})`
+                          : base;
+                      })()
                     : '결제 미완료'
               }
             />
