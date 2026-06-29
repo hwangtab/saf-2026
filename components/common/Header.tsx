@@ -135,6 +135,7 @@ function PublicHeader() {
         isOpen={search.isOpen}
         query={search.query}
         results={search.results}
+        recommended={search.recommended}
         isLoading={search.isLoading}
         error={search.error}
         onClose={search.close}

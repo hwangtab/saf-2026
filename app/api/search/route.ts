@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseArtworks } from '@/lib/supabase-data';
+import { getSupabaseArtworks, getAvailableArtworksLight } from '@/lib/supabase-data';
 import { matchesAnySearch } from '@/lib/search-utils';
+import type { Artwork } from '@/types';
 
 export const revalidate = 300;
 
@@ -37,12 +38,52 @@ function normalizeSearchLimit(value: string | null) {
   return Math.min(parsed, 20);
 }
 
+function toSearchResultArtwork(a: Artwork): SearchResultArtwork {
+  return {
+    id: a.id,
+    title: a.title,
+    title_en: a.title_en,
+    artist: a.artist,
+    artist_en: a.artist_en,
+    price: a.price,
+    image: a.images?.[0] ?? '',
+    sold: a.sold,
+    reserved: a.reserved,
+    category: a.category,
+  };
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = (searchParams.get('q')?.trim() ?? '').slice(0, 200);
   const limit = normalizeSearchLimit(searchParams.get('limit'));
+  const recommend = searchParams.get('recommend') === '1';
 
   if (!query) {
+    // 검색어가 없을 때, recommend=1이면 빈 검색 화면을 채울 추천 작품(판매가능 무작위)을 반환
+    if (recommend) {
+      try {
+        const available = await getAvailableArtworksLight();
+        // 매 요청마다 무작위로 섞어 '발견의 재미'를 준다 (원본 캐시 배열은 변경하지 않음)
+        const recommended = [...available]
+          .sort(() => Math.random() - 0.5)
+          .slice(0, limit)
+          .map(toSearchResultArtwork);
+
+        return NextResponse.json<SearchResponse>(
+          { artworks: recommended, artists: [], totalArtworkMatches: 0, query: '' },
+          { headers: { 'Cache-Control': 'no-store' } }
+        );
+      } catch (error) {
+        console.error('Search recommendations error:', error);
+        // 추천 실패는 치명적이지 않으므로 빈 결과로 폴백
+        return NextResponse.json<SearchResponse>(
+          { artworks: [], artists: [], totalArtworkMatches: 0, query: '' },
+          { headers: { 'Cache-Control': 'no-store' } }
+        );
+      }
+    }
+
     return NextResponse.json<SearchResponse>(
       { artworks: [], artists: [], totalArtworkMatches: 0, query: '' },
       { headers: { 'Cache-Control': 'no-store' } }
@@ -63,18 +104,9 @@ export async function GET(request: Request) {
       ])
     );
 
-    const artworkResults: SearchResultArtwork[] = matchedArtworks.slice(0, limit).map((a) => ({
-      id: a.id,
-      title: a.title,
-      title_en: a.title_en,
-      artist: a.artist,
-      artist_en: a.artist_en,
-      price: a.price,
-      image: a.images?.[0] ?? '',
-      sold: a.sold,
-      reserved: a.reserved,
-      category: a.category,
-    }));
+    const artworkResults: SearchResultArtwork[] = matchedArtworks
+      .slice(0, limit)
+      .map(toSearchResultArtwork);
 
     // 작가 집계 (매칭된 작품 기준)
     const artistMap = new Map<

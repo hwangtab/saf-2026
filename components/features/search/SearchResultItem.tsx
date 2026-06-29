@@ -5,6 +5,8 @@ import { Link } from '@/i18n/navigation';
 import SafeImage from '@/components/common/SafeImage';
 import type { SearchResultArtwork } from '@/app/api/search/route';
 import { buildArtworkAlt } from '@/lib/artwork-alt';
+import { resolveArtworkImageUrlForPreset } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 interface SearchResultItemProps {
   artwork: SearchResultArtwork;
@@ -14,52 +16,67 @@ interface SearchResultItemProps {
 export default function SearchResultItem({ artwork, onSelect }: SearchResultItemProps) {
   const tFilters = useTranslations('filters');
   const locale = useLocale();
+  const isEn = locale === 'en';
+
+  const title = (isEn && artwork.title_en?.trim()) || artwork.title;
+  const artist = (isEn && artwork.artist_en?.trim()) || artwork.artist;
   const altText = buildArtworkAlt(
     { title: artwork.title, artist: artwork.artist },
-    locale === 'en' ? 'en' : 'ko'
+    isEn ? 'en' : 'ko'
   );
+  const imageSrc = artwork.image ? resolveArtworkImageUrlForPreset(artwork.image, 'card') : '';
 
   return (
     <Link
       href={`/artworks/${artwork.id}`}
       onClick={onSelect}
-      className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-50"
+      className="group block h-full rounded-xl overflow-hidden border border-gray-200 bg-white transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg"
     >
-      {/* 썸네일 */}
-      <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden bg-canvas relative">
-        {artwork.image ? (
-          <div className="absolute inset-1">
+      {/* 이미지 */}
+      <div className="relative w-full aspect-[4/5] bg-canvas-soft overflow-hidden">
+        {imageSrc ? (
+          <div className="absolute inset-2">
             <SafeImage
-              src={artwork.image}
+              src={imageSrc}
               alt={altText}
               fill
+              loading="lazy"
+              quality={70}
+              sizes="(max-width: 640px) 50vw, 260px"
               className="object-contain"
-              sizes="48px"
             />
           </div>
         ) : (
           <div className="w-full h-full bg-gray-200" />
         )}
+
+        {artwork.sold && (
+          <div className="absolute top-2 right-2 px-2 py-0.5 text-xs rounded-md shadow-md bg-danger-a11y text-white font-bold">
+            {tFilters('sold')}
+          </div>
+        )}
+        {artwork.reserved && !artwork.sold && (
+          <div className="absolute top-2 right-2 px-2 py-0.5 text-xs rounded-md shadow-md bg-charcoal-deep text-white font-bold">
+            {tFilters('reserved')}
+          </div>
+        )}
       </div>
 
       {/* 텍스트 */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-charcoal truncate">{artwork.title}</p>
-        <p className="text-xs text-charcoal-muted truncate">{artwork.artist}</p>
-        <p className="text-xs text-charcoal-muted mt-0.5">{artwork.price}</p>
+      <div className="p-3">
+        <p className="text-sm font-bold text-charcoal break-keep line-clamp-2 transition-colors group-hover:text-primary-strong">
+          {title}
+        </p>
+        <p className="text-xs text-charcoal-muted truncate mt-0.5">{artist}</p>
+        <p
+          className={cn(
+            'text-xs font-semibold mt-1',
+            artwork.sold ? 'text-gray-600 line-through' : 'text-primary-strong'
+          )}
+        >
+          {artwork.price}
+        </p>
       </div>
-
-      {/* sold / reserved 뱃지 */}
-      {artwork.sold && (
-        <span className="flex-shrink-0 text-xs font-medium text-charcoal-soft bg-gray-100 px-2 py-0.5 rounded">
-          {tFilters('sold')}
-        </span>
-      )}
-      {artwork.reserved && !artwork.sold && (
-        <span className="flex-shrink-0 text-xs font-medium text-white bg-charcoal-deep px-2 py-0.5 rounded">
-          {tFilters('reserved')}
-        </span>
-      )}
     </Link>
   );
 }

@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { SearchResponse } from '@/app/api/search/route';
+import type { SearchResponse, SearchResultArtwork } from '@/app/api/search/route';
 
 interface UseGlobalSearchReturn {
   isOpen: boolean;
   query: string;
   results: SearchResponse | null;
+  recommended: SearchResultArtwork[] | null;
   isLoading: boolean;
   error: string | null;
   open: () => void;
@@ -18,11 +19,29 @@ export function useGlobalSearch(): UseGlobalSearchReturn {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQueryState] = useState('');
   const [results, setResults] = useState<SearchResponse | null>(null);
+  const [recommended, setRecommended] = useState<SearchResultArtwork[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recommendedFetchedRef = useRef(false);
+
+  // 검색 전 빈 화면을 채울 인기 작품을 최초 1회만 가져온다
+  const fetchRecommended = useCallback(() => {
+    if (recommendedFetchedRef.current) return;
+    recommendedFetchedRef.current = true;
+
+    fetch('/api/search?recommend=1')
+      .then((res) => (res.ok ? (res.json() as Promise<SearchResponse>) : null))
+      .then((data) => {
+        if (data) setRecommended(data.artworks);
+      })
+      .catch(() => {
+        // 추천 실패는 무시 — 빈 상태는 기존 안내 문구로 폴백
+        recommendedFetchedRef.current = false;
+      });
+  }, []);
 
   const fetchSearch = useCallback((searchQuery: string) => {
     abortControllerRef.current?.abort();
@@ -83,7 +102,8 @@ export function useGlobalSearch(): UseGlobalSearchReturn {
     setQueryState('');
     setResults(null);
     setError(null);
-  }, []);
+    fetchRecommended();
+  }, [fetchRecommended]);
 
   const close = useCallback(() => {
     setIsOpen(false);
@@ -117,6 +137,7 @@ export function useGlobalSearch(): UseGlobalSearchReturn {
           setQueryState('');
           setResults(null);
           setError(null);
+          fetchRecommended();
           return true;
         });
       }
@@ -124,7 +145,7 @@ export function useGlobalSearch(): UseGlobalSearchReturn {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [fetchRecommended]);
 
   // 컴포넌트 언마운트 시 클린업
   useEffect(() => {
@@ -136,5 +157,5 @@ export function useGlobalSearch(): UseGlobalSearchReturn {
     };
   }, []);
 
-  return { isOpen, query, results, isLoading, error, open, close, setQuery };
+  return { isOpen, query, results, recommended, isLoading, error, open, close, setQuery };
 }

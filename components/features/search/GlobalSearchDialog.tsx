@@ -17,6 +17,7 @@ interface GlobalSearchDialogProps {
     totalArtworkMatches: number;
     query: string;
   } | null;
+  recommended?: import('@/app/api/search/route').SearchResultArtwork[] | null;
   isLoading: boolean;
   error?: string | null;
   onClose: () => void;
@@ -27,6 +28,7 @@ export default function GlobalSearchDialog({
   isOpen,
   query,
   results,
+  recommended,
   isLoading,
   error,
   onClose,
@@ -201,12 +203,26 @@ export default function GlobalSearchDialog({
           aria-live="polite"
           aria-atomic="false"
         >
-          {/* 빈 상태 - 초기 */}
-          {!query && (
-            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-              <p className="text-sm text-charcoal-muted">{t('initialHint')}</p>
-            </div>
-          )}
+          {/* 빈 상태 - 초기: 추천(인기) 작품이 있으면 노출, 없으면 안내 문구 */}
+          {!query &&
+            (recommended && recommended.length > 0 ? (
+              <section className="py-2">
+                <p className="px-4 py-2 text-xs font-semibold text-charcoal-muted uppercase tracking-wide">
+                  {t('recommendedSection')}
+                </p>
+                <ul className="grid grid-cols-2 gap-3 px-4 pb-2">
+                  {recommended.map((artwork) => (
+                    <li key={artwork.id}>
+                      <SearchResultItem artwork={artwork} onSelect={onClose} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                <p className="text-sm text-charcoal-muted">{t('initialHint')}</p>
+              </div>
+            ))}
 
           {/* 에러 */}
           {error && (
@@ -248,7 +264,7 @@ export default function GlobalSearchDialog({
                   <p className="px-4 py-2 text-xs font-semibold text-charcoal-muted uppercase tracking-wide">
                     {t('artworksSection')}
                   </p>
-                  <ul>
+                  <ul className="grid grid-cols-2 gap-3 px-4 pb-2">
                     {results.artworks.map((artwork) => (
                       <li key={artwork.id}>
                         <SearchResultItem artwork={artwork} onSelect={onClose} />
