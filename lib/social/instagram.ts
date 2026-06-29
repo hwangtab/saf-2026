@@ -1,3 +1,4 @@
+import { wrapInstagramImageUrl } from './letterbox';
 import { fetchPermalink, isRetryableMetaError, metaGet, metaPost } from './meta-graph';
 import { sleep } from './sleep';
 import { clampForSinglePost, stripThreadDelimiters } from './thread-split';
@@ -33,7 +34,10 @@ async function waitUntilReady(containerId: string, accessToken: string): Promise
     const status = typeof json.status_code === 'string' ? json.status_code : '';
     if (status === 'FINISHED' || status === 'PUBLISHED') return;
     if (status === 'ERROR' || status === 'EXPIRED') {
-      throw new SocialPublishError(`Instagram 미디어 처리에 실패했습니다 (status: ${status}).`, json);
+      throw new SocialPublishError(
+        `Instagram 미디어 처리에 실패했습니다 (status: ${status}).`,
+        json
+      );
     }
     await sleep(STATUS_POLL_INTERVAL_MS);
   }
@@ -59,6 +63,9 @@ export const instagramAdapter: SocialAdapter = {
     if (!imageUrl) {
       throw new SocialPublishError('Instagram 게시에는 이미지가 필요합니다.');
     }
+    // 종횡비 안전화: 허용 범위(0.8~1.91:1) 밖 작품은 letterbox 라우트가 1:1 흰 패딩본으로
+    // 변환해 "aspect ratio is not supported" 거부를 회피한다(범위 안이면 라우트가 원본 통과).
+    const safeImageUrl = wrapInstagramImageUrl(imageUrl) ?? imageUrl;
 
     // 토큰은 DB(cron 갱신본) 우선, 없으면 env fallback — 60일 만료 자동 회피.
     const accessToken = await resolveAccessToken(
@@ -75,7 +82,7 @@ export const instagramAdapter: SocialAdapter = {
     // 컨테이너 생성 → 처리 대기(FINISHED) → publish. 일시 오류면 컨테이너 새로 만들어 재시도.
     const publishOnce = async (): Promise<string> => {
       const container = await metaPost(`${BASE_URL}/${userId}/media`, {
-        image_url: imageUrl,
+        image_url: safeImageUrl,
         caption: igCaption,
         access_token: accessToken,
       });
@@ -103,7 +110,8 @@ export const instagramAdapter: SocialAdapter = {
         break;
       } catch (err) {
         lastErr = err;
-        const transient = isRetryableMetaError(err) || /not available/i.test((err as Error).message);
+        const transient =
+          isRetryableMetaError(err) || /not available/i.test((err as Error).message);
         if (transient && attempt < MAX_PUBLISH_ATTEMPTS) {
           await sleep(RETRY_BASE_DELAY_MS * attempt);
           continue;
