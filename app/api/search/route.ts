@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseArtworks, getAvailableArtworksLight } from '@/lib/supabase-data';
+import {
+  getSupabaseArtworks,
+  getAvailableArtworksLight,
+  pickRandomItems,
+} from '@/lib/supabase-data';
 import { matchesAnySearch } from '@/lib/search-utils';
 import type { Artwork } from '@/types';
 
@@ -64,11 +68,9 @@ export async function GET(request: Request) {
     if (recommend) {
       try {
         const available = await getAvailableArtworksLight();
-        // 매 요청마다 무작위로 섞어 '발견의 재미'를 준다 (원본 캐시 배열은 변경하지 않음)
-        const recommended = [...available]
-          .sort(() => Math.random() - 0.5)
-          .slice(0, limit)
-          .map(toSearchResultArtwork);
+        // 매 요청마다 균등 무작위로 섞어 '발견의 재미'를 준다 (원본 캐시 배열은 변경하지 않음).
+        // sort(() => Math.random() - 0.5)는 V8에서 편향되므로 Fisher-Yates 헬퍼를 사용.
+        const recommended = pickRandomItems(available, limit).map(toSearchResultArtwork);
 
         return NextResponse.json<SearchResponse>(
           { artworks: recommended, artists: [], totalArtworkMatches: 0, query: '' },
