@@ -74,7 +74,10 @@ export async function POST(req: NextRequest) {
       const inbound = await processInboundEmail(event, supabase);
       // 신규 수신일 때만 관리자 알림 — 웹훅 재시도로 중복 알림이 가지 않게 한다(M3).
       if (inbound.isNew) {
-        await notifyInboundEmail(event, inbound.id).catch((err) => {
+        await notifyInboundEmail(event, inbound.id, {
+          textBody: inbound.textBody,
+          htmlBody: inbound.htmlBody,
+        }).catch((err) => {
           console.error('[resend-webhook] inbound notify failed:', err);
         });
       }
