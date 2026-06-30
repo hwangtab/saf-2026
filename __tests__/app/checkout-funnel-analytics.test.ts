@@ -52,7 +52,12 @@ describe('checkout funnel ecommerce analytics', () => {
     expect(action).toContain('!shippingAddressTrimmed');
     expect(action).toContain('!shippingPostalCodeTrimmed');
     expect(action).toContain('shipping_address_detail: shippingAddressDetailTrimmed || null');
-    expect(koCheckout).toContain('transferTrustTitle');
+    // KO 체크아웃은 결제수단별 한 줄 hint로 전환됨(transferTrustTitle 블록 제거, 8a69783f).
+    // 퀵계좌이체 신뢰 카피는 methodTransferHint 메시지로 이동.
+    expect(koCheckout).toContain('t(activeChoice.hintKey)');
+    expect(read('messages/ko.json')).toContain('methodTransferHint');
+    expect(read('messages/en.json')).toContain('methodTransferHint');
+    // EN(해외) 체크아웃은 transferTrust 신뢰 블록을 유지.
     expect(enCheckout).toContain('transferTrustTitle');
   });
 

@@ -14,18 +14,21 @@ describe('getRepresentativeArtwork', () => {
   it('빈/누락 order_items는 count=0, 필드 null', () => {
     expect(getRepresentativeArtwork(undefined)).toEqual({
       title: null,
+      artworkId: null,
       image: null,
       artistName: null,
       count: 0,
     });
     expect(getRepresentativeArtwork(null)).toEqual({
       title: null,
+      artworkId: null,
       image: null,
       artistName: null,
       count: 0,
     });
     expect(getRepresentativeArtwork([])).toEqual({
       title: null,
+      artworkId: null,
       image: null,
       artistName: null,
       count: 0,
@@ -34,12 +37,20 @@ describe('getRepresentativeArtwork', () => {
 
   it('다품목: 첫 품목을 대표로, count는 전체 라인 수', () => {
     const rep = getRepresentativeArtwork([
-      { artworks: { title: '봄의 정원', images: ['spring.jpg'], artists: { name_ko: '김작가' } } },
+      {
+        artworks: {
+          id: 'aw-spring',
+          title: '봄의 정원',
+          images: ['spring.jpg'],
+          artists: { name_ko: '김작가' },
+        },
+      },
       { artworks: { title: '여름 바다', images: ['summer.jpg'], artists: { name_ko: '이작가' } } },
       { artworks: { title: '가을 산', images: ['autumn.jpg'], artists: { name_ko: '박작가' } } },
     ]);
     expect(rep).toEqual({
       title: '봄의 정원',
+      artworkId: 'aw-spring',
       image: 'spring.jpg',
       artistName: '김작가',
       count: 3,
@@ -48,9 +59,22 @@ describe('getRepresentativeArtwork', () => {
 
   it('단건: count=1, 대표=그 작품', () => {
     const rep = getRepresentativeArtwork([
-      { artworks: { title: '단독', images: ['solo.jpg'], artists: { name_ko: '최작가' } } },
+      {
+        artworks: {
+          id: 'aw-solo',
+          title: '단독',
+          images: ['solo.jpg'],
+          artists: { name_ko: '최작가' },
+        },
+      },
     ]);
-    expect(rep).toEqual({ title: '단독', image: 'solo.jpg', artistName: '최작가', count: 1 });
+    expect(rep).toEqual({
+      title: '단독',
+      artworkId: 'aw-solo',
+      image: 'solo.jpg',
+      artistName: '최작가',
+      count: 1,
+    });
   });
 
   it('artworks가 배열로 임베드돼도 첫 요소 정규화', () => {

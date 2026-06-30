@@ -49,7 +49,12 @@ describe('Resend webhook route', () => {
     process.env.RESEND_WEBHOOK_SECRET = secret;
     jest.clearAllMocks();
     mockCreateSupabaseAdminClient.mockReturnValue({ from: jest.fn() } as any);
-    mockProcessInboundEmail.mockResolvedValue({ id: 'inbound-1', isNew: true });
+    mockProcessInboundEmail.mockResolvedValue({
+      id: 'inbound-1',
+      isNew: true,
+      textBody: '문의 본문입니다',
+      htmlBody: '<p>문의 본문입니다</p>',
+    });
     mockNotifyInboundEmail.mockResolvedValue(undefined);
   });
 
@@ -79,7 +84,11 @@ describe('Resend webhook route', () => {
     expect(json).toEqual({ ok: true, inbound_id: 'inbound-1' });
     expect(mockCreateSupabaseAdminClient).toHaveBeenCalledTimes(1);
     expect(mockProcessInboundEmail).toHaveBeenCalledWith(event, expect.anything());
-    expect(mockNotifyInboundEmail).toHaveBeenCalledWith(event, 'inbound-1');
+    // 신규 수신 시 답장 본문(textBody/htmlBody)을 알림에 함께 전달 (PR #206)
+    expect(mockNotifyInboundEmail).toHaveBeenCalledWith(event, 'inbound-1', {
+      textBody: '문의 본문입니다',
+      htmlBody: '<p>문의 본문입니다</p>',
+    });
   });
 
   it('재처리(isNew=false)면 중복 알림을 보내지 않는다 (M3)', async () => {
