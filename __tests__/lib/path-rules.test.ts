@@ -87,6 +87,11 @@ describe('shouldHideSiteFooter', () => {
     // 결제 완료/실패는 다음 행동 유도 위해 Footer 유지 (하위 세그먼트 제외)
     ['/checkout/123/success', false],
     ['/checkout/123/fail', false],
+    // 장바구니(다품목) 결제 결과 — /checkout/{id}와 세그먼트 수가 같지만 Footer 유지해야 함 (회귀 방지)
+    ['/checkout/success', false],
+    ['/checkout/fail', false],
+    ['/ko/checkout/success', false],
+    ['/en/checkout/fail', false],
     // 형제 경로 차단
     ['/checkout-history', false],
     // 일반 공개 페이지 — Footer 유지

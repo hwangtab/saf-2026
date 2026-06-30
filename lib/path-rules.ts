@@ -47,11 +47,18 @@ export function shouldShowFooterSlider(pathname: string | null | undefined): boo
  * 결제 입력 페이지(`/checkout` 장바구니, `/checkout/{id}` 단건·해외)에서는 사이트 Footer
  * (출품작 캐러셀 + 풀 푸터)를 숨겨 결제 집중을 유지한다. 판매자 정보·약관은 결제 페이지
  * 내부 CheckoutTrustNotice가 이미 노출하므로 중복도 제거된다.
- * 결제 완료/실패(`/checkout/{id}/success|fail`)는 다음 행동 유도를 위해 Footer를 유지 —
- * `/^\/checkout\/[^/]+$/`가 하위 세그먼트(success/fail)를 자연 제외한다.
+ * 결제 완료/실패는 다음 행동 유도를 위해 Footer를 유지:
+ * - 단건/해외(`/checkout/{id}/success|fail`)는 세그먼트가 3개라 정규식에서 자연 제외.
+ * - 장바구니(`/checkout/success|fail`)는 `/checkout/{id}`와 세그먼트 수가 같아 구분이 안 되므로
+ *   `success`/`fail` 예약 세그먼트를 명시 제외한다(미제외 시 카트 결제 결과 Footer 누락 회귀).
  */
+const CHECKOUT_RESULT_SEGMENTS = new Set(['success', 'fail']);
+
 export function shouldHideSiteFooter(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
   const normalized = stripLocale(pathname);
-  return normalized === '/checkout' || /^\/checkout\/[^/]+$/.test(normalized);
+  if (normalized === '/checkout') return true;
+  const match = normalized.match(/^\/checkout\/([^/]+)$/);
+  if (!match) return false;
+  return !CHECKOUT_RESULT_SEGMENTS.has(match[1]);
 }

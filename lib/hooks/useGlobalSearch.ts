@@ -33,12 +33,17 @@ export function useGlobalSearch(): UseGlobalSearchReturn {
     recommendedFetchedRef.current = true;
 
     fetch('/api/search?recommend=1')
-      .then((res) => (res.ok ? (res.json() as Promise<SearchResponse>) : null))
+      .then((res) => {
+        // non-OK 응답은 프로미스가 정상 resolve되므로 여기서 throw해 .catch로 보낸다.
+        // (throw 안 하면 ref가 true로 남아 일시적 5xx 후 세션 내내 추천이 다시 안 뜸)
+        if (!res.ok) throw new Error('Recommend fetch failed');
+        return res.json() as Promise<SearchResponse>;
+      })
       .then((data) => {
         if (data) setRecommended(data.artworks);
       })
       .catch(() => {
-        // 추천 실패는 무시 — 빈 상태는 기존 안내 문구로 폴백
+        // 추천 실패는 무시 — 빈 상태는 기존 안내 문구로 폴백. ref를 되돌려 다음 open에서 재시도.
         recommendedFetchedRef.current = false;
       });
   }, []);
