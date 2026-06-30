@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
-import { CreditCard, Landmark, type LucideIcon } from 'lucide-react';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
@@ -11,32 +10,14 @@ import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee, SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
+import { PAYMENT_CHOICES, type PaymentChoice } from '@/lib/checkout/payment-choices';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
-import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
+import { PaymentBrandLogo } from './PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
 import CheckoutTrustNotice from '@/components/features/CheckoutTrustNotice';
 import { trackEvent } from '@/lib/analytics/track';
 import { sessionSet } from '@/lib/storage';
-
-/**
- * 결제 옵션 — 각 버튼의 cardOptions에 따라 Toss 결제창이 분기.
- *
- * - CARD: cardOptions undefined → 통합결제창(picker, flowMode='DEFAULT'). 카드사 선택 UI를
- *   별도로 만들지 않으므로 SDK가 picker를 띄워 사용자가 카드사를 고르도록 위임.
- * - KAKAOPAY/TOSSPAY/NAVERPAY: `card: { flowMode: 'DIRECT', easyPay: '한국어 enum' }`로
- *   해당 간편결제 자체창 직행. easyPay 영문 enum('KAKAOPAY' 등)은 Toss 검증 단계에서 거부됨.
- * - TRANSFER: 토스 퀵계좌이체 (method: 'TRANSFER'). 카드와 동일 파이프라인 —
- *   실시간 출금 후 DONE으로 즉시 결제 완료. 가상계좌(WAITING_FOR_DEPOSIT) 아님.
- *
- * saf202i818 MID 자체창 직행은 토스페이먼츠 결제연동팀 한지형부장 회신(2026-05-09)으로
- * 활성화 — 테스트-라이브 sync 이슈 해결됨. 가상계좌는 별도 미계약(에러 2003) 제외.
- */
-type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
-
-type KoBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay'> | null;
-
-type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
 
 type PendingCheckoutSession = {
   orderId: string;
@@ -48,33 +29,6 @@ function rememberPendingCheckout(artworkId: string, orderId: string, checkoutTok
   const payload: PendingCheckoutSession = { orderId, checkoutToken, currency: 'KRW' };
   sessionSet(`saf:checkout:${orderId}`, payload);
   sessionSet(`saf:checkout:latest:${artworkId}`, payload);
-}
-
-interface CardOptions {
-  flowMode: 'DIRECT';
-  easyPay: EasyPayKo;
-}
-
-type MethodHintKey =
-  | 'methodCardHint'
-  | 'methodTransferHint'
-  | 'methodKakaopayHint'
-  | 'methodTosspayHint'
-  | 'methodNaverpayHint';
-
-interface PaymentChoiceConfig {
-  value: PaymentChoice;
-  labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
-  /** 선택 시 셀렉터 하단에 노출되는 한 줄 안내 메시지 키 */
-  hintKey: MethodHintKey;
-  /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
-  brand: KoBrand;
-  /** 브랜드 로고가 없는 수단(카드·계좌이체)의 단색 아이콘 — 행 시각 균형 통일 */
-  icon?: LucideIcon;
-  /** Toss SDK v2 requestPayment의 method. 간편결제 4종은 'CARD'+cardOptions, 퀵계좌이체는 'TRANSFER'. */
-  tossMethod: 'CARD' | 'TRANSFER';
-  /** Toss SDK v2 자체창 직행 옵션. undefined면 통합결제창 (DEFAULT). */
-  cardOptions?: CardOptions;
 }
 
 interface Props {
@@ -135,49 +89,6 @@ function buildCheckoutTrackingParams(input: {
     error_message: input.error_message ? input.error_message.slice(0, 120) : null,
   };
 }
-
-const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  {
-    value: 'CARD',
-    labelKey: 'methodCard',
-    hintKey: 'methodCardHint',
-    brand: null,
-    icon: CreditCard,
-    tossMethod: 'CARD',
-  },
-  {
-    value: 'TRANSFER',
-    labelKey: 'methodTransfer',
-    hintKey: 'methodTransferHint',
-    brand: null,
-    icon: Landmark,
-    tossMethod: 'TRANSFER',
-  },
-  {
-    value: 'KAKAOPAY',
-    labelKey: 'methodKakaopay',
-    hintKey: 'methodKakaopayHint',
-    brand: 'kakaopay',
-    tossMethod: 'CARD',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
-  },
-  {
-    value: 'TOSSPAY',
-    labelKey: 'methodTosspay',
-    hintKey: 'methodTosspayHint',
-    brand: 'tosspay',
-    tossMethod: 'CARD',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
-  },
-  {
-    value: 'NAVERPAY',
-    labelKey: 'methodNaverpay',
-    hintKey: 'methodNaverpayHint',
-    brand: 'naverpay',
-    tossMethod: 'CARD',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
-  },
-];
 
 /**
  * 한국어 체크아웃 클라이언트.

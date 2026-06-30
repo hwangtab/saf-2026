@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
-import { CreditCard, Landmark, type LucideIcon } from 'lucide-react';
 
 import { useCart } from '@/components/providers/CartProvider';
 import { getCartArtworks, type CartArtworkInfo } from '@/app/actions/cart-artworks';
@@ -14,89 +13,14 @@ import Button from '@/components/ui/Button';
 import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee, SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
+import { PAYMENT_CHOICES, type PaymentChoice } from '@/lib/checkout/payment-choices';
 import BuyerInfoForm from '../checkout/[artworkId]/BuyerInfoForm';
 import type { BuyerInfoHandle } from '../checkout/[artworkId]/BuyerInfoForm';
-import { PaymentBrandLogo, type BrandKind } from '../checkout/[artworkId]/PaymentBrandLogo';
+import { PaymentBrandLogo } from '../checkout/[artworkId]/PaymentBrandLogo';
 import TrustBadges from '@/components/features/TrustBadges';
 import CheckoutTrustNotice from '@/components/features/CheckoutTrustNotice';
 import { trackEvent } from '@/lib/analytics/track';
 import { sessionSet } from '@/lib/storage';
-
-/**
- * 결제 옵션 — 단건 CheckoutClient와 동일한 구성. cardOptions에 따라 Toss 결제창이 분기.
- * 단건 CheckoutClient의 PAYMENT_CHOICES 패턴을 그대로 미러한다.
- */
-type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
-
-type KoBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay'> | null;
-
-type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
-
-interface CardOptions {
-  flowMode: 'DIRECT';
-  easyPay: EasyPayKo;
-}
-
-type MethodHintKey =
-  | 'methodCardHint'
-  | 'methodTransferHint'
-  | 'methodKakaopayHint'
-  | 'methodTosspayHint'
-  | 'methodNaverpayHint';
-
-interface PaymentChoiceConfig {
-  value: PaymentChoice;
-  labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
-  /** 선택 시 셀렉터 하단에 노출되는 한 줄 안내 메시지 키 */
-  hintKey: MethodHintKey;
-  brand: KoBrand;
-  icon?: LucideIcon;
-  tossMethod: 'CARD' | 'TRANSFER';
-  cardOptions?: CardOptions;
-}
-
-const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
-  {
-    value: 'CARD',
-    labelKey: 'methodCard',
-    hintKey: 'methodCardHint',
-    brand: null,
-    icon: CreditCard,
-    tossMethod: 'CARD',
-  },
-  {
-    value: 'TRANSFER',
-    labelKey: 'methodTransfer',
-    hintKey: 'methodTransferHint',
-    brand: null,
-    icon: Landmark,
-    tossMethod: 'TRANSFER',
-  },
-  {
-    value: 'KAKAOPAY',
-    labelKey: 'methodKakaopay',
-    hintKey: 'methodKakaopayHint',
-    brand: 'kakaopay',
-    tossMethod: 'CARD',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
-  },
-  {
-    value: 'TOSSPAY',
-    labelKey: 'methodTosspay',
-    hintKey: 'methodTosspayHint',
-    brand: 'tosspay',
-    tossMethod: 'CARD',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
-  },
-  {
-    value: 'NAVERPAY',
-    labelKey: 'methodNaverpay',
-    hintKey: 'methodNaverpayHint',
-    brand: 'naverpay',
-    tossMethod: 'CARD',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
-  },
-];
 
 type PendingCheckoutSession = {
   orderId: string;

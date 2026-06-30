@@ -147,7 +147,12 @@ function pickArtist(artists: ArtistRow | ArtistRow[] | null | undefined): Artist
   return Array.isArray(artists) ? (artists[0] ?? null) : artists;
 }
 
-function pickRandomItems<T>(items: T[], limit: number): T[] {
+/**
+ * Fisher-Yates 균등 셔플 후 앞 `limit`개를 반환. `sort(() => Math.random() - 0.5)`는
+ * V8에서 편향되므로(앞쪽 원소 과대 노출) 무작위 표본이 필요한 곳은 이 헬퍼를 쓸 것.
+ * 입력 배열은 변경하지 않는다(캐시 배열 보호).
+ */
+export function pickRandomItems<T>(items: T[], limit: number): T[] {
   const shuffled = [...items];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
