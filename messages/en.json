@@ -785,7 +785,9 @@
       "editionOpen": "Open",
       "editionLimit": "Edition quantity",
       "editionLimitPlaceholder": "e.g., 50",
-      "artistNote": "Artist note"
+      "artistNote": "Artist note",
+      "fundraiserBadgeTitle": "This artwork will be exhibited in the Oh Yoon Terracotta Relief Exhibition",
+      "fundraiserBadgeHint": "After saving, you will be returned to the participation page. Sale proceeds will be tracked separately for the Oh Yoon Terracotta relocation fund."
     },
     "pending": {
       "title": "Pending Approval",

@@ -785,7 +785,9 @@
       "editionOpen": "Open (무제한)",
       "editionLimit": "에디션 수량",
       "editionLimitPlaceholder": "예: 50",
-      "artistNote": "작가 노트"
+      "artistNote": "작가 노트",
+      "fundraiserBadgeTitle": "이 작품은 오윤 테라코타 기금마련전에 출품됩니다",
+      "fundraiserBadgeHint": "등록하면 참여 페이지로 돌아갑니다. 판매 수익은 오윤 테라코타 이전 기금으로 별도 집계됩니다."
     },
     "pending": {
       "title": "승인 대기 중",
