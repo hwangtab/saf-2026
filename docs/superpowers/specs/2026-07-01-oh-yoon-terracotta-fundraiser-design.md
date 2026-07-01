@@ -10,6 +10,14 @@
 
 이 기금마련전은 기존 오윤 콘텐츠(`/event/oh-yoon-memorial` 추도식, `/petition/oh-yoon` 청원, 오윤 본인 사후판화)와 **별개**다. 여기서 파는 작품은 오윤의 작품이 아니라 **동료 작가들이 연대해 내놓은 자기 작품**이다.
 
+### 테라코타 스토리는 이미 코드베이스에 있음 (재사용)
+
+오윤 1974년 옛 상업은행 구의동지점 **테라코타 양면 부조**의 멸실 위기와 보존 서사는 이미 존재한다 — 새로 쓰지 않고 **재사용·링크**한다:
+
+- [`app/[locale]/petition/oh-yoon/page.tsx`](../../../app/[locale]/petition/oh-yoon/page.tsx) — "벽화 지키기 청원", 1974 구의동 테라코타 양면 부조, 멸실 위기 서사, 구조화 데이터.
+- [`components/special/master-artists/OhYoonFeature.tsx`](../../../components/special/master-artists/OhYoonFeature.tsx) — 오윤 전기·타임라인(테라코타 부조 제작 언급).
+- 관련 매거진/청원 콘텐츠(`content/articles/오윤-청원-*.md`, `content/artist-articles.ts`).
+
 ### 해결할 핵심 문제
 
 1. **구분 혼란**: 한 작가가 씨앗페에 올린 작품 중 어느 것이 "상시 판매작"이고 어느 것이 "기금마련전 출품작"인지 헷갈림.
@@ -77,7 +85,7 @@ export type ExhibitionSlug = typeof OH_YOON_TERRACOTTA_EXHIBITION.slug;
 - 위치: `app/(portal)/dashboard/(artist)/fundraiser/page.tsx` (신규)
 - 대시보드 네비/배너로 안내 (§4.3). `OH_YOON_TERRACOTTA_EXHIBITION.active === false`면 접근 시 "종료됨" 안내.
 - 화면 구성:
-  1. **스토리 헤더** — 오윤 테라코타 이야기와 기금마련전 취지를 담아, 작가에게 안내이자 감동이 되는 서사. (유틸 화면이 아니라 "마음을 담아 출품하는 경험") 표준 컴포넌트(`PageHero`/`Section` 톤)로 구성하되 대시보드 내부용.
+  1. **스토리 헤더** — 오윤 테라코타 이전 취지를 담아 작가에게 안내이자 감동이 되게. **새 카피를 쓰지 않고 기존 오윤 테라코타 콘텐츠(§1의 petition/OhYoonFeature)를 재사용·요약**하고 `/petition/oh-yoon`으로 링크. (유틸 화면이 아니라 "마음을 담아 출품하는 경험") 표준 컴포넌트(`Section` 톤)로 구성하되 대시보드 내부용.
   2. **선택 UI** — 작가 본인 작품 목록을 카드로 나열, 각 카드에 체크박스. 상단에 **"기금마련전 출품 2/3"** 카운터.
   3. **저장** — 선택을 저장하면 태그 반영.
 - **3점 초과 방지**: 3점 선택 시 나머지 체크박스 비활성 + 안내. 4점째 시도 시 명확한 안내 문구.
@@ -115,7 +123,8 @@ setFundraiserSelection(selectedArtworkIds: string[]): Promise<ActionState>
 
 - 위치: `app/[locale]/exhibition/oh-yoon-terracotta/page.tsx` (신규)
   - 경로명은 크라우드펀딩(`/funding`)과 구분하기 위해 `exhibition` 사용. (조정 가능)
-- 구성: `PageHero`(오윤 테라코타 스토리·취지·모금 목적) + `exhibition='oh-yoon-terracotta' AND is_hidden=false`인 **전 작가 작품**을 표준 `ArtworkGridCard` 그리드로. 다작가 테마전 → 거장(단일작가) 갤러리와 다름.
+- 구성: `PageHero`(오윤 테라코타 취지) + `exhibition='oh-yoon-terracotta' AND is_hidden=false`인 **전 작가 작품**을 표준 `ArtworkGridCard` 그리드로. 다작가 테마전 → 거장(단일작가) 갤러리와 다름.
+- **스토리는 재사용·링크** — 테라코타 서사는 §1의 기존 콘텐츠(petition/OhYoonFeature)를 재사용하고 `/petition/oh-yoon`으로 연결. 히어로에 취지 요약 + "벽화 지키기 청원" 링크. 새 서사 작성 금지.
 - **표준 컴포넌트 재사용 필수** (`PageHero`, `Section`, `ArtworkGridCard`, 기존 갤러리 그리드 패턴). 인라인 히어로/카드 제작 금지.
 - 데이터 헬퍼: `lib/supabase-data.ts`에 `getArtworksByExhibition(slug)` 추가 (`getSupabaseArtworksByArtist` 패턴 참고, `unstable_cache` + `cache` 래핑, `is_hidden=false` 자동 필터).
 - **i18n**: 공개 라우트 → `messages/ko.json`·`messages/en.json`에 메시지 키 추가. 한국어 리터럴 직접 사용 금지. `force-static` 사용 시 `getMessages`/`getTranslations`에 `{locale}` 명시 (메모리 `project_i18n_force_static_locale`).
@@ -137,33 +146,35 @@ setFundraiserSelection(selectedArtworkIds: string[]): Promise<ActionState>
 - 참여 화면(§4.1)에서는 해당 작품을 "판매됨 · 출품 확정" 잠금 카드로 표시.
 - 결과: 판매 후 태그가 불변이므로 조인 기반 집계가 항상 정확. (추후 감사수준 원장이 필요하면 `order_items` 스냅샷으로 업그레이드.)
 
-## 7. 별도 집계 (Admin 리포트)
+## 7. 별도 집계 — 기존 Admin 화면에 통합 (신규 페이지 없음)
 
-- 위치: admin 포털 내 신규 페이지/섹션 (예: `app/(portal)/admin/.../fundraiser/`). **admin은 한국어 전용 — i18n 비스코프.**
-- 내용:
-  - 기금마련전 출품작 목록 (작품명, 작가, 가격, 상태, 판매일).
-  - **총 모금액** = 판매된 출품작 가격 합.
-  - 작가별 집계.
-- 쿼리: `artworks` where `exhibition='oh-yoon-terracotta'` 기준. 판매 매출 정밀 대조가 필요하면 `order_items → artworks` 조인으로 실제 결제액 확인(신규 판매는 전부 토스/체크아웃 → `order_items` 존재; 메모리 `project_cafe24_shutdown_toss_only`).
-- **정산 파이프라인 무수정** — 태그 필터로 읽기만.
+**원칙: 기금마련전 전용 admin 페이지를 새로 만들지 않는다.** 이미 있는 매출/작품 관리 화면에 필터·컬럼으로 흡수한다. (admin은 한국어 전용 — i18n 비스코프.)
+
+- **`app/(portal)/admin/revenue`** (기존 매출 화면 — `RevenueFilterBar`·`RevenueCharts`·`MonthlyRevenueChart`):
+  - `RevenueFilterBar`에 **전시(exhibition) 필터 차원** 추가 — "전체 / 상시 / 오윤 테라코타 기금마련전".
+  - 기금마련전 선택 시 그 태그의 매출만 집계·차트. 여기서 **총 모금액·기간별·작가별**을 본다. → "별도로 기록"의 실체.
+- **`app/(portal)/admin/artworks`** (기존 작품 관리):
+  - 목록에 `exhibition` 태그 **뱃지/필터** 노출 — 운영진이 어떤 작품이 출품작인지 보고 관리(필요 시 태그 수정).
+- 쿼리: `artworks` where `exhibition='oh-yoon-terracotta'` 기준. 매출 정밀 대조는 `order_items → artworks` 조인(신규 판매는 전부 토스/체크아웃 → `order_items` 존재; 메모리 `project_cafe24_shutdown_toss_only`).
+- **정산 파이프라인 무수정** — 태그 필터로 읽기만. `admin/funding`(크라우드펀딩)과 혼동 금지 — 별개 기능.
 
 ## 8. 영향 범위 요약
 
-| 구분          | 파일/위치                                                  | 변경                                                                        |
-| ------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
-| DB            | `supabase/migrations/<ts>_add_artwork_exhibition.sql`      | 신규 컬럼 + 인덱스                                                          |
-| 타입          | `types/supabase.ts`, `types/index.ts`                      | `exhibition` 필드 반영                                                      |
-| 상수          | `lib/exhibitions.ts`                                       | 신규                                                                        |
-| 데이터        | `lib/supabase-data.ts`                                     | `getArtworksByExhibition` 추가                                              |
-| 작가 참여     | `app/(portal)/dashboard/(artist)/fundraiser/page.tsx`      | 신규 참여 화면                                                              |
-| 서버 액션     | `app/actions/fundraiser.ts` (or `artwork.ts`)              | `setFundraiserSelection` + 잠금/한도 검증                                   |
-| 등록 폼       | `artwork-form.tsx`, `app/actions/artwork.ts`               | `?exhibition=` 진입 시에만 태그 확정 배지; create/update가 한도·잠금 재검증 |
-| 대시보드 배너 | 작가 대시보드 레이아웃/네비                                | 캠페인 배너                                                                 |
-| 공개 페이지   | `app/[locale]/exhibition/oh-yoon-terracotta/page.tsx`      | 신규                                                                        |
-| Header        | `lib/hero-routes.ts` + `__tests__/lib/hero-routes.test.ts` | hero 경로 등록                                                              |
-| i18n          | `messages/ko.json`, `messages/en.json`                     | 공개 페이지·작가 화면 메시지                                                |
-| a11y          | `e2e/a11y/`                                                | 신규 spec                                                                   |
-| Admin         | `app/(portal)/admin/.../fundraiser/`                       | 집계 리포트 (한국어)                                                        |
+| 구분          | 파일/위치                                                       | 변경                                                                        |
+| ------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| DB            | `supabase/migrations/<ts>_add_artwork_exhibition.sql`           | 신규 컬럼 + 인덱스                                                          |
+| 타입          | `types/supabase.ts`, `types/index.ts`                           | `exhibition` 필드 반영                                                      |
+| 상수          | `lib/exhibitions.ts`                                            | 신규                                                                        |
+| 데이터        | `lib/supabase-data.ts`                                          | `getArtworksByExhibition` 추가                                              |
+| 작가 참여     | `app/(portal)/dashboard/(artist)/fundraiser/page.tsx`           | 신규 참여 화면                                                              |
+| 서버 액션     | `app/actions/fundraiser.ts` (or `artwork.ts`)                   | `setFundraiserSelection` + 잠금/한도 검증                                   |
+| 등록 폼       | `artwork-form.tsx`, `app/actions/artwork.ts`                    | `?exhibition=` 진입 시에만 태그 확정 배지; create/update가 한도·잠금 재검증 |
+| 대시보드 배너 | 작가 대시보드 레이아웃/네비                                     | 캠페인 배너                                                                 |
+| 공개 페이지   | `app/[locale]/exhibition/oh-yoon-terracotta/page.tsx`           | 신규                                                                        |
+| Header        | `lib/hero-routes.ts` + `__tests__/lib/hero-routes.test.ts`      | hero 경로 등록                                                              |
+| i18n          | `messages/ko.json`, `messages/en.json`                          | 공개 페이지·작가 화면 메시지                                                |
+| a11y          | `e2e/a11y/`                                                     | 신규 spec                                                                   |
+| Admin (통합)  | `app/(portal)/admin/revenue/*`, `app/(portal)/admin/artworks/*` | 기존 화면에 전시 필터·태그 컬럼 추가 (신규 페이지 없음)                     |
 
 ## 9. 테스트 계획
 
