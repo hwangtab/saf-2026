@@ -3,19 +3,28 @@
 import clsx from 'clsx';
 import { Link, usePathname } from '@/i18n/navigation';
 import { useLocale } from 'next-intl';
+import { OH_YOON_TERRACOTTA_EXHIBITION } from '@/lib/exhibitions';
 
-const navItemsByLocale = {
+type NavItem = { href: string; label: string };
+
+const navItemsByLocale: Record<'ko' | 'en', NavItem[]> = {
   ko: [
     { href: '/dashboard/artworks', label: '작품 관리' },
+    ...(OH_YOON_TERRACOTTA_EXHIBITION.active
+      ? [{ href: '/dashboard/fundraiser', label: '기금마련전 출품' }]
+      : []),
     { href: '/dashboard/profile', label: '프로필 설정' },
     { href: '/mypage', label: '내 주문' },
   ],
   en: [
     { href: '/dashboard/artworks', label: 'Artworks' },
+    ...(OH_YOON_TERRACOTTA_EXHIBITION.active
+      ? [{ href: '/dashboard/fundraiser', label: 'Fundraiser' }]
+      : []),
     { href: '/dashboard/profile', label: 'Profile Settings' },
     { href: '/mypage', label: 'My Orders' },
   ],
-} as const;
+};
 
 export default function DashboardNav() {
   const pathname = usePathname();
