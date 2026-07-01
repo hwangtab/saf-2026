@@ -495,6 +495,47 @@ export const getSupabaseArtworksByArtist = cache(
   async (artistName: string): Promise<Artwork[]> => getSupabaseArtworksByArtistCached(artistName)
 );
 
+// --- All artworks for a single exhibition (for fundraiser/special exhibition pages) ---
+
+const getArtworksByExhibitionUncached = async (slug: string): Promise<Artwork[]> => {
+  if (!hasSupabaseConfig || !supabase) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('artworks')
+    .select(
+      `
+      ${ARTWORK_SELECT_COLUMNS},
+      artists!inner (${ARTIST_SELECT_COLUMNS})
+    `
+    )
+    .eq('exhibition', slug)
+    .eq('is_hidden', false)
+    .order('created_at', { ascending: false })
+    .returns<ArtworkWithArtistRow[]>();
+
+  if (error) {
+    console.error(`Error fetching artworks for exhibition ${slug}:`, error);
+    return [];
+  }
+
+  return (data || []).map((item) => mapArtworkRow(item, pickArtist(item.artists)));
+};
+
+const getArtworksByExhibitionCached = unstable_cache(
+  async (slug: string) => getArtworksByExhibitionUncached(slug),
+  ['supabase-artworks-by-exhibition-v1'],
+  {
+    revalidate: ARTWORK_DATA_REVALIDATE_SECONDS,
+    tags: ['artworks'],
+  }
+);
+
+export const getArtworksByExhibition = cache(
+  async (slug: string): Promise<Artwork[]> => getArtworksByExhibitionCached(slug)
+);
+
 // --- All artworks for a single category (for category listing pages) ---
 
 /**
