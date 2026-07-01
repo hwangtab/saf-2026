@@ -1639,5 +1639,13 @@
     "paymentMethodCard": "Card",
     "paymentMethodTransfer": "Quick account transfer",
     "paymentTransferHelp": "Pay instantly with Toss quick account transfer. A Korean bank account is required."
+  },
+  "exhibitionOhYoonTerracotta": {
+    "heroTitle": "Oh Yoon Terracotta Relief Exhibition",
+    "heroDescription": "Fellow artists contribute works to carry forward the Oh Yoon terracotta mural preservation.",
+    "petitionCta": "Sign the Mural Petition",
+    "fundingCta": "Support Directly",
+    "emptyState": "Exhibited works will be announced soon.",
+    "breadcrumb": "Oh Yoon Terracotta Relief Exhibition"
   }
 }

@@ -1639,5 +1639,13 @@
     "paymentMethodCard": "카드 결제",
     "paymentMethodTransfer": "퀵계좌이체",
     "paymentTransferHelp": "토스 퀵계좌이체로 즉시 결제합니다. 한국 은행 계좌가 필요합니다."
+  },
+  "exhibitionOhYoonTerracotta": {
+    "heroTitle": "오윤 테라코타 기금마련전",
+    "heroDescription": "동료 작가들이 작품을 내놓아 오윤 테라코타 이전을 잇습니다.",
+    "petitionCta": "벽화 지키기 청원",
+    "fundingCta": "직접 후원하기",
+    "emptyState": "곧 출품작이 공개됩니다.",
+    "breadcrumb": "오윤 테라코타 기금마련전"
   }
 }

@@ -26,6 +26,7 @@ describe('isHeroRoute', () => {
       '/event/oh-yoon-memorial',
       '/wishlist',
       '/changelog',
+      '/exhibition/oh-yoon-terracotta',
     ])('%s는 hero 경로', (path) => {
       expect(isHeroRoute(path)).toBe(true);
     });
