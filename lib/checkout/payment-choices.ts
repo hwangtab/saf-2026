@@ -11,16 +11,28 @@ import type { BrandKind } from '@/app/[locale]/checkout/[artworkId]/PaymentBrand
  *
  * cardOptions에 따라 Toss 결제창이 분기:
  * - CARD: cardOptions undefined → 통합결제창(picker, flowMode='DEFAULT').
- * - KAKAOPAY/TOSSPAY/NAVERPAY: `card: { flowMode: 'DIRECT', easyPay: '한국어 enum' }`로 자체창 직행.
- *   easyPay 영문 enum('KAKAOPAY' 등)은 Toss 검증 단계에서 거부됨.
+ * - KAKAOPAY/TOSSPAY/NAVERPAY/PAYCO/APPLEPAY: `card: { flowMode: 'DIRECT', easyPay: '한국어 enum' }`
+ *   로 자체창 직행. easyPay 영문 enum('KAKAOPAY' 등)은 Toss 검증 단계에서 거부됨.
+ * - APPLEPAY: 위와 동형이나 PC=Safari·모바일=iOS에서만 동작(window.ApplePaySession 존재 환경).
+ *   requiresApplePay=true 항목은 각 클라이언트가 useApplePaySupport()로 지원 환경에서만 노출.
  * - TRANSFER: 토스 퀵계좌이체 (method: 'TRANSFER'). 실시간 출금 후 DONE으로 즉시 완료.
  *   가상계좌(WAITING_FOR_DEPOSIT) 아님.
  */
-export type PaymentChoice = 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
+export type PaymentChoice =
+  | 'CARD'
+  | 'KAKAOPAY'
+  | 'TOSSPAY'
+  | 'NAVERPAY'
+  | 'PAYCO'
+  | 'APPLEPAY'
+  | 'TRANSFER';
 
-export type KoBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay'> | null;
+export type KoBrand = Extract<
+  BrandKind,
+  'kakaopay' | 'tosspay' | 'naverpay' | 'payco' | 'applepay'
+> | null;
 
-export type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
+export type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이' | '페이코' | '애플페이';
 
 export interface CardOptions {
   flowMode: 'DIRECT';
@@ -32,21 +44,32 @@ export type MethodHintKey =
   | 'methodTransferHint'
   | 'methodKakaopayHint'
   | 'methodTosspayHint'
-  | 'methodNaverpayHint';
+  | 'methodNaverpayHint'
+  | 'methodPaycoHint'
+  | 'methodApplepayHint';
 
 export interface PaymentChoiceConfig {
   value: PaymentChoice;
-  labelKey: 'methodCard' | 'methodKakaopay' | 'methodTosspay' | 'methodNaverpay' | 'methodTransfer';
+  labelKey:
+    | 'methodCard'
+    | 'methodKakaopay'
+    | 'methodTosspay'
+    | 'methodNaverpay'
+    | 'methodPayco'
+    | 'methodApplepay'
+    | 'methodTransfer';
   /** 선택 시 셀렉터 하단에 노출되는 한 줄 안내 메시지 키 */
   hintKey: MethodHintKey;
   /** 브랜드 로고 렌더링 식별자 — null이면 텍스트 라벨 사용 */
   brand: KoBrand;
   /** 브랜드 로고가 없는 수단(카드·계좌이체)의 단색 아이콘 — 행 시각 균형 통일 */
   icon?: LucideIcon;
-  /** Toss SDK v2 requestPayment의 method. 간편결제 4종은 'CARD'+cardOptions, 퀵계좌이체는 'TRANSFER'. */
+  /** Toss SDK v2 requestPayment의 method. 간편결제는 'CARD'+cardOptions, 퀵계좌이체는 'TRANSFER'. */
   tossMethod: 'CARD' | 'TRANSFER';
   /** Toss SDK v2 자체창 직행 옵션. undefined면 통합결제창 (DEFAULT). */
   cardOptions?: CardOptions;
+  /** true면 애플페이 지원 환경(Safari/iOS)에서만 노출. 각 클라이언트가 useApplePaySupport()로 필터. */
+  requiresApplePay?: boolean;
 }
 
 export const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
@@ -89,5 +112,22 @@ export const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
     brand: 'naverpay',
     tossMethod: 'CARD',
     cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
+  },
+  {
+    value: 'PAYCO',
+    labelKey: 'methodPayco',
+    hintKey: 'methodPaycoHint',
+    brand: 'payco',
+    tossMethod: 'CARD',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '페이코' },
+  },
+  {
+    value: 'APPLEPAY',
+    labelKey: 'methodApplepay',
+    hintKey: 'methodApplepayHint',
+    brand: 'applepay',
+    tossMethod: 'CARD',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '애플페이' },
+    requiresApplePay: true,
   },
 ];

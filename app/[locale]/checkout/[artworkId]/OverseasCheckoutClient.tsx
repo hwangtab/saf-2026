@@ -21,6 +21,7 @@ import { sessionSet } from '@/lib/storage';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
+import { useApplePaySupport } from '@/lib/checkout/use-apple-pay-support';
 import TrustBadges from '@/components/features/TrustBadges';
 import CheckoutTrustNotice from '@/components/features/CheckoutTrustNotice';
 import { trackEvent } from '@/lib/analytics/track';
@@ -42,11 +43,21 @@ import { trackEvent } from '@/lib/analytics/track';
  * 직행(`flowMode='DIRECT'`): saf202i818 MID 활성화(2026-05-09)로 KAKAOPAY/TOSSPAY/NAVERPAY는
  * 자체창 직행. CARD는 카드사 선택 UI 없으므로 통합결제창(DEFAULT) 유지.
  */
-type EnPaymentChoice = 'PAYPAL' | 'CARD' | 'KAKAOPAY' | 'TOSSPAY' | 'NAVERPAY' | 'TRANSFER';
+type EnPaymentChoice =
+  | 'PAYPAL'
+  | 'CARD'
+  | 'KAKAOPAY'
+  | 'TOSSPAY'
+  | 'NAVERPAY'
+  | 'APPLEPAY'
+  | 'TRANSFER';
 
-type EnBrand = Extract<BrandKind, 'kakaopay' | 'tosspay' | 'naverpay' | 'paypal'> | null;
+type EnBrand = Extract<
+  BrandKind,
+  'kakaopay' | 'tosspay' | 'naverpay' | 'applepay' | 'paypal'
+> | null;
 
-type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이';
+type EasyPayKo = '카카오페이' | '토스페이' | '네이버페이' | '애플페이';
 
 type PendingCheckoutSession = {
   orderId: string;
@@ -78,12 +89,15 @@ interface PaymentChoiceConfig {
     | 'methodKakaopay'
     | 'methodTosspay'
     | 'methodNaverpay'
+    | 'methodApplepay'
     | 'methodTransfer';
   brand: EnBrand;
   /** 브랜드 로고가 없는 수단(카드·계좌이체)의 단색 아이콘 — 행 시각 균형 통일 */
   icon?: LucideIcon;
   /** Toss SDK v2 자체창 직행 옵션. CARD/PAYPAL/TRANSFER는 별도 흐름이라 undefined. */
   cardOptions?: CardOptions;
+  /** true면 애플페이 지원 환경(Safari/iOS)에서만 노출. useApplePaySupport()로 필터. */
+  requiresApplePay?: boolean;
 }
 
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
@@ -106,6 +120,13 @@ const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
     labelKey: 'methodNaverpay',
     brand: 'naverpay',
     cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
+  },
+  {
+    value: 'APPLEPAY',
+    labelKey: 'methodApplepay',
+    brand: 'applepay',
+    cardOptions: { flowMode: 'DIRECT', easyPay: '애플페이' },
+    requiresApplePay: true,
   },
   { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null, icon: Landmark },
 ];
@@ -207,9 +228,12 @@ export default function OverseasCheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalKrw = price + shippingFee;
   const usdTotal = krwToUsd(totalKrw);
+  const applePaySupported = useApplePaySupport();
   const availablePaymentChoices = PAYMENT_CHOICES.filter((choice) => {
     if (choice.value === 'PAYPAL') return overseasPaymentsEnabled;
     if (choice.value === 'TRANSFER') return true;
+    // 애플페이는 domestic(KRW) MID + 지원 환경(Safari/iOS)에서만. 국내 카드 등록분만 결제 가능.
+    if (choice.requiresApplePay) return domesticPaymentsEnabled && applePaySupported;
     return domesticPaymentsEnabled;
   });
   const defaultPaymentChoice = availablePaymentChoices[0]?.value ?? 'TRANSFER';
