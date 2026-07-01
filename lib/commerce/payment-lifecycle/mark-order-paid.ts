@@ -1,7 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { deriveAndSyncArtworkStatus } from '@/app/actions/admin-artworks';
+import { deriveAndSyncArtworkStatus } from '@/lib/artworks/status';
 import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
 import {
   extractLineItems,

@@ -31,7 +31,7 @@ jest.mock('@/lib/integrations/toss/cancel', () => ({
   cancelPayment: jest.fn(),
 }));
 
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: jest.fn(),
 }));
 
