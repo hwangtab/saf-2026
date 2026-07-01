@@ -186,6 +186,7 @@ export default memo(function AuthButtons({
       setUserId((prevId) => {
         if (prevId !== newId) {
           if (newId) {
+            userIdRef.current = newId;
             fetchProfileData(newId, controller.signal, true);
           } else {
             userIdRef.current = null;

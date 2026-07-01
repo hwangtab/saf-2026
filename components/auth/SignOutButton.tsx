@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/auth/client';
-import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useToast } from '@/lib/hooks/useToast';
 
@@ -33,7 +32,6 @@ export function SignOutButton() {
   const locale = useLocale();
   const copy = SIGN_OUT_COPY[locale as 'ko' | 'en'];
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const toast = useToast();
 
@@ -43,7 +41,7 @@ export function SignOutButton() {
     setIsSigningOut(true);
 
     try {
-      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
 
       if (error) {
         toast.error(copy.error);
@@ -53,8 +51,7 @@ export function SignOutButton() {
 
       toast.success(copy.success);
       setIsSigningOut(false);
-      router.replace('/');
-      router.refresh();
+      window.location.href = '/';
     } catch (error) {
       toast.error(copy.error);
       setIsSigningOut(false);
