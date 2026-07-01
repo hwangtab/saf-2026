@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useActionState } from 'react';
 import Button from '@/components/ui/Button';
 import LinkButton from '@/components/ui/LinkButton';
@@ -32,8 +32,12 @@ export function FundraiserSelection({
     [artworks]
   );
   const [selected, setSelected] = useState<Set<string>>(initialSelected);
+  const selectedRef = useRef(selected);
+  useLayoutEffect(() => {
+    selectedRef.current = selected;
+  });
   const [state, formAction, isPending] = useActionState(
-    async (_prev: ActionState) => setFundraiserSelection([...selected]),
+    async (_prev: ActionState) => setFundraiserSelection([...selectedRef.current]),
     initialState
   );
 
