@@ -17,6 +17,7 @@ type Props = {
     tag?: string;
     q?: string;
     sort?: string;
+    exhibition?: string;
   }>;
 };
 
@@ -41,6 +42,7 @@ type AdminArtworkRow = Pick<
   | 'images'
   | 'created_at'
   | 'category'
+  | 'exhibition'
 > & {
   artists: ArtistRef | ArtistRef[] | null;
   artwork_admin_tags: ArtworkAdminTagRef[] | null;
@@ -55,7 +57,7 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
     supabase
       .from('artworks')
       .select(
-        'id, title, admin_product_name, status, is_hidden, images, created_at, category, artists(name_ko), artwork_admin_tags(tag_id, admin_tags(id, name, slug, color, description, archived_at))'
+        'id, title, admin_product_name, status, is_hidden, images, created_at, category, exhibition, artists(name_ko), artwork_admin_tags(tag_id, admin_tags(id, name, slug, color, description, archived_at))'
       )
       .order('created_at', { ascending: false })
       .returns<AdminArtworkRow[]>(),
@@ -77,6 +79,7 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
     ...artwork,
     status: artwork.status ?? 'available',
     is_hidden: artwork.is_hidden ?? false,
+    exhibition: artwork.exhibition ?? null,
     artists: Array.isArray(artwork.artists)
       ? (artwork.artists[0] ?? null)
       : (artwork.artists ?? null),
@@ -112,6 +115,7 @@ export default async function AdminArtworksPage({ searchParams }: Props) {
           tag: params.tag,
           q: params.q,
           sort: params.sort,
+          exhibition: params.exhibition,
         }}
       />
     </div>

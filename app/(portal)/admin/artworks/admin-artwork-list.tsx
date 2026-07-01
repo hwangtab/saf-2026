@@ -42,6 +42,7 @@ import {
   formatDate,
   getSortStateFromFilter,
   mapSortStateToFilter,
+  normalizeExhibitionFilter,
   normalizeQuery,
   normalizeSortFilter,
   normalizeStatusFilter,
@@ -49,6 +50,7 @@ import {
   normalizeVisibilityFilter,
   type AdminArtworkTag,
   type ArtworkItem,
+  type ExhibitionFilter,
   type InitialArtworkFilters,
   type SortDirection,
   type SortFilter,
@@ -56,6 +58,7 @@ import {
   type StatusFilter,
   type VisibilityFilter,
 } from './_utils';
+import { OH_YOON_TERRACOTTA_EXHIBITION } from '@/lib/exhibitions';
 
 const ArtworkLightbox = dynamic(() => import('@/components/ui/ArtworkLightbox'), { ssr: false });
 
@@ -99,6 +102,7 @@ export function AdminArtworkList({
   const initialQuery = normalizeQuery(initialFilters?.q);
   const initialSortFilter = normalizeSortFilter(initialFilters?.sort);
   const initialSortState = getSortStateFromFilter(initialSortFilter);
+  const initialExhibitionFilter = normalizeExhibitionFilter(initialFilters?.exhibition);
 
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [batchProcessing, setBatchProcessing] = useState(false);
@@ -107,6 +111,8 @@ export function AdminArtworkList({
   const [visibilityFilter, setVisibilityFilter] =
     useState<VisibilityFilter>(initialVisibilityFilter);
   const [tagFilter, setTagFilter] = useState(initialTagFilter);
+  const [exhibitionFilter, setExhibitionFilter] =
+    useState<ExhibitionFilter>(initialExhibitionFilter);
   const [sortFilter, setSortFilter] = useState<SortFilter>(initialSortFilter);
   const [sortKey, setSortKey] = useState<SortKey>(initialSortState.key);
   const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortState.direction);
@@ -137,6 +143,7 @@ export function AdminArtworkList({
     setStatusFilter(initialStatusFilter);
     setVisibilityFilter(initialVisibilityFilter);
     setTagFilter(initialTagFilter);
+    setExhibitionFilter(initialExhibitionFilter);
     setSortFilter(initialSortFilter);
     const nextSortState = getSortStateFromFilter(initialSortFilter);
     setSortKey(nextSortState.key);
@@ -147,6 +154,7 @@ export function AdminArtworkList({
     initialStatusFilter,
     initialVisibilityFilter,
     initialTagFilter,
+    initialExhibitionFilter,
     initialSortFilter,
   ]);
 
@@ -156,6 +164,7 @@ export function AdminArtworkList({
       status?: StatusFilter;
       visibility?: VisibilityFilter;
       tag?: string;
+      exhibition?: ExhibitionFilter;
       sort?: SortFilter;
     }) => {
       if (typeof window === 'undefined') return;
@@ -197,6 +206,15 @@ export function AdminArtworkList({
         }
       }
 
+      if ('exhibition' in updates) {
+        const exhibition = updates.exhibition;
+        if (exhibition && exhibition !== 'all') {
+          params.set('exhibition', exhibition);
+        } else {
+          params.delete('exhibition');
+        }
+      }
+
       if ('sort' in updates) {
         const sort = updates.sort;
         if (sort && sort !== 'default') {
@@ -235,6 +253,12 @@ export function AdminArtworkList({
       if (visibilityFilter === 'visible' && artwork.is_hidden) return false;
       if (visibilityFilter === 'hidden' && !artwork.is_hidden) return false;
       if (tagFilter && !artwork.admin_tags.some((tag) => tag.id === tagFilter)) return false;
+      if (
+        exhibitionFilter === OH_YOON_TERRACOTTA_EXHIBITION.slug &&
+        artwork.exhibition !== OH_YOON_TERRACOTTA_EXHIBITION.slug
+      )
+        return false;
+      if (exhibitionFilter === 'none' && artwork.exhibition !== null) return false;
       if (!query.trim()) return true;
       return matchesAnySearch(query, [
         artwork.title,
@@ -243,7 +267,7 @@ export function AdminArtworkList({
         ...artwork.admin_tags.map((tag) => tag.name),
       ]);
     });
-  }, [optimisticArtworks, query, statusFilter, tagFilter, visibilityFilter]);
+  }, [optimisticArtworks, query, statusFilter, tagFilter, visibilityFilter, exhibitionFilter]);
 
   const sortedArtworks = useMemo(() => {
     const sorted = [...filtered];
@@ -849,6 +873,20 @@ export function AdminArtworkList({
                 ))}
               </AdminSelect>
               <AdminSelect
+                value={exhibitionFilter}
+                onChange={(e) => {
+                  const nextExhibition = normalizeExhibitionFilter(e.target.value);
+                  setExhibitionFilter(nextExhibition);
+                  updateFilterParams({ exhibition: nextExhibition });
+                  setSelectedIds(new Set());
+                }}
+                wrapperClassName="min-w-[140px]"
+              >
+                <option value="all">전시 전체</option>
+                <option value={OH_YOON_TERRACOTTA_EXHIBITION.slug}>기금마련전</option>
+                <option value="none">상시 출품작</option>
+              </AdminSelect>
+              <AdminSelect
                 value={sortFilter}
                 onChange={(e) => {
                   const nextSort = normalizeSortFilter(e.target.value);
@@ -1269,17 +1307,22 @@ export function AdminArtworkList({
                           )}
                         </div>
                         <div className="ml-4">
-                          <Link
-                            href={`/admin/artworks/${artwork.id}`}
-                            className="font-medium text-gray-900 hover:text-primary-a11y hover:underline"
-                          >
-                            {artwork.title}
-                            {artwork.admin_product_name && (
-                              <span className="ml-1.5 text-xs font-normal text-primary-a11y">
-                                [{artwork.admin_product_name}]
-                              </span>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <Link
+                              href={`/admin/artworks/${artwork.id}`}
+                              className="font-medium text-gray-900 hover:text-primary-a11y hover:underline"
+                            >
+                              {artwork.title}
+                              {artwork.admin_product_name && (
+                                <span className="ml-1.5 text-xs font-normal text-primary-a11y">
+                                  [{artwork.admin_product_name}]
+                                </span>
+                              )}
+                            </Link>
+                            {artwork.exhibition === OH_YOON_TERRACOTTA_EXHIBITION.slug && (
+                              <AdminBadge tone="info">기금마련전</AdminBadge>
                             )}
-                          </Link>
+                          </div>
                           <div className="text-sm text-gray-500">
                             {artwork.artists?.name_ko || t('unknownArtist')}
                           </div>
