@@ -35,7 +35,7 @@ export type MarkOrderRefundedAfterCancelInput = {
   order: RefundedOrderLifecycleOrder;
   payment?: RefundedOrderLifecyclePayment | null;
   now: string;
-  sourceStatuses: Array<'paid' | 'preparing'>;
+  sourceStatuses: Array<'paid' | 'preparing' | 'refund_requested'>;
   voidReason: string;
 };
 
@@ -74,20 +74,9 @@ export async function markOrderRefundedAfterCancel({
 }: MarkOrderRefundedAfterCancelInput): Promise<MarkOrderRefundedAfterCancelOutcome> {
   const warnings: MarkOrderRefundedWarning[] = [];
 
-  if (payment?.id && payment.status !== 'CANCELED') {
-    const { error: paymentUpdateError } = await supabase
-      .from('payments')
-      .update({ status: 'CANCELED', cancelled_at: now })
-      .eq('id', payment.id);
-
-    if (paymentUpdateError) {
-      warnings.push({
-        code: 'PAYMENT_UPDATE_FAILED',
-        error: errorMessage(paymentUpdateError),
-      });
-    }
-  }
-
+  // Order update FIRST — fail early before touching the payment record.
+  // This prevents the stuck-order scenario where payment is CANCELED in DB
+  // but the order stays in paid/preparing with no UI recovery path.
   const { data: updatedOrders, error: orderUpdateError } = await supabase
     .from('orders')
     .update({ status: 'refunded', refunded_at: now })
@@ -101,6 +90,21 @@ export async function markOrderRefundedAfterCancel({
 
   if (!updatedOrders || updatedOrders.length === 0) {
     return { ok: false, code: 'ORDER_STATE_MISMATCH' };
+  }
+
+  // Payment record sync after order is confirmed refunded — best-effort only.
+  if (payment?.id && payment.status !== 'CANCELED') {
+    const { error: paymentUpdateError } = await supabase
+      .from('payments')
+      .update({ status: 'CANCELED', cancelled_at: now })
+      .eq('id', payment.id);
+
+    if (paymentUpdateError) {
+      warnings.push({
+        code: 'PAYMENT_UPDATE_FAILED',
+        error: errorMessage(paymentUpdateError),
+      });
+    }
   }
 
   const artworkIds = getArtworkIds(order);

@@ -127,7 +127,7 @@ describe('admin refund mutation', () => {
       order: paidOrder,
       payment: paidPayment,
       now: '2026-06-30T05:00:00.000Z',
-      sourceStatuses: ['paid', 'preparing'],
+      sourceStatuses: ['paid', 'preparing', 'refund_requested'],
       voidReason: '관리자 환불',
     });
   });
@@ -157,7 +157,7 @@ describe('admin refund mutation', () => {
     expect(mockMarkOrderRefundedAfterCancel).toHaveBeenCalledWith(
       expect.objectContaining({
         payment: alreadyCanceledPayment,
-        sourceStatuses: ['paid', 'preparing'],
+        sourceStatuses: ['paid', 'preparing', 'refund_requested'],
       })
     );
   });
@@ -193,13 +193,47 @@ describe('admin refund mutation', () => {
     expect(mockMarkOrderRefundedAfterCancel).toHaveBeenCalledWith(
       expect.objectContaining({
         payment: bankPayment,
-        sourceStatuses: ['paid', 'preparing'],
+        sourceStatuses: ['paid', 'preparing', 'refund_requested'],
         voidReason: '계좌이체 환불',
       })
     );
   });
 
-  it('rejects statuses outside paid and preparing before touching payments', async () => {
+  it('processes refund for refund_requested order with Toss cancel and lifecycle sync', async () => {
+    const { refundOrderMutation } = await import('@/lib/orders/admin-refund');
+    const refundRequestedOrder = { ...paidOrder, status: 'refund_requested' };
+    const { supabase } = buildAdminRefundSupabaseMock({
+      order: refundRequestedOrder,
+      payment: paidPayment,
+    });
+
+    const result = await refundOrderMutation(supabase as never, {
+      orderId: 'ord-1',
+      cancelReason: '관리자 환불',
+      now: '2026-06-30T05:00:00.000Z',
+    });
+
+    expect(result).toEqual({
+      success: true,
+      order: refundRequestedOrder,
+      payment: paidPayment,
+      hasTossPayment: true,
+      warnings: [],
+    });
+    expect(mockCancelPayment).toHaveBeenCalledWith(
+      'pk_test',
+      { cancelReason: '관리자 환불' },
+      'refund-SAF-001',
+      'domestic'
+    );
+    expect(mockMarkOrderRefundedAfterCancel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sourceStatuses: ['paid', 'preparing', 'refund_requested'],
+      })
+    );
+  });
+
+  it('rejects statuses outside paid, preparing, refund_requested before touching payments', async () => {
     const { refundOrderMutation } = await import('@/lib/orders/admin-refund');
     const { supabase, paymentEq } = buildAdminRefundSupabaseMock({
       order: { ...paidOrder, status: 'shipped' },

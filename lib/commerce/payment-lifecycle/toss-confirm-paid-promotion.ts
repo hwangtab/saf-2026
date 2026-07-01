@@ -224,6 +224,9 @@ export async function promoteTossConfirmPaidOrder({
     return { ok: true, status: 'contest_lost' };
   }
 
-  scheduleSalesWarning(orderNo, { code: 'ARTWORK_SALES_FAILED', error: paidOutcome.error });
+  // continueOnSalesRecordFailure: true means markOrderPaidWithOutcome absorbs ARTWORK_SALES_FAILED
+  // into warnings and returns ok:true, so this branch is unreachable at runtime.
+  // TypeScript cannot narrow on the runtime boolean flag value, so it stays for exhaustive checking.
+  scheduleSalesWarning(orderNo, paidOutcome);
   return { ok: true, status: 'promoted' };
 }

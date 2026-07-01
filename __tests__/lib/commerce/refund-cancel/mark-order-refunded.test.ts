@@ -155,7 +155,7 @@ describe('markOrderRefundedAfterCancel', () => {
     expect(mockRevalidatePublicArtworkSurfaces).toHaveBeenCalledTimes(1);
   });
 
-  it('stops before sales, artwork, reservation, and cache side effects when the order update affects zero rows', async () => {
+  it('stops before payment, sales, artwork, reservation, and cache side effects when the order update affects zero rows', async () => {
     const { markOrderRefundedAfterCancel } = await import(
       '@/lib/commerce/refund-cancel/mark-order-refunded'
     );
@@ -171,6 +171,9 @@ describe('markOrderRefundedAfterCancel', () => {
     });
 
     expect(result).toEqual({ ok: false, code: 'ORDER_STATE_MISMATCH' });
+    // Payment must NOT be touched — prevents stuck-order scenario where payment is CANCELED
+    // in DB but the order stays in paid with no UI recovery path.
+    expect(supabase.paymentsBuilder.update).not.toHaveBeenCalled();
     expect(supabase.artworkSalesBuilder.update).not.toHaveBeenCalled();
     expect(mockDeriveAndSyncArtworkStatus).not.toHaveBeenCalled();
     expect(mockReleaseReservedArtworksIfUnowned).not.toHaveBeenCalled();

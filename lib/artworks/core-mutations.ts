@@ -59,6 +59,10 @@ export async function updateArtworkImagesMutation(
     .eq('id', id)
     .single();
 
+  if (!beforeArtwork) {
+    throw new Error('작품을 찾을 수 없습니다. 삭제되었거나 권한이 없는 작품입니다.');
+  }
+
   const { data: updatedRows, error } = await supabase
     .from('artworks')
     .update({

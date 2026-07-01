@@ -326,9 +326,9 @@ describe('refundOrder', () => {
       expect.stringContaining('Toss 취소 후 주문 상태 반영 실패'),
       expect.objectContaining({ 주문번호: 'SAF-001', paymentKey: 'pk_test' })
     );
-    expect(capturedPaymentUpdates).toEqual([
-      expect.objectContaining({ status: 'CANCELED', cancelled_at: expect.any(String) }),
-    ]);
+    // order update가 먼저 실패하므로 payment 레코드는 건드리지 않아야 한다 — 역순 처리로 인한
+    // stuck-order(주문 PAID + payment CANCELED) 방지
+    expect(capturedPaymentUpdates).toEqual([]);
   });
 });
 

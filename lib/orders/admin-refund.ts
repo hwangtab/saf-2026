@@ -96,7 +96,7 @@ export async function refundOrderMutation(
   if (orderError || !order) throw new Error('주문을 찾을 수 없습니다.');
 
   const orderRow = order as AdminRefundOrderRow;
-  if (!['paid', 'preparing'].includes(orderRow.status)) {
+  if (!['paid', 'preparing', 'refund_requested'].includes(orderRow.status)) {
     throw new Error(`환불 가능한 상태가 아닙니다. (현재 상태: ${orderRow.status})`);
   }
 
@@ -134,7 +134,7 @@ export async function refundOrderMutation(
     order: orderRow,
     payment: paymentRow,
     now,
-    sourceStatuses: ['paid', 'preparing'],
+    sourceStatuses: ['paid', 'preparing', 'refund_requested'],
     voidReason: trimmedReason,
   });
 

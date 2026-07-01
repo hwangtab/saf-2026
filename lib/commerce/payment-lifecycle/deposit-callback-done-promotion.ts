@@ -123,6 +123,7 @@ export async function handleDepositCallbackDonePromotion({
 
   if (paymentUpdateError) {
     console.error(`[toss-webhook] payment UPDATE failed: ${paymentKey}`, paymentUpdateError);
+    return { ok: false, code: 'PAYMENT_RECORD_FAILED', error: paymentUpdateError.message };
   }
 
   const paidOutcome = await markOrderPaidWithOutcome({

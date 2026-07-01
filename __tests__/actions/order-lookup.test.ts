@@ -1114,9 +1114,9 @@ describe('cancelBuyerOrder', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error).toBe('ORDER_CANCEL_FAILED');
-    expect(capturedPaymentUpdates).toEqual([
-      expect.objectContaining({ status: 'CANCELED', cancelled_at: expect.any(String) }),
-    ]);
+    // order update가 먼저 실패하므로 payment 레코드는 건드리지 않아야 한다 — 역순 처리로 인한
+    // stuck-order(주문 PAID + payment CANCELED) 방지
+    expect(capturedPaymentUpdates).toHaveLength(0);
     expect(capturedSaleUpdates).toHaveLength(0);
   });
 
