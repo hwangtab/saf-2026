@@ -11,6 +11,7 @@ import { formatPriceForDisplay } from '@/lib/utils';
 import { calculateShippingFee, SHIPPING_THRESHOLD } from '@/lib/integrations/toss/config';
 import { createOrder, cancelPendingOrder } from '@/app/actions/checkout';
 import { PAYMENT_CHOICES, type PaymentChoice } from '@/lib/checkout/payment-choices';
+import { useApplePaySupport } from '@/lib/checkout/use-apple-pay-support';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo } from './PaymentBrandLogo';
@@ -120,6 +121,9 @@ export default function CheckoutClient({
   const totalAmount = price + shippingFee;
 
   const [paymentChoice, setPaymentChoice] = useState<PaymentChoice>('CARD');
+  const applePaySupported = useApplePaySupport();
+  // 애플페이는 지원 환경(Safari/iOS)에서만 노출. 그 외 수단은 항상 노출.
+  const paymentChoices = PAYMENT_CHOICES.filter((c) => !c.requiresApplePay || applePaySupported);
   const activeChoice = PAYMENT_CHOICES.find((c) => c.value === paymentChoice);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -365,7 +369,7 @@ export default function CheckoutClient({
             aria-label={t('paymentMethodSelect')}
             className="border-t border-gray-200"
           >
-            {PAYMENT_CHOICES.map(({ value, labelKey, brand, icon: Icon }, i) => {
+            {paymentChoices.map(({ value, labelKey, brand, icon: Icon }, i) => {
               const selected = paymentChoice === value;
               return (
                 <div key={value}>
