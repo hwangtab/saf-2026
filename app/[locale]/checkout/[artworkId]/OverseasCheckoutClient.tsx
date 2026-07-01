@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
-import { CreditCard, Landmark, type LucideIcon } from 'lucide-react';
+import { CreditCard, type LucideIcon } from 'lucide-react';
 
 import SafeImage from '@/components/common/SafeImage';
 import { Link } from '@/i18n/navigation';
@@ -21,7 +21,6 @@ import { sessionSet } from '@/lib/storage';
 import BuyerInfoForm from './BuyerInfoForm';
 import type { BuyerInfoHandle } from './BuyerInfoForm';
 import { PaymentBrandLogo, type BrandKind } from './PaymentBrandLogo';
-import { useApplePaySupport } from '@/lib/checkout/use-apple-pay-support';
 import TrustBadges from '@/components/features/TrustBadges';
 import CheckoutTrustNotice from '@/components/features/CheckoutTrustNotice';
 import { trackEvent } from '@/lib/analytics/track';
@@ -100,35 +99,12 @@ interface PaymentChoiceConfig {
   requiresApplePay?: boolean;
 }
 
+// 해외(en) 결제창은 외국인이 실제 사용 가능한 수단만 노출: PayPal(해외 계정) + 카드(국내·외국 카드).
+// 한국 전용 간편결제(카카오/토스/네이버/애플페이)와 계좌이체는 한국 계정/카드/계좌 보유자 전용이라
+// 외국인이 눌러도 결제 실패 → 제외. 재외 한국인은 한국어 페이지에서 전체 수단 이용.
 const PAYMENT_CHOICES: PaymentChoiceConfig[] = [
   { value: 'PAYPAL', labelKey: 'methodPaypal', brand: 'paypal' },
   { value: 'CARD', labelKey: 'methodCard', brand: null, icon: CreditCard },
-  {
-    value: 'KAKAOPAY',
-    labelKey: 'methodKakaopay',
-    brand: 'kakaopay',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '카카오페이' },
-  },
-  {
-    value: 'TOSSPAY',
-    labelKey: 'methodTosspay',
-    brand: 'tosspay',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '토스페이' },
-  },
-  {
-    value: 'NAVERPAY',
-    labelKey: 'methodNaverpay',
-    brand: 'naverpay',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '네이버페이' },
-  },
-  {
-    value: 'APPLEPAY',
-    labelKey: 'methodApplepay',
-    brand: 'applepay',
-    cardOptions: { flowMode: 'DIRECT', easyPay: '애플페이' },
-    requiresApplePay: true,
-  },
-  { value: 'TRANSFER', labelKey: 'methodTransfer', brand: null, icon: Landmark },
 ];
 
 interface Props {
@@ -228,15 +204,11 @@ export default function OverseasCheckoutClient({
   const shippingFee = calculateShippingFee(price);
   const totalKrw = price + shippingFee;
   const usdTotal = krwToUsd(totalKrw);
-  const applePaySupported = useApplePaySupport();
   const availablePaymentChoices = PAYMENT_CHOICES.filter((choice) => {
     if (choice.value === 'PAYPAL') return overseasPaymentsEnabled;
-    if (choice.value === 'TRANSFER') return true;
-    // 애플페이는 domestic(KRW) MID + 지원 환경(Safari/iOS)에서만. 국내 카드 등록분만 결제 가능.
-    if (choice.requiresApplePay) return domesticPaymentsEnabled && applePaySupported;
-    return domesticPaymentsEnabled;
+    return domesticPaymentsEnabled; // CARD — 국내·외국 카드 다국어 결제창
   });
-  const defaultPaymentChoice = availablePaymentChoices[0]?.value ?? 'TRANSFER';
+  const defaultPaymentChoice = availablePaymentChoices[0]?.value ?? 'CARD';
 
   const [paymentChoice, setPaymentChoice] = useState<EnPaymentChoice>(defaultPaymentChoice);
   const [submitting, setSubmitting] = useState(false);
