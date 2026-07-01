@@ -35,6 +35,7 @@ export type RevenueQueryInput = {
   evidenceEnd?: string | null;
   evidenceLabel?: string | null;
   evidenceChannel?: string | null;
+  exhibition?: string | null;
 };
 
 function getKstDateParts(date: Date): { year: number; month: number; day: number } {
@@ -247,7 +248,9 @@ export async function getRevenueAnalyticsForAuthorizedUser(
   const rangeStartIso = getYearStartUtcIso(rangeStartYear);
   const rangeEndIso = getYearStartUtcIso(rangeEndYear);
 
-  let soldRowsResult = await supabase
+  const exhibition = input.exhibition?.trim() || null;
+
+  let soldBaseQuery = supabase
     .from('artwork_sales')
     .select(buildSalesSelect())
     .gte('sold_at', rangeStartIso)
@@ -255,13 +258,29 @@ export async function getRevenueAnalyticsForAuthorizedUser(
     .is('voided_at', null)
     .order('sold_at', { ascending: true });
 
+  if (exhibition === 'regular') {
+    soldBaseQuery = soldBaseQuery.is('artworks.exhibition', null);
+  } else if (exhibition) {
+    soldBaseQuery = soldBaseQuery.eq('artworks.exhibition', exhibition);
+  }
+
+  let soldRowsResult = await soldBaseQuery;
+
   if (soldRowsResult.error && isMissingVoidedAtColumnError(soldRowsResult.error)) {
-    soldRowsResult = await supabase
+    let fallbackQuery = supabase
       .from('artwork_sales')
       .select(buildSalesSelect())
       .gte('sold_at', rangeStartIso)
       .lt('sold_at', rangeEndIso)
       .order('sold_at', { ascending: true });
+
+    if (exhibition === 'regular') {
+      fallbackQuery = fallbackQuery.is('artworks.exhibition', null);
+    } else if (exhibition) {
+      fallbackQuery = fallbackQuery.eq('artworks.exhibition', exhibition);
+    }
+
+    soldRowsResult = await fallbackQuery;
   }
 
   const { data: soldRows, error: soldRowsError } = soldRowsResult;
