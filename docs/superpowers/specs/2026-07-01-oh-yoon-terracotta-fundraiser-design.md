@@ -90,7 +90,7 @@ export type ExhibitionSlug = typeof OH_YOON_TERRACOTTA_EXHIBITION.slug;
   3. **저장** — 선택을 저장하면 태그 반영.
 - **3점 초과 방지**: 3점 선택 시 나머지 체크박스 비활성 + 안내. 4점째 시도 시 명확한 안내 문구.
 - **잠금 표시**: 이미 판매된 출품작은 "판매됨 · 출품 확정"으로 잠금 표시, 체크 해제 불가(§6).
-- **새 작품을 출품하려면**: "새 작품 등록하고 출품" 버튼 → 표준 등록 폼을 `?exhibition=oh-yoon-terracotta` 쿼리로 오픈. **그 진입 경로에서만** 폼이 "이 작품은 기금마련전에 출품됩니다" 확정 상태(읽기 전용 안내 배지)를 노출. 폼 자체의 기본 모습은 불변.
+- **새 작품을 출품하려면**: 이 참여 화면의 "새 작품 등록하고 출품" 버튼 → 표준 등록 폼을 `?exhibition=oh-yoon-terracotta` 쿼리로 오픈. **그 진입 경로에서만** 폼이 "이 작품은 기금마련전에 출품됩니다" 확정 상태(읽기 전용 안내 배지)를 노출하고, 저장 후 참여 화면으로 복귀. 폼의 기본 모습은 불변(비참여 작가는 파라미터 없이 진입하므로 아무 변화 없음). → **진입점은 항상 기금마련전 참여 페이지**로 단일 유지.
 
 ### 4.2 서버 액션
 
@@ -108,8 +108,8 @@ setFundraiserSelection(selectedArtworkIds: string[]): Promise<ActionState>
 4. **한도**: 최종 태그 개수 `<= maxPerArtist(3)`. 초과 시 i18n 에러.
 5. 선택된 작품 `exhibition = slug`, 선택 해제된(잠금 아닌) 작품 `exhibition = NULL`로 갱신.
 
-- 표준 폼 경유 신규 등록(`?exhibition=` 진입)의 경우 `createArtwork`가 태그를 설정하되 **동일한 3점 한도·소유권 검증을 반드시 재적용**(server action이 유일한 강제 지점).
-- `updateArtwork`는 기존 `exhibition` 값을 **보존**하고, 잠금 규칙을 위반하는 변경을 거부.
+- 표준 폼 경유 신규 등록(참여 화면에서 `?exhibition=` 진입)의 경우 `createArtwork`가 태그를 설정하되 **동일한 3점 한도·소유권 검증을 재적용**.
+- `updateArtwork`는 기존 `exhibition` 값을 **보존**(`.update({...})`에 exhibition 미포함)하고, 잠금 규칙 위반 변경을 거부.
 
 ### 4.3 대시보드 안내 배너
 
@@ -135,6 +135,19 @@ setFundraiserSelection(selectedArtworkIds: string[]): Promise<ActionState>
 
 - **변경 없음**. "양쪽 노출"이므로 메인/상시 갤러리 쿼리는 출품작을 특별 취급하지 않고 그대로 노출.
 
+### 5.3 크라우드펀딩과의 관계 (별개 공존 + 상호 연결)
+
+오윤 테라코타 이전을 위한 모금 수단은 두 갈래로 **공존**한다:
+
+1. **크라우드펀딩** (`/funding/oh-yoon-terracotta`) — 기존 텀블벅형 플랫폼(`app/[locale]/funding/[slug]`, `funding_*` 테이블, 리워드형 카드 후원). **이미 구현됨.**
+2. **기금마련전** (`/exhibition/oh-yoon-terracotta`) — 작가가 자기 작품을 내놓아 **판매**, 수익이 기금. (이 스펙)
+
+- **명명 구분**: 라우트 네임스페이스가 다르므로(`/funding/` vs `/exhibition/`) 슬러그 `oh-yoon-terracotta` 재사용 OK. `exhibition` 태그 값도 `'oh-yoon-terracotta'` 유지.
+- **상호 연결(필수)**:
+  - **기금마련전 → 크라우드펀딩**: 기금마련전 공개 페이지에 "직접 후원하기 → `/funding/oh-yoon-terracotta`" 링크를 **코드로** 추가(이 페이지는 이 캠페인 전용 하드코딩이라 안전).
+  - **크라우드펀딩 → 기금마련전**: 펀딩 플랫폼은 범용이라 코드로 링크 박지 않음. 해당 캠페인의 **admin 작성 콘텐츠(설명 본문)에 `/exhibition/oh-yoon-terracotta` 링크를 넣는 운영 작업**으로 처리(펀딩 플랫폼 코드 무수정). → 이 스펙의 코드 범위는 기금마련전 쪽 링크만.
+- 펀딩 플랫폼 코드는 **손대지 않음**.
+
 ## 6. 판매 후 무결성 (잠금 방식)
 
 문제: 집계는 "현재 `exhibition` 태그가 붙은 판매작"을 세는데, 태그가 사후에 바뀌면 과거 모금액이 소급 왜곡됨.
@@ -142,7 +155,7 @@ setFundraiserSelection(selectedArtworkIds: string[]): Promise<ActionState>
 해결(간단·잠금):
 
 - **작품이 기금마련전 태그를 단 채로 판매되면(`status='sold'` 또는 `manual_sold_override=true`), 그 태그는 이후 제거·변경 불가.**
-- 강제 지점: `setFundraiserSelection` / `updateArtwork` server action에서 "판매됨 + 태그됨"인 작품의 태그 해제 시도를 거부.
+- 강제 지점: `setFundraiserSelection`(선택에서 판매된 출품작이 빠지면 거부) + `createArtwork`/`updateArtwork`(태그 해제/변경 거부).
 - 참여 화면(§4.1)에서는 해당 작품을 "판매됨 · 출품 확정" 잠금 카드로 표시.
 - 결과: 판매 후 태그가 불변이므로 조인 기반 집계가 항상 정확. (추후 감사수준 원장이 필요하면 `order_items` 스냅샷으로 업그레이드.)
 
