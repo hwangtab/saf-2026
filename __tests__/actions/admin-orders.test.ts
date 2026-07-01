@@ -29,7 +29,7 @@ jest.mock('@/app/actions/activity-log-writer', () => ({
   logAdminAction: jest.fn(async () => {}),
 }));
 
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: jest.fn(async () => {}),
 }));
 
@@ -217,6 +217,25 @@ beforeEach(async () => {
 });
 
 describe('cancelAwaitingOrder', () => {
+  it('입금대기 관리자 취소 action은 domain mutation에 shared lifecycle을 위임한다', () => {
+    const fs = jest.requireActual('node:fs') as typeof import('node:fs');
+    const path = jest.requireActual('node:path') as typeof import('node:path');
+    const source = fs.readFileSync(path.join(process.cwd(), 'app/actions/admin-orders.ts'), 'utf8');
+    const start = source.indexOf('export async function cancelAwaitingOrder');
+    const end = source.indexOf('\nexport async function setOrderEscalation', start);
+    const cancelAwaitingSlice = source.slice(start, end);
+    const domainSource = fs.readFileSync(
+      path.join(process.cwd(), 'lib/orders/admin-awaiting-cancel.ts'),
+      'utf8'
+    );
+
+    expect(cancelAwaitingSlice).toContain('cancelAwaitingOrderMutation(supabase, {');
+    expect(cancelAwaitingSlice).not.toContain('cancelAwaitingDepositOrder({');
+    expect(cancelAwaitingSlice).not.toContain('releaseReservedArtworksIfUnowned(');
+    expect(cancelAwaitingSlice).not.toContain('extractLineItems(');
+    expect(domainSource).toContain('cancelAwaitingDepositOrder({');
+  });
+
   it('예약 해제 실패를 운영 알림으로 남긴다', async () => {
     mockOrderRow = {
       id: 'ord-1',
@@ -254,6 +273,27 @@ describe('cancelAwaitingOrder', () => {
 });
 
 describe('refundOrder', () => {
+  it('관리자 환불 action은 domain mutation에 내부 refunded 동기화를 위임한다', () => {
+    const fs = jest.requireActual('node:fs') as typeof import('node:fs');
+    const path = jest.requireActual('node:path') as typeof import('node:path');
+    const source = fs.readFileSync(path.join(process.cwd(), 'app/actions/admin-orders.ts'), 'utf8');
+    const start = source.indexOf('export async function refundOrder');
+    const end = source.indexOf('\nconst VALID_STATUS_TRANSITIONS', start);
+    const refundOrderSlice = source.slice(start, end);
+    const domainSource = fs.readFileSync(
+      path.join(process.cwd(), 'lib/orders/admin-refund.ts'),
+      'utf8'
+    );
+
+    expect(refundOrderSlice).toContain('refundOrderMutation(supabase, {');
+    expect(refundOrderSlice).not.toContain('markOrderRefundedAfterCancel({');
+    expect(refundOrderSlice).not.toContain('cancelPayment(');
+    expect(refundOrderSlice).not.toContain(".from('artwork_sales')");
+    expect(refundOrderSlice).not.toContain('deriveAndSyncArtworkStatus(');
+    expect(domainSource).toContain('markOrderRefundedAfterCancel({');
+    expect(domainSource).toContain('cancelPayment(');
+  });
+
   it('관리자 환불에서 Toss 취소 성공 후 주문 refunded 전환이 실패하면 운영 알림을 남긴다', async () => {
     mockOrderRow = {
       id: 'ord-1',

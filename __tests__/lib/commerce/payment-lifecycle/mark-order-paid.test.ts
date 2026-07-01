@@ -14,7 +14,7 @@ jest.mock('@/lib/orders/record-artwork-sales', () => ({
   recordOrderArtworkSales: (...args: unknown[]) => mockRecordOrderArtworkSales(...args),
 }));
 
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: (...args: unknown[]) => mockDeriveAndSyncArtworkStatus(...args),
 }));
 

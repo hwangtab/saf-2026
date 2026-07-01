@@ -8,7 +8,10 @@ describe('admin artwork create image upload source wiring', () => {
   const formSource = () => read('app/(portal)/admin/artworks/artwork-edit-form.tsx');
   const imageUploadSource = () => read('components/dashboard/ImageUpload.tsx');
   const imageUploadTypesSource = () => read('components/dashboard/image-upload/types.ts');
-  const actionSource = () => read('app/actions/admin-artworks.ts');
+  const adminArtworksSource = () => read('app/actions/admin-artworks.ts');
+  const detailsActionSource = () => read('app/actions/admin-artwork-details.ts');
+  const detailsFormSource = () => read('lib/artworks/details-form.ts');
+  const detailsMutationsSource = () => read('lib/artworks/details-mutations.ts');
 
   it('shows the artwork image uploader on the new artwork form with a draft prefix', () => {
     const source = formSource();
@@ -57,7 +60,8 @@ describe('admin artwork create image upload source wiring', () => {
 
   it('routes newly created artwork back to the list via a hard navigation', () => {
     const source = formSource();
-    const action = actionSource();
+    const adminArtworksAction = adminArtworksSource();
+    const detailsAction = detailsActionSource();
 
     // 회귀(2026-06-19, navigation 코드만 5회 수정·전부 실패): 작품 등록 시 server action은
     // 매번 정상 완주(POST 200, INSERT·로그 성공)했으나 응답에 실린 무거운 캐시 무효화 처리 중
@@ -67,12 +71,16 @@ describe('admin artwork create image upload source wiring', () => {
     // 회피하고, 액션의 무거운 공개면 revalidate(revalidateTag('artworks'))는 등록 경로에서 제거.
     expect(source).toContain('createAdminArtwork(formData)');
     expect(source).toContain("window.location.assign('/admin/artworks')");
-    expect(action).toContain('export async function createAdminArtwork(formData: FormData)');
+    // "use server" re-export 금지 — 폼은 전용 details action 모듈에서 직접 import하고,
+    // admin-artworks.ts는 createAdminArtwork를 더 이상 정의도 re-export도 하지 않는다.
+    expect(source).toContain("from '@/app/actions/admin-artwork-details'");
+    expect(adminArtworksAction).not.toContain('createAdminArtwork');
+    expect(detailsAction).toContain('export async function createAdminArtwork(formData: FormData)');
 
     // 같은 회귀를 되살릴 수 있는 옛 패턴이 다시 들어오지 못하게 한다.
     expect(source).not.toContain('createAdminArtworkAndRedirect');
     expect(source).not.toContain('unstable_rethrow');
-    expect(action).not.toContain('createAdminArtworkAndRedirect');
+    expect(detailsAction).not.toContain('createAdminArtworkAndRedirect');
   });
 
   it('uses a portal-safe Next link for the back-to-list button', () => {
@@ -89,18 +97,23 @@ describe('admin artwork create image upload source wiring', () => {
   });
 
   it('validates draft image URLs before inserting a new admin artwork', () => {
-    const source = actionSource();
+    const action = detailsActionSource();
+    const detailsForm = detailsFormSource();
+    const detailsMutations = detailsMutationsSource();
 
-    expect(source).toContain('const ADMIN_ARTWORK_MAX_IMAGES = 10;');
-    expect(source).toContain("parseUrlList(formData.get('images'), '이미지')");
-    expect(source).toContain("imageOwnerPrefix.startsWith('admin-artwork-draft-')");
-    expect(source).toContain('validateImageUrls(imageList.urls, imageOwnerPrefix)');
-    expect(source).toContain('images: imageList.urls');
-    expect(source).toContain('async function createAdminArtworkRecord(formData: FormData)');
+    expect(detailsForm).toContain('export const ADMIN_ARTWORK_MAX_IMAGES = 10;');
+    expect(detailsForm).toContain("parseUrlList(formData.get('images'), '이미지')");
+    expect(detailsForm).toContain("imageOwnerPrefix.startsWith('admin-artwork-draft-')");
+    expect(detailsForm).toContain('validateImageUrls(imageList.urls, imageOwnerPrefix)');
+    expect(detailsForm).toContain('images: imageList.urls');
+    expect(action).toContain('async function createAdminArtworkRecord(formData: FormData)');
+    expect(action).toContain('parseAdminArtworkCreateFormData(formData)');
+    expect(action).toContain('createAdminArtworkRecordMutation(supabase, { details })');
+    expect(detailsMutations).toContain('buildAdminArtworkCreateInsert(details)');
   });
 
   it('schedules public artwork cache invalidation after create without blocking the action response', () => {
-    const action = actionSource();
+    const action = detailsActionSource();
 
     expect(action).toContain('schedulePublicArtworkSurfaceRevalidation([artistName], {');
     expect(action).toContain('artworkId: artwork.id');

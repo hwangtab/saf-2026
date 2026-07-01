@@ -78,7 +78,7 @@ jest.mock('@/lib/orders/reservations', () => ({
     mockReserveUniqueArtworksOrRollback(...args),
 }));
 
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: jest.fn(),
 }));
 

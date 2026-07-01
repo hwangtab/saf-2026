@@ -8,6 +8,7 @@ const mockNotifyEmail = jest.fn();
 const mockLogSystemAction = jest.fn();
 const mockEnsureTossPaymentRecord = jest.fn();
 const mockRecordOrderArtworkSales = jest.fn();
+const mockCancelPayment = jest.fn();
 
 jest.mock('next/server', () => {
   return {
@@ -35,6 +36,10 @@ jest.mock('@/lib/integrations/toss/confirm', () => ({
 
 jest.mock('@/lib/integrations/toss/config', () => ({
   resolveOrderProvider: jest.fn(() => 'api_v1'),
+}));
+
+jest.mock('@/lib/integrations/toss/cancel', () => ({
+  cancelPayment: (...args: unknown[]) => mockCancelPayment(...args),
 }));
 
 jest.mock('@/lib/notify', () => ({
@@ -67,7 +72,7 @@ jest.mock('@/lib/orders/reservations', () => ({
   reserveUniqueArtworksOrRollback: jest.fn(async () => ({ ok: true, reservedArtworkIds: [] })),
 }));
 
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: jest.fn(),
 }));
 
@@ -193,6 +198,7 @@ describe('Toss confirm payment record failure handling', () => {
     });
     mockEnsureTossPaymentRecord.mockResolvedValue({ ok: false, error: 'db down' });
     mockRecordOrderArtworkSales.mockResolvedValue({ inserted: true, rows: 1 });
+    mockCancelPayment.mockResolvedValue({ success: true, data: { status: 'CANCELED' } });
   });
 
   it('does not mark an order paid when the payment row insert fails after Toss DONE', async () => {
@@ -243,10 +249,16 @@ describe('Toss confirm payment record failure handling', () => {
   });
 
   it('routes Toss DONE promotion through the shared payment lifecycle helper', () => {
-    const source = readFileSync('app/api/payments/toss/confirm/route.ts', 'utf8');
+    const routeSource = readFileSync('app/api/payments/toss/confirm/route.ts', 'utf8');
+    const helperSource = readFileSync(
+      'lib/commerce/payment-lifecycle/toss-confirm-paid-promotion.ts',
+      'utf8'
+    );
 
-    expect(source).toContain('@/lib/commerce/payment-lifecycle/mark-order-paid');
-    expect(source).toContain('markOrderPaidWithOutcome({');
-    expect(source).not.toContain('recordOrderArtworkSales(supabase');
+    expect(routeSource).toContain('promoteTossConfirmPaidOrder');
+    expect(routeSource).not.toContain('markOrderPaidWithOutcome({');
+    expect(routeSource).not.toContain('recordOrderArtworkSales(supabase');
+    expect(helperSource).toContain('@/lib/commerce/payment-lifecycle/mark-order-paid');
+    expect(helperSource).toContain('markOrderPaidWithOutcome({');
   });
 });

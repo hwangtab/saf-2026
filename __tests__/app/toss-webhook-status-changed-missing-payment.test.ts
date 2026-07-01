@@ -45,7 +45,7 @@ jest.mock('@/lib/payments/toss-payment-record', () => ({
   ensureTossPaymentRecord: (...args: unknown[]) => mockEnsureTossPaymentRecord(...args),
 }));
 
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: jest.fn(),
 }));
 
@@ -235,13 +235,40 @@ describe('Toss STATUS_CHANGED missing payment row repair', () => {
     expect(supabase.orderStatusUpdates).toContain('paid');
   });
 
+  it('routes STATUS_CHANGED missing payment repair through the shared helper', () => {
+    const source = readFileSync('app/api/webhooks/toss/route.ts', 'utf8');
+    const branchStart = source.indexOf(
+      "if (!paymentFetchError && !paymentRow && newStatus === 'DONE')"
+    );
+    const branchEnd = source.indexOf('if (paymentFetchError || !paymentRow)', branchStart);
+    const missingPaymentBranch = source.slice(branchStart, branchEnd);
+
+    expect(source).toContain(
+      "from '@/lib/commerce/payment-lifecycle/status-missing-payment-repair'"
+    );
+    expect(missingPaymentBranch).toContain('repairStatusChangedMissingPaymentRecord({');
+    expect(missingPaymentBranch).not.toContain('ensureTossPaymentRecord({');
+    expect(missingPaymentBranch).not.toContain(".from('orders')");
+  });
+
   it('routes STATUS_CHANGED DONE promotion through the shared lifecycle helper', () => {
     const source = readFileSync('app/api/webhooks/toss/route.ts', 'utf8');
     const branchStart = source.indexOf('// PAYMENT_STATUS_CHANGED DONE');
-    const branchEnd = source.indexOf("} else if (newStatus === 'CANCELED'", branchStart);
+    const branchEnd = source.indexOf('// Cascade cancel to order', branchStart);
     const statusDoneBranch = source.slice(branchStart, branchEnd);
+    const helperSource = readFileSync(
+      'lib/commerce/payment-lifecycle/status-changed-done-promotion.ts',
+      'utf8'
+    );
 
-    expect(statusDoneBranch).toContain('markOrderPaidWithOutcome({');
+    expect(source).toContain(
+      "from '@/lib/commerce/payment-lifecycle/status-changed-done-promotion'"
+    );
+    expect(statusDoneBranch).toContain('handleStatusChangedDonePromotion({');
+    expect(statusDoneBranch).not.toContain('markOrderPaidWithOutcome({');
+    expect(statusDoneBranch).not.toContain('handleArtworkTakenAutoRefund({');
     expect(statusDoneBranch).not.toContain('recordOrderArtworkSales(');
+    expect(helperSource).toContain('markOrderPaidWithOutcome({');
+    expect(helperSource).toContain('handleArtworkTakenAutoRefund({');
   });
 });

@@ -42,7 +42,7 @@ jest.mock('@/lib/integrations/toss/cancel', () => ({
 }));
 
 // --- Mock: deriveAndSyncArtworkStatus ---
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: jest.fn(async () => {}),
 }));
 
@@ -187,13 +187,13 @@ function createOrdersMock() {
       };
     }),
     update: jest.fn(() => {
-      const inFn = jest.fn(() => ({ error: mockOrderUpdateError }));
       // awaiting_deposit 취소는 .eq().eq().select('id') 로 취소된 행을 받는다.
       const selectFn = jest.fn(() =>
         mockOrderUpdateError
           ? { data: null, error: mockOrderUpdateError }
           : mockOrderUpdateSelectRows
       );
+      const inFn = jest.fn(() => ({ select: selectFn, error: mockOrderUpdateError }));
       const eq: jest.Mock = jest.fn(() => ({
         eq,
         in: inFn,
@@ -340,6 +340,30 @@ beforeEach(async () => {
   lookupOrderDetail = mod.lookupOrderDetail;
   updateBuyerShipping = mod.updateBuyerShipping;
   cancelBuyerOrder = mod.cancelBuyerOrder;
+});
+
+describe('claimGuestOrders', () => {
+  it('게스트 주문 귀속 action은 domain mutation에 DB update를 위임한다', () => {
+    const fs = jest.requireActual('node:fs') as typeof import('node:fs');
+    const path = jest.requireActual('node:path') as typeof import('node:path');
+    const actionSource = fs.readFileSync(
+      path.join(process.cwd(), 'app/actions/order-lookup.ts'),
+      'utf8'
+    );
+    const domainSource = fs.readFileSync(
+      path.join(process.cwd(), 'lib/orders/guest-claims.ts'),
+      'utf8'
+    );
+    const start = actionSource.indexOf('export async function claimGuestOrders');
+    const end = actionSource.indexOf('\nexport async function lookupOrderDetail', start);
+    const actionSlice = actionSource.slice(start, end);
+
+    expect(actionSlice).toContain('claimGuestOrdersMutation(adminClient, user)');
+    expect(actionSlice).not.toContain('.update({ buyer_user_id');
+    expect(actionSlice).not.toContain(".is('buyer_user_id', null)");
+    expect(domainSource).toContain('.update({ buyer_user_id');
+    expect(domainSource).toContain(".is('buyer_user_id', null)");
+  });
 });
 
 // ========== lookupOrders ==========
@@ -908,6 +932,42 @@ describe('updateBuyerShipping', () => {
 // ========== cancelBuyerOrder ==========
 
 describe('cancelBuyerOrder', () => {
+  it('입금대기 셀프 취소는 shared cancel-awaiting lifecycle로 예약 해제를 처리한다', () => {
+    const fs = jest.requireActual('node:fs') as typeof import('node:fs');
+    const path = jest.requireActual('node:path') as typeof import('node:path');
+    const actionSource = fs.readFileSync(
+      path.join(process.cwd(), 'app/actions/order-lookup.ts'),
+      'utf8'
+    );
+    const domainSource = fs.readFileSync(
+      path.join(process.cwd(), 'lib/orders/buyer-cancel.ts'),
+      'utf8'
+    );
+
+    expect(actionSource).toContain('cancelBuyerOrderMutation(adminClient, {');
+    expect(domainSource).toContain('cancelAwaitingDepositOrder({');
+    expect(actionSource).not.toContain('releaseReservedArtworksIfUnowned(');
+    expect(actionSource).not.toContain('extractLineItems(');
+  });
+
+  it('paid 셀프 취소는 shared refund/cancel lifecycle로 내부 refunded 동기화를 처리한다', () => {
+    const fs = jest.requireActual('node:fs') as typeof import('node:fs');
+    const path = jest.requireActual('node:path') as typeof import('node:path');
+    const actionSource = fs.readFileSync(
+      path.join(process.cwd(), 'app/actions/order-lookup.ts'),
+      'utf8'
+    );
+    const domainSource = fs.readFileSync(
+      path.join(process.cwd(), 'lib/orders/buyer-cancel.ts'),
+      'utf8'
+    );
+
+    expect(actionSource).toContain('cancelBuyerOrderMutation(adminClient, {');
+    expect(domainSource).toContain('markOrderRefundedAfterCancel({');
+    expect(actionSource).not.toContain(".from('artwork_sales')");
+    expect(actionSource).not.toContain('deriveAndSyncArtworkStatus(');
+  });
+
   it('rate limit 초과 시 RATE_LIMITED 반환', async () => {
     mockRateLimitResult = { success: false, remaining: 0 };
     const result = await cancelBuyerOrder('SAF-001', 'test@test.com', '단순변심');

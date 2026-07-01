@@ -1,11 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
-import {
-  getArtworkById,
-  getAllArtists,
-  getArtworkSales,
-  getAdminTags,
-  getArtworkAdminTags,
-} from '@/app/actions/admin-artworks';
+import { getArtworkById, getAllArtists } from '@/app/actions/admin-artworks';
+import { getArtworkSales } from '@/app/actions/admin-artwork-sales';
+import { getAdminTags, getArtworkAdminTags } from '@/app/actions/admin-artwork-tags';
 import type { Artwork, ArtworkSale } from '@/types';
 import { ArtworkEditForm } from '../artwork-edit-form';
 import { SalesHistory } from './sales-history';

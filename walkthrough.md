@@ -1,3 +1,137 @@
+# SAF 리팩토링 Phase 3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27 결과 (2026-07-01)
+
+## 변경 요약
+
+- 결제 완료 lifecycle은 `lib/commerce/payment-lifecycle/mark-order-paid.ts`로 유지하고, 환불/취소 lifecycle을 `lib/commerce/refund-cancel/*`로 분리했다.
+  - 관리자 환불, 구매자 self-cancel, 무통장 입금대기 취소가 같은 상태 전이와 공개 캐시 갱신 정책을 사용한다.
+  - `lib/commerce`가 `app/actions`를 import하지 않도록 작품 상태 동기화는 `lib/artworks/status.ts`로 이동했다.
+- `app/actions/admin-artworks.ts`의 판매 기록 로직을 `lib/artworks/sales.ts`로 이동했다.
+  - manual sale 생성/수정/void, limited edition cap, Toss/source 판매 기록 수정 차단, status sync를 domain module이 담당한다.
+- `batchUpdateArtworkStatus` DB mutation은 `lib/artworks/status-mutations.ts`로 이동했다.
+  - Server Action은 admin auth, audit log, revalidation 중심으로 남겼다.
+- `deleteAdminArtwork`/`batchToggleHidden`/`batchDeleteArtworks` DB mutation과 삭제 정책은 `lib/artworks/batch-mutations.ts`로 이동했다.
+  - active order guard, missing id partial result, FK 23503 안내 메시지를 domain module에서 관리한다.
+- 관리자 내부 태그 조회/CRUD/작품 연결 mutation은 `lib/artworks/admin-tags.ts`로 이동했다.
+  - archived duplicate 차단, archived tag 수정/추가 차단, attach 실패 rollback, bulk add dedupe, delete snapshot을 domain module에서 관리한다.
+- 관리자 내부 태그 server action wrapper는 `app/actions/admin-artwork-tags.ts`로 이동했다.
+  - 기존 UI import 경로는 `app/actions/admin-artworks.ts` re-export로 유지한다.
+  - audit log, `/admin/artworks`와 연결 작품 상세 revalidation, 빈 bulk add/remove 반환값을 보존한다.
+- 이미지/카테고리 mutation은 `lib/artworks/core-mutations.ts`로 이동했다.
+  - 이미지 낙관적 잠금, UPDATE 성공 후 storage cleanup, 카테고리 이전 snapshot을 domain module에서 관리한다.
+- create/update details FormData 파싱과 insert/update payload builder는 `lib/artworks/details-form.ts`로 이동했다.
+  - 공통 필드 정규화, limited edition fallback, 신규 작품 draft image 검증, 작가 필수값을 parser helper에서 관리한다.
+- create/update details DB mutation과 artist-name revalidation lookup은 `lib/artworks/details-mutations.ts`로 이동했다.
+  - update 전후 snapshot, 이전/새 작가명 조회, create 결과 artwork/artistName 반환을 domain module에서 관리한다.
+- 작품 생성/상세 수정 server action wrapper와 공개 작품 캐시 재검증 예약 helper는 `app/actions/admin-artwork-details.ts`로 이동했다.
+  - 기존 UI import 경로는 `app/actions/admin-artworks.ts` re-export로 유지한다.
+  - 신규 작품 등록 응답은 admin list revalidation만 즉시 수행하고, 공개 목록/작가/API tag 무효화는 보호된 내부 route 호출로 응답 후 예약한다.
+  - config 누락, route HTTP 실패, fetch 실패의 운영자 email/system log 가시성을 보존한다.
+- `app/actions/admin-artworks.ts`는 510줄까지 줄었고, 새 `app/actions/admin-artwork-details.ts`는 170줄, `app/actions/admin-artwork-tags.ts`는 239줄이다.
+- `admin-orders.ts`의 배송정보 수정, 입금대기 자동취소 보류, 에스컬레이션 mutation은 `lib/orders/admin-mutations.ts`로 이동했다.
+  - shipped/delivered 배송 제한, awaiting_deposit 보류 제한, 에스컬레이션 낙관적 잠금과 admin note 저장/삭제를 domain module에서 관리한다.
+- `admin-orders.ts`의 무통장 입금확정 mutation은 `lib/orders/deposit-confirmation.ts`로 이동했다.
+  - 주문 조회, `awaiting_deposit` 상태 guard, `confirm_bank_transfer_order` RPC 호출, `UNIQUE_EDITION_TAKEN` 분기, artwork id 검증, 작품 상태 재동기화를 domain module에서 관리한다.
+  - Server Action은 알림, 감사 로그, admin/public revalidation 중심으로 남겼다.
+- `admin-orders.ts`의 주문 상태 전이 mutation은 `lib/orders/status-transition.ts`로 이동했다.
+  - 상태 전이표, optimistic status update, 배송 tracking payload, 취소 시 판매기록 void/예약 해제/작품 상태 재동기화를 domain module에서 관리한다.
+  - Server Action은 배송/완료 알림, 감사 로그, admin/public revalidation 중심으로 남겼다.
+- `admin-orders.ts`의 관리자 주문 목록/상세 read model은 `lib/orders/admin-read-model.ts`로 이동했다.
+  - 목록 q/status filter, SLA 계산, 대표 작품 표시, 상세 line items, payment/sale/virtual account/easyPay DTO 조립을 domain module에서 관리한다.
+  - `getOrders`/`getOrderDetail` action은 admin auth와 read model 호출 중심으로 남겼다.
+- `admin-orders.ts`의 관리자 환불 mutation은 `lib/orders/admin-refund.ts`로 이동했다.
+  - 주문/결제 조회, `paid`/`preparing` 상태 guard, Toss 취소 호출, 이미 취소된 결제 skip, 결제키 없는 계좌이체 환불 분기, shared refunded lifecycle 호출, sync failure 구조화를 domain module에서 관리한다.
+  - `refundOrder` action은 admin auth, 운영 알림, 구매자 알림, 감사 로그, admin revalidation 중심으로 남겼다.
+- `admin-orders.ts`의 입금대기 관리자 취소 mutation은 `lib/orders/admin-awaiting-cancel.ts`로 이동했다.
+  - 주문 조회, `awaiting_deposit` 상태 guard, shared awaiting cancel lifecycle 호출, lifecycle 실패 매핑을 domain module에서 관리한다.
+  - `cancelAwaitingOrder` action은 admin auth, 예약 해제 실패 운영 알림, 구매자 취소 알림, 감사 로그, admin revalidation 중심으로 남겼다.
+- `app/actions/admin-orders.ts`는 647줄까지 줄었다.
+- `order-lookup.ts`의 구매자 배송정보 수정 mutation은 `lib/orders/buyer-mutations.ts`로 이동했다.
+  - trim 기반 입력 검증, owner session/email 소유권 검증, `paid`/`preparing` 상태 제한, update 실패의 `UPDATE_FAILED` 매핑을 domain module에서 관리한다.
+- `order-lookup.ts`의 구매자 셀프 취소 mutation은 `lib/orders/buyer-cancel.ts`로 이동했다.
+  - 주문 조회, owner session/email 소유권 검증, `paid`/`awaiting_deposit` 상태 제한, Toss 취소, shared refund/cancel lifecycle 호출, sync failure 구조화를 domain module에서 관리한다.
+  - Server Action은 rate limit, 세션 조회, 운영자/구매자 알림, 감사 로그 중심으로 남겼다.
+- `order-lookup.ts`의 구매자 주문조회 read model은 `lib/orders/public-lookup.ts`로 이동했다.
+  - 주문 목록 전화번호 검증, 다품목 대표 작품 표시, 상세 DTO 조립, Toss 가상계좌/무통장 입금 표시 분기를 domain module에서 관리한다.
+  - `lookupOrders`, `lookupOrderDetail`, `lookupOrderByToken` action은 rate limit, 세션/토큰 권한 검증 중심으로 남겼다.
+- `order-lookup.ts`의 게스트 주문 회원 귀속 mutation은 `lib/orders/guest-claims.ts`로 이동했다.
+  - 검증된 이메일 guard, `buyer_user_id is null` 조건 update, update error 구조화를 domain module에서 관리한다.
+  - `claimGuestOrders` action은 session user 조회, admin client 생성, 오류 로깅 fallback 중심으로 남겼다.
+- `app/actions/order-lookup.ts`는 494줄까지 줄었다.
+- confirm route와 Toss webhook에 중복되어 있던 동시 구매 경합 자동환불 보상 흐름은 `lib/commerce/refund-cancel/auto-refund-taken.ts`로 이동했다.
+  - `ARTWORK_TAKEN` 이후 주문 refunded 마킹, 예약 해제, 공개 revalidation, Toss cancel, payments CANCELED sync를 shared helper에서 관리한다.
+  - 자동환불 성공 시 운영자/구매자 환불 알림을 보내고, 자동환불 실패 시에는 구매자 성공성 알림 없이 운영자 수동환불 필요 알림만 보낸다.
+  - confirm route와 webhook route는 context별 notification label/title/reference만 넘기도록 줄였다.
+- Toss webhook의 이미 취소된 주문 DONE 보상 흐름은 `lib/commerce/refund-cancel/cancelled-order-done.ts`로 이동했다.
+  - 취소 주문에 결제 완료 webhook이 도착하면 주문을 paid로 재승격하지 않고 Toss cancel을 예약한다.
+  - Toss cancel 성공 시 `payments.id` 기준으로 CANCELED를 동기화하고 warning 운영자 알림을 보낸다.
+  - Toss cancel 실패 시 payment sync를 하지 않고 error 운영자 알림으로 수동 확인 필요를 남긴다.
+- STATUS_CHANGED DONE에서 payment row가 없을 때 복구하는 흐름은 `lib/commerce/payment-lifecycle/status-missing-payment-repair.ts`로 이동했다.
+  - verified Toss payment의 `orderId`로 SAF 주문을 찾고 `ensureTossPaymentRecord`를 호출한다.
+  - 새 payment id가 없으면 `payment_key`로 refetch해 route가 status update와 order repair를 이어갈 수 있는 row를 반환한다.
+  - route는 failure code별 logging과 500 retry 응답만 유지한다.
+- DEPOSIT_CALLBACK DONE에서 payment row가 없을 때 복구하는 흐름은 `lib/commerce/payment-lifecycle/deposit-missing-payment-repair.ts`로 이동했다.
+  - webhook orderId로 SAF 주문을 찾고 metadata 기반 provider를 결정한 뒤 Toss API에서 DONE/orderId 일치를 검증한다.
+  - 검증된 Toss payment로 `ensureTossPaymentRecord`를 호출하고, 새 payment id가 없으면 `payment_key`로 refetch한다.
+  - route는 failure code별 logging/운영자 알림/500 retry 응답과 기존 per-payment secret 검증만 유지한다.
+- Toss CANCELED/PARTIAL_CANCELED webhook cascade는 `lib/commerce/refund-cancel/toss-canceled-cascade.ts`로 이동했다.
+  - active 주문을 refunded로 보정하고 active artwork_sales void, 작품 상태 재동기화, 예약 해제, 공개 revalidation을 helper에서 처리한다.
+  - 이미 refunded/cancelled인 주문은 mutation/notification 없이 skip한다.
+  - `tossWebhook.canceled.notifications` 알림 label과 운영자/구매자 환불 알림 흐름을 helper에서 보존한다.
+- STATUS_CHANGED DONE에서 confirm route 실패를 즉시 보정하는 promotion 흐름은 `lib/commerce/payment-lifecycle/status-changed-done-promotion.ts`로 이동했다.
+  - pending/awaiting 주문은 `markOrderPaidWithOutcome`으로 paid 승격, 판매 기록, 작품 상태 동기화를 진행한다.
+  - 이미 cancelled인 주문은 paid로 되살리지 않고 `handleCancelledOrderDoneRefund`에 위임한다.
+  - 동시 구매 경합은 `handleArtworkTakenAutoRefund`로 넘기고, 보정 성공 때만 `tossWebhook.statusChangedDone.notifications` 알림을 예약한다.
+  - `PAYMENT_RECORD_FAILED`만 route가 500 retry 응답으로 매핑한다.
+- DEPOSIT_CALLBACK CANCELED의 가상계좌 만료/취소 흐름은 `lib/commerce/refund-cancel/deposit-callback-canceled.ts`로 이동했다.
+  - payment row가 있으면 주문을 조회하고 `cancelAwaitingDepositOrder` shared lifecycle로 awaiting-deposit 취소, 예약 해제, 공개 cache revalidation을 수행한다.
+  - payment row가 없어도 기존처럼 `가상계좌 입금 취소/만료` warning 알림은 유지한다.
+  - 예약 해제 warning이나 주문 상태 mismatch는 Toss retry fatal로 올리지 않고 logging/ack 흐름을 유지한다.
+- DEPOSIT_CALLBACK DONE의 입금완료 promotion과 알림 흐름은 `lib/commerce/payment-lifecycle/deposit-callback-done-promotion.ts`로 이동했다.
+  - payment row 없음, 주문 조회 실패, payment record fatal은 route가 기존처럼 500 retry 응답으로 매핑한다.
+  - already paid 주문은 멱등 200, cancelled 주문은 paid로 되살리지 않고 자동 Toss cancel helper로 위임한다.
+  - awaiting-deposit 주문은 `markOrderPaidWithOutcome`으로 paid 승격하고, 정상 승격 때만 `tossWebhook.depositPaid.notifications`를 예약한다.
+  - ARTWORK_TAKEN 경합은 구매자에게 거짓 입금확인 알림을 보내지 않고 자동환불 helper로 위임한다.
+- Toss confirm route의 최종 성공 알림 scheduling은 `lib/commerce/payment-lifecycle/toss-confirm-success-notifications.ts`로 이동했다.
+  - `tossConfirm.paymentConfirmed.notifications`와 `tossConfirm.virtualAccountIssued.notifications` label을 helper에서 보존한다.
+  - route는 notifyInfo 조회와 analytics response 조립을 유지하고, helper는 admin/buyer email/SMS 알림 예약만 담당한다.
+  - buyer email이 없으면 email task를 생략하고 SMS task는 기존처럼 유지한다.
+- Toss confirm route의 가상계좌 발급 promotion/reservation 흐름은 `lib/commerce/payment-lifecycle/toss-confirm-virtual-account-promotion.ts`로 이동했다.
+  - payment row 생성, unique 작품 예약, `awaiting_deposit` 전이, 예약 실패 자동 취소, 주문 상태 경합 release/cancel 보상을 helper가 담당한다.
+  - `toss-confirm.virtual-account-reservation-failed.notifications`, `toss-confirm.virtual-account-race-cancel.notification`, `tossConfirm.orderStatusSyncFailed.notifications` label을 helper에서 보존한다.
+  - `lib/commerce`가 `app/actions`를 import하지 않도록 activity log는 route가 주입한 callback으로 기록한다.
+- Toss confirm route의 DONE paid promotion 흐름은 `lib/commerce/payment-lifecycle/toss-confirm-paid-promotion.ts`로 이동했다.
+  - `markOrderPaidWithOutcome` 호출, payment record 실패, already promoted, status mismatch 보상, `ARTWORK_TAKEN` 자동환불 위임을 helper가 담당한다.
+  - `toss-confirm.cancelled-order-refund.notification`, `tossConfirm.orderStatusSyncFailed.notifications` label을 helper에서 보존한다.
+  - 판매기록 실패/품목 없음 warning 알림도 helper에서 예약해 route의 성공 응답/analytics 조립과 분리했다.
+- `app/api/payments/toss/confirm/route.ts`는 445줄, `app/api/webhooks/toss/route.ts`는 475줄이다.
+
+## 검증
+
+- focused batch mutation 검증 통과
+  - `npm test -- --runInBand __tests__/lib/artworks/batch-mutations.test.ts __tests__/actions/admin-artworks-delete.test.ts __tests__/actions/admin-artworks-status.test.ts`
+  - 3 suites / 13 tests
+- Phase 26 focused action/source 검증 통과
+  - `npm test -- --runInBand __tests__/actions/admin-artwork-tags.test.ts __tests__/app/admin-artwork-tags-action-source.test.ts __tests__/lib/artworks/admin-tags.test.ts __tests__/actions/admin-artworks-status.test.ts __tests__/actions/admin-artworks-delete.test.ts __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts`
+  - 7 suites / 39 tests
+- Phase 27 focused action/source 검증 통과
+  - `npm test -- --runInBand __tests__/actions/admin-artwork-details.test.ts __tests__/actions/admin-artwork-tags.test.ts __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts __tests__/app/admin-artwork-tags-action-source.test.ts __tests__/lib/artworks/details-form.test.ts __tests__/lib/artworks/details-mutations.test.ts __tests__/lib/artworks/admin-tags.test.ts __tests__/actions/admin-artworks-status.test.ts __tests__/actions/admin-artworks-delete.test.ts`
+  - 10 suites / 49 tests
+- Phase 3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27 관련 회귀 검증 통과
+  - `npm test -- --runInBand __tests__/lib/commerce/payment-lifecycle/toss-confirm-paid-promotion.test.ts __tests__/lib/commerce/payment-lifecycle/toss-confirm-virtual-account-promotion.test.ts __tests__/lib/commerce/payment-lifecycle/toss-confirm-success-notifications.test.ts __tests__/lib/commerce/payment-lifecycle/deposit-callback-done-promotion.test.ts __tests__/lib/commerce/refund-cancel/deposit-callback-canceled.test.ts __tests__/lib/commerce/payment-lifecycle/status-changed-done-promotion.test.ts __tests__/lib/commerce/refund-cancel/toss-canceled-cascade.test.ts __tests__/lib/commerce/payment-lifecycle/deposit-missing-payment-repair.test.ts __tests__/lib/commerce/payment-lifecycle/status-missing-payment-repair.test.ts __tests__/lib/commerce/refund-cancel/cancelled-order-done.test.ts __tests__/lib/commerce/refund-cancel/auto-refund-taken.test.ts __tests__/lib/orders/guest-claims.test.ts __tests__/lib/orders/admin-awaiting-cancel.test.ts __tests__/lib/orders/admin-refund.test.ts __tests__/lib/orders/admin-read-model.test.ts __tests__/lib/orders/status-transition.test.ts __tests__/lib/orders/deposit-confirmation.test.ts __tests__/lib/orders/public-lookup.test.ts __tests__/lib/orders/buyer-cancel.test.ts __tests__/lib/orders/buyer-mutations.test.ts __tests__/lib/orders/admin-mutations.test.ts __tests__/app/deposit-auto-cancel-pause-guard.test.ts __tests__/lib/admin-artwork-tags.test.ts __tests__/lib/artworks/admin-tags.test.ts __tests__/lib/artworks/core-mutations.test.ts __tests__/lib/artworks/details-form.test.ts __tests__/lib/artworks/details-mutations.test.ts __tests__/lib/artworks/sales.test.ts __tests__/lib/artworks/status-mutations.test.ts __tests__/lib/artworks/batch-mutations.test.ts __tests__/lib/commerce/layer-boundary.test.ts __tests__/lib/commerce/payment-lifecycle/mark-order-paid.test.ts __tests__/lib/commerce/refund-cancel/mark-order-refunded.test.ts __tests__/lib/commerce/refund-cancel/cancel-awaiting-order.test.ts __tests__/actions/admin-artwork-details.test.ts __tests__/actions/admin-artwork-tags.test.ts __tests__/actions/admin-artworks-status.test.ts __tests__/actions/admin-artworks-delete.test.ts __tests__/actions/admin-orders.test.ts __tests__/actions/order-lookup.test.ts __tests__/app/admin-artwork-tags-action-source.test.ts __tests__/app/admin-artwork-create-image-upload-source.test.ts __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/reconcile-payments-backfill-contract.test.ts __tests__/app/toss-confirm-payment-record-failure.test.ts __tests__/app/toss-confirm-virtual-account-reservation.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts __tests__/app/toss-webhook-cancelled-done-source.test.ts __tests__/app/toss-confirm-notification-source.test.ts __tests__/app/reservation-release-source.test.ts`
+  - 51 suites / 245 tests
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 `app/api/webhooks/funding/toss/route.ts:120` console warning 1건은 유지
+- `git diff --check` 통과
+
+## 남은 항목
+
+- `app/api/payments/toss/confirm/route.ts`는 445줄이고 요청 검증/주문 조회/availability preflight/결제 승인 실패 처리/최종 analytics response 조립이 아직 route에 남아 있다.
+- `app/api/webhooks/toss/route.ts`는 475줄까지 줄었지만 STATUS_CHANGED provider/verification/audit setup은 아직 route에 남아 있다.
+- `app/actions/admin-artworks.ts`는 510줄로 남아 있어 판매 기록 action wrapper, 이미지/카테고리 action wrapper, batch/status/delete action wrapper를 더 작은 action modules로 나누는 작업이 다음 후보다.
+
+---
+
 # 결제/환불 상태 불일치 차단 결과 (2026-06-22)
 
 ## 변경 요약
@@ -1666,4 +1800,44 @@ curl -fsS \
 - `npm run type-check` 통과
 - `npm run lint` 통과
   - 기존 접근성 warning 46개, Browserslist 오래됨 경고, generated artwork Babel deopt 경고는 남아 있으나 exit code는 0이다.
+- `git diff --check` 통과
+
+---
+
+# SAF 리팩토링 Phase 3 환불/취소 lifecycle
+
+## 변경 사항
+
+- `lib/commerce/refund-cancel/mark-order-refunded.ts`를 추가해 Toss 취소 성공 이후 내부 `payments`/`orders` sync, `artwork_sales` void, 작품 상태 재계산, 예약 해제, 공개 작품 캐시 갱신을 하나의 domain lifecycle로 묶었다.
+- `refundOrder()`와 구매자 `cancelBuyerOrder()` paid branch가 `markOrderRefundedAfterCancel(...)`을 사용하도록 변경했다.
+- `lib/commerce/refund-cancel/cancel-awaiting-order.ts`를 추가해 관리자/구매자 입금대기 취소의 주문 취소, 예약 해제, 공개 작품 캐시 갱신을 공통화했다.
+- `deriveAndSyncArtworkStatus(...)`를 `lib/artworks/status.ts`로 이동하고 `app/actions/admin-artworks.ts`는 기존 import 호환을 위해 re-export adapter로 유지했다.
+- `lib/commerce`가 `@/app/*`를 import하지 못하게 `__tests__/lib/commerce/layer-boundary.test.ts`를 추가했다.
+
+## 검증
+
+- `npm test -- --runInBand __tests__/lib/commerce/layer-boundary.test.ts __tests__/lib/commerce/payment-lifecycle/mark-order-paid.test.ts __tests__/lib/commerce/refund-cancel/mark-order-refunded.test.ts __tests__/lib/commerce/refund-cancel/cancel-awaiting-order.test.ts __tests__/actions/admin-artworks-status.test.ts __tests__/actions/admin-orders.test.ts __tests__/actions/order-lookup.test.ts __tests__/app/reconcile-payments-backfill-contract.test.ts __tests__/app/toss-confirm-payment-record-failure.test.ts __tests__/app/toss-confirm-virtual-account-reservation.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts` 통과: 12 suites / 80 tests
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 `app/api/webhooks/funding/toss/route.ts` console warning 1건은 남아 있으나 exit code는 0이다.
+- `git diff --check` 통과
+
+---
+
+# SAF 리팩토링 Phase 4 admin-artworks 판매/상태 분해
+
+## 변경 사항
+
+- `lib/artworks/sales.ts`를 추가해 판매 기록 조회, manual sale 생성/수정/void, limited edition capacity 검증, 판매 변경 후 작품 상태 재동기화를 담당하게 했다.
+- `recordArtworkSale()`, `updateArtworkSale()`, `voidArtworkSale()`은 FormData 파싱, 감사 로그, admin/public revalidation 중심으로 축소했다.
+- `lib/artworks/status-mutations.ts`를 추가해 `batchUpdateArtworkStatus()`의 DB mutation을 분리했다.
+- 관리자 수동 sold 변경은 `manual_sold_override`를 켜고 `sold_at` 누락 행만 보정하며, available/reserved 변경은 `sold_at`과 override를 함께 해제하는 기존 정책을 유지했다.
+- `app/actions/admin-artworks.ts`는 이번 slice 후 1,367줄로 줄었다.
+
+## 검증
+
+- `npm test -- --runInBand __tests__/lib/artworks/sales.test.ts __tests__/lib/artworks/status-mutations.test.ts __tests__/lib/commerce/layer-boundary.test.ts __tests__/lib/commerce/payment-lifecycle/mark-order-paid.test.ts __tests__/lib/commerce/refund-cancel/mark-order-refunded.test.ts __tests__/lib/commerce/refund-cancel/cancel-awaiting-order.test.ts __tests__/actions/admin-artworks-status.test.ts __tests__/actions/admin-orders.test.ts __tests__/actions/order-lookup.test.ts __tests__/app/admin-artwork-create-revalidate-contract.test.ts __tests__/app/reconcile-payments-backfill-contract.test.ts __tests__/app/toss-confirm-payment-record-failure.test.ts __tests__/app/toss-confirm-virtual-account-reservation.test.ts __tests__/app/toss-webhook-status-changed-missing-payment.test.ts __tests__/app/toss-webhook-deposit-callback-missing-payment.test.ts` 통과: 15 suites / 98 tests
+- `npm run type-check` 통과
+- `npm run lint` 통과
+  - 기존 `app/api/webhooks/funding/toss/route.ts` console warning 1건은 남아 있으나 exit code는 0이다.
 - `git diff --check` 통과

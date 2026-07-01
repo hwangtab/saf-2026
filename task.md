@@ -1,3 +1,323 @@
+# SAF 리팩토링 Phase 3 환불/취소 lifecycle 체크리스트
+
+- [x] 깨끗한 worktree 생성: `.worktrees/refactor-phase-3-refund-cancel`
+- [x] 기준 테스트 확인: `admin-orders`, `order-lookup`
+- [x] Phase 3 실행 계획 문서 작성
+- [x] `markOrderRefundedAfterCancel` RED 테스트 작성 및 실패 확인
+- [x] `markOrderRefundedAfterCancel` 최소 구현 및 GREEN 확인
+- [x] 관리자 `refundOrder()` shared lifecycle 연결
+- [x] 구매자 `cancelBuyerOrder()` paid branch shared lifecycle 연결
+- [x] 입금대기 취소 shared lifecycle 분리
+- [x] commerce layer boundary 정리 (`lib/commerce` -> `app/actions` import 제거)
+- [x] focused Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 4 admin-artworks 판매 기록 분해 체크리스트
+
+- [x] 판매 기록 mutation 분해 계획 작성
+- [x] `lib/artworks/sales.ts` RED 테스트 작성 및 실패 확인
+- [x] `lib/artworks/sales.ts` 구현 및 GREEN 확인
+- [x] `admin-artworks.ts` 판매 기록 action을 domain module에 연결
+- [x] `batchUpdateArtworkStatus`를 `lib/artworks/status-mutations.ts`로 분리
+- [x] `deleteAdminArtwork`/`batchToggleHidden`/`batchDeleteArtworks`를 `lib/artworks/batch-mutations.ts`로 분리
+- [x] 관리자 내부 태그 조회/CRUD/작품 연결을 `lib/artworks/admin-tags.ts`로 분리
+- [x] `updateArtworkImages`/`updateArtworkCategory`를 `lib/artworks/core-mutations.ts`로 분리
+- [x] create/update details FormData 파싱과 payload builder를 `lib/artworks/details-form.ts`로 분리
+- [x] create/update details DB mutation과 artist-name lookup을 `lib/artworks/details-mutations.ts`로 분리
+- [x] focused Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 5 admin-orders 소형 mutation 분해 체크리스트
+
+- [x] 관리자 주문 소형 mutation 분해 계획 작성
+- [x] `lib/orders/admin-mutations.ts` RED 테스트 작성 및 실패 확인
+- [x] 배송정보/입금대기 자동취소 보류/에스컬레이션 mutation 구현
+- [x] `admin-orders.ts` 관련 action을 domain module에 연결
+- [x] focused Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 6 buyer order shipping mutation 분해 체크리스트
+
+- [x] 구매자 배송정보 mutation 분해 계획 작성
+- [x] `lib/orders/buyer-mutations.ts` RED 테스트 작성 및 실패 확인
+- [x] 배송정보 입력/소유권/상태/update mutation 구현
+- [x] `order-lookup.ts` `updateBuyerShipping` action을 domain module에 연결
+- [x] focused Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 7 buyer order cancel mutation 분해 체크리스트
+
+- [x] 구매자 셀프 취소 mutation 분해 계획 작성
+- [x] `lib/orders/buyer-cancel.ts` RED 테스트 작성 및 실패 확인
+- [x] 주문 조회/소유권/상태/Toss/shared lifecycle mutation 구현
+- [x] `order-lookup.ts` `cancelBuyerOrder` action을 domain module에 연결
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 8 public order lookup read model 분해 체크리스트
+
+- [x] 구매자 주문조회 read model 분해 계획 작성
+- [x] `lib/orders/public-lookup.ts` RED 테스트 작성 및 실패 확인
+- [x] 주문 목록/상세 DTO 조립 및 무통장 표시 read model 구현
+- [x] `order-lookup.ts` `lookupOrders`/`lookupOrderDetail`/`lookupOrderByToken` action을 domain module에 연결
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 9 admin order deposit confirmation 분해 체크리스트
+
+- [x] 관리자 입금확정 mutation 분해 계획 작성
+- [x] `lib/orders/deposit-confirmation.ts` RED 테스트 작성 및 실패 확인
+- [x] 주문 조회/상태 guard/RPC/artwork sync mutation 구현
+- [x] `admin-orders.ts` `confirmDeposit` action을 domain module에 연결
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 10 admin order status transition 분해 체크리스트
+
+- [x] 관리자 주문 상태 전이 mutation 분해 계획 작성
+- [x] `lib/orders/status-transition.ts` RED 테스트 작성 및 실패 확인
+- [x] 상태 전이표/optimistic update/취소 cleanup mutation 구현
+- [x] `admin-orders.ts` `updateOrderStatus` action을 domain module에 연결
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 11 admin order read model 분해 체크리스트
+
+- [x] 관리자 주문 목록/상세 read model 분해 계획 작성
+- [x] `lib/orders/admin-read-model.ts` RED 테스트 작성 및 실패 확인
+- [x] 목록 q/status/SLA/대표작품 및 상세 payment/sale/line items read model 구현
+- [x] `admin-orders.ts` `getOrders`/`getOrderDetail` action을 domain module에 연결
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 12 admin order refund mutation 분해 체크리스트
+
+- [x] 관리자 환불 mutation 분해 계획 작성
+- [x] `lib/orders/admin-refund.ts` RED 테스트 작성 및 실패 확인
+- [x] 주문/결제 조회, 환불 가능 상태 guard, Toss 취소/skip 판단, shared refunded lifecycle 호출 구현
+- [x] `admin-orders.ts` `refundOrder` action을 domain module에 연결
+- [x] sync failure 운영 알림/audit와 성공 알림/audit/revalidate 유지 검증
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 13 admin awaiting cancel mutation 분해 체크리스트
+
+- [x] 관리자 입금대기 취소 mutation 분해 계획 작성
+- [x] `lib/orders/admin-awaiting-cancel.ts` RED 테스트 작성 및 실패 확인
+- [x] 주문 조회, `awaiting_deposit` 상태 guard, shared awaiting cancel lifecycle 호출 구현
+- [x] `admin-orders.ts` `cancelAwaitingOrder` action을 domain module에 연결
+- [x] 예약 해제 실패 운영 알림과 구매자 취소 알림/audit/revalidate 유지 검증
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 14 guest order claims mutation 분해 체크리스트
+
+- [x] 게스트 주문 귀속 mutation 분해 계획 작성
+- [x] `lib/orders/guest-claims.ts` RED 테스트 작성 및 실패 확인
+- [x] 검증된 이메일 guard, guest order update, update error 구조화 구현
+- [x] `order-lookup.ts` `claimGuestOrders` action을 domain module에 연결
+- [x] source boundary test로 action DB update 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 15 artwork taken auto refund 분해 체크리스트
+
+- [x] 동시 구매 경합 자동환불 분해 계획 작성
+- [x] `lib/commerce/refund-cancel/auto-refund-taken.ts` RED 테스트 작성 및 실패 확인
+- [x] 주문 refunded 마킹, 예약 해제, public revalidation, Toss cancel, payments CANCELED sync 구현
+- [x] 자동환불 성공 시 운영자/구매자 알림, 실패 시 운영자 수동환불 알림 분기 검증
+- [x] confirm route `ARTWORK_TAKEN` branch를 shared helper에 연결
+- [x] webhook DEPOSIT_CALLBACK/STATUS_CHANGED `ARTWORK_TAKEN` branch를 shared helper에 연결
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 16 cancelled-order DONE compensation 분해 체크리스트
+
+- [x] 취소 주문 DONE webhook 보상 분해 계획 작성
+- [x] `lib/commerce/refund-cancel/cancelled-order-done.ts` RED 테스트 작성 및 실패 확인
+- [x] Toss cancel 예약, 성공 시 payments CANCELED sync, 성공/실패 운영자 알림 분기 구현
+- [x] webhook DEPOSIT_CALLBACK 취소 주문 DONE branch를 shared helper에 연결
+- [x] webhook STATUS_CHANGED 취소 주문 DONE branch를 shared helper에 연결
+- [x] source contract test로 route local function 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 17 status changed missing payment repair 분해 체크리스트
+
+- [x] STATUS_CHANGED DONE payment row 복구 분해 계획 작성
+- [x] `lib/commerce/payment-lifecycle/status-missing-payment-repair.ts` RED 테스트 작성 및 실패 확인
+- [x] `orders.order_no` 기반 주문 조회, `ensureTossPaymentRecord` 호출, payment row 반환 helper 구현
+- [x] paymentId 없음 refetch fallback과 ORDER/PAYMENT 실패 code 검증
+- [x] webhook STATUS_CHANGED missing payment branch를 shared helper에 연결
+- [x] source contract test로 route 직접 ensure/order lookup 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 18 deposit callback missing payment repair 분해 체크리스트
+
+- [x] DEPOSIT_CALLBACK DONE payment row 복구 분해 계획 작성
+- [x] `lib/commerce/payment-lifecycle/deposit-missing-payment-repair.ts` RED 테스트 작성 및 실패 확인
+- [x] `orders.order_no` 조회, provider resolve, Toss DONE/orderId 검증, `ensureTossPaymentRecord` 호출 helper 구현
+- [x] paymentId 없음 refetch fallback과 ORDER/VERIFY/PAYMENT 실패 code 검증
+- [x] webhook DEPOSIT_CALLBACK missing payment branch를 shared helper에 연결
+- [x] source contract test로 route 직접 ensure/order/payment lookup 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 19 Toss canceled cascade 분해 체크리스트
+
+- [x] Toss CANCELED/PARTIAL_CANCELED webhook cascade 분해 계획 작성
+- [x] `lib/commerce/refund-cancel/toss-canceled-cascade.ts` RED 테스트 작성 및 실패 확인
+- [x] 주문 refunded 업데이트, active sale void, 작품 상태 재동기화, 예약 해제, public revalidation helper 구현
+- [x] terminal refunded/cancelled 주문 skip과 `tossWebhook.canceled.notifications` 알림 예약 검증
+- [x] webhook CANCELED_STATUSES branch를 shared helper에 연결
+- [x] notification source contract test로 canceled notification label 보존
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 20 STATUS_CHANGED DONE promotion 분해 체크리스트
+
+- [x] STATUS_CHANGED DONE 보정 promotion 분해 계획 작성
+- [x] `lib/commerce/payment-lifecycle/status-changed-done-promotion.ts` RED 테스트 작성 및 실패 확인
+- [x] pending/awaiting 주문 paid promotion, cancelled 주문 refund scheduling, payment record fatal result helper 구현
+- [x] `tossWebhook.statusChangedDone.notifications` 운영자/구매자 알림 예약 검증
+- [x] webhook STATUS_CHANGED DONE branch를 shared helper에 연결
+- [x] source contract tests로 route local promotion orchestration 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 21 DEPOSIT_CALLBACK CANCELED 분해 체크리스트
+
+- [x] DEPOSIT_CALLBACK CANCELED branch 분해 계획 작성
+- [x] `lib/commerce/refund-cancel/deposit-callback-canceled.ts` RED 테스트 작성 및 실패 확인
+- [x] payment row 존재 시 주문 조회 후 `cancelAwaitingDepositOrder` shared lifecycle 호출 구현
+- [x] payment row 없음 skip과 `가상계좌 입금 취소/만료` warning 알림 유지 검증
+- [x] reservation release warning을 Toss retry fatal로 올리지 않는 logging 검증
+- [x] webhook DEPOSIT_CALLBACK CANCELED branch를 shared helper에 연결
+- [x] source contract test로 route local reservation/revalidation 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 22 DEPOSIT_CALLBACK DONE promotion 분해 체크리스트
+
+- [x] DEPOSIT_CALLBACK DONE promotion 분해 계획 작성
+- [x] `lib/commerce/payment-lifecycle/deposit-callback-done-promotion.ts` RED 테스트 작성 및 실패 확인
+- [x] payment row 없음, already paid, cancelled order, payment record fatal result 검증
+- [x] awaiting-deposit 주문 paid promotion과 `tossWebhook.depositPaid.notifications` 알림 예약 구현
+- [x] ARTWORK_TAKEN 경합 시 거짓 입금확인 알림 없이 자동환불 helper 위임 유지
+- [x] webhook DEPOSIT_CALLBACK DONE branch를 shared helper에 연결
+- [x] source contract tests로 route local promotion orchestration 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 23 Toss confirm success notifications 분해 체크리스트
+
+- [x] Toss confirm 최종 성공 알림 분해 계획 작성
+- [x] `lib/commerce/payment-lifecycle/toss-confirm-success-notifications.ts` RED 테스트 작성 및 실패 확인
+- [x] 결제완료 `tossConfirm.paymentConfirmed.notifications` helper 구현
+- [x] 가상계좌발급 `tossConfirm.virtualAccountIssued.notifications` helper 구현
+- [x] buyer email 없음 분기에서 SMS 알림 유지 검증
+- [x] confirm route final notification block을 shared helper에 연결
+- [x] source contract test로 confirm route local notification orchestration 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 24 Toss confirm virtual-account promotion 분해 체크리스트
+
+- [x] Toss confirm 가상계좌 promotion/reservation 분해 계획 작성
+- [x] `lib/commerce/payment-lifecycle/toss-confirm-virtual-account-promotion.ts` RED 테스트 작성 및 실패 확인
+- [x] payment row 생성, unique 예약, `awaiting_deposit` 전이, public revalidation helper 구현
+- [x] payment record 실패, unique 예약 실패 자동 취소, order 상태 경합 release/cancel 보상 검증
+- [x] `app/actions` import 없이 route 주입 logging callback으로 activity log boundary 유지
+- [x] confirm route 가상계좌 branch를 shared helper에 연결
+- [x] source contract test로 confirm route local reservation/release orchestration 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 25 Toss confirm paid promotion 분해 체크리스트
+
+- [x] Toss confirm DONE paid promotion 분해 계획 작성
+- [x] `lib/commerce/payment-lifecycle/toss-confirm-paid-promotion.ts` RED 테스트 작성 및 실패 확인
+- [x] `markOrderPaidWithOutcome` 호출, payment record 실패, already promoted, status mismatch 보상 helper 구현
+- [x] cancelled order 자동 Toss cancel 알림과 order sync failure logging callback 검증
+- [x] `ARTWORK_TAKEN` 경합 자동환불 helper 위임과 판매기록 warning 알림 검증
+- [x] confirm route DONE branch를 shared helper에 연결
+- [x] source contract test로 confirm route local paid promotion orchestration 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 26 admin-artwork tag action 분해 체크리스트
+
+- [x] 관리자 내부 태그 server action 분해 계획 작성
+- [x] `app/actions/admin-artwork-tags.ts` RED 테스트 작성 및 실패 확인
+- [x] 태그 조회/CRUD/작품 연결 action wrapper를 전용 module로 분리
+- [x] `admin-artworks.ts`는 기존 UI import 호환을 위해 tag action re-export만 유지
+- [x] audit log, admin/detail revalidation, 빈 bulk add/remove 반환값 유지 검증
+- [x] source contract test로 `admin-artworks.ts` tag mutation direct import 재유입 방지
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
+# SAF 리팩토링 Phase 27 admin-artwork details action 분해 체크리스트
+
+- [x] 관리자 작품 생성/상세 수정 action 분해 계획 작성
+- [x] `app/actions/admin-artwork-details.ts` RED 테스트 작성 및 실패 확인
+- [x] 생성/상세 수정 action wrapper와 공개 캐시 재검증 예약 helper를 전용 module로 분리
+- [x] `admin-artworks.ts`는 기존 UI import 호환을 위해 details action re-export만 유지
+- [x] 신규 작품 등록 응답 경량화, protected revalidation route 예약, 실패 알림/시스템 로그 유지 검증
+- [x] 상세 수정 public/admin revalidation과 audit snapshot 유지 검증
+- [x] focused Jest / regression Jest / type-check / lint / diff check 검증
+- [x] `walkthrough.md` 결과 정리
+
+---
+
 # 결제/환불 상태 불일치 차단 체크리스트
 
 - [x] confirm route 주문 상태 전이 실패 RED 테스트 추가

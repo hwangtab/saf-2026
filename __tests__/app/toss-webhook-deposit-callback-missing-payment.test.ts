@@ -48,7 +48,7 @@ jest.mock('@/lib/payments/toss-payment-record', () => ({
   ensureTossPaymentRecord: (...args: unknown[]) => mockEnsureTossPaymentRecord(...args),
 }));
 
-jest.mock('@/app/actions/admin-artworks', () => ({
+jest.mock('@/lib/artworks/status', () => ({
   deriveAndSyncArtworkStatus: jest.fn(),
 }));
 
@@ -210,8 +210,29 @@ describe('Toss DEPOSIT_CALLBACK missing payment row repair', () => {
     expect(supabase.orderStatusUpdates).toContain('paid');
   });
 
+  it('routes DEPOSIT_CALLBACK missing payment repair through the shared helper', () => {
+    const source = readFileSync('app/api/webhooks/toss/route.ts', 'utf8');
+    const branchStart = source.indexOf(
+      "if (!paymentRecord && payload.data.paymentStatus === 'DONE')"
+    );
+    const branchEnd = source.indexOf('// SEC-04a: Verify per-payment secret', branchStart);
+    const missingPaymentBranch = source.slice(branchStart, branchEnd);
+
+    expect(source).toContain(
+      "from '@/lib/commerce/payment-lifecycle/deposit-missing-payment-repair'"
+    );
+    expect(missingPaymentBranch).toContain('repairDepositCallbackMissingPaymentRecord({');
+    expect(missingPaymentBranch).not.toContain('ensureTossPaymentRecord({');
+    expect(missingPaymentBranch).not.toContain(".from('orders')");
+    expect(missingPaymentBranch).not.toContain(".from('payments')");
+  });
+
   it('routes DEPOSIT_CALLBACK DONE promotion through the shared lifecycle helper', () => {
     const source = readFileSync('app/api/webhooks/toss/route.ts', 'utf8');
+    const helperSource = readFileSync(
+      'lib/commerce/payment-lifecycle/deposit-callback-done-promotion.ts',
+      'utf8'
+    );
     const branchStart = source.indexOf("if (payload.data.paymentStatus === 'DONE')");
     const branchEnd = source.indexOf(
       "} else if (payload.data.paymentStatus === 'CANCELED')",
@@ -219,7 +240,33 @@ describe('Toss DEPOSIT_CALLBACK missing payment row repair', () => {
     );
     const depositDoneBranch = source.slice(branchStart, branchEnd);
 
-    expect(depositDoneBranch).toContain('markOrderPaidWithOutcome({');
+    expect(source).toContain(
+      "from '@/lib/commerce/payment-lifecycle/deposit-callback-done-promotion'"
+    );
+    expect(depositDoneBranch).toContain('handleDepositCallbackDonePromotion({');
+    expect(depositDoneBranch).not.toContain('markOrderPaidWithOutcome({');
     expect(depositDoneBranch).not.toContain('recordOrderArtworkSales(');
+    expect(helperSource).toContain('markOrderPaidWithOutcome({');
+    expect(helperSource).toContain('handleArtworkTakenAutoRefund({');
+  });
+
+  it('routes DEPOSIT_CALLBACK CANCELED through the shared awaiting-cancel helper', () => {
+    const source = readFileSync('app/api/webhooks/toss/route.ts', 'utf8');
+    const helperSource = readFileSync(
+      'lib/commerce/refund-cancel/deposit-callback-canceled.ts',
+      'utf8'
+    );
+    const branchStart = source.indexOf("} else if (payload.data.paymentStatus === 'CANCELED')");
+    const branchEnd = source.indexOf('  } else if (isPaymentStatusChanged(payload))', branchStart);
+    const canceledBranch = source.slice(branchStart, branchEnd);
+
+    expect(source).toContain("from '@/lib/commerce/refund-cancel/deposit-callback-canceled'");
+    expect(canceledBranch).toContain('handleDepositCallbackCanceled({');
+    expect(canceledBranch).not.toContain('releaseReservedArtworksIfUnowned(');
+    expect(canceledBranch).not.toContain('extractLineItems(');
+    expect(canceledBranch).not.toContain('revalidatePath(');
+    expect(canceledBranch).not.toContain('revalidatePublicArtworkSurfaces(');
+    expect(helperSource).toContain('cancelAwaitingDepositOrder({');
+    expect(helperSource).toContain("notifyEmail('warning', '가상계좌 입금 취소/만료'");
   });
 });
