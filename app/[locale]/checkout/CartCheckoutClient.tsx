@@ -421,7 +421,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                     ) : (
                       <span
                         className={clsx(
-                          'flex items-center gap-2 text-base font-medium',
+                          'flex items-center gap-2 text-sm font-medium',
                           selected ? 'text-primary-strong' : 'text-charcoal'
                         )}
                       >
@@ -429,7 +429,7 @@ export default function CartCheckoutClient({ clientKey }: Props) {
                           <Icon
                             aria-hidden="true"
                             className={clsx(
-                              'h-6 w-6 shrink-0',
+                              'h-5 w-5 shrink-0',
                               selected ? 'text-primary-strong' : 'text-charcoal-soft'
                             )}
                           />

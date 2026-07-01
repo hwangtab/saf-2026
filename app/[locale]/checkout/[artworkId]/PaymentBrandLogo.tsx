@@ -28,7 +28,7 @@ const BRAND_ASSETS: Record<
   'kakaopay' | 'tosspay' | 'naverpay' | 'payco' | 'applepay',
   { src: string; alt: string; width: number; height: number }
 > = {
-  kakaopay: { src: '/images/payment/kakaopay.svg', alt: 'KakaoPay', width: 78, height: 27 },
+  kakaopay: { src: '/images/payment/kakaopay.png', alt: 'KakaoPay', width: 121, height: 50 },
   tosspay: { src: '/images/payment/tosspay.png', alt: 'Toss', width: 3000, height: 910 },
   naverpay: { src: '/images/payment/naverpay.svg', alt: 'NaverPay', width: 198, height: 66 },
   payco: { src: '/images/payment/payco.svg', alt: 'PAYCO', width: 1022, height: 265 },
@@ -41,7 +41,7 @@ export function PaymentBrandLogo({ brand }: { brand: BrandKind }) {
     // PayPal 공식 wordmark — Pay(다크블루) + Pal(라이트블루) 이탤릭, brand guideline 준수
     return (
       <span
-        className="font-black italic text-xl"
+        className="font-black italic text-base"
         style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
       >
         <span style={{ color: BRAND_COLORS.external.paypalDark }}>Pay</span>
