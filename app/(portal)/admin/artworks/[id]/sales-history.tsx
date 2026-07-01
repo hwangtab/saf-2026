@@ -7,7 +7,7 @@ import {
   recordArtworkSale,
   updateArtworkSale,
   voidArtworkSale,
-} from '@/app/actions/admin-artworks';
+} from '@/app/actions/admin-artwork-sales';
 import { useToast } from '@/lib/hooks/useToast';
 import { cn } from '@/lib/utils/cn';
 import { ArtworkSale } from '@/types';

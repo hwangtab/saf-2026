@@ -20,30 +20,7 @@ import {
   revalidatePublicArtworkDetails,
   revalidatePublicArtworkSurfaces,
 } from '@/lib/utils/revalidate';
-import { deriveAndSyncArtworkStatus } from '@/lib/artworks/status';
-
 type ArtworkStatus = Database['public']['Enums']['artwork_status'];
-
-export { deriveAndSyncArtworkStatus };
-export { createAdminArtwork, updateArtworkDetails } from './admin-artwork-details';
-export {
-  getArtworkSales,
-  recordArtworkSale,
-  updateArtworkSale,
-  voidArtworkSale,
-} from './admin-artwork-sales';
-export {
-  addAdminTagToArtworks,
-  archiveAdminTag,
-  createAdminTag,
-  createAndAttachAdminTagToArtwork,
-  deleteAdminTag,
-  getAdminTags,
-  getArtworkAdminTags,
-  removeAdminTagFromArtworks,
-  restoreAdminTag,
-  updateAdminTag,
-} from './admin-artwork-tags';
 
 export async function deleteAdminArtwork(id: string) {
   const admin = await requireAdmin();

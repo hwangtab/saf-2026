@@ -6,15 +6,14 @@ import Link from 'next/link';
 import { Plus, Trash2, X } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { buttonVariants } from '@/components/ui/button-base';
+import { updateArtworkImages } from '@/app/actions/admin-artworks';
+import { updateArtworkDetails, createAdminArtwork } from '@/app/actions/admin-artwork-details';
 import {
-  updateArtworkDetails,
-  updateArtworkImages,
-  createAdminArtwork,
   createAndAttachAdminTagToArtwork,
   addAdminTagToArtworks,
   removeAdminTagFromArtworks,
   deleteAdminTag,
-} from '@/app/actions/admin-artworks';
+} from '@/app/actions/admin-artwork-tags';
 import { ImageUpload } from '@/components/dashboard/ImageUpload';
 import { AdminCard, AdminSelect } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/admin/_components/AdminConfirmModal';

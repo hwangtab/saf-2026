@@ -114,7 +114,7 @@ describe('deriveAndSyncArtworkStatus manual sold override', () => {
   });
 
   it('관리자 수동 sold override 작품은 active sale이 없어도 available로 되돌리지 않는다', async () => {
-    const { deriveAndSyncArtworkStatus } = await import('@/app/actions/admin-artworks');
+    const { deriveAndSyncArtworkStatus } = await import('@/lib/artworks/status');
     const { supabase, updates } = buildDeriveSupabaseMock({
       artwork: {
         id: 'art-1',
@@ -133,7 +133,7 @@ describe('deriveAndSyncArtworkStatus manual sold override', () => {
   });
 
   it('자동 sold 작품은 active sale이 사라지면 기존처럼 available로 복원한다', async () => {
-    const { deriveAndSyncArtworkStatus } = await import('@/app/actions/admin-artworks');
+    const { deriveAndSyncArtworkStatus } = await import('@/lib/artworks/status');
     const { supabase, updates } = buildDeriveSupabaseMock({
       artwork: {
         id: 'art-1',

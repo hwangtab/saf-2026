@@ -71,14 +71,15 @@ describe('admin artwork create image upload source wiring', () => {
     // 회피하고, 액션의 무거운 공개면 revalidate(revalidateTag('artworks'))는 등록 경로에서 제거.
     expect(source).toContain('createAdminArtwork(formData)');
     expect(source).toContain("window.location.assign('/admin/artworks')");
-    expect(adminArtworksAction).toContain("from './admin-artwork-details'");
-    expect(adminArtworksAction).toContain('createAdminArtwork');
+    // "use server" re-export 금지 — 폼은 전용 details action 모듈에서 직접 import하고,
+    // admin-artworks.ts는 createAdminArtwork를 더 이상 정의도 re-export도 하지 않는다.
+    expect(source).toContain("from '@/app/actions/admin-artwork-details'");
+    expect(adminArtworksAction).not.toContain('createAdminArtwork');
     expect(detailsAction).toContain('export async function createAdminArtwork(formData: FormData)');
 
     // 같은 회귀를 되살릴 수 있는 옛 패턴이 다시 들어오지 못하게 한다.
     expect(source).not.toContain('createAdminArtworkAndRedirect');
     expect(source).not.toContain('unstable_rethrow');
-    expect(adminArtworksAction).not.toContain('createAdminArtworkAndRedirect');
     expect(detailsAction).not.toContain('createAdminArtworkAndRedirect');
   });
 

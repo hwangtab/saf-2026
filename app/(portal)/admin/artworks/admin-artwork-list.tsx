@@ -14,6 +14,8 @@ import {
   batchToggleHidden,
   batchDeleteArtworks,
   updateArtworkCategory,
+} from '@/app/actions/admin-artworks';
+import {
   createAdminTag,
   updateAdminTag,
   archiveAdminTag,
@@ -21,7 +23,7 @@ import {
   deleteAdminTag,
   addAdminTagToArtworks,
   removeAdminTagFromArtworks,
-} from '@/app/actions/admin-artworks';
+} from '@/app/actions/admin-artwork-tags';
 import { ARTWORK_CATEGORIES } from '@/types';
 import {
   AdminBadge,

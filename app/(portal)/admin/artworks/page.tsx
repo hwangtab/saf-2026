@@ -1,6 +1,6 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseServerClient } from '@/lib/auth/server';
-import { getAdminTags } from '@/app/actions/admin-artworks';
+import { getAdminTags } from '@/app/actions/admin-artwork-tags';
 import { AdminArtworkList } from './admin-artwork-list';
 import LinkButton from '@/components/ui/LinkButton';
 import {

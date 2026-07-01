@@ -52,14 +52,17 @@ describe('admin artwork create revalidate contract', () => {
     expect(routeResponseBlock).toContain("stage: 'route_response'");
   });
 
-  it('admin-artworks re-exports details actions without importing details orchestration locally', () => {
+  it('details actions live in the dedicated module, not re-exported through admin-artworks', () => {
+    // "use server" 파일은 re-export가 불가하므로 details action은 전용 admin-artwork-details.ts가
+    // 소유하고, admin-artworks.ts는 이들을 정의도 re-export도 하지 않는다.
     const src = readFileSync('app/actions/admin-artworks.ts', 'utf8');
+    const detailsSrc = readFileSync('app/actions/admin-artwork-details.ts', 'utf8');
 
-    expect(src).toContain("from './admin-artwork-details'");
     for (const actionName of ['createAdminArtwork', 'updateArtworkDetails']) {
-      expect(src).toContain(actionName);
+      expect(detailsSrc).toContain(`export async function ${actionName}`);
       expect(src).not.toContain(`export async function ${actionName}`);
     }
+    expect(src).not.toContain("from './admin-artwork-details'");
 
     expect(src).not.toContain("from '@/lib/artworks/details-form'");
     expect(src).not.toContain("from '@/lib/artworks/details-mutations'");
@@ -103,19 +106,22 @@ describe('admin artwork create revalidate contract', () => {
     expect(voidBlock).not.toContain(".from('artwork_sales')");
   });
 
-  it('admin-artworks re-exports sales actions without importing sales orchestration locally', () => {
+  it('sales actions live in the dedicated module, not re-exported through admin-artworks', () => {
+    // "use server" 파일은 re-export가 불가하므로 sales action은 전용 admin-artwork-sales.ts가
+    // 소유하고, admin-artworks.ts는 이들을 정의도 re-export도 하지 않는다.
     const src = readFileSync('app/actions/admin-artworks.ts', 'utf8');
+    const salesSrc = readFileSync('app/actions/admin-artwork-sales.ts', 'utf8');
 
-    expect(src).toContain("from './admin-artwork-sales'");
     for (const actionName of [
       'getArtworkSales',
       'recordArtworkSale',
       'updateArtworkSale',
       'voidArtworkSale',
     ]) {
-      expect(src).toContain(actionName);
+      expect(salesSrc).toContain(`export async function ${actionName}`);
       expect(src).not.toContain(`export async function ${actionName}`);
     }
+    expect(src).not.toContain("from './admin-artwork-sales'");
 
     expect(src).not.toContain("from '@/lib/artworks/sales'");
     expect(src).not.toContain("from '@/lib/actions/artwork-validation'");
