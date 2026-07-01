@@ -24,15 +24,49 @@ export type BrandKind =
  */
 // 이미지 자산이 있는 브랜드. paypal만 라이선스 wordmark를 호스팅하지 않고 아래에서 텍스트 렌더.
 // payco·applepay는 공식 SVG(Wikimedia) — payco는 브랜드 레드(#fa2829), applepay는 검정 마크.
+//
+// heightClass — 로고마다 자산 여백·글자 비율이 달라 같은 높이로 렌더하면 시각 크기가 제각각.
+// 카카오페이(pill 배경 안에 작은 심볼+pay) 콘텐츠 크기를 기준으로 각 로고의 렌더 높이를
+// 개별 보정해 글자 크기를 균일하게 맞춘다. (Tailwind JIT 스캔용 완전한 클래스 리터럴)
 const BRAND_ASSETS: Record<
   'kakaopay' | 'tosspay' | 'naverpay' | 'payco' | 'applepay',
-  { src: string; alt: string; width: number; height: number }
+  { src: string; alt: string; width: number; height: number; heightClass: string }
 > = {
-  kakaopay: { src: '/images/payment/kakaopay.png', alt: 'KakaoPay', width: 121, height: 50 },
-  tosspay: { src: '/images/payment/tosspay.png', alt: 'Toss', width: 3000, height: 910 },
-  naverpay: { src: '/images/payment/naverpay.svg', alt: 'NaverPay', width: 198, height: 66 },
-  payco: { src: '/images/payment/payco.svg', alt: 'PAYCO', width: 1022, height: 265 },
-  applepay: { src: '/images/payment/applepay.svg', alt: 'Apple Pay', width: 512, height: 210 },
+  kakaopay: {
+    src: '/images/payment/kakaopay.png',
+    alt: 'KakaoPay',
+    width: 121,
+    height: 50,
+    heightClass: 'h-6',
+  },
+  tosspay: {
+    src: '/images/payment/tosspay.png',
+    alt: 'Toss',
+    width: 3000,
+    height: 910,
+    heightClass: 'h-5',
+  },
+  naverpay: {
+    src: '/images/payment/naverpay.svg',
+    alt: 'NaverPay',
+    width: 198,
+    height: 66,
+    heightClass: 'h-5',
+  },
+  payco: {
+    src: '/images/payment/payco.svg',
+    alt: 'PAYCO',
+    width: 1022,
+    height: 265,
+    heightClass: 'h-4',
+  },
+  applepay: {
+    src: '/images/payment/applepay.svg',
+    alt: 'Apple Pay',
+    width: 512,
+    height: 210,
+    heightClass: 'h-5',
+  },
 };
 
 export function PaymentBrandLogo({ brand }: { brand: BrandKind }) {
@@ -56,7 +90,7 @@ export function PaymentBrandLogo({ brand }: { brand: BrandKind }) {
       alt={asset.alt}
       width={asset.width}
       height={asset.height}
-      className="h-6 w-auto object-contain"
+      className={`${asset.heightClass} w-auto object-contain`}
     />
   );
 }
