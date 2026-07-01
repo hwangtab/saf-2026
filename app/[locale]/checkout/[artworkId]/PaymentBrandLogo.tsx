@@ -22,15 +22,17 @@ export type BrandKind =
  *
  * 자체 여백 거의 없는 trimmed 상태 (Toss는 sharp.trim()으로 후처리).
  */
-// 이미지 자산이 있는 브랜드만. paypal·payco·applepay는 라이선스 자산을 호스팅하지 않고
-// 아래 PaymentBrandLogo에서 텍스트 wordmark로 분기 렌더한다.
+// 이미지 자산이 있는 브랜드. paypal만 라이선스 wordmark를 호스팅하지 않고 아래에서 텍스트 렌더.
+// payco·applepay는 공식 SVG(Wikimedia) — payco는 브랜드 레드(#fa2829), applepay는 검정 마크.
 const BRAND_ASSETS: Record<
-  'kakaopay' | 'tosspay' | 'naverpay',
+  'kakaopay' | 'tosspay' | 'naverpay' | 'payco' | 'applepay',
   { src: string; alt: string; width: number; height: number }
 > = {
   kakaopay: { src: '/images/payment/kakaopay.png', alt: 'KakaoPay', width: 121, height: 50 },
   tosspay: { src: '/images/payment/tosspay.png', alt: 'Toss', width: 3000, height: 910 },
   naverpay: { src: '/images/payment/naverpay.svg', alt: 'NaverPay', width: 198, height: 66 },
+  payco: { src: '/images/payment/payco.svg', alt: 'PAYCO', width: 1022, height: 265 },
+  applepay: { src: '/images/payment/applepay.svg', alt: 'Apple Pay', width: 512, height: 210 },
 };
 
 export function PaymentBrandLogo({ brand }: { brand: BrandKind }) {
@@ -44,23 +46,6 @@ export function PaymentBrandLogo({ brand }: { brand: BrandKind }) {
       >
         <span style={{ color: BRAND_COLORS.external.paypalDark }}>Pay</span>
         <span style={{ color: BRAND_COLORS.external.paypalLight }}>Pal</span>
-      </span>
-    );
-  }
-  if (brand === 'payco') {
-    // 페이코 wordmark 텍스트 폴백 (이미지 자산 도입 전까지). 브랜드 색 리터럴 대신 중립 토큰.
-    return (
-      <span className="text-base font-extrabold tracking-tight text-charcoal-deep">PAYCO</span>
-    );
-  }
-  if (brand === 'applepay') {
-    //  Pay — 애플 로고 글리프(U+F8FF)는 애플페이 노출 환경(Safari/iOS)의 시스템 폰트에서 렌더됨.
-    return (
-      <span
-        className="text-base font-semibold tracking-tight text-charcoal-deep"
-        style={{ fontFamily: '-apple-system, system-ui, sans-serif' }}
-      >
-        {'\uF8FF'} Pay
       </span>
     );
   }
