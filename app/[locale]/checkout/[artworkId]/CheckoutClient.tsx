@@ -416,7 +416,7 @@ export default function CheckoutClient({
                       ) : (
                         <span
                           className={clsx(
-                            'flex items-center gap-2 text-sm font-medium',
+                            'flex items-center gap-2 text-base font-medium',
                             selected ? 'text-primary-strong' : 'text-charcoal'
                           )}
                         >
@@ -424,7 +424,7 @@ export default function CheckoutClient({
                             <Icon
                               aria-hidden="true"
                               className={clsx(
-                                'h-5 w-5 shrink-0',
+                                'h-6 w-6 shrink-0',
                                 selected ? 'text-primary-strong' : 'text-charcoal-soft'
                               )}
                             />

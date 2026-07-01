@@ -41,7 +41,7 @@ export function PaymentBrandLogo({ brand }: { brand: BrandKind }) {
     // PayPal 공식 wordmark — Pay(다크블루) + Pal(라이트블루) 이탤릭, brand guideline 준수
     return (
       <span
-        className="font-black italic text-base"
+        className="font-black italic text-xl"
         style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}
       >
         <span style={{ color: BRAND_COLORS.external.paypalDark }}>Pay</span>
