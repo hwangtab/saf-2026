@@ -260,6 +260,48 @@ export async function updateOrderStatus(
     { summary: `주문 상태 변경: ${order.order_no} (${fromStatus} → ${toStatus})` }
   );
 
+  // 구매자 환불 알림 — refund_requested → refunded 전환 시 (updateOrderStatus 경로)
+  // refundOrder 액션은 자체 알림 블록을 가지며 이 경로와 독립적.
+  if (order.buyer_email && newStatus === 'refunded') {
+    after(async () => {
+      try {
+        const refundInfo = await getOrderNotificationInfo(supabase, { id: order.id });
+        const locale = extractBuyerLocale(order.metadata);
+        await runAllSettled('adminOrders.updateOrderStatus.refundedNotifications', [
+          () =>
+            sendBuyerEmail(
+              order.buyer_email!,
+              'refunded',
+              {
+                orderNo: order.order_no,
+                buyerName: order.buyer_name ?? '',
+                artworkTitle: refundInfo?.artworkTitle ?? '',
+                artistName: refundInfo?.artistName ?? '',
+                amount: refundInfo?.itemAmount ?? 0,
+                itemAmount: refundInfo?.itemAmount,
+                shippingAmount: refundInfo?.shippingAmount,
+              },
+              locale
+            ),
+          () =>
+            sendBuyerSms(
+              order.buyer_phone,
+              'refunded',
+              {
+                buyerName: order.buyer_name ?? '',
+                artworkTitle: refundInfo?.artworkTitle ?? '',
+                amount: refundInfo?.itemAmount ?? 0,
+              },
+              locale,
+              order.order_no ?? undefined
+            ),
+        ]);
+      } catch (err) {
+        console.error('[updateOrderStatus] refunded notification failed:', err);
+      }
+    });
+  }
+
   // 구매자 배송 이메일 발송 — after(): 응답 후 실행 보장 — 알림 fetch abort 방지
   if (order.buyer_email && (newStatus === 'shipped' || newStatus === 'delivered')) {
     after(async () => {

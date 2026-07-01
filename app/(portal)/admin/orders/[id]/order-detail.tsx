@@ -104,6 +104,7 @@ const NEXT_STATUS_OPTIONS: Partial<Record<OrderStatus, { value: OrderStatus; lab
   preparing: [{ value: 'shipped', label: '배송 중으로 변경' }],
   shipped: [{ value: 'delivered', label: '배송 완료로 변경' }],
   delivered: [{ value: 'completed', label: '거래 완료로 변경' }],
+  refund_requested: [{ value: 'refunded', label: '환불 완료로 변경' }],
 };
 
 // ─── Tracking Edit Section ────────────────────────────────────────────────────
@@ -292,7 +293,7 @@ export function OrderDetail({ order }: { order: OrderDetailType }) {
   // 미완료) 주문도 포함되므로 payment_provider로 구분 — domestic 결제 실패 주문이 "계좌이체"로
   // 오표시되던 버그 방지.
   const isManualBankTransfer = order.payment_provider === 'manual_bank_transfer';
-  const canRefund = ['paid', 'preparing'].includes(order.status);
+  const canRefund = ['paid', 'preparing', 'refund_requested'].includes(order.status);
   const isAwaitingDeposit = order.status === 'awaiting_deposit';
   const isDepositPaused = order.deposit_auto_cancel_paused;
   const nextOptions = NEXT_STATUS_OPTIONS[order.status as OrderStatus] ?? [];

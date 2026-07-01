@@ -123,6 +123,15 @@ export async function handleDepositCallbackDonePromotion({
 
   if (paymentUpdateError) {
     console.error(`[toss-webhook] payment UPDATE failed: ${paymentKey}`, paymentUpdateError);
+    // Toss retries on 5xx — without this alert, structural DB failures loop silently.
+    after(() =>
+      notifyEmail('error', '가상계좌 웹훅 payment 레코드 업데이트 실패 — 재시도 루프 위험', {
+        paymentKey,
+        주문ID: paymentRecord.order_id,
+        에러: paymentUpdateError.message,
+        참고: 'Toss가 5xx를 받아 무한 재시도 중일 수 있습니다. DB 컬럼/제약 확인 후 수동 처리 필요.',
+      })
+    );
     return { ok: false, code: 'PAYMENT_RECORD_FAILED', error: paymentUpdateError.message };
   }
 
