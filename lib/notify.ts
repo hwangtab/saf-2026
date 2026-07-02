@@ -21,8 +21,37 @@ import AutoCancelledEmail from '@/emails/auto-cancelled';
 import type { EmailLocale } from '@/emails/_components/i18n';
 import { signOrderAccessToken } from '@/lib/email/order-access-token';
 import { buildReplyToAddress } from '@/lib/email/inbound';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 
 type NotifyLevel = 'payment' | 'warning' | 'error' | 'info';
+
+/**
+ * 트랜잭션 이메일 발송 결과를 email_logs에 기록(실패 가시성·재발송). sms_logs 대칭.
+ * 기록 실패가 이메일 발송 결과에 영향 주지 않도록 삼킨다. service-role write.
+ */
+async function recordEmailLog(entry: {
+  orderNo?: string | null;
+  to: string;
+  type: string;
+  subject: string;
+  result: ResendResult;
+}): Promise<void> {
+  try {
+    const admin = createSupabaseAdminClient();
+    await admin.from('email_logs').insert({
+      order_no: entry.orderNo ?? null,
+      to_email: entry.to,
+      type: entry.type,
+      subject: entry.subject,
+      provider: 'resend',
+      provider_message_id: entry.result.id,
+      status: entry.result.ok ? 'sent' : 'failed',
+      error: entry.result.error,
+    });
+  } catch (err) {
+    console.error(`[email-log:${entry.type}] insert failed:`, err);
+  }
+}
 
 /** orders.metadata 에서 buyer locale 추출. 기본값 'ko'. */
 export function extractBuyerLocale(metadata: unknown): EmailLocale {
@@ -208,10 +237,10 @@ export async function sendBuyerEmail(
   type: BuyerEmailType,
   data: BuyerEmailData,
   locale: EmailLocale = 'ko'
-): Promise<void> {
+): Promise<ResendResult | null> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from || !to) return;
+  if (!apiKey || !from || !to) return null;
 
   // 이메일 → 원클릭 주문조회 링크. 서명 토큰이라 로그인·재입력 없이 상세로 직행.
   // 진행형 5종에만 전달(환불·취소는 종료 주문이라 제외). secret 미설정 시 undefined → 버튼 미표시.
@@ -326,24 +355,40 @@ export async function sendBuyerEmail(
       default: {
         const _exhaustive: never = type;
         console.error(`[buyer-email] Unknown email type: ${_exhaustive}`);
-        return;
+        return null;
       }
     }
 
     const html = await render(emailElement);
-    await resendFetch(
+    const subject = BUYER_EMAIL_SUBJECTS[locale][type];
+    const result = await resendFetch(
       {
         apiKey,
         from,
         to,
-        subject: BUYER_EMAIL_SUBJECTS[locale][type],
+        subject,
         html,
         reply_to: buildReplyToAddress(),
       },
       `[buyer-email:${type}:${locale}]`
     );
+    await recordEmailLog({ orderNo: data.orderNo, to, type, subject, result });
+    return result;
   } catch (err) {
     console.error(`[buyer-email:${type}] render/send failed:`, err);
+    const errResult: ResendResult = {
+      ok: false,
+      id: null,
+      error: err instanceof Error ? err.message : String(err),
+    };
+    await recordEmailLog({
+      orderNo: data.orderNo,
+      to,
+      type,
+      subject: BUYER_EMAIL_SUBJECTS[locale]?.[type] ?? '',
+      result: errResult,
+    });
+    return errResult;
   }
 }
 
@@ -383,21 +428,25 @@ export async function sendArtistApprovalEmail(to: string, artistName: string): P
 </html>`;
 
   // 작가 승인 이메일은 관리자가 명시적으로 발송하는 액션 — 실패 시 throw해서 감사 로그에 허위 성공 기록 방지
-  const ok = await resendFetch(
+  const subject = '[씨앗페] 작가 대시보드 이용 안내';
+  const result = await resendFetch(
     {
       apiKey,
       from,
       to,
-      subject: '[씨앗페] 작가 대시보드 이용 안내',
+      subject,
       html,
       reply_to: buildReplyToAddress(),
     },
     '[artist-approval]'
   );
-  if (!ok) throw new Error('이메일 발송에 실패했습니다. Resend API 응답을 확인하세요.');
+  await recordEmailLog({ to, type: 'artist_approval', subject, result });
+  if (!result.ok) throw new Error('이메일 발송에 실패했습니다. Resend API 응답을 확인하세요.');
 }
 
 /** Resend 이메일 전송 — 5초 타임아웃 + 429/5xx·네트워크 1회 재시도. never throw, boolean 반환. */
+export type ResendResult = { ok: boolean; id: string | null; error: string | null };
+
 export async function resendFetch(
   opts: {
     apiKey: string;
@@ -408,7 +457,8 @@ export async function resendFetch(
     reply_to?: string;
   },
   logPrefix: string
-): Promise<boolean> {
+): Promise<ResendResult> {
+  let lastError: string | null = null;
   for (let attempt = 0; attempt < 2; attempt++) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
@@ -432,9 +482,13 @@ export async function resendFetch(
 
       clearTimeout(timeout);
 
-      if (res.ok) return true;
+      if (res.ok) {
+        const json = (await res.json().catch(() => null)) as { id?: string } | null;
+        return { ok: true, id: json?.id ?? null, error: null };
+      }
 
       const body = await res.text();
+      lastError = `${res.status}: ${body.slice(0, 300)}`;
 
       // 429 또는 5xx → 1회 재시도
       if (attempt === 0 && (res.status === 429 || res.status >= 500)) {
@@ -444,9 +498,10 @@ export async function resendFetch(
       }
 
       console.error(`${logPrefix} Resend returned ${res.status}: ${body.slice(0, 500)}`);
-      return false;
+      return { ok: false, id: null, error: lastError };
     } catch (err) {
       clearTimeout(timeout);
+      lastError = err instanceof Error ? err.message : String(err);
 
       // 타임아웃/네트워크 에러 → 1회 재시도
       if (attempt === 0) {
@@ -456,8 +511,8 @@ export async function resendFetch(
       }
 
       console.error(`${logPrefix} Resend email failed after retry:`, err);
-      return false;
+      return { ok: false, id: null, error: lastError };
     }
   }
-  return false;
+  return { ok: false, id: null, error: lastError ?? 'unknown' };
 }
