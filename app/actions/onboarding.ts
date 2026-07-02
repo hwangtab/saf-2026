@@ -8,9 +8,11 @@ import {
   TERMS_OF_SERVICE_VERSION,
 } from '@/lib/constants';
 import { redirect } from 'next/navigation';
+import { after } from 'next/server';
 import { logArtistAction } from './activity-log-writer';
 import { getRequestMetadata } from './request-metadata';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
+import { notifyEmail } from '@/lib/notify';
 
 export type OnboardingState = {
   message: string;
@@ -125,6 +127,15 @@ export async function submitArtistApplication(
         afterSnapshot: application,
         reversible: true,
       }
+    );
+
+    // 신규 신청 접수를 관리자에게 이메일로 알림 — 심사 지연 방지. redirect 전에 등록해야
+    // 응답 후 실행이 보장된다. notifyEmail은 never-throw이므로 신청 저장에 영향 없음.
+    after(() =>
+      notifyEmail('info', '신규 작가 신청', {
+        신청자: artistName || '(이름 미입력)',
+        연락처: contact || '(연락처 미입력)',
+      })
     );
 
     redirectPath =
