@@ -13,7 +13,11 @@ import {
 } from '@/app/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/(portal)/admin/_components/AdminConfirmModal';
 import { ArrowRight, Clock, AlertTriangle } from 'lucide-react';
-import { confirmDeposit, type AdminOrderListItem } from '@/app/actions/admin-orders';
+import {
+  confirmDeposit,
+  confirmDepositBatch,
+  type AdminOrderListItem,
+} from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
 import { useToast } from '@/lib/hooks/useToast';
 
@@ -102,6 +106,9 @@ export function OrderList({
   const [query, setQuery] = useState(initialQ ?? '');
   const [confirmTarget, setConfirmTarget] = useState<AdminOrderListItem | null>(null);
   const [isConfirming, startConfirm] = useTransition();
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
+  const [isBulkConfirming, startBulkConfirm] = useTransition();
 
   function handleConfirmDeposit() {
     if (!confirmTarget) return;
@@ -137,8 +144,52 @@ export function OrderList({
     return result;
   }, [orders, statusFilter, query]);
 
+  const selectableRows = useMemo(
+    () => filtered.filter((o) => o.status === 'awaiting_deposit'),
+    [filtered]
+  );
+  const allSelected =
+    selectableRows.length > 0 && selectableRows.every((o) => selectedIds.has(o.id));
+
+  function toggleOne(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    setSelectedIds((prev) => {
+      if (selectableRows.every((o) => prev.has(o.id))) return new Set();
+      return new Set(selectableRows.map((o) => o.id));
+    });
+  }
+
+  function handleBulkConfirm() {
+    const ids = [...selectedIds];
+    if (ids.length === 0) return;
+    startBulkConfirm(async () => {
+      try {
+        const { succeeded, failed } = await confirmDepositBatch(ids);
+        if (failed.length === 0) {
+          toast.success(`${succeeded.length}건 입금 확인 완료`);
+        } else {
+          toast.error(`${succeeded.length}건 확인, ${failed.length}건 실패`);
+        }
+        setSelectedIds(new Set());
+        setBulkConfirmOpen(false);
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '일괄 입금 확인에 실패했습니다.');
+      }
+    });
+  }
+
   function handleStatusChange(value: string) {
     setStatusFilter(value);
+    setSelectedIds(new Set());
     const params = new URLSearchParams();
     if (value) params.set('status', value);
     if (query.trim()) params.set('q', query.trim());
@@ -158,7 +209,10 @@ export function OrderList({
           <AdminInput
             placeholder="주문번호 / 구매자 검색"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelectedIds(new Set());
+            }}
             className="w-full sm:w-64"
           />
           <AdminSelect
@@ -176,6 +230,32 @@ export function OrderList({
         <p className="text-sm text-gray-500">{filtered.length}건</p>
       </AdminCardHeader>
 
+      {selectedIds.size > 0 && (
+        <div className="flex flex-wrap items-center gap-4 border-b border-primary-soft bg-primary-surface px-4 py-3">
+          <span className="text-sm font-medium text-primary-strong">{selectedIds.size}건 선택</span>
+          <div className="h-4 w-px bg-primary-soft" />
+          <button
+            type="button"
+            onClick={() => setBulkConfirmOpen(true)}
+            disabled={isBulkConfirming}
+            className="rounded-md bg-primary-strong px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary-strong/90 disabled:opacity-50"
+          >
+            일괄 입금 확인
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedIds(new Set())}
+            disabled={isBulkConfirming}
+            className="text-xs text-charcoal-muted hover:underline disabled:opacity-50"
+          >
+            선택 해제
+          </button>
+          {isBulkConfirming && (
+            <span className="animate-pulse text-xs text-primary-a11y">처리 중…</span>
+          )}
+        </div>
+      )}
+
       {filtered.length === 0 ? (
         <AdminEmptyState title="주문 없음" description="조건에 맞는 주문이 없습니다." />
       ) : (
@@ -183,6 +263,16 @@ export function OrderList({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--admin-border-soft)] text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+                <th className="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    aria-label="입금 대기 전체 선택"
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    disabled={selectableRows.length === 0}
+                    className="h-4 w-4 cursor-pointer accent-primary-strong disabled:cursor-not-allowed"
+                  />
+                </th>
                 <th className="px-4 py-3">주문번호</th>
                 <th className="px-4 py-3">작품명</th>
                 <th className="px-4 py-3">작가</th>
@@ -196,6 +286,17 @@ export function OrderList({
             <tbody className="divide-y divide-[var(--admin-border-soft)]">
               {filtered.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    {order.status === 'awaiting_deposit' && (
+                      <input
+                        type="checkbox"
+                        aria-label={`주문 ${order.order_no} 선택`}
+                        checked={selectedIds.has(order.id)}
+                        onChange={() => toggleOne(order.id)}
+                        className="h-4 w-4 cursor-pointer accent-primary-strong"
+                      />
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-mono text-xs text-gray-700">{order.order_no}</td>
                   <td className="max-w-[180px] truncate px-4 py-3 text-gray-800">
                     {order.artwork_title ?? '—'}
@@ -271,6 +372,17 @@ export function OrderList({
         confirmText="입금 확인"
         variant="info"
         isLoading={isConfirming}
+      />
+
+      <AdminConfirmModal
+        isOpen={bulkConfirmOpen}
+        onClose={() => setBulkConfirmOpen(false)}
+        onConfirm={handleBulkConfirm}
+        title="일괄 입금 확인"
+        description={`선택한 ${selectedIds.size}건의 입금을 확인하고 결제 완료 처리합니다.`}
+        confirmText="일괄 입금 확인"
+        variant="info"
+        isLoading={isBulkConfirming}
       />
     </AdminCard>
   );

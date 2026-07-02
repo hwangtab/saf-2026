@@ -173,6 +173,7 @@ jest.mock('@/lib/orders/record-artwork-sales', () => {
 });
 
 let confirmDeposit: typeof import('@/app/actions/admin-orders').confirmDeposit;
+let confirmDepositBatch: typeof import('@/app/actions/admin-orders').confirmDepositBatch;
 let cancelAwaitingOrder: typeof import('@/app/actions/admin-orders').cancelAwaitingOrder;
 let refundOrder: typeof import('@/app/actions/admin-orders').refundOrder;
 
@@ -212,6 +213,7 @@ beforeEach(async () => {
 
   const mod = await import('@/app/actions/admin-orders');
   confirmDeposit = mod.confirmDeposit;
+  confirmDepositBatch = mod.confirmDepositBatch;
   cancelAwaitingOrder = mod.cancelAwaitingOrder;
   refundOrder = mod.refundOrder;
 });
@@ -359,6 +361,30 @@ describe('confirmDeposit', () => {
 
       expect(capturedRpcCalls).toHaveLength(1);
       expect(capturedOrderUpdates).toHaveLength(0);
+    } finally {
+      consoleSpy.mockRestore();
+    }
+  });
+});
+
+describe('confirmDepositBatch', () => {
+  it('여러 주문을 순차 확인하고 성공 목록을 반환한다', async () => {
+    await expect(confirmDepositBatch(['ord-1', 'ord-2'])).resolves.toEqual({
+      succeeded: ['ord-1', 'ord-2'],
+      failed: [],
+    });
+    expect(capturedRpcCalls).toHaveLength(2);
+  });
+
+  it('개별 실패를 수집하고 나머지 처리를 막지 않는다', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    mockRpcResult = { data: null, error: { message: 'NO_LINE_ITEMS', code: 'P0001' } };
+    try {
+      const result = await confirmDepositBatch(['ord-1', 'ord-2']);
+      expect(result.succeeded).toEqual([]);
+      expect(result.failed).toHaveLength(2);
+      expect(result.failed.map((f) => f.id)).toEqual(['ord-1', 'ord-2']);
+      expect(result.failed[0].error).toContain('판매 기록');
     } finally {
       consoleSpy.mockRestore();
     }
