@@ -444,6 +444,62 @@ export async function sendArtistApprovalEmail(to: string, artistName: string): P
   if (!result.ok) throw new Error('이메일 발송에 실패했습니다. Resend API 응답을 확인하세요.');
 }
 
+/**
+ * 작가 신청 반려 안내 메일. 승인 메일 레이아웃을 미러하되 사유는 담지 않고 정중히 안내한다.
+ * rejectUser의 after() 안에서 비차단 호출되므로 실패해도 throw하지 않는다(반려 DB는 이미 커밋).
+ */
+export async function sendArtistRejectionEmail(to: string, artistName: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey || !from || !to) return;
+
+  const safeArtistName = escapeHtml(artistName);
+
+  const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:${BRAND_COLORS.canvas.DEFAULT};font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;">
+  <div style="max-width:520px;margin:32px auto;background:${BRAND_COLORS.gallery.canvas};border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+    <div style="background:${BRAND_COLORS.primary.strong};padding:16px 24px;">
+      <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;">씨앗페 2026 작가 신청 안내</p>
+    </div>
+    <div style="padding:24px;">
+      <p style="margin:0 0 12px;font-size:15px;color:${BRAND_COLORS.charcoal.deep};">${safeArtistName} 선생님, 안녕하세요.</p>
+      <p style="margin:0 0 16px;font-size:14px;color:${BRAND_COLORS.charcoal.DEFAULT};line-height:1.6;">
+        씨앗페 2026 작가 신청에 관심을 가져주셔서 진심으로 감사드립니다.<br>
+        신중히 검토한 결과, 이번에는 함께하기 어렵게 되었음을 정중히 안내드립니다.<br>
+        보내주신 관심에 다시 한 번 깊이 감사드리며, 다음 기회에 다시 뵙기를 바랍니다.
+      </p>
+      <p style="margin:0;font-size:14px;color:${BRAND_COLORS.charcoal.DEFAULT};line-height:1.6;">
+        문의사항은 <a href="mailto:contact@kosmart.org" style="color:${BRAND_COLORS.primary.strong};">contact@kosmart.org</a> 로 연락 주시면 정성껏 답변드리겠습니다.
+      </p>
+    </div>
+    <div style="padding:12px 24px;background:${BRAND_COLORS.canvas.DEFAULT};border-top:1px solid ${BRAND_COLORS.gallery.hairline};">
+      <p style="margin:0;font-size:12px;color:${BRAND_COLORS.gray[400]};">씨앗페 2026 · 한국스마트협동조합 · 문의: contact@kosmart.org</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const subject = '[씨앗페] 작가 신청 안내';
+  const result = await resendFetch(
+    {
+      apiKey,
+      from,
+      to,
+      subject,
+      html,
+      reply_to: buildReplyToAddress(),
+    },
+    '[artist-rejection]'
+  );
+  await recordEmailLog({ to, type: 'artist_rejection', subject, result });
+  // after() 비차단 발송이므로 실패해도 throw하지 않고 로그만 남긴다.
+  if (!result.ok) {
+    console.error('[artist-rejection] 이메일 발송 실패:', result.error);
+  }
+}
+
 /** Resend 이메일 전송 — 5초 타임아웃 + 429/5xx·네트워크 1회 재시도. never throw, boolean 반환. */
 export type ResendResult = { ok: boolean; id: string | null; error: string | null };
 

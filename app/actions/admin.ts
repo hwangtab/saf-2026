@@ -702,7 +702,7 @@ export async function rejectUser(userId: string): Promise<AdminActionState> {
 
     const { data: beforeProfile, error: beforeProfileError } = await supabase
       .from('profiles')
-      .select('id, name, role, status, updated_at')
+      .select('id, name, email, role, status, updated_at')
       .eq('id', userId)
       .single();
 
@@ -745,6 +745,21 @@ export async function rejectUser(userId: string): Promise<AdminActionState> {
         reversible: true,
       }
     );
+
+    // 반려 완료 후 신청자에게 정중한 안내 메일 발송(비차단). 반려 DB는 이미 커밋됐으므로
+    // 발송 실패가 반려 결과를 되돌리지 않도록 after()로 처리한다.
+    const rejectionEmail = normalizeEmail(beforeProfile?.email || null);
+    if (rejectionEmail) {
+      const artistName = beforeProfile?.name || '작가님';
+      after(async () => {
+        try {
+          const { sendArtistRejectionEmail } = await import('@/lib/notify');
+          await sendArtistRejectionEmail(rejectionEmail, artistName);
+        } catch (err) {
+          console.error('[rejectUser] 반려 안내 이메일 발송 실패:', err);
+        }
+      });
+    }
 
     return { message: '사용자가 거절(차단)되었습니다.', error: false };
   } catch (error: unknown) {
