@@ -2,6 +2,7 @@ import { requireArtistActive } from '@/lib/auth/guards';
 import DashboardNav from './dashboard-nav';
 import { AdminBadge } from '@/app/admin/_components/admin-ui';
 import PortalShell from '@/components/layout/PortalShell';
+import FundraiserDashboardBanner from '@/components/features/FundraiserDashboardBanner';
 import { getTranslations } from 'next-intl/server';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       }
       rightSlot={<span className="hidden text-sm text-gray-500 sm:inline">{user.email}</span>}
     >
+      <FundraiserDashboardBanner />
       {children}
     </PortalShell>
   );
