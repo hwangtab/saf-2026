@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { type SupabaseClient } from '@supabase/supabase-js';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import type { Database } from '@/types/supabase';
 export const runtime = 'nodejs';
 
@@ -196,7 +197,9 @@ async function removeStoragePaths(
   return { removed, failed };
 }
 
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('purge-trash', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) {
     return authError;
@@ -213,6 +216,12 @@ export async function GET(request: NextRequest) {
     console.error('[purge-trash] admin client init failed:', err);
     return NextResponse.json({ error: 'Supabase admin credentials are missing.' }, { status: 500 });
   }
+
+  // cron 실행 이력(cron_runs) 보관: 14일 초과 행 정리 — 무제한 증가 방지. best-effort.
+  await supabase
+    .from('cron_runs')
+    .delete()
+    .lt('started_at', new Date(Date.now() - 14 * 86_400_000).toISOString());
 
   const { data: logs, error: fetchError } = await supabase
     .from('activity_logs')

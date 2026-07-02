@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import { fetchPaymentByOrderId } from '@/lib/integrations/toss/confirm';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { notifyEmail } from '@/lib/notify';
@@ -31,7 +32,9 @@ const MAX_ATTEMPTS = 5;
  *
  * 매 10분 Vercel Cron (작품 reconcile-payments와 별개).
  */
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('reconcile-event-registrations', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 

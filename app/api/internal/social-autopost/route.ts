@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import {
   buildCaptionForArtwork,
   executePublish,
@@ -22,7 +23,9 @@ const INTER_ARTWORK_DELAY_MS = 5000;
  * 안전장치: SOCIAL_AUTOPOST_ENABLED='true' 일 때만 동작(기본 OFF), 미게시 작품만.
  * 선정: 작가별로 골고루 순환(최근 안 올라간 작가 우선) + 자료 많은 작가 가중.
  */
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('social-autopost', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 

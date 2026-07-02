@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import { fetchSolapiMessageStatuses } from '@/lib/sms/solapi';
 import { hashPhone } from '@/lib/sms/phone-hash';
 
@@ -50,7 +51,9 @@ function isPermanentFailure(statusCode: string): boolean {
   return PERMANENT_FAILURE_CODES.has(statusCode);
 }
 
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('sms-delivery-reconcile', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 

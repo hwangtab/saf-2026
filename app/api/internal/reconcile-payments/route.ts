@@ -6,6 +6,7 @@ import { resolveOrderProvider } from '@/lib/integrations/toss/config';
 import { notifyEmail } from '@/lib/notify';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import {
   releaseReservedArtworksIfUnowned,
@@ -62,7 +63,9 @@ function isManualBankTransferOrder(metadata: unknown): boolean {
  *
  * 매 10분 Vercel Cron 실행 (expire-stale-orders 직후).
  */
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('reconcile-payments', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) {
     return authError;

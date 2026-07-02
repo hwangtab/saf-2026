@@ -28,6 +28,42 @@ export type Database = {
   };
   public: {
     Tables: {
+      cron_runs: {
+        Row: {
+          created_at: string;
+          error: string | null;
+          finished_at: string;
+          id: string;
+          name: string;
+          ok: boolean;
+          started_at: string;
+          status: number | null;
+          summary: Json | null;
+        };
+        Insert: {
+          created_at?: string;
+          error?: string | null;
+          finished_at?: string;
+          id?: string;
+          name: string;
+          ok?: boolean;
+          started_at?: string;
+          status?: number | null;
+          summary?: Json | null;
+        };
+        Update: {
+          created_at?: string;
+          error?: string | null;
+          finished_at?: string;
+          id?: string;
+          name?: string;
+          ok?: boolean;
+          started_at?: string;
+          status?: number | null;
+          summary?: Json | null;
+        };
+        Relationships: [];
+      };
       activity_logs: {
         Row: {
           action: string;
