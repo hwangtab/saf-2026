@@ -52,7 +52,9 @@
     "ohYoonMemorial": "추도식 신청",
     "ohYoonMemorialDesc": "7월 5일 추도식 참가 신청 (선착순)",
     "ohYoonFunding": "테라코타 이전 펀딩",
-    "ohYoonFundingDesc": "철거 위기의 구의동 테라코타 부조 — 시민 모금으로 이전 비용을 함께 마련합니다"
+    "ohYoonFundingDesc": "철거 위기의 구의동 테라코타 부조 — 시민 모금으로 이전 비용을 함께 마련합니다",
+    "ohYoonExhibition": "테라코타 기금마련전",
+    "ohYoonExhibitionDesc": "작가들이 함께 내놓은 작품으로 — 오윤 테라코타 이전 기금마련전"
   },
   "footer": {
     "links": "링크",
@@ -67,6 +69,7 @@
     "termsOfService": "이용약관",
     "refundPolicy": "배송·교환·환불 안내",
     "faq": "자주 묻는 질문",
+    "ohYoonCampaign": "오윤 40주기 캠페인",
     "masterArtists": "지금 만나는 특별전",
     "description": "한국 예술인들의 내일을 함께 만드는 상호부조 플랫폼입니다.",
     "guide": "온라인 전시 및 구매 안내는 링크 메뉴와 고객문의에서 확인할 수 있습니다.",
@@ -275,6 +278,16 @@
       "featuredArtworks": "관련 작품",
       "viewAll": "전체 보기",
       "relatedStories": "관련 글"
+    },
+    "ohYoonCluster": {
+      "heading": "오윤 40주기 캠페인",
+      "intro": "동료 예술인을 위해 작품을 내놓은 작가들의 연대 — 청원, 추도, 기금마련전",
+      "petitionEyebrow": "구의동 벽화 시민 청원",
+      "petitionTitle": "멸실 위기의 오윤 벽화, 시민의 품으로 — 서명에 동참하기",
+      "memorialEyebrow": "오윤 40주기 추도식",
+      "memorialTitle": "오윤 40주기 추도식 — 7월 5일 인사동, 함께 추모하고 참가 신청하기",
+      "exhibitionEyebrow": "테라코타 기금마련전",
+      "exhibitionTitle": "작가들이 함께 내놓은 작품으로 — 오윤 테라코타 이전 기금마련전"
     }
   },
   "breadcrumbs": {
@@ -1273,7 +1286,9 @@
       "formSubmitting": "제출 중…",
       "formFooter": "서명은 30초입니다. 입력하신 정보는 청원 운영에만 사용되며, 청원 종료 후 6개월 내 파기됩니다.",
       "fundingCtaEyebrow": "테라코타 후원 프로젝트",
-      "fundingCtaTitle": "오윤 테라코타 보존 후원 — 벽화를 시민의 품으로 옮기는 일에 함께하기"
+      "fundingCtaTitle": "오윤 테라코타 보존 후원 — 벽화를 시민의 품으로 옮기는 일에 함께하기",
+      "exhibitionCtaEyebrow": "테라코타 기금마련전",
+      "exhibitionCtaTitle": "작가들이 함께 내놓은 작품으로 — 오윤 테라코타 이전 기금마련전"
     }
   },
   "wishlist": {
@@ -1560,6 +1575,8 @@
         "petitionTitle": "멸실 위기의 오윤 벽화, 시민의 품으로 — 서명에 동참하기",
         "fundingEyebrow": "벽화를 옮기는 후원",
         "fundingTitle": "구의동 테라코타 부조를 시민의 힘으로 — 보존·이전 펀딩 참여하기",
+        "exhibitionEyebrow": "테라코타 기금마련전",
+        "exhibitionTitle": "작가들이 함께 내놓은 작품으로 — 오윤 테라코타 이전 기금마련전",
         "story40thEyebrow": "40주기 헌정",
         "story40thTitle": "오윤 40주기 — 작가의 삶과 작품 세계를 정리한 씨앗페 매거진",
         "storyBladeEyebrow": "대표작 읽기",

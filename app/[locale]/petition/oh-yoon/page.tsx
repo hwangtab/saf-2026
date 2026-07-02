@@ -795,6 +795,17 @@ export default async function PetitionOhYoonPage({
                 {t('fundingCtaTitle')}
               </div>
             </Link>
+            <Link
+              href="/exhibition/oh-yoon-terracotta"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('exhibitionCtaEyebrow')}
+              </div>
+              <div className="text-base font-medium text-charcoal-deep leading-snug">
+                {t('exhibitionCtaTitle')}
+              </div>
+            </Link>
           </div>
         </div>
       </Section>

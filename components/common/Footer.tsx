@@ -6,6 +6,7 @@ import FooterSliderWrapper from '@/components/common/FooterSliderWrapper';
 import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import TrackedExternalLink from '@/components/common/TrackedExternalLink';
 import { MASTER_ARTISTS } from '@/lib/master-artists';
+import { OH_YOON_TERRACOTTA_EXHIBITION } from '@/lib/exhibitions';
 
 /**
  * force-static + Suspense 경계에서 setRequestLocale의 request scope가 끊겨
@@ -262,6 +263,42 @@ export default async function Footer({ locale }: { locale: string }) {
                 </div>
               </div>
             </div>
+
+            {/* 오윤 40주기 캠페인 링크 — 청원·추도식·기금마련전 */}
+            {OH_YOON_TERRACOTTA_EXHIBITION.active && (
+              <div className="border-t border-gray-700 pt-6 mb-6">
+                <p className="text-xs text-gray-400 mb-3">{t('ohYoonCampaign')}</p>
+                <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                  <li>
+                    <Link
+                      href="/petition/oh-yoon"
+                      prefetch={false}
+                      className="text-gray-300 hover:text-white transition-colors"
+                    >
+                      {tNav('ohYoonPetition')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/event/oh-yoon-memorial"
+                      prefetch={false}
+                      className="text-gray-300 hover:text-white transition-colors"
+                    >
+                      {tNav('ohYoonMemorial')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/exhibition/oh-yoon-terracotta"
+                      prefetch={false}
+                      className="text-gray-300 hover:text-white transition-colors"
+                    >
+                      {tNav('ohYoonExhibition')}
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            )}
 
             {/* 거장 작가 직링크 — Part 15 S5.1 내부 링크 척추 */}
             <div className="border-t border-gray-700 pt-6 mb-6">
