@@ -15,6 +15,7 @@ import {
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
 import { markOrderPaid } from '@/lib/commerce/payment-lifecycle/mark-order-paid';
+import { sendBuyerPaidNotifications } from '@/lib/commerce/payment-lifecycle/buyer-paid-notifications';
 import { isManualBankTransferOrder } from '@/lib/orders/manual-bank-transfer';
 
 export const runtime = 'nodejs';
@@ -123,7 +124,13 @@ async function cronHandler(request: NextRequest) {
             idempotencyKey: `backfill-missing-payment-${order.order_no}`,
             errors,
           });
-          if (repaired) reconciled++;
+          if (repaired) {
+            reconciled++;
+            await sendBuyerPaidNotifications(supabase, {
+              orderId: order.id,
+              type: 'deposit_confirmed',
+            });
+          }
           continue;
         }
 
@@ -241,6 +248,10 @@ async function cronHandler(request: NextRequest) {
         if (!repaired) continue;
 
         reconciled++;
+        await sendBuyerPaidNotifications(supabase, {
+          orderId: order.id,
+          type: 'payment_confirmed',
+        });
         console.error(
           `[reconcile-payments] FIXED: ${order.order_no} — Toss DONE, DB was pending_payment`
         );
@@ -414,6 +425,10 @@ async function cronHandler(request: NextRequest) {
 
         if (repaired) {
           reconciled++;
+          await sendBuyerPaidNotifications(supabase, {
+            orderId: order.id,
+            type: 'deposit_confirmed',
+          });
           console.error(
             `[reconcile-payments] FIXED: ${order.order_no} — Toss DONE, DB was awaiting_deposit without payment row`
           );

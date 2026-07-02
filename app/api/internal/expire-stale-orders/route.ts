@@ -14,6 +14,7 @@ import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { runAllSettled } from '@/lib/server/after-response';
 import { promotePaidBeforeExpiry } from '@/lib/orders/expire-toss-guard';
+import { sendBuyerPaidNotifications } from '@/lib/commerce/payment-lifecycle/buyer-paid-notifications';
 
 export const runtime = 'nodejs';
 
@@ -78,6 +79,9 @@ async function cronHandler(request: NextRequest) {
   // 취소-시점 Toss 가드 결과 누적(두 블록 공용).
   let totalPromoted = 0;
   const promotionNeedsManual: string[] = [];
+  // 승격된 주문에 보낼 구매자 확인 알림(주문ID + 알림유형). 취소·복원 처리 후 일괄 발송.
+  const promotedNotify: Array<{ orderId: string; type: 'payment_confirmed' | 'deposit_confirmed' }> =
+    [];
 
   // ── 1) pending_payment: 30분 초과 자동 취소 ──────────────────────────────────
   const pendingCutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
@@ -101,6 +105,7 @@ async function cronHandler(request: NextRequest) {
     const guard = await promotePaidBeforeExpiry(supabase, expiredPending, 'pending_payment', now);
     totalPromoted += guard.promoted;
     promotionNeedsManual.push(...guard.needsManual);
+    for (const id of guard.promotedIds) promotedNotify.push({ orderId: id, type: 'payment_confirmed' });
 
     const cancelIds = expiredPending.map((o) => o.id).filter((id) => !guard.excludeIds.has(id));
 
@@ -149,6 +154,7 @@ async function cronHandler(request: NextRequest) {
     const guard = await promotePaidBeforeExpiry(supabase, expiredDeposit, 'awaiting_deposit', now);
     totalPromoted += guard.promoted;
     promotionNeedsManual.push(...guard.needsManual);
+    for (const id of guard.promotedIds) promotedNotify.push({ orderId: id, type: 'deposit_confirmed' });
 
     const cancelIds = expiredDeposit.map((o) => o.id).filter((id) => !guard.excludeIds.has(id));
 
@@ -286,6 +292,15 @@ async function cronHandler(request: NextRequest) {
   if (totalPromoted > 0) {
     console.error(
       `[expire-stale-orders] promoted ${totalPromoted} order(s) to paid instead of cancelling (Toss DONE)`
+    );
+    // 승격된 주문의 구매자에게 확인 알림(웹훅 경로와 동일). 실제 승격에 성공한 건만 대상이라 중복 없음.
+    await runAllSettled(
+      'expire-stale-orders.promotedBuyerNotifications',
+      promotedNotify.map(
+        ({ orderId, type }) =>
+          () =>
+            sendBuyerPaidNotifications(supabase, { orderId, type })
+      )
     );
   }
 
