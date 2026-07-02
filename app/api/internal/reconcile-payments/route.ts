@@ -15,6 +15,7 @@ import {
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
 import { markOrderPaid } from '@/lib/commerce/payment-lifecycle/mark-order-paid';
+import { isManualBankTransferOrder } from '@/lib/orders/manual-bank-transfer';
 
 export const runtime = 'nodejs';
 
@@ -36,16 +37,6 @@ function parseBackfillLimit(searchParams: URLSearchParams): number {
 function hasPaymentRows(order: { payments?: unknown }): boolean {
   if (Array.isArray(order.payments)) return order.payments.length > 0;
   return Boolean(order.payments);
-}
-
-function metadataRecord(metadata: unknown): Record<string, unknown> {
-  return metadata && typeof metadata === 'object' && !Array.isArray(metadata)
-    ? (metadata as Record<string, unknown>)
-    : {};
-}
-
-function isManualBankTransferOrder(metadata: unknown): boolean {
-  return metadataRecord(metadata).payment_provider === 'manual_bank_transfer';
 }
 
 /**
