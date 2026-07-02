@@ -51,7 +51,11 @@ export function withCronRun(name: string, handler: CronHandler): CronHandler {
       response = NextResponse.json({ error: 'Internal error' }, { status: 500 });
     }
 
-    if (response.status !== 401) {
+    // 인증 거부(401)와 CRON_SECRET 미설정(config 500)은 "cron 실행"이 아니라 게이트 차단이므로
+    // 기록하지 않는다. CRON_SECRET이 없으면 모든 cron이 게이트에서 막혀 아무 row도 안 남고 →
+    // fetchSystemHealth의 "N시간 미실행" 단일 staleness 신호로 수렴(cron별 실패 6건 스팸 방지).
+    const isGateRejection = response.status === 401 || (response.status === 500 && !process.env.CRON_SECRET);
+    if (!isGateRejection) {
       let summary: unknown = null;
       try {
         summary = await response.clone().json();

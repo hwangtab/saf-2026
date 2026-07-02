@@ -26,6 +26,8 @@ export type ExpiryTossGuardResult = {
   promotedIds: string[];
   /** 결제됐으나 이행 실패(작품 소진 등) — 관리자 수동 확인(환불 등) 필요. */
   needsManual: string[];
+  /** Toss 조회 실패로 취소를 보류한 주문 수 — 지속 장애 시 예약 작품이 묶이므로 집계 경보용. */
+  tossErrorCount: number;
   checked: number;
   skippedOverCap: number;
 };
@@ -51,6 +53,7 @@ export async function promotePaidBeforeExpiry(
   const needsManual: string[] = [];
   const promotedIds: string[] = [];
   let promoted = 0;
+  let tossErrorCount = 0;
 
   const checkable = orders.filter((o) => !!o.order_no && !isManualBankTransferOrder(o.metadata));
   const capped = checkable.slice(0, MAX_TOSS_CHECKS_PER_RUN);
@@ -97,7 +100,9 @@ export async function promotePaidBeforeExpiry(
         } catch (err) {
           // Toss 조회 실패 → 취소를 보류(과잉취소 방지). 다음 실행에서 재확인되어 자가 치유되며,
           // 조회 장애 중 알림 스팸을 피하려 needsManual에는 넣지 않고 경고 로그만 남긴다.
+          // 단 지속 장애 감지를 위해 건수는 집계(호출측이 회당 1건으로 경보).
           excludeIds.add(order.id);
+          tossErrorCount++;
           console.warn(
             `[expire-stale-orders] Toss 조회 실패로 취소 보류: ${orderNo} — ${
               err instanceof Error ? err.message : String(err)
@@ -108,5 +113,13 @@ export async function promotePaidBeforeExpiry(
     );
   }
 
-  return { excludeIds, promoted, promotedIds, needsManual, checked: capped.length, skippedOverCap };
+  return {
+    excludeIds,
+    promoted,
+    promotedIds,
+    needsManual,
+    tossErrorCount,
+    checked: capped.length,
+    skippedOverCap,
+  };
 }

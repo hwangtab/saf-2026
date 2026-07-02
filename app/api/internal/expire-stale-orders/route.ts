@@ -79,6 +79,7 @@ async function cronHandler(request: NextRequest) {
   // 취소-시점 Toss 가드 결과 누적(두 블록 공용).
   let totalPromoted = 0;
   const promotionNeedsManual: string[] = [];
+  let totalTossErrors = 0;
   // 승격된 주문에 보낼 구매자 확인 알림(주문ID + 알림유형). 취소·복원 처리 후 일괄 발송.
   const promotedNotify: Array<{ orderId: string; type: 'payment_confirmed' | 'deposit_confirmed' }> =
     [];
@@ -105,6 +106,7 @@ async function cronHandler(request: NextRequest) {
     const guard = await promotePaidBeforeExpiry(supabase, expiredPending, 'pending_payment', now);
     totalPromoted += guard.promoted;
     promotionNeedsManual.push(...guard.needsManual);
+    totalTossErrors += guard.tossErrorCount;
     for (const id of guard.promotedIds) promotedNotify.push({ orderId: id, type: 'payment_confirmed' });
 
     const cancelIds = expiredPending.map((o) => o.id).filter((id) => !guard.excludeIds.has(id));
@@ -154,6 +156,7 @@ async function cronHandler(request: NextRequest) {
     const guard = await promotePaidBeforeExpiry(supabase, expiredDeposit, 'awaiting_deposit', now);
     totalPromoted += guard.promoted;
     promotionNeedsManual.push(...guard.needsManual);
+    totalTossErrors += guard.tossErrorCount;
     for (const id of guard.promotedIds) promotedNotify.push({ orderId: id, type: 'deposit_confirmed' });
 
     const cancelIds = expiredDeposit.map((o) => o.id).filter((id) => !guard.excludeIds.has(id));
@@ -316,11 +319,20 @@ async function cronHandler(request: NextRequest) {
     );
   }
 
+  // Toss 조회 실패로 취소를 보류한 건 — 지속 장애면 미결제 주문+예약 작품이 묶이므로 회당 1건 집계 경보.
+  if (totalTossErrors > 0) {
+    await notifyEmail('warning', `만료 가드: Toss 조회 실패로 취소 보류 (${totalTossErrors}건)`, {
+      건수: `${totalTossErrors}건`,
+      안내: 'Toss 조회 실패로 만료 취소를 보류했습니다. 일시적이면 다음 실행에서 자동 해소되나, 지속되면 Toss 연동 상태를 확인하세요(해당 주문의 예약 작품이 계속 묶입니다).',
+    });
+  }
+
   return NextResponse.json({
     cancelled: totalCancelled,
     pending_cancelled: pendingCancelled,
     deposit_cancelled: depositCancelled,
     promoted: totalPromoted,
     needs_manual: promotionNeedsManual.length,
+    toss_errors: totalTossErrors,
   });
 }
