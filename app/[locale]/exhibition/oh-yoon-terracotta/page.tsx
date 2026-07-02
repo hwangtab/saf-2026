@@ -72,7 +72,9 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
         <div className="absolute inset-0 -z-10">
           <SafeImage
             src="/images/petition-oh-yoon/mural-1.webp"
+            // decorative-alt-ok: 히어로 배경 장식 이미지(그라디언트 뒤, opacity-40)
             alt=""
+            aria-hidden
             fill
             priority
             sizes="100vw"
@@ -87,7 +89,7 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
         </div>
 
         <div className="container-max mx-auto flex min-h-[72vh] min-h-[72svh] flex-col justify-center px-4 py-24 md:py-32">
-          <p className="text-eyebrow mb-6 text-sun">{t('heroEyebrow')}</p>
+          <p className="text-eyebrow mb-6 !text-sun">{t('heroEyebrow')}</p>
           <h1 className="max-w-4xl font-display text-4xl font-black leading-[1.05] tracking-tighter text-balance drop-shadow-sm sm:text-6xl md:text-7xl lg:text-8xl">
             {t('heroDisplayLine1')}
             <br />
@@ -186,7 +188,7 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
           2026
         </span>
         <div className="container-max relative mx-auto max-w-4xl px-4">
-          <p className="text-eyebrow mb-3 text-sun">{t('ch2Eyebrow')}</p>
+          <p className="text-eyebrow mb-3 !text-sun">{t('ch2Eyebrow')}</p>
           <h2 className="border-l-[12px] border-sun pl-5 font-section text-4xl font-black leading-tight text-balance md:pl-6 md:text-6xl">
             {t('ch2Title')}
           </h2>
@@ -251,7 +253,7 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
           SEED ART
         </span>
         <div className="container-max relative mx-auto px-4">
-          <p className="text-eyebrow mb-3 text-sun">{t('galleryEyebrow')}</p>
+          <p className="text-eyebrow mb-3 !text-sun">{t('galleryEyebrow')}</p>
           <h2 className="mb-10 font-section text-3xl font-black leading-tight md:text-5xl">
             {t('galleryTitle')}
           </h2>

@@ -273,6 +273,53 @@ export type Database = {
           },
         ];
       };
+      artist_settlements: {
+        Row: {
+          artist_id: string;
+          artist_share: number;
+          created_at: string;
+          created_by: string | null;
+          gross_amount: number;
+          id: string;
+          note: string | null;
+          paid_amount: number | null;
+          paid_at: string;
+          period_month: string;
+        };
+        Insert: {
+          artist_id: string;
+          artist_share: number;
+          created_at?: string;
+          created_by?: string | null;
+          gross_amount: number;
+          id?: string;
+          note?: string | null;
+          paid_amount?: number | null;
+          paid_at?: string;
+          period_month: string;
+        };
+        Update: {
+          artist_id?: string;
+          artist_share?: number;
+          created_at?: string;
+          created_by?: string | null;
+          gross_amount?: number;
+          id?: string;
+          note?: string | null;
+          paid_amount?: number | null;
+          paid_at?: string;
+          period_month?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'artist_settlements_artist_id_fkey';
+            columns: ['artist_id'];
+            isOneToOne: false;
+            referencedRelation: 'artists';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       artists: {
         Row: {
           bio: string | null;

@@ -125,7 +125,7 @@ export default async function ExhibitionApplyPage({ params }: Props) {
       {/* ③ 나누는 마음 (오윤 어록, 다크) */}
       <section className="bg-charcoal py-20 text-white md:py-28">
         <div className="container-max mx-auto max-w-4xl px-4">
-          <p className="text-eyebrow mb-8 text-center text-sun">{t('s3Eyebrow')}</p>
+          <p className="text-eyebrow mb-8 text-center !text-sun">{t('s3Eyebrow')}</p>
           <blockquote className="relative mx-auto max-w-3xl border-4 border-white/15 bg-white/[0.04] p-8 text-center backdrop-blur-sm md:p-14">
             <span
               aria-hidden="true"

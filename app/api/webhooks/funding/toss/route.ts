@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       if (!isDuplicate) {
         console.error('[funding-webhook] funding_payments insert failed:', insertError);
       } else {
-        console.log(`[funding-webhook] duplicate webhook ignored (idempotency): ${orderId}`);
+        console.warn(`[funding-webhook] duplicate webhook ignored (idempotency): ${orderId}`);
       }
     }
   }
