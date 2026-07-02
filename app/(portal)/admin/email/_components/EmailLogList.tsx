@@ -10,6 +10,7 @@ import {
 } from '@/app/(portal)/admin/_components/admin-ui';
 import { AdminConfirmModal } from '@/app/(portal)/admin/_components/AdminConfirmModal';
 import { getEmailLogs, resendEmailLog, type EmailLogRow } from '@/app/actions/admin-email-logs';
+import { isResendableEmailType } from '@/lib/email/resendable-email-types';
 import { useToast } from '@/lib/hooks/useToast';
 
 type BadgeTone = 'default' | 'info' | 'success' | 'warning' | 'danger';
@@ -30,14 +31,6 @@ const TYPE_LABELS: Record<string, string> = {
   auto_cancelled: '자동 취소',
   artist_approval: '작가 승인',
 };
-
-// 서버 resendEmailLog의 RESENDABLE_TYPES와 일치.
-const RESENDABLE_TYPES = new Set([
-  'payment_confirmed',
-  'deposit_confirmed',
-  'shipped',
-  'delivered',
-]);
 
 const STATUS_OPTIONS = [
   { value: '', label: '전체 상태' },
@@ -127,7 +120,7 @@ export function EmailLogList({ initial }: { initial: EmailLogRow[] }) {
             <tbody className="divide-y divide-[var(--admin-border-soft)]">
               {rows.map((row) => {
                 const meta = STATUS_META[row.status] ?? { label: row.status, tone: 'default' };
-                const canResend = row.status === 'failed' && RESENDABLE_TYPES.has(row.type);
+                const canResend = row.status === 'failed' && isResendableEmailType(row.type);
                 return (
                   <tr key={row.id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap px-4 py-3 text-xs text-gray-500">

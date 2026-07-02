@@ -3,6 +3,7 @@
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
 import { sendBuyerEmail, type BuyerEmailType, type BuyerEmailData } from '@/lib/notify';
 import { getOrderNotificationInfo } from '@/lib/utils/get-order-notification-info';
+import { isResendableEmailType } from '@/lib/email/resendable-email-types';
 
 export type EmailLogRow = {
   id: string;
@@ -41,15 +42,6 @@ export async function getEmailLogs(params: EmailLogsParams = {}): Promise<EmailL
   return { logs: (data ?? []) as EmailLogRow[] };
 }
 
-// getOrderNotificationInfo만으로 완전히 재구성 가능한(주문 데이터 기반) 유형만 재발송 허용.
-// virtual_account/bank_transfer(계좌정보 필요)·refunded/auto_cancelled(종료 주문)는 제외.
-const RESENDABLE_TYPES = new Set<BuyerEmailType>([
-  'payment_confirmed',
-  'deposit_confirmed',
-  'shipped',
-  'delivered',
-]);
-
 export async function resendEmailLog(
   logId: string
 ): Promise<{ ok: boolean; error?: string }> {
@@ -69,7 +61,7 @@ export async function resendEmailLog(
   if (!log.order_no) {
     return { ok: false, error: '주문번호가 없는 로그는 재발송할 수 없습니다.' };
   }
-  if (!RESENDABLE_TYPES.has(log.type as BuyerEmailType)) {
+  if (!isResendableEmailType(log.type)) {
     return { ok: false, error: `재발송할 수 없는 유형입니다: ${log.type}` };
   }
 
