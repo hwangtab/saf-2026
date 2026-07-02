@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import LinkButton from '@/components/ui/LinkButton';
 import SafeImage from '@/components/common/SafeImage';
@@ -27,6 +28,7 @@ export function FundraiserSelection({
   artworks: Item[];
   maxPerArtist: number;
 }) {
+  const t = useTranslations('dashboard.fundraiser');
   const initialSelected = useMemo(
     () => new Set(artworks.filter((a) => a.isTagged).map((a) => a.id)),
     [artworks]
@@ -61,13 +63,13 @@ export function FundraiserSelection({
     <form action={formAction} className="space-y-6">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-charcoal-deep">
-          기금마련전 출품 {count}/{maxPerArtist}
+          {t('counter', { count, max: maxPerArtist })}
         </p>
         <LinkButton
           href={`/dashboard/artworks/new?exhibition=${OH_YOON_TERRACOTTA_EXHIBITION.slug}`}
           variant="secondary"
         >
-          새 작품 등록하고 출품
+          {t('newArtworkCta')}
         </LinkButton>
       </div>
 
@@ -107,7 +109,7 @@ export function FundraiserSelection({
                   />
                 )}
                 <p className="mt-2 truncate text-sm text-charcoal">{item.title}</p>
-                {locked && <p className="text-xs text-charcoal-soft">판매됨 · 출품 확정</p>}
+                {locked && <p className="text-xs text-charcoal-soft">{t('soldLocked')}</p>}
               </button>
             </li>
           );
@@ -115,7 +117,7 @@ export function FundraiserSelection({
       </ul>
 
       <Button type="submit" variant="primary" loading={isPending} disabled={isPending}>
-        출품 작품 저장
+        {t('saveButton')}
       </Button>
     </form>
   );

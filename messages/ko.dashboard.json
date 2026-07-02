@@ -103,6 +103,17 @@
       "awaitingApproval": "관리자의 승인 후 작가 활동을 시작할 수 있습니다.",
       "readyToUse": "승인이 완료되면 서비스를 이용할 수 있습니다.",
       "submitted": "제출 완료:"
+    },
+    "fundraiser": {
+      "title": "오윤 테라코타 기금마련전",
+      "closedNotice": "기금마련전 출품 접수가 종료되었습니다.",
+      "storyHeading": "동료 작가들의 연대로 오윤 테라코타를 지킵니다",
+      "storyBody": "1974년 옛 상업은행 구의동지점에 새겨진 오윤의 테라코타 양면 부조가 멸실 위기에 놓였습니다. 작가들이 자기 작품을 내놓아, 판매 수익을 오윤 테라코타 이전 기금으로 잇습니다.",
+      "petitionLink": "벽화 지키기 청원 보기",
+      "counter": "기금마련전 출품 {count}/{max}",
+      "newArtworkCta": "새 작품 등록하고 출품",
+      "soldLocked": "판매됨 · 출품 확정",
+      "saveButton": "출품 작품 저장"
     }
   },
   "onboarding": {
