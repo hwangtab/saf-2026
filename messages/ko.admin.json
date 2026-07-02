@@ -59,6 +59,8 @@
       "pendingOrders": "결제 대기 주문",
       "awaitingDeposit": "입금 대기 확인",
       "refundRequested": "환불 요청 처리",
+      "newInboundMail": "새 문의",
+      "eventActionNeeded": "추도식 처리 대기",
       "recentOrdersTitle": "최근 주문",
       "noRecentOrders": "최근 주문이 없습니다.",
       "orderStatusPendingPayment": "결제 대기",

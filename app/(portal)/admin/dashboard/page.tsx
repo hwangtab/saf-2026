@@ -185,6 +185,22 @@ export default async function AdminDashboardPage() {
             href="/admin/orders?status=escalated"
           />
         )}
+        {stats.newInboundMailCount > 0 && (
+          <StatCard
+            title={t('newInboundMail')}
+            valueText={numberFormatter.format(stats.newInboundMailCount)}
+            subtitle={t('needsCheck')}
+            href="/admin/email"
+          />
+        )}
+        {stats.eventActionNeededCount > 0 && (
+          <StatCard
+            title={t('eventActionNeeded')}
+            valueText={numberFormatter.format(stats.eventActionNeededCount)}
+            subtitle={t('needsCheck')}
+            href="/admin/event"
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -455,8 +471,11 @@ export default async function AdminDashboardPage() {
             ) : (
               <ul className="divide-y divide-gray-100">
                 {stats.recentApplications.map((app) => (
-                  <li key={app.id} className="p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center justify-between">
+                  <li key={app.id} className="hover:bg-gray-50 transition-colors">
+                    <Link
+                      href="/admin/users?status=pending"
+                      className="flex items-center justify-between p-4"
+                    >
                       <div>
                         <p className="text-sm font-medium text-gray-900">{app.name}</p>
                         <p className="text-xs text-gray-500 mt-0.5">{app.email}</p>
@@ -465,7 +484,7 @@ export default async function AdminDashboardPage() {
                       <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
                         {formatDate(app.created_at, locale)}
                       </span>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ul>

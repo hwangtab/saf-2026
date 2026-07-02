@@ -59,6 +59,8 @@
       "pendingOrders": "Pending Orders",
       "awaitingDeposit": "Deposit Confirmations",
       "refundRequested": "Refund Requests",
+      "newInboundMail": "New Inquiries",
+      "eventActionNeeded": "Memorial To-Do",
       "recentOrdersTitle": "Recent Orders",
       "noRecentOrders": "No recent orders.",
       "orderStatusPendingPayment": "Pending Payment",

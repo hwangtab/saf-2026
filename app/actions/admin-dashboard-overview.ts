@@ -104,6 +104,8 @@ export type DashboardOverviewStats = {
   pendingOrderCount: number;
   awaitingDepositCount: number;
   refundRequestedCount: number;
+  newInboundMailCount: number;
+  eventActionNeededCount: number;
   slaOverdueCount: number;
   escalatedCount: number;
   recentOrders: Array<{
@@ -272,6 +274,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     escalatedCountResult,
     awaitingDepositCountResult,
     refundRequestedCountResult,
+    newInboundMailCountResult,
+    eventActionNeededCountResult,
   ] = await Promise.all([
     supabase.from('artists').select('id', { count: 'exact', head: true }),
     supabase
@@ -338,6 +342,16 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .from('orders')
       .select('id', { count: 'exact', head: true })
       .eq('status', 'refund_requested'),
+    // 새 인바운드 메일 — 관리자 확인 필요
+    supabase
+      .from('email_inbound_messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'new'),
+    // 추도식 신청 처리 대기 — 입금 확인 + 대기자 안내
+    supabase
+      .from('event_registrations')
+      .select('id', { count: 'exact', head: true })
+      .in('status', ['awaiting_deposit', 'waitlist']),
   ]);
 
   const currentMonthSalesVoidColumnMissing = isMissingVoidedAtColumnError(
@@ -494,6 +508,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     pendingOrderCount: pendingOrderCountResult.count ?? 0,
     awaitingDepositCount: awaitingDepositCountResult.count ?? 0,
     refundRequestedCount: refundRequestedCountResult.count ?? 0,
+    newInboundMailCount: newInboundMailCountResult.count ?? 0,
+    eventActionNeededCount: eventActionNeededCountResult.count ?? 0,
     slaOverdueCount: slaOverdueCountResult.count ?? 0,
     escalatedCount: escalatedCountResult.count ?? 0,
     recentOrders: (recentOrdersResult.data ?? []).map((row) => {
