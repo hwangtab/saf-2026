@@ -17,7 +17,7 @@ import {
 } from '@/lib/newsletter/blocks';
 import { BlockEditor, createBlock } from './block-editors';
 import { PreviewPane } from './PreviewPane';
-// import { SendPanel } from './SendPanel'; // Task 9에서 주석 해제
+import { SendPanel } from './SendPanel';
 
 const STATUS_LABELS: Record<string, string> = {
   draft: '초안',
@@ -286,7 +286,6 @@ export function NewsletterEditor({ initial }: { initial: NewsletterDetail }) {
             isAdvertisement={isAdvertisement}
             blocks={blocks}
           />
-          {/* Task 9에서 주석 해제:
           <SendPanel
             newsletterId={initial.id}
             status={initial.status}
@@ -295,7 +294,6 @@ export function NewsletterEditor({ initial }: { initial: NewsletterDetail }) {
             initialChannels={initial.audience_channels}
             dirty={dirty}
           />
-          */}
         </div>
       </div>
     </div>
