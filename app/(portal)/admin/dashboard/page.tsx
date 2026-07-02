@@ -198,7 +198,7 @@ export default async function AdminDashboardPage() {
             title={t('eventActionNeeded')}
             valueText={numberFormatter.format(stats.eventActionNeededCount)}
             subtitle={t('needsCheck')}
-            href="/admin/event"
+            href="/admin/event/oh-yoon-memorial"
           />
         )}
       </div>
