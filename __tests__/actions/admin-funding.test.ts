@@ -18,6 +18,8 @@ jest.mock('@/lib/auth/guards', () => ({ requireAdmin: jest.fn().mockResolvedValu
 jest.mock('@/lib/auth/server', () => ({ createSupabaseAdminClient: jest.fn() }));
 jest.mock('@/lib/integrations/toss/cancel', () => ({ cancelPayment: jest.fn() }));
 jest.mock('@/lib/notify', () => ({ notifyEmail: jest.fn() }));
+// 감사 로그는 본 테스트 대상이 아니며 내부에서 requireAdmin을 재호출하므로 no-op 처리.
+jest.mock('@/app/actions/activity-log-writer', () => ({ logAdminAction: jest.fn() }));
 
 const { createSupabaseAdminClient } = require('@/lib/auth/server');
 const { cancelPayment } = require('@/lib/integrations/toss/cancel');
