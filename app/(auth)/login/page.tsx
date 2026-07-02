@@ -21,19 +21,6 @@ import Button from '@/components/ui/Button';
 import { SAWTOOTH_TOP_SAFE_PADDING } from '@/components/ui/SawtoothDivider';
 import SafeImage from '@/components/common/SafeImage';
 
-/**
- * 공개 출품 랜딩에서 심은 '기금마련전 출품 의도' 쿠키(불리언 플래그)를 읽고 소비한다.
- * 활성 작가가 로그인하면 목적지를 /dashboard/fundraiser로. 쿠키 없으면 false → 기존 동작 유지.
- */
-function takeFundraiserSubmitIntent(): boolean {
-  if (typeof document === 'undefined') return false;
-  const has = document.cookie.split('; ').includes('fundraiser_submit_intent=1');
-  if (has) {
-    document.cookie = 'fundraiser_submit_intent=; path=/; max-age=0; samesite=lax';
-  }
-  return has;
-}
-
 const LOGIN_COPY = {
   ko: {
     subtitle: '로그인',
@@ -255,9 +242,7 @@ export default function LoginPage() {
                     needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
                     needsTosConsent: artistReconsent.needsTosConsent,
                   })
-                : takeFundraiserSubmitIntent()
-                  ? '/dashboard/fundraiser'
-                  : '/dashboard/artworks'
+                : '/dashboard/artworks'
               : '/onboarding?recover=1';
           } else if (profile.status === 'suspended') {
             nextPath = '/dashboard/suspended';
