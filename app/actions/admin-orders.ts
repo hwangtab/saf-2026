@@ -514,6 +514,32 @@ export async function confirmDeposit(orderId: string) {
   return { success: true };
 }
 
+/**
+ * 여러 입금대기 주문을 순차로 입금 확인한다. 각 건은 기존 confirmDeposit를 그대로 호출하므로
+ * 알림·감사 로그 로직이 완전히 재사용된다. 건별 성공/실패를 수집해 반환하며, 한 건이 실패해도
+ * 나머지를 계속 처리한다(부분 실패 시 throw하지 않음). 입금 다건은 소량이라 순차로 충분하고,
+ * 각 건이 after() 알림을 스케줄하므로 병렬 시 부하·로그 순서 혼선을 피한다.
+ */
+export async function confirmDepositBatch(
+  orderIds: string[]
+): Promise<{ succeeded: string[]; failed: { id: string; error: string }[] }> {
+  await requireAdmin();
+
+  const succeeded: string[] = [];
+  const failed: { id: string; error: string }[] = [];
+
+  for (const id of orderIds) {
+    try {
+      await confirmDeposit(id);
+      succeeded.push(id);
+    } catch (err) {
+      failed.push({ id, error: err instanceof Error ? err.message : '입금 확인에 실패했습니다.' });
+    }
+  }
+
+  return { succeeded, failed };
+}
+
 // ─── 입금대기 취소 (awaiting_deposit → cancelled) ────────────────────────────
 
 /**
