@@ -10,6 +10,7 @@ import {
   matchesAnySearch,
 } from '@/lib/search-utils';
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { logAdminAction } from './activity-log-writer';
 import { UserRole } from '@/types/database.types';
 import { validatePhone } from '@/lib/utils/phone';
@@ -668,6 +669,22 @@ export async function approveUser(userId: string): Promise<AdminActionState> {
         reversible: true,
       }
     );
+
+    // 승인 완료 후 작가에게 대시보드 이용 안내 이메일 발송.
+    // 승인 DB 작업은 이미 커밋됐으므로 발송 실패가 승인 결과를 되돌리지 않도록 after()로 비차단 처리.
+    const approvalEmail =
+      normalizeEmail(beforeProfile?.email || null) || parsedContact.contactEmail;
+    if (approvalEmail) {
+      const artistName = application?.artist_name || beforeProfile?.name || '작가님';
+      after(async () => {
+        try {
+          const { sendArtistApprovalEmail } = await import('@/lib/notify');
+          await sendArtistApprovalEmail(approvalEmail, artistName);
+        } catch (err) {
+          console.error('[approveUser] 승인 안내 이메일 발송 실패:', err);
+        }
+      });
+    }
 
     return { message: '사용자가 승인되었습니다.', error: false };
   } catch (error: unknown) {
