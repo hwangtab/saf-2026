@@ -101,9 +101,6 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
             </LinkButton>
-            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="outline-white">
-              {t('petitionCta')}
-            </LinkButton>
           </div>
         </div>
         <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
@@ -236,9 +233,6 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
             </LinkButton>
-            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="secondary">
-              {t('petitionCta')}
-            </LinkButton>
           </div>
           <p className="mt-6 text-sm text-charcoal-muted">
             <Link
@@ -288,9 +282,6 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
-            </LinkButton>
-            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="outline-white">
-              {t('petitionCta')}
             </LinkButton>
           </div>
         </div>
