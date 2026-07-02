@@ -125,7 +125,7 @@
       "selectHint": "Tap works below to select them for submission, then press Save. Up to three works.",
       "selectedTag": "Selected",
       "selectTag": "Tap to select",
-      "emptyArtworks": "You haven't registered any works yet. Start with 'Register & submit a new work' at the top right."
+      "emptyArtworks": "You haven't registered any works yet. Start with the 'Register a new artwork to submit' button."
     }
   },
   "onboarding": {

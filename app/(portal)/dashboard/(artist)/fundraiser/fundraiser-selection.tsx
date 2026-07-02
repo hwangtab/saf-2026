@@ -3,6 +3,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
+import clsx from 'clsx';
 import Button from '@/components/ui/Button';
 import LinkButton from '@/components/ui/LinkButton';
 import SafeImage from '@/components/common/SafeImage';
@@ -108,32 +109,32 @@ export function FundraiserSelection({
                   onClick={() => toggle(item)}
                   disabled={disabled}
                   aria-pressed={isChecked}
-                  className={
-                    'block w-full rounded-xl border-2 p-2 text-left transition ' +
-                    (isChecked
-                      ? 'border-primary bg-primary-surface ring-2 ring-primary/30'
-                      : 'border-gallery-hairline hover:border-primary/50') +
-                    (disabled ? ' cursor-not-allowed opacity-50' : ' cursor-pointer')
-                  }
+                  className={clsx(
+                    'block w-full rounded-xl border-2 bg-canvas-soft p-2 text-left transition',
+                    isChecked
+                      ? 'border-primary ring-2 ring-primary/40'
+                      : 'border-gallery-hairline hover:border-primary/50',
+                    disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                  )}
                 >
-                  <div className="relative">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-canvas-strong">
                     {item.image && (
                       <SafeImage
                         src={item.image}
                         alt={item.title}
                         width={300}
                         height={300}
-                        className="aspect-square w-full rounded-lg object-cover"
+                        className="h-full w-full object-cover"
                       />
                     )}
                     <span
                       aria-hidden="true"
-                      className={
-                        'absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black ' +
-                        (isChecked
+                      className={clsx(
+                        'absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 text-sm font-black',
+                        isChecked
                           ? 'border-primary bg-primary-strong text-white'
-                          : 'border-white bg-white/80 text-transparent backdrop-blur-sm')
-                      }
+                          : 'border-white bg-white/80 text-transparent backdrop-blur-sm'
+                      )}
                     >
                       ✓
                     </span>
@@ -143,10 +144,10 @@ export function FundraiserSelection({
                   </p>
                   {!item.isSold && (
                     <p
-                      className={
-                        'text-xs font-semibold ' +
-                        (isChecked ? 'text-primary-strong' : 'text-charcoal-soft')
-                      }
+                      className={clsx(
+                        'text-xs font-semibold',
+                        isChecked ? 'text-primary-strong' : 'text-charcoal-soft'
+                      )}
                     >
                       {isChecked ? t('selectedTag') : t('selectTag')}
                     </p>
