@@ -61,6 +61,10 @@ export async function setMessageMasked(
 ): Promise<AdminActionResult> {
   await requireAdmin();
   const t = await getTranslations('admin.petition');
+  // ⚠️ 마스킹은 서버(관리자 JWT) 클라이언트로 실행해야 한다. is_masked 트리거가
+  // masked_by/petition_audit_log.actor_id를 auth.uid()로 기록하는데, service-role
+  // 클라이언트에선 auth.uid()가 NULL이라 감사 귀속이 사라진다. RLS "Signatures admin update"가
+  // 관리자 UPDATE를 허용하므로 서버 클라이언트로 정상 동작.
   const supabase = await createSupabaseServerClient();
 
   const { error } = await supabase
@@ -158,7 +162,7 @@ function buildCsv(headers: string[], rows: (string | number | boolean | null)[][
 }
 
 export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExportResult> {
-  await requireAdmin();
+  const actor = await requireAdmin();
   const t = await getTranslations('admin.petition');
   const admin = createSupabaseAdminClient();
 
@@ -236,6 +240,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
       action: 'csv_export_full',
       targetType: 'batch',
       details: { row_count: rows.length },
+      actorId: actor.id,
     });
   } else if (mode === 'masked') {
     csv = buildCsv(
@@ -253,6 +258,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
       action: 'csv_export_masked',
       targetType: 'batch',
       details: { row_count: rows.length },
+      actorId: actor.id,
     });
   } else {
     csv = buildCsv(
@@ -271,6 +277,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
       action: 'csv_export_committee',
       targetType: 'batch',
       details: { row_count: rows.length },
+      actorId: actor.id,
     });
   }
 
@@ -279,7 +286,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
 
 // ─── 서명 삭제 (운영자 직접 조작 — 잘못된/중복 입력 정정) ───────────
 export async function deleteSignature(signatureId: string): Promise<AdminActionResult> {
-  await requireAdmin();
+  const actor = await requireAdmin();
   const t = await getTranslations('admin.petition');
 
   if (!signatureId) {
@@ -311,6 +318,7 @@ export async function deleteSignature(signatureId: string): Promise<AdminActionR
     targetType: 'signature',
     targetId: signatureId,
     details: snapshot as unknown as Record<string, unknown>,
+    actorId: actor.id,
   });
 
   revalidatePath(ADMIN_PATH);
@@ -587,6 +595,7 @@ export async function updateSignature(
     return { ok: true };
   }
 
+  // is_masked 변경 시 트리거가 auth.uid()로 감사 귀속을 기록하므로 서버(관리자 JWT) 클라이언트 사용.
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from('petition_signatures').update(update).eq('id', signatureId);
 
