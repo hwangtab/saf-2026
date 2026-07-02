@@ -69,6 +69,12 @@ async function cronHandler(request: NextRequest) {
         .update({ status: 'draft', scheduled_at: null })
         .eq('id', due.id)
         .eq('status', 'sending');
+    } else if (result.error) {
+      // 부분 실패: 일부 채널은 큐됐고(발송됨) 일부는 드롭. sending 유지 — 성공분 완료 시
+      // finalize 훅이 sent로 마감. 드롭된 채널은 로그로만 관찰 가능하므로 반드시 기록.
+      console.error(
+        `[broadcast-dispatch] newsletter ${due.id} partial enqueue (${result.broadcastIds.length} channel(s) queued): ${result.error}`
+      );
     }
   }
 
@@ -466,12 +472,18 @@ async function cronHandler(request: NextRequest) {
 
       // 뉴스레터: 연결된 모든 채널 broadcast가 종결되면 뉴스레터도 sent로 마감.
       if (broadcast.newsletter_id) {
-        const { data: activeSiblings } = await supabase
+        const { data: activeSiblings, error: siblingsError } = await supabase
           .from('email_broadcasts')
           .select('id')
           .eq('newsletter_id', broadcast.newsletter_id)
           .in('status', ['queued', 'sending'])
           .limit(1);
+        if (siblingsError) {
+          console.error(
+            `[broadcast-dispatch] newsletter ${broadcast.newsletter_id} sibling query failed:`,
+            siblingsError.message
+          );
+        }
         if (activeSiblings && activeSiblings.length === 0) {
           await supabase
             .from('newsletters')
