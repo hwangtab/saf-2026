@@ -6,6 +6,7 @@ import {
   AdminPageTitle,
   AdminPageDescription,
 } from '@/app/admin/_components/admin-ui';
+import LinkButton from '@/components/ui/LinkButton';
 import { OrderList } from './order-list';
 
 type Props = {
@@ -24,10 +25,15 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader>
-        <AdminPageTitle>주문 관리</AdminPageTitle>
-        <AdminPageDescription>온라인 결제 주문을 조회하고 관리합니다.</AdminPageDescription>
-      </AdminPageHeader>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <AdminPageHeader>
+          <AdminPageTitle>주문 관리</AdminPageTitle>
+          <AdminPageDescription>온라인 결제 주문을 조회하고 관리합니다.</AdminPageDescription>
+        </AdminPageHeader>
+        <LinkButton href="/admin/orders/export" variant="white" className="w-full sm:w-auto">
+          주문 데이터 다운로드
+        </LinkButton>
+      </div>
       <OrderList
         orders={orders}
         initialStatus={params.status}
