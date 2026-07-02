@@ -84,6 +84,8 @@ export type DashboardOverviewStats = {
     currentMonthLabel: string;
     currentMonthRevenue: number;
     currentMonthSoldCount: number;
+    currentMonthExhibitionRevenue: number;
+    currentMonthExhibitionSoldCount: number;
   };
   recentApplications: Array<{
     id: string;
@@ -296,7 +298,7 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .limit(5),
     supabase
       .from('artwork_sales')
-      .select('sale_price, quantity')
+      .select('sale_price, quantity, artworks(exhibition)')
       .gte('sold_at', monthBoundary.startIso)
       .lt('sold_at', monthBoundary.endIso)
       .is('voided_at', null),
@@ -400,20 +402,35 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
   if (currentMonthSoldRowsResult.error && currentMonthSalesVoidColumnMissing) {
     const fallback = await supabase
       .from('artwork_sales')
-      .select('sale_price, quantity')
+      .select('sale_price, quantity, artworks(exhibition)')
       .gte('sold_at', monthBoundary.startIso)
       .lt('sold_at', monthBoundary.endIso);
     if (fallback.error) throw fallback.error;
     currentMonthSalesRows = fallback.data || [];
   }
-  const currentMonthRevenue = currentMonthSalesRows.reduce(
-    (sum, row) => sum + parsePrice(row.sale_price) * (row.quantity || 1),
-    0
-  );
-  const currentMonthSoldCount = currentMonthSalesRows.reduce(
-    (sum, row) => sum + (row.quantity || 1),
-    0
-  );
+
+  // 매출 탭의 전시 필터(기본=전체 / regular=일반 / <slug>=전시)와 정합되도록,
+  // 당월 매출을 일반 판매와 기금마련전(전시 배치) 매출로 분리 집계한다.
+  const exhibitionOfSale = (row: { artworks?: unknown }): string | null => {
+    const rel = row.artworks;
+    const obj = Array.isArray(rel) ? rel[0] : rel;
+    const value = (obj as { exhibition?: unknown } | null | undefined)?.exhibition;
+    return typeof value === 'string' && value.length > 0 ? value : null;
+  };
+  let currentMonthRevenue = 0;
+  let currentMonthSoldCount = 0;
+  let currentMonthExhibitionRevenue = 0;
+  let currentMonthExhibitionSoldCount = 0;
+  for (const row of currentMonthSalesRows) {
+    const quantity = row.quantity || 1;
+    const amount = parsePrice(row.sale_price) * quantity;
+    currentMonthRevenue += amount;
+    currentMonthSoldCount += quantity;
+    if (exhibitionOfSale(row)) {
+      currentMonthExhibitionRevenue += amount;
+      currentMonthExhibitionSoldCount += quantity;
+    }
+  }
 
   // main batch 완료 후 이미 실행 중인 analytics+feedback을 await
   const [analyticsSettled, feedbackSettled] = await analyticsFeedbackPromise;
@@ -440,6 +457,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       currentMonthLabel: monthBoundary.currentMonthLabel,
       currentMonthRevenue,
       currentMonthSoldCount,
+      currentMonthExhibitionRevenue,
+      currentMonthExhibitionSoldCount,
     },
     recentApplications: recentPendingProfiles.map((profile) => {
       const artistApplication = pendingArtistApplicationMap.get(profile.id);

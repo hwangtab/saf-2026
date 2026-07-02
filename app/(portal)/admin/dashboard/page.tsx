@@ -68,6 +68,11 @@ export default async function AdminDashboardPage() {
   const locale = await getLocale();
   const t = await getTranslations('admin.dashboard');
   const numberFormatter = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR');
+  const currencyFormatter = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'ko-KR', {
+    style: 'currency',
+    currency: 'KRW',
+    maximumFractionDigits: 0,
+  });
 
   let stats;
   try {
@@ -177,7 +182,11 @@ export default async function AdminDashboardPage() {
         <RevenueCard
           title={`${stats.revenue.currentMonthLabel} ${t('monthlyRevenue')}`}
           value={stats.revenue.currentMonthRevenue}
-          subtitle={`${t('soldCount')}: ${numberFormatter.format(stats.revenue.currentMonthSoldCount)}`}
+          subtitle={
+            stats.revenue.currentMonthExhibitionRevenue > 0
+              ? `${t('soldCount')}: ${numberFormatter.format(stats.revenue.currentMonthSoldCount)} · ${t('fundraiserRevenueLabel')}: ${currencyFormatter.format(stats.revenue.currentMonthExhibitionRevenue)} (${numberFormatter.format(stats.revenue.currentMonthExhibitionSoldCount)})`
+              : `${t('soldCount')}: ${numberFormatter.format(stats.revenue.currentMonthSoldCount)}`
+          }
         />
         <AdminCard className="flex flex-col justify-between p-6">
           <div>

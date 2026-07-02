@@ -31,6 +31,7 @@
       "hiddenHelp": "Number of artworks currently set to hidden and not visible on the public website.",
       "hiddenRate": "Share of total artworks",
       "monthlyRevenue": "Revenue",
+      "fundraiserRevenueLabel": "Fundraiser exhibition",
       "analyticsPanelTitle": "Dedicated Revenue Analytics",
       "analyticsPanelDescription": "Review monthly accounting revenue, month-over-month/year-over-year comparisons, and artist/artwork breakdowns on a dedicated page.",
       "analyticsPanelButton": "Go to Revenue Analytics",

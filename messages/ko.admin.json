@@ -31,6 +31,7 @@
       "hiddenHelp": "현재 '공개 안 함'으로 설정되어 사용자 웹사이트에 노출되지 않는 작품의 수입니다.",
       "hiddenRate": "전체 작품 대비",
       "monthlyRevenue": "매출",
+      "fundraiserRevenueLabel": "기금마련전",
       "analyticsPanelTitle": "매출 분석 전용 화면",
       "analyticsPanelDescription": "회계 기준 월별(1월~12월) 매출, 전월/전년 동월 비교, 작품/작가별 매출을 별도 페이지에서 확인하세요.",
       "analyticsPanelButton": "매출 현황 페이지로 이동",
