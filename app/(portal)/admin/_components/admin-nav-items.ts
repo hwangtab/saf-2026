@@ -52,6 +52,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       label: '도구',
       items: [
         { href: '/admin/email', label: '이메일 발송' },
+        { href: '/admin/newsletter', label: '뉴스레터' },
         { href: '/admin/sms', label: '문자/SMS' },
         { href: '/admin/social', label: '소셜 미디어' },
         { href: '/admin/feedback', label: '피드백' },
@@ -106,6 +107,7 @@ const ADMIN_NAV_GROUPS_BY_LOCALE: Record<LocaleCode, AdminNavGroup[]> = {
       label: 'Tools',
       items: [
         { href: '/admin/email', label: 'Email Broadcast' },
+        { href: '/admin/newsletter', label: 'Newsletter' },
         { href: '/admin/sms', label: 'SMS' },
         { href: '/admin/social', label: 'Social Media' },
         { href: '/admin/feedback', label: 'Feedback' },
