@@ -42,9 +42,6 @@ export async function GET(request: NextRequest) {
   const cookieStore = await cookies();
   const cookiesToPropagate: PendingCookie[] = [];
 
-  // 공개 출품 랜딩에서 심은 '기금마련전 출품 의도' 플래그. 활성 작가면 참여 화면으로 안내.
-  const fundraiserSubmitIntent = request.cookies.get('fundraiser_submit_intent')?.value === '1';
-
   const redirectWithOAuthStateCleared = (url: string) => {
     // NextResponse.redirect 대신 manual NextResponse 생성 — set-cookie 헤더 처리를 명시 제어.
     const response = new NextResponse(null, {
@@ -57,8 +54,6 @@ export async function GET(request: NextRequest) {
     }
     response.cookies.set(OAUTH_STATE_COOKIE_NAME, '', getOAuthStateCookieOptions(0));
     response.cookies.set(OAUTH_ROLE_COOKIE_NAME, '', getOAuthRoleCookieOptions(0));
-    // 출품 의도 플래그는 한 번 쓰고 소거(재로그인 시 오작동 방지).
-    response.cookies.set('fundraiser_submit_intent', '', { path: '/', maxAge: 0 });
     return response;
   };
 
@@ -228,9 +223,7 @@ export async function GET(request: NextRequest) {
                           needsPrivacyConsent: artistReconsent.needsPrivacyConsent,
                           needsTosConsent: artistReconsent.needsTosConsent,
                         })
-                      : fundraiserSubmitIntent
-                        ? '/dashboard/fundraiser'
-                        : '/dashboard/artworks'
+                      : '/dashboard/artworks'
                   }`
                 : `${origin}/onboarding?recover=1`
             );

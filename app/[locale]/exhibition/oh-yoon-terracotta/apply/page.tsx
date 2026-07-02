@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import LinkButton from '@/components/ui/LinkButton';
-import FundraiserSubmitButton from '@/components/features/FundraiserSubmitButton';
 import SafeImage from '@/components/common/SafeImage';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { resolveLocale } from '@/lib/server-locale';
@@ -15,6 +14,7 @@ export const dynamic = 'force-static';
 
 const PAGE_PATH = '/exhibition/oh-yoon-terracotta/apply';
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
+const FUNDRAISER_PATH = '/dashboard/fundraiser';
 const EXHIBITION_PATH = '/exhibition/oh-yoon-terracotta';
 const JOIN_PATH = '/signup';
 
@@ -76,7 +76,9 @@ export default async function ExhibitionApplyPage({ params }: Props) {
             {t('heroLead')}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <FundraiserSubmitButton>{t('ctaApply')}</FundraiserSubmitButton>
+            <LinkButton href={FUNDRAISER_PATH} variant="primary">
+              {t('ctaApply')}
+            </LinkButton>
             <LinkButton href={EXHIBITION_PATH} variant="secondary">
               {t('ctaView')}
             </LinkButton>
@@ -171,7 +173,9 @@ export default async function ExhibitionApplyPage({ params }: Props) {
             {t('inviteBody')}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <FundraiserSubmitButton>{t('ctaApply')}</FundraiserSubmitButton>
+            <LinkButton href={FUNDRAISER_PATH} variant="primary">
+              {t('ctaApply')}
+            </LinkButton>
             <LinkButton href={EXHIBITION_PATH} variant="outline-white">
               {t('ctaView')}
             </LinkButton>
@@ -232,7 +236,9 @@ export default async function ExhibitionApplyPage({ params }: Props) {
             {t('closingTitle')}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <FundraiserSubmitButton>{t('ctaApply')}</FundraiserSubmitButton>
+            <LinkButton href={FUNDRAISER_PATH} variant="primary">
+              {t('ctaApply')}
+            </LinkButton>
             <LinkButton href={JOIN_PATH} variant="outline-white">
               {t('ctaJoin')}
             </LinkButton>
