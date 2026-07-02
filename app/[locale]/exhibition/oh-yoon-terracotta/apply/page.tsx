@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import LinkButton from '@/components/ui/LinkButton';
 import SafeImage from '@/components/common/SafeImage';
+import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { resolveLocale } from '@/lib/server-locale';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
@@ -44,7 +45,7 @@ export default async function ExhibitionApplyPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'exhibitionOhYoonTerracotta.apply' });
 
-  const [titleLine1, titleLine2] = t('heroTitle').split('\n');
+  const [heroLine1, heroLine2] = t('heroTitle').split('\n');
 
   const breadcrumbSchema = createBreadcrumbSchema([
     { name: locale === 'en' ? 'Home' : '홈', url: SITE_URL },
@@ -62,7 +63,7 @@ export default async function ExhibitionApplyPage({ params }: Props) {
     <>
       <JsonLdScript data={breadcrumbSchema} />
 
-      {/* 히어로 — 작가 초대 (다크 + 테라코타 배경) */}
+      {/* ① 히어로 — 작가에게 보내는 초대 (다크 + 테라코타 배경) */}
       <header className="relative isolate overflow-hidden bg-charcoal text-white">
         <div className="absolute inset-0 -z-10">
           <SafeImage
@@ -80,12 +81,12 @@ export default async function ExhibitionApplyPage({ params }: Props) {
           <div className="absolute top-0 right-[16%] h-full w-px bg-primary/25" />
         </div>
 
-        <div className="container-max mx-auto flex min-h-[62vh] min-h-[62svh] flex-col justify-center px-4 py-24 md:py-28">
+        <div className="container-max mx-auto flex min-h-[68vh] min-h-[68svh] flex-col justify-center px-4 py-24 md:py-32">
           <p className="text-eyebrow mb-6 text-sun">{t('heroEyebrow')}</p>
           <h1 className="max-w-3xl font-display text-4xl font-black leading-[1.08] tracking-tighter text-balance drop-shadow-sm sm:text-5xl md:text-6xl lg:text-7xl">
-            {titleLine1}
+            {heroLine1}
             <br />
-            {titleLine2}
+            {heroLine2}
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed break-keep text-white/85 md:text-xl">
             {t('heroLead')}
@@ -99,12 +100,110 @@ export default async function ExhibitionApplyPage({ params }: Props) {
             </LinkButton>
           </div>
         </div>
+        <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
       </header>
 
-      {/* 출품 안내 — 3 포인트 (라이트) */}
+      {/* ② 무엇을 지키는가 (유물, 라이트) */}
       <section className="bg-canvas-soft py-20 md:py-28">
         <div className="container-max mx-auto max-w-5xl px-4">
-          <h2 className="border-l-[12px] border-charcoal pl-5 font-section text-3xl font-bold leading-tight text-charcoal-deep text-balance md:pl-6 md:text-4xl">
+          <p className="text-eyebrow mb-3 text-primary-strong">{t('s2Eyebrow')}</p>
+          <h2 className="border-l-[12px] border-charcoal pl-5 font-section text-3xl font-bold leading-tight text-charcoal-deep text-balance md:pl-6 md:text-5xl">
+            {t('s2Title')}
+          </h2>
+          <p className="mt-8 max-w-2xl text-base leading-relaxed break-keep text-charcoal md:text-lg">
+            {t('s2Body')}
+          </p>
+          <figure className="mt-12 grid gap-3 md:grid-cols-3">
+            {[
+              { src: '/images/petition-oh-yoon/mural-1.webp', alt: t('muralAltFront') },
+              { src: '/images/petition-oh-yoon/mural-2.webp', alt: t('muralAltDetail') },
+              { src: '/images/petition-oh-yoon/mural-3.webp', alt: t('muralAltBack') },
+            ].map((img) => (
+              <div
+                key={img.src}
+                className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep"
+              >
+                <SafeImage
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ))}
+            <figcaption className="mt-1 text-center text-xs text-charcoal-muted md:col-span-3">
+              {t('muralCaption')}
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      {/* ③ 나누는 마음 (오윤 어록, 다크) */}
+      <section className="bg-charcoal py-20 text-white md:py-28">
+        <div className="container-max mx-auto max-w-4xl px-4">
+          <p className="text-eyebrow mb-8 text-center text-sun">{t('s3Eyebrow')}</p>
+          <blockquote className="relative mx-auto max-w-3xl border-4 border-white/15 bg-white/[0.04] p-8 text-center backdrop-blur-sm md:p-14">
+            <span
+              aria-hidden="true"
+              className="absolute -top-6 left-1/2 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-primary font-display text-3xl font-black text-white"
+            >
+              &ldquo;
+            </span>
+            <p className="font-display text-2xl font-black leading-snug text-balance break-keep md:text-4xl">
+              {t('s3Quote')}
+            </p>
+            <footer className="mt-6 flex items-center justify-center gap-2">
+              <span className="h-px w-8 bg-white/30" />
+              <span className="text-base font-bold tracking-widest text-white/80 md:text-lg">
+                {t('s3QuoteBy')}
+              </span>
+              <span className="h-px w-8 bg-white/30" />
+            </footer>
+          </blockquote>
+          <p className="mx-auto mt-10 max-w-2xl text-base leading-relaxed break-keep text-white/85 md:text-lg">
+            {t('s3Body')}
+          </p>
+        </div>
+      </section>
+
+      {/* ④ 당신의 자리 (연대의 의의, canvas) */}
+      <section className="bg-canvas py-20 md:py-28">
+        <div className="container-max mx-auto max-w-3xl px-4">
+          <p className="text-eyebrow mb-3 text-primary-strong">{t('s4Eyebrow')}</p>
+          <h2 className="font-section text-3xl font-bold leading-tight text-charcoal-deep text-balance md:text-5xl">
+            {t('s4Title')}
+          </h2>
+          <p className="mt-6 text-base leading-relaxed break-keep text-charcoal md:text-lg">
+            {t('s4Body')}
+          </p>
+        </div>
+      </section>
+
+      {/* ⑤ 함께해 주시겠습니까 (초대의 절정, 다크) */}
+      <section className="bg-charcoal-deep py-20 text-center text-white md:py-28">
+        <div className="container-max mx-auto max-w-3xl px-4">
+          <h2 className="font-display text-3xl font-black leading-tight text-balance break-keep md:text-5xl">
+            {t('inviteTitle')}
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed break-keep text-white/85 md:text-xl">
+            {t('inviteBody')}
+          </p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <LinkButton href={FUNDRAISER_PATH} variant="primary">
+              {t('ctaApply')}
+            </LinkButton>
+            <LinkButton href={EXHIBITION_PATH} variant="secondary">
+              {t('ctaView')}
+            </LinkButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ⑥ 출품 안내 — 실무 코다 (라이트) */}
+      <section className="bg-canvas-soft py-20 md:py-28">
+        <div className="container-max mx-auto max-w-5xl px-4">
+          <h2 className="border-l-[12px] border-charcoal pl-5 font-section text-2xl font-bold leading-tight text-charcoal-deep text-balance md:pl-6 md:text-4xl">
             {t('howTitle')}
           </h2>
           <ul className="mt-10 grid gap-6 md:grid-cols-3">
@@ -125,32 +224,29 @@ export default async function ExhibitionApplyPage({ params }: Props) {
               </li>
             ))}
           </ul>
+
+          <div className="mt-12 rounded-2xl border border-gallery-hairline bg-white p-6 md:p-8">
+            <p className="text-eyebrow mb-4 text-primary-strong">{t('stepsTitle')}</p>
+            <ol className="space-y-4">
+              {steps.map((step, i) => (
+                <li key={step} className="flex gap-4">
+                  <span className="shrink-0 font-display text-xl font-black tabular-nums text-charcoal-deep">
+                    {i + 1}
+                  </span>
+                  <p className="text-base leading-relaxed break-keep text-charcoal md:text-lg">
+                    {step}
+                  </p>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-6 border-t border-gallery-divider pt-4 text-sm leading-relaxed break-keep text-charcoal-muted">
+              {t('note')}
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* 출품 방법 — 스텝 (다크) */}
-      <section className="bg-charcoal-deep py-20 text-white md:py-28">
-        <div className="container-max mx-auto max-w-3xl px-4">
-          <p className="text-eyebrow mb-3 text-sun">{t('stepsTitle')}</p>
-          <ol className="mt-6 space-y-6">
-            {steps.map((step, i) => (
-              <li key={step} className="flex gap-4 border-t border-white/15 pt-6">
-                <span className="shrink-0 font-display text-2xl font-black tabular-nums text-sun">
-                  {i + 1}
-                </span>
-                <p className="text-base leading-relaxed break-keep text-white/85 md:text-lg">
-                  {step}
-                </p>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-10 rounded-xl border border-white/15 bg-white/5 px-5 py-4 text-sm leading-relaxed break-keep text-white/70 backdrop-blur-sm md:text-base">
-            {t('note')}
-          </p>
-        </div>
-      </section>
-
-      {/* 클로징 CTA */}
+      {/* ⑦ 클로징 */}
       <section className="bg-charcoal py-20 text-center text-white md:py-28">
         <div className="container-max mx-auto max-w-3xl px-4">
           <p className="font-display text-2xl font-black leading-snug text-balance break-keep md:text-4xl">
