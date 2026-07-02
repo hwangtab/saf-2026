@@ -102,6 +102,8 @@ export type DashboardOverviewStats = {
   siteAnalytics: DashboardSiteAnalytics | null;
   feedback: DashboardFeedbackSummary | null;
   pendingOrderCount: number;
+  awaitingDepositCount: number;
+  refundRequestedCount: number;
   slaOverdueCount: number;
   escalatedCount: number;
   recentOrders: Array<{
@@ -268,6 +270,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     recentOrdersResult,
     slaOverdueCountResult,
     escalatedCountResult,
+    awaitingDepositCountResult,
+    refundRequestedCountResult,
   ] = await Promise.all([
     supabase.from('artists').select('id', { count: 'exact', head: true }),
     supabase
@@ -324,6 +328,16 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
       .select('id', { count: 'exact', head: true })
       .not('escalated_at', 'is', null)
       .not('status', 'in', '(completed,cancelled,refunded,refund_requested)'),
+    // 무통장/가상계좌 입금 대기 — 관리자 수동 입금 확인 필요
+    supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'awaiting_deposit'),
+    // 환불 요청 대기 — 관리자 처리 필요
+    supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'refund_requested'),
   ]);
 
   const currentMonthSalesVoidColumnMissing = isMissingVoidedAtColumnError(
@@ -478,6 +492,8 @@ export async function getDashboardOverviewStats(): Promise<DashboardOverviewStat
     siteAnalytics,
     feedback,
     pendingOrderCount: pendingOrderCountResult.count ?? 0,
+    awaitingDepositCount: awaitingDepositCountResult.count ?? 0,
+    refundRequestedCount: refundRequestedCountResult.count ?? 0,
     slaOverdueCount: slaOverdueCountResult.count ?? 0,
     escalatedCount: escalatedCountResult.count ?? 0,
     recentOrders: (recentOrdersResult.data ?? []).map((row) => {

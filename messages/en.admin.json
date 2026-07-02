@@ -57,6 +57,8 @@
       "viewRecent": "Sort by newest",
       "noArtworks": "No artworks registered.",
       "pendingOrders": "Pending Orders",
+      "awaitingDeposit": "Deposit Confirmations",
+      "refundRequested": "Refund Requests",
       "recentOrdersTitle": "Recent Orders",
       "noRecentOrders": "No recent orders.",
       "orderStatusPendingPayment": "Pending Payment",

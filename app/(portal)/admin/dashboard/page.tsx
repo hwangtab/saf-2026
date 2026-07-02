@@ -158,6 +158,20 @@ export default async function AdminDashboardPage() {
           href="/admin/orders?status=pending_payment"
         />
         <StatCard
+          title={t('awaitingDeposit')}
+          valueText={numberFormatter.format(stats.awaitingDepositCount)}
+          subtitle={stats.awaitingDepositCount > 0 ? t('needsCheck') : t('noPending')}
+          href="/admin/orders?status=awaiting_deposit"
+        />
+        {stats.refundRequestedCount > 0 && (
+          <StatCard
+            title={t('refundRequested')}
+            valueText={numberFormatter.format(stats.refundRequestedCount)}
+            subtitle={t('needsCheck')}
+            href="/admin/orders?status=refund_requested"
+          />
+        )}
+        <StatCard
           title={t('slaOverdue')}
           valueText={numberFormatter.format(stats.slaOverdueCount)}
           subtitle={stats.slaOverdueCount > 0 ? t('slaOverdueDesc') : t('slaNoViolation')}
