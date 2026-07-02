@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import SafeImage from '@/components/common/SafeImage';
 import MasterArtistGallery from '@/components/special/MasterArtistGallery';
@@ -100,6 +99,9 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
           <div className="mt-10 flex flex-wrap gap-3">
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
+            </LinkButton>
+            <LinkButton href="/exhibition/oh-yoon-terracotta/apply" variant="outline-white">
+              {t('applyCta')}
             </LinkButton>
           </div>
         </div>
@@ -233,15 +235,10 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
             </LinkButton>
+            <LinkButton href="/exhibition/oh-yoon-terracotta/apply" variant="secondary">
+              {t('applyCta')}
+            </LinkButton>
           </div>
-          <p className="mt-6 text-sm text-charcoal-muted">
-            <Link
-              href="/exhibition/oh-yoon-terracotta/apply"
-              className="font-medium text-primary-strong underline-offset-4 hover:underline"
-            >
-              {t('ch3ArtistLink')}
-            </Link>
-          </p>
         </div>
       </section>
 
@@ -282,6 +279,9 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
+            </LinkButton>
+            <LinkButton href="/exhibition/oh-yoon-terracotta/apply" variant="outline-white">
+              {t('applyCta')}
             </LinkButton>
           </div>
         </div>
