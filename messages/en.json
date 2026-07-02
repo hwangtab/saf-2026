@@ -52,7 +52,9 @@
     "ohYoonMemorial": "Memorial Sign-up",
     "ohYoonMemorialDesc": "Register for the July 5 memorial (first-come)",
     "ohYoonFunding": "Terracotta Relocation Fund",
-    "ohYoonFundingDesc": "The Guui-dong terracotta relief faces demolition — join citizens funding its relocation"
+    "ohYoonFundingDesc": "The Guui-dong terracotta relief faces demolition — join citizens funding its relocation",
+    "ohYoonExhibition": "Terracotta Relief Exhibition",
+    "ohYoonExhibitionDesc": "Artists donate their work — Oh Yoon Terracotta Relief Exhibition"
   },
   "footer": {
     "links": "Links",
@@ -67,6 +69,7 @@
     "termsOfService": "Terms of Service",
     "refundPolicy": "Shipping & Refund",
     "faq": "FAQ",
+    "ohYoonCampaign": "Oh Yoon 40th Campaign",
     "masterArtists": "Special Exhibitions on View",
     "description": "A mutual-aid platform building a brighter future together with Korean artists.",
     "guide": "Visit our links and contact section for information about online exhibitions and purchases.",
@@ -275,6 +278,16 @@
       "featuredArtworks": "Featured Artworks",
       "viewAll": "View all",
       "relatedStories": "Related Stories"
+    },
+    "ohYoonCluster": {
+      "heading": "Oh Yoon 40th Campaign",
+      "intro": "Artists standing in solidarity by contributing their own work — a petition, a memorial, and a fundraising exhibition",
+      "petitionEyebrow": "Guui-dong Mural Petition",
+      "petitionTitle": "Oh Yoon's mural at risk, back to the public — add your signature",
+      "memorialEyebrow": "Oh Yoon 40th Memorial",
+      "memorialTitle": "Oh Yoon 40th Memorial — July 5 in Insa-dong, join us to pay tribute",
+      "exhibitionEyebrow": "Terracotta Relief Exhibition",
+      "exhibitionTitle": "Artists donate their work — Oh Yoon Terracotta Relief Exhibition"
     }
   },
   "breadcrumbs": {
@@ -785,7 +798,9 @@
       "editionOpen": "Open",
       "editionLimit": "Edition quantity",
       "editionLimitPlaceholder": "e.g., 50",
-      "artistNote": "Artist note"
+      "artistNote": "Artist note",
+      "fundraiserBadgeTitle": "This artwork will be exhibited in the Oh Yoon Terracotta Relief Exhibition",
+      "fundraiserBadgeHint": "After saving, you will be returned to the participation page. Sale proceeds will be tracked separately for the Oh Yoon Terracotta relocation fund."
     },
     "pending": {
       "title": "Pending Approval",
@@ -1271,7 +1286,9 @@
       "formSubmitting": "Submitting…",
       "formFooter": "Signing takes 30 seconds. Your information is used only for petition operations and disposed within 6 months of petition close.",
       "fundingCtaEyebrow": "Terracotta Preservation Fund",
-      "fundingCtaTitle": "Support the Oh Yoon Terracotta Project — help move the mural into public hands"
+      "fundingCtaTitle": "Support the Oh Yoon Terracotta Project — help move the mural into public hands",
+      "exhibitionCtaEyebrow": "Terracotta Relief Exhibition",
+      "exhibitionCtaTitle": "Artists donate their work — Oh Yoon Terracotta Relief Exhibition"
     }
   },
   "wishlist": {
@@ -1558,6 +1575,8 @@
         "petitionTitle": "Oh Yoon's mural at risk, back to the public — add your signature",
         "fundingEyebrow": "Fund the mural's move",
         "fundingTitle": "Move the Guui-dong terracotta relief by citizens' hands — join the funding",
+        "exhibitionEyebrow": "Terracotta Relief Exhibition",
+        "exhibitionTitle": "Artists donate their work — Oh Yoon Terracotta Relief Exhibition",
         "story40thEyebrow": "40th anniversary tribute",
         "story40thTitle": "Oh Yoon at 40 years — the SAF magazine on his life and work",
         "storyBladeEyebrow": "Reading a masterwork",
@@ -1637,5 +1656,13 @@
     "paymentMethodCard": "Card",
     "paymentMethodTransfer": "Quick account transfer",
     "paymentTransferHelp": "Pay instantly with Toss quick account transfer. A Korean bank account is required."
+  },
+  "exhibitionOhYoonTerracotta": {
+    "heroTitle": "Oh Yoon Terracotta Relief Exhibition",
+    "heroDescription": "Fellow artists contribute works to carry forward the Oh Yoon terracotta mural preservation.",
+    "petitionCta": "Sign the Mural Petition",
+    "fundingCta": "Support Directly",
+    "emptyState": "Exhibited works will be announced soon.",
+    "breadcrumb": "Oh Yoon Terracotta Relief Exhibition"
   }
 }

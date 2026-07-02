@@ -103,6 +103,19 @@
       "awaitingApproval": "You can start artist activities after admin approval.",
       "readyToUse": "You will be able to use the service once approval is complete.",
       "submitted": "Submitted:"
+    },
+    "fundraiser": {
+      "title": "Oh Yoon Terracotta Fundraiser",
+      "closedNotice": "Artwork submissions for the fundraiser have closed.",
+      "storyHeading": "Artists stand together to preserve Oh Yoon's terracotta",
+      "storyBody": "Oh Yoon's terracotta double-sided relief, carved into the former Sangup Bank Guui-dong branch in 1974, faces demolition. Artists are donating their own works — and sales proceeds will go directly to a fund to relocate and preserve the terracotta.",
+      "petitionLink": "Sign the petition to protect the mural",
+      "counter": "Fundraiser submissions {count}/{max}",
+      "newArtworkCta": "Register a new artwork to submit",
+      "soldLocked": "Sold · Submission confirmed",
+      "soldUnavailable": "Sold · not available",
+      "hiddenNote": "Hidden — not shown publicly",
+      "saveButton": "Save submitted artworks"
     }
   },
   "onboarding": {

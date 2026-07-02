@@ -40,6 +40,7 @@ type ArtworkData = {
 type ArtworkFormProps = {
   artwork?: Partial<ArtworkData>;
   artistId: string;
+  exhibition?: string; // 신규 등록을 기금마련전에 귀속
 };
 
 const initialState: ActionState = {
@@ -54,7 +55,7 @@ const createSessionId = () => {
   return `${Date.now()}_${Math.random().toString(36).slice(2)}`;
 };
 
-export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
+export function ArtworkForm({ artwork, artistId, exhibition }: ArtworkFormProps) {
   // If editing, we bind the ID to the update action
   const action = artwork?.id ? updateArtwork.bind(null, artwork.id) : createArtwork;
 
@@ -201,6 +202,15 @@ export function ArtworkForm({ artwork, artistId }: ArtworkFormProps) {
     >
       <div className="space-y-8 divide-y divide-gray-200">
         <div>
+          {exhibition && (
+            <div className="mb-6 rounded-lg border border-primary/30 bg-primary/5 p-4">
+              <p className="text-sm font-semibold text-charcoal-deep">
+                🌱 {t('fundraiserBadgeTitle')}
+              </p>
+              <p className="mt-1 text-sm text-charcoal-muted">{t('fundraiserBadgeHint')}</p>
+              <input type="hidden" name="exhibition" value={exhibition} />
+            </div>
+          )}
           <h3 className="text-lg leading-6 font-semibold text-gray-900">
             {artwork ? t('editTitle') : t('createTitle')}
           </h3>

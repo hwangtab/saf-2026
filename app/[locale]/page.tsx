@@ -15,7 +15,9 @@ import JoinCommunityCTA from '@/components/features/JoinCommunityCTA';
 import MagazineSection from '@/components/features/MagazineSection';
 import ArtworkCategoryGrid from '@/components/features/ArtworkCategoryGrid';
 import HomeTrackedSection from '@/components/features/HomeTrackedSection';
+import { Link } from '@/i18n/navigation';
 import { OG_IMAGE, SITE_URL, CONTACT } from '@/lib/constants';
+import { OH_YOON_TERRACOTTA_EXHIBITION } from '@/lib/exhibitions';
 import { LOAN_COUNT } from '@/lib/site-stats';
 import { getLiveStats } from '@/lib/live-stats';
 import {
@@ -159,6 +161,60 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
 
       {/* 매거진 [K] — 매뉴얼 6.4 [K]. 최신 기사 3건. 깊이감 + 재방문 의지 형성. */}
       <MagazineSection locale={locale} />
+
+      {/* 오윤 40주기 캠페인 클러스터 — 청원·추도식·기금마련전 3카드.
+          크라우드펀딩(/funding/...)은 별도 라벨이므로 여기에 포함하지 않음.
+          active 플래그로 캠페인 종료 시 자동 숨김. */}
+      {OH_YOON_TERRACOTTA_EXHIBITION.active && (
+        <Section variant="canvas-soft" className="py-12 md:py-16 reveal-on-scroll">
+          <div className="container-max max-w-4xl">
+            <h2 className="mb-3 text-center font-section text-2xl font-bold text-charcoal-deep md:text-3xl">
+              {t('ohYoonCluster.heading')}
+            </h2>
+            <p className="mb-8 text-center text-sm text-charcoal-muted break-keep md:text-base">
+              {t('ohYoonCluster.intro')}
+            </p>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <Link
+                href="/petition/oh-yoon"
+                prefetch={false}
+                className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+              >
+                <div className="text-eyebrow mb-2 text-primary-strong">
+                  {t('ohYoonCluster.petitionEyebrow')}
+                </div>
+                <div className="text-base font-medium text-charcoal-deep leading-snug">
+                  {t('ohYoonCluster.petitionTitle')}
+                </div>
+              </Link>
+              <Link
+                href="/event/oh-yoon-memorial"
+                prefetch={false}
+                className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+              >
+                <div className="text-eyebrow mb-2 text-primary-strong">
+                  {t('ohYoonCluster.memorialEyebrow')}
+                </div>
+                <div className="text-base font-medium text-charcoal-deep leading-snug">
+                  {t('ohYoonCluster.memorialTitle')}
+                </div>
+              </Link>
+              <Link
+                href="/exhibition/oh-yoon-terracotta"
+                prefetch={false}
+                className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
+              >
+                <div className="text-eyebrow mb-2 text-primary-strong">
+                  {t('ohYoonCluster.exhibitionEyebrow')}
+                </div>
+                <div className="text-base font-medium text-charcoal-deep leading-snug">
+                  {t('ohYoonCluster.exhibitionTitle')}
+                </div>
+              </Link>
+            </div>
+          </div>
+        </Section>
+      )}
 
       {/* 회원 가입 CTA [L] — 매뉴얼 6.4 [L].
           Impact Stats 제거 후 메인에서 회원 가입 동선이 Footer만 남았던 회귀 보강.

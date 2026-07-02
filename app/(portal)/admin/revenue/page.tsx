@@ -25,6 +25,7 @@ type Props = {
     evidenceEnd?: string;
     evidenceLabel?: string;
     evidenceChannel?: string;
+    exhibition?: string;
   }>;
 };
 
@@ -182,6 +183,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
       evidenceEnd: params.evidenceEnd,
       evidenceLabel: params.evidenceLabel,
       evidenceChannel: params.evidenceChannel,
+      exhibition: params.exhibition,
     });
   } catch (error) {
     console.error('Revenue Analytics Error:', error);
@@ -257,6 +259,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
         selectedYear={analytics.filter.selectedYear}
         selectedMonth={analytics.filter.selectedMonth}
         availableYears={analytics.filter.availableYears}
+        selectedExhibition={params.exhibition}
       />
       <div className="flex flex-wrap justify-end gap-2">
         <a
@@ -291,7 +294,10 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
             ) : null}
             {analytics.filter.artistId ? (
               <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700">
-                {t('sellerColumn')}: {analytics.filter.artistId.startsWith('name:') ? analytics.filter.artistId.slice(5) : analytics.filter.artistId}
+                {t('sellerColumn')}:{' '}
+                {analytics.filter.artistId.startsWith('name:')
+                  ? analytics.filter.artistId.slice(5)
+                  : analytics.filter.artistId}
               </span>
             ) : null}
             {analytics.filter.evidenceLabel ? (
@@ -451,10 +457,7 @@ export default async function AdminRevenuePage({ searchParams }: Props) {
                   previousMonth.year,
                   previousMonth.month
                 );
-                const previousYearMonthStart = getMonthStartKstDate(
-                  selectedYear - 1,
-                  month.month
-                );
+                const previousYearMonthStart = getMonthStartKstDate(selectedYear - 1, month.month);
                 const previousYearMonthEnd = getNextMonthStartKstDate(
                   selectedYear - 1,
                   month.month

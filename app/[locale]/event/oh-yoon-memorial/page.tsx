@@ -215,6 +215,17 @@ export default async function OhYoonMemorialEventPage({ params }: Props) {
               </div>
             </Link>
             <Link
+              href="/exhibition/oh-yoon-terracotta"
+              className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
+            >
+              <div className="text-eyebrow mb-2 text-primary-strong">
+                {t('relatedHub.exhibitionEyebrow')}
+              </div>
+              <div className="text-base font-medium leading-snug text-charcoal-deep">
+                {t('relatedHub.exhibitionTitle')}
+              </div>
+            </Link>
+            <Link
               href="/stories/oh-yun-40th-anniversary"
               className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 transition-colors hover:bg-canvas-strong"
             >

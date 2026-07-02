@@ -66,6 +66,7 @@ export interface BaseArtwork {
   artist: string;
   title: string;
   admin_product_name?: string | null;
+  exhibition?: string | null; // 전시 귀속 태그 슬러그 (예: 'oh-yoon-terracotta')
   description?: string;
   description_en?: string;
   quote?: string;

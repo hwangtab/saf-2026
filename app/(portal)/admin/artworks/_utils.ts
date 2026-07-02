@@ -7,6 +7,7 @@ export type ArtworkItem = {
   images: string[] | null;
   created_at: string | null;
   category: string | null;
+  exhibition: string | null;
   admin_tags: AdminArtworkTag[];
   artists: { name_ko: string | null } | null;
 };
@@ -26,12 +27,15 @@ export type SortKey = 'artwork_info' | 'status' | 'category' | 'visibility' | 'c
 export type SortDirection = 'asc' | 'desc';
 export type SortFilter = 'default' | 'recent' | 'oldest';
 
+export type ExhibitionFilter = 'all' | 'oh-yoon-terracotta' | 'none';
+
 export type InitialArtworkFilters = {
   status?: string;
   visibility?: string;
   tag?: string;
   q?: string;
   sort?: string;
+  exhibition?: string;
 };
 
 export function normalizeStatusFilter(value: string | undefined): StatusFilter {
@@ -50,6 +54,11 @@ export function normalizeQuery(value: string | undefined): string {
 
 export function normalizeTagFilter(value: string | undefined): string {
   return (value || '').trim();
+}
+
+export function normalizeExhibitionFilter(value: string | undefined): ExhibitionFilter {
+  if (value === 'oh-yoon-terracotta' || value === 'none') return value;
+  return 'all';
 }
 
 export function normalizeSortFilter(value: string | undefined): SortFilter {

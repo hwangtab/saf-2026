@@ -160,6 +160,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date('2026-05-30'),
     },
     {
+      // 오윤 테라코타 기금마련전 — 작가들이 자발적으로 출품해 판매 수익을 이전 기금으로
+      path: '/exhibition/oh-yoon-terracotta',
+      changeFrequency: 'weekly',
+      priority: 0.9,
+      lastModified: new Date('2026-07-02'),
+    },
+    {
       path: '/archive/2026',
       changeFrequency: 'monthly',
       priority: 0.85,

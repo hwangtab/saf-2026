@@ -46,6 +46,7 @@ const HERO_EXACT = new Set<string>([
   '/wishlist',
   '/changelog',
   '/collections',
+  '/exhibition/oh-yoon-terracotta',
 ]);
 
 /**

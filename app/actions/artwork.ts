@@ -21,6 +21,7 @@ import {
   revalidatePublicArtworkSurfaces,
 } from '@/lib/utils/revalidate';
 import { hasActiveOrdersForArtworks } from '@/lib/orders/active-order-guard';
+import { isExhibitionSlug, OH_YOON_TERRACOTTA_EXHIBITION } from '@/lib/exhibitions';
 import type { ActionState } from '@/types';
 
 export type { ActionState } from '@/types';
@@ -74,6 +75,11 @@ export async function createArtwork(
       edition_type === 'limited' && edition_limit_str ? Number(edition_limit_str) : null;
     const price = getString(formData, 'price');
     const category = getString(formData, 'category') || null;
+    const rawExhibition = getString(formData, 'exhibition') || null;
+    const exhibition = isExhibitionSlug(rawExhibition) ? rawExhibition : null;
+    if (exhibition) {
+      redirectPath = '/dashboard/fundraiser?result=created';
+    }
     const rawStatus = getString(formData, 'status') || 'available';
     const status = (
       ['available', 'reserved', 'sold'].includes(rawStatus) ? rawStatus : 'available'
@@ -125,6 +131,25 @@ export async function createArtwork(
       return { message: dataValidation.error, error: true, cleanupUrls };
     }
 
+    // 4. Exhibition count check
+    if (exhibition) {
+      const { count } = await supabase
+        .from('artworks')
+        .select('id', { count: 'exact', head: true })
+        .eq('artist_id', artist.id)
+        .eq('exhibition', exhibition);
+      if ((count ?? 0) >= OH_YOON_TERRACOTTA_EXHIBITION.maxPerArtist) {
+        if (supabase && artistId) {
+          await cleanupUploads(supabase, cleanupUrls, artistId);
+        }
+        return {
+          message: `기금마련전은 작가당 최대 ${OH_YOON_TERRACOTTA_EXHIBITION.maxPerArtist}점까지 출품할 수 있습니다.`,
+          error: true,
+          cleanupUrls,
+        };
+      }
+    }
+
     const { data: insertedArtwork, error } = await supabase
       .from('artworks')
       .insert({
@@ -144,6 +169,7 @@ export async function createArtwork(
         images,
         is_hidden: false,
         shop_url: null,
+        exhibition,
       })
       .select(
         'id, title, artist_id, description, size, material, year, edition, price, status, images, is_hidden, shop_url, updated_at'
