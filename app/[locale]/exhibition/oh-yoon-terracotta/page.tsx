@@ -72,7 +72,9 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
         <div className="absolute inset-0 -z-10">
           <SafeImage
             src="/images/petition-oh-yoon/mural-1.webp"
+            // decorative-alt-ok: 히어로 배경 장식 이미지(그라디언트 뒤, opacity-40)
             alt=""
+            aria-hidden
             fill
             priority
             sizes="100vw"
