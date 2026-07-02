@@ -1,6 +1,11 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: '14.5';
+  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -28,81 +33,6 @@ export type Database = {
   };
   public: {
     Tables: {
-      email_logs: {
-        Row: {
-          created_at: string;
-          error: string | null;
-          id: string;
-          order_no: string | null;
-          provider: string;
-          provider_message_id: string | null;
-          status: string;
-          subject: string | null;
-          to_email: string;
-          type: string;
-        };
-        Insert: {
-          created_at?: string;
-          error?: string | null;
-          id?: string;
-          order_no?: string | null;
-          provider?: string;
-          provider_message_id?: string | null;
-          status: string;
-          subject?: string | null;
-          to_email: string;
-          type: string;
-        };
-        Update: {
-          created_at?: string;
-          error?: string | null;
-          id?: string;
-          order_no?: string | null;
-          provider?: string;
-          provider_message_id?: string | null;
-          status?: string;
-          subject?: string | null;
-          to_email?: string;
-          type?: string;
-        };
-        Relationships: [];
-      };
-      cron_runs: {
-        Row: {
-          created_at: string;
-          error: string | null;
-          finished_at: string;
-          id: string;
-          name: string;
-          ok: boolean;
-          started_at: string;
-          status: number | null;
-          summary: Json | null;
-        };
-        Insert: {
-          created_at?: string;
-          error?: string | null;
-          finished_at?: string;
-          id?: string;
-          name: string;
-          ok?: boolean;
-          started_at?: string;
-          status?: number | null;
-          summary?: Json | null;
-        };
-        Update: {
-          created_at?: string;
-          error?: string | null;
-          finished_at?: string;
-          id?: string;
-          name?: string;
-          ok?: boolean;
-          started_at?: string;
-          status?: number | null;
-          summary?: Json | null;
-        };
-        Relationships: [];
-      };
       activity_logs: {
         Row: {
           action: string;
@@ -714,6 +644,42 @@ export type Database = {
           },
         ];
       };
+      cron_runs: {
+        Row: {
+          created_at: string;
+          error: string | null;
+          finished_at: string;
+          id: string;
+          name: string;
+          ok: boolean;
+          started_at: string;
+          status: number | null;
+          summary: Json | null;
+        };
+        Insert: {
+          created_at?: string;
+          error?: string | null;
+          finished_at?: string;
+          id?: string;
+          name: string;
+          ok?: boolean;
+          started_at?: string;
+          status?: number | null;
+          summary?: Json | null;
+        };
+        Update: {
+          created_at?: string;
+          error?: string | null;
+          finished_at?: string;
+          id?: string;
+          name?: string;
+          ok?: boolean;
+          started_at?: string;
+          status?: number | null;
+          summary?: Json | null;
+        };
+        Relationships: [];
+      };
       customer_contact_overrides: {
         Row: {
           created_at: string;
@@ -814,6 +780,7 @@ export type Database = {
           failed_count: number;
           id: string;
           is_advertisement: boolean;
+          newsletter_id: string | null;
           petition_slug: string | null;
           queued_at: string | null;
           recipient_count: number;
@@ -836,6 +803,7 @@ export type Database = {
           failed_count?: number;
           id?: string;
           is_advertisement?: boolean;
+          newsletter_id?: string | null;
           petition_slug?: string | null;
           queued_at?: string | null;
           recipient_count?: number;
@@ -858,6 +826,7 @@ export type Database = {
           failed_count?: number;
           id?: string;
           is_advertisement?: boolean;
+          newsletter_id?: string | null;
           petition_slug?: string | null;
           queued_at?: string | null;
           recipient_count?: number;
@@ -872,6 +841,13 @@ export type Database = {
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'email_broadcasts_newsletter_id_fkey';
+            columns: ['newsletter_id'];
+            isOneToOne: false;
+            referencedRelation: 'newsletters';
             referencedColumns: ['id'];
           },
         ];
@@ -959,6 +935,45 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      email_logs: {
+        Row: {
+          created_at: string;
+          error: string | null;
+          id: string;
+          order_no: string | null;
+          provider: string;
+          provider_message_id: string | null;
+          status: string;
+          subject: string | null;
+          to_email: string;
+          type: string;
+        };
+        Insert: {
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          order_no?: string | null;
+          provider?: string;
+          provider_message_id?: string | null;
+          status: string;
+          subject?: string | null;
+          to_email: string;
+          type: string;
+        };
+        Update: {
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          order_no?: string | null;
+          provider?: string;
+          provider_message_id?: string | null;
+          status?: string;
+          subject?: string | null;
+          to_email?: string;
+          type?: string;
+        };
+        Relationships: [];
       };
       email_suppressions: {
         Row: {
@@ -1614,6 +1629,65 @@ export type Database = {
           title_en?: string | null;
         };
         Relationships: [];
+      };
+      newsletters: {
+        Row: {
+          audience_channels: string[];
+          blocks: Json;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          is_advertisement: boolean;
+          issue_no: number;
+          preheader: string;
+          scheduled_at: string | null;
+          sent_at: string | null;
+          slug: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          audience_channels?: string[];
+          blocks?: Json;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          is_advertisement?: boolean;
+          issue_no: number;
+          preheader?: string;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          slug: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Update: {
+          audience_channels?: string[];
+          blocks?: Json;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          is_advertisement?: boolean;
+          issue_no?: number;
+          preheader?: string;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          slug?: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'newsletters_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       order_admin_notes: {
         Row: {
