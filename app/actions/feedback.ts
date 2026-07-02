@@ -1,7 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { requireAuth, requireAdminClient } from '@/lib/auth/guards';
+import { notifyEmail } from '@/lib/notify';
 import { createSupabaseServerClient } from '@/lib/auth/server';
 import { getString } from '@/lib/utils/form-helpers';
 import { getActionErrorMessage } from '@/lib/utils/action-error';
@@ -52,6 +54,15 @@ export async function submitFeedback(formData: FormData) {
     console.error('[feedback] insert failed:', error.message, error.code, error.details);
     return { error: getActionErrorMessage(error, '피드백 제출 중 오류가 발생했습니다.') };
   }
+
+  // 새 피드백 접수를 관리자에게 이메일로 알림 — 버그·개선 제안 누락 방지. 응답 후 실행 보장을
+  // 위해 after()로 등록(bare void는 함수 정지 시 fetch abort). notifyEmail은 never-throw.
+  after(() =>
+    notifyEmail('info', '새 피드백 접수', {
+      카테고리: category,
+      제목: title,
+    })
+  );
 
   revalidatePath('/admin/feedback');
   return { success: true };
