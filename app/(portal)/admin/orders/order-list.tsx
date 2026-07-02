@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -11,9 +11,11 @@ import {
   AdminBadge,
   AdminEmptyState,
 } from '@/app/admin/_components/admin-ui';
+import { AdminConfirmModal } from '@/app/(portal)/admin/_components/AdminConfirmModal';
 import { ArrowRight, Clock, AlertTriangle } from 'lucide-react';
-import type { AdminOrderListItem } from '@/app/actions/admin-orders';
+import { confirmDeposit, type AdminOrderListItem } from '@/app/actions/admin-orders';
 import type { OrderStatus } from '@/lib/integrations/toss/types';
+import { useToast } from '@/lib/hooks/useToast';
 
 const STATUS_OPTIONS = [
   { value: '', label: '전체 상태' },
@@ -26,6 +28,7 @@ const STATUS_OPTIONS = [
   { value: 'shipped', label: '배송 중' },
   { value: 'delivered', label: '배송 완료' },
   { value: 'completed', label: '거래 완료' },
+  { value: 'refund_requested', label: '환불 요청' },
   { value: 'cancelled', label: '취소됨' },
   { value: 'refunded', label: '환불됨' },
 ];
@@ -90,8 +93,26 @@ export function OrderList({
   initialQ?: string;
 }) {
   const router = useRouter();
+  const toast = useToast();
   const [statusFilter, setStatusFilter] = useState(initialStatus ?? '');
   const [query, setQuery] = useState(initialQ ?? '');
+  const [confirmTarget, setConfirmTarget] = useState<AdminOrderListItem | null>(null);
+  const [isConfirming, startConfirm] = useTransition();
+
+  function handleConfirmDeposit() {
+    if (!confirmTarget) return;
+    const target = confirmTarget;
+    startConfirm(async () => {
+      try {
+        await confirmDeposit(target.id);
+        toast.success('입금이 확인되어 결제 완료 처리되었습니다.');
+        setConfirmTarget(null);
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : '입금 확인에 실패했습니다.');
+      }
+    });
+  }
 
   const filtered = useMemo(() => {
     let result = orders;
@@ -197,15 +218,26 @@ export function OrderList({
                     {formatDate(order.created_at)}
                   </td>
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/admin/orders/${order.id}`}
-                      className="text-xs text-primary-a11y hover:underline"
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        상세
-                        <ArrowRight className="h-3 w-3" aria-hidden="true" />
-                      </span>
-                    </Link>
+                    <div className="flex items-center justify-end gap-2">
+                      {order.status === 'awaiting_deposit' && (
+                        <button
+                          type="button"
+                          onClick={() => setConfirmTarget(order)}
+                          className="whitespace-nowrap rounded-md bg-primary-strong px-2.5 py-1 text-xs font-semibold text-white hover:bg-primary-strong/90"
+                        >
+                          입금 확인
+                        </button>
+                      )}
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="text-xs text-primary-a11y hover:underline"
+                      >
+                        <span className="inline-flex items-center gap-1">
+                          상세
+                          <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                        </span>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -213,6 +245,23 @@ export function OrderList({
           </table>
         </div>
       )}
+
+      <AdminConfirmModal
+        isOpen={confirmTarget !== null}
+        onClose={() => setConfirmTarget(null)}
+        onConfirm={handleConfirmDeposit}
+        title="입금 확인"
+        description={
+          confirmTarget
+            ? `주문 ${confirmTarget.order_no} (${confirmTarget.buyer_name ?? '구매자'}, ${formatKRW(
+                confirmTarget.total_amount
+              )})의 입금을 확인하고 결제 완료 처리합니다.`
+            : ''
+        }
+        confirmText="입금 확인"
+        variant="info"
+        isLoading={isConfirming}
+      />
     </AdminCard>
   );
 }

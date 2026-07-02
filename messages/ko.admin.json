@@ -57,6 +57,8 @@
       "viewRecent": "최근 등록순으로 보기",
       "noArtworks": "등록된 작품이 없습니다.",
       "pendingOrders": "결제 대기 주문",
+      "awaitingDeposit": "입금 대기 확인",
+      "refundRequested": "환불 요청 처리",
       "recentOrdersTitle": "최근 주문",
       "noRecentOrders": "최근 주문이 없습니다.",
       "orderStatusPendingPayment": "결제 대기",
