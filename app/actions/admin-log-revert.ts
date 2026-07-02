@@ -33,6 +33,23 @@ function asSnapshotList(value: unknown): Record<string, unknown>[] | null {
   );
 }
 
+// 콘텐츠 테이블(news/faq/testimonials/videos)은 updated_at 컬럼이 없어 artwork/artist식
+// updated_at 낙관적 동시성 검사를 쓸 수 없다. 대신 revert 대상 필드 기준으로 "현재 row가
+// 편집 직후 스냅샷(after_snapshot)과 여전히 일치하는가"를 비교해, 그 사이 다른 편집이
+// 있었으면 복구를 중단한다(상대방 변경 덮어쓰기 방지).
+function contentChangedSinceSnapshot(
+  current: Record<string, unknown>,
+  afterSnapshot: Record<string, unknown>,
+  keys: readonly string[]
+): boolean {
+  for (const key of keys) {
+    if (JSON.stringify(current[key] ?? null) !== JSON.stringify(afterSnapshot[key] ?? null)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // ── Revert/Restore key constants ──
 
 const ARTWORK_REVERT_KEYS = [
@@ -510,6 +527,18 @@ export async function revertActivityLog(
       }
     }
 
+    // For creation actions, we use after_snapshot to identify what to delete
+    const isCreationAction =
+      ARTWORK_CREATION_ACTIONS.has(log.action) ||
+      ARTIST_CREATION_ACTIONS.has(log.action) ||
+      log.action === 'artist_application_submitted';
+
+    // 스냅샷 부재 검사는 반드시 락 점유 전에 수행한다. 락(reverted_at)을 먼저 점유한 뒤
+    // 여기서 throw하면 실제 복구는 하나도 안 됐는데 로그만 "복구됨"으로 남는다.
+    if (!log.before_snapshot && !isCreationAction) {
+      throw new Error('복구 스냅샷 정보가 없습니다.');
+    }
+
     // TOCTOU 방지: destructive 작업 실행 전 reverted_at을 먼저 점유(lock-then-mutate).
     // 두 admin이 동시에 "복구" 클릭 시 한쪽만 점유 성공 → 나머지는 여기서 early return.
     // 마커를 마지막에 설정하던 기존 패턴(mutate-then-lock)은 이중 실행 위험이 있었음.
@@ -528,16 +557,6 @@ export async function revertActivityLog(
     if (lockError) throw lockError;
     if (!lockRows || lockRows.length !== 1) {
       throw new Error('이미 다른 관리자가 복구를 진행 중입니다. 페이지를 새로고침해 주세요.');
-    }
-
-    // For creation actions, we use after_snapshot to identify what to delete
-    const isCreationAction =
-      ARTWORK_CREATION_ACTIONS.has(log.action) ||
-      ARTIST_CREATION_ACTIONS.has(log.action) ||
-      log.action === 'artist_application_submitted';
-
-    if (!log.before_snapshot && !isCreationAction) {
-      throw new Error('복구 스냅샷 정보가 없습니다.');
     }
 
     if (log.target_type === 'artwork') {
@@ -948,6 +967,19 @@ export async function revertActivityLog(
         if (!snapshot) {
           throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
         }
+        const afterSnapshot = asSnapshotObject(log.after_snapshot);
+        const { data: currentNews } = await supabase
+          .from('news')
+          .select('title, source, date, link, thumbnail, description')
+          .eq('id', log.target_id)
+          .maybeSingle();
+        if (
+          afterSnapshot &&
+          currentNews &&
+          contentChangedSinceSnapshot(currentNews, afterSnapshot, NEWS_REVERT_KEYS)
+        ) {
+          throw new Error('현재 뉴스 내용이 추가로 변경되어 복구를 중단합니다.');
+        }
         const patch = buildPatch(snapshot, NEWS_REVERT_KEYS);
         const { error: revertError } = await supabase
           .from('news')
@@ -983,6 +1015,19 @@ export async function revertActivityLog(
         const snapshot = asSnapshotObject(log.before_snapshot);
         if (!snapshot) {
           throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const afterSnapshot = asSnapshotObject(log.after_snapshot);
+        const { data: currentFaq } = await supabase
+          .from('faq')
+          .select('question, answer, question_en, answer_en, display_order')
+          .eq('id', log.target_id)
+          .maybeSingle();
+        if (
+          afterSnapshot &&
+          currentFaq &&
+          contentChangedSinceSnapshot(currentFaq, afterSnapshot, FAQ_REVERT_KEYS)
+        ) {
+          throw new Error('현재 FAQ 내용이 추가로 변경되어 복구를 중단합니다.');
         }
         const patch = buildPatch(snapshot, FAQ_REVERT_KEYS);
         const { error: revertError } = await supabase
@@ -1020,6 +1065,19 @@ export async function revertActivityLog(
         if (!snapshot) {
           throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
         }
+        const afterSnapshot = asSnapshotObject(log.after_snapshot);
+        const { data: currentTestimonial } = await supabase
+          .from('testimonials')
+          .select('category, quote, author, context, display_order')
+          .eq('id', log.target_id)
+          .maybeSingle();
+        if (
+          afterSnapshot &&
+          currentTestimonial &&
+          contentChangedSinceSnapshot(currentTestimonial, afterSnapshot, TESTIMONIAL_REVERT_KEYS)
+        ) {
+          throw new Error('현재 증언 내용이 추가로 변경되어 복구를 중단합니다.');
+        }
         const patch = buildPatch(snapshot, TESTIMONIAL_REVERT_KEYS);
         const { error: revertError } = await supabase
           .from('testimonials')
@@ -1055,6 +1113,19 @@ export async function revertActivityLog(
         const snapshot = asSnapshotObject(log.before_snapshot);
         if (!snapshot) {
           throw new Error('복구 스냅샷 정보가 올바르지 않습니다.');
+        }
+        const afterSnapshot = asSnapshotObject(log.after_snapshot);
+        const { data: currentVideo } = await supabase
+          .from('videos')
+          .select('title, description, youtube_id, thumbnail, transcript')
+          .eq('id', log.target_id)
+          .maybeSingle();
+        if (
+          afterSnapshot &&
+          currentVideo &&
+          contentChangedSinceSnapshot(currentVideo, afterSnapshot, VIDEO_REVERT_KEYS)
+        ) {
+          throw new Error('현재 비디오 내용이 추가로 변경되어 복구를 중단합니다.');
         }
         const patch = buildPatch(snapshot, VIDEO_REVERT_KEYS);
         const { error: revertError } = await supabase
