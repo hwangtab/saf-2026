@@ -13,6 +13,8 @@ interface NavDropdownProps {
    * 0보다 크면 작은 빨간 점 + 카운트 tooltip. 드롭다운 닫혀 있어도 즉시 인지.
    */
   alertCount?: number;
+  /** nav item href → 처리 대기 건수. 그룹 버튼엔 합계 pill, 항목엔 개별 count. */
+  badges?: Record<string, number>;
 }
 
 function isItemActive(
@@ -35,11 +37,13 @@ function isItemActive(
   return pathname.startsWith(targetPath);
 }
 
-export function NavDropdown({ label, items, alertCount = 0 }: NavDropdownProps) {
+export function NavDropdown({ label, items, alertCount = 0, badges = {} }: NavDropdownProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const groupBadgeTotal = items.reduce((sum, item) => sum + (badges[item.href] ?? 0), 0);
 
   const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
   const roleFilter = pathname === '/admin/users' ? searchParams.get('role') : null;
@@ -71,6 +75,15 @@ export function NavDropdown({ label, items, alertCount = 0 }: NavDropdownProps) 
         }`}
       >
         {label}
+        {groupBadgeTotal > 0 && (
+          <span
+            className="ml-0.5 inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-danger-a11y px-1.5 py-0.5 text-[11px] font-semibold leading-none text-white"
+            title={`처리 대기 ${groupBadgeTotal}건`}
+            aria-label={`처리 대기 ${groupBadgeTotal}건`}
+          >
+            {groupBadgeTotal}
+          </span>
+        )}
         {alertCount > 0 && (
           <span
             className="ml-0.5 inline-flex h-2 w-2 rounded-full bg-danger-a11y"
@@ -94,19 +107,25 @@ export function NavDropdown({ label, items, alertCount = 0 }: NavDropdownProps) 
         <div className="absolute left-0 top-full z-50 mt-1 min-w-[160px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black/5">
           {items.map((item) => {
             const isActive = isItemActive(item, pathname, isReviewQueueMode, roleFilter);
+            const itemBadge = badges[item.href] ?? 0;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 prefetch={item.href.startsWith('/admin/changelog') ? false : undefined}
                 onClick={() => setOpen(false)}
-                className={`block px-4 py-2 text-sm transition-colors ${
+                className={`flex items-center justify-between gap-3 px-4 py-2 text-sm transition-colors ${
                   isActive
                     ? 'bg-primary-surface font-medium text-primary-strong'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {item.label}
+                <span>{item.label}</span>
+                {itemBadge > 0 && (
+                  <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-danger-a11y px-1.5 py-0.5 text-[11px] font-semibold leading-none text-white">
+                    {itemBadge}
+                  </span>
+                )}
               </Link>
             );
           })}

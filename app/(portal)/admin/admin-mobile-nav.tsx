@@ -12,14 +12,17 @@ import { getAdminNavGroups } from './_components/admin-nav-items';
 interface AdminMobileNavProps {
   /** Web Vitals 회귀 페이지 개수 — 햄버거 버튼 + Analytics item 옆 dot. */
   regressionCount?: number;
+  /** nav item href → 처리 대기 건수. 항목 옆 숫자 뱃지 + 햄버거 dot. */
+  badges?: Record<string, number>;
 }
 
-export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
+export function AdminMobileNav({ regressionCount = 0, badges = {} }: AdminMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const locale = useLocale() as 'ko' | 'en';
   const t = useTranslations('admin.common');
   const adminNavGroups = getAdminNavGroups(locale);
+  const badgesTotal = Object.values(badges).reduce((sum, n) => sum + n, 0);
   const searchParams = useSearchParams();
   const isReviewQueueMode = pathname === '/admin/users' && searchParams.get('status') === 'pending';
   const roleFilter = pathname === '/admin/users' ? searchParams.get('role') : null;
@@ -70,11 +73,15 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
             d="M4 6h16M4 12h16M4 18h16"
           />
         </svg>
-        {regressionCount > 0 && (
+        {(regressionCount > 0 || badgesTotal > 0) && (
           <span
             className="absolute top-1.5 right-1.5 inline-flex h-2 w-2 rounded-full bg-danger-a11y ring-2 ring-white"
-            aria-label={`Web Vitals 회귀 ${regressionCount}건`}
-            title={`Web Vitals 회귀 ${regressionCount}건`}
+            aria-label={
+              badgesTotal > 0 ? `처리 대기 ${badgesTotal}건` : `Web Vitals 회귀 ${regressionCount}건`
+            }
+            title={
+              badgesTotal > 0 ? `처리 대기 ${badgesTotal}건` : `Web Vitals 회귀 ${regressionCount}건`
+            }
           />
         )}
       </button>
@@ -162,6 +169,7 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
                               : pathname.startsWith(targetPath);
                         const hasAnalyticsAlert =
                           item.href === '/admin/analytics' && regressionCount > 0;
+                        const itemBadge = badges[item.href] ?? 0;
                         return (
                           <Link
                             key={item.href}
@@ -176,11 +184,17 @@ export function AdminMobileNav({ regressionCount = 0 }: AdminMobileNavProps) {
                             onClick={() => setIsOpen(false)}
                           >
                             <span>{item.label}</span>
-                            {hasAnalyticsAlert && (
+                            {hasAnalyticsAlert ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-danger-a11y/10 px-2 py-0.5 text-xs font-semibold text-danger-a11y">
                                 <span className="inline-flex h-1.5 w-1.5 rounded-full bg-danger-a11y" />
                                 {regressionCount}
                               </span>
+                            ) : (
+                              itemBadge > 0 && (
+                                <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-danger-a11y px-1.5 py-0.5 text-xs font-semibold leading-none text-white">
+                                  {itemBadge}
+                                </span>
+                              )
                             )}
                           </Link>
                         );
