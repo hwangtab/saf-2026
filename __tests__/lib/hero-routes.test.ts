@@ -27,7 +27,6 @@ describe('isHeroRoute', () => {
       '/wishlist',
       '/changelog',
       '/exhibition/oh-yoon-terracotta',
-      '/exhibition/oh-yoon-terracotta/apply',
     ])('%s는 hero 경로', (path) => {
       expect(isHeroRoute(path)).toBe(true);
     });
@@ -83,6 +82,8 @@ describe('isHeroRoute', () => {
       '/auth/callback',
       '/checkout',
       '/orders',
+      // 출품 안내는 밝은 초대장 히어로 → 헤더 solid (투명화 제외)
+      '/exhibition/oh-yoon-terracotta/apply',
       '/unknown-route',
     ])('%s는 hero 경로 아님', (path) => {
       expect(isHeroRoute(path)).toBe(false);

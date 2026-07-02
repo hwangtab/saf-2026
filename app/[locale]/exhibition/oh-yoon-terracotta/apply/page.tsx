@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import LinkButton from '@/components/ui/LinkButton';
 import SafeImage from '@/components/common/SafeImage';
-import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { resolveLocale } from '@/lib/server-locale';
 import { createLocaleAlternates } from '@/lib/locale-alternates';
@@ -63,44 +62,28 @@ export default async function ExhibitionApplyPage({ params }: Props) {
     <>
       <JsonLdScript data={breadcrumbSchema} />
 
-      {/* ① 히어로 — 작가에게 보내는 초대 (다크 + 테라코타 배경) */}
-      <header className="relative isolate overflow-hidden bg-charcoal text-white">
-        <div className="absolute inset-0 -z-10">
-          <SafeImage
-            src="/images/petition-oh-yoon/mural-2.webp"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-30"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/50 to-black/85" />
-        </div>
-        <div aria-hidden="true" className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-[10%] h-full w-px bg-white/10" />
-          <div className="absolute top-0 right-[16%] h-full w-px bg-primary/25" />
-        </div>
-
-        <div className="container-max mx-auto flex min-h-[68vh] min-h-[68svh] flex-col justify-center px-4 py-24 md:py-32">
-          <p className="text-eyebrow mb-6 text-sun">{t('heroEyebrow')}</p>
-          <h1 className="max-w-3xl font-display text-4xl font-black leading-[1.08] tracking-tighter text-balance drop-shadow-sm sm:text-5xl md:text-6xl lg:text-7xl">
+      {/* ① 히어로 — 작가에게 보내는 밝은 초대장 (전시의 다크 몰입 히어로와 대비) */}
+      <header className="border-b border-gallery-hairline bg-canvas-strong">
+        <div className="container-max mx-auto max-w-3xl px-4 py-24 text-center md:py-32">
+          <div aria-hidden="true" className="mx-auto mb-8 h-px w-16 bg-primary-strong/40" />
+          <p className="text-eyebrow mb-6 text-primary-strong">{t('heroEyebrow')}</p>
+          <h1 className="font-display text-4xl font-black leading-[1.1] tracking-tight text-charcoal-deep text-balance sm:text-5xl md:text-6xl">
             {heroLine1}
             <br />
             {heroLine2}
           </h1>
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed break-keep text-white/85 md:text-xl">
+          <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed break-keep text-charcoal-muted md:text-xl">
             {t('heroLead')}
           </p>
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
             <LinkButton href={FUNDRAISER_PATH} variant="primary">
               {t('ctaApply')}
             </LinkButton>
-            <LinkButton href={EXHIBITION_PATH} variant="outline-white">
+            <LinkButton href={EXHIBITION_PATH} variant="secondary">
               {t('ctaView')}
             </LinkButton>
           </div>
         </div>
-        <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
       </header>
 
       {/* ② 무엇을 지키는가 (유물, 라이트) */}
