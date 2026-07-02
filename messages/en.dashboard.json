@@ -89,7 +89,9 @@
       "cancel": "Cancel",
       "saveEdit": "Save changes",
       "saveCreate": "Create artwork",
-      "genericError": "An error occurred while saving. Please try again shortly."
+      "genericError": "An error occurred while saving. Please try again shortly.",
+      "fundraiserBadgeTitle": "This artwork will be exhibited in the Oh Yoon Terracotta Relief Exhibition",
+      "fundraiserBadgeHint": "After saving, you will be returned to the participation page. Sale proceeds will be tracked separately for the Oh Yoon Terracotta relocation fund."
     },
     "suspended": {
       "title": "Account Suspended",
@@ -118,7 +120,12 @@
       "soldLocked": "Sold · Submission confirmed",
       "soldUnavailable": "Sold · not available",
       "hiddenNote": "Hidden — not shown publicly",
-      "saveButton": "Save submitted artworks"
+      "saveButton": "Save submitted artworks",
+      "selectHeading": "Choose works to submit",
+      "selectHint": "Tap works below to select them for submission, then press Save. Up to three works.",
+      "selectedTag": "Selected",
+      "selectTag": "Tap to select",
+      "emptyArtworks": "You haven't registered any works yet. Start with 'Register & submit a new work' at the top right."
     }
   },
   "onboarding": {
