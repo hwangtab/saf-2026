@@ -47,10 +47,21 @@ export async function setFundraiserSelection(selectedArtworkIds: string[]): Prom
       }
     }
 
-    // 2. 판매 잠금: 판매된 출품작이 선택에서 빠지면 거부
+    // 2a. 판매 잠금: 판매된 출품작이 선택에서 빠지면 거부
     for (const a of rows) {
       if (a.exhibition === slug && isSold(a) && !selected.has(a.id)) {
         return { message: '이미 판매된 출품작은 출품을 해제할 수 없습니다.', error: true };
+      }
+    }
+
+    // 2b. 판매 신규 태그 차단: 판매된 작품을 새로 기금마련전에 태그하면 거부
+    //     (캠페인 이전 판매액이 모금액 원장에 유령으로 잡히는 것을 방지)
+    for (const a of rows) {
+      if (a.exhibition !== slug && isSold(a) && selected.has(a.id)) {
+        return {
+          message: '이미 판매된 작품은 기금마련전에 새로 출품할 수 없습니다.',
+          error: true,
+        };
       }
     }
 

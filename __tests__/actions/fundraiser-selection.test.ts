@@ -110,6 +110,34 @@ describe('setFundraiserSelection', () => {
     expect(updateSpy).not.toHaveBeenCalled();
   });
 
+  it('판매된 미태그 작품을 새로 선택하면 거부한다', async () => {
+    const updateSpy = jest.fn();
+    mockCreateSupabaseServerClient.mockResolvedValue(
+      buildSupabase(
+        [{ id: 'sold-new', status: 'sold', manual_sold_override: false, exhibition: null }],
+        updateSpy
+      )
+    );
+    const { setFundraiserSelection } = await import('@/app/actions/fundraiser');
+    const res = await setFundraiserSelection(['sold-new']); // 판매된 미태그 작품을 새로 태그하려 시도
+    expect(res.error).toBe(true);
+    expect(updateSpy).not.toHaveBeenCalled();
+  });
+
+  it('manual_sold_override된 미태그 작품을 새로 선택해도 거부한다', async () => {
+    const updateSpy = jest.fn();
+    mockCreateSupabaseServerClient.mockResolvedValue(
+      buildSupabase(
+        [{ id: 'override-new', status: 'available', manual_sold_override: true, exhibition: null }],
+        updateSpy
+      )
+    );
+    const { setFundraiserSelection } = await import('@/app/actions/fundraiser');
+    const res = await setFundraiserSelection(['override-new']);
+    expect(res.error).toBe(true);
+    expect(updateSpy).not.toHaveBeenCalled();
+  });
+
   it('유효한 선택은 태그를 적용한다', async () => {
     const updateSpy = jest.fn();
     const rows: Row[] = [

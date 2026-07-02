@@ -113,6 +113,8 @@
       "counter": "기금마련전 출품 {count}/{max}",
       "newArtworkCta": "새 작품 등록하고 출품",
       "soldLocked": "판매됨 · 출품 확정",
+      "soldUnavailable": "판매됨 · 출품 불가",
+      "hiddenNote": "숨김 — 공개 노출 안 됨",
       "saveButton": "출품 작품 저장"
     }
   },

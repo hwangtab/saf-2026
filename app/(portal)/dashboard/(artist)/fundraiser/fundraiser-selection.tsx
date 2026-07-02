@@ -17,6 +17,7 @@ type Item = {
   price: string | null;
   isTagged: boolean;
   isSold: boolean;
+  isHidden: boolean;
 };
 
 const initialState: ActionState = { message: '', error: false };
@@ -47,7 +48,7 @@ export function FundraiserSelection({
   const atLimit = count >= maxPerArtist;
 
   const toggle = (item: Item) => {
-    if (item.isSold && item.isTagged) return; // 잠금
+    if (item.isSold) return; // 판매된 작품은 태그 추가/제거 모두 불가
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(item.id)) next.delete(item.id);
@@ -82,8 +83,9 @@ export function FundraiserSelection({
       <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {artworks.map((item) => {
           const isChecked = selected.has(item.id);
-          const locked = item.isSold && item.isTagged;
-          const disabled = locked || (!isChecked && atLimit);
+          const soldLocked = item.isSold && item.isTagged;
+          const soldUnavailable = item.isSold && !item.isTagged;
+          const disabled = item.isSold || (!isChecked && atLimit);
           return (
             <li key={item.id}>
               <button
@@ -109,7 +111,13 @@ export function FundraiserSelection({
                   />
                 )}
                 <p className="mt-2 truncate text-sm text-charcoal">{item.title}</p>
-                {locked && <p className="text-xs text-charcoal-soft">{t('soldLocked')}</p>}
+                {soldLocked && <p className="text-xs text-charcoal-soft">{t('soldLocked')}</p>}
+                {soldUnavailable && (
+                  <p className="text-xs text-charcoal-soft">{t('soldUnavailable')}</p>
+                )}
+                {item.isHidden && (
+                  <p className="mt-1 text-xs text-charcoal-soft">{t('hiddenNote')}</p>
+                )}
               </button>
             </li>
           );

@@ -113,6 +113,8 @@
       "counter": "Fundraiser submissions {count}/{max}",
       "newArtworkCta": "Register a new artwork to submit",
       "soldLocked": "Sold · Submission confirmed",
+      "soldUnavailable": "Sold · not available",
+      "hiddenNote": "Hidden — not shown publicly",
       "saveButton": "Save submitted artworks"
     }
   },

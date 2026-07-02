@@ -28,7 +28,9 @@ export default async function FundraiserPage() {
   const supabase = await createSupabaseServerClient();
   const { data: artworks } = await supabase
     .from('artworks')
-    .select('id, title, images, price, status, manual_sold_override, exhibition, created_at')
+    .select(
+      'id, title, images, price, status, manual_sold_override, exhibition, is_hidden, created_at'
+    )
     .eq('artist_id', artist.id)
     .order('created_at', { ascending: false });
 
@@ -54,6 +56,7 @@ export default async function FundraiserPage() {
           price: a.price,
           isTagged: a.exhibition === OH_YOON_TERRACOTTA_EXHIBITION.slug,
           isSold: a.status === 'sold' || a.manual_sold_override === true,
+          isHidden: a.is_hidden === true,
         }))}
         maxPerArtist={OH_YOON_TERRACOTTA_EXHIBITION.maxPerArtist}
       />
