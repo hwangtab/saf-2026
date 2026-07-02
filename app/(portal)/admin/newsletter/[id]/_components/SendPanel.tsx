@@ -43,25 +43,31 @@ export function SendPanel({
     );
     return initial.length > 0 ? initial : ['customer'];
   });
-  const [counts, setCounts] = useState<Record<string, number> | null>(null);
+  const [counts, setCounts] = useState<{ sig: string; values: Record<string, number> } | null>(
+    null
+  );
   const [confirmMode, setConfirmMode] = useState(false);
   const [scheduleAt, setScheduleAt] = useState('');
   const [feedback, setFeedback] = useState<{ text: string; isError: boolean } | null>(null);
   const [isActing, startActing] = useTransition();
 
   // 채널 선택 변경 시 수신자 수 갱신 (기존 count RPC 재사용)
-  // cancelled ref로 경합 취소. counts=null은 비동기 완료 후 새 값으로 교체되어 처리.
+  // 시그니처 태깅: 조회 완료 전 채널 변경 시 freshCounts가 null이 되어 "집계 중…" 표시.
+  // setCounts는 gen 가드 통과 후 결과와 함께 1회만 호출 → lint-safe.
   const countsGenRef = useRef(0);
   useEffect(() => {
     const gen = ++countsGenRef.current;
+    const sig = channels.join(',');
     Promise.all(channels.map((c) => previewAudience(c).then((r) => [c, r.total] as const))).then(
       (entries) => {
-        if (gen === countsGenRef.current) setCounts(Object.fromEntries(entries));
+        if (gen === countsGenRef.current) setCounts({ sig, values: Object.fromEntries(entries) });
       }
     );
   }, [channels]);
 
-  const totalCount = counts ? Object.values(counts).reduce((a, b) => a + b, 0) : null;
+  const channelSig = channels.join(',');
+  const freshCounts = counts && counts.sig === channelSig ? counts.values : null;
+  const totalCount = freshCounts ? Object.values(freshCounts).reduce((a, b) => a + b, 0) : null;
 
   const run = (fn: () => Promise<{ message: string; error?: boolean }>, refresh = true) =>
     startActing(async () => {
@@ -168,7 +174,9 @@ export function SendPanel({
                 />
                 {NEWSLETTER_CHANNEL_LABELS[channel]}
                 <span className="text-xs text-charcoal-muted">
-                  {counts ? `${(counts[channel] ?? 0).toLocaleString('ko-KR')}명` : '집계 중…'}
+                  {freshCounts
+                    ? `${(freshCounts[channel] ?? 0).toLocaleString('ko-KR')}명`
+                    : '집계 중…'}
                 </span>
               </label>
             ))}
