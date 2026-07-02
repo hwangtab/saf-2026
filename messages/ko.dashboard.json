@@ -105,6 +105,9 @@
       "submitted": "제출 완료:"
     },
     "fundraiser": {
+      "bannerText": "🌱 오윤 테라코타 기금마련전이 열렸어요 — 작품을 출품해 함께해요",
+      "bannerCta": "출품하러 가기",
+      "bannerDismiss": "배너 닫기",
       "title": "오윤 테라코타 기금마련전",
       "closedNotice": "기금마련전 출품 접수가 종료되었습니다.",
       "storyHeading": "동료 작가들의 연대로 오윤 테라코타를 지킵니다",

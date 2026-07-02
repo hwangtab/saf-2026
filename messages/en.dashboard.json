@@ -105,6 +105,9 @@
       "submitted": "Submitted:"
     },
     "fundraiser": {
+      "bannerText": "🌱 The Oh Yoon Terracotta Fundraiser is now open — submit your artwork and join us",
+      "bannerCta": "Submit artwork",
+      "bannerDismiss": "Dismiss banner",
       "title": "Oh Yoon Terracotta Fundraiser",
       "closedNotice": "Artwork submissions for the fundraiser have closed.",
       "storyHeading": "Artists stand together to preserve Oh Yoon's terracotta",
