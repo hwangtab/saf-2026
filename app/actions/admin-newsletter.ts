@@ -469,17 +469,10 @@ export async function scheduleNewsletter(
     return { message: '예약 시각은 최소 1분 이후여야 합니다.', error: true };
   }
 
-  // 예약 시점에 블록·이미지 검증 — scheduled는 편집 잠금이라 이후 변하지 않는다 (편차 §6)
-  const current = await getNewsletter(id);
-  if (!current) return { message: '뉴스레터를 찾을 수 없습니다.', error: true };
-  try {
-    const broken = await findBrokenImageUrl(parseNewsletterBlocks(current.blocks));
-    if (broken) return { message: `이미지 URL이 응답하지 않습니다: ${broken}`, error: true };
-  } catch (err) {
-    return { message: err instanceof Error ? err.message : '블록 검증 실패', error: true };
-  }
-
-  const { data, error } = await supabase
+  // 원자적 claim: draft → scheduled. status 가드 UPDATE라 검증-저장 사이에 다른 관리자가
+  // blocks를 바꿀 수 없다 (updateNewsletter·deleteNewsletter 둘 다 status='draft' 가드).
+  // claim 성공 시 returned blocks가 실제 예약된 blocks — TOCTOU 소멸.
+  const { data: claimed, error: claimError } = await supabase
     .from('newsletters')
     .update({
       status: 'scheduled',
@@ -489,9 +482,31 @@ export async function scheduleNewsletter(
     })
     .eq('id', id)
     .eq('status', 'draft')
-    .select('id')
+    .select('id, blocks')
     .maybeSingle();
-  if (error || !data) return { message: '초안 상태에서만 예약할 수 있습니다.', error: true };
+  if (claimError || !claimed) {
+    return { message: '초안 상태에서만 예약할 수 있습니다.', error: true };
+  }
+
+  // claim된 행의 blocks로 이미지 검증 — 검증 실패 시 scheduled → draft 복원
+  try {
+    const broken = await findBrokenImageUrl(parseNewsletterBlocks(claimed.blocks));
+    if (broken) {
+      await supabase
+        .from('newsletters')
+        .update({ status: 'draft', scheduled_at: null })
+        .eq('id', id)
+        .eq('status', 'scheduled');
+      return { message: `이미지 URL이 응답하지 않습니다: ${broken}`, error: true };
+    }
+  } catch (err) {
+    await supabase
+      .from('newsletters')
+      .update({ status: 'draft', scheduled_at: null })
+      .eq('id', id)
+      .eq('status', 'scheduled');
+    return { message: err instanceof Error ? err.message : '블록 검증 실패', error: true };
+  }
 
   await logAdminAction('newsletter_schedule', 'newsletter', id, {
     channels,
