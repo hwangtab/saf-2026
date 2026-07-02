@@ -271,15 +271,6 @@ export default async function Footer({ locale }: { locale: string }) {
                 <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
                   <li>
                     <Link
-                      href="/petition/oh-yoon"
-                      prefetch={false}
-                      className="text-gray-300 hover:text-white transition-colors"
-                    >
-                      {tNav('ohYoonPetition')}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
                       href="/event/oh-yoon-memorial"
                       prefetch={false}
                       className="text-gray-300 hover:text-white transition-colors"

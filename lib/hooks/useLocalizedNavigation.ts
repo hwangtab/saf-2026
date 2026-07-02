@@ -30,7 +30,8 @@ export function useLocalizedNavigation(): NavigationItem[] {
       ],
     },
     {
-      // 오윤 40주기 캠페인 묶음: 펀딩(이전 모금) + 기금마련전(작품 판매) + 추도식(시기성 행동) + 청원(시민 행동) + 오윤 작품.
+      // 오윤 40주기 캠페인 묶음: 펀딩(이전 모금) + 기금마련전(작품 판매) + 추도식(시기성 행동) + 오윤 작품.
+      // (벽화 지키기 청원은 캠페인 종료로 제거 — 2026-07)
       name: t('ohYoon40th'),
       href: '/event/oh-yoon-memorial',
       items: [
@@ -48,11 +49,6 @@ export function useLocalizedNavigation(): NavigationItem[] {
           name: t('ohYoonMemorial'),
           href: '/event/oh-yoon-memorial',
           description: t('ohYoonMemorialDesc'),
-        },
-        {
-          name: t('ohYoonPetition'),
-          href: '/petition/oh-yoon',
-          description: t('ohYoonPetitionDesc'),
         },
         {
           name: t('ohYoon'),
@@ -139,7 +135,7 @@ export function useLocalizedNavigation(): NavigationItem[] {
         },
       ],
     },
-    // 오윤 청원·추도식은 '오윤 40주기' 그룹(위)으로 묶어 헤더에 노출.
+    // 오윤 추도식은 '오윤 40주기' 그룹(위)으로 묶어 헤더에 노출.
     // 추도식은 2026-07-05 행사 종료 후 메뉴에서 제거할 것.
   ];
 }
