@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import {
   DRAFT_PREFIX,
   DEFAULT_AGE_THRESHOLD_MS,
@@ -23,7 +24,9 @@ const CHUNK_SIZE = 100;
  *
  * 안전: 참조 스캔 실패/참조집합 0건이면 전체 abort(fail-closed). 삭제 직전 prefix 재검사.
  */
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('purge-draft-images', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 

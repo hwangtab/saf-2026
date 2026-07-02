@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import { getStoredToken, refreshAccessToken, saveToken } from '@/lib/social/token-store';
 import { SOCIAL_PLATFORMS, type Platform } from '@/lib/social/types';
 
@@ -13,7 +14,9 @@ export const runtime = 'nodejs';
  * Instagram/Threads 토큰은 60일 만료 → 매주 갱신하면 영구히 유효. 토큰 미설정 플랫폼은 skip.
  * 한 플랫폼 실패가 다른 플랫폼을 막지 않도록 플랫폼별로 격리.
  */
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('refresh-social-tokens', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 

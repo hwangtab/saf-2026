@@ -15,7 +15,27 @@ export type AdminNotification = {
 type SupabaseClient = Awaited<ReturnType<typeof requireAdminClient>>;
 type RpcResult<T> = { data: T | null; error: unknown };
 
+// 알림 정렬 우선순위 — danger가 구매완료(success) 홍수에 밀리지 않도록 severity 우선, 동순위는 최신순.
+const SEVERITY_RANK: Record<AdminNotification['severity'], number> = {
+  danger: 0,
+  warning: 1,
+  success: 2,
+  info: 3,
+};
+
 const RECENT_WINDOW_DAYS = 30; // 신규 등록·구매 알림에 포함할 최대 기간
+
+// cron 헬스 감시 대상 — 빈번 cron(≤30분 주기)만. 일/주 단위 cron은 정상 주기가 길어
+// 오탐 여지가 크고(예: gsc-sync는 자체 결과 기반 stale 경보 존재) 제외.
+// maxStaleMin: 정상 주기의 여유 배수(1회 누락은 넘기고 연속 누락에서 경보).
+const FREQUENT_CRONS: Array<{ name: string; label: string; maxStaleMin: number }> = [
+  { name: 'reconcile-payments', label: '결제 정합성', maxStaleMin: 30 },
+  { name: 'expire-stale-orders', label: '미결제 주문 만료', maxStaleMin: 30 },
+  { name: 'reconcile-event-registrations', label: '행사 결제 정합성', maxStaleMin: 30 },
+  { name: 'broadcast-dispatch', label: '이메일 발송 큐', maxStaleMin: 15 },
+  { name: 'sms-broadcast-dispatch', label: 'SMS 발송 큐', maxStaleMin: 15 },
+  { name: 'sms-delivery-reconcile', label: 'SMS 전달 보정', maxStaleMin: 90 },
+];
 
 // 운영 상태 알림은 당일 UTC 자정을 createdAt으로 써서 하루 단위 재-unread 방지.
 function todayUtcIso(): string {
@@ -376,6 +396,68 @@ async function fetchSystemHealth(supabase: SupabaseClient): Promise<AdminNotific
     });
   }
 
+  // cron 실행 이력(cron_runs) 기반 헬스: 빈번 cron(≤30분 주기)이 정상 주기를 초과해
+  // 미실행이거나 최근 실행이 실패로 끝나면 danger. 전역 cron 중단(2026-05-11 유형: secret
+  // 회전·vercel.json 사고로 모든 cron이 조용히 실패) 조기 감지. cron_runs 조회 실패는
+  // 나머지 헬스 체크를 죽이지 않도록 독립 try/catch로 격리.
+  try {
+    const cronSinceIso = new Date(Date.now() - 6 * 3_600_000).toISOString();
+    const { data: cronRows, error: cronErr } = await supabase
+      .from('cron_runs')
+      .select('name, started_at, ok')
+      .gte('started_at', cronSinceIso)
+      .order('started_at', { ascending: false })
+      .limit(2000);
+
+    if (!cronErr) {
+      const latest = new Map<string, { started_at: string; ok: boolean }>();
+      for (const row of cronRows ?? []) {
+        if (!latest.has(row.name)) {
+          latest.set(row.name, { started_at: row.started_at, ok: row.ok });
+        }
+      }
+      for (const cron of FREQUENT_CRONS) {
+        const last = latest.get(cron.name);
+        if (!last) {
+          notifications.push({
+            id: `cron-stale:${cron.name}`,
+            category: 'action_needed',
+            severity: 'danger',
+            title: `크론 미실행 — ${cron.label}`,
+            detail: `${cron.name} 최근 6시간 실행 기록 없음 — 스케줄 중단 의심`,
+            href: '/admin/logs',
+            createdAt: today,
+          });
+          continue;
+        }
+        const ageMin = (Date.now() - new Date(last.started_at).getTime()) / 60_000;
+        if (ageMin > cron.maxStaleMin) {
+          notifications.push({
+            id: `cron-stale:${cron.name}`,
+            category: 'action_needed',
+            severity: 'danger',
+            title: `크론 지연 — ${cron.label}`,
+            detail: `${Math.round(ageMin)}분간 미실행 (정상 주기 초과)`,
+            href: '/admin/logs',
+            createdAt: today,
+          });
+        } else if (!last.ok) {
+          notifications.push({
+            id: `cron-failed:${cron.name}`,
+            category: 'action_needed',
+            severity: 'danger',
+            title: `크론 실패 — ${cron.label}`,
+            detail: `${cron.name} 최근 실행이 실패로 종료 — 로그 확인 필요`,
+            href: '/admin/logs',
+            createdAt: today,
+          });
+        }
+      }
+    }
+  } catch {
+    // cron_runs 미배포·조회 실패는 무시(다른 헬스 알림은 그대로 유지)
+  }
+
   return notifications;
 }
 
@@ -608,6 +690,38 @@ export async function getAdminNotifications(): Promise<AdminNotification[]> {
     ...(analyticsResult.status === 'fulfilled' ? analyticsResult.value : []),
   ];
 
-  all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  // 자기위장 방지: allSettled에서 rejected된 소스가 있으면 "알림 0건"처럼 보이지 않도록
+  // 집계 실패 자체를 danger 알림으로 노출한다.
+  const settledSources = [
+    purchasesResult,
+    registrationsResult,
+    eventResult,
+    depositResult,
+    petitionResult,
+    inboundResult,
+    paymentFailResult,
+    actionNeededResult,
+    systemHealthResult,
+    analyticsResult,
+  ];
+  const failedSources = settledSources.filter((r) => r.status === 'rejected').length;
+  if (failedSources > 0) {
+    all.push({
+      id: 'alert:notifications-degraded',
+      category: 'action_needed',
+      severity: 'danger',
+      title: `알림 집계 일부 실패 (${failedSources}개 소스)`,
+      detail: '일부 알림 소스 조회 오류 — 표시되지 않은 항목이 있을 수 있음. 잠시 후 새로고침',
+      href: '/admin/logs',
+      createdAt: todayUtcIso(),
+    });
+  }
+
+  // severity 우선(danger→warning→success→info), 동순위는 최신순.
+  all.sort((a, b) => {
+    const bySeverity = SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity];
+    if (bySeverity !== 0) return bySeverity;
+    return b.createdAt.localeCompare(a.createdAt);
+  });
   return all.slice(0, 30);
 }

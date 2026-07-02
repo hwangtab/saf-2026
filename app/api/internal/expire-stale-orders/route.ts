@@ -8,6 +8,7 @@ import {
   type OrderNotificationInfo,
 } from '@/lib/utils/get-order-notification-info';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
@@ -55,7 +56,9 @@ const NOTIFY_DETAIL_CAP = 30;
  * Called every 10 minutes by Vercel Cron (vercel.json).
  * Requires Bearer CRON_SECRET authorization.
  */
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('expire-stale-orders', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) {
     return authError;

@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
+import { withCronRun } from '@/lib/monitoring/cron-run';
 import { sendBatch, buildBatchIdempotencyKey } from '@/lib/email/resend-batch';
 import { buildReplyFromAddress, buildReplyToAddress } from '@/lib/email/inbound';
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
@@ -21,7 +22,9 @@ const LEASE_SECONDS = 120; // 청크당 시간(~5s)보다 충분히 커서 발�
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.saf2026.com';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? buildReplyFromAddress();
 
-export async function GET(request: NextRequest) {
+export const GET = withCronRun('broadcast-dispatch', cronHandler);
+
+async function cronHandler(request: NextRequest) {
   const authError = validateInternalCronRequest(request);
   if (authError) return authError;
 
