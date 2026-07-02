@@ -87,10 +87,14 @@ export function OrderList({
   orders,
   initialStatus,
   initialQ,
+  truncated = false,
+  limit,
 }: {
   orders: AdminOrderListItem[];
   initialStatus?: string;
   initialQ?: string;
+  truncated?: boolean;
+  limit?: number;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -143,6 +147,12 @@ export function OrderList({
 
   return (
     <AdminCard>
+      {truncated && (
+        <div className="mb-3 rounded-md border border-danger-a11y/30 bg-danger-a11y/10 px-3 py-2 text-xs text-danger-a11y">
+          최대 {limit?.toLocaleString('ko-KR')}건까지만 표시됩니다. 오래된 주문은 잘렸을 수 있으니
+          상태·검색 필터로 범위를 좁혀 조회하세요.
+        </div>
+      )}
       <AdminCardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <AdminInput

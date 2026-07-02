@@ -117,6 +117,9 @@ function getPaymentProvider(metadata: unknown) {
     : null;
 }
 
+// 주문 목록 조회 상한. 초과 시 조용히 잘리지 않도록 UI가 이 상수로 절단 여부를 감지해 경고한다.
+export const ADMIN_ORDERS_LIST_LIMIT = 2000;
+
 export async function getAdminOrdersReadModel(
   supabase: AdminOrderReadClient,
   filters: OrderFilters = {},
@@ -130,7 +133,7 @@ export async function getAdminOrdersReadModel(
       'id, order_no, status, total_amount, buyer_name, buyer_phone, created_at, paid_at, escalated_at, artwork_id, artworks(title, images, artists(name_ko)), order_items(artworks(title, images, artists(name_ko)))'
     )
     .order('created_at', { ascending: false })
-    .limit(2000);
+    .limit(ADMIN_ORDERS_LIST_LIMIT);
 
   const virtualStatusValues = new Set(['sla_overdue', 'escalated']);
   if (filters.status && !virtualStatusValues.has(filters.status)) {

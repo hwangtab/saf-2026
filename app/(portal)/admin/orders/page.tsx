@@ -1,5 +1,6 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import { getOrders } from '@/app/actions/admin-orders';
+import { ADMIN_ORDERS_LIST_LIMIT } from '@/lib/orders/admin-read-model';
 import {
   AdminPageHeader,
   AdminPageTitle,
@@ -19,6 +20,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   const VIRTUAL_FILTERS = new Set(['sla_overdue', 'escalated']);
   const dbStatus = params.status && !VIRTUAL_FILTERS.has(params.status) ? params.status : undefined;
   const orders = await getOrders({ status: dbStatus, q: params.q });
+  const truncated = orders.length >= ADMIN_ORDERS_LIST_LIMIT;
 
   return (
     <div className="space-y-6">
@@ -26,7 +28,13 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         <AdminPageTitle>주문 관리</AdminPageTitle>
         <AdminPageDescription>온라인 결제 주문을 조회하고 관리합니다.</AdminPageDescription>
       </AdminPageHeader>
-      <OrderList orders={orders} initialStatus={params.status} initialQ={params.q} />
+      <OrderList
+        orders={orders}
+        initialStatus={params.status}
+        initialQ={params.q}
+        truncated={truncated}
+        limit={ADMIN_ORDERS_LIST_LIMIT}
+      />
     </div>
   );
 }
