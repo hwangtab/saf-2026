@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 
 import { requireAdmin } from '@/lib/auth/guards';
-import { createSupabaseAdminClient, createSupabaseServerClient } from '@/lib/auth/server';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { PETITION_OH_YOON_PATH, PETITION_OH_YOON_SLUG } from '@/lib/petition/constants';
 import { fetchAllInBatches } from '@/lib/utils/supabase-batch';
 import type {
@@ -61,7 +61,7 @@ export async function setMessageMasked(
 ): Promise<AdminActionResult> {
   await requireAdmin();
   const t = await getTranslations('admin.petition');
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
 
   const { error } = await supabase
     .from('petition_signatures')
@@ -158,7 +158,7 @@ function buildCsv(headers: string[], rows: (string | number | boolean | null)[][
 }
 
 export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExportResult> {
-  await requireAdmin();
+  const actor = await requireAdmin();
   const t = await getTranslations('admin.petition');
   const admin = createSupabaseAdminClient();
 
@@ -236,6 +236,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
       action: 'csv_export_full',
       targetType: 'batch',
       details: { row_count: rows.length },
+      actorId: actor.id,
     });
   } else if (mode === 'masked') {
     csv = buildCsv(
@@ -253,6 +254,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
       action: 'csv_export_masked',
       targetType: 'batch',
       details: { row_count: rows.length },
+      actorId: actor.id,
     });
   } else {
     csv = buildCsv(
@@ -271,6 +273,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
       action: 'csv_export_committee',
       targetType: 'batch',
       details: { row_count: rows.length },
+      actorId: actor.id,
     });
   }
 
@@ -279,7 +282,7 @@ export async function exportSignaturesCsv(mode: CsvExportMode): Promise<CsvExpor
 
 // ─── 서명 삭제 (운영자 직접 조작 — 잘못된/중복 입력 정정) ───────────
 export async function deleteSignature(signatureId: string): Promise<AdminActionResult> {
-  await requireAdmin();
+  const actor = await requireAdmin();
   const t = await getTranslations('admin.petition');
 
   if (!signatureId) {
@@ -311,6 +314,7 @@ export async function deleteSignature(signatureId: string): Promise<AdminActionR
     targetType: 'signature',
     targetId: signatureId,
     details: snapshot as unknown as Record<string, unknown>,
+    actorId: actor.id,
   });
 
   revalidatePath(ADMIN_PATH);
@@ -587,7 +591,7 @@ export async function updateSignature(
     return { ok: true };
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   const { error } = await supabase.from('petition_signatures').update(update).eq('id', signatureId);
 
   if (error) {
