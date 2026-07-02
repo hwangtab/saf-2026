@@ -47,7 +47,7 @@ const HERO_EXACT = new Set<string>([
   '/changelog',
   '/collections',
   '/exhibition/oh-yoon-terracotta',
-  '/exhibition/oh-yoon-terracotta/apply',
+  // /exhibition/oh-yoon-terracotta/apply는 밝은 초대장 히어로라 헤더 투명화 제외(solid 헤더).
 ]);
 
 /**
