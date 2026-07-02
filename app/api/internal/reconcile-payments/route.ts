@@ -17,6 +17,20 @@ import { ensureTossPaymentRecord } from '@/lib/payments/toss-payment-record';
 import { markOrderPaid } from '@/lib/commerce/payment-lifecycle/mark-order-paid';
 import { sendBuyerPaidNotifications } from '@/lib/commerce/payment-lifecycle/buyer-paid-notifications';
 import { isManualBankTransferOrder } from '@/lib/orders/manual-bank-transfer';
+import { runAllSettled } from '@/lib/server/after-response';
+
+// 승격된 주문의 구매자 확인 알림을 루프 후 일괄 발송하기 위한 항목(주문별 인라인 await 대신).
+type PromotedNotify = { orderId: string; type: 'payment_confirmed' | 'deposit_confirmed' };
+
+function dispatchPromotedNotifications(
+  supabase: ReturnType<typeof createSupabaseAdminClient>,
+  items: PromotedNotify[]
+): Promise<unknown> {
+  return runAllSettled(
+    'reconcile-payments.promotedBuyerNotifications',
+    items.map((it) => () => sendBuyerPaidNotifications(supabase, it))
+  );
+}
 
 export const runtime = 'nodejs';
 
@@ -101,6 +115,7 @@ async function cronHandler(request: NextRequest) {
     const missingPaymentOrders = settledOrders ?? [];
     let reconciled = 0;
     const errors: string[] = [];
+    const promotedNotify: PromotedNotify[] = [];
 
     for (const order of missingPaymentOrders) {
       try {
@@ -126,10 +141,7 @@ async function cronHandler(request: NextRequest) {
           });
           if (repaired) {
             reconciled++;
-            await sendBuyerPaidNotifications(supabase, {
-              orderId: order.id,
-              type: 'deposit_confirmed',
-            });
+            promotedNotify.push({ orderId: order.id, type: 'deposit_confirmed' });
           }
           continue;
         }
@@ -169,6 +181,7 @@ async function cronHandler(request: NextRequest) {
       }
     }
 
+    await dispatchPromotedNotifications(supabase, promotedNotify);
     return NextResponse.json({
       scope,
       lookbackDays,
@@ -218,6 +231,7 @@ async function cronHandler(request: NextRequest) {
 
   let reconciled = 0;
   const errors: string[] = [];
+  const promotedNotify: PromotedNotify[] = [];
 
   for (const order of staleOrders ?? []) {
     try {
@@ -248,10 +262,7 @@ async function cronHandler(request: NextRequest) {
         if (!repaired) continue;
 
         reconciled++;
-        await sendBuyerPaidNotifications(supabase, {
-          orderId: order.id,
-          type: 'payment_confirmed',
-        });
+        promotedNotify.push({ orderId: order.id, type: 'payment_confirmed' });
         console.error(
           `[reconcile-payments] FIXED: ${order.order_no} — Toss DONE, DB was pending_payment`
         );
@@ -425,10 +436,7 @@ async function cronHandler(request: NextRequest) {
 
         if (repaired) {
           reconciled++;
-          await sendBuyerPaidNotifications(supabase, {
-            orderId: order.id,
-            type: 'deposit_confirmed',
-          });
+          promotedNotify.push({ orderId: order.id, type: 'deposit_confirmed' });
           console.error(
             `[reconcile-payments] FIXED: ${order.order_no} — Toss DONE, DB was awaiting_deposit without payment row`
           );
@@ -490,6 +498,7 @@ async function cronHandler(request: NextRequest) {
     });
   }
 
+  await dispatchPromotedNotifications(supabase, promotedNotify);
   return NextResponse.json({
     checked,
     reconciled,

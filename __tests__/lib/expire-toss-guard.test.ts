@@ -108,4 +108,5 @@ it('Toss 조회 에러 시 취소를 보류(제외)하되 수동확인 스팸은
 
   expect(res.excludeIds.has('7')).toBe(true);
   expect(res.needsManual).toEqual([]);
+  expect(res.tossErrorCount).toBe(1); // 지속 장애 감지용 집계(회당 1건 경보)
 });
