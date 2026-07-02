@@ -1695,6 +1695,30 @@
     "galleryEyebrow": "Exhibition",
     "galleryTitle": "Exhibited Works",
     "galleryEmpty": "Soon, the works of fellow artists will hang in this space.",
-    "closingLine": "Add your name to the work of moving this wall."
+    "closingLine": "Add your name to the work of moving this wall.",
+    "apply": {
+      "heroEyebrow": "For Participating Artists",
+      "heroTitle": "Will you help\nlift this wall?",
+      "heroLead": "Your work, as a fellow artist, helps move the wall Oh Yoon left behind into citizens' hands. The sale of a single piece moves one piece of the wall.",
+      "metaDescription": "How artists can contribute to the Oh Yoon Terracotta Relief Exhibition — up to three works per artist, with proceeds going to the terracotta relocation fund.",
+      "ctaApply": "Submit Your Work",
+      "ctaView": "View the Exhibition",
+      "ctaJoin": "Join as an Artist",
+      "breadcrumb": "For Participating Artists",
+      "howTitle": "How It Works",
+      "how1Title": "Up to three works per artist",
+      "how1Body": "You may submit up to three of the works you most want to share.",
+      "how2Title": "Proceeds fund the relocation",
+      "how2Body": "When a submitted work sells, the proceeds go toward moving Oh Yoon's terracotta relief.",
+      "how3Title": "Shown in the main gallery too",
+      "how3Body": "Submitted works appear both on the exhibition page and across the SAF gallery.",
+      "stepsTitle": "How to Submit",
+      "step1": "Sign in to SAF as an artist.",
+      "step2": "On the fundraiser page, choose the works to submit, or register a new work.",
+      "step3": "Save your submission, and your work joins the exhibition.",
+      "note": "Submissions are open to registered SAF artists. If you're not yet an artist, please join us first.",
+      "closingTitle": "Your work becomes the wall"
+    },
+    "ch3ArtistLink": "Are you an artist? See how to submit"
   }
 }

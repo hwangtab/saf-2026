@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
 import LinkButton from '@/components/ui/LinkButton';
 import SafeImage from '@/components/common/SafeImage';
 import MasterArtistGallery from '@/components/special/MasterArtistGallery';
@@ -239,6 +240,14 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
               {t('petitionCta')}
             </LinkButton>
           </div>
+          <p className="mt-6 text-sm text-charcoal-muted">
+            <Link
+              href="/exhibition/oh-yoon-terracotta/apply"
+              className="font-medium text-primary-strong underline-offset-4 hover:underline"
+            >
+              {t('ch3ArtistLink')}
+            </Link>
+          </p>
         </div>
       </section>
 
