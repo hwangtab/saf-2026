@@ -12,9 +12,11 @@ interface AdminDesktopNavProps {
    * '/admin/analytics' href를 포함한 group을 자동 식별해 dot 표시.
    */
   regressionCount?: number;
+  /** nav item href → 처리 대기 건수. 항목/그룹 옆 숫자 뱃지로 표시. */
+  badges?: Record<string, number>;
 }
 
-export function AdminDesktopNav({ regressionCount = 0 }: AdminDesktopNavProps) {
+export function AdminDesktopNav({ regressionCount = 0, badges = {} }: AdminDesktopNavProps) {
   const pathname = usePathname();
   const locale = useLocale();
   const adminNavGroups = getAdminNavGroups(locale as 'ko' | 'en');
@@ -35,6 +37,7 @@ export function AdminDesktopNav({ regressionCount = 0 }: AdminDesktopNavProps) {
                 label={group.label}
                 items={group.items}
                 alertCount={isAnalyticsGroup ? regressionCount : 0}
+                badges={badges}
               />
             ) : (
               <div className="flex items-center gap-4">
