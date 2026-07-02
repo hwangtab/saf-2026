@@ -4,6 +4,8 @@ import { validateInternalCronRequest } from '@/lib/security/internal-cron-auth';
 import { withCronRun } from '@/lib/monitoring/cron-run';
 import { getStoredToken, refreshAccessToken, saveToken } from '@/lib/social/token-store';
 import { SOCIAL_PLATFORMS, type Platform } from '@/lib/social/types';
+import { createSupabaseAdminClient } from '@/lib/auth/server';
+import { notifyEmail } from '@/lib/notify';
 
 export const runtime = 'nodejs';
 
@@ -43,6 +45,33 @@ async function cronHandler(request: NextRequest) {
       results[platform] = { ok: false, error: message };
       console.error(`[refresh-social-tokens] ${platform} 갱신 실패:`, err);
     }
+  }
+
+  // 갱신 시도 후에도 7일 내 만료 예정 토큰이 있으면 관리자 이메일 경보(자동 갱신 실패 조기 인지).
+  // 알림벨(fetchSystemHealth)은 이미 D-7 danger를 띄우지만, 접속 전에 이메일로도 전달.
+  try {
+    const db = createSupabaseAdminClient();
+    const soonIso = new Date(Date.now() + 7 * 86_400_000).toISOString();
+    const { data: expiring } = await db
+      .from('social_tokens')
+      .select('platform, expires_at')
+      .not('expires_at', 'is', null)
+      .lt('expires_at', soonIso);
+    if (expiring && expiring.length > 0) {
+      const nowMs = Date.now();
+      await notifyEmail('warning', `SNS 토큰 만료 임박 (${expiring.length}건)`, {
+        상세: expiring
+          .map((t) => {
+            const exp = t.expires_at as string;
+            const days = Math.floor((new Date(exp).getTime() - nowMs) / 86_400_000);
+            return `${t.platform}: ${exp.slice(0, 10)} (${days < 0 ? '만료됨' : `D-${days}`})`;
+          })
+          .join('\n'),
+        안내: '자동 갱신이 실패했을 수 있습니다. /admin/social에서 토큰 상태를 확인하고 필요 시 재인증하세요.',
+      });
+    }
+  } catch (err) {
+    console.error('[refresh-social-tokens] 만료 점검 실패:', err);
   }
 
   return NextResponse.json({ results });

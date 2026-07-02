@@ -1,6 +1,7 @@
 import { requireAdmin } from '@/lib/auth/guards';
 import {
   getSocialConfigStatus,
+  getSocialTokenStatuses,
   listPublishCandidates,
   listSocialPosts,
 } from '@/app/actions/admin-social';
@@ -13,6 +14,7 @@ import {
 } from '@/app/(portal)/admin/_components/admin-ui';
 import { SocialPublisher } from './_components/SocialPublisher';
 import { SocialPostList } from './_components/SocialPostList';
+import { SocialTokenStatusPanel } from './_components/SocialTokenStatus';
 
 export const metadata = {
   title: '소셜 미디어 | 관리자',
@@ -30,10 +32,11 @@ function getActiveShowingArtistNames(): string[] {
 
 export default async function AdminSocialPage() {
   await requireAdmin();
-  const [configStatus, candidates, posts] = await Promise.all([
+  const [configStatus, candidates, posts, tokenStatuses] = await Promise.all([
     getSocialConfigStatus(),
     listPublishCandidates(),
     listSocialPosts(),
+    getSocialTokenStatuses(),
   ]);
   const showingArtistNames = getActiveShowingArtistNames();
 
@@ -46,6 +49,8 @@ export default async function AdminSocialPage() {
           자동으로 채워지며 게시 전 자유롭게 편집할 수 있습니다.
         </AdminPageDescription>
       </AdminPageHeader>
+
+      <SocialTokenStatusPanel statuses={tokenStatuses} />
 
       <SocialPublisher
         candidates={candidates}

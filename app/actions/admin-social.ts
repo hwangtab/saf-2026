@@ -9,7 +9,7 @@ import { sortCandidatesForPublishing } from '@/lib/social/candidate-sort';
 import { resolvePublicImageUrl } from '@/lib/social/image-url';
 import { aggregatePublishHistory, executePublish } from '@/lib/social/publish-core';
 import { getPlatformConfigStatuses } from '@/lib/social/registry';
-import { isPlatform, SocialPublishError, type Platform } from '@/lib/social/types';
+import { isPlatform, SOCIAL_PLATFORMS, SocialPublishError, type Platform } from '@/lib/social/types';
 import type { ActionState } from '@/types';
 
 export interface SocialPostListItem {
@@ -73,6 +73,40 @@ function normalizePlatform(value: string): Platform {
 export async function getSocialConfigStatus() {
   await requireAdmin();
   return getPlatformConfigStatuses();
+}
+
+export type SocialTokenStatus = {
+  platform: Platform;
+  expiresAt: string | null;
+  daysRemaining: number | null;
+  state: 'healthy' | 'expiring' | 'expired' | 'missing';
+};
+
+/** 플랫폼별 저장 토큰 만료 상태 — /admin/social 상태 패널용. 7일 내면 expiring, 지났으면 expired. */
+export async function getSocialTokenStatuses(): Promise<SocialTokenStatus[]> {
+  await requireAdmin();
+  const supabase = await requireAdminClient();
+  const { data } = await supabase.from('social_tokens').select('platform, expires_at');
+  const expiryByPlatform = new Map<string, string | null>(
+    (data ?? []).map((t) => [t.platform as string, (t.expires_at as string | null) ?? null])
+  );
+
+  const now = Date.now();
+  return SOCIAL_PLATFORMS.map((platform) => {
+    const expiresAt = expiryByPlatform.has(platform)
+      ? (expiryByPlatform.get(platform) ?? null)
+      : null;
+    if (!expiryByPlatform.has(platform)) {
+      return { platform, expiresAt: null, daysRemaining: null, state: 'missing' as const };
+    }
+    if (!expiresAt) {
+      // 토큰 행은 있으나 만료일 미기록 — 장기토큰으로 간주(healthy).
+      return { platform, expiresAt: null, daysRemaining: null, state: 'healthy' as const };
+    }
+    const daysRemaining = Math.floor((new Date(expiresAt).getTime() - now) / 86_400_000);
+    const state = daysRemaining < 0 ? 'expired' : daysRemaining <= 7 ? 'expiring' : 'healthy';
+    return { platform, expiresAt, daysRemaining, state };
+  });
 }
 
 /** 작품 선택 시 캡션 초안 + 공개 이미지 URL + 판매상태/게시이력(가드·배지용)을 생성. */
