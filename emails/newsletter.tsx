@@ -16,6 +16,7 @@ import * as React from 'react';
 import { AdSenderInfo, UnsubscribeLink } from './_components/legal-footer';
 import type { EmailLocale } from './_components/i18n';
 import { BRAND_COLORS } from '@/lib/colors';
+import { CONTACT } from '@/lib/constants';
 import type { NewsletterBlock } from '@/lib/newsletter/blocks';
 
 export interface NewsletterEmailProps {
@@ -83,7 +84,7 @@ export default function NewsletterEmail({
           <UnsubscribeLink href={unsubscribeUrl} locale={locale} />
           <Section style={{ padding: '4px 28px 24px', textAlign: 'center' }}>
             <Text style={footerBrandStyle}>
-              {locale === 'en' ? 'SAF 2026' : '씨앗페 SAF 2026'} · contact@kosmart.org
+              {locale === 'en' ? 'SAF 2026' : '씨앗페 SAF 2026'} · {CONTACT.EMAIL}
             </Text>
           </Section>
         </Container>
