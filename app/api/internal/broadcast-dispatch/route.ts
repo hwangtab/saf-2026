@@ -10,6 +10,9 @@ import { buildReplyFromAddress, buildReplyToAddress } from '@/lib/email/inbound'
 import { generateUnsubscribeToken } from '@/lib/email/unsubscribe-token';
 import { hashEmail } from '@/lib/email/email-hash';
 import BroadcastEmail from '@/emails/broadcast';
+import NewsletterEmail from '@/emails/newsletter';
+import { parseNewsletterBlocks, type NewsletterBlock } from '@/lib/newsletter/blocks';
+import { enqueueNewsletterBroadcasts, type NewsletterSendRow } from '@/lib/newsletter/enqueue';
 import { personalizeRichEmailHtml, personalizeRichEmailText } from '@/lib/email/rich-content';
 import { validateResendRecipientEmail } from '@/lib/email/resend-recipient';
 
@@ -36,13 +39,46 @@ async function cronHandler(request: NextRequest) {
     return NextResponse.json({ error: 'supabase credentials missing' }, { status: 500 });
   }
 
+  // 예약 뉴스레터 도래분 발송 등록. status 가드 UPDATE(scheduled → sending)가 원자적 claim이라
+  // 매분 중복 실행·동시 run에도 1회만 성공한다. 등록 실패 시 draft로 복원해 무한 재시도 대신
+  // 관리자가 확인하게 한다 (스케줄은 해제됨 — 로그로 관찰).
+  const { data: dueNewsletters } = await supabase
+    .from('newsletters')
+    .select('id')
+    .eq('status', 'scheduled')
+    .lte('scheduled_at', new Date().toISOString())
+    .limit(3);
+
+  for (const due of dueNewsletters ?? []) {
+    const { data: claimed } = await supabase
+      .from('newsletters')
+      .update({ status: 'sending' })
+      .eq('id', due.id)
+      .eq('status', 'scheduled')
+      .select(
+        'id, issue_no, slug, title, preheader, blocks, is_advertisement, audience_channels, created_by'
+      )
+      .maybeSingle();
+    if (!claimed) continue;
+
+    const result = await enqueueNewsletterBroadcasts(supabase, claimed as NewsletterSendRow);
+    if (result.error && result.broadcastIds.length === 0) {
+      console.error(`[broadcast-dispatch] newsletter ${due.id} enqueue failed: ${result.error}`);
+      await supabase
+        .from('newsletters')
+        .update({ status: 'draft', scheduled_at: null })
+        .eq('id', due.id)
+        .eq('status', 'sending');
+    }
+  }
+
   // recipient_count > 0 가드: enqueueBroadcast가 recipients INSERT 전에 crash한 orphan broadcast를
   // 자동 dispatch에서 제외 (sent_count=0인 상태로 silently 'sent' 마킹되는 회귀 차단).
   // commit d0f39bba의 멱등 가드 정책과 동일 원칙.
   const { data: broadcasts } = await supabase
     .from('email_broadcasts')
     .select(
-      'id, channel, subject, body_html, body_text, cta_label, cta_url, status, is_advertisement'
+      'id, channel, subject, body_html, body_text, cta_label, cta_url, status, is_advertisement, newsletter_id'
     )
     .in('status', ['queued', 'sending'])
     .gt('recipient_count', 0)
@@ -97,6 +133,46 @@ async function cronHandler(request: NextRequest) {
         );
       }
       continue;
+    }
+
+    // 뉴스레터 브로드캐스트면 블록을 1회 로드·검증 — 수신자별 렌더에서 재사용.
+    // 로드/검증 실패 시 failed 마킹 (silent skip은 queued 고착 → 매분 재시도 낭비).
+    let newsletterRender: {
+      issueNo: number;
+      title: string;
+      preheader: string;
+      blocks: NewsletterBlock[];
+      webUrl: string;
+    } | null = null;
+    if (broadcast.newsletter_id) {
+      const { data: nl } = await supabase
+        .from('newsletters')
+        .select('issue_no, title, preheader, slug, blocks')
+        .eq('id', broadcast.newsletter_id)
+        .maybeSingle();
+      let parsedBlocks: NewsletterBlock[] | null = null;
+      if (nl) {
+        try {
+          parsedBlocks = parseNewsletterBlocks(nl.blocks);
+        } catch (err) {
+          console.error(`[broadcast-dispatch] newsletter blocks invalid for ${broadcast.id}:`, err);
+        }
+      }
+      if (!nl || !parsedBlocks) {
+        await supabase
+          .from('email_broadcasts')
+          .update({ status: 'failed', dispatch_locked_until: null, dispatch_lock_token: null })
+          .eq('id', broadcast.id)
+          .eq('dispatch_lock_token', lockToken);
+        continue;
+      }
+      newsletterRender = {
+        issueNo: nl.issue_no as number,
+        title: nl.title as string,
+        preheader: (nl.preheader as string) ?? '',
+        blocks: parsedBlocks,
+        webUrl: `${SITE_URL}/newsletter/${nl.slug as string}`,
+      };
     }
 
     let hasMore = true;
@@ -175,17 +251,31 @@ async function cronHandler(request: NextRequest) {
             ? `${SITE_URL}/api/email/unsubscribe?t=${unsubToken}`
             : `${SITE_URL}/api/email/unsubscribe?invalid=1`;
 
-          const emailEl = React.createElement(BroadcastEmail, {
-            channel: broadcast.channel as 'customer' | 'member' | 'petition' | 'individual',
-            isAdvertisement: (broadcast.is_advertisement ?? false) as boolean,
-            recipientName: r.name,
-            subject: broadcast.subject as string,
-            bodyHtml,
-            ctaLabel: broadcast.cta_label as string | null,
-            ctaUrl: broadcast.cta_url as string | null,
-            unsubscribeUrl,
-            locale: r.locale === 'en' ? 'en' : 'ko',
-          });
+          const emailEl = newsletterRender
+            ? React.createElement(NewsletterEmail, {
+                issueNo: newsletterRender.issueNo,
+                title: newsletterRender.title,
+                preheader: newsletterRender.preheader,
+                // {{name}} 개인화는 text 블록에만 적용 (스냅샷·CTA는 불변)
+                blocks: newsletterRender.blocks.map((b) =>
+                  b.type === 'text' ? { ...b, html: personalizeRichEmailHtml(b.html, r.name) } : b
+                ),
+                isAdvertisement: (broadcast.is_advertisement ?? false) as boolean,
+                unsubscribeUrl,
+                webUrl: newsletterRender.webUrl,
+                locale: r.locale === 'en' ? ('en' as const) : ('ko' as const),
+              })
+            : React.createElement(BroadcastEmail, {
+                channel: broadcast.channel as 'customer' | 'member' | 'petition' | 'individual',
+                isAdvertisement: (broadcast.is_advertisement ?? false) as boolean,
+                recipientName: r.name,
+                subject: broadcast.subject as string,
+                bodyHtml,
+                ctaLabel: broadcast.cta_label as string | null,
+                ctaUrl: broadcast.cta_url as string | null,
+                unsubscribeUrl,
+                locale: r.locale === 'en' ? 'en' : 'ko',
+              });
 
           const html = await render(emailEl);
           const isAd = (broadcast.is_advertisement ?? false) as boolean;
@@ -373,6 +463,23 @@ async function cronHandler(request: NextRequest) {
         })
         .eq('id', broadcast.id)
         .eq('dispatch_lock_token', lockToken); // 여전히 락 보유 중일 때만 finalize
+
+      // 뉴스레터: 연결된 모든 채널 broadcast가 종결되면 뉴스레터도 sent로 마감.
+      if (broadcast.newsletter_id) {
+        const { data: activeSiblings } = await supabase
+          .from('email_broadcasts')
+          .select('id')
+          .eq('newsletter_id', broadcast.newsletter_id)
+          .in('status', ['queued', 'sending'])
+          .limit(1);
+        if (activeSiblings && activeSiblings.length === 0) {
+          await supabase
+            .from('newsletters')
+            .update({ status: 'sent', sent_at: new Date().toISOString() })
+            .eq('id', broadcast.newsletter_id)
+            .eq('status', 'sending');
+        }
+      }
     }
   }
 
