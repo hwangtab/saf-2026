@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/auth/guards';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { cancelPayment } from '@/lib/integrations/toss/cancel';
 import { notifyEmail } from '@/lib/notify';
+import { logAdminAction } from './activity-log-writer';
 
 const VALID_STATUS = ['draft', 'active', 'closed', 'settled'] as const;
 const STATUS_ORDER: Record<string, number> = { draft: 0, active: 1, closed: 2, settled: 3 };
@@ -41,7 +42,13 @@ export async function createFundingProject(input: FundingProjectInput) {
     .select('id')
     .single();
   if (error) return { ok: false, error: error.message };
-  return { ok: true, id: (data as { id: string }).id };
+  const newId = (data as { id: string }).id;
+  await logAdminAction('funding_project_created', 'funding_project', newId, {
+    slug: input.slug,
+    title: input.title,
+    goal_amount: input.goal_amount,
+  });
+  return { ok: true, id: newId };
 }
 
 export async function updateFundingProject(
@@ -74,7 +81,11 @@ export async function updateFundingProject(
     if (input[k] !== undefined) patch[k] = input[k];
   }
   const { error } = await db.from('funding_projects').update(patch).eq('id', id);
-  return error ? { ok: false, error: error.message } : { ok: true };
+  if (error) return { ok: false, error: error.message };
+  await logAdminAction('funding_project_updated', 'funding_project', id, {
+    changed: Object.keys(patch).filter((k) => k !== 'updated_at'),
+  });
+  return { ok: true };
 }
 
 export async function createRewardTier(input: {
@@ -104,7 +115,12 @@ export async function createRewardTier(input: {
     estimated_delivery: input.estimated_delivery ?? null,
     sort_order: input.sort_order ?? 0,
   });
-  return error ? { ok: false, error: error.message } : { ok: true };
+  if (error) return { ok: false, error: error.message };
+  await logAdminAction('reward_tier_created', 'reward_tier', input.project_id, {
+    title: input.title,
+    amount: input.amount,
+  });
+  return { ok: true };
 }
 
 export async function updateRewardTier(id: string, input: Record<string, unknown>) {
@@ -124,7 +140,11 @@ export async function updateRewardTier(id: string, input: Record<string, unknown
   const patch: Record<string, unknown> = {};
   for (const k of allowed) if (input[k] !== undefined) patch[k] = input[k];
   const { error } = await db.from('reward_tiers').update(patch).eq('id', id);
-  return error ? { ok: false, error: error.message } : { ok: true };
+  if (error) return { ok: false, error: error.message };
+  await logAdminAction('reward_tier_updated', 'reward_tier', id, {
+    changed: Object.keys(patch),
+  });
+  return { ok: true };
 }
 
 export async function deleteRewardTier(id: string) {
@@ -148,7 +168,9 @@ export async function deleteRewardTier(id: string) {
     if (paidPledges && paidPledges.length > 0) return { ok: false, error: 'TIER_HAS_PLEDGES' };
   }
   const { error } = await db.from('reward_tiers').delete().eq('id', id);
-  return error ? { ok: false, error: error.message } : { ok: true };
+  if (error) return { ok: false, error: error.message };
+  await logAdminAction('reward_tier_deleted', 'reward_tier', id, {});
+  return { ok: true };
 }
 
 export async function listFundingBackers(projectId: string) {
@@ -177,26 +199,46 @@ export async function refundFundingPledge(pledgeId: string) {
   if (pledgeData.status !== 'paid') return { ok: false, error: 'NOT_REFUNDABLE' };
   const { data: pay } = await db
     .from('funding_payments')
-    .select('payment_key')
+    .select('payment_key, status')
     .eq('pledge_id', pledgeId)
     .single();
-  const payData = pay as { payment_key: string } | null;
+  const payData = pay as { payment_key: string; status: string } | null;
   if (!payData?.payment_key) return { ok: false, error: 'NO_PAYMENT' };
-  const cancelResult = await cancelPayment(
-    payData.payment_key,
-    { cancelReason: '관리자 환불' },
-    `fnd-admin-refund-${pledgeData.order_no}`,
-    'domestic'
-  );
-  if (!cancelResult.success) {
-    after(() =>
-      notifyEmail('error', '펀딩 환불 실패(수동확인)', {
-        주문번호: pledgeData.order_no,
-        에러: cancelResult.error?.message ?? cancelResult.error?.code ?? '알 수 없는 오류',
-      })
+
+  // 부분실패 재시도 안전: 결제가 이미 CANCELED면 Toss를 다시 호출하지 않고
+  // pledge 상태 동기화만 마저 수행한다(직전 시도가 pledge UPDATE 전에 끊긴 경우).
+  if (payData.status !== 'CANCELED') {
+    const cancelResult = await cancelPayment(
+      payData.payment_key,
+      { cancelReason: '관리자 환불' },
+      `fnd-admin-refund-${pledgeData.order_no}`,
+      'domestic'
     );
-    return { ok: false, error: 'TOSS_CANCEL_FAILED' };
+    if (!cancelResult.success) {
+      after(() =>
+        notifyEmail('error', '펀딩 환불 실패(수동확인)', {
+          주문번호: pledgeData.order_no,
+          에러: cancelResult.error?.message ?? cancelResult.error?.code ?? '알 수 없는 오류',
+        })
+      );
+      return { ok: false, error: 'TOSS_CANCEL_FAILED' };
+    }
+    // Toss 취소 성공 직후 결제 레코드를 먼저 CANCELED로 확정 → 매출 집계 정합성 우선.
+    const { error: payErr } = await db
+      .from('funding_payments')
+      .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
+      .eq('pledge_id', pledgeId);
+    if (payErr) {
+      after(() =>
+        notifyEmail('error', '펀딩 환불 후 결제상태 변경 실패(Toss는 취소됨, 수동확인)', {
+          주문번호: pledgeData.order_no,
+          에러: payErr.message,
+        })
+      );
+      return { ok: false, error: 'SYNC_FAILED' };
+    }
   }
+
   const { error: uErr } = await db
     .from('funding_pledges')
     .update({
@@ -207,16 +249,17 @@ export async function refundFundingPledge(pledgeId: string) {
     .eq('id', pledgeId);
   if (uErr) {
     after(() =>
-      notifyEmail('error', '펀딩 환불 후 상태변경 실패(Toss는 취소됨)', {
+      notifyEmail('error', '펀딩 환불 후 후원상태 변경 실패(Toss·결제는 취소됨, 수동확인)', {
         주문번호: pledgeData.order_no,
+        에러: uErr.message,
       })
     );
     return { ok: false, error: 'SYNC_FAILED' };
   }
-  await db
-    .from('funding_payments')
-    .update({ status: 'CANCELED', cancelled_at: new Date().toISOString() })
-    .eq('pledge_id', pledgeId);
+
+  await logAdminAction('funding_pledge_refunded', 'funding_pledge', pledgeId, {
+    order_no: pledgeData.order_no,
+  });
   return { ok: true };
 }
 
@@ -239,5 +282,11 @@ export async function updateFulfillment(
       updated_at: new Date().toISOString(),
     })
     .eq('id', pledgeId);
-  return error ? { ok: false, error: error.message } : { ok: true };
+  if (error) return { ok: false, error: error.message };
+  await logAdminAction('funding_fulfillment_updated', 'funding_pledge', pledgeId, {
+    fulfillment_status: status,
+    tracking_company: company ?? null,
+    tracking_number: number ?? null,
+  });
+  return { ok: true };
 }
