@@ -13,6 +13,7 @@ import { extractLineItems } from '@/lib/orders/record-artwork-sales';
 import { releaseReservedArtworksIfUnowned } from '@/lib/orders/reservations';
 import { revalidatePublicArtworkSurfaces } from '@/lib/utils/revalidate';
 import { runAllSettled } from '@/lib/server/after-response';
+import { promotePaidBeforeExpiry } from '@/lib/orders/expire-toss-guard';
 
 export const runtime = 'nodejs';
 
@@ -74,12 +75,18 @@ async function cronHandler(request: NextRequest) {
 
   const now = new Date().toISOString();
 
+  // 취소-시점 Toss 가드 결과 누적(두 블록 공용).
+  let totalPromoted = 0;
+  const promotionNeedsManual: string[] = [];
+
   // ── 1) pending_payment: 30분 초과 자동 취소 ──────────────────────────────────
   const pendingCutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
 
   const { data: expiredPending, error: pendingFetchError } = await supabase
     .from('orders')
-    .select('id')
+    .select(
+      'id, order_no, artwork_id, total_amount, buyer_name, buyer_phone, metadata, order_items(artwork_id, quantity, unit_price)'
+    )
     .eq('status', 'pending_payment')
     .lt('created_at', pendingCutoff);
 
@@ -90,24 +97,32 @@ async function cronHandler(request: NextRequest) {
   let pendingCancelled = 0;
   let pendingInfos: (OrderNotificationInfo | null)[] = [];
   if (expiredPending && expiredPending.length > 0) {
-    const ids = expiredPending.map((o: { id: string }) => o.id);
-    const { data: updated, error: updateError } = await supabase
-      .from('orders')
-      .update({ status: 'cancelled', cancelled_at: now })
-      .in('id', ids)
-      .eq('status', 'pending_payment')
-      .select('id');
+    // 취소 전 Toss DONE 가드 — 이미 결제된 주문은 취소 대신 이행(paid 승격).
+    const guard = await promotePaidBeforeExpiry(supabase, expiredPending, 'pending_payment', now);
+    totalPromoted += guard.promoted;
+    promotionNeedsManual.push(...guard.needsManual);
 
-    if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
-    }
-    pendingCancelled = updated?.length ?? 0;
+    const cancelIds = expiredPending.map((o) => o.id).filter((id) => !guard.excludeIds.has(id));
 
-    // 실제 취소된 주문의 상세(작품·작가·구매자)를 알림용으로 수집.
-    if (updated && updated.length > 0) {
-      pendingInfos = await Promise.all(
-        updated.map((o: { id: string }) => getOrderNotificationInfo(supabase, { id: o.id }))
-      );
+    if (cancelIds.length > 0) {
+      const { data: updated, error: updateError } = await supabase
+        .from('orders')
+        .update({ status: 'cancelled', cancelled_at: now })
+        .in('id', cancelIds)
+        .eq('status', 'pending_payment')
+        .select('id');
+
+      if (updateError) {
+        return NextResponse.json({ error: updateError.message }, { status: 500 });
+      }
+      pendingCancelled = updated?.length ?? 0;
+
+      // 실제 취소된 주문의 상세(작품·작가·구매자)를 알림용으로 수집.
+      if (updated && updated.length > 0) {
+        pendingInfos = await Promise.all(
+          updated.map((o: { id: string }) => getOrderNotificationInfo(supabase, { id: o.id }))
+        );
+      }
     }
   }
 
@@ -117,7 +132,7 @@ async function cronHandler(request: NextRequest) {
   const { data: expiredDeposit, error: depositFetchError } = await supabase
     .from('orders')
     .select(
-      'id, artwork_id, buyer_email, buyer_name, order_no, total_amount, metadata, order_items(artwork_id, quantity, unit_price)'
+      'id, artwork_id, buyer_email, buyer_name, buyer_phone, order_no, total_amount, metadata, order_items(artwork_id, quantity, unit_price)'
     )
     .eq('status', 'awaiting_deposit')
     .eq('deposit_auto_cancel_paused', false) // 관리자가 자동취소 보류한 주문은 만료 제외
@@ -130,16 +145,26 @@ async function cronHandler(request: NextRequest) {
   let depositCancelled = 0;
   let depositInfos: (OrderNotificationInfo | null)[] = [];
   if (expiredDeposit && expiredDeposit.length > 0) {
-    const ids = expiredDeposit.map((o: { id: string }) => o.id);
-    const { data: updated, error: updateError } = await supabase
-      .from('orders')
-      .update({ status: 'cancelled', cancelled_at: now })
-      .in('id', ids)
-      .eq('status', 'awaiting_deposit')
-      .select('id');
+    // 취소 전 Toss DONE 가드 — 입금 완료(DONE)인데 웹훅 유실로 awaiting에 남은 주문을 취소 대신 이행.
+    const guard = await promotePaidBeforeExpiry(supabase, expiredDeposit, 'awaiting_deposit', now);
+    totalPromoted += guard.promoted;
+    promotionNeedsManual.push(...guard.needsManual);
 
-    if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
+    const cancelIds = expiredDeposit.map((o) => o.id).filter((id) => !guard.excludeIds.has(id));
+
+    let updated: { id: string }[] | null = null;
+    if (cancelIds.length > 0) {
+      const res = await supabase
+        .from('orders')
+        .update({ status: 'cancelled', cancelled_at: now })
+        .in('id', cancelIds)
+        .eq('status', 'awaiting_deposit')
+        .select('id');
+
+      if (res.error) {
+        return NextResponse.json({ error: res.error.message }, { status: 500 });
+      }
+      updated = res.data;
     }
     depositCancelled = updated?.length ?? 0;
 
@@ -258,9 +283,29 @@ async function cronHandler(request: NextRequest) {
     await notifyEmail('warning', `만료 주문 자동 취소 (${totalCancelled}건)`, fields);
   }
 
+  if (totalPromoted > 0) {
+    console.error(
+      `[expire-stale-orders] promoted ${totalPromoted} order(s) to paid instead of cancelling (Toss DONE)`
+    );
+  }
+
+  // 결제됐으나 이행 실패(작품 소진 등) — 관리자가 환불 등 수동 판단 필요. danger로 즉시 노출.
+  if (promotionNeedsManual.length > 0) {
+    await notifyEmail(
+      'error',
+      `만료 가드: 결제됐으나 이행 실패 (${promotionNeedsManual.length}건, 수동확인)`,
+      {
+        상세: promotionNeedsManual.join('\n'),
+        안내: '고객은 결제 완료 상태이나 자동 이행이 되지 않았습니다. 환불 또는 수동 처리 필요.',
+      }
+    );
+  }
+
   return NextResponse.json({
     cancelled: totalCancelled,
     pending_cancelled: pendingCancelled,
     deposit_cancelled: depositCancelled,
+    promoted: totalPromoted,
+    needs_manual: promotionNeedsManual.length,
   });
 }
