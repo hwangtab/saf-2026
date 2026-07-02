@@ -1,6 +1,7 @@
 'use server';
 
 import { requireAdmin, requireAdminClient } from '@/lib/auth/guards';
+import { SOCIAL_TOKEN_WARN_DAYS } from '@/lib/social/token-expiry';
 
 export type AdminNotification = {
   id: string;
@@ -318,7 +319,7 @@ async function fetchPaymentFailures(supabase: SupabaseClient): Promise<AdminNoti
 // SNS 토큰 만료·게시 실패·대량 발송 실패 — 장애성 경보
 async function fetchSystemHealth(supabase: SupabaseClient): Promise<AdminNotification[]> {
   const sinceIso = new Date(Date.now() - RECENT_WINDOW_DAYS * 86_400_000).toISOString();
-  const soonIso = new Date(Date.now() + 7 * 86_400_000).toISOString();
+  const soonIso = new Date(Date.now() + SOCIAL_TOKEN_WARN_DAYS * 86_400_000).toISOString();
   const today = todayUtcIso();
   const notifications: AdminNotification[] = [];
 

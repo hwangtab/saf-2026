@@ -6,6 +6,7 @@ import { getStoredToken, refreshAccessToken, saveToken } from '@/lib/social/toke
 import { SOCIAL_PLATFORMS, type Platform } from '@/lib/social/types';
 import { createSupabaseAdminClient } from '@/lib/auth/server';
 import { notifyEmail } from '@/lib/notify';
+import { SOCIAL_TOKEN_WARN_DAYS, daysUntilExpiry } from '@/lib/social/token-expiry';
 
 export const runtime = 'nodejs';
 
@@ -51,19 +52,18 @@ async function cronHandler(request: NextRequest) {
   // 알림벨(fetchSystemHealth)은 이미 D-7 danger를 띄우지만, 접속 전에 이메일로도 전달.
   try {
     const db = createSupabaseAdminClient();
-    const soonIso = new Date(Date.now() + 7 * 86_400_000).toISOString();
+    const soonIso = new Date(Date.now() + SOCIAL_TOKEN_WARN_DAYS * 86_400_000).toISOString();
     const { data: expiring } = await db
       .from('social_tokens')
       .select('platform, expires_at')
       .not('expires_at', 'is', null)
       .lt('expires_at', soonIso);
     if (expiring && expiring.length > 0) {
-      const nowMs = Date.now();
       await notifyEmail('warning', `SNS 토큰 만료 임박 (${expiring.length}건)`, {
         상세: expiring
           .map((t) => {
             const exp = t.expires_at as string;
-            const days = Math.floor((new Date(exp).getTime() - nowMs) / 86_400_000);
+            const days = daysUntilExpiry(exp);
             return `${t.platform}: ${exp.slice(0, 10)} (${days < 0 ? '만료됨' : `D-${days}`})`;
           })
           .join('\n'),

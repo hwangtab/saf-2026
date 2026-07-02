@@ -10,6 +10,7 @@ import { resolvePublicImageUrl } from '@/lib/social/image-url';
 import { aggregatePublishHistory, executePublish } from '@/lib/social/publish-core';
 import { getPlatformConfigStatuses } from '@/lib/social/registry';
 import { isPlatform, SOCIAL_PLATFORMS, SocialPublishError, type Platform } from '@/lib/social/types';
+import { classifyTokenExpiry } from '@/lib/social/token-expiry';
 import type { ActionState } from '@/types';
 
 export interface SocialPostListItem {
@@ -103,8 +104,7 @@ export async function getSocialTokenStatuses(): Promise<SocialTokenStatus[]> {
       // 토큰 행은 있으나 만료일 미기록 — 장기토큰으로 간주(healthy).
       return { platform, expiresAt: null, daysRemaining: null, state: 'healthy' as const };
     }
-    const daysRemaining = Math.floor((new Date(expiresAt).getTime() - now) / 86_400_000);
-    const state = daysRemaining < 0 ? 'expired' : daysRemaining <= 7 ? 'expiring' : 'healthy';
+    const { daysRemaining, state } = classifyTokenExpiry(expiresAt, now);
     return { platform, expiresAt, daysRemaining, state };
   });
 }
