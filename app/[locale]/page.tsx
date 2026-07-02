@@ -174,19 +174,7 @@ export default async function Home({ params }: { params: Promise<LocaleParams> }
             <p className="mb-8 text-center text-sm text-charcoal-muted break-keep md:text-base">
               {t('ohYoonCluster.intro')}
             </p>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <Link
-                href="/petition/oh-yoon"
-                prefetch={false}
-                className="block rounded-2xl border border-gallery-hairline bg-canvas-soft p-5 hover:bg-canvas-strong transition-colors"
-              >
-                <div className="text-eyebrow mb-2 text-primary-strong">
-                  {t('ohYoonCluster.petitionEyebrow')}
-                </div>
-                <div className="text-base font-medium text-charcoal-deep leading-snug">
-                  {t('ohYoonCluster.petitionTitle')}
-                </div>
-              </Link>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Link
                 href="/event/oh-yoon-memorial"
                 prefetch={false}
