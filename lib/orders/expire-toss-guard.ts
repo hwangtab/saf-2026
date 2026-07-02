@@ -22,6 +22,8 @@ export type ExpiryTossGuardResult = {
   excludeIds: Set<string>;
   /** markOrderPaid로 정상 이행(paid 승격)된 건수. */
   promoted: number;
+  /** 정상 이행된 주문 ID — 호출측이 구매자 확인 알림을 보낼 대상. */
+  promotedIds: string[];
   /** 결제됐으나 이행 실패(작품 소진 등) — 관리자 수동 확인(환불 등) 필요. */
   needsManual: string[];
   checked: number;
@@ -47,6 +49,7 @@ export async function promotePaidBeforeExpiry(
 ): Promise<ExpiryTossGuardResult> {
   const excludeIds = new Set<string>();
   const needsManual: string[] = [];
+  const promotedIds: string[] = [];
   let promoted = 0;
 
   const checkable = orders.filter((o) => !!o.order_no && !isManualBankTransferOrder(o.metadata));
@@ -79,6 +82,7 @@ export async function promotePaidBeforeExpiry(
 
           if (outcome.ok) {
             promoted++;
+            promotedIds.push(order.id);
             console.error(
               `[expire-stale-orders] PROMOTED: ${orderNo} — Toss DONE, ${sourceStatus} → paid (취소 대신 이행)`
             );
@@ -104,5 +108,5 @@ export async function promotePaidBeforeExpiry(
     );
   }
 
-  return { excludeIds, promoted, needsManual, checked: capped.length, skippedOverCap };
+  return { excludeIds, promoted, promotedIds, needsManual, checked: capped.length, skippedOverCap };
 }

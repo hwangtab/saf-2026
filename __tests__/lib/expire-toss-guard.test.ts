@@ -39,6 +39,7 @@ it('Toss DONE 주문은 승격되고 취소 대상에서 제외된다', async ()
 
   expect(res.excludeIds.has('1')).toBe(true);
   expect(res.promoted).toBe(1);
+  expect(res.promotedIds).toEqual(['1']); // 호출측이 구매자 확인 알림을 보낼 대상
   expect(res.needsManual).toEqual([]);
   expect(markOrderPaidWithOutcome).toHaveBeenCalledWith(
     expect.objectContaining({ sourceStatuses: ['pending_payment'] })
