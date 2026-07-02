@@ -101,7 +101,7 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
             </LinkButton>
-            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="secondary">
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="outline-white">
               {t('petitionCta')}
             </LinkButton>
           </div>
@@ -289,7 +289,7 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
             <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
               {t('fundingCta')}
             </LinkButton>
-            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="secondary">
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="outline-white">
               {t('petitionCta')}
             </LinkButton>
           </div>

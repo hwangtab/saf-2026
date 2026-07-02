@@ -95,7 +95,7 @@ export default async function ExhibitionApplyPage({ params }: Props) {
             <LinkButton href={FUNDRAISER_PATH} variant="primary">
               {t('ctaApply')}
             </LinkButton>
-            <LinkButton href={EXHIBITION_PATH} variant="secondary">
+            <LinkButton href={EXHIBITION_PATH} variant="outline-white">
               {t('ctaView')}
             </LinkButton>
           </div>
@@ -193,7 +193,7 @@ export default async function ExhibitionApplyPage({ params }: Props) {
             <LinkButton href={FUNDRAISER_PATH} variant="primary">
               {t('ctaApply')}
             </LinkButton>
-            <LinkButton href={EXHIBITION_PATH} variant="secondary">
+            <LinkButton href={EXHIBITION_PATH} variant="outline-white">
               {t('ctaView')}
             </LinkButton>
           </div>
@@ -256,7 +256,7 @@ export default async function ExhibitionApplyPage({ params }: Props) {
             <LinkButton href={FUNDRAISER_PATH} variant="primary">
               {t('ctaApply')}
             </LinkButton>
-            <LinkButton href={JOIN_PATH} variant="secondary">
+            <LinkButton href={JOIN_PATH} variant="outline-white">
               {t('ctaJoin')}
             </LinkButton>
           </div>
