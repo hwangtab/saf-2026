@@ -1735,5 +1735,14 @@
     },
     "ch3ArtistLink": "Are you an artist? See how to submit",
     "applyCta": "For Artists — Submit"
+  },
+  "newsletter": {
+    "title": "Newsletter",
+    "description": "Monthly artworks and stories from Seed Art Festival",
+    "issueLabel": "Issue {issueNo}",
+    "empty": "No issues published yet.",
+    "backToList": "All issues",
+    "publishedOn": "Published {date}",
+    "viewArtwork": "View artwork"
   }
 }

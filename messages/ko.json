@@ -1735,5 +1735,14 @@
     },
     "ch3ArtistLink": "작가이신가요? 출품 안내 보기",
     "applyCta": "작가 출품 안내"
+  },
+  "newsletter": {
+    "title": "뉴스레터",
+    "description": "씨앗페가 매달 전하는 작품과 소식",
+    "issueLabel": "제{issueNo}호",
+    "empty": "아직 발행된 뉴스레터가 없습니다.",
+    "backToList": "뉴스레터 목록",
+    "publishedOn": "{date} 발행",
+    "viewArtwork": "작품 보러가기"
   }
 }
