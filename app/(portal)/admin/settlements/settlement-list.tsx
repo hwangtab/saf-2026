@@ -116,7 +116,7 @@ export function SettlementList({ data }: { data: MonthlySettlements }) {
             <thead>
               <tr className="border-b border-[var(--admin-border-soft)] text-left text-xs font-medium uppercase tracking-wide text-gray-500">
                 <th className="px-4 py-3">작가</th>
-                <th className="px-4 py-3 text-right">판매건수</th>
+                <th className="px-4 py-3 text-right">판매수량</th>
                 <th className="px-4 py-3 text-right">판매액</th>
                 <th className="px-4 py-3 text-right">정산예정(50%)</th>
                 <th className="px-4 py-3">상태</th>

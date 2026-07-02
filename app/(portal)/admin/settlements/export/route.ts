@@ -38,7 +38,7 @@ export async function GET(request: Request) {
 
   const header = [
     '작가',
-    '판매건수',
+    '판매수량',
     '판매액',
     '정산예정액(50%)',
     '지급상태',
