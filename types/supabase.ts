@@ -28,6 +28,45 @@ export type Database = {
   };
   public: {
     Tables: {
+      email_logs: {
+        Row: {
+          created_at: string;
+          error: string | null;
+          id: string;
+          order_no: string | null;
+          provider: string;
+          provider_message_id: string | null;
+          status: string;
+          subject: string | null;
+          to_email: string;
+          type: string;
+        };
+        Insert: {
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          order_no?: string | null;
+          provider?: string;
+          provider_message_id?: string | null;
+          status: string;
+          subject?: string | null;
+          to_email: string;
+          type: string;
+        };
+        Update: {
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          order_no?: string | null;
+          provider?: string;
+          provider_message_id?: string | null;
+          status?: string;
+          subject?: string | null;
+          to_email?: string;
+          type?: string;
+        };
+        Relationships: [];
+      };
       cron_runs: {
         Row: {
           created_at: string;
