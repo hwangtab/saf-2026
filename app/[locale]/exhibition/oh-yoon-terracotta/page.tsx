@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import PageHero from '@/components/ui/PageHero';
-import Section from '@/components/ui/Section';
-import SectionTitle from '@/components/ui/SectionTitle';
 import LinkButton from '@/components/ui/LinkButton';
 import SafeImage from '@/components/common/SafeImage';
 import MasterArtistGallery from '@/components/special/MasterArtistGallery';
+import SawtoothDivider from '@/components/ui/SawtoothDivider';
 import { JsonLdScript } from '@/components/common/JsonLdScript';
 import { getArtworksByExhibition } from '@/lib/supabase-data';
 import { OH_YOON_TERRACOTTA_EXHIBITION } from '@/lib/exhibitions';
@@ -33,8 +31,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = t('heroDescription');
 
   const base = createStandardPageMetadata(title, description, PAGE_URL, PAGE_PATH, locale);
-
-  // EN_INDEXABLE_PAGES에 등록된 색인 대상 — en도 index 허용
   const robots = resolveEnRobots(locale, true);
 
   return {
@@ -49,12 +45,8 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
   const locale = resolveLocale(raw);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'exhibitionOhYoonTerracotta' });
-  const tOhYoon = await getTranslations({ locale, namespace: 'petition.ohYoon' });
 
   const artworks = await getArtworksByExhibition(OH_YOON_TERRACOTTA_EXHIBITION.slug);
-
-  // OhYoonFeature.tsx:147-149의 매핑을 그대로 따른다.
-  // ArtworkListItem = Omit<HydratedArtwork, 'profile' | 'history' | 'profile_en' | 'history_en'>
   const listArtworks: ArtworkListItem[] = artworks.map(
     ({ profile: _p, history: _h, profile_en: _pe, history_en: _he, ...rest }: Artwork) => rest
   );
@@ -64,91 +56,94 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
     { name: t('breadcrumb'), url: PAGE_URL },
   ]);
 
+  const deadlines = [
+    { when: t('ch2When1'), what: t('ch2What1') },
+    { when: t('ch2When2'), what: t('ch2What2') },
+    { when: t('ch2When3'), what: t('ch2What3') },
+  ];
+  const steps = [t('ch3Step1'), t('ch3Step2'), t('ch3Step3')];
+
   return (
     <>
       <JsonLdScript data={breadcrumbSchema} />
-      <PageHero title={t('heroTitle')} description={t('heroDescription')}>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
-            {t('fundingCta')}
-          </LinkButton>
-          <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="secondary">
-            {t('petitionCta')}
-          </LinkButton>
+
+      {/* ① 히어로 — 벽이 사라지기 전에 (full-bleed 다크 + 테라코타 배경 + 지층 라인) */}
+      <header className="relative isolate overflow-hidden bg-charcoal text-white">
+        <div className="absolute inset-0 -z-10">
+          <SafeImage
+            src="/images/petition-oh-yoon/mural-1.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-40"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/80" />
         </div>
-      </PageHero>
+        <div aria-hidden="true" className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-[8%] h-full w-px bg-white/10" />
+          <div className="absolute top-0 left-[22%] h-full w-px bg-primary/25" />
+          <div className="absolute top-0 right-[12%] h-full w-px bg-white/10" />
+        </div>
 
-      {/* 위기 한 줄 — 어두운 배경 + 흰 글자 띠 (petition 페이지 §2 미러링) */}
-      <section className="bg-charcoal-deep text-white py-6 px-4">
-        <p className="container-max max-w-3xl mx-auto text-center text-base md:text-xl font-medium leading-relaxed break-keep text-balance">
-          {tOhYoon('crisis')}
-        </p>
-      </section>
-
-      {/* 스토리 섹션 — 히어로와 갤러리 사이 (petition 페이지 §3 미러링) */}
-      <Section variant="white" className="py-20 md:py-24">
-        <div className="container-max max-w-5xl mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <SectionTitle as="h2" className="mb-8 md:mb-10">
-              {tOhYoon('storyHeading')}
-            </SectionTitle>
-
-            {/* 인용 — 작가 초상 + blockquote */}
-            <aside
-              aria-label={tOhYoon('storyTributeLabel')}
-              className="mb-10 rounded-2xl bg-canvas px-6 py-7 md:px-8 md:py-8"
-            >
-              <div className="grid gap-5 md:grid-cols-[auto_1fr] md:items-center md:gap-8">
-                <figure className="flex flex-col items-center md:items-start">
-                  <div className="w-28 h-28 md:w-32 md:h-32 overflow-hidden rounded-full border-4 border-white shadow-md">
-                    <SafeImage
-                      src="/images/ohyoon.webp"
-                      alt={tOhYoon('storyPortraitAlt')}
-                      width={256}
-                      height={256}
-                      className="w-full h-full object-cover grayscale"
-                    />
-                  </div>
-                  <figcaption className="mt-3 text-center md:text-left">
-                    <span className="block text-sm font-semibold text-charcoal-deep">
-                      {tOhYoon('storyPortraitName')}
-                    </span>
-                    <span className="block text-xs text-charcoal-muted tracking-wider mt-0.5">
-                      {tOhYoon('storyPortraitCaption')}
-                    </span>
-                  </figcaption>
-                </figure>
-                <blockquote className="relative md:pl-2">
-                  <span
-                    aria-hidden="true"
-                    className="absolute -left-1 -top-4 md:-left-2 md:-top-5 text-6xl md:text-7xl leading-none text-charcoal/15 font-display font-black select-none"
-                  >
-                    &ldquo;
-                  </span>
-                  <p className="relative font-display font-bold italic text-xl md:text-2xl leading-snug text-charcoal-deep break-keep">
-                    {tOhYoon('storyQuote')}
-                  </p>
-                  <footer className="mt-3 text-xs md:text-sm text-charcoal-muted tracking-widest uppercase">
-                    — {tOhYoon('storyQuoteAttribution')}
-                  </footer>
-                </blockquote>
-              </div>
-            </aside>
-
-            {/* 작품 이야기 3단락 */}
-            <div className="space-y-6 text-base md:text-lg leading-relaxed text-charcoal break-keep">
-              <p>{tOhYoon('storyP1')}</p>
-              <p>{tOhYoon('storyP2')}</p>
-              <p>{tOhYoon('storyP3')}</p>
-            </div>
+        <div className="container-max mx-auto flex min-h-[72vh] min-h-[72svh] flex-col justify-center px-4 py-24 md:py-32">
+          <p className="text-eyebrow mb-6 text-sun">{t('heroEyebrow')}</p>
+          <h1 className="max-w-4xl font-display text-4xl font-black leading-[1.05] tracking-tighter text-balance drop-shadow-sm sm:text-6xl md:text-7xl lg:text-8xl">
+            {t('heroDisplayLine1')}
+            <br />
+            {t('heroDisplayLine2')}
+          </h1>
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed break-keep text-white/85 md:text-xl">
+            {t('heroLead')}
+          </p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
+              {t('fundingCta')}
+            </LinkButton>
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="secondary">
+              {t('petitionCta')}
+            </LinkButton>
           </div>
+        </div>
+        <SawtoothDivider position="bottom" colorClass="text-canvas-soft" />
+      </header>
 
-          {/* 작품 사진 3장 — petition 페이지 §3 미러링 */}
-          <figure className="mt-10 grid gap-3 md:grid-cols-3">
+      {/* ② 챕터 1 — 한 노동자가 벽에 새긴 것 (유물, 라이트) */}
+      <section className="bg-canvas-soft py-20 md:py-28">
+        <div className="container-max mx-auto max-w-5xl px-4">
+          <p className="text-eyebrow mb-3 text-primary-strong">{t('ch1Eyebrow')}</p>
+          <h2 className="border-l-[12px] border-charcoal pl-5 font-section text-3xl font-bold leading-tight text-charcoal-deep text-balance md:pl-6 md:text-5xl">
+            {t('ch1Title')}
+          </h2>
+
+          <blockquote className="relative mx-auto my-12 max-w-3xl border-4 border-charcoal bg-white p-8 text-center shadow-[8px_8px_0px_0px_rgba(49,57,60,0.1)] md:my-16 md:p-14">
+            <span
+              aria-hidden="true"
+              className="absolute -top-6 left-1/2 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-primary font-display text-3xl font-black text-white"
+            >
+              &ldquo;
+            </span>
+            <p className="font-display text-2xl font-black leading-snug text-charcoal-deep text-balance break-keep md:text-4xl">
+              {t('ch1Quote')}
+            </p>
+            <footer className="mt-6 flex items-center justify-center gap-2">
+              <span className="h-px w-8 bg-charcoal/40" />
+              <span className="text-base font-bold tracking-widest text-charcoal md:text-lg">
+                {t('ch1QuoteBy')}
+              </span>
+              <span className="h-px w-8 bg-charcoal/40" />
+            </footer>
+          </blockquote>
+
+          <p className="mx-auto max-w-2xl text-base leading-relaxed break-keep text-charcoal md:text-lg">
+            {t('ch1Body')}
+          </p>
+
+          <figure className="mt-12 grid gap-3 md:grid-cols-3">
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <SafeImage
                 src="/images/petition-oh-yoon/mural-1.webp"
-                alt={tOhYoon('muralAltFront')}
+                alt={t('muralAltFront')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
                 className="object-cover"
@@ -157,7 +152,7 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <SafeImage
                 src="/images/petition-oh-yoon/mural-2.webp"
-                alt={tOhYoon('muralAltDetail')}
+                alt={t('muralAltDetail')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
                 className="object-cover"
@@ -166,85 +161,131 @@ export default async function ExhibitionOhYoonTerracottaPage({ params }: Props) 
             <div className="relative aspect-square overflow-hidden rounded-lg bg-charcoal-deep">
               <SafeImage
                 src="/images/petition-oh-yoon/mural-3.webp"
-                alt={tOhYoon('muralAltBack')}
+                alt={t('muralAltBack')}
                 fill
                 sizes="(min-width: 768px) 33vw, 100vw"
                 className="object-cover"
               />
-              <div className="absolute top-2 left-2 rounded bg-white/90 backdrop-blur-sm px-2 py-0.5 text-xs font-semibold text-charcoal-deep">
-                {tOhYoon('muralOtherSideBadge')}
+              <div className="absolute left-2 top-2 rounded bg-white/90 px-2 py-0.5 text-xs font-semibold text-charcoal-deep backdrop-blur-sm">
+                {t('muralBadge')}
               </div>
             </div>
-            <figcaption className="md:col-span-3 text-xs text-charcoal-muted text-center mt-1">
-              {tOhYoon('muralCaption')}
+            <figcaption className="mt-1 text-center text-xs text-charcoal-muted md:col-span-3">
+              {t('muralCaption')}
             </figcaption>
           </figure>
         </div>
-      </Section>
+      </section>
 
-      {/* 왜 지금인가 섹션 — petition 페이지 §7 미러링 */}
-      <Section variant="canvas" className="py-20 md:py-24">
-        <div className="container-max max-w-3xl mx-auto px-4">
-          <SectionTitle as="h2" className="mb-8 md:mb-10">
-            {tOhYoon('urgencyHeading')}
-          </SectionTitle>
-          <p className="text-lg md:text-xl font-semibold text-charcoal-deep leading-relaxed break-keep text-balance mb-8">
-            {tOhYoon('urgencyLead')}
+      {/* ③ 챕터 2 — 50년, 그리고 8월 (위기, 다크 + 시한) */}
+      <section className="relative overflow-hidden bg-charcoal-deep py-20 text-white md:py-28">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-6 right-2 -z-0 select-none font-display text-[22vw] font-black leading-none text-white/[0.04]"
+        >
+          2026
+        </span>
+        <div className="container-max relative mx-auto max-w-4xl px-4">
+          <p className="text-eyebrow mb-3 text-sun">{t('ch2Eyebrow')}</p>
+          <h2 className="border-l-[12px] border-sun pl-5 font-section text-4xl font-black leading-tight text-balance md:pl-6 md:text-6xl">
+            {t('ch2Title')}
+          </h2>
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed break-keep text-white/85 md:text-xl">
+            {t('ch2Body')}
           </p>
-          <div className="rounded-xl bg-white border border-gallery-hairline p-6">
-            <p className="text-sm font-semibold text-charcoal-muted mb-3 uppercase tracking-wide">
-              {tOhYoon('urgencyNote')}
-            </p>
-            <ul className="space-y-2 text-base text-charcoal break-keep">
-              <li className="flex gap-2">
-                <span aria-hidden="true" className="shrink-0">
-                  ·
-                </span>
-                <span>{tOhYoon('urgencyBullet1')}</span>
+          <ol className="mt-12 grid gap-6 sm:grid-cols-3">
+            {deadlines.map((d) => (
+              <li key={d.what} className="border-t-2 border-white/20 pt-4">
+                <div className="font-display text-3xl font-black tabular-nums text-sun md:text-4xl">
+                  {d.when}
+                </div>
+                <div className="mt-2 text-sm text-white/70 md:text-base">{d.what}</div>
               </li>
-              <li className="flex gap-2">
-                <span aria-hidden="true" className="shrink-0">
-                  ·
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ④ 챕터 3 — 작가들이 벽을 듭니다 (연대 · 기금 메커니즘, 라이트) */}
+      <section className="bg-canvas py-20 md:py-28">
+        <div className="container-max mx-auto max-w-4xl px-4 text-center">
+          <p className="text-eyebrow mb-3 text-primary-strong">{t('ch3Eyebrow')}</p>
+          <h2 className="font-section text-3xl font-bold leading-tight text-charcoal-deep text-balance md:text-5xl">
+            {t('ch3Title')}
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed break-keep text-charcoal-muted md:text-lg">
+            {t('ch3Body')}
+          </p>
+          <ol className="mx-auto mt-12 grid max-w-3xl gap-6 text-left md:grid-cols-3">
+            {steps.map((step, i) => (
+              <li
+                key={step}
+                className="rounded-2xl border border-gallery-hairline bg-white p-6 transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-charcoal font-display text-lg font-black tabular-nums text-charcoal-deep">
+                  {i + 1}
                 </span>
-                <span>{tOhYoon('urgencyBullet2')}</span>
+                <p className="mt-4 text-base font-medium leading-snug break-keep text-charcoal-deep">
+                  {step}
+                </p>
               </li>
-              <li className="flex gap-2">
-                <span aria-hidden="true" className="shrink-0">
-                  ·
-                </span>
-                <span>{tOhYoon('urgencyBullet3')}</span>
-              </li>
-            </ul>
+            ))}
+          </ol>
+          <div className="mt-12 flex flex-wrap justify-center gap-3">
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
+              {t('fundingCta')}
+            </LinkButton>
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="secondary">
+              {t('petitionCta')}
+            </LinkButton>
           </div>
-          <p className="mt-8 text-base md:text-lg leading-relaxed text-charcoal-muted break-keep text-balance">
-            {tOhYoon('urgencyTail')}
-          </p>
         </div>
-      </Section>
+      </section>
 
-      {/* 기금마련전 연결부 — 이 전시 수익은 테라코타 이전 기금 (신규 키, petition 상호부조 대출과 구별) */}
-      <Section variant="white" className="py-20 md:py-24">
-        <div className="container-max max-w-3xl mx-auto px-4">
-          <SectionTitle as="h2" className="mb-6 md:mb-8">
-            {t('storyConnectHeading')}
-          </SectionTitle>
-          <p className="text-base md:text-lg leading-relaxed text-charcoal break-keep">
-            {t('storyConnectBody')}
-          </p>
+      {/* ⑤ 출품작 갤러리 (다크) */}
+      <section className="relative overflow-hidden bg-charcoal py-20 text-white md:py-28">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-8 left-1/2 -z-0 -translate-x-1/2 select-none font-display text-[18vw] font-black uppercase leading-none tracking-tighter text-white/[0.04]"
+        >
+          SEED ART
+        </span>
+        <div className="container-max relative mx-auto px-4">
+          <p className="text-eyebrow mb-3 text-sun">{t('galleryEyebrow')}</p>
+          <h2 className="mb-10 font-section text-3xl font-black leading-tight md:text-5xl">
+            {t('galleryTitle')}
+          </h2>
+          {listArtworks.length === 0 ? (
+            <div className="rounded-2xl border border-white/15 bg-white/5 px-6 py-16 text-center backdrop-blur-sm">
+              <p className="text-base leading-relaxed break-keep text-white/70 md:text-lg">
+                {t('galleryEmpty')}
+              </p>
+            </div>
+          ) : (
+            <MasterArtistGallery
+              artworks={listArtworks}
+              returnTo="%2Fexhibition%2Foh-yoon-terracotta"
+            />
+          )}
         </div>
-      </Section>
+      </section>
 
-      {/* 갤러리 섹션 */}
-      <Section>
-        {listArtworks.length === 0 ? (
-          <p className="text-center text-charcoal-muted">{t('emptyState')}</p>
-        ) : (
-          <MasterArtistGallery
-            artworks={listArtworks}
-            returnTo="%2Fexhibition%2Foh-yoon-terracotta"
-          />
-        )}
-      </Section>
+      {/* ⑥ 클로징 */}
+      <section className="bg-charcoal-deep py-20 text-center text-white md:py-28">
+        <div className="container-max mx-auto max-w-3xl px-4">
+          <p className="font-display text-2xl font-black leading-snug text-balance break-keep md:text-4xl">
+            {t('closingLine')}
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.fundingHref} variant="primary">
+              {t('fundingCta')}
+            </LinkButton>
+            <LinkButton href={OH_YOON_TERRACOTTA_EXHIBITION.petitionHref} variant="secondary">
+              {t('petitionCta')}
+            </LinkButton>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
